@@ -350,14 +350,8 @@ importers:
         specifier: 3.7.7
         version: 3.7.7
       '@neo4j-ndl/react':
-        specifier: 3.5.5
-        version: 3.5.5(@neo4j-ndl/base@3.4.2)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      '@neo4j-nvl/base':
-        specifier: 0.3.8
-        version: 0.3.8(neo4j-driver@5.12.0)
-      '@neo4j-nvl/react':
-        specifier: 0.3.8
-        version: 0.3.8(neo4j-driver@5.12.0)
+        specifier: 3.8.13
+        version: 3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@5.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -1409,6 +1403,9 @@ packages:
   '@neo4j-cypher/language-support@2.0.0-next.13':
     resolution: {integrity: sha512-csi1nmY3PfEJEpGrxALmSi6LU8fewgTCMRHYk5yGWT5IFUh2q/b2Q3XqAIblbgAkRoggzkA/9dRoiGq76Ug6eA==}
     engines: {node: '>=18.18.2'}
+
+  '@neo4j-devtools/word-color@0.0.8':
+    resolution: {integrity: sha512-0fC2PXU1M0wL72lVil/2JnUccpEoPaiNJsNAc8fgRUysVeZ/OLKFvZAeOnufJ4X5OKkImaL1lvoGyhfKfOKfzw==}
 
   '@neo4j-ndl/base@3.2.10':
     resolution: {integrity: sha512-Bpdxeg13hiOk4pw1t0CYKuvyfB1yAZBGE2B4X0Rxa3zR2CsGrEtfXAy3qRomJJMn5UpIPIcbiBj6IRp7MVBVWw==}
@@ -3312,6 +3309,9 @@ packages:
   chownr@3.0.0:
     resolution: {integrity: sha512-+IxzY9BZOQd/XuYPRmrvEVjF/nqj5kgT4kEq7VofrDoM1MxoRjEWkrCC3EtLi59TVawxTAn+orJwFQcrqEN1+g==}
     engines: {node: '>=18'}
+
+  chroma-js@2.4.2:
+    resolution: {integrity: sha512-U9eDw6+wt7V8z5NncY2jJfZa+hUH8XEj8FQHgFJTrUFnJfXYf4Ml4adI2vXZOjqRDpFWtYVWypDfZwnJ+HIR4A==}
 
   chromium-bidi@0.5.8:
     resolution: {integrity: sha512-blqh+1cEQbHBKmok3rVJkBlBxt9beKBgOsxbFgs7UJcoVbbeZ+K7+6liAsjgpc8l1Xd55cQUy14fXZdGSb4zIw==}
@@ -8523,19 +8523,29 @@ snapshots:
       fastest-levenshtein: 1.0.16
       vscode-languageserver-types: 3.17.5
 
+  '@neo4j-devtools/word-color@0.0.8':
+    dependencies:
+      '@types/chroma-js': 2.1.4
+      chroma-js: 2.4.2
+
   '@neo4j-ndl/base@3.2.10': {}
 
   '@neo4j-ndl/base@3.7.7': {}
 
-  '@neo4j-ndl/react@3.5.5(@neo4j-ndl/base@3.4.2)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@neo4j-ndl/react@3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@5.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@dnd-kit/core': 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/sortable': 8.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
       '@floating-ui/react': 0.26.24(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@floating-ui/react-dom': 2.1.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@heroicons/react': 2.1.5(react@18.3.1)
-      '@neo4j-ndl/base': 3.4.2
+      '@neo4j-devtools/word-color': 0.0.8
+      '@neo4j-ndl/base': 3.7.7
+      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@5.12.0)
+      '@neo4j-nvl/interaction-handlers': 0.3.8-859d66de(neo4j-driver@5.12.0)
+      '@neo4j-nvl/react': 0.3.8-859d66de(neo4j-driver@5.12.0)
       '@tanstack/react-table': 8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@uiw/react-color': 2.5.4(@babel/runtime@7.27.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       classnames: 2.5.1
       date-fns: 4.1.0
       detect-browser: 5.3.0
@@ -11267,6 +11277,8 @@ snapshots:
   chownr@1.1.4: {}
 
   chownr@3.0.0: {}
+
+  chroma-js@2.4.2: {}
 
   chromium-bidi@0.5.8(devtools-protocol@0.0.1232444):
     dependencies:
