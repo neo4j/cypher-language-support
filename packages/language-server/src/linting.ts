@@ -1,6 +1,6 @@
 import {
   _internalFeatureFlags,
-  SyntaxDiagnostic,
+  cleanPositions,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
@@ -43,40 +43,13 @@ async function rawLintDocument(
 
     const result = await lastSemanticJob;
 
-    cleanPositions(
-      result,
-      document.lineCount,
-      document.getText().length -
-        document.offsetAt({ line: document.lineCount - 1, character: 0 }),
-    );
+    //marks the entire text if any position is negative
+    cleanPositions(result, document);
 
     sendDiagnostics(result);
   } catch (err) {
     if (!(err instanceof workerpool.Promise.CancellationError)) {
       console.error(err);
-    }
-  }
-}
-
-//marks the entire text if any position is negative
-function cleanPositions(
-  diagnostics: SyntaxDiagnostic[],
-  endLine: number,
-  endOffset: number,
-): void {
-  for (const diagnostic of diagnostics) {
-    if (
-      [
-        diagnostic.range.end.character,
-        diagnostic.range.start.character,
-        diagnostic.range.end.line,
-        diagnostic.range.start.line,
-      ].find((pos) => pos < 0)
-    ) {
-      diagnostic.range.start.line = 0;
-      diagnostic.range.end.line = endLine;
-      diagnostic.range.start.character = 0;
-      diagnostic.range.end.character = endOffset;
     }
   }
 }

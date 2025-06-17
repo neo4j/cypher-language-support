@@ -5,6 +5,8 @@ import {
   Position,
 } from 'vscode-languageserver-types';
 
+import { TextDocument } from 'vscode-languageserver-textdocument';
+
 import { DbSchema } from '../dbSchema';
 import { resolveCypherVersion } from '../helpers';
 import {
@@ -53,6 +55,35 @@ function detectNonDeclaredLabel(
   }
 
   return undefined;
+}
+
+export function cleanPositions(
+  diagnostics: SyntaxDiagnostic[],
+  document: TextDocument,
+): void {
+  const endLine = document.lineCount;
+  const endOffset =
+    document.getText().length -
+    document.offsetAt({ line: document.lineCount - 1, character: 0 });
+  for (const diagnostic of diagnostics) {
+    if (
+      [
+        diagnostic.range.end.character,
+        diagnostic.range.start.character,
+        diagnostic.range.end.line,
+        diagnostic.range.start.line,
+        diagnostic.offsets.start,
+        diagnostic.offsets.end,
+      ].find((pos) => pos < 0)
+    ) {
+      diagnostic.range.start.line = 0;
+      diagnostic.range.end.line = endLine;
+      diagnostic.range.start.character = 0;
+      diagnostic.range.end.character = endOffset;
+      diagnostic.offsets.start = 0;
+      diagnostic.offsets.end = document.getText().length;
+    }
+  }
 }
 
 function generateSyntaxDiagnostic(
