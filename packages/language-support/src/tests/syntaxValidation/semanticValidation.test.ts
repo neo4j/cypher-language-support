@@ -15,9 +15,9 @@ describe('Semantic validation spec', () => {
   });
 
   test('SyntaxChecker-exceptions work', () => {
-    const query1 = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25000';
-    const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
-    expect(diagnostics1).toEqual([
+    const query = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25000';
+    const diagnostics = getDiagnosticsForQuery({ query });
+    expect(diagnostics).toEqual([
       {
         message:
           "Invalid Cypher version '25000'. Valid Cypher versions are: 5, 25",
