@@ -85,6 +85,8 @@ export function clampUnsafePositions(
         },
         offsets: { start: 0, end: endOffset },
       };
+    } else {
+      return diagnostic;
     }
   });
 }
