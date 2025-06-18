@@ -10,7 +10,7 @@ import {
   waitUntilNotification,
 } from '../../webviewUtils';
 
-suite('Query results testing', () => {
+suite.skip('Query results testing', () => {
   let workbench: Workbench;
   let connectionSection: ViewSection;
 

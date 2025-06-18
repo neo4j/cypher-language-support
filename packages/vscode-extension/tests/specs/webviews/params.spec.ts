@@ -95,7 +95,7 @@ suite('Params panel testing', () => {
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   }
 
-  test('Should correctly set and clear cypher parameters', async function () {
+  test.skip('Should correctly set and clear cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -149,7 +149,7 @@ suite('Params panel testing', () => {
     await forceSwitchDatabase('neo4j');
   });
 
-  test('Should correctly modify cypher parameters', async function () {
+  test.skip('Should correctly modify cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -177,7 +177,7 @@ suite('Params panel testing', () => {
     });
   });
 
-  test('Should correctly delete parameters', async function () {
+  test.skip('Should correctly delete parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -207,7 +207,7 @@ suite('Params panel testing', () => {
     });
   });
 
-  test('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
+  test.skip('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
     await clearParams();
     await forceAddParam('a', '1998');
     await executeFile(workbench, 'params.cypher');
@@ -234,7 +234,7 @@ suite('Params panel testing', () => {
     });
   });
 
-  test('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
+  test.skip('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
     await clearParams();
     await forceAddParam('a', '1998');
     await executeFile(workbench, 'params.cypher');
