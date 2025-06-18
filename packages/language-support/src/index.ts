@@ -22,7 +22,7 @@ export {
 export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
 export {
   lintCypherQuery,
-  cleanPositions,
+  clampUnsafePositions,
 } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';

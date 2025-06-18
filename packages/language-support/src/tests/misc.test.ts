@@ -1,6 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
-  cleanPositions,
+  clampUnsafePositions,
   SyntaxDiagnostic,
 } from '../syntaxValidation/syntaxValidation';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
@@ -43,14 +43,14 @@ function testPositionCoversDoc(
     0,
     text,
   );
-  cleanPositions([error], textDoc);
+  const cleanedResult = clampUnsafePositions([error], textDoc)[0];
 
-  expect(error.range.start.line).toBe(0);
-  expect(error.range.start.character).toBe(0);
-  expect(error.range.end.line).toBe(endLine);
-  expect(error.range.end.character).toBe(endChar);
-  expect(error.offsets.start).toBe(0);
-  expect(error.offsets.end).toBe(text.length);
+  expect(cleanedResult.range.start.line).toBe(0);
+  expect(cleanedResult.range.start.character).toBe(0);
+  expect(cleanedResult.range.end.line).toBe(endLine);
+  expect(cleanedResult.range.end.character).toBe(endChar);
+  expect(cleanedResult.offsets.start).toBe(0);
+  expect(cleanedResult.offsets.end).toBe(text.length);
 }
 
 const makeBadDiagnostic = (

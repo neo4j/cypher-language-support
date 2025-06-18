@@ -57,15 +57,16 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
-export function cleanPositions(
+export function clampUnsafePositions(
   diagnostics: SyntaxDiagnostic[],
   document: TextDocument,
-): void {
+): SyntaxDiagnostic[] {
   const endLine = document.lineCount;
-  const endOffset =
-    document.getText().length -
+  const endOffset = document.getText().length;
+  const endLineOffset =
+    endOffset -
     document.offsetAt({ line: document.lineCount - 1, character: 0 });
-  for (const diagnostic of diagnostics) {
+  return diagnostics.map((diagnostic: SyntaxDiagnostic) => {
     if (
       [
         diagnostic.range.end.character,
@@ -76,14 +77,16 @@ export function cleanPositions(
         diagnostic.offsets.end,
       ].find((pos) => pos < 0)
     ) {
-      diagnostic.range.start.line = 0;
-      diagnostic.range.end.line = endLine;
-      diagnostic.range.start.character = 0;
-      diagnostic.range.end.character = endOffset;
-      diagnostic.offsets.start = 0;
-      diagnostic.offsets.end = document.getText().length;
+      return {
+        ...diagnostic,
+        range: {
+          start: Position.create(0, 0),
+          end: Position.create(endLine, endLineOffset),
+        },
+        offsets: { start: 0, end: endOffset },
+      };
     }
-  }
+  });
 }
 
 function generateSyntaxDiagnostic(
