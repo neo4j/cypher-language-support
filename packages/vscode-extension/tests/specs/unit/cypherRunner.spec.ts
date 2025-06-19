@@ -54,7 +54,7 @@ MATCH (n) RETURN n`,
       .returns(getMockConnection());
     await runCypher(async () => {});
 
-    const arg = runMethod.firstCall.args.at(2) as string;
+    const arg = runMethod.firstCall.args.at(0) as string;
 
     // We check that the first line and the RETURN n from the last one have been concatenated correctly
     assert.equal(arg, 'CREATE (n:Person) RETURN n');

@@ -187,7 +187,7 @@ function getSelectedText(editor: TextEditor): string {
 }
 
 export async function runCypher(
-  callback: (statements: string[]) => Promise<void>,
+  renderBottomPanel: (statements: string[]) => Promise<void>,
 ): Promise<void> {
   const cypherRunner = getQueryRunner();
 
@@ -206,14 +206,8 @@ export async function runCypher(
     }
 
     const selectedText = getSelectedText(editor);
-    const documentUri = editor.document.uri;
 
-    await cypherRunner.run(
-      activeConnection,
-      documentUri,
-      selectedText,
-      callback,
-    );
+    await cypherRunner.run(selectedText, renderBottomPanel);
   }
 }
 

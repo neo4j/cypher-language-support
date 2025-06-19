@@ -27,7 +27,7 @@ import { getExtensionContext, getSchemaPoller } from '../../contextService';
 import { getNonce } from '../../getNonce';
 import { getDeserializedParams } from '../../parameterService';
 import { toNativeTypes } from '../../typeUtils';
-import { querySummary } from '../resultWindow';
+import { querySummary } from './querySummary';
 import { QueryResultsMessage, views } from './queryResultsTypes';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
