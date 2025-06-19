@@ -1,4 +1,7 @@
-import { _internalFeatureFlags } from '@neo4j-cypher/language-support';
+import {
+  _internalFeatureFlags,
+  clampUnsafePositions,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
@@ -37,9 +40,13 @@ async function rawLintDocument(
       dbSchema,
       _internalFeatureFlags,
     );
+
     const result = await lastSemanticJob;
 
-    sendDiagnostics(result);
+    //marks the entire text if any position is negative
+    const positionSafeResult = clampUnsafePositions(result, document);
+
+    sendDiagnostics(positionSafeResult);
   } catch (err) {
     if (!(err instanceof workerpool.Promise.CancellationError)) {
       console.error(err);
