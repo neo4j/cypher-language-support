@@ -12,6 +12,12 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
+import * as tar from 'tar';
+import * as path from 'path';
+import { pipeline } from 'stream/promises';
+import axios from 'axios';
+import * as vscode from 'vscode';
+import { serverVersionToLinter } from '@neo4j-cypher/lint-worker';
 
 export type Scheme =
   | 'neo4j'
@@ -397,6 +403,99 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 }
 
 /**
+ * Notifies the language client it should switch linter
+ */
+export async function switchWorkerOnLanguageServer(
+  fileName: string,
+  destDir: string,
+) {
+  const linterPath = fileName ? path.join(destDir, fileName) : undefined;
+  await sendNotificationToLanguageClient('updateLintWorker', {
+    lintWorkerPath: linterPath,
+  });
+}
+
+async function downloadLintWorker(
+  fileName: string,
+  destDir: string,
+): Promise<void> {
+  const filePath = path.join(destDir, fileName);
+  const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
+  const response = await axios.get(downloadUrl, { responseType: 'stream' });
+  await pipeline(
+    response.data,
+    tar.x({
+      cwd: destDir,
+      filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
+    }),
+  );
+
+  const extractedFilePath = path.join(
+    destDir,
+    'package',
+    'dist',
+    'cjs',
+    'lintWorker.cjs',
+  );
+  const fileUri = vscode.Uri.file(filePath);
+  const extractedUri = vscode.Uri.file(extractedFilePath);
+  const newFolderUri = vscode.Uri.file(path.join(destDir, 'package'));
+  await vscode.workspace.fs.rename(extractedUri, fileUri);
+  await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
+}
+async function getDestDir(
+  fileName: string,
+): Promise<{ fileExists: boolean; destDir: string }> {
+  const context = getExtensionContext();
+  const storageUri = context.globalStorageUri;
+  const destDir = storageUri.path.slice(1);
+  await vscode.workspace.fs.createDirectory(storageUri);
+  const filePath = path.join(destDir, fileName);
+  const fileUri = vscode.Uri.file(filePath);
+
+  //checking metadata of file, just to see if the file is there
+  let stats: vscode.FileStat;
+  try {
+    stats = await vscode.workspace.fs.stat(fileUri);
+  } catch (e) {
+    stats = undefined;
+  }
+  return { fileExists: stats !== undefined, destDir };
+}
+
+async function dynamicallyAdjustLinter(): Promise<void> {
+  const poller = getSchemaPoller();
+  if (poller) {
+    const serverVersion = poller.connection?.serverVersion;
+
+    if (serverVersion) {
+      //removes zero padding on month of new versions
+      const sanitizedServerVersion = serverVersion.replace(
+        /(\.0+)(?=\d)/g,
+        '.',
+      );
+
+      //since not every release has a linter release
+      const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+
+      //If the server is newer than the latest published package on npm, use default linter
+      if (!linterVersion) {
+        return switchWorkerOnLanguageServer(undefined, undefined);
+      }
+      const fileName = `${linterVersion}-lintWorker.cjs`;
+      const { fileExists, destDir } = await getDestDir(fileName);
+
+      if (fileExists) {
+        await switchWorkerOnLanguageServer(fileName, destDir);
+      } else {
+        await downloadLintWorker(fileName, destDir);
+        await switchWorkerOnLanguageServer(fileName, destDir);
+      }
+    }
+  }
+}
+
+/**
  * Attempts to establish a connection to the database and notifies the language client that the connection has been updated.
  * If the connection is successful, the Connection's state will be set to 'connected'.
  * If the connection is not successful, the Connection's state will either be set to 'error' if the error is retriable, or disconnected if not.
@@ -419,6 +518,12 @@ async function connectToDatabaseAndNotifyLanguageClient(
   result.success
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)
     : await sendNotificationToLanguageClient('connectionDisconnected');
+
+  const config = vscode.workspace.getConfiguration('neo4j.features');
+  const versionedLintersEnabled = config.get('useVersionedLinters', false);
+  if (result.success && versionedLintersEnabled) {
+    await dynamicallyAdjustLinter();
+  }
 
   await saveConnection({
     ...connection,

@@ -7,11 +7,15 @@ export type Neo4jConnectionSettings = {
   database?: string;
 };
 
+export type LintWorkerSettings = {
+  lintWorkerPath: string;
+};
+
 export type Neo4jSettings = {
   trace: {
     server: 'off' | 'messages' | 'verbose';
   };
-  features: { linting: boolean };
+  features: { linting: boolean; useVersionedLinters?: boolean };
 };
 
 export type Neo4jParameters = Record<string, unknown>;

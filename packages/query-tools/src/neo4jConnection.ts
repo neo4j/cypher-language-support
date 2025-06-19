@@ -39,6 +39,7 @@ type RunCypherQueryArgs = {
 export type QueryResultWithLimit = QueryResult & { recordLimitHit: boolean };
 export class Neo4jConnection {
   public currentDb: string | undefined;
+  public serverVersion: string | undefined;
 
   constructor(
     public connectedUser: string,
@@ -48,6 +49,7 @@ export class Neo4jConnection {
     database?: string,
   ) {
     this.currentDb = resolveInitialDatabase(databases, database);
+    this.serverVersion = undefined;
   }
 
   async runCypherQuery({

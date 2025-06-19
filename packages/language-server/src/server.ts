@@ -11,7 +11,6 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-
 import {
   _internalFeatureFlags,
   syntaxColouringLegend,
@@ -19,10 +18,11 @@ import {
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
-import { cleanupWorkers, lintDocument } from './linting';
+import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import {
+  LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jParameters,
   Neo4jSettings,
@@ -50,6 +50,7 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
         });
       },
       neo4jSchemaPoller,
+      settings?.features?.useVersionedLinters,
     );
   } else {
     void connection.sendDiagnostics({
@@ -128,6 +129,18 @@ connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
 connection.onNotification(
+  'updateLintWorker',
+  (linterSettings: LintWorkerSettings) => {
+    const lintWorkerPath = linterSettings.lintWorkerPath;
+
+    void (async () => {
+      await setLintWorker(lintWorkerPath);
+      relintAllDocuments();
+    })();
+  },
+);
+
+connection.onNotification(
   'connectionUpdated',
   (connectionSettings: Neo4jConnectionSettings) => {
     changeConnection(connectionSettings);
@@ -154,7 +167,7 @@ documents.listen(connection);
 connection.listen();
 
 connection.onExit(() => {
-  cleanupWorkers();
+  void cleanupWorkers();
 });
 
 const changeConnection = (connectionSettings: Neo4jConnectionSettings) => {

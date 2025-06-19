@@ -1,10 +1,14 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import {
+  LintWorkerSettings,
+  Neo4jConnectionSettings,
+} from '@neo4j-cypher/language-server/src/types';
 import { getLanguageClient } from './contextService';
 
 export type MethodName =
   | 'connectionUpdated'
   | 'connectionDisconnected'
-  | 'updateParameters';
+  | 'updateParameters'
+  | 'updateLintWorker';
 
 /**
  * Communicates to the language client that a connection has been updated or disconnected and needs to take action.
@@ -13,7 +17,7 @@ export type MethodName =
  */
 export async function sendNotificationToLanguageClient(
   methodName: MethodName,
-  settings?: Neo4jConnectionSettings,
+  settings?: Neo4jConnectionSettings | LintWorkerSettings,
 ) {
   const languageClient = getLanguageClient();
   await languageClient.sendNotification(methodName, settings);
