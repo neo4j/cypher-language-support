@@ -1,5 +1,20 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.23
+
+### Minor Changes
+
+- ed65ef3: Fixes handling of negative positions and syntaxchecker-exceptions
+
+### Patch Changes
+
+- Updated dependencies [ed65ef3]
+- Updated dependencies [039d1c5]
+- Updated dependencies [a38255f]
+  - @neo4j-cypher/language-support@2.0.0-next.22
+  - @neo4j-cypher/lint-worker@2025.4.1-next.1
+  - @neo4j-cypher/query-tools@2.0.0-next.22
+
 ## 2.0.0-next.22
 
 ### Patch Changes
