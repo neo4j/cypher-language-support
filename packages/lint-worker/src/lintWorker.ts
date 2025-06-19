@@ -5,7 +5,7 @@ import {
 import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
-} from '@neo4j-cypher/language-support';
+} from 'languageSupport-next.8';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
