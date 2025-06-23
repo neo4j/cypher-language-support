@@ -8,7 +8,7 @@
 !LICENSE.md
 !resources/
 !dist/extension.js
-!dist/lintWorker.js
+!dist/lintWorker.cjs
 !dist/cypher-language-server.js
 !dist/webviews/
 !cypher-language-configuration.json
