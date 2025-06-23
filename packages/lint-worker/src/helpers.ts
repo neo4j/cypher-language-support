@@ -31,7 +31,7 @@ export function convertDbSchema(
   const serverVersion = neo4j.connection?.serverVersion;
   const linterVersion = serverVersionToLinter(serverVersion);
 
-  if (compareMajorMinorVersions(linterVersion, oldLinter) < 0) {
+  if (compareMajorMinorVersions(linterVersion, oldLinter) <= 0) {
     const dbSchemaOld: DbSchemaV1 = {
       ...originalSchema,
       functions: oldFunctions,
