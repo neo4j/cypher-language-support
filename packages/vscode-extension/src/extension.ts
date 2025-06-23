@@ -32,15 +32,6 @@ export async function activate(context: ExtensionContext) {
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
 
-  // show query result bottom panel only if showBottomPanel is set to true
-  const config = workspace.getConfiguration('neo4j.features');
-  const showBottomPanel = config.get('showBottomPanel', false);
-  await commands.executeCommand(
-    'setContext',
-    'neo4j:showBottomPanel',
-    showBottomPanel,
-  );
-
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {
