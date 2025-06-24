@@ -33,7 +33,11 @@ export function validateParamInput(
   paramValue: string,
   dbSchema: DbSchema,
 ): string | undefined {
-  const diagnostics = lintCypherQuery(`RETURN ${paramValue}`, dbSchema, true);
+  const diagnostics = lintCypherQuery(
+    `RETURN ${paramValue}`,
+    dbSchema,
+    true,
+  ).diagnostics;
   const errors = diagnostics.filter(
     (d) => d.severity === DiagnosticSeverity.Error,
   );

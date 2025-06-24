@@ -48,3 +48,16 @@ export type Neo4jFunction = {
 export type CompletionItem = VSCodeCompletionItem & {
   signature?: string;
 };
+
+export type Reference = {
+  startOffset: number;
+  endOffset: number;
+};
+
+export type SymbolTable = {
+  key: string;
+  startOffset: number;
+  endOffset: number;
+  types: string[];
+  references: Reference[];
+}[];

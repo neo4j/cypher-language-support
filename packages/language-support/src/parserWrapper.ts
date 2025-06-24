@@ -35,6 +35,7 @@ import {
   CypherVersion,
   cypherVersionNumbers,
   allCypherVersions,
+  SymbolTable,
 } from './types';
 
 export interface ParsedStatement {
@@ -775,6 +776,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 
 class ParserWrapper {
   parsingResult?: ParsingResult;
+  symbolTables: SymbolTable[] = [];
 
   parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
@@ -794,6 +796,11 @@ class ParserWrapper {
 
   clearCache() {
     this.parsingResult = undefined;
+    this.symbolTables = [];
+  }
+
+  setSymbolTables(symbolTables: SymbolTable[]) {
+    this.symbolTables = symbolTables;
   }
 }
 

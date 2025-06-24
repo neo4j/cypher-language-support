@@ -37,6 +37,7 @@ import {
   cypherVersionNumbers,
   Neo4jFunction,
   Neo4jProcedure,
+  SymbolTable,
 } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
@@ -487,6 +488,7 @@ export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
   caretToken: Token,
+  symbolTables: SymbolTable[],
   manualTrigger = false,
 ): CompletionItem[] {
   const cypherVersion = resolveCypherVersion(

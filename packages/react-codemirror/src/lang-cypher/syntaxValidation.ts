@@ -4,6 +4,7 @@ import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import { parserWrapper } from '@neo4j-cypher/language-support';
 
 const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
@@ -38,7 +39,9 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
       const result = await lastSemanticJob;
 
-      const a: Diagnostic[] = result.map((diagnostic) => {
+      parserWrapper.setSymbolTables(result.symbolTables);
+
+      const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {
         return {
           from: diagnostic.offsets.start,
           to: diagnostic.offsets.end,

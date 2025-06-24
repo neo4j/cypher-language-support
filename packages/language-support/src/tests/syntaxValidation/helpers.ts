@@ -10,5 +10,12 @@ export function getDiagnosticsForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return lintCypherQuery(query, dbSchema);
+  return lintCypherQuery(query, dbSchema).diagnostics;
+}
+
+export function getSymbolTablesForQuery({
+  query,
+  dbSchema = {},
+}: SyntaxValidationTestArgs) {
+  return lintCypherQuery(query, dbSchema).symbolTables;
 }

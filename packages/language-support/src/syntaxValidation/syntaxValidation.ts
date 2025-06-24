@@ -18,7 +18,7 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction, Neo4jProcedure } from '../types';
+import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
 
 export type SyntaxDiagnostic = Diagnostic & {
@@ -275,6 +275,11 @@ type FixSemanticPositionsArgs = {
   parseResult: ParsedStatement;
 };
 
+type FixSymbolTablePositionArgs = {
+  symbolTable: SymbolTable;
+  parseResult: ParsedStatement;
+};
+
 function fixOffsets({
   semanticDiagnostics,
   parseResult,
@@ -306,18 +311,42 @@ function fixOffsets({
   });
 }
 
+function fixSymbolTableOffsets({
+  symbolTable,
+  parseResult,
+}: FixSymbolTablePositionArgs): SymbolTable {
+  const cmd = parseResult.command;
+  const offsetAdjust = cmd.start.start;
+
+  return symbolTable.map((symbol) => {
+    return {
+      key: symbol.key,
+      startOffset: symbol.startOffset + offsetAdjust,
+      endOffset: symbol.endOffset + offsetAdjust,
+      types: symbol.types,
+      references: symbol.references.map((ref) => {
+        return {
+          startOffset: ref.startOffset + offsetAdjust,
+          endOffset: ref.endOffset + offsetAdjust,
+        };
+      }),
+    };
+  });
+}
+
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
   consoleCommandsEnabled?: boolean,
-): SyntaxDiagnostic[] {
+): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
     const cachedParse = parserWrapper.parse(query, consoleCommandsEnabled);
     const statements = cachedParse.statementsParsing;
-    const errors = statements.flatMap((current) => {
+    const result = statements.map((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {
-        if (current.cypherVersionError) return current.cypherVersionError;
+        if (current.cypherVersionError)
+          return { diagnostics: [current.cypherVersionError], symbolTable: [] };
 
         const parameterErrors = errorOnUndeclaredParameters(current, dbSchema);
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
@@ -329,7 +358,11 @@ export function lintCypherQuery(
         const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
         const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
 
-        const { notifications, errors } = wrappedSemanticAnalysis(
+        const {
+          notifications,
+          errors,
+          symbolTable: rawSymbolTable,
+        } = wrappedSemanticAnalysis(
           cmd.statement,
           dbSchema,
           current.cypherVersion,
@@ -342,7 +375,7 @@ export function lintCypherQuery(
           parseResult: current,
         });
 
-        return semanticDiagnostics
+        const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
             parameterErrors,
@@ -353,15 +386,24 @@ export function lintCypherQuery(
             current.syntaxErrors,
           )
           .sort(sortByPositionAndMessage);
+
+        const symbolTable = fixSymbolTableOffsets({
+          symbolTable: rawSymbolTable,
+          parseResult: current,
+        });
+
+        return { diagnostics, symbolTable };
       }
       // There could be console command errors
-      return current.syntaxErrors;
+      return { diagnostics: current.syntaxErrors, symbolTable: [] };
     });
 
-    return errors;
+    const diagnostics = result.flatMap((d) => d.diagnostics);
+    const symbolTables = result.map((d) => d.symbolTable);
+    return { diagnostics, symbolTables: symbolTables };
   }
 
-  return [];
+  return { diagnostics: [], symbolTables: [] };
 }
 
 function warningOnDeprecatedProcedure(
