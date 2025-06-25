@@ -451,6 +451,28 @@ const isExpectedParameterType = (
   }
 };
 
+function couldBeNode(
+  variablePosition: number,
+  variableName: string,
+  symbolTables: SymbolTable[],
+) {
+  // If we can find the symbol referenced in that exact position
+  // in our symbol table, return whether its type is a Node
+  for (const symbolTable of symbolTables) {
+    const foundVariable = symbolTable.find(
+      ({ key, references }) =>
+        key === variableName && references.includes(variablePosition),
+    );
+
+    if (foundVariable) {
+      return foundVariable.types.includes('Node');
+    }
+  }
+
+  // Assume we don't have an up to date symbol table
+  return true;
+}
+
 function calculateNamespacePrefix(
   candidateRule: CandidateRule,
   tokens: Token[],
@@ -665,10 +687,13 @@ export function completionCoreCompletion(
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
           if (expr2 instanceof Expression2Context) {
-            const variableName = expr2.expression1().variable()?.getText();
+            const variable = expr2.expression1().variable();
+            const variablePosition = variable?.start?.start;
+            const variableName = variable?.getText();
             if (
               !variableName ||
-              !parsingResult.collectedVariables.includes(variableName)
+              !variablePosition ||
+              !couldBeNode(variablePosition, variableName, symbolTables)
             ) {
               return [];
             }

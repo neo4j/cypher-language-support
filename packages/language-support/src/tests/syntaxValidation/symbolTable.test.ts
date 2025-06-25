@@ -15,18 +15,8 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          endOffset: 8,
           key: 'n',
-          references: [
-            {
-              endOffset: 8,
-              startOffset: 7,
-            },
-            {
-              endOffset: 18,
-              startOffset: 17,
-            },
-          ],
+          references: [7, 17],
           startOffset: 7,
           types: ['Node'],
         },
@@ -47,26 +37,14 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          endOffset: 18,
           key: 'm',
-          references: [
-            {
-              endOffset: 18,
-              startOffset: 17,
-            },
-          ],
+          references: [17],
           startOffset: 17,
           types: ['Any'],
         },
         {
-          endOffset: 8,
           key: 'n',
-          references: [
-            {
-              endOffset: 8,
-              startOffset: 7,
-            },
-          ],
+          references: [7],
           startOffset: 7,
           types: ['Node'],
         },
@@ -87,44 +65,22 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          endOffset: 18,
           key: 'm',
-          references: [
-            {
-              endOffset: 18,
-              startOffset: 17,
-            },
-          ],
+          references: [17],
           startOffset: 17,
           types: ['Any'],
         },
         {
-          endOffset: 8,
           key: 'n',
-          references: [
-            {
-              endOffset: 8,
-              startOffset: 7,
-            },
-          ],
+          references: [7],
           startOffset: 7,
           types: ['Node'],
         },
       ],
       [
         {
-          endOffset: 28,
           key: 'm',
-          references: [
-            {
-              endOffset: 28,
-              startOffset: 27,
-            },
-            {
-              endOffset: 38,
-              startOffset: 37,
-            },
-          ],
+          references: [27, 37],
           startOffset: 27,
           types: ['Node'],
         },
