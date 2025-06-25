@@ -13,7 +13,6 @@ import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvid
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
 import * as tar from 'tar';
-import * as path from 'path';
 import { pipeline } from 'stream/promises';
 import axios from 'axios';
 import * as vscode from 'vscode';
@@ -407,9 +406,11 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
  */
 export async function switchWorkerOnLanguageServer(
   fileName: string,
-  destDir: string,
+  destUri: vscode.Uri,
 ) {
-  const linterPath = fileName ? path.join(destDir, fileName) : undefined;
+  const linterPath = fileName
+    ? vscode.Uri.joinPath(destUri, fileName).fsPath
+    : undefined;
   await sendNotificationToLanguageClient('updateLintWorker', {
     lintWorkerPath: linterPath,
   });
@@ -417,41 +418,38 @@ export async function switchWorkerOnLanguageServer(
 
 async function downloadLintWorker(
   fileName: string,
-  destDir: string,
+  destUri: vscode.Uri,
 ): Promise<void> {
-  const filePath = path.join(destDir, fileName);
+  const fileUri = vscode.Uri.joinPath(destUri, fileName);
+
   const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
   const response = await axios.get(downloadUrl, { responseType: 'stream' });
   await pipeline(
     response.data,
     tar.x({
-      cwd: destDir,
+      cwd: destUri.fsPath,
       filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
     }),
   );
 
-  const extractedFilePath = path.join(
-    destDir,
+  const extractedUri = vscode.Uri.joinPath(
+    destUri,
     'package',
     'dist',
     'cjs',
     'lintWorker.cjs',
   );
-  const fileUri = vscode.Uri.file(filePath);
-  const extractedUri = vscode.Uri.file(extractedFilePath);
-  const newFolderUri = vscode.Uri.file(path.join(destDir, 'package'));
+  const newFolderUri = vscode.Uri.joinPath(destUri, 'package');
   await vscode.workspace.fs.rename(extractedUri, fileUri);
   await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
 }
 async function getDestDir(
   fileName: string,
-): Promise<{ fileExists: boolean; destDir: string }> {
+): Promise<{ fileExists: boolean; destUri: vscode.Uri }> {
   const context = getExtensionContext();
   const storageUri = context.globalStorageUri;
-  const destDir = storageUri.path.slice(1);
   await vscode.workspace.fs.createDirectory(storageUri);
-  const filePath = path.join(destDir, fileName);
-  const fileUri = vscode.Uri.file(filePath);
+  const fileUri = vscode.Uri.joinPath(storageUri, fileName);
 
   //checking metadata of file, just to see if the file is there
   let stats: vscode.FileStat;
@@ -460,7 +458,7 @@ async function getDestDir(
   } catch (e) {
     stats = undefined;
   }
-  return { fileExists: stats !== undefined, destDir };
+  return { fileExists: stats !== undefined, destUri: storageUri };
 }
 
 async function dynamicallyAdjustLinter(): Promise<void> {
@@ -483,13 +481,13 @@ async function dynamicallyAdjustLinter(): Promise<void> {
         return switchWorkerOnLanguageServer(undefined, undefined);
       }
       const fileName = `${linterVersion}-lintWorker.cjs`;
-      const { fileExists, destDir } = await getDestDir(fileName);
+      const { fileExists, destUri } = await getDestDir(fileName);
 
       if (fileExists) {
-        await switchWorkerOnLanguageServer(fileName, destDir);
+        await switchWorkerOnLanguageServer(fileName, destUri);
       } else {
-        await downloadLintWorker(fileName, destDir);
-        await switchWorkerOnLanguageServer(fileName, destDir);
+        await downloadLintWorker(fileName, destUri);
+        await switchWorkerOnLanguageServer(fileName, destUri);
       }
     }
   }

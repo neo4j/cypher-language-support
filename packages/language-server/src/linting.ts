@@ -14,11 +14,12 @@ import {
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
 
-let pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
+const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+
+let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
-const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 export let workerPath = defaultWorkerPath;
 let lastSemanticJob: LinterTask | undefined;
 
