@@ -455,6 +455,7 @@ function couldBeNode(
   variablePosition: number,
   variableName: string,
   symbolTables: SymbolTable[],
+  collectedVariables: string[],
 ) {
   // If we can find the symbol referenced in that exact position
   // in our symbol table, return whether its type is a Node
@@ -470,7 +471,7 @@ function couldBeNode(
   }
 
   // Assume we don't have an up to date symbol table
-  return true;
+  return collectedVariables.includes(variableName);
 }
 
 function calculateNamespacePrefix(
@@ -693,7 +694,12 @@ export function completionCoreCompletion(
             if (
               !variableName ||
               !variablePosition ||
-              !couldBeNode(variablePosition, variableName, symbolTables)
+              !couldBeNode(
+                variablePosition,
+                variableName,
+                symbolTables,
+                parsingResult.collectedVariables,
+              )
             ) {
               return [];
             }
