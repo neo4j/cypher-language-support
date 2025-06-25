@@ -1,14 +1,16 @@
 import {
-  DbSchema,
-  lintCypherQuery as _lintCypherQuery,
   _internalFeatureFlags,
   SyntaxDiagnostic,
+} from '@neo4j-cypher/language-support';
+import {
+  DbSchema,
+  lintCypherQuery as _lintCypherQuery,
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
   query: string,
-  dbSchema: DbSchema,
+  dbSchema,
   featureFlags: { consoleCommands?: boolean; cypher25?: boolean } = {},
 ): SyntaxDiagnostic[] {
   // We allow to override the consoleCommands feature flag
@@ -18,7 +20,8 @@ function lintCypherQuery(
   if (featureFlags.cypher25 !== undefined) {
     _internalFeatureFlags.cypher25 = featureFlags.cypher25;
   }
-  return _lintCypherQuery(query, dbSchema);
+  //cast to appease git lint check
+  return _lintCypherQuery(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });

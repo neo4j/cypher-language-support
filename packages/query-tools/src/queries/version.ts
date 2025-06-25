@@ -7,7 +7,7 @@ import { ExecuteQueryArgs } from '../types/sdkTypes';
 export function getVersion(): ExecuteQueryArgs<{
   serverVersion: string | undefined;
 }> {
-  const query = 'CALL dbms.components() YIELD versions';
+  const query = 'CALL dbms.components() YIELD name, versions';
 
   const resultTransformer = resultTransformers.mappedResultTransformer({
     map(record) {
@@ -17,11 +17,12 @@ export function getVersion(): ExecuteQueryArgs<{
       return { name, versions };
     },
     collect(rows, summary) {
-      rows.forEach((row) => {
+      for (const row of rows) {
         if (row.name === 'Neo4j Kernel') {
-          return { serverVersion: row.versions, summary };
+          return { serverVersion: row.versions[0], summary };
         }
-      });
+      }
+
       //We should not reach this unless the "name" field changes
       return { serverVersion: undefined, summary };
     },
@@ -46,11 +47,12 @@ export function getCypherVersions(): ExecuteQueryArgs<{
       return { name, versions };
     },
     collect(rows, summary) {
-      rows.forEach((row) => {
+      for (const row of rows) {
         if (row.name === 'Cypher') {
           return { serverCypherVersions: row.versions, summary };
         }
-      });
+      }
+
       return { serverCypherVersions: ['5'], summary };
     },
   });

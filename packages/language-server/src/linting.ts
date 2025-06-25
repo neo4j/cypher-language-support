@@ -8,19 +8,39 @@ import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import {
+  convertDbSchema,
+  LinterTask,
+  LintWorker,
+} from '@neo4j-cypher/lint-worker';
 
-const pool = workerpool.pool(join(__dirname, 'lintWorker.cjs'), {
+const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+
+let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
   workerTerminateTimeout: 2000,
 });
-
+export let workerPath = defaultWorkerPath;
 let lastSemanticJob: LinterTask | undefined;
+
+/**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
+export async function setLintWorker(lintWorkerPath: string | undefined) {
+  lintWorkerPath = lintWorkerPath ? lintWorkerPath : defaultWorkerPath;
+  if (lintWorkerPath !== workerPath) {
+    await cleanupWorkers();
+    workerPath = lintWorkerPath;
+    pool = workerpool.pool(workerPath, {
+      minWorkers: 2,
+      workerTerminateTimeout: 2000,
+    });
+  }
+}
 
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
   neo4j: Neo4jSchemaPoller,
+  versionedLinters: boolean,
 ) {
   const query = document.getText();
   if (query.length === 0) {
@@ -35,9 +55,13 @@ async function rawLintDocument(
     }
 
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+
+    const fixedDbSchema = versionedLinters
+      ? convertDbSchema(dbSchema, neo4j)
+      : dbSchema;
     lastSemanticJob = proxyWorker.lintCypherQuery(
       query,
-      dbSchema,
+      fixedDbSchema,
       _internalFeatureFlags,
     );
 
@@ -63,6 +87,6 @@ export const lintDocument: typeof rawLintDocument = debounce(
   },
 );
 
-export const cleanupWorkers = () => {
-  void pool.terminate();
+export const cleanupWorkers = async () => {
+  await pool.terminate();
 };
