@@ -416,32 +416,53 @@ export async function switchWorkerOnLanguageServer(
   });
 }
 
+export async function getFilesInExtensionStorage(): Promise<string[]> {
+  const context = getExtensionContext();
+  const dirUri = context.globalStorageUri;
+  try {
+    const entries = await vscode.workspace.fs.readDirectory(dirUri);
+    return entries
+      .filter(([, fileType]) => fileType === vscode.FileType.File)
+      .map(([name]) => name);
+  } catch (err) {
+    void vscode.window.showErrorMessage(
+      'Failed to read neo4j globalStorage directory.',
+    );
+    return [];
+  }
+}
+
 async function downloadLintWorker(
   fileName: string,
   destUri: vscode.Uri,
-): Promise<void> {
+): Promise<boolean> {
   const fileUri = vscode.Uri.joinPath(destUri, fileName);
 
   const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
-  const response = await axios.get(downloadUrl, { responseType: 'stream' });
-  await pipeline(
-    response.data,
-    tar.x({
-      cwd: destUri.fsPath,
-      filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
-    }),
-  );
+  try {
+    const response = await axios.get(downloadUrl, { responseType: 'stream' });
+    await pipeline(
+      response.data,
+      tar.x({
+        cwd: destUri.fsPath,
+        filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
+      }),
+    );
 
-  const extractedUri = vscode.Uri.joinPath(
-    destUri,
-    'package',
-    'dist',
-    'cjs',
-    'lintWorker.cjs',
-  );
-  const newFolderUri = vscode.Uri.joinPath(destUri, 'package');
-  await vscode.workspace.fs.rename(extractedUri, fileUri);
-  await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
+    const extractedUri = vscode.Uri.joinPath(
+      destUri,
+      'package',
+      'dist',
+      'cjs',
+      'lintWorker.cjs',
+    );
+    const newFolderUri = vscode.Uri.joinPath(destUri, 'package');
+    await vscode.workspace.fs.rename(extractedUri, fileUri);
+    await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
+    return true;
+  } catch (error) {
+    return false;
+  }
 }
 async function getDestDir(
   fileName: string,
@@ -451,14 +472,17 @@ async function getDestDir(
   await vscode.workspace.fs.createDirectory(storageUri);
   const fileUri = vscode.Uri.joinPath(storageUri, fileName);
 
-  //checking metadata of file, just to see if the file is there
-  let stats: vscode.FileStat;
+  return { fileExists: await fileExists(fileUri), destUri: storageUri };
+}
+
+//checking metadata of file, just to see if the file is there
+async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
   try {
-    stats = await vscode.workspace.fs.stat(fileUri);
+    await vscode.workspace.fs.stat(fileUri);
+    return true;
   } catch (e) {
-    stats = undefined;
+    return false;
   }
-  return { fileExists: stats !== undefined, destUri: storageUri };
 }
 
 async function dynamicallyAdjustLinter(): Promise<void> {
@@ -486,8 +510,17 @@ async function dynamicallyAdjustLinter(): Promise<void> {
       if (fileExists) {
         await switchWorkerOnLanguageServer(fileName, destUri);
       } else {
-        await downloadLintWorker(fileName, destUri);
-        await switchWorkerOnLanguageServer(fileName, destUri);
+        void vscode.window.showInformationMessage(
+          'Downloading linter for your server',
+        );
+        const success = await downloadLintWorker(fileName, destUri);
+        if (!success)
+          void vscode.window.showInformationMessage(
+            'Linter download failed, reverting to latest linter version',
+          );
+        success
+          ? await switchWorkerOnLanguageServer(fileName, destUri)
+          : await switchWorkerOnLanguageServer(undefined, undefined);
       }
     }
   }

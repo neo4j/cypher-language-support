@@ -1,9 +1,10 @@
-import { commands, Disposable, window } from 'vscode';
+import { commands, Disposable, StatusBarAlignment, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
+  manualLinterSwitch,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -40,8 +41,16 @@ export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
+  const statusBarItem = window.createStatusBarItem(
+    StatusBarAlignment.Right,
+    100,
+  );
+  statusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
+  statusBarItem.text = 'Cypher Linter';
+  statusBarItem.show();
 
   disposables.push(
+    statusBarItem,
     window.registerWebviewViewProvider(
       'neo4jQueryDetails',
       queryDetailsProvider,
@@ -65,6 +74,10 @@ export function registerDisposables(): Disposable[] {
       parametersTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
+      manualLinterSwitch,
+    ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       saveConnectionAndDisplayConnectionResult,
