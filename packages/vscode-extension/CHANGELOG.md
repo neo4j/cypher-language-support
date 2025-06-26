@@ -1,5 +1,10 @@
 # neo4j-for-vscode
 
+## 1.12.0
+
+- Adds improved results pannel with visualizations
+- Adds minor improvements for the formatter
+
 ## 1.11.0
 
 - Adds support for the access-mode console command
