@@ -75,7 +75,12 @@ async function rawLintDocument(
     );
 
     // Pass the computed symbol tables to the parser
-    parserWrapper.setSymbolsInfo({ query, symbolTables: result.symbolTables });
+    if (result.symbolTables) {
+      parserWrapper.setSymbolsInfo({
+        query,
+        symbolTables: result.symbolTables,
+      });
+    }
 
     sendDiagnostics(positionSafeResult);
   } catch (err) {

@@ -49,7 +49,6 @@ export interface ParsedStatement {
   cypherVersionError: SyntaxDiagnostic | undefined;
   stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
-  // TODO Nacho: where do we use these that we can refine with the symbol table?
   collectedVariables: string[];
   collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];

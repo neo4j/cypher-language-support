@@ -402,9 +402,9 @@ suite('Auto completion spec', () => {
       ],
     });
 
-    // Note this has an eventually inside, so eventually
-    // (when the symbol table is updated) we are asking
-    // the property completion to not be there
+    // Note this has an eventually inside, so we are asking
+    // the property completion to not be there eventually
+    // (when the symbol table is updated)
     await testCompletionNotContains({
       textFile: 'symbol-table.cypher',
       position: new vscode.Position(3, 9),
