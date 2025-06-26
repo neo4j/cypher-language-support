@@ -38,6 +38,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "neo4j.switchLinter",
+        "category": "Neo4j",
+        "title": "Pick linter"
+      },
+      {
         "command": "neo4j.editConnection",
         "category": "Neo4j",
         "title": "Edit connection",
@@ -155,6 +160,10 @@
       ],
       "commandPalette": [
         {
+          "command": "neo4j.switchLinter",
+          "when": "true"
+        },
+        {
           "command": "neo4j.deleteConnection",
           "when": "false"
         },
@@ -228,6 +237,11 @@
           "command": "neo4j.deleteConnection",
           "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
           "group": "01_management@2"
+        },
+        {
+          "command": "neo4j.switchLinter",
+          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
+          "group": "01_management@3"
         },
         {
           "command": "neo4j.editConnection",

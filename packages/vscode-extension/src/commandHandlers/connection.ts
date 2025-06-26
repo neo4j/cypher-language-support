@@ -6,9 +6,11 @@ import {
   getActiveConnection,
   getConnectionByKey,
   getConnections,
+  getFilesInExtensionStorage,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
+  switchWorkerOnLanguageServer,
   toggleConnectionAndUpdateDatabaseConnection,
 } from '../connectionService';
 import { CONSTANTS } from '../constants';
@@ -75,6 +77,33 @@ export function createConnectionPanel(): void {
   const context = getExtensionContext();
   ConnectionPanel.createOrShow(context.extensionPath, undefined, '');
 }
+
+/**
+ * Handler for SWITCH_LINTWORKER_COMMAND (neo4j.editLinter)
+ * This can be triggered on the connection tree view, through the status bar or via the command palette.
+ * Triggering shows a list of available linters. Picking one switches the linter used.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function manualLinterSwitch(): Promise<void> {
+  const fileNames = await getFilesInExtensionStorage();
+  const linterVersions: Record<string, string> = Object.fromEntries(
+    fileNames
+      .map((name) => [name.match(/^([\d.]+)-lintWorker\.cjs$/)?.[1], name])
+      .filter(
+        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
+      ),
+  );
+  linterVersions['Latest'] = '';
+
+  const picked = await window.showQuickPick(Object.keys(linterVersions), {
+    placeHolder: 'Select Linter version',
+  });
+  if (picked === undefined) {
+    return;
+  }
+  const globalStorage = getExtensionContext().globalStorageUri;
+  await switchWorkerOnLanguageServer(linterVersions[picked], globalStorage);
+} //Test that default works as expected, that cancelling works, that unexpected files are not picked up and of course that pickingworks
 
 /**
  * Handler for EDIT_CONNECTION_COMMAND (neo4j.editConnection)

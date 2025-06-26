@@ -416,6 +416,22 @@ export async function switchWorkerOnLanguageServer(
   });
 }
 
+export async function getFilesInExtensionStorage(): Promise<string[]> {
+  const context = getExtensionContext();
+  const dirUri = context.globalStorageUri;
+  try {
+    const entries = await vscode.workspace.fs.readDirectory(dirUri);
+    return entries
+      .filter(([, fileType]) => fileType === vscode.FileType.File)
+      .map(([name]) => name);
+  } catch (err) {
+    void vscode.window.showErrorMessage(
+      'Failed to read neo4j globalStorage directory.',
+    );
+    return [];
+  }
+}
+
 async function downloadLintWorker(
   fileName: string,
   destUri: vscode.Uri,
