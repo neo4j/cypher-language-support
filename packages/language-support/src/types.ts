@@ -55,3 +55,8 @@ export type SymbolTable = {
   types: string[];
   references: number[];
 }[];
+
+export type SymbolsInfo = {
+  query: string;
+  symbolTables: SymbolTable[];
+};

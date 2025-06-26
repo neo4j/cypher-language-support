@@ -39,7 +39,10 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
       const result = await lastSemanticJob;
 
-      parserWrapper.setSymbolTables(result.symbolTables);
+      parserWrapper.setSymbolsInfo({
+        query,
+        symbolTables: result.symbolTables,
+      });
 
       const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {
         return {
