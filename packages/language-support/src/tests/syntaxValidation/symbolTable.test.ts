@@ -15,10 +15,10 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          key: 'n',
+          definitionPosition: 7,
           references: [7, 17],
-          startOffset: 7,
           types: ['Node'],
+          variable: 'n',
         },
       ],
     ]);
@@ -37,16 +37,16 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          key: 'm',
+          definitionPosition: 17,
           references: [17],
-          startOffset: 17,
           types: ['Any'],
+          variable: 'm',
         },
         {
-          key: 'n',
+          definitionPosition: 7,
           references: [7],
-          startOffset: 7,
           types: ['Node'],
+          variable: 'n',
         },
       ],
     ]);
@@ -65,24 +65,24 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
-          key: 'm',
+          definitionPosition: 17,
           references: [17],
-          startOffset: 17,
           types: ['Any'],
+          variable: 'm',
         },
         {
-          key: 'n',
+          definitionPosition: 7,
           references: [7],
-          startOffset: 7,
           types: ['Node'],
+          variable: 'n',
         },
       ],
       [
         {
-          key: 'm',
+          definitionPosition: 27,
           references: [27, 37],
-          startOffset: 27,
           types: ['Node'],
+          variable: 'm',
         },
       ],
     ]);

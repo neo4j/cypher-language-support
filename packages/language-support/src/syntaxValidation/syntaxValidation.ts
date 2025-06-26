@@ -320,8 +320,8 @@ function fixSymbolTableOffsets({
 
   return symbolTable.map((symbol) => {
     return {
-      key: symbol.key,
-      startOffset: symbol.startOffset + offsetAdjust,
+      variable: symbol.variable,
+      definitionPosition: symbol.definitionPosition + offsetAdjust,
       types: symbol.types,
       references: symbol.references.map((ref) => ref + offsetAdjust),
     };

@@ -50,9 +50,12 @@ export type CompletionItem = VSCodeCompletionItem & {
 };
 
 export type SymbolTable = {
-  key: string;
-  startOffset: number;
+  variable: string;
+  // Where the variable is initially defined
+  definitionPosition: number;
+  // A variable could have more than an inferred type (for example union types)
   types: string[];
+  // Offsets of each one of the references to that variable
   references: number[];
 }[];
 

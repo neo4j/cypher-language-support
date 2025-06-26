@@ -462,8 +462,8 @@ function couldBeNode(
   // in our symbol table, return whether its type is a Node
   for (const symbolTable of symbolTables) {
     const foundVariable = symbolTable.find(
-      ({ key, references }) =>
-        key === variableName && references.includes(variablePosition),
+      ({ variable, references }) =>
+        variable === variableName && references.includes(variablePosition),
     );
 
     if (foundVariable) {

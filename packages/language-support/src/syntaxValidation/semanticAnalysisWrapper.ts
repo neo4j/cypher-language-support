@@ -59,14 +59,16 @@ function copySettingSeverity(
 }
 
 function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
-  return symbolTable.map(({ key, startOffset, types, references }) => {
-    return {
-      key: key,
-      startOffset: startOffset,
-      types: types,
-      references: Array.from(references),
-    };
-  });
+  return symbolTable.map(
+    ({ variable, definitionPosition, types, references }) => {
+      return {
+        variable,
+        definitionPosition,
+        types: types,
+        references: Array.from(references),
+      };
+    },
+  );
 }
 
 function updateResolverForVersion(
