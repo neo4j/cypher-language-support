@@ -233,6 +233,35 @@ suite('Auto completion spec', () => {
     });
   });
 
+  test('Does not complete properties for non node variables', async () => {
+    await testCompletionContains({
+      textFile: 'symbol-table.cypher',
+      position: new vscode.Position(1, 9),
+      expected: [
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: vscode.CompletionItemKind.Property,
+        },
+      ],
+    });
+
+    // Note this has an eventually inside, so we are asking
+    // the property completion to not be there eventually
+    // (when the symbol table is updated)
+    await testCompletionNotContains({
+      textFile: 'symbol-table.cypher',
+      position: new vscode.Position(3, 9),
+      excluded: [
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: vscode.CompletionItemKind.Property,
+        },
+      ],
+    });
+  });
+
   test('Completions depends on the Cypher version', async () => {
     const textDocument = await newUntitledFileWithContent(`
       CYPHER 5 RETURN ;
@@ -387,34 +416,5 @@ suite('Auto completion spec', () => {
       CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
       0,
     );
-  });
-
-  test('Does not complete properties for non node variables', async () => {
-    await testCompletionContains({
-      textFile: 'symbol-table.cypher',
-      position: new vscode.Position(1, 9),
-      expected: [
-        {
-          label: 'foo bar',
-          insertText: '`foo bar`',
-          kind: vscode.CompletionItemKind.Property,
-        },
-      ],
-    });
-
-    // Note this has an eventually inside, so we are asking
-    // the property completion to not be there eventually
-    // (when the symbol table is updated)
-    await testCompletionNotContains({
-      textFile: 'symbol-table.cypher',
-      position: new vscode.Position(3, 9),
-      excluded: [
-        {
-          label: 'foo bar',
-          insertText: '`foo bar`',
-          kind: vscode.CompletionItemKind.Property,
-        },
-      ],
-    });
   });
 });
