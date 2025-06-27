@@ -48,3 +48,18 @@ export type Neo4jFunction = {
 export type CompletionItem = VSCodeCompletionItem & {
   signature?: string;
 };
+
+export type SymbolTable = {
+  variable: string;
+  // Where the variable is initially defined
+  definitionPosition: number;
+  // A variable could have more than an inferred type (for example union types)
+  types: string[];
+  // Offsets of each one of the references to that variable
+  references: number[];
+}[];
+
+export type SymbolsInfo = {
+  query: string;
+  symbolTables: SymbolTable[];
+};

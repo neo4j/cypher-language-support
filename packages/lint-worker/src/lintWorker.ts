@@ -1,5 +1,6 @@
 import {
   _internalFeatureFlags,
+  SymbolTable,
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import {
@@ -12,7 +13,7 @@ function lintCypherQuery(
   query: string,
   dbSchema,
   featureFlags: { consoleCommands?: boolean; cypher25?: boolean } = {},
-): SyntaxDiagnostic[] {
+): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
   // We allow to override the consoleCommands feature flag
   if (featureFlags.consoleCommands !== undefined) {
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;

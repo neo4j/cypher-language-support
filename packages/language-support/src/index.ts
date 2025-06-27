@@ -33,6 +33,7 @@ export type {
   CypherVersion,
   Neo4jFunction,
   Neo4jProcedure,
+  SymbolTable,
 } from './types';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 

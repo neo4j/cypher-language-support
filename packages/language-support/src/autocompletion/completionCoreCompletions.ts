@@ -37,6 +37,8 @@ import {
   cypherVersionNumbers,
   Neo4jFunction,
   Neo4jProcedure,
+  SymbolTable,
+  SymbolsInfo,
 } from '../types';
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
@@ -450,6 +452,29 @@ const isExpectedParameterType = (
   }
 };
 
+function couldBeNode(
+  variablePosition: number,
+  variableName: string,
+  symbolTables: SymbolTable[],
+  collectedVariables: string[],
+) {
+  // If we can find the symbol referenced in that exact position
+  // in our symbol table, return whether its type is a Node
+  for (const symbolTable of symbolTables) {
+    const foundVariable = symbolTable.find(
+      ({ variable, references }) =>
+        variable === variableName && references.includes(variablePosition),
+    );
+
+    if (foundVariable) {
+      return foundVariable.types.includes('Node');
+    }
+  }
+
+  // Assume we don't have an up to date symbol table
+  return collectedVariables.includes(variableName);
+}
+
 function calculateNamespacePrefix(
   candidateRule: CandidateRule,
   tokens: Token[],
@@ -487,6 +512,7 @@ export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
   caretToken: Token,
+  symbolsInfo: SymbolsInfo | undefined,
   manualTrigger = false,
 ): CompletionItem[] {
   const cypherVersion = resolveCypherVersion(
@@ -663,10 +689,18 @@ export function completionCoreCompletion(
         ) {
           const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
           if (expr2 instanceof Expression2Context) {
-            const variableName = expr2.expression1().variable()?.getText();
+            const variable = expr2.expression1().variable();
+            const variablePosition = variable?.start?.start;
+            const variableName = variable?.getText();
             if (
               !variableName ||
-              !parsingResult.collectedVariables.includes(variableName)
+              !variablePosition ||
+              !couldBeNode(
+                variablePosition,
+                variableName,
+                symbolsInfo?.symbolTables ?? [],
+                parsingResult.collectedVariables,
+              )
             ) {
               return [];
             }

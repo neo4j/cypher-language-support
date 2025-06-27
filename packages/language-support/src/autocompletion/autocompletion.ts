@@ -11,6 +11,7 @@ export function autocomplete(
   manual = false,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(query);
+  const symbolsInfo = parserWrapper.symbolsInfo;
   /* We try to locate the statement where the caret is and the token of the caret
 
      The reason for doing that is we need a way to "resynchronise" when the 
@@ -24,7 +25,13 @@ export function autocomplete(
   if (caret) {
     const statement = caret.statement;
     const caretToken = caret.token;
-    return completionCoreCompletion(statement, dbSchema, caretToken, manual);
+    return completionCoreCompletion(
+      statement,
+      dbSchema,
+      caretToken,
+      symbolsInfo,
+      manual,
+    );
   }
 
   return [];
