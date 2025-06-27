@@ -21,6 +21,11 @@ async function main() {
     const extensionDevelopmentPath = path.resolve(__dirname, '../..');
     const extensionTestsPath = path.resolve(__dirname, './testRunner');
 
+    const neo4jInstance_old = await createAndStartTestContainer({
+      containerName: 'vscode-integration-tests-old',
+      serverVersion: 'neo4j:5.20.0-enterprise',
+    });
+
     // Bootstraps VS Code and executes the integration tests
     await runTests({
       launchArgs: [path.join(__dirname, '../../tests/fixtures/')],
@@ -29,6 +34,7 @@ async function main() {
       extensionTestsEnv: {
         CYPHER_25: 'true',
         NEO4J_PORT: neo4jInstance.getMappedPort(7687).toString(),
+        NEO4J_OLD_PORT: neo4jInstance_old.getMappedPort(7687).toString(),
         DEBUG_VSCODE_TESTS: process.env.DEBUG_VSCODE_TESTS,
       },
     });

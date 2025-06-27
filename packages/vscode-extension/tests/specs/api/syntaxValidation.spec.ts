@@ -360,4 +360,68 @@ suite('Syntax validation spec', () => {
       expected: [],
     });
   });
+
+  test('New linting of subquery call does give deprecation warning', async () => {
+    const textFile = 'subQuery-call.cypher';
+    const docUri = getDocumentUri(textFile);
+
+    const useOldDb = false;
+    await connectDefault(useOldDb);
+
+    await openDocument(docUri);
+
+    await testSyntaxValidation({
+      docUri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 0),
+            new vscode.Position(4, 1),
+          ),
+          'CALL subquery without a variable scope clause is now deprecated. Use CALL (n) { ... }',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(5, 7),
+            new vscode.Position(5, 9),
+          ),
+          'Function id is deprecated.',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(5, 7),
+            new vscode.Position(5, 12),
+          ),
+          "The query used a deprecated function. ('id' has been replaced by 'elementId or consider using an application-generated id')",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+  });
+
+  test('Old linting of subquery call does not give deprecation warning', async () => {
+    const textFile = 'subQuery-call.cypher';
+    const docUri = getDocumentUri(textFile);
+
+    const useOldDb = true;
+    await connectDefault(useOldDb);
+
+    await openDocument(docUri);
+
+    await testSyntaxValidation({
+      docUri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(5, 7),
+            new vscode.Position(5, 12),
+          ),
+          'The query used a deprecated function: `id`.',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+  });
 });

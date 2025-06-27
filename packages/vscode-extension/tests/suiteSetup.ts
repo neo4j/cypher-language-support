@@ -3,9 +3,9 @@ import * as vscode from 'vscode';
 import { CONSTANTS } from '../src/constants';
 import { getNeo4jConfiguration } from './helpers';
 
-export const testDatabaseKey = 'default-test-connection';
-
 export const defaultConnectionKey = 'default-connection-key';
+
+export const defaultConnectionKey_old = 'default-connection-key-old';
 
 export async function saveDefaultConnection(): Promise<void> {
   const { scheme, host, port, user, database, password } =
@@ -25,20 +25,38 @@ export async function saveDefaultConnection(): Promise<void> {
   );
 }
 
-export async function connectDefault(): Promise<void> {
+export async function saveOldConnection(): Promise<void> {
+  const { scheme, host, port, user, database, password } =
+    getNeo4jConfiguration(true);
+  await vscode.commands.executeCommand(
+    CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+    {
+      key: defaultConnectionKey_old,
+      scheme: scheme,
+      host: host,
+      port: port,
+      user: user,
+      database: database,
+      state: 'active',
+    },
+    password,
+  );
+} //TODO: make one unified saveconnection
+
+export async function connectDefault(old: boolean = false): Promise<void> {
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.CONNECT_COMMAND, {
-    key: defaultConnectionKey,
+    key: old ? defaultConnectionKey_old : defaultConnectionKey,
   });
 }
 
-export async function disconnectDefault(): Promise<void> {
+export async function disconnectDefault(old: boolean = false): Promise<void> {
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.DISCONNECT_COMMAND, {
-    key: defaultConnectionKey,
+    key: old ? defaultConnectionKey_old : defaultConnectionKey,
   });
 }
 
-export async function createTestDatabase(): Promise<void> {
-  const { scheme, host, port, user, password } = getNeo4jConfiguration();
+export async function createTestDatabase(old: boolean = false): Promise<void> {
+  const { scheme, host, port, user, password } = getNeo4jConfiguration(old);
 
   const driver = neo4j.driver(
     `${scheme}://${host}:${port}`,
