@@ -153,7 +153,7 @@ export async function manualLinterSwitch(): Promise<void> {
     fileName = downloadedLinterVersions[picked];
   }
   await switchWorkerOnLanguageServer(fileName, globalStorage);
-} //Test that default works as expected, that cancelling works, that unexpected files are not picked up and of course that pickingworks
+}
 
 /**
  * Handler for EDIT_CONNECTION_COMMAND (neo4j.editConnection)

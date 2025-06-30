@@ -38,7 +38,7 @@ export async function activate(context: ExtensionContext) {
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
 
-  //only show linter picking command on feature flag
+  //only show linter picking command with feature flag active
   const config = workspace.getConfiguration('neo4j.features');
   const useVersionedLinters = config.get('useVersionedLinters', false);
   await commands.executeCommand(

@@ -443,6 +443,9 @@ export async function downloadLintWorker(
   fileName: string,
   destUri: vscode.Uri,
 ): Promise<boolean> {
+  void vscode.window.showInformationMessage(
+    'Downloading linter for your server',
+  );
   const fileUri = vscode.Uri.joinPath(destUri, fileName);
 
   const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
@@ -468,6 +471,9 @@ export async function downloadLintWorker(
     await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
     return true;
   } catch (error) {
+    void vscode.window.showInformationMessage(
+      'Linter download failed, reverting to latest linter version',
+    );
     return false;
   }
 }
@@ -517,14 +523,7 @@ async function dynamicallyAdjustLinter(): Promise<void> {
       if (fileExists) {
         await switchWorkerOnLanguageServer(fileName, destUri);
       } else {
-        void vscode.window.showInformationMessage(
-          'Downloading linter for your server',
-        );
         const success = await downloadLintWorker(fileName, destUri);
-        if (!success)
-          void vscode.window.showInformationMessage(
-            'Linter download failed, reverting to latest linter version',
-          );
         success
           ? await switchWorkerOnLanguageServer(fileName, destUri)
           : await switchWorkerOnLanguageServer(undefined, undefined);
