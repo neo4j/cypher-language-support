@@ -240,7 +240,7 @@
         },
         {
           "command": "neo4j.switchLinter",
-          "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection && neo4j:useVersionedLinters",
+          "when": "view == neo4jConnections && viewItem == activeConnection && neo4j:useVersionedLinters",
           "group": "01_management@3"
         },
         {
