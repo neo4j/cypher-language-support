@@ -20,6 +20,7 @@ import {
   linterFileToVersion,
   serverVersionToLinter,
 } from '@neo4j-cypher/lint-worker';
+import { linterStatusBarItem } from './extension';
 
 export type Scheme =
   | 'neo4j'
@@ -419,6 +420,7 @@ export async function switchWorkerOnLanguageServer(
     lintWorkerPath: linterPath,
     linterVersion: linterVersion,
   });
+  linterStatusBarItem.text = linterVersion ? linterVersion : 'Latest';
 }
 
 export async function getFilesInExtensionStorage(): Promise<string[]> {

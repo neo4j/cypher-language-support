@@ -3,6 +3,7 @@ import {
   commands,
   ExtensionContext,
   RelativePattern,
+  StatusBarAlignment,
   Uri,
   window,
   workspace,
@@ -22,6 +23,11 @@ import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
+
+export const linterStatusBarItem = window.createStatusBarItem(
+  StatusBarAlignment.Right,
+  100,
+);
 
 export async function activate(context: ExtensionContext) {
   // The server is implemented in node
