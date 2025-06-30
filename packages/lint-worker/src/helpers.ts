@@ -4,7 +4,6 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 
 const oldLinter = '5.20.0';
@@ -13,7 +12,7 @@ const oldLinter = '5.20.0';
 // meaning old linters need conversion of the new schema
 export function convertDbSchema(
   originalSchema: DbSchemaV2,
-  neo4j: Neo4jSchemaPoller,
+  linterVersion: string,
 ): DbSchemaV2 | DbSchemaV1 {
   let oldFunctions: Record<string, Neo4jFunction> = {};
   let oldProcedures: Record<string, Neo4jProcedure> = {};
@@ -27,9 +26,6 @@ export function convertDbSchema(
     oldFunctions = originalSchema.functions['CYPHER 5'];
     oldProcedures = originalSchema.procedures['CYPHER 5'];
   }
-
-  const serverVersion = neo4j.connection?.serverVersion;
-  const linterVersion = serverVersionToLinter(serverVersion);
 
   if (compareMajorMinorVersions(linterVersion, oldLinter) <= 0) {
     const dbSchemaOld: DbSchemaV1 = {
@@ -49,4 +45,10 @@ export function serverVersionToLinter(serverVersion: string) {
     candidate = oldLinter;
   }
   return candidate;
+}
+
+export function linterFileToVersion(fileName: string) {
+  return fileName
+    ? fileName.match(/^([\d.]+)-lintWorker\.cjs$/)?.[1]
+    : undefined;
 }

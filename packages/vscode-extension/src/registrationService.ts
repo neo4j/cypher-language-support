@@ -1,4 +1,10 @@
-import { commands, Disposable, StatusBarAlignment, window } from 'vscode';
+import {
+  commands,
+  Disposable,
+  StatusBarAlignment,
+  window,
+  workspace,
+} from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
@@ -45,12 +51,22 @@ export function registerDisposables(): Disposable[] {
     StatusBarAlignment.Right,
     100,
   );
-  statusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
-  statusBarItem.text = 'Cypher Linter';
-  statusBarItem.show();
+  const config = workspace.getConfiguration('neo4j.features');
+  const versionedLintersEnabled = config.get('useVersionedLinters', false);
+  if (versionedLintersEnabled) {
+    statusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
+    statusBarItem.text = 'Cypher Linter';
+    statusBarItem.show();
+    disposables.push(
+      commands.registerCommand(
+        CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
+        manualLinterSwitch,
+      ),
+      statusBarItem,
+    );
+  }
 
   disposables.push(
-    statusBarItem,
     window.registerWebviewViewProvider(
       'neo4jQueryDetails',
       queryDetailsProvider,
@@ -74,10 +90,6 @@ export function registerDisposables(): Disposable[] {
       parametersTreeDataProvider,
     ),
     window.registerFileDecorationProvider(connectionTreeDecorationProvider),
-    commands.registerCommand(
-      CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
-      manualLinterSwitch,
-    ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
       saveConnectionAndDisplayConnectionResult,

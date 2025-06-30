@@ -3,6 +3,7 @@ import { commands, Selection, TextEditor, window, workspace } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
+  downloadLintWorker,
   getActiveConnection,
   getConnectionByKey,
   getConnections,
@@ -23,6 +24,8 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
+import axios from 'axios';
+import { linterFileToVersion } from '@neo4j-cypher/lint-worker';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -78,6 +81,40 @@ export function createConnectionPanel(): void {
   ConnectionPanel.createOrShow(context.extensionPath, undefined, '');
 }
 
+//The npm data object contains more fields from the npm registrys package.json, but we only need dist-tags here
+type NpmRelease = {
+  'dist-tags'?: Record<string, string>;
+};
+
+export async function getTaggedRegistryVersions(): Promise<
+  { tag: string; version: string }[]
+> {
+  const registryUrl = 'https://registry.npmjs.org/@neo4j-cypher/lint-worker';
+  const tagToFilter = 'neo4j-5.20.0';
+
+  try {
+    const response = await axios.get<NpmRelease>(registryUrl);
+    const data: NpmRelease = response.data;
+
+    const taggedVersions: { tag: string; version: string }[] = [];
+    if (data !== null && data['dist-tags'] !== null) {
+      for (const [tag, version] of Object.entries(data['dist-tags'])) {
+        if (
+          typeof tag === 'string' &&
+          typeof version === 'string' &&
+          tag === tagToFilter
+        ) {
+          taggedVersions.push({ tag, version });
+        }
+      }
+    }
+
+    return taggedVersions;
+  } catch (error) {
+    return [];
+  }
+}
+
 /**
  * Handler for SWITCH_LINTWORKER_COMMAND (neo4j.editLinter)
  * This can be triggered on the connection tree view, through the status bar or via the command palette.
@@ -85,24 +122,37 @@ export function createConnectionPanel(): void {
  * @returns A promise that resolves when the handler has completed.
  */
 export async function manualLinterSwitch(): Promise<void> {
+  const npmVersions = await getTaggedRegistryVersions();
   const fileNames = await getFilesInExtensionStorage();
-  const linterVersions: Record<string, string> = Object.fromEntries(
+  const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
     fileNames
-      .map((name) => [name.match(/^([\d.]+)-lintWorker\.cjs$/)?.[1], name])
+      .map((name) => [linterFileToVersion(name), name])
       .filter(
         (v): v is [string, string] => v !== undefined && v[0] !== undefined,
       ),
   );
-  linterVersions['Latest'] = '';
-
-  const picked = await window.showQuickPick(Object.keys(linterVersions), {
+  downloadedLinterVersions['Latest'] = '';
+  const npm_versions = npmVersions
+    .map((x) => x.tag.match(/^neo4j-([\d.]+)$/)?.[1])
+    .filter((v) => v !== undefined);
+  const existing_versions = Object.keys(downloadedLinterVersions);
+  const all_versions = new Set(existing_versions.concat(npm_versions));
+  const picked = await window.showQuickPick(Array.from(all_versions), {
     placeHolder: 'Select Linter version',
   });
+
+  const globalStorage = getExtensionContext().globalStorageUri;
+  let fileName = '';
   if (picked === undefined) {
     return;
+  } else if (!existing_versions.includes(picked)) {
+    const desiredFileName = `${picked}-lintWorker.cjs`;
+    const success = await downloadLintWorker(desiredFileName, globalStorage);
+    fileName = success ? desiredFileName : '';
+  } else {
+    fileName = downloadedLinterVersions[picked];
   }
-  const globalStorage = getExtensionContext().globalStorageUri;
-  await switchWorkerOnLanguageServer(linterVersions[picked], globalStorage);
+  await switchWorkerOnLanguageServer(fileName, globalStorage);
 } //Test that default works as expected, that cancelling works, that unexpected files are not picked up and of course that pickingworks
 
 /**

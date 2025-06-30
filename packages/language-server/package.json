@@ -41,7 +41,8 @@
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-textdocument": "^1.0.8",
-    "workerpool": "^9.0.4"
+    "workerpool": "^9.0.4",
+    "axios": "^1.9.0"
   },
   "scripts": {
     "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm copy-lint-worker",
@@ -53,6 +54,7 @@
   },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
-    "copyfiles": "^2.4.1"
+    "copyfiles": "^2.4.1",
+    "@types/vscode": "^1.75.0"
   }
 }

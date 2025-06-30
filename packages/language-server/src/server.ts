@@ -132,9 +132,10 @@ connection.onNotification(
   'updateLintWorker',
   (linterSettings: LintWorkerSettings) => {
     const lintWorkerPath = linterSettings.lintWorkerPath;
+    const linterVersion = linterSettings.linterVersion;
 
     void (async () => {
-      await setLintWorker(lintWorkerPath);
+      await setLintWorker(lintWorkerPath, linterVersion);
       relintAllDocuments();
     })();
   },

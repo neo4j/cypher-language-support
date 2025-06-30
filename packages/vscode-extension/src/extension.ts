@@ -32,6 +32,15 @@ export async function activate(context: ExtensionContext) {
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
 
+  //only show linter picking command on feature flag
+  const config = workspace.getConfiguration('neo4j.features');
+  const useVersionedLinters = config.get('useVersionedLinters', false);
+  await commands.executeCommand(
+    'setContext',
+    'neo4j:useVersionedLinters',
+    useVersionedLinters,
+  );
+
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const serverOptions: ServerOptions = {

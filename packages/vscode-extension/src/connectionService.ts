@@ -16,7 +16,10 @@ import * as tar from 'tar';
 import { pipeline } from 'stream/promises';
 import axios from 'axios';
 import * as vscode from 'vscode';
-import { serverVersionToLinter } from '@neo4j-cypher/lint-worker';
+import {
+  linterFileToVersion,
+  serverVersionToLinter,
+} from '@neo4j-cypher/lint-worker';
 
 export type Scheme =
   | 'neo4j'
@@ -411,8 +414,10 @@ export async function switchWorkerOnLanguageServer(
   const linterPath = fileName
     ? vscode.Uri.joinPath(destUri, fileName).fsPath
     : undefined;
+  const linterVersion = linterFileToVersion(fileName);
   await sendNotificationToLanguageClient('updateLintWorker', {
     lintWorkerPath: linterPath,
+    linterVersion: linterVersion,
   });
 }
 
@@ -432,7 +437,7 @@ export async function getFilesInExtensionStorage(): Promise<string[]> {
   }
 }
 
-async function downloadLintWorker(
+export async function downloadLintWorker(
   fileName: string,
   destUri: vscode.Uri,
 ): Promise<boolean> {
@@ -464,7 +469,7 @@ async function downloadLintWorker(
     return false;
   }
 }
-async function getDestDir(
+export async function getDestDir(
   fileName: string,
 ): Promise<{ fileExists: boolean; destUri: vscode.Uri }> {
   const context = getExtensionContext();
