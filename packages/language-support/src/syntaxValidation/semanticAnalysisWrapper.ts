@@ -4,7 +4,12 @@
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
-import { CypherVersion, Neo4jFunction, Neo4jProcedure } from '../types';
+import {
+  CypherVersion,
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolTable,
+} from '../types';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
@@ -13,20 +18,19 @@ import { SyntaxDiagnostic } from './syntaxValidation';
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];
   notifications: SyntaxDiagnostic[];
+  symbolTable: SymbolTable;
+}
+
+export interface ElementPosition {
+  offset: number;
+  line: number;
+  column: number;
 }
 
 export interface SemanticAnalysisElement {
   message: string;
-  startPosition: {
-    offset: number;
-    line: number;
-    column: number;
-  };
-  endPosition: {
-    offset: number;
-    line: number;
-    column: number;
-  };
+  startPosition: ElementPosition;
+  endPosition: ElementPosition;
 }
 
 const previousResolvers: {
@@ -52,6 +56,19 @@ function copySettingSeverity(
       end: endPosition.offset,
     },
   }));
+}
+
+function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
+  return symbolTable.map(
+    ({ variable, definitionPosition, types, references }) => {
+      return {
+        variable,
+        definitionPosition,
+        types: Array.from(types),
+        references: Array.from(references),
+      };
+    },
+  );
 }
 
 function updateResolverForVersion(
@@ -92,6 +109,7 @@ export function wrappedSemanticAnalysis(
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;
+    const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
       errors: copySettingSeverity(errors, DiagnosticSeverity.Error),
@@ -99,9 +117,10 @@ export function wrappedSemanticAnalysis(
         notifications,
         DiagnosticSeverity.Warning,
       ),
+      symbolTable: copySymbolTable(symbolTable),
     };
   } catch (e) {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
-    return { errors: [], notifications: [] };
+    return { errors: [], notifications: [], symbolTable: [] };
   }
 }
