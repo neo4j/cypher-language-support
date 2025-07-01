@@ -64,7 +64,7 @@ function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
       return {
         variable,
         definitionPosition,
-        types: types,
+        types: Array.from(types),
         references: Array.from(references),
       };
     },

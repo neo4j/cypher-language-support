@@ -233,7 +233,7 @@ suite('Auto completion spec', () => {
     });
   });
 
-  test('Does not complete properties for non node variables', async () => {
+  test('Does not complete properties for non node / relationship variables', async () => {
     await testCompletionContains({
       textFile: 'symbol-table.cypher',
       position: new vscode.Position(1, 9),

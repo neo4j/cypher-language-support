@@ -452,14 +452,14 @@ const isExpectedParameterType = (
   }
 };
 
-function couldBeNode(
+function couldBeNodeOrRel(
   variablePosition: number,
   variableName: string,
   symbolTables: SymbolTable[],
   collectedVariables: string[],
 ) {
   // If we can find the symbol referenced in that exact position
-  // in our symbol table, return whether its type is a Node
+  // in our symbol table, return whether its type is a Node or a Relationship
   for (const symbolTable of symbolTables) {
     const foundVariable = symbolTable.find(
       ({ variable, references }) =>
@@ -467,7 +467,10 @@ function couldBeNode(
     );
 
     if (foundVariable) {
-      return foundVariable.types.includes('Node');
+      return (
+        foundVariable.types.includes('Node') ||
+        foundVariable.types.includes('Relationship')
+      );
     }
   }
 
@@ -695,7 +698,7 @@ export function completionCoreCompletion(
             if (
               !variableName ||
               !variablePosition ||
-              !couldBeNode(
+              !couldBeNodeOrRel(
                 variablePosition,
                 variableName,
                 symbolsInfo?.symbolTables ?? [],

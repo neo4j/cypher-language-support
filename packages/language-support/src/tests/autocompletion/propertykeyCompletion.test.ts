@@ -245,7 +245,7 @@ RETURN movie {
     });
   });
 
-  test('does not complete properties for non node variables when symbol table is available', () => {
+  test('does not complete properties for non node / relationship variables when symbol table is available', () => {
     const dbSchema = { propertyKeys: ['name', 'surname'] };
     const query = 'WITH [1,2,3] AS x RETURN x.';
     const symbolsInfo = {
@@ -270,6 +270,28 @@ RETURN movie {
   test('completes properties for node variables when symbol table is available', () => {
     const dbSchema = { propertyKeys: ['name', 'surname'] };
     const query = 'MATCH (n) RETURN n.';
+    const symbolsInfo = {
+      query,
+      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+    };
+    parserWrapper.setSymbolsInfo(symbolsInfo);
+
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        { label: 'name', kind: CompletionItemKind.Property },
+        { label: 'surname', kind: CompletionItemKind.Property },
+      ],
+    });
+
+    // Clean the symbol tables
+    parserWrapper.clearCache();
+  });
+
+  test('completes properties for relationship variables when symbol table is available', () => {
+    const dbSchema = { propertyKeys: ['name', 'surname'] };
+    const query = 'MATCH (n)-[r]-(m) RETURN r.';
     const symbolsInfo = {
       query,
       symbolTables: lintCypherQuery(query, dbSchema).symbolTables,

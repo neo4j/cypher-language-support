@@ -545,7 +545,7 @@ test('completions depend on the Cypher version', async ({ page, mount }) => {
   ).toBeVisible();
 });
 
-test('does not complete properties for non node variables', async ({ page, mount }) => {
+test('does not complete properties for non node / relationship variables', async ({ page, mount }) => {
   await mount(
     <CypherEditor
     schema={{
