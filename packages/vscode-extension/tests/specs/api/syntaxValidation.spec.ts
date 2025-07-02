@@ -5,17 +5,20 @@ import { CONSTANTS } from '../../../src/constants';
 import {
   eventually,
   getDocumentUri,
+  getExtensionStoragePath,
   getNeo4j2025Configuration,
   newUntitledFileWithContent,
   openDocument,
   rangeToString,
   toggleLinting,
+  toggleVersionedLinters,
 } from '../../helpers';
 import {
   connectDefault,
   neo4j2025ConnectionKey,
   disconnectDefault,
 } from '../../suiteSetup';
+import { rmdirSync } from 'fs';
 
 type InclusionTestArgs = {
   docUri: vscode.Uri;
@@ -359,5 +362,86 @@ suite('Syntax validation spec', () => {
       docUri,
       expected: [],
     });
+  });
+
+  test('Linting depends on the specific neo4j version and works when having to download new linters', async () => {
+    // Force the extension to re-download linters
+    const lintersFolder = getExtensionStoragePath();
+    rmdirSync(lintersFolder, { recursive: true });
+    await toggleVersionedLinters(true);
+    //await connectDefault({version: 'neo4j 2025'})
+
+    const textFile = 'deprecated-by.cypher';
+    const docUri = getDocumentUri(textFile);
+    await openDocument(docUri);
+
+    await testSyntaxValidation({
+      docUri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
+          ),
+          "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
+          'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+
+    await connectDefault({ version: 'neo4j 5' });
+    await testSyntaxValidation({
+      docUri,
+      expected: [],
+    });
+
+    await toggleVersionedLinters(false);
+  });
+
+  test('Linting depends on the specific neo4j version and works when linters are already present in global storage', async () => {
+    await toggleVersionedLinters(true);
+    //await connectDefault({version: 'neo4j 2025'})
+
+    const textFile = 'deprecated-by.cypher';
+    const docUri = getDocumentUri(textFile);
+    await openDocument(docUri);
+
+    await testSyntaxValidation({
+      docUri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
+          ),
+          "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
+          'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+      ],
+    });
+
+    await connectDefault({ version: 'neo4j 5' });
+    await testSyntaxValidation({
+      docUri,
+      expected: [],
+    });
+
+    await toggleVersionedLinters(false);
   });
 });
