@@ -3,10 +3,10 @@ import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
-import { getNeo4jConfiguration } from '../../helpers';
+import { getNeo4j2025Configuration } from '../../helpers';
 import {
   connectDefault,
-  defaultConnectionKey,
+  neo4j2025ConnectionKey,
   saveDefaultConnection,
 } from '../../suiteSetup';
 
@@ -33,7 +33,7 @@ suite('Execute commands spec', () => {
   suite('saveConnectionCommand', () => {
     test('Creating and activating a valid connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
+        getNeo4j2025Configuration();
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -56,7 +56,8 @@ suite('Execute commands spec', () => {
     });
 
     test('Saving a connection with invalid credentials should show a warning message', async () => {
-      const { scheme, host, port, user, database } = getNeo4jConfiguration();
+      const { scheme, host, port, user, database } =
+        getNeo4j2025Configuration();
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -91,7 +92,8 @@ suite('Execute commands spec', () => {
     });
 
     test('Saving a connection with an invalid database should show a warning message', async () => {
-      const { scheme, host, port, user, password } = getNeo4jConfiguration();
+      const { scheme, host, port, user, password } =
+        getNeo4j2025Configuration();
       const stub = sandbox.stub(
         window,
         'showWarningMessage',
@@ -202,7 +204,7 @@ suite('Execute commands spec', () => {
         .resolves('Yes');
 
       const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
+        getNeo4j2025Configuration();
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -257,8 +259,8 @@ suite('Execute commands spec', () => {
       await commands.executeCommand(
         CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,
         {
-          key: defaultConnectionKey,
-          label: defaultConnectionKey,
+          key: neo4j2025ConnectionKey,
+          label: neo4j2025ConnectionKey,
         },
       );
 
@@ -315,7 +317,7 @@ suite('Execute commands spec', () => {
   suite('connectCommand', () => {
     test('Activating an inactive connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
+        getNeo4j2025Configuration();
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {
@@ -390,7 +392,7 @@ suite('Execute commands spec', () => {
   suite('disconnectCommand', () => {
     test('Decativating a connection should show a success message', async () => {
       const { scheme, host, port, user, database, password } =
-        getNeo4jConfiguration();
+        getNeo4j2025Configuration();
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
         {

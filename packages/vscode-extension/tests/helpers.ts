@@ -78,11 +78,22 @@ export function getMockConnection(activate: boolean = false): Connection {
   };
 }
 
-export function getNeo4jConfiguration() {
+export function getNeo4j2025Configuration() {
   return {
     scheme: process.env.NEO4J_SCHEME || 'neo4j',
     host: process.env.NEO4J_HOST || 'localhost',
-    port: process.env.NEO4J_PORT || '7687',
+    port: process.env.NEO4J_2025_PORT || '7687',
+    user: process.env.NEO4J_USER || 'neo4j',
+    database: process.env.NEO4J_DATABASE || 'neo4j',
+    password: process.env.NEO4J_PASSWORD || 'password',
+  };
+}
+
+export function getNeo4j5Configuration() {
+  return {
+    scheme: process.env.NEO4J_SCHEME || 'neo4j',
+    host: process.env.NEO4J_HOST || 'localhost',
+    port: process.env.NEO4J_5_PORT || '7687',
     user: process.env.NEO4J_USER || 'neo4j',
     database: process.env.NEO4J_DATABASE || 'neo4j',
     password: process.env.NEO4J_PASSWORD || 'password',

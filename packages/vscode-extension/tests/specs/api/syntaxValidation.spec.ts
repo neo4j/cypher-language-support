@@ -5,7 +5,7 @@ import { CONSTANTS } from '../../../src/constants';
 import {
   eventually,
   getDocumentUri,
-  getNeo4jConfiguration,
+  getNeo4j2025Configuration,
   newUntitledFileWithContent,
   openDocument,
   rangeToString,
@@ -13,7 +13,7 @@ import {
 } from '../../helpers';
 import {
   connectDefault,
-  defaultConnectionKey,
+  neo4j2025ConnectionKey,
   disconnectDefault,
 } from '../../suiteSetup';
 
@@ -218,9 +218,9 @@ suite('Syntax validation spec', () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
     const { scheme, host, port, user, database, password } =
-      getNeo4jConfiguration();
+      getNeo4j2025Configuration();
     const connection = {
-      key: defaultConnectionKey,
+      key: neo4j2025ConnectionKey,
       scheme: scheme,
       host: host,
       port: port,

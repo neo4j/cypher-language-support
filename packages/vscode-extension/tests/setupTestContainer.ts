@@ -2,15 +2,17 @@ import { Neo4jContainer, StartedNeo4jContainer } from '@testcontainers/neo4j';
 
 type ContainerOpts = {
   containerName?: string;
+  neo4jVersion: string;
 };
 
 export async function createAndStartTestContainer(
   opts: ContainerOpts = {
     containerName: 'vscode-integration-tests',
+    neo4jVersion: 'neo4j:5-enterprise',
   },
 ): Promise<StartedNeo4jContainer> {
   const password = 'password';
-  const container = await new Neo4jContainer('neo4j:5-enterprise')
+  const container = await new Neo4jContainer(opts.neo4jVersion)
     .withExposedPorts(7474, 7687)
     .withApoc()
     .withPassword(password)
