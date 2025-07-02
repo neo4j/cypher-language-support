@@ -1,6 +1,5 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import {
-  _internalFeatureFlags,
   allCypherVersions,
   DbSchema,
   Neo4jFunction,
@@ -119,8 +118,6 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     private readonly events: EventEmitter,
   ) {
     super();
-    const supportsCypherAnnotation =
-      _internalFeatureFlags.cypher25 || serverCypherVersions?.includes('25');
 
     this.dbSchema.parameters = parameters;
 
@@ -180,9 +177,8 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       },
     });
 
-    const versions: (CypherVersion | undefined)[] = supportsCypherAnnotation
-      ? allCypherVersions
-      : [undefined];
+    const versions: (CypherVersion | undefined)[] =
+      serverCypherVersions?.includes('25') ? allCypherVersions : [undefined];
 
     versions.forEach((cypherVersion) => {
       const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'CYPHER 5';

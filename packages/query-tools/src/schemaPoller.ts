@@ -13,7 +13,7 @@ import {
 } from './metadataPoller';
 import { Neo4jConnection } from './neo4jConnection';
 import { listDatabases } from './queries/databases.js';
-import { getCypherVersions, getVersion } from './queries/version';
+import { getVersion } from './queries/version';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -152,6 +152,28 @@ export class Neo4jSchemaPoller {
     clearTimeout(this.reconnectionTimeout);
   }
 
+  private async getCypherVersions(): Promise<{
+    serverCypherVersions: string[];
+  }> {
+    const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
+      getVersion();
+
+    try {
+      if (this.driver) {
+        await this.driver.executeQuery(
+          'CYPHER 25' + ' ' + cypherVersionQuery,
+          {},
+          cypherVersionQueryConfig,
+        );
+        return { serverCypherVersions: ['5', '25'] };
+      }
+    } catch (e) {
+      return { serverCypherVersions: ['5'] };
+    }
+
+    return { serverCypherVersions: ['5'] };
+  }
+
   private async connectAndStartMetadataPoller(
     url: string,
     credentials: { username: string; password: string },
@@ -180,13 +202,7 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
-      getCypherVersions();
-    const { serverCypherVersions } = await this.driver.executeQuery(
-      cypherVersionQuery,
-      {},
-      cypherVersionQueryConfig,
-    );
+    const { serverCypherVersions } = await this.getCypherVersions();
 
     const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
       getVersion();

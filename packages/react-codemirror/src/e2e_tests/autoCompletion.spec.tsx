@@ -526,7 +526,6 @@ test('completions depend on the Cypher version', async ({ page, mount }) => {
           },
         },
       }}
-      featureFlags={{ cypher25: true }}
     />,
   );
 

@@ -103,7 +103,6 @@ export interface CypherEditorProps {
    */
   featureFlags?: {
     consoleCommands?: boolean;
-    cypher25?: boolean;
   };
   /**
    * The schema to use for autocompletion and linting.
@@ -372,8 +371,6 @@ export class CypherEditor extends Component<
       onExecute,
       newLineOnEnter,
     } = this.props;
-
-    _internalFeatureFlags.cypher25 = featureFlags?.cypher25 ?? false;
 
     this.schemaRef.current = {
       schema,

@@ -11,10 +11,7 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import {
-  _internalFeatureFlags,
-  syntaxColouringLegend,
-} from '@neo4j-cypher/language-support';
+import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
@@ -27,10 +24,6 @@ import {
   Neo4jParameters,
   Neo4jSettings,
 } from './types';
-
-if (process.env.CYPHER_25 === 'true') {
-  _internalFeatureFlags.cypher25 = true;
-}
 
 const connection = createConnection(ProposedFeatures.all);
 let settings: Neo4jSettings | undefined = undefined;

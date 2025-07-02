@@ -11,6 +11,9 @@ async function main() {
     createAndStartTestContainer({
       containerName: 'vscode-it-neo4j-2025',
       neo4jVersion: 'neo4j:2025-enterprise',
+      env: {
+        NEO4J_internal_dbms_cypher_enable__experimental__versions: 'true',
+      },
     }),
   ]);
 
@@ -36,7 +39,6 @@ async function main() {
       extensionDevelopmentPath,
       extensionTestsPath,
       extensionTestsEnv: {
-        CYPHER_25: 'true',
         NEO4J_5_PORT: neo4j5Instance.getMappedPort(7687).toString(),
         NEO4J_2025_PORT: neo4j2025Instance.getMappedPort(7687).toString(),
         DEBUG_VSCODE_TESTS: process.env.DEBUG_VSCODE_TESTS,

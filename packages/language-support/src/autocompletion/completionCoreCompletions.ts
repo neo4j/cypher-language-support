@@ -41,9 +41,6 @@ import {
 
 const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
-const versions = () =>
-  _internalFeatureFlags.cypher25 ? cypherVersionNumbers : ['5'];
-
 type BacktickVariant = 'label' | 'propertyKey' | 'relType' | 'dbName' | 'param';
 
 export function backtickIfNeeded(
@@ -74,7 +71,7 @@ export function backtickIfNeeded(
 }
 
 const versionCompletions = () =>
-  versions().map((v) => {
+  cypherVersionNumbers.map((v) => {
     const result: CompletionItem = {
       label: v,
       kind: CompletionItemKind.EnumMember,
@@ -83,7 +80,7 @@ const versionCompletions = () =>
   });
 
 const cypherVersionCompletions = () =>
-  versions().map((v) => {
+  cypherVersionNumbers.map((v) => {
     const result: CompletionItem = {
       label: 'CYPHER ' + v,
       kind: CompletionItemKind.Keyword,
