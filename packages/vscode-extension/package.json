@@ -239,11 +239,6 @@
           "group": "01_management@2"
         },
         {
-          "command": "neo4j.switchLinter",
-          "when": "view == neo4jConnections && viewItem == activeConnection && neo4j:useVersionedLinters",
-          "group": "01_management@3"
-        },
-        {
           "command": "neo4j.editConnection",
           "when": "view == neo4jConnections && viewItem == connection || viewItem == activeConnection",
           "group": "inline"
