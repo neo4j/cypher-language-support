@@ -10,7 +10,7 @@ async function main() {
     }),
     createAndStartTestContainer({
       containerName: 'vscode-it-neo4j-2025',
-      neo4jVersion: 'neo4j:2025-enterprise',
+      neo4jVersion: 'neo4j:2025.05.1-enterprise',
       env: {
         NEO4J_internal_dbms_cypher_enable__experimental__versions: 'true',
       },

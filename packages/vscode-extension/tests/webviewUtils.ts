@@ -73,7 +73,7 @@ export async function openFixtureFile(
 export async function createNewConnection(containerName: string) {
   const container = await createAndStartTestContainer({
     containerName: containerName,
-    neo4jVersion: 'neo4j:2025-enterprise',
+    neo4jVersion: 'neo4j:2025.05.1-enterprise',
   });
   const port = container.getMappedPort(7687);
   const workbench = await browser.getWorkbench();
