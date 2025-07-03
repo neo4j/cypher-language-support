@@ -41,7 +41,7 @@ export function getDocumentUri(docName: string) {
 
 export async function eventually(
   assertion: () => Promise<void>,
-  timeoutMs = 15000000000,
+  timeoutMs = 15000,
   backoffMs = 100,
 ) {
   let totalWait = 0;
@@ -169,7 +169,7 @@ export function getExtensionStoragePath(): string {
       process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
     userDataDir = path.join(appData, 'Code');
   } else {
-    // Linux / otros
+    // Linux
     userDataDir = path.join(os.homedir(), '.config', 'Code');
   }
 
