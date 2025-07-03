@@ -4,7 +4,7 @@ import {
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
-  manualLinterSwitch,
+  manuallyAdjustLinter,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -52,7 +52,7 @@ export function registerDisposables(): Disposable[] {
     disposables.push(
       commands.registerCommand(
         CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
-        manualLinterSwitch,
+        manuallyAdjustLinter,
       ),
       linterStatusBarItem,
     );

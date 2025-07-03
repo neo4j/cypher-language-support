@@ -3,7 +3,6 @@ import { commands, Selection, TextEditor, window, workspace } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
-  downloadLintWorker,
   getActiveConnection,
   getConnectionByKey,
   getConnections,
@@ -11,7 +10,7 @@ import {
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
-  switchWorkerOnLanguageServer,
+  switchToLinter,
   toggleConnectionAndUpdateDatabaseConnection,
 } from '../connectionService';
 import { CONSTANTS } from '../constants';
@@ -25,7 +24,7 @@ import {
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
 import axios from 'axios';
-import { linterFileToVersion } from '@neo4j-cypher/lint-worker';
+import { linterFileToServerVersion } from '@neo4j-cypher/lint-worker';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -82,20 +81,22 @@ export function createConnectionPanel(): void {
 }
 
 //The npm data object contains more fields from the npm registrys package.json, but we only need dist-tags here
-type NpmRelease = {
+type NpmData = {
   'dist-tags'?: Record<string, string>;
 };
 
-export async function getTaggedRegistryVersions(): Promise<
-  { tag: string; version: string }[]
-> {
+export type NpmRelease = {
+  tag: string;
+  version: string;
+};
+
+export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
   const registryUrl = 'https://registry.npmjs.org/@neo4j-cypher/lint-worker';
   const tagToFilter = 'neo4j-5.20.0';
 
   try {
-    const response = await axios.get<NpmRelease>(registryUrl);
-    const data: NpmRelease = response.data;
-
+    const response = await axios.get<NpmData>(registryUrl);
+    const data: NpmData = response.data;
     const taggedVersions: { tag: string; version: string }[] = [];
     if (data !== null && data['dist-tags'] !== null) {
       for (const [tag, version] of Object.entries(data['dist-tags'])) {
@@ -115,44 +116,36 @@ export async function getTaggedRegistryVersions(): Promise<
   }
 }
 
+export const npmTagToLinterVersion = (tag: string) =>
+  tag.match(/^neo4j-([\d.]+)$/)?.[1];
+
 /**
  * Handler for SWITCH_LINTWORKER_COMMAND (neo4j.editLinter)
  * This can be triggered on the connection tree view, through the status bar or via the command palette.
  * Triggering shows a list of available linters. Picking one switches the linter used.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function manualLinterSwitch(): Promise<void> {
-  const npmVersions = await getTaggedRegistryVersions();
+export async function manuallyAdjustLinter(): Promise<void> {
+  const npmReleases = await getTaggedRegistryVersions();
   const fileNames = await getFilesInExtensionStorage();
-  const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
-    fileNames
-      .map((name) => [linterFileToVersion(name), name])
-      .filter(
-        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
-      ),
+  const npmLinterVersions = npmReleases.map((release) =>
+    npmTagToLinterVersion(release.tag),
   );
-  downloadedLinterVersions['Latest'] = '';
-  const npm_versions = npmVersions
-    .map((x) => x.tag.match(/^neo4j-([\d.]+)$/)?.[1])
-    .filter((v) => v !== undefined);
-  const existing_versions = Object.keys(downloadedLinterVersions);
-  const all_versions = new Set(existing_versions.concat(npm_versions));
-  const picked = await window.showQuickPick(Array.from(all_versions), {
+  const existingVersions = fileNames.map((name) =>
+    linterFileToServerVersion(name),
+  );
+  existingVersions.push('Latest');
+  const allVersions = new Set(
+    existingVersions.concat(npmLinterVersions).filter((v) => v !== undefined),
+  );
+  const picked = await window.showQuickPick(Array.from(allVersions), {
     placeHolder: 'Select Linter version',
   });
-
-  const globalStorage = getExtensionContext().globalStorageUri;
-  let fileName = '';
+  //closing the quickpick menu will return undefined
   if (picked === undefined) {
     return;
-  } else if (!existing_versions.includes(picked)) {
-    const desiredFileName = `${picked}-lintWorker.cjs`;
-    const success = await downloadLintWorker(desiredFileName, globalStorage);
-    fileName = success ? desiredFileName : '';
-  } else {
-    fileName = downloadedLinterVersions[picked];
   }
-  await switchWorkerOnLanguageServer(fileName, globalStorage);
+  await switchToLinter(picked, npmReleases);
 }
 
 /**

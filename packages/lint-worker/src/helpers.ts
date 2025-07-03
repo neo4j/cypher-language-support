@@ -40,15 +40,14 @@ export function convertDbSchema(
 }
 
 export function serverVersionToLinter(serverVersion: string) {
-  let candidate: string = undefined;
+  let candidate: string = 'Latest';
   if (compareMajorMinorVersions(serverVersion, oldLinter) <= 0) {
     candidate = oldLinter;
   }
   return candidate;
 }
 
-export function linterFileToVersion(fileName: string) {
-  return fileName
-    ? fileName.match(/^([\d.]+)-lintWorker\.cjs$/)?.[1]
-    : undefined;
+export function linterFileToServerVersion(fileName: string) {
+  const linterFileRegex = /^([\d.]+)-lintWorker-([\d.]+)\.cjs$/;
+  return fileName ? fileName.match(linterFileRegex)?.[1] : undefined;
 }

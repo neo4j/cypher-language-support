@@ -17,10 +17,15 @@ import { pipeline } from 'stream/promises';
 import axios from 'axios';
 import * as vscode from 'vscode';
 import {
-  linterFileToVersion,
+  linterFileToServerVersion,
   serverVersionToLinter,
 } from '@neo4j-cypher/lint-worker';
 import { linterStatusBarItem } from './extension';
+import {
+  getTaggedRegistryVersions,
+  NpmRelease,
+  npmTagToLinterVersion,
+} from './commandHandlers/connection';
 
 export type Scheme =
   | 'neo4j'
@@ -406,16 +411,19 @@ async function updateDatabaseConnectionAndNotifyLanguageClient(
 }
 
 /**
- * Notifies the language client it should switch linter
+ * Notifies the language client it should switch linter. Passing all params as undefined is a sign to the language server that it should
+ * use the default linter packaged in the extension
+ * @param fileName The name of the linter file, e.g. "5.20.0-lintWorker-0.0.0.cjs".
+ * @param storageUri The uri pointing to the vscode global storage of the extension.
  */
 export async function switchWorkerOnLanguageServer(
   fileName: string,
-  destUri: vscode.Uri,
+  storageUri: vscode.Uri,
 ) {
   const linterPath = fileName
-    ? vscode.Uri.joinPath(destUri, fileName).fsPath
+    ? vscode.Uri.joinPath(storageUri, fileName).fsPath
     : undefined;
-  const linterVersion = linterFileToVersion(fileName);
+  const linterVersion = linterFileToServerVersion(fileName);
   await sendNotificationToLanguageClient('updateLintWorker', {
     lintWorkerPath: linterPath,
     linterVersion: linterVersion,
@@ -439,57 +447,89 @@ export async function getFilesInExtensionStorage(): Promise<string[]> {
   }
 }
 
+export async function deleteOutdatedLinters(
+  linterVersion: string,
+  newFile: string,
+  storageUri: vscode.Uri,
+) {
+  const fileNames = await getFilesInExtensionStorage();
+  const outDatedLinters: Record<string, string> = Object.fromEntries(
+    fileNames
+      .map((name) => [linterFileToServerVersion(name), name])
+      .filter(
+        (v): v is [string, string] =>
+          v !== undefined &&
+          v.length === 2 &&
+          v[0] === linterVersion &&
+          v[1] !== newFile,
+      ),
+  );
+  for (const [, fileName] of Object.entries(outDatedLinters)) {
+    await vscode.workspace.fs.delete(vscode.Uri.joinPath(storageUri, fileName));
+  }
+}
+
+/**
+ * Attempts to download the latest linter of version $linterVersion,
+ * saving the file as "$linterVersion-lintWorker-$npmVersion.cjs"
+ * returning the name of the file saved if successful, and a blank string otherwise
+ */
 export async function downloadLintWorker(
-  fileName: string,
-  destUri: vscode.Uri,
+  linterVersion: string,
+  storageUri: vscode.Uri,
+  npmReleases: NpmRelease[],
 ): Promise<boolean> {
   void vscode.window.showInformationMessage(
     'Downloading linter for your server',
   );
-  const fileUri = vscode.Uri.joinPath(destUri, fileName);
 
-  const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
-  try {
-    const response = await axios.get(downloadUrl, { responseType: 'stream' });
-    await pipeline(
-      response.data,
-      tar.x({
-        cwd: destUri.fsPath,
-        filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
-      }),
-    );
-
-    const extractedUri = vscode.Uri.joinPath(
-      destUri,
-      'package',
-      'dist',
-      'cjs',
-      'lintWorker.cjs',
-    );
-    const newFolderUri = vscode.Uri.joinPath(destUri, 'package');
-    await vscode.workspace.fs.rename(extractedUri, fileUri);
-    await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
-    return true;
-  } catch (error) {
+  const latestOldLinter = npmReleases?.find(
+    (release) => release.tag === `neo4j-${linterVersion}`,
+  );
+  if (!latestOldLinter) {
     void vscode.window.showInformationMessage(
       'Linter download failed, reverting to latest linter version',
     );
     return false;
   }
-}
-export async function getDestDir(
-  fileName: string,
-): Promise<{ fileExists: boolean; destUri: vscode.Uri }> {
-  const context = getExtensionContext();
-  const storageUri = context.globalStorageUri;
-  await vscode.workspace.fs.createDirectory(storageUri);
+  const fileName = `${linterVersion}-lintWorker-${latestOldLinter.version}.cjs`;
   const fileUri = vscode.Uri.joinPath(storageUri, fileName);
 
-  return { fileExists: await fileExists(fileUri), destUri: storageUri };
+  const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-${latestOldLinter.version}.tgz`;
+  try {
+    const response = await axios.get(downloadUrl, { responseType: 'stream' });
+    await pipeline(
+      response.data,
+      tar.x({
+        cwd: storageUri.fsPath,
+        filter: (path) => path === 'package/dist/cjs/lintWorker.cjs',
+      }),
+    );
+
+    const extractedUri = vscode.Uri.joinPath(
+      storageUri,
+      'package',
+      'dist',
+      'cjs',
+      'lintWorker.cjs',
+    );
+    const newFolderUri = vscode.Uri.joinPath(storageUri, 'package');
+    await vscode.workspace.fs.rename(extractedUri, fileUri, {
+      overwrite: true,
+    });
+    await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
+    await deleteOutdatedLinters(linterVersion, fileName, storageUri);
+    return true;
+  } catch (error) {
+    void vscode.window.showInformationMessage(
+      'Linter download failed, reverting to best match from currently downloaded linter versions',
+    );
+    return false;
+  }
 }
 
 //checking metadata of file, just to see if the file is there
-async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
+export async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(fileUri);
     return true;
@@ -512,23 +552,75 @@ async function dynamicallyAdjustLinter(): Promise<void> {
 
       //since not every release has a linter release
       const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+      const npmReleases = await getTaggedRegistryVersions();
+      await switchToLinter(linterVersion, npmReleases);
+    }
+  }
+}
 
-      //If the server is newer than the latest published package on npm, use default linter
-      if (!linterVersion) {
-        return switchWorkerOnLanguageServer(undefined, undefined);
-      }
-      const fileName = `${linterVersion}-lintWorker.cjs`;
-      const { fileExists, destUri } = await getDestDir(fileName);
+async function expectedLinterExists(
+  npmReleases: NpmRelease[],
+  storageUri: vscode.Uri,
+): Promise<{ expectedFileName: string; isExpectedLinterDownloaded: boolean }> {
+  const newestLegacyLinter = npmReleases.find(
+    (release) => release.tag === 'neo4j-5.20.0',
+  );
+  const expectedFileName = `${npmTagToLinterVersion(
+    newestLegacyLinter.tag,
+  )}-lintWorker-${newestLegacyLinter.version}.cjs`;
+  const expectedUri = vscode.Uri.joinPath(storageUri, expectedFileName);
+  const isExpectedLinterDownloaded = await fileExists(expectedUri);
+  return { expectedFileName, isExpectedLinterDownloaded };
+}
 
-      if (fileExists) {
-        await switchWorkerOnLanguageServer(fileName, destUri);
+export async function switchToLinter(
+  linterVersion: string,
+  npmReleases: NpmRelease[],
+): Promise<void> {
+  if (linterVersion === 'Latest') {
+    return await switchWorkerOnLanguageServer(undefined, undefined);
+  }
+  if (npmReleases.length === 0) {
+    await switchToLocalLinter(linterVersion);
+  } else {
+    const storageUri = getExtensionContext().globalStorageUri;
+    const { expectedFileName, isExpectedLinterDownloaded } =
+      await expectedLinterExists(npmReleases, storageUri);
+    if (isExpectedLinterDownloaded) {
+      await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+    } else {
+      const success = await downloadLintWorker(
+        linterVersion,
+        storageUri,
+        npmReleases,
+      );
+      if (success) {
+        await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        const success = await downloadLintWorker(fileName, destUri);
-        success
-          ? await switchWorkerOnLanguageServer(fileName, destUri)
-          : await switchWorkerOnLanguageServer(undefined, undefined);
+        await switchToLocalLinter(linterVersion);
       }
     }
+  }
+}
+
+export async function switchToLocalLinter(
+  linterVersion: string,
+): Promise<void> {
+  const fileNames = await getFilesInExtensionStorage();
+  const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
+    fileNames
+      .map((name) => [linterFileToServerVersion(name), name])
+      .filter(
+        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
+      ),
+  );
+  const matchingFile = downloadedLinterVersions[linterVersion];
+  const context = getExtensionContext();
+  const storageUri = context.globalStorageUri;
+  if (matchingFile) {
+    await switchWorkerOnLanguageServer(matchingFile, storageUri);
+  } else {
+    await switchWorkerOnLanguageServer(undefined, undefined);
   }
 }
 
