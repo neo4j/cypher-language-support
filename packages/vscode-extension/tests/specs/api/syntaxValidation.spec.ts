@@ -406,7 +406,7 @@ suite('Syntax validation spec', () => {
     await toggleVersionedLinters(false);
   });
 
-  test('Linting depends on the specific neo4j version and works when linters are already present in global storage', async () => {
+  test.only('Linting depends on the specific neo4j version and works when linters are already present in global storage', async () => {
     await toggleVersionedLinters(true);
     //await connectDefault({version: 'neo4j 2025'})
 

@@ -18,6 +18,12 @@ type InclusionTestArgs = {
   expected: vscode.CompletionItem[];
 };
 
+type NonInclusionTestArgs = {
+  textFile: string | vscode.Uri;
+  position: vscode.Position;
+  excluded: vscode.CompletionItem[];
+};
+
 const { functions, procedures } = testData.mockSchema;
 
 function labelToString(label: string | vscode.CompletionItemLabel) {
@@ -81,6 +87,45 @@ export async function testCompletionContains({
         `Tags do not match. Actual: ${tagsToString(
           found.tags,
         )}, expected: ${tagsToString(expectedItem.tags)}`,
+      );
+    });
+  });
+}
+
+export async function testCompletionNotContains({
+  textFile,
+  position,
+  excluded,
+}: NonInclusionTestArgs): Promise<void> {
+  let docUri: vscode.Uri;
+  if (typeof textFile === 'string') {
+    docUri = getDocumentUri(textFile);
+    await openDocument(docUri);
+  } else {
+    docUri = textFile;
+  }
+
+  await eventually(async () => {
+    const actualCompletionList: vscode.CompletionList =
+      await vscode.commands.executeCommand(
+        'vscode.executeCompletionItemProvider',
+        docUri,
+        position,
+      );
+
+    excluded.forEach((excludedItem) => {
+      const found = actualCompletionList.items.find(
+        (value) =>
+          value.kind === excludedItem.kind &&
+          value.label === excludedItem.label,
+      );
+
+      assert.equal(
+        found === undefined,
+        true,
+        `Expected excluded item found by kind ${excludedItem.kind.toString()} and label ${labelToString(
+          excludedItem.label,
+        )}`,
       );
     });
   });
@@ -185,6 +230,35 @@ suite('Auto completion spec', () => {
       textFile: 'function-completion.cypher',
       position: position,
       expected: expected,
+    });
+  });
+
+  test('Does not complete properties for non node / relationship variables', async () => {
+    await testCompletionContains({
+      textFile: 'symbol-table.cypher',
+      position: new vscode.Position(1, 9),
+      expected: [
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: vscode.CompletionItemKind.Property,
+        },
+      ],
+    });
+
+    // Note this has an eventually inside, so we are asking
+    // the property completion to not be there eventually
+    // (when the symbol table is updated)
+    await testCompletionNotContains({
+      textFile: 'symbol-table.cypher',
+      position: new vscode.Position(3, 9),
+      excluded: [
+        {
+          label: 'foo bar',
+          insertText: '`foo bar`',
+          kind: vscode.CompletionItemKind.Property,
+        },
+      ],
     });
   });
 

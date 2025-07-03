@@ -530,6 +530,25 @@ describe('Syntactic validation spec', () => {
     ).toEqual([
       {
         message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 19,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
           "Invalid input ')': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 10,
@@ -1198,6 +1217,25 @@ describe('Syntactic validation spec', () => {
     ).toEqual([
       {
         message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 19,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
           "Invalid input ''Person'': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 18,
@@ -1227,7 +1265,27 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: `Invalid input ''Person'': expected an identifier, '$', '%' or '('`,
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input ''Person'': expected an identifier, '$', '%' or '('",
         offsets: {
           end: 20,
           start: 12,

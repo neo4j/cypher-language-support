@@ -35,6 +35,7 @@ import {
   CypherVersion,
   cypherVersionNumbers,
   allCypherVersions,
+  SymbolsInfo,
 } from './types';
 
 export interface ParsedStatement {
@@ -775,6 +776,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 
 class ParserWrapper {
   parsingResult?: ParsingResult;
+  symbolsInfo?: SymbolsInfo;
 
   parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
@@ -794,6 +796,11 @@ class ParserWrapper {
 
   clearCache() {
     this.parsingResult = undefined;
+    this.symbolsInfo = undefined;
+  }
+
+  setSymbolsInfo(symbolsInfo: SymbolsInfo) {
+    this.symbolsInfo = symbolsInfo;
   }
 }
 

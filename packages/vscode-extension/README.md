@@ -16,6 +16,7 @@ Our extension provides a rich set of features for working with Cypher, the query
 - Connection management.
 - Query parameter management.
 - Query execution.
+- Query results and visualization.
 
 ![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo.gif?raw=true)
 
@@ -113,10 +114,9 @@ Parameters can be edited / deleted hovering over them.
 ![demo-param-editing](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-param-editing.png?raw=true)
 
 
-
 ## Executing a Cypher file
 
-Once you've written your desired query (for example `RETURN $a, $b`) you can execute it by either of:
+Once you've written your desired query (for example `CREATE (n)-[r:Rel]->(m) RETURN n, r, m, $a, $b`) you can execute it by either of:
 * Using the `Neo4j: Run cypher statements` command from the Command Palette.
 * Right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item.
 * Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the `alt` key depending on your keyboard).
@@ -128,8 +128,6 @@ Once you've written your desired query (for example `RETURN $a, $b`) you can exe
 We're working on adding more features to the extension, such as:
 
 - Dynamically adjusting the language server depending on the neo4j version.
-- Improved query results table.
-- Graph visualization for the results.
 
 ## Extension settings
 
