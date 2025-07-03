@@ -15,7 +15,6 @@ import {
 } from '@codemirror/view';
 import {
   formatQuery,
-  _internalFeatureFlags,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
