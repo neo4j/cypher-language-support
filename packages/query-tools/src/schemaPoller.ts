@@ -152,7 +152,7 @@ export class Neo4jSchemaPoller {
     clearTimeout(this.reconnectionTimeout);
   }
 
-  private async getCypherVersions(): Promise<{
+  private async getAvailableCypherVersions(): Promise<{
     serverCypherVersions: string[];
   }> {
     const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
@@ -202,7 +202,7 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    const { serverCypherVersions } = await this.getCypherVersions();
+    const { serverCypherVersions } = await this.getAvailableCypherVersions();
 
     const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
       getVersion();
