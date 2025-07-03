@@ -1,11 +1,11 @@
-import {
-  _internalFeatureFlags,
+import type {
   SymbolTable,
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
+  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
