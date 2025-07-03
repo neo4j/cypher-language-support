@@ -422,7 +422,7 @@ async function downloadLintWorker(
 ): Promise<void> {
   const fileUri = vscode.Uri.joinPath(destUri, fileName);
 
-  const downloadUrl = `https://registry.npmjs.org/@neo4j-cypher/lint-worker/-/lint-worker-0.0.0.tgz`;
+  const downloadUrl = `http://localhost:4873/@neo4j-cypher/lint-worker/-/lint-worker-0.0.1.tgz`;
   const response = await axios.get(downloadUrl, { responseType: 'stream' });
   await pipeline(
     response.data,
