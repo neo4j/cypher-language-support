@@ -1,24 +1,28 @@
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import {
+  _internalFeatureFlags,
+  SymbolTable,
+  SyntaxDiagnostic,
+} from '@neo4j-cypher/language-support';
 import {
   DbSchema,
-  SyntaxDiagnostic,
-  _internalFeatureFlags,
   lintCypherQuery as _lintCypherQuery,
-} from 'languageSupport-next.8';
+} from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
   query: string,
   dbSchema,
-  featureFlags: { consoleCommands?: boolean } = {},
+  featureFlags: { consoleCommands?: boolean; cypher25?: boolean } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
   // We allow to override the consoleCommands feature flag
   if (featureFlags.consoleCommands !== undefined) {
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
+  if (featureFlags.cypher25 !== undefined) {
+    _internalFeatureFlags.cypher25 = featureFlags.cypher25;
+  }
   //cast to appease git lint check
-  const diagnostics = _lintCypherQuery(query, dbSchema as DbSchema);
-  return { diagnostics: diagnostics };
+  return _lintCypherQuery(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });
