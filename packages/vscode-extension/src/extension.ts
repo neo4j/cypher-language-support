@@ -3,6 +3,7 @@ import {
   commands,
   ExtensionContext,
   RelativePattern,
+  StatusBarAlignment,
   Uri,
   window,
   workspace,
@@ -23,6 +24,10 @@ import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
 
+export const linterStatusBarItem = window.createStatusBarItem(
+  StatusBarAlignment.Right,
+);
+
 export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const runServer = context.asAbsolutePath(
@@ -31,6 +36,20 @@ export async function activate(context: ExtensionContext) {
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
+
+  //only show linter picking command with feature flag active
+  const config = workspace.getConfiguration('neo4j.features');
+  const useVersionedLinters = config.get('useVersionedLinters', false);
+  await commands.executeCommand(
+    'setContext',
+    'neo4j:useVersionedLinters',
+    useVersionedLinters,
+  );
+  if (useVersionedLinters) {
+    //Create the globalStorage directory for the lint worker files if it doesnt exist
+    const storageUri = context.globalStorageUri;
+    await workspace.fs.createDirectory(storageUri);
+  }
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used

@@ -1,4 +1,4 @@
-import { commands, Disposable, window } from 'vscode';
+import { commands, Disposable, window, workspace } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
@@ -31,6 +31,8 @@ import { databaseInformationTreeDataProvider } from './treeviews/databaseInforma
 import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvider';
 import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetailsProvider';
 import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualizationProvider';
+import { linterStatusBarItem } from './extension';
+import { manuallyAdjustLinter } from './commandHandlers/linters';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -40,6 +42,21 @@ export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
+  const config = workspace.getConfiguration('neo4j.features');
+  const versionedLintersEnabled = config.get('useVersionedLinters', false);
+  if (versionedLintersEnabled) {
+    linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
+    linterStatusBarItem.text = 'Latest';
+    linterStatusBarItem.tooltip = 'Current Cypher Linter. Click to switch';
+    linterStatusBarItem.show();
+    disposables.push(
+      commands.registerCommand(
+        CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
+        manuallyAdjustLinter,
+      ),
+      linterStatusBarItem,
+    );
+  }
 
   disposables.push(
     window.registerWebviewViewProvider(

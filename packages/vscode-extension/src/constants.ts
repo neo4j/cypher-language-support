@@ -1,5 +1,6 @@
 export const CONSTANTS = {
   COMMANDS: {
+    SWITCH_LINTWORKER_COMMAND: 'neo4j.switchLinter',
     SAVE_CONNECTION_COMMAND: 'neo4j.saveConnection',
     CREATE_CONNECTION_COMMAND: 'neo4j.createConnection',
     EDIT_CONNECTION_COMMAND: 'neo4j.editConnection',
@@ -23,6 +24,9 @@ export const CONSTANTS = {
     },
   },
   MESSAGES: {
+    GLOBALSTORAGE_READ_FAILED: 'Failed to read neo4j globalStorage directory.',
+    LINTER_DOWNLOAD_FAILED:
+      'Linter download failed, reverting to best match from currently downloaded linter versions.',
     CONNECTED_MESSAGE: 'Connected to Neo4j.',
     DISCONNECTED_MESSAGE: 'Disconnected from Neo4j.',
     RECONNECTED_MESSAGE: 'Reconnected to Neo4j.',

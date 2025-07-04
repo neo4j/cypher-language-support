@@ -9,6 +9,7 @@ export type Neo4jConnectionSettings = {
 
 export type LintWorkerSettings = {
   lintWorkerPath: string;
+  linterVersion: string;
 };
 
 export type Neo4jSettings = {
