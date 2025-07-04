@@ -33,32 +33,3 @@ export function getVersion(): ExecuteQueryArgs<{
     queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
   };
 }
-
-export function getCypherVersions(): ExecuteQueryArgs<{
-  serverCypherVersions: string[] | undefined;
-}> {
-  const query = 'CALL dbms.components() YIELD name, versions';
-
-  const resultTransformer = resultTransformers.mappedResultTransformer({
-    map(record) {
-      const obj = record.toObject();
-      const name = obj.name as string;
-      const versions = obj.versions as string[];
-      return { name, versions };
-    },
-    collect(rows, summary) {
-      for (const row of rows) {
-        if (row.name === 'Cypher') {
-          return { serverCypherVersions: row.versions, summary };
-        }
-      }
-
-      return { serverCypherVersions: ['5'], summary };
-    },
-  });
-
-  return {
-    query,
-    queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
-  };
-}

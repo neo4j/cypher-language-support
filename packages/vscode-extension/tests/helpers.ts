@@ -1,5 +1,6 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
+import * as os from 'os';
 import { TextDocument, Uri, window, workspace } from 'vscode';
 import { Connection } from '../src/connectionService';
 import { getNonce } from '../src/getNonce';
@@ -78,11 +79,22 @@ export function getMockConnection(activate: boolean = false): Connection {
   };
 }
 
-export function getNeo4jConfiguration() {
+export function getNeo4j2025Configuration() {
   return {
     scheme: process.env.NEO4J_SCHEME || 'neo4j',
     host: process.env.NEO4J_HOST || 'localhost',
-    port: process.env.NEO4J_PORT || '7687',
+    port: process.env.NEO4J_2025_PORT || '7687',
+    user: process.env.NEO4J_USER || 'neo4j',
+    database: process.env.NEO4J_DATABASE || 'neo4j',
+    password: process.env.NEO4J_PASSWORD || 'password',
+  };
+}
+
+export function getNeo4j5Configuration() {
+  return {
+    scheme: process.env.NEO4J_SCHEME || 'neo4j',
+    host: process.env.NEO4J_HOST || 'localhost',
+    port: process.env.NEO4J_5_PORT || '7687',
     user: process.env.NEO4J_USER || 'neo4j',
     database: process.env.NEO4J_DATABASE || 'neo4j',
     password: process.env.NEO4J_PASSWORD || 'password',
@@ -126,4 +138,40 @@ export function parameterLabelToString(label: string | [number, number]) {
 export async function toggleLinting(value: boolean) {
   const config = vscode.workspace.getConfiguration('neo4j.features');
   await config.update('linting', value, vscode.ConfigurationTarget.Global);
+}
+
+export async function toggleVersionedLinters(value: boolean) {
+  const config = vscode.workspace.getConfiguration('neo4j.features');
+  await config.update(
+    'useVersionedLinters',
+    value,
+    vscode.ConfigurationTarget.Global,
+  );
+}
+
+export function getExtensionStoragePath(): string {
+  const extensionId = 'neo4j-extensions.neo4j-for-vscode';
+  const platform = os.platform();
+
+  let userDataDir: string;
+
+  if (platform === 'darwin') {
+    // macOS
+    userDataDir = path.join(
+      os.homedir(),
+      'Library',
+      'Application Support',
+      'Code',
+    );
+  } else if (platform === 'win32') {
+    // Windows
+    const appData =
+      process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+    userDataDir = path.join(appData, 'Code');
+  } else {
+    // Linux
+    userDataDir = path.join(os.homedir(), '.config', 'Code');
+  }
+
+  return path.join(userDataDir, 'User', 'globalStorage', extensionId);
 }

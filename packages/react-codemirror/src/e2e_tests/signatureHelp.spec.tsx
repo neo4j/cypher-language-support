@@ -425,7 +425,6 @@ test('Signature help depends on the Cypher version', async ({
           },
         },
       }}
-      featureFlags={{ cypher25: true }}
     />,
   );
 

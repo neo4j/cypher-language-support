@@ -1,5 +1,4 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { _internalFeatureFlags } from '../../featureFlags';
 import {
   testCompletions,
   testCompletionsExactly,
@@ -8,8 +7,6 @@ import {
 describe('Misc auto-completion', () => {
   test('Correctly completes cypher version number, when cypher25 is enabled', () => {
     const query = 'CYPHER ';
-    const cypher25Enabled = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = true;
 
     testCompletions({
       query,
@@ -18,27 +15,19 @@ describe('Misc auto-completion', () => {
         { label: '25', kind: CompletionItemKind.EnumMember },
       ],
     });
-
-    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes cypher version number, when cypher25 is disabled', () => {
     const query = 'CYPHER ';
-    const cypher25Enabled = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = false;
 
     testCompletions({
       query,
       expected: [{ label: '5', kind: CompletionItemKind.EnumMember }],
     });
-
-    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes CYPHER when keyword is not finished, optionally with version, when cypher25 is enabled', () => {
     const query = 'CYP';
-    const cypher25Enabled = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = true;
     testCompletions({
       query,
       expected: [
@@ -47,13 +36,10 @@ describe('Misc auto-completion', () => {
         { label: 'CYPHER', kind: CompletionItemKind.Keyword },
       ],
     });
-    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes CYPHER when keyword is not finished, optionally with version, when cypher25 is disabled', () => {
     const query = 'CYP';
-    const cypher25Enabled = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = false;
     testCompletions({
       query,
       expected: [
@@ -61,7 +47,6 @@ describe('Misc auto-completion', () => {
         { label: 'CYPHER', kind: CompletionItemKind.Keyword },
       ],
     });
-    _internalFeatureFlags.cypher25 = cypher25Enabled;
   });
 
   test('Correctly completes empty statement', () => {

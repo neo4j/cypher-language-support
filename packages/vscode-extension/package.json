@@ -436,6 +436,16 @@
           ],
           "default": true,
           "description": "Enable linting errors for Cypher queries"
+        },
+        "neo4j.features.useVersionedLinters": {
+          "scope": "window",
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ],
+          "default": false,
+          "description": "Enable neo4j version specifc linting"
         }
       }
     },

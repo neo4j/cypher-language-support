@@ -239,7 +239,6 @@ test('Syntax validation depends on the Cypher version', async ({
   await mount(
     <CypherEditor
       schema={testData.mockSchema}
-      featureFlags={{ cypher25: true }}
     />,
   );
 
