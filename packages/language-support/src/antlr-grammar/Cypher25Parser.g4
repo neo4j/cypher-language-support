@@ -571,6 +571,8 @@ expression1
    | listItemsPredicate
    | normalizeFunction
    | vectorFunction
+   | vectorDistanceFunction
+   | vectorNormFunction
    | trimFunction
    | patternExpression
    | shortestPathExpression
@@ -656,6 +658,28 @@ normalizeFunction
 
 vectorFunction
    : VECTOR LPAREN vectorValue = expression COMMA dimension = expression COMMA vectorCoordinateType RPAREN
+   ;
+
+vectorDistanceFunction
+   : VECTOR_DISTANCE LPAREN vector1 = expression COMMA vector2 = expression COMMA vectorDistanceMetric RPAREN
+   ;
+
+vectorNormFunction
+   : VECTOR_NORM LPAREN vectorValue = expression COMMA vectorNormDistanceMetric RPAREN
+   ;
+   
+vectorDistanceMetric
+   : EUCLIDEAN
+   | EUCLIDEAN_SQUARED
+   | MANHATTAN
+   | COSINE
+   | DOT_METRIC
+   | HAMMING
+   ;
+   
+vectorNormDistanceMetric
+   : EUCLIDEAN
+   | MANHATTAN
    ;
 
 trimFunction
@@ -2032,6 +2056,7 @@ unescapedSymbolicNameString_
    | CONTAINS
    | CONTINUE
    | COPY
+   | COSINE
    | COUNT
    | CREATE
    | CSV
@@ -2055,6 +2080,7 @@ unescapedSymbolicNameString_
    | DIFFERENT
    | DISTINCT
    | DRIVER
+   | DOT_METRIC
    | DROP
    | DRYRUN
    | DUMP
@@ -2069,6 +2095,8 @@ unescapedSymbolicNameString_
    | END
    | ENDS
    | ERROR
+   | EUCLIDEAN
+   | EUCLIDEAN_SQUARED
    | EXECUTABLE
    | EXECUTE
    | EXIST
@@ -2093,6 +2121,7 @@ unescapedSymbolicNameString_
    | GRAPHS
    | GROUP
    | GROUPS
+   | HAMMING
    | HEADERS
    | HOME
    | ID
@@ -2131,6 +2160,7 @@ unescapedSymbolicNameString_
    | LOOKUP
    | MATCH
    | MANAGEMENT
+   | MANHATTAN
    | MAP
    | MERGE
    | NAME
@@ -2259,6 +2289,8 @@ unescapedSymbolicNameString_
    | USING
    | VALUE
    | VECTOR
+   | VECTOR_DISTANCE
+   | VECTOR_NORM
    | VERTEX
    | WAIT
    | WHEN
