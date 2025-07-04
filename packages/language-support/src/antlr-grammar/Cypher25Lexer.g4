@@ -287,6 +287,10 @@ CONTINUE
    : C O N T I N U E
    ;
 
+COSINE
+   : C O S I N E
+   ;
+
 COUNT
    : C O U N T
    ;
@@ -387,6 +391,10 @@ DOT
    : '.'
    ;
 
+DOT_METRIC
+   : D O T
+   ;
+
 DOTDOT
    : '..'
    ;
@@ -442,6 +450,14 @@ ELSE
 ENCRYPTED
    : E N C R Y P T E D
    ;
+   
+EUCLIDEAN
+    : E U C L I D E A N
+    ;
+   
+EUCLIDEAN_SQUARED
+    : E U C L I D E A N UNDERSCORE S Q U A R E D
+    ;
 
 END
    : E N D
@@ -560,6 +576,10 @@ GROUPS
 
 GT
    : '>'
+   ;
+
+HAMMING
+   : H A M M I N G
    ;
 
 HEADERS
@@ -726,6 +746,10 @@ LT
 
 MANAGEMENT
    : M A N A G E M E N T
+   ;
+
+MANHATTAN
+   : M A N H A T T A N
    ;
 
 MAP
@@ -1304,6 +1328,14 @@ VECTOR
    : V E C T O R
    ;
 
+VECTOR_DISTANCE
+   : V E C T O R UNDERSCORE D I S T A N C E
+   ;
+
+VECTOR_NORM
+   : V E C T O R UNDERSCORE N O R M
+   ;
+
 VERTEX
    : V E R T E X
    ;
@@ -1523,6 +1555,10 @@ fragment EIGHT
 fragment NINE
    : [9]
    ;
+   
+fragment UNDERSCORE 
+       : [\u005F]
+       ;
 
 // Should always be last in the file before modes
 ErrorChar
