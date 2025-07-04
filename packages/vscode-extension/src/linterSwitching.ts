@@ -36,10 +36,9 @@ export async function switchWorkerOnLanguageServer(
 }
 
 export async function getFilesInExtensionStorage(): Promise<string[]> {
-  const context = getExtensionContext();
-  const dirUri = context.globalStorageUri;
+  const storageUri = await getStorageUri();
   try {
-    const entries = await vscode.workspace.fs.readDirectory(dirUri);
+    const entries = await vscode.workspace.fs.readDirectory(storageUri);
     return entries
       .filter(([, fileType]) => fileType === vscode.FileType.File)
       .map(([name]) => name);
@@ -186,7 +185,7 @@ export async function switchToLinter(
   if (npmReleases.length === 0) {
     await switchToLocalLinter(linterVersion);
   } else {
-    const storageUri = getExtensionContext().globalStorageUri;
+    const storageUri = await getStorageUri();
     const { expectedFileName, isExpectedLinterDownloaded } =
       await expectedLinterExists(linterVersion, npmReleases, storageUri);
     if (isExpectedLinterDownloaded) {
@@ -218,11 +217,16 @@ export async function switchToLocalLinter(
       ),
   );
   const matchingFile = downloadedLinterVersions[linterVersion];
-  const context = getExtensionContext();
-  const storageUri = context.globalStorageUri;
+  const storageUri = await getStorageUri();
   if (matchingFile) {
     await switchWorkerOnLanguageServer(matchingFile, storageUri);
   } else {
     await switchWorkerOnLanguageServer();
   }
+}
+
+async function getStorageUri(): Promise<vscode.Uri> {
+  const storageUri = getExtensionContext().globalStorageUri;
+  await vscode.workspace.fs.createDirectory(storageUri);
+  return storageUri;
 }

@@ -45,11 +45,6 @@ export async function activate(context: ExtensionContext) {
     'neo4j:useVersionedLinters',
     useVersionedLinters,
   );
-  if (useVersionedLinters) {
-    //Create the globalStorage directory for the lint worker files if it doesnt exist
-    const storageUri = context.globalStorageUri;
-    await workspace.fs.createDirectory(storageUri);
-  }
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
