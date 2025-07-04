@@ -152,9 +152,10 @@ export class Neo4jSchemaPoller {
     clearTimeout(this.reconnectionTimeout);
   }
 
-  private async getAvailableCypherVersions(): Promise<{
-    serverCypherVersions: string[];
-  }> {
+  private async getAvailableCypherVersions(): Promise<string[]> {
+    // We need to use a query we can fire against the system database
+    // because we might not have no information on what user database
+    // we could use to try a simpler CYPHER 25 RETURN true query
     const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
       getVersion();
 
@@ -165,13 +166,13 @@ export class Neo4jSchemaPoller {
           {},
           cypherVersionQueryConfig,
         );
-        return { serverCypherVersions: ['5', '25'] };
+        return ['5', '25'];
       }
     } catch (e) {
-      return { serverCypherVersions: ['5'] };
+      return ['5'];
     }
 
-    return { serverCypherVersions: ['5'] };
+    return ['5'];
   }
 
   private async connectAndStartMetadataPoller(
@@ -202,7 +203,7 @@ export class Neo4jSchemaPoller {
       database,
     );
 
-    const { serverCypherVersions } = await this.getAvailableCypherVersions();
+    const serverCypherVersions = await this.getAvailableCypherVersions();
 
     const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
       getVersion();
