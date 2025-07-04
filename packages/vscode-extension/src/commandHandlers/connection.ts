@@ -6,11 +6,9 @@ import {
   getActiveConnection,
   getConnectionByKey,
   getConnections,
-  getFilesInExtensionStorage,
   getPasswordForConnection,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
-  switchToLinter,
   toggleConnectionAndUpdateDatabaseConnection,
 } from '../connectionService';
 import { CONSTANTS } from '../constants';
@@ -23,8 +21,6 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
-import axios from 'axios';
-import { linterFileToServerVersion } from '@neo4j-cypher/lint-worker';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -78,74 +74,6 @@ export async function saveConnectionAndDisplayConnectionResult(
 export function createConnectionPanel(): void {
   const context = getExtensionContext();
   ConnectionPanel.createOrShow(context.extensionPath, undefined, '');
-}
-
-//The npm data object contains more fields from the npm registrys package.json, but we only need dist-tags here
-type NpmData = {
-  'dist-tags'?: Record<string, string>;
-};
-
-export type NpmRelease = {
-  tag: string;
-  version: string;
-};
-
-export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
-  const registryUrl = 'https://registry.npmjs.org/@neo4j-cypher/lint-worker';
-  const tagToFilter = 'neo4j-5.20.0';
-
-  try {
-    const response = await axios.get<NpmData>(registryUrl);
-    const data: NpmData = response.data;
-    const taggedVersions: { tag: string; version: string }[] = [];
-    if (data !== null && data['dist-tags'] !== null) {
-      for (const [tag, version] of Object.entries(data['dist-tags'])) {
-        if (
-          typeof tag === 'string' &&
-          typeof version === 'string' &&
-          tag === tagToFilter
-        ) {
-          taggedVersions.push({ tag, version });
-        }
-      }
-    }
-
-    return taggedVersions;
-  } catch (error) {
-    return [];
-  }
-}
-
-export const npmTagToLinterVersion = (tag: string) =>
-  tag.match(/^neo4j-([\d.]+)$/)?.[1];
-
-/**
- * Handler for SWITCH_LINTWORKER_COMMAND (neo4j.editLinter)
- * This can be triggered on the connection tree view, through the status bar or via the command palette.
- * Triggering shows a list of available linters. Picking one switches the linter used.
- * @returns A promise that resolves when the handler has completed.
- */
-export async function manuallyAdjustLinter(): Promise<void> {
-  const npmReleases = await getTaggedRegistryVersions();
-  const fileNames = await getFilesInExtensionStorage();
-  const npmLinterVersions = npmReleases.map((release) =>
-    npmTagToLinterVersion(release.tag),
-  );
-  const existingVersions = fileNames.map((name) =>
-    linterFileToServerVersion(name),
-  );
-  existingVersions.push('Latest');
-  const allVersions = new Set(
-    existingVersions.concat(npmLinterVersions).filter((v) => v !== undefined),
-  );
-  const picked = await window.showQuickPick(Array.from(allVersions), {
-    placeHolder: 'Select Linter version',
-  });
-  //closing the quickpick menu will return undefined
-  if (picked === undefined) {
-    return;
-  }
-  await switchToLinter(picked, npmReleases);
 }
 
 /**

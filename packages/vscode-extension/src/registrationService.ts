@@ -4,7 +4,6 @@ import {
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
-  manuallyAdjustLinter,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -33,6 +32,7 @@ import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvid
 import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetailsProvider';
 import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualizationProvider';
 import { linterStatusBarItem } from './extension';
+import { manuallyAdjustLinter } from './commandHandlers/linters';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
