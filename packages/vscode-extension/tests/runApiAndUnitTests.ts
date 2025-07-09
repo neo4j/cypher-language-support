@@ -3,7 +3,19 @@ import * as path from 'path';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 async function main() {
-  const neo4jInstance = await createAndStartTestContainer();
+  const [neo4j5Instance, neo4j2025Instance] = await Promise.all([
+    createAndStartTestContainer({
+      containerName: 'vscode-it-neo4j-5',
+      neo4jVersion: 'neo4j:5.20-enterprise',
+    }),
+    createAndStartTestContainer({
+      containerName: 'vscode-it-neo4j-2025',
+      neo4jVersion: 'neo4j:2025.05.1-enterprise',
+      env: {
+        NEO4J_internal_dbms_cypher_enable__experimental__versions: 'true',
+      },
+    }),
+  ]);
 
   try {
     /* This is equivalent to running from a command line: 
@@ -27,8 +39,8 @@ async function main() {
       extensionDevelopmentPath,
       extensionTestsPath,
       extensionTestsEnv: {
-        CYPHER_25: 'true',
-        NEO4J_PORT: neo4jInstance.getMappedPort(7687).toString(),
+        NEO4J_5_PORT: neo4j5Instance.getMappedPort(7687).toString(),
+        NEO4J_2025_PORT: neo4j2025Instance.getMappedPort(7687).toString(),
         DEBUG_VSCODE_TESTS: process.env.DEBUG_VSCODE_TESTS,
       },
     });
@@ -36,7 +48,7 @@ async function main() {
     console.error('Failed to run integration tests');
     process.exit(1);
   } finally {
-    await neo4jInstance.stop();
+    await Promise.all([neo4j5Instance.stop(), neo4j2025Instance.stop()]);
   }
 }
 

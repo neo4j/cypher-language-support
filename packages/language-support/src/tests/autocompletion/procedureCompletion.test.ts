@@ -3,22 +3,10 @@ import {
   CompletionItemTag,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
-import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 
 describe('Procedures auto-completion', () => {
-  let isCypher25: boolean;
-
-  beforeAll(() => {
-    isCypher25 = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.cypher25 = isCypher25;
-  });
-
   const procedures = testData.mockSchema.procedures;
 
   const dbSchema: DbSchema = {

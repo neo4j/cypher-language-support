@@ -1,19 +1,32 @@
 import neo4j from 'neo4j-driver';
 import * as vscode from 'vscode';
 import { CONSTANTS } from '../src/constants';
-import { getNeo4jConfiguration } from './helpers';
+import { getNeo4j2025Configuration, getNeo4j5Configuration } from './helpers';
 
 export const testDatabaseKey = 'default-test-connection';
 
-export const defaultConnectionKey = 'default-connection-key';
+export const neo4j2025ConnectionKey = 'neo4j-2025-connection-key';
+export const neo4j5ConnectionKey = 'neo4j-5-connection-key';
 
-export async function saveDefaultConnection(): Promise<void> {
+type Neo4jVersion = 'neo4j 5' | 'neo4j 2025';
+
+export async function saveDefaultConnection(
+  opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
+): Promise<void> {
   const { scheme, host, port, user, database, password } =
-    getNeo4jConfiguration();
+    opts.version === 'neo4j 2025'
+      ? getNeo4j2025Configuration()
+      : getNeo4j5Configuration();
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
+
   await vscode.commands.executeCommand(
     CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
     {
-      key: defaultConnectionKey,
+      key: key,
+      name: opts.version,
       scheme: scheme,
       host: host,
       port: port,
@@ -25,20 +38,39 @@ export async function saveDefaultConnection(): Promise<void> {
   );
 }
 
-export async function connectDefault(): Promise<void> {
+export async function connectDefault(
+  opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
+): Promise<void> {
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
+
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.CONNECT_COMMAND, {
-    key: defaultConnectionKey,
+    key: key,
   });
 }
 
-export async function disconnectDefault(): Promise<void> {
+export async function disconnectDefault(
+  opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
+): Promise<void> {
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
+
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.DISCONNECT_COMMAND, {
-    key: defaultConnectionKey,
+    key: key,
   });
 }
 
-export async function createTestDatabase(): Promise<void> {
-  const { scheme, host, port, user, password } = getNeo4jConfiguration();
+export async function createTestDatabase(
+  opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
+): Promise<void> {
+  const { scheme, host, port, user, password } =
+    opts.version === 'neo4j 2025'
+      ? getNeo4j2025Configuration()
+      : getNeo4j5Configuration();
 
   const driver = neo4j.driver(
     `${scheme}://${host}:${port}`,

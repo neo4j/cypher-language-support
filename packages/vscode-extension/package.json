@@ -38,6 +38,11 @@
   "contributes": {
     "commands": [
       {
+        "command": "neo4j.switchLinter",
+        "category": "Neo4j",
+        "title": "Pick linter"
+      },
+      {
         "command": "neo4j.editConnection",
         "category": "Neo4j",
         "title": "Edit connection",
@@ -154,6 +159,10 @@
         }
       ],
       "commandPalette": [
+        {
+          "command": "neo4j.switchLinter",
+          "when": "neo4j:useVersionedLinters"
+        },
         {
           "command": "neo4j.deleteConnection",
           "when": "false"
@@ -436,6 +445,16 @@
           ],
           "default": true,
           "description": "Enable linting errors for Cypher queries"
+        },
+        "neo4j.features.useVersionedLinters": {
+          "scope": "window",
+          "type": "boolean",
+          "enum": [
+            true,
+            false
+          ],
+          "default": false,
+          "description": "Enable neo4j version specifc linting"
         }
       }
     },

@@ -22,14 +22,19 @@ let pool = workerpool.pool(defaultWorkerPath, {
   workerTerminateTimeout: 2000,
 });
 export let workerPath = defaultWorkerPath;
+let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
 
 /**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
-export async function setLintWorker(lintWorkerPath: string | undefined) {
+export async function setLintWorker(
+  lintWorkerPath: string | undefined,
+  linter: string | undefined,
+) {
   lintWorkerPath = lintWorkerPath ? lintWorkerPath : defaultWorkerPath;
   if (lintWorkerPath !== workerPath) {
     await cleanupWorkers();
     workerPath = lintWorkerPath;
+    linterVersion = linter;
     pool = workerpool.pool(workerPath, {
       minWorkers: 2,
       workerTerminateTimeout: 2000,
@@ -58,7 +63,7 @@ async function rawLintDocument(
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
     const fixedDbSchema = versionedLinters
-      ? convertDbSchema(dbSchema, neo4j)
+      ? convertDbSchema(dbSchema, linterVersion)
       : dbSchema;
     lastSemanticJob = proxyWorker.lintCypherQuery(
       query,

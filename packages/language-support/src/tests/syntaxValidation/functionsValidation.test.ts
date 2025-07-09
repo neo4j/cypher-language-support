@@ -1,20 +1,8 @@
 import { DiagnosticTag } from 'vscode-languageserver-types';
-import { _internalFeatureFlags } from '../../featureFlags';
 import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Functions semantic validation spec', () => {
-  let isCypher25: boolean;
-
-  beforeAll(() => {
-    isCypher25 = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.cypher25 = isCypher25;
-  });
-
   test('Syntax validation warns on deprecated function when database can be contacted and deprecated by is not present', () => {
     const query = `RETURN id()`;
     expect(

@@ -3,17 +3,6 @@ import { testData } from '../testData';
 import { getDiagnosticsForQuery } from './helpers';
 
 describe('Semantic validation spec', () => {
-  let isCypher25: boolean;
-
-  beforeAll(() => {
-    isCypher25 = _internalFeatureFlags.cypher25;
-    _internalFeatureFlags.cypher25 = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.cypher25 = isCypher25;
-  });
-
   test('SyntaxChecker-exceptions work', () => {
     const query = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25000';
     const diagnostics = getDiagnosticsForQuery({ query });
