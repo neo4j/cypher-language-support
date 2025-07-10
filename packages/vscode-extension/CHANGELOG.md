@@ -1,5 +1,8 @@
 # neo4j-for-vscode
 
+## 1.13.0
+- Updates grammar and semantic analysis
+
 ## 1.12.0
 
 - Adds improved results pannel with visualizations
