@@ -198,3 +198,7 @@ test('rerender with prior external update should not cancel onChange', async () 
   expect(getEditorValue()).toBe('internal update');
   expect(value).toBe('internal update');
 });
+
+test('setValueAndFocus should handle CRLF newline characters', () => {
+  expect(() => ref.current.setValueAndFocus('new value\r\nnew line')).not.toThrow();
+});
