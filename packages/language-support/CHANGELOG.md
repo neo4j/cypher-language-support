@@ -1,5 +1,18 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.22
+
+### Minor Changes
+
+- ed65ef3: Fixes handling of negative positions and syntaxchecker-exceptions
+
+### Patch Changes
+
+- 7538cfd: Wires the symbol table into the language support
+- 039d1c5: Makes the semantic analysis work with partial queries
+- 1ef063e: Updates grammar and semantic analysis to version 2025.07
+- a38255f: Updates grammar and semantic analysis to version 2025.06
+
 ## 2.0.0-next.21
 
 ### Minor Changes

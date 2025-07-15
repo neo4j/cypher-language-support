@@ -1,5 +1,20 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.25
+
+### Patch Changes
+
+- d99368c: Ensures CRLF newlines are handled when setting editor value
+- Updated dependencies [ed65ef3]
+- Updated dependencies [7538cfd]
+- Updated dependencies [c1fa91f]
+- Updated dependencies [039d1c5]
+- Updated dependencies [1ef063e]
+- Updated dependencies [a38255f]
+- Updated dependencies [c4f27c9]
+  - @neo4j-cypher/language-support@2.0.0-next.22
+  - @neo4j-cypher/lint-worker@0.1.0-next.0
+
 ## 2.0.0-next.24
 
 ### Patch Changes
