@@ -176,6 +176,16 @@ export interface CypherEditorProps {
    * @default false
    */
   moveFocusOnTab?: boolean;
+
+  /**
+   * Whether the editor should be resizable.
+   * 
+   * true will initialize the editor with the resizable editor extension, 
+   * enabling the editor to be resized dynamically.
+   * 
+   * @default false
+   */
+  resizeable?: boolean;
 }
 
 const format = (view: EditorView): void => {
@@ -350,6 +360,7 @@ export class CypherEditor extends Component<
     lineNumbers: true,
     newLineOnEnter: false,
     moveFocusOnTab: false,
+    resizeable: false,
   };
 
   private debouncedOnChange = this.props.onChange
