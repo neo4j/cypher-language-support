@@ -1,5 +1,27 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.23
+
+### Minor Changes
+
+- ed65ef3: Fixes handling of negative positions and syntaxchecker-exceptions
+- c4f27c9: Adds support for server-versioned lint-workers
+
+### Patch Changes
+
+- c1fa91f: Adds support for manual linter switching
+- Updated dependencies [ed65ef3]
+- Updated dependencies [7538cfd]
+- Updated dependencies [c4f27c9]
+- Updated dependencies [c1fa91f]
+- Updated dependencies [039d1c5]
+- Updated dependencies [1ef063e]
+- Updated dependencies [a38255f]
+- Updated dependencies [c4f27c9]
+  - @neo4j-cypher/language-support@2.0.0-next.22
+  - @neo4j-cypher/query-tools@2.0.0-next.22
+  - @neo4j-cypher/lint-worker@0.1.0-next.0
+
 ## 2.0.0-next.22
 
 ### Patch Changes
