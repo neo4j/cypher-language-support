@@ -181,7 +181,7 @@ export interface CypherEditorProps {
 const format = (view: EditorView): void => {
   try {
     const doc = view.state.doc.toString();
-    const { formattedQuery, newCursorPos } = formatQuery(doc, {cursorPosition: view.state.selection.main.anchor});
+    const { formattedQuery, newCursorPos } = formatQuery(doc, { cursorPosition: view.state.selection.main.anchor });
     view.dispatch({
       changes: {
         from: 0,
@@ -323,13 +323,17 @@ export class CypherEditor extends Component<
    */
   setValueAndFocus(value = '') {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
+    // Normalize line endings to LF that CM expects.
+    // Prevents issues with inserted values that contain CRLF line endings.
+    // https://codemirror.net/docs/ref/?utm_source=chatgpt.com#state.EditorState^lineSeparator
+    const normalizedValue = value.replace(/\r\n/g, '\n');
     this.editorView.current.dispatch({
       changes: {
         from: 0,
         to: currentCmValue.length,
-        insert: value,
+        insert: normalizedValue,
       },
-      selection: { anchor: value.length, head: value.length },
+      selection: { anchor: normalizedValue.length, head: normalizedValue.length },
     });
     this.editorView.current?.focus();
   }
@@ -350,11 +354,11 @@ export class CypherEditor extends Component<
 
   private debouncedOnChange = this.props.onChange
     ? debounce(
-        ((value, viewUpdate) => {
-          this.props.onChange(value, viewUpdate);
-        }) satisfies CypherEditorProps['onChange'],
-        DEBOUNCE_TIME,
-      )
+      ((value, viewUpdate) => {
+        this.props.onChange(value, viewUpdate);
+      }) satisfies CypherEditorProps['onChange'],
+      DEBOUNCE_TIME,
+    )
     : undefined;
 
   componentDidMount(): void {
@@ -394,20 +398,20 @@ export class CypherEditor extends Component<
 
     const changeListener = this.debouncedOnChange
       ? [
-          EditorView.updateListener.of((upt: ViewUpdate) => {
-            const wasUserEdit = !upt.transactions.some((tr) =>
-              tr.annotation(ExternalEdit),
-            );
+        EditorView.updateListener.of((upt: ViewUpdate) => {
+          const wasUserEdit = !upt.transactions.some((tr) =>
+            tr.annotation(ExternalEdit),
+          );
 
-            if (upt.docChanged && wasUserEdit) {
-              const doc = upt.state.doc;
-              const value = doc.toString();
-              this.debouncedOnChange(value, upt);
-            }
-          }),
-        ]
+          if (upt.docChanged && wasUserEdit) {
+            const doc = upt.state.doc;
+            const value = doc.toString();
+            this.debouncedOnChange(value, upt);
+          }
+        }),
+      ]
       : [];
-    
+
     this.editorState.current = EditorState.create({
       extensions: [
         keyBindingCompartment.of(
@@ -441,8 +445,8 @@ export class CypherEditor extends Component<
         ),
         this.props.ariaLabel
           ? EditorView.contentAttributes.of({
-              'aria-label': this.props.ariaLabel,
-            })
+            'aria-label': this.props.ariaLabel,
+          })
           : [],
       ],
       doc: this.props.value,
@@ -490,7 +494,7 @@ export class CypherEditor extends Component<
     const didChangeTheme =
       prevProps.theme !== this.props.theme ||
       prevProps.overrideThemeBackgroundColor !==
-        this.props.overrideThemeBackgroundColor;
+      this.props.overrideThemeBackgroundColor;
 
     if (didChangeTheme) {
       this.editorView.current.dispatch({
