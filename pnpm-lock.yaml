@@ -142,9 +142,9 @@ importers:
       languageSupport-next.13:
         specifier: npm:@neo4j-cypher/language-support@2.0.0-next.13
         version: '@neo4j-cypher/language-support@2.0.0-next.13'
-      languageSupport-next.17.5:
-        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.17.5
-        version: '@neo4j-cypher/language-support@2.0.0-next.17.5'
+      languageSupport-next.20:
+        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.20
+        version: '@neo4j-cypher/language-support@2.0.0-next.20'
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -1410,8 +1410,8 @@ packages:
     resolution: {integrity: sha512-csi1nmY3PfEJEpGrxALmSi6LU8fewgTCMRHYk5yGWT5IFUh2q/b2Q3XqAIblbgAkRoggzkA/9dRoiGq76Ug6eA==}
     engines: {node: '>=18.18.2'}
 
-  '@neo4j-cypher/language-support@2.0.0-next.17.5':
-    resolution: {integrity: sha512-jH2WNq+MQsB1E40iJoCAwB31cfv4h23EiUZBfOSZRM3xQ3Ol3fnQD6+XlRar0rdajOl/i9SjqRBGNvl17/Uf7w==}
+  '@neo4j-cypher/language-support@2.0.0-next.20':
+    resolution: {integrity: sha512-/NrngRulU4H7pS3Zj4s5mtO6hex/dwgS87xR8SKmFgHKck3rYERh9qDs4dcExa63Zys9GElHr22elZ8ScZ/UKQ==}
     engines: {node: '>=18.18.2'}
 
   '@neo4j-devtools/word-color@0.0.8':
@@ -4645,10 +4645,6 @@ packages:
   he@1.2.0:
     resolution: {integrity: sha512-F/1DnUGPopORZi0ni+CvrCgHQ5FyEAHRLSApuYWMmrbSwoN2Mn/7k+Gl38gJnR7yyDZk6WLXwiGod1JOWNDKGw==}
     hasBin: true
-
-  heap-js@2.6.0:
-    resolution: {integrity: sha512-trFMIq3PATiFRiQmNNeHtsrkwYRByIXUbYNbotiY9RLVfMkdwZdd2eQ38mGt7BRiCKBaj1DyBAIHmm7mmXPuuw==}
-    engines: {node: '>=10.0.0'}
 
   highlight.js@10.7.3:
     resolution: {integrity: sha512-tzcUFauisWKNHaRkN4Wjl/ZA07gENAjFl3J/c480dprkGTg5EQstgaNFqBfUqCq54kZRIEcreTsAgF/m2quD7A==}
@@ -8537,12 +8533,10 @@ snapshots:
       fastest-levenshtein: 1.0.16
       vscode-languageserver-types: 3.17.5
 
-  '@neo4j-cypher/language-support@2.0.0-next.17.5':
+  '@neo4j-cypher/language-support@2.0.0-next.20':
     dependencies:
       antlr4: 4.13.2
-      antlr4-c3: 3.4.4
       fastest-levenshtein: 1.0.16
-      heap-js: 2.6.0
       vscode-languageserver-types: 3.17.5
 
   '@neo4j-devtools/word-color@0.0.8':
@@ -12929,8 +12923,6 @@ snapshots:
       space-separated-tokens: 1.1.5
 
   he@1.2.0: {}
-
-  heap-js@2.6.0: {}
 
   highlight.js@10.7.3: {}
 
