@@ -139,12 +139,12 @@ importers:
       axios:
         specifier: ^1.9.0
         version: 1.9.0
-      languageSupport-next.12:
-        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.12
-        version: '@neo4j-cypher/language-support@2.0.0-next.12'
       languageSupport-next.13:
         specifier: npm:@neo4j-cypher/language-support@2.0.0-next.13
         version: '@neo4j-cypher/language-support@2.0.0-next.13'
+      languageSupport-next.15:
+        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.15
+        version: '@neo4j-cypher/language-support@2.0.0-next.15'
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -1406,12 +1406,12 @@ packages:
   '@neo4j-bloom/dagre@0.8.14':
     resolution: {integrity: sha512-FW1hbtbEr1FmJzGdbLxGOcn2SYZPhM1kGCs8RlMkqrjcXpcueTmEDZzGhZJx7KLbT15VSzEM6/sK4CaVsXdhkQ==}
 
-  '@neo4j-cypher/language-support@2.0.0-next.12':
-    resolution: {integrity: sha512-4F0fT1r7WFowGbszCAe4tkjoj6avCkK/2tlIbCEiZVJ8fHic13nkgijfSrb/UD9g8WjjcOl4LmvpITk+yVnPiw==}
-    engines: {node: '>=18.18.2'}
-
   '@neo4j-cypher/language-support@2.0.0-next.13':
     resolution: {integrity: sha512-csi1nmY3PfEJEpGrxALmSi6LU8fewgTCMRHYk5yGWT5IFUh2q/b2Q3XqAIblbgAkRoggzkA/9dRoiGq76Ug6eA==}
+    engines: {node: '>=18.18.2'}
+
+  '@neo4j-cypher/language-support@2.0.0-next.15':
+    resolution: {integrity: sha512-u9X4tnbaI5SwWyITzXFTU4VFg0XDwf8SXVRV4z871G/VEV91fOqotzz/attJdHGt3TG8vK0evTl4Fv2Bb7NMQA==}
     engines: {node: '>=18.18.2'}
 
   '@neo4j-devtools/word-color@0.0.8':
@@ -8526,14 +8526,14 @@ snapshots:
       graphlib: 2.1.8
       lodash: 4.17.21
 
-  '@neo4j-cypher/language-support@2.0.0-next.12':
+  '@neo4j-cypher/language-support@2.0.0-next.13':
     dependencies:
       antlr4: 4.13.2
       antlr4-c3: 3.4.4
       fastest-levenshtein: 1.0.16
       vscode-languageserver-types: 3.17.5
 
-  '@neo4j-cypher/language-support@2.0.0-next.13':
+  '@neo4j-cypher/language-support@2.0.0-next.15':
     dependencies:
       antlr4: 4.13.2
       antlr4-c3: 3.4.4
