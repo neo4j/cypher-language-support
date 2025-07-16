@@ -27,7 +27,23 @@ statement
    ;
 
 regularQuery
+   : union | when
+   ;
+
+union
    : singleQuery (UNION (ALL | DISTINCT)? singleQuery)*
+   ;
+
+when
+   : whenBranch+ elseBranch?
+   ;
+
+whenBranch
+   : WHEN expression THEN singleQuery
+   ;
+
+elseBranch
+   : ELSE singleQuery
    ;
 
 singleQuery
@@ -47,7 +63,9 @@ clause
    | matchClause
    | mergeClause
    | withClause
+   | filterClause
    | unwindClause
+   | letClause
    | callClause
    | subqueryClause
    | loadCSVClause
@@ -182,8 +200,20 @@ mergeAction
    : ON (MATCH | CREATE) setClause
    ;
 
+filterClause
+   : FILTER WHERE? expression
+   ;
+
 unwindClause
    : UNWIND expression AS variable
+   ;
+
+letClause
+   : LET letItem (COMMA letItem)*
+   ;
+
+letItem
+   : variable EQ expression
    ;
 
 callClause
@@ -227,7 +257,12 @@ subqueryInTransactionsBatchParameters
    ;
 
 subqueryInTransactionsErrorParameters
-   : ON ERROR (CONTINUE | BREAK | FAIL)
+   : ON ERROR RETRY (subqueryInTransactionsRetryParameters)? (THEN (CONTINUE | BREAK | FAIL))?
+   | ON ERROR (CONTINUE | BREAK | FAIL)
+   ;
+
+subqueryInTransactionsRetryParameters
+   : FOR? expression secondsToken
    ;
 
 subqueryInTransactionsReportParameters
@@ -1346,7 +1381,7 @@ showPrivilege
 
 setPrivilege
    : SET (
-      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE ACCESS | DEFAULT LANGUAGE) ON DBMS
+      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE (ACCESS | DEFAULT LANGUAGE)) ON DBMS
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
       | AUTH ON DBMS
@@ -1464,7 +1499,7 @@ globPart
    ;
 
 qualifiedGraphPrivilegesWithProperty
-   : (TRAVERSE | (READ | MATCH) propertiesResource) ON graphScope graphQualifier (LPAREN TIMES RPAREN)?
+   : (TRAVERSE | (READ | MATCH) propertiesResource) ON graphScope graphQualifier
    ;
 
 qualifiedGraphPrivileges
@@ -1488,7 +1523,11 @@ nonEmptyStringList
 graphQualifier
    : (
       graphQualifierToken (TIMES | nonEmptyStringList)
-      | FOR LPAREN variable? (COLON symbolicNameString (BAR symbolicNameString)*)? (RPAREN WHERE expression | (WHERE expression | map) RPAREN)
+      | FOR (
+        LPAREN variable? (COLON symbolicNameString (BAR symbolicNameString)*)? (RPAREN WHERE expression | (WHERE expression | map) RPAREN)
+        | LPAREN RPAREN leftArrow? arrowLine LBRACKET variable? (COLON symbolicNameString (BAR symbolicNameString)*)?
+            (RBRACKET arrowLine rightArrow? LPAREN RPAREN WHERE expression | (WHERE expression | map) RBRACKET arrowLine rightArrow? LPAREN RPAREN)
+      )
    )?
    ;
 
@@ -1526,11 +1565,11 @@ graphScope
 // Database commands
 
 createCompositeDatabase
-   : COMPOSITE DATABASE databaseName (IF NOT EXISTS)? defaultLanguageSpecification? commandOptions? waitClause?
+   : COMPOSITE DATABASE databaseName (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? commandOptions? waitClause?
    ;
 
 createDatabase
-   : DATABASE databaseName (IF NOT EXISTS)? defaultLanguageSpecification? (TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
+   : DATABASE databaseName (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? (SET? TOPOLOGY (primaryTopology | secondaryTopology)+)? commandOptions? waitClause?
    ;
 
 primaryTopology
@@ -1617,7 +1656,7 @@ databaseName
 // Alias commands
 
 createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
    ;
 
 dropAlias
@@ -1631,6 +1670,7 @@ alterAlias
       | alterAliasPassword
       | alterAliasDriver
       | alterAliasProperties
+      | defaultLanguageSpecification
    )+
    ;
 
@@ -1846,6 +1886,7 @@ unescapedSymbolicNameString_
    | FAIL
    | FALSE
    | FIELDTERMINATOR
+   | FILTER
    | FINISH
    | FLOAT
    | FOREACH
@@ -1880,6 +1921,7 @@ unescapedSymbolicNameString_
    | LABELS
    | LANGUAGE
    | LEADING
+   | LET
    | LIMITROWS
    | LIST
    | LOAD
@@ -1948,6 +1990,7 @@ unescapedSymbolicNameString_
    | REQUIRE
    | REQUIRED
    | RESTRICT
+   | RETRY
    | RETURN
    | REVOKE
    | ROLE

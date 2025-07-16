@@ -483,6 +483,10 @@ FIELDTERMINATOR
    : F I E L D T E R M I N A T O R
    ;
 
+FILTER
+   : F I L T E R
+   ;
+
 FINISH
    : F I N I S H
    ;
@@ -645,6 +649,10 @@ LE
 
 LEADING
    : L E A D I N G
+   ;
+
+LET
+   : L E T
    ;
 
 LIMITROWS
@@ -969,6 +977,10 @@ REQUIRED
 
 RESTRICT
    : R E S T R I C T
+   ;
+
+RETRY
+   : R E T R Y
    ;
 
 RETURN
