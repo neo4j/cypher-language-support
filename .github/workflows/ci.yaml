@@ -23,6 +23,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: ./.github/actions/setup-and-build
+      - name: Check the TextMate grammar is up to date
+        run: |
+          (git diff-index --name-status HEAD | grep "cypher.json" && (echo "Run pnpm build and commit an up to date cypher.json file please" && exit 1)) || echo "\n\nTextMate grammar is up to date"
 
   lint-and-format:
     name: Run eslint and check formatting
