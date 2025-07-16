@@ -16,7 +16,7 @@ export type Neo4jSettings = {
   trace: {
     server: 'off' | 'messages' | 'verbose';
   };
-  features: { linting: boolean; useVersionedLinters?: boolean };
+  features: { linting: boolean };
 };
 
 export type Neo4jParameters = Record<string, unknown>;

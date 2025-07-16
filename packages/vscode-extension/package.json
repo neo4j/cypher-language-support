@@ -160,8 +160,7 @@
       ],
       "commandPalette": [
         {
-          "command": "neo4j.switchLinter",
-          "when": "neo4j:useVersionedLinters"
+          "command": "neo4j.switchLinter"
         },
         {
           "command": "neo4j.deleteConnection",
@@ -445,16 +444,6 @@
           ],
           "default": true,
           "description": "Enable linting errors for Cypher queries"
-        },
-        "neo4j.features.useVersionedLinters": {
-          "scope": "window",
-          "type": "boolean",
-          "enum": [
-            true,
-            false
-          ],
-          "default": false,
-          "description": "Enable neo4j version specifc linting"
         }
       }
     },

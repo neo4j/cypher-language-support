@@ -41,11 +41,16 @@ export function convertDbSchema(
 }
 
 export function serverVersionToLinter(serverVersion: string) {
-  let candidate: string = 'Latest';
-  if (compareMajorMinorVersions(serverVersion, oldLinter) <= 0) {
-    candidate = oldLinter;
-  }
-  return candidate;
+  // Extract only the major and minor
+  const versionRegex = /^\d+\.\d+/;
+  const linterVersion = serverVersion.match(versionRegex)?.[0];
+
+  if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
+    return '5.23';
+  } else
+    return {
+      linterVersion,
+    };
 }
 
 export function linterFileToServerVersion(fileName: string) {

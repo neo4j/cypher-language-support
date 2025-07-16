@@ -140,15 +140,6 @@ export async function toggleLinting(value: boolean) {
   await config.update('linting', value, vscode.ConfigurationTarget.Global);
 }
 
-export async function toggleVersionedLinters(value: boolean) {
-  const config = vscode.workspace.getConfiguration('neo4j.features');
-  await config.update(
-    'useVersionedLinters',
-    value,
-    vscode.ConfigurationTarget.Global,
-  );
-}
-
 export function getExtensionStoragePath(): string {
   const extensionId = 'neo4j-extensions.neo4j-for-vscode';
   const platform = os.platform();

@@ -1,4 +1,4 @@
-import { commands, Disposable, window, workspace } from 'vscode';
+import { commands, Disposable, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
@@ -42,21 +42,18 @@ export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
-  const config = workspace.getConfiguration('neo4j.features');
-  const versionedLintersEnabled = config.get('useVersionedLinters', false);
-  if (versionedLintersEnabled) {
-    linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
-    linterStatusBarItem.text = 'Latest';
-    linterStatusBarItem.tooltip = 'Current Cypher Linter. Click to switch';
-    linterStatusBarItem.show();
-    disposables.push(
-      commands.registerCommand(
-        CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
-        manuallyAdjustLinter,
-      ),
-      linterStatusBarItem,
-    );
-  }
+
+  linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
+  linterStatusBarItem.text = 'Default';
+  linterStatusBarItem.tooltip = 'Current Cypher Linter. Click to switch';
+  linterStatusBarItem.show();
+  disposables.push(
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
+      manuallyAdjustLinter,
+    ),
+    linterStatusBarItem,
+  );
 
   disposables.push(
     window.registerWebviewViewProvider(

@@ -12,7 +12,6 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
-import * as vscode from 'vscode';
 import { dynamicallyAdjustLinter } from './linterSwitching';
 
 export type Scheme =
@@ -422,9 +421,7 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)
     : await sendNotificationToLanguageClient('connectionDisconnected');
 
-  const config = vscode.workspace.getConfiguration('neo4j.features');
-  const versionedLintersEnabled = config.get('useVersionedLinters', false);
-  if (result.success && versionedLintersEnabled) {
+  if (result.success) {
     await dynamicallyAdjustLinter();
   }
 

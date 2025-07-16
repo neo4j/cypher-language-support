@@ -21,7 +21,7 @@ export async function manuallyAdjustLinter(): Promise<void> {
   const existingVersions = fileNames.map((name) =>
     linterFileToServerVersion(name),
   );
-  existingVersions.push('Latest');
+  existingVersions.push('Default');
   const allVersions = new Set(
     existingVersions.concat(npmLinterVersions).filter((v) => v !== undefined),
   );

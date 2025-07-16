@@ -32,7 +32,7 @@ export async function switchWorkerOnLanguageServer(
     lintWorkerPath: linterPath,
     linterVersion: linterVersion,
   });
-  linterStatusBarItem.text = linterVersion ? linterVersion : 'Latest';
+  linterStatusBarItem.text = linterVersion ? linterVersion : 'Default';
 }
 
 export async function getFilesInExtensionStorage(): Promise<string[]> {
@@ -179,7 +179,7 @@ export async function switchToLinter(
   linterVersion: string,
   npmReleases: NpmRelease[],
 ): Promise<void> {
-  if (linterVersion === 'Latest') {
+  if (linterVersion === 'Default') {
     return await switchWorkerOnLanguageServer();
   }
   if (npmReleases.length === 0) {
