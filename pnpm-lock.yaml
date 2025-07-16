@@ -142,9 +142,9 @@ importers:
       languageSupport-next.13:
         specifier: npm:@neo4j-cypher/language-support@2.0.0-next.13
         version: '@neo4j-cypher/language-support@2.0.0-next.13'
-      languageSupport-next.8:
-        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.8
-        version: '@neo4j-cypher/language-support@2.0.0-next.8'
+      languageSupport-next.9:
+        specifier: npm:@neo4j-cypher/language-support@2.0.0-next.9
+        version: '@neo4j-cypher/language-support@2.0.0-next.9'
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -1410,8 +1410,8 @@ packages:
     resolution: {integrity: sha512-csi1nmY3PfEJEpGrxALmSi6LU8fewgTCMRHYk5yGWT5IFUh2q/b2Q3XqAIblbgAkRoggzkA/9dRoiGq76Ug6eA==}
     engines: {node: '>=18.18.2'}
 
-  '@neo4j-cypher/language-support@2.0.0-next.8':
-    resolution: {integrity: sha512-dl4kNU+i8hbMgKSIGWX/Lzeg5vEst9wDPz172OA3XQ3HNGkwlSBxAqauVgA9EUIX+7Ujhgptzz49cZMuAe5KtQ==}
+  '@neo4j-cypher/language-support@2.0.0-next.9':
+    resolution: {integrity: sha512-3P6PvmxYtO9cdpmrkZvUNPjY9d/t8A8st7XO2vWAk8i0BbzYkhK5jFKixMZcoGRgiFYNX5zvreUsGYelxbUlxQ==}
     engines: {node: '>=18.18.2'}
 
   '@neo4j-devtools/word-color@0.0.8':
@@ -8533,7 +8533,7 @@ snapshots:
       fastest-levenshtein: 1.0.16
       vscode-languageserver-types: 3.17.5
 
-  '@neo4j-cypher/language-support@2.0.0-next.8':
+  '@neo4j-cypher/language-support@2.0.0-next.9':
     dependencies:
       antlr4: 4.13.2
       antlr4-c3: 3.4.4
