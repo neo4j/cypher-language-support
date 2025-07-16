@@ -6,7 +6,7 @@ import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
   _internalFeatureFlags,
-} from 'languageSupport-next.21.5';
+} from 'languageSupport-next.22';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
