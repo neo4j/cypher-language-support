@@ -18,7 +18,7 @@
     "cypher",
     "lint worker"
   ],
-  "version": "1.3.0",
+  "version": "1.4.0",
   "repository": {
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
@@ -34,7 +34,7 @@
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
     "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
-    "languageSupport-next.15": "npm:@neo4j-cypher/language-support@2.0.0-next.15",
+    "languageSupport-next.16": "npm:@neo4j-cypher/language-support@2.0.0-next.16",
     "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-types": "^3.17.3",
     "workerpool": "^9.0.4",
