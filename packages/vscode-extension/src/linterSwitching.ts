@@ -179,29 +179,34 @@ export async function switchToLinter(
   linterVersion: string,
   npmReleases: NpmRelease[],
 ): Promise<void> {
-  if (linterVersion === 'Default') {
-    return await switchWorkerOnLanguageServer();
-  }
-  if (npmReleases.length === 0) {
-    await switchToLocalLinter(linterVersion);
-  } else {
-    const storageUri = await getStorageUri();
-    const { expectedFileName, isExpectedLinterDownloaded } =
-      await expectedLinterExists(linterVersion, npmReleases, storageUri);
-    if (isExpectedLinterDownloaded) {
-      await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+  try {
+    if (linterVersion === 'Default') {
+      return await switchWorkerOnLanguageServer();
+    }
+    if (npmReleases.length === 0) {
+      await switchToLocalLinter(linterVersion);
     } else {
-      const success = await downloadLintWorker(
-        linterVersion,
-        storageUri,
-        npmReleases,
-      );
-      if (success) {
+      const storageUri = await getStorageUri();
+      const { expectedFileName, isExpectedLinterDownloaded } =
+        await expectedLinterExists(linterVersion, npmReleases, storageUri);
+      if (isExpectedLinterDownloaded) {
         await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        await switchToLocalLinter(linterVersion);
+        const success = await downloadLintWorker(
+          linterVersion,
+          storageUri,
+          npmReleases,
+        );
+        if (success) {
+          await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+        } else {
+          await switchToLocalLinter(linterVersion);
+        }
       }
     }
+  } catch (e) {
+    // In case of error use default linter (i.e. the one included with the language server)
+    await switchWorkerOnLanguageServer();
   }
 }
 
