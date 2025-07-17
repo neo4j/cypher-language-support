@@ -47,10 +47,11 @@ export function serverVersionToLinter(serverVersion: string) {
 
   if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
     return '5.23';
-  } else
-    return {
-      linterVersion,
-    };
+  } else if (linterVersion) {
+    return linterVersion;
+  } else {
+    return 'Default';
+  }
 }
 
 export function linterFileToServerVersion(fileName: string) {
