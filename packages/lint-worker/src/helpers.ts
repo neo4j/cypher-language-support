@@ -43,6 +43,7 @@ export function serverVersionToLinter(serverVersion: string) {
   const versionRegex = /^\d+\.\d+/;
   const linterVersion = serverVersion.match(versionRegex)?.[0];
 
+  // If we have a version lower than 5.23, use that linter
   if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
     return '5.23';
     // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
@@ -51,9 +52,9 @@ export function serverVersionToLinter(serverVersion: string) {
     return '2025.03';
   } else if (linterVersion) {
     return linterVersion;
-  } else {
-    return 'Default';
   }
+
+  return 'Default';
 }
 
 export function linterFileToServerVersion(fileName: string) {
