@@ -13,14 +13,17 @@ export function compareMajorMinorVersions(
 ): integer | undefined {
   const semVer1: semver.SemVer | null = semver.coerce(version1, {
     includePrerelease: false,
+    loose: true,
   });
   const semVer2: semver.SemVer | null = semver.coerce(version2, {
     includePrerelease: false,
+    loose: true,
   });
   if (semVer1 && semVer2) {
     semVer1.patch = 0;
     semVer2.patch = 0;
-    return semver.compare(semVer1, semVer2);
+    const result = semver.compare(semVer1, semVer2, true);
+    return result;
   }
   return undefined;
 }

@@ -32,7 +32,7 @@ export async function switchWorkerOnLanguageServer(
     lintWorkerPath: linterPath,
     linterVersion: linterVersion,
   });
-  linterStatusBarItem.text = linterVersion ? linterVersion : 'Latest';
+  linterStatusBarItem.text = linterVersion ? linterVersion : 'Default';
 }
 
 export async function getFilesInExtensionStorage(): Promise<string[]> {
@@ -147,14 +147,8 @@ export async function dynamicallyAdjustLinter(): Promise<void> {
     const serverVersion = poller.connection?.serverVersion;
 
     if (serverVersion) {
-      //removes zero padding on month of new versions
-      const sanitizedServerVersion = serverVersion.replace(
-        /(\.0+)(?=\d)/g,
-        '.',
-      );
-
       //since not every release has a linter release
-      const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+      const linterVersion = serverVersionToLinter(serverVersion);
       const npmReleases = await getTaggedRegistryVersions();
       await switchToLinter(linterVersion, npmReleases);
     }
@@ -179,29 +173,34 @@ export async function switchToLinter(
   linterVersion: string,
   npmReleases: NpmRelease[],
 ): Promise<void> {
-  if (linterVersion === 'Latest') {
-    return await switchWorkerOnLanguageServer();
-  }
-  if (npmReleases.length === 0) {
-    await switchToLocalLinter(linterVersion);
-  } else {
-    const storageUri = await getStorageUri();
-    const { expectedFileName, isExpectedLinterDownloaded } =
-      await expectedLinterExists(linterVersion, npmReleases, storageUri);
-    if (isExpectedLinterDownloaded) {
-      await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+  try {
+    if (linterVersion === 'Default') {
+      return await switchWorkerOnLanguageServer();
+    }
+    if (npmReleases.length === 0) {
+      await switchToLocalLinter(linterVersion);
     } else {
-      const success = await downloadLintWorker(
-        linterVersion,
-        storageUri,
-        npmReleases,
-      );
-      if (success) {
+      const storageUri = await getStorageUri();
+      const { expectedFileName, isExpectedLinterDownloaded } =
+        await expectedLinterExists(linterVersion, npmReleases, storageUri);
+      if (isExpectedLinterDownloaded) {
         await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        await switchToLocalLinter(linterVersion);
+        const success = await downloadLintWorker(
+          linterVersion,
+          storageUri,
+          npmReleases,
+        );
+        if (success) {
+          await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+        } else {
+          await switchToLocalLinter(linterVersion);
+        }
       }
     }
+  } catch (e) {
+    // In case of error use default linter (i.e. the one included with the language server)
+    await switchWorkerOnLanguageServer();
   }
 }
 

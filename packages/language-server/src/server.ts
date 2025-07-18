@@ -43,7 +43,6 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
         });
       },
       neo4jSchemaPoller,
-      settings?.features?.useVersionedLinters,
     );
   } else {
     void connection.sendDiagnostics({

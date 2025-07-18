@@ -7,8 +7,6 @@ import {
 import axios from 'axios';
 import { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 
-const oldLinter = '5.20.0';
-
 // for older versions of the language support, the dbschema was not the same,
 // meaning old linters need conversion of the new schema
 export function convertDbSchema(
@@ -28,7 +26,7 @@ export function convertDbSchema(
     oldProcedures = originalSchema.procedures['CYPHER 5'];
   }
 
-  if (compareMajorMinorVersions(linterVersion, oldLinter) <= 0) {
+  if (compareMajorMinorVersions(linterVersion, '2025.01') < 0) {
     const dbSchemaOld: DbSchemaV1 = {
       ...originalSchema,
       functions: oldFunctions,
@@ -41,11 +39,22 @@ export function convertDbSchema(
 }
 
 export function serverVersionToLinter(serverVersion: string) {
-  let candidate: string = 'Latest';
-  if (compareMajorMinorVersions(serverVersion, oldLinter) <= 0) {
-    candidate = oldLinter;
+  // Extract only the major and minor
+  const versionRegex = /^\d+\.\d+/;
+  const linterVersion = serverVersion.match(versionRegex)?.[0];
+
+  // If we have a version lower than 5.23, use that linter
+  if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
+    return '5.23';
+    // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
+    // so we have to assume we are on the most modern database from all those
+  } else if (compareMajorMinorVersions(serverVersion, '5.27') === 0) {
+    return '2025.03';
+  } else if (linterVersion) {
+    return linterVersion;
   }
-  return candidate;
+
+  return 'Default';
 }
 
 export function linterFileToServerVersion(fileName: string) {

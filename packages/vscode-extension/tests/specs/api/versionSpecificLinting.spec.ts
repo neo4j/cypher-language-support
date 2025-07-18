@@ -3,22 +3,12 @@ import {
   getDocumentUri,
   getExtensionStoragePath,
   openDocument,
-  toggleVersionedLinters,
 } from '../../helpers';
 import { connectDefault } from '../../suiteSetup';
 import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
-import { after, before } from 'mocha';
 
 suite('Neo4j version specific linting spec', () => {
-  before(async () => {
-    await toggleVersionedLinters(true);
-  });
-
-  after(async () => {
-    await toggleVersionedLinters(false);
-  });
-
   async function testNeo4jSpecificLinting() {
     const textFile = 'subquery-call.cypher';
     const docUri = getDocumentUri(textFile);
