@@ -207,11 +207,23 @@ export class Neo4jSchemaPoller {
 
     const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
       getVersion();
-    const { serverVersion } = await this.driver.executeQuery(
+    let { serverVersion } = await this.driver.executeQuery(
       serverVersionQuery,
       {},
       serverVersionQueryConfig,
     );
+
+    // If the server version is 5.27.0 we have to use the agent to
+    // really know whether we are in 2025.01, 2025.02 or 2025.03
+    if (serverVersion?.startsWith('5.27.0')) {
+      const agent = summary.server.agent;
+      if (agent) {
+        const matchedVersion = agent.match(/\d+\.\d+\.\d+/);
+        if (matchedVersion) {
+          serverVersion = matchedVersion[0];
+        }
+      }
+    }
 
     this.connection.serverVersion = serverVersion;
 

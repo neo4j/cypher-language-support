@@ -45,8 +45,10 @@ export function serverVersionToLinter(serverVersion: string) {
 
   if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
     return '5.23';
+    // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
+    // so we have to assume we are on the most modern database from all those
   } else if (compareMajorMinorVersions(serverVersion, '5.27') === 0) {
-    return '2025.01';
+    return '2025.03';
   } else if (linterVersion) {
     return linterVersion;
   } else {

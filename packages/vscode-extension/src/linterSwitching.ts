@@ -147,14 +147,8 @@ export async function dynamicallyAdjustLinter(): Promise<void> {
     const serverVersion = poller.connection?.serverVersion;
 
     if (serverVersion) {
-      //removes zero padding on month of new versions
-      const sanitizedServerVersion = serverVersion.replace(
-        /(\.0+)(?=\d)/g,
-        '.',
-      );
-
       //since not every release has a linter release
-      const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+      const linterVersion = serverVersionToLinter(serverVersion);
       const npmReleases = await getTaggedRegistryVersions();
       await switchToLinter(linterVersion, npmReleases);
     }
