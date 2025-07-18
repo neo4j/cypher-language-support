@@ -14,7 +14,7 @@
       "name": "VSCode Playground",
       "runtimeExecutable": "${execPath}",
       "env": {
-        "watch": "true"
+        "watch": "false"
       },
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
@@ -23,7 +23,8 @@
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",
         "${workspaceRoot}/packages/query-tools/**/*.js",
-        "${workspaceRoot}/packages/language-server/**/*.js"
+        "${workspaceRoot}/packages/language-server/**/*.js",
+        "${workspaceRoot}/packages/lint-worker/**/*.js"
       ],
       "autoAttachChildProcesses": true,
       "sourceMaps": true,

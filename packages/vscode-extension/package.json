@@ -464,7 +464,7 @@
     "bundle-webview-controllers": "esbuild ./src/webviews/controllers/* --bundle --outdir=dist/webviews/ --platform=browser",
     "build": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
     "build:dev": "tsc -b && pnpm gen-textmate && pnpm bundle-extension && pnpm bundle-language-server && pnpm bundle-webview-controllers",
-    "dev": "tsc -b && pnpm gen-textmate && concurrently 'node --experimental-strip-types esbuild-extension.mts' 'pnpm bundle-webview-controllers --watch' ",
+    "dev": "tsc -b && pnpm gen-textmate && node --experimental-strip-types esbuild-extension.mts && pnpm bundle-webview-controllers",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "package": "pnpm vsce package --pre-release --no-dependencies",
     "test:e2e": "DEBUG_VSCODE_TESTS=false && pnpm build:dev && pnpm test:apiAndUnit && pnpm test:webviews",
