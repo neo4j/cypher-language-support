@@ -6,7 +6,7 @@ import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
   _internalFeatureFlags,
-} from 'languageSupport-next.16';
+} from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
@@ -19,7 +19,7 @@ function lintCypherQuery(
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
   //cast to appease git lint check
-  return { diagnostics: _lintCypherQuery(query, dbSchema as DbSchema) };
+  return _lintCypherQuery(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });
