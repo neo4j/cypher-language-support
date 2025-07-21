@@ -7,8 +7,17 @@ import {
 import { connectDefault } from '../../suiteSetup';
 import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
+import { after, before } from 'mocha';
 
 suite('Neo4j version specific linting spec', () => {
+  before(() => {
+    process.env.LINTER_SWITCHING_TESTS = 'true';
+  });
+
+  after(() => {
+    process.env.LINTER_SWITCHING_TESTS = undefined;
+  });
+
   async function testNeo4jSpecificLinting() {
     const textFile = 'subquery-call.cypher';
     const docUri = getDocumentUri(textFile);
