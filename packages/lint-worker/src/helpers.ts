@@ -13,20 +13,20 @@ export function convertDbSchema(
   originalSchema: DbSchemaV2,
   linterVersion: string,
 ): DbSchemaV2 | DbSchemaV1 {
-  let oldFunctions: Record<string, Neo4jFunction> = {};
-  let oldProcedures: Record<string, Neo4jProcedure> = {};
   if (!originalSchema) {
     return originalSchema;
   }
-  if (
-    originalSchema.functions['CYPHER 5'] &&
-    originalSchema.procedures['CYPHER 5']
-  ) {
-    oldFunctions = originalSchema.functions['CYPHER 5'];
-    oldProcedures = originalSchema.procedures['CYPHER 5'];
-  }
 
   if (compareMajorMinorVersions(linterVersion, '2025.01') < 0) {
+    let oldFunctions: Record<string, Neo4jFunction> | undefined = undefined;
+    let oldProcedures: Record<string, Neo4jProcedure> | undefined = undefined;
+    if (originalSchema.functions && originalSchema.functions['CYPHER 5']) {
+      oldFunctions = originalSchema.functions['CYPHER 5'];
+    }
+
+    if (originalSchema.procedures && originalSchema.procedures['CYPHER 5']) {
+      oldProcedures = originalSchema.procedures['CYPHER 5'];
+    }
     const dbSchemaOld: DbSchemaV1 = {
       ...originalSchema,
       functions: oldFunctions,
