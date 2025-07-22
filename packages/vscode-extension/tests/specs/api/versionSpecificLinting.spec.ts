@@ -9,7 +9,7 @@ import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
 import { after, before } from 'mocha';
 
-suite.only('Neo4j version specific linting spec', () => {
+suite('Neo4j version specific linting spec', () => {
   before(async () => {
     process.env.LINTER_SWITCHING_TESTS = 'true';
     // We need to reconnect to neo4j so that the switching
