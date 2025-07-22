@@ -9,6 +9,7 @@ import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
 import { after, before } from 'mocha';
 
+// Note these tests do not seem to work with the VSCode debugger
 suite('Neo4j version specific linting spec', () => {
   before(async () => {
     process.env.LINTER_SWITCHING_TESTS = 'true';

@@ -12,7 +12,7 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
-import { dynamicallyAdjustLinter } from './linterSwitching';
+import { dynamicallyAdjustLinter, switchToLinter } from './linterSwitching';
 
 export type Scheme =
   | 'neo4j'
@@ -426,12 +426,18 @@ async function connectToDatabaseAndNotifyLanguageClient(
   // not an older one (which would not make sense to debug them for example)
   //
   // except for the tests that are specifically about switching the linter
-  if (
-    (!process.env.DEBUG_VSCODE_TESTS ||
-      process.env.LINTER_SWITCHING_TESTS === 'true') &&
-    result.success
-  ) {
-    await dynamicallyAdjustLinter();
+  if (result.success) {
+    if (process.env.DEBUG_VSCODE_TESTS !== undefined) {
+      // tests code
+      if (process.env.LINTER_SWITCHING_TESTS === 'true') {
+        await dynamicallyAdjustLinter();
+      } else {
+        await switchToLinter('Default', []);
+      }
+    } else {
+      // production code
+      await dynamicallyAdjustLinter();
+    }
   }
 
   await saveConnection({
