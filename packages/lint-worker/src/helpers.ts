@@ -38,23 +38,27 @@ export function convertDbSchema(
   }
 }
 
-export function serverVersionToLinter(serverVersion: string) {
+export function serverVersionToLinter(serverVersion: string): {
+  linterVersion: string;
+  notResolved?: boolean;
+  notSupported?: boolean;
+} {
   // Extract only the major and minor
   const versionRegex = /^\d+\.\d+/;
   const linterVersion = serverVersion.match(versionRegex)?.[0];
 
   // If we have a version lower than 5.23, use that linter
-  if (compareMajorMinorVersions(serverVersion, '5.23') <= 0) {
-    return '5.23';
+  if (compareMajorMinorVersions(serverVersion, '5.23') < 0) {
+    return { linterVersion: '5.23', notSupported: true };
     // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
     // so we have to assume we are on the most modern database from all those
   } else if (compareMajorMinorVersions(serverVersion, '5.27') === 0) {
-    return '2025.03';
+    return { linterVersion: '2025.03' };
   } else if (linterVersion) {
-    return linterVersion;
+    return { linterVersion: linterVersion };
   }
 
-  return 'Default';
+  return { linterVersion: 'Default', notResolved: true };
 }
 
 export function linterFileToServerVersion(fileName: string) {

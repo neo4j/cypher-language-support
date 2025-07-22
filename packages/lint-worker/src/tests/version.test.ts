@@ -3,6 +3,7 @@ import { compareMajorMinorVersions } from '../version';
 describe('Version comparison', () => {
   test('Comparing versions for major/minor version', () => {
     expect(compareMajorMinorVersions('5.24.0', '2025.01')).toBe(-1);
+    expect(compareMajorMinorVersions('5.22.0', '5.23')).toBe(-1);
     expect(compareMajorMinorVersions('5.24', '2025.01')).toBe(-1);
     expect(compareMajorMinorVersions('2025.01', '5.24.0')).toBe(1);
     expect(compareMajorMinorVersions('2025.01', '5.24')).toBe(1);

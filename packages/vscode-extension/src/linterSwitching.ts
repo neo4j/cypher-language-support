@@ -83,7 +83,7 @@ export async function downloadLintWorker(
   npmReleases: NpmRelease[],
 ): Promise<boolean> {
   void vscode.window.showInformationMessage(
-    'Downloading linter for your server',
+    `Downloading linter ${linterVersion} for your server`,
   );
 
   const newestLegacyLinter = npmReleases?.find(
@@ -148,7 +148,19 @@ export async function dynamicallyAdjustLinter(): Promise<void> {
 
     if (serverVersion) {
       //since not every release has a linter release
-      const linterVersion = serverVersionToLinter(serverVersion);
+      const { linterVersion, notResolved, notSupported } =
+        serverVersionToLinter(serverVersion);
+
+      if (notResolved) {
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_RESOLVED,
+        );
+      } else if (notSupported) {
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_SUPPORTED,
+        );
+      }
+
       const npmReleases = await getTaggedRegistryVersions();
       await switchToLinter(linterVersion, npmReleases);
     }
