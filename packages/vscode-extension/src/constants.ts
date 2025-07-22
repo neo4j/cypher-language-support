@@ -27,8 +27,10 @@ export const CONSTANTS = {
     GLOBALSTORAGE_READ_FAILED: 'Failed to read neo4j globalStorage directory.',
     LINTER_DOWNLOAD_FAILED:
       'Linter download failed, reverting to best match from currently downloaded linter versions.',
+    LINTER_VERSION_NOT_AVAILABLE:
+      'Required linter not available for download, default linting experience will be used.',
     LINTER_SERVER_NOT_RESOLVED:
-      'Neo4j version could not be resolved, using default linting experience.',
+      'Neo4j version could not be resolved, default linting experience will be used.',
     LINTER_SERVER_NOT_SUPPORTED:
       'Neo4j version is lower than 5.23, your will have a degraded linting experience.',
     CONNECTED_MESSAGE: 'Connected to Neo4j.',

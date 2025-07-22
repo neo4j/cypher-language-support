@@ -91,7 +91,7 @@ export async function downloadLintWorker(
   );
   if (!newestLegacyLinter) {
     void vscode.window.showErrorMessage(
-      CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED,
+      CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
     );
     return false;
   }
