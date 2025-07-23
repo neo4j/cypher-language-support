@@ -9,7 +9,10 @@ import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
 import { after, before } from 'mocha';
 
-// Note these tests do not seem to work with the VSCode debugger
+// Note these tests do not work with the VSCode debugger
+// Because the VSCode debugger seems to sandbox the editor
+// it spins up, so globalStorage is a temp folder, not the
+// one getExtensionContext().globalStorageUri returns
 suite('Neo4j version specific linting spec', () => {
   before(async () => {
     process.env.LINTER_SWITCHING_TESTS = 'true';

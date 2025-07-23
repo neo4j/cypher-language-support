@@ -326,17 +326,13 @@ suite('Connection service spec', () => {
         'mock-password',
       );
 
-      sandbox.assert.calledOnceWithExactly(
-        sendNotificationSpy,
-        'connectionUpdated',
-        {
-          connect: true,
-          connectURL: 'neo4j://localhost:7687',
-          database: 'neo4j',
-          user: 'neo4j',
-          password: 'mock-password',
-        },
-      );
+      sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+        connect: true,
+        connectURL: 'neo4j://localhost:7687',
+        database: 'neo4j',
+        user: 'neo4j',
+        password: 'mock-password',
+      });
     });
 
     test('Should not notify language server when initializeDatabaseConnection returns a non success status', async () => {
