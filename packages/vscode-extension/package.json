@@ -40,7 +40,7 @@
       {
         "command": "neo4j.switchLinter",
         "category": "Neo4j",
-        "title": "Pick linter"
+        "title": "Pick linter version"
       },
       {
         "command": "neo4j.editConnection",

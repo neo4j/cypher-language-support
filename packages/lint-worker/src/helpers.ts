@@ -80,7 +80,7 @@ export type NpmRelease = {
 };
 
 export const npmTagToLinterVersion = (tag: string) =>
-  tag.match(/^neo4j-([\d.]+)$/)?.[1];
+  tag.match(/^neo4j-(\d+\.\d+)$/)?.[1];
 
 export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
   const registryUrl = 'https://registry.npmjs.org/@neo4j-cypher/lint-worker';
@@ -90,7 +90,7 @@ export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
     const taggedVersions: { tag: string; version: string }[] = [];
     if (data !== null && data['dist-tags'] !== null) {
       for (const [tag, version] of Object.entries(data['dist-tags'])) {
-        if (typeof tag === 'string' && typeof version === 'string') {
+        if (npmTagToLinterVersion(tag)) {
           taggedVersions.push({ tag, version });
         }
       }
