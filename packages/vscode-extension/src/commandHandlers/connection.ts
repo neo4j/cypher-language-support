@@ -4,6 +4,7 @@ import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
+  getAllConnections,
   getConnectionByKey,
   getConnections,
   getPasswordForConnection,
@@ -15,6 +16,7 @@ import { CONSTANTS } from '../constants';
 import { getExtensionContext, getQueryRunner } from '../contextService';
 import { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
 import {
+  displayConfirmAllConnectionsDeletionPrompt,
   displayConfirmConnectionDeletionPrompt,
   displayMessageForConnectionResult,
   displayMessageForSwitchDatabaseResult,
@@ -116,6 +118,32 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
       CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
     );
     void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_DELETED);
+  }
+}
+
+/**
+ * Handler for DELETE_ALL_CONNECTION_COMMAND (neo4j.deleteAllConnections)
+ * This can be triggered from the Connection tree view and from the Command Palette
+ * Deletes all connections
+ * @param connectionItem The ConnectionItem to delete.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function promptUserToDeleteAllConnectionsAndDisplayConnectionResult(): Promise<void> {
+  const result = await displayConfirmAllConnectionsDeletionPrompt();
+
+  if (result === 'Yes') {
+    const connections = getAllConnections();
+    await Promise.allSettled(
+      connections.map((connection) =>
+        deleteConnectionAndUpdateDatabaseConnection(connection.key),
+      ),
+    );
+    void commands.executeCommand(
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
+    void window.showInformationMessage(
+      CONSTANTS.MESSAGES.ALL_CONNECTIONS_DELETED,
+    );
   }
 }
 
