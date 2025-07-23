@@ -135,7 +135,7 @@ Our aim is to provide an experience that suits the different neo4j versions you 
 
 We can match a neo4j version from 5.23 onwards. If connected to an older database, the 5.23 version will be used. If the version cannot be resolved from your neo4j instance for any reason, the `Default` linter (the one packaged with the current version of the VSCode extension) will be used.
 
-The linter can be manually adjusted either on the bottom menu or using the `Neo4j: Pick linter version` command from the Command Palette.
+The linter can be manually adjusted either on the bottom menu or using the `Neo4j: Select Cypher linter version` command from the Command Palette.
 
 ![demo-linter-manual-adjusting](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-linter-manual-adjusting.png?raw=true).
 

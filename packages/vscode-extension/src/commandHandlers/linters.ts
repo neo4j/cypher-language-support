@@ -31,7 +31,7 @@ export async function manuallyAdjustLinter(): Promise<void> {
     ...Array.from(allVersions).sort(compareMajorMinorVersions).reverse(),
   ];
   const picked = await window.showQuickPick(sanitizedVersions, {
-    placeHolder: 'Select Linter version',
+    placeHolder: 'Select Cypher linter version',
   });
   //closing the quickpick menu will return undefined
   if (picked === undefined) {
