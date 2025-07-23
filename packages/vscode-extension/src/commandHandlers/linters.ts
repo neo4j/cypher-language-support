@@ -1,4 +1,5 @@
 import {
+  compareMajorMinorVersions,
   getTaggedRegistryVersions,
   linterFileToServerVersion,
   npmTagToLinterVersion,
@@ -21,12 +22,16 @@ export async function manuallyAdjustLinter(): Promise<void> {
   const existingVersions = fileNames.map((name) =>
     linterFileToServerVersion(name),
   );
-  existingVersions.push('Latest');
   const allVersions = new Set(
     existingVersions.concat(npmLinterVersions).filter((v) => v !== undefined),
   );
-  const picked = await window.showQuickPick(Array.from(allVersions), {
-    placeHolder: 'Select Linter version',
+  // This is to show Default on top and then the versions in decreasing order
+  const sanitizedVersions = [
+    'Default',
+    ...Array.from(allVersions).sort(compareMajorMinorVersions).reverse(),
+  ];
+  const picked = await window.showQuickPick(sanitizedVersions, {
+    placeHolder: 'Select Cypher linter version',
   });
   //closing the quickpick menu will return undefined
   if (picked === undefined) {

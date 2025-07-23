@@ -3,20 +3,33 @@ import {
   getDocumentUri,
   getExtensionStoragePath,
   openDocument,
-  toggleVersionedLinters,
 } from '../../helpers';
-import { connectDefault } from '../../suiteSetup';
+import { connectDefault, disconnectDefault } from '../../suiteSetup';
 import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
 import { after, before } from 'mocha';
 
+// Note these tests do not work with the VSCode debugger
+// Because the VSCode debugger seems to sandbox the editor
+// it spins up, so globalStorage is a temp folder, not the
+// one getExtensionContext().globalStorageUri returns
 suite('Neo4j version specific linting spec', () => {
   before(async () => {
-    await toggleVersionedLinters(true);
+    process.env.LINTER_SWITCHING_TESTS = 'true';
+    // We need to reconnect to neo4j so that the switching
+    // linter action takes place, otherwise we would be
+    // using the one packaged with the VSCode extension
+    await disconnectDefault({ version: 'neo4j 2025' });
+    await connectDefault({ version: 'neo4j 2025' });
   });
 
   after(async () => {
-    await toggleVersionedLinters(false);
+    process.env.LINTER_SWITCHING_TESTS = undefined;
+    // We need to reconnect to neo4j so that the switching
+    // linter action is disabled and we go back to be using
+    // the one packaged with the VSCode extension
+    await disconnectDefault({ version: 'neo4j 2025' });
+    await connectDefault({ version: 'neo4j 2025' });
   });
 
   async function testNeo4jSpecificLinting() {
@@ -48,7 +61,7 @@ suite('Neo4j version specific linting spec', () => {
             new vscode.Position(5, 7),
             new vscode.Position(5, 12),
           ),
-          "The query used a deprecated function. ('id' has been replaced by 'elementId or consider using an application-generated id')",
+          "The query used a deprecated function. ('id' has been replaced by 'elementId or an application-generated id')",
           vscode.DiagnosticSeverity.Warning,
         ),
       ],

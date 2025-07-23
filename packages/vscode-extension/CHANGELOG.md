@@ -1,6 +1,7 @@
 # neo4j-for-vscode
 
 ## 1.13.0
+- Adjusts linting automatically depending on the neo4j version.
 - Updates grammar and semantic analysis
 
 ## 1.12.0

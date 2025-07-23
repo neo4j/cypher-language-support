@@ -12,8 +12,7 @@ import * as schemaPollerEventHandlers from './schemaPollerEventHandlers';
 import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { displayMessageForConnectionResult } from './uiUtils';
-import * as vscode from 'vscode';
-import { dynamicallyAdjustLinter } from './linterSwitching';
+import { dynamicallyAdjustLinter, switchToLinter } from './linterSwitching';
 
 export type Scheme =
   | 'neo4j'
@@ -422,10 +421,23 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)
     : await sendNotificationToLanguageClient('connectionDisconnected');
 
-  const config = vscode.workspace.getConfiguration('neo4j.features');
-  const versionedLintersEnabled = config.get('useVersionedLinters', false);
-  if (result.success && versionedLintersEnabled) {
-    await dynamicallyAdjustLinter();
+  // Note the e2e tests are always going to be on an older neo4j version (a docker container)
+  // We want for all of the tests to run with the latest version of the linter,
+  // not an older one (which would not make sense to debug them for example)
+  //
+  // except for the tests that are specifically about switching the linter
+  if (result.success) {
+    if (process.env.DEBUG_VSCODE_TESTS !== undefined) {
+      // tests code
+      if (process.env.LINTER_SWITCHING_TESTS === 'true') {
+        await dynamicallyAdjustLinter();
+      } else {
+        await switchToLinter('Default', []);
+      }
+    } else {
+      // production code
+      await dynamicallyAdjustLinter();
+    }
   }
 
   await saveConnection({

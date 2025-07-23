@@ -32,7 +32,7 @@ export async function switchWorkerOnLanguageServer(
     lintWorkerPath: linterPath,
     linterVersion: linterVersion,
   });
-  linterStatusBarItem.text = linterVersion ? linterVersion : 'Latest';
+  linterStatusBarItem.text = linterVersion ? linterVersion : 'Default';
 }
 
 export async function getFilesInExtensionStorage(): Promise<string[]> {
@@ -83,7 +83,7 @@ export async function downloadLintWorker(
   npmReleases: NpmRelease[],
 ): Promise<boolean> {
   void vscode.window.showInformationMessage(
-    'Downloading linter for your server',
+    `Downloading linter ${linterVersion} for your server`,
   );
 
   const newestLegacyLinter = npmReleases?.find(
@@ -91,7 +91,7 @@ export async function downloadLintWorker(
   );
   if (!newestLegacyLinter) {
     void vscode.window.showErrorMessage(
-      CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED,
+      CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
     );
     return false;
   }
@@ -147,14 +147,20 @@ export async function dynamicallyAdjustLinter(): Promise<void> {
     const serverVersion = poller.connection?.serverVersion;
 
     if (serverVersion) {
-      //removes zero padding on month of new versions
-      const sanitizedServerVersion = serverVersion.replace(
-        /(\.0+)(?=\d)/g,
-        '.',
-      );
-
       //since not every release has a linter release
-      const linterVersion = serverVersionToLinter(sanitizedServerVersion);
+      const { linterVersion, notResolved, notSupported } =
+        serverVersionToLinter(serverVersion);
+
+      if (notResolved) {
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_RESOLVED,
+        );
+      } else if (notSupported) {
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_SUPPORTED,
+        );
+      }
+
       const npmReleases = await getTaggedRegistryVersions();
       await switchToLinter(linterVersion, npmReleases);
     }
@@ -179,29 +185,34 @@ export async function switchToLinter(
   linterVersion: string,
   npmReleases: NpmRelease[],
 ): Promise<void> {
-  if (linterVersion === 'Latest') {
-    return await switchWorkerOnLanguageServer();
-  }
-  if (npmReleases.length === 0) {
-    await switchToLocalLinter(linterVersion);
-  } else {
-    const storageUri = await getStorageUri();
-    const { expectedFileName, isExpectedLinterDownloaded } =
-      await expectedLinterExists(linterVersion, npmReleases, storageUri);
-    if (isExpectedLinterDownloaded) {
-      await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+  try {
+    if (linterVersion === 'Default') {
+      return await switchWorkerOnLanguageServer();
+    }
+    if (npmReleases.length === 0) {
+      await switchToLocalLinter(linterVersion);
     } else {
-      const success = await downloadLintWorker(
-        linterVersion,
-        storageUri,
-        npmReleases,
-      );
-      if (success) {
+      const storageUri = await getStorageUri();
+      const { expectedFileName, isExpectedLinterDownloaded } =
+        await expectedLinterExists(linterVersion, npmReleases, storageUri);
+      if (isExpectedLinterDownloaded) {
         await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        await switchToLocalLinter(linterVersion);
+        const success = await downloadLintWorker(
+          linterVersion,
+          storageUri,
+          npmReleases,
+        );
+        if (success) {
+          await switchWorkerOnLanguageServer(expectedFileName, storageUri);
+        } else {
+          await switchToLocalLinter(linterVersion);
+        }
       }
     }
+  } catch (e) {
+    // In case of error use default linter (i.e. the one included with the language server)
+    await switchWorkerOnLanguageServer();
   }
 }
 

@@ -46,17 +46,13 @@ suite('Command handlers spec', () => {
       key: 'schemas',
     });
 
-    sandbox.assert.calledOnceWithExactly(
-      sendNotificationSpy,
-      'connectionUpdated',
-      {
-        connect: true,
-        connectURL: 'neo4j://localhost:7687',
-        database: 'schemas',
-        user: 'neo4j',
-        password: null,
-      },
-    );
+    sandbox.assert.calledWith(sendNotificationSpy, 'connectionUpdated', {
+      connect: true,
+      connectURL: 'neo4j://localhost:7687',
+      database: 'schemas',
+      user: 'neo4j',
+      password: null,
+    });
   });
 
   test('Switching to a bad database should notify the language server with connectionDisconnected', async () => {

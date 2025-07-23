@@ -123,11 +123,21 @@ Once you've written your desired query (for example `CREATE (n)-[r:Rel]->(m) RET
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 
-## Upcoming features
+## Version tailored linting
 
-We're working on adding more features to the extension, such as:
+Our aim is to provide an experience that suits the different neo4j versions you could be connected to. When connecting to a database, a linter that matches that version of the database will be automatically downloaded.
 
-- Dynamically adjusting the language server depending on the neo4j version.
+![demo-linter-automatic-adjusting](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-linter-automatic-adjusting.png?raw=true).
+
+![demo-linter-5](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-linter-5.png?raw=true).
+
+![demo-linter-2025](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-linter-2025.png?raw=true).
+
+We can match a neo4j version from 5.23 onwards. If connected to an older database, the 5.23 version will be used. If the version cannot be resolved from your neo4j instance for any reason, the `Default` linter (the one packaged with the current version of the VSCode extension) will be used.
+
+The linter can be manually adjusted either on the bottom menu or using the `Neo4j: Select Cypher linter version` command from the Command Palette.
+
+![demo-linter-manual-adjusting](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-linter-manual-adjusting.png?raw=true).
 
 ## Extension settings
 
