@@ -123,7 +123,7 @@ Once you've written your desired query (for example `CREATE (n)-[r:Rel]->(m) RET
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 
-## Linting experience
+## Version tailored linting
 
 Our aim is to provide an experience that suits the different neo4j versions you could be connected to. When connecting to a database, a linter that matches that version of the database will be automatically downloaded.
 
