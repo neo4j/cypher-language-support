@@ -71,6 +71,12 @@
         "icon": "$(trash)"
       },
       {
+        "command": "neo4j.deleteAllConnections",
+        "title": "Delete all connections",
+        "category": "Neo4j",
+        "icon": "$(trash)"
+      },
+      {
         "command": "neo4j.refreshConnections",
         "title": "Refresh connections",
         "category": "Neo4j"
@@ -203,6 +209,11 @@
       "view/title": [
         {
           "command": "neo4j.createConnection",
+          "when": "view == neo4jConnections",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.deleteAllConnections",
           "when": "view == neo4jConnections",
           "group": "navigation"
         },

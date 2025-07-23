@@ -4,6 +4,7 @@ import {
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
+  promptUserToDeleteAllConnectionsAndDisplayConnectionResult,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -97,6 +98,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.DELETE_CONNECTION_COMMAND,
       promptUserToDeleteConnectionAndDisplayConnectionResult,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.DELETE_ALL_CONNECTIONS_COMMAND,
+      promptUserToDeleteAllConnectionsAndDisplayConnectionResult,
     ),
     commands.registerCommand(
       CONSTANTS.COMMANDS.CONNECT_COMMAND,

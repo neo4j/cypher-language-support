@@ -64,6 +64,16 @@ export async function displayConfirmConnectionDeletionPrompt(
   );
 }
 
+export async function displayConfirmAllConnectionsDeletionPrompt(): Promise<
+  string | null
+> {
+  return await window.showWarningMessage<string>(
+    `Are you sure you want to delete all connections?`,
+    { modal: true },
+    'Yes',
+  );
+}
+
 /**
  * Utility function to display a message to the user based on the result of switching databases.
  * @param database The database that was switched to.
