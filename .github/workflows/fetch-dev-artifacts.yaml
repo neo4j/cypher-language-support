@@ -109,7 +109,7 @@ jobs:
           git add ./packages/language-support/src/antlr-grammar
           git add ./packages/language-support/src/syntaxValidation
           git add ./packages/vscode-extension/syntaxes/cypher.json
-          git commit -m "Updates artifacts to those from latest dev snapshot (${{ env.neo4j_version_base }}-SNAPSHOT)"
+          git commit -m "Updates artifacts to those from latest dev snapshot ${{ env.neo4j_version_base }}"
           git push origin HEAD:${{ env.BRANCH_NAME }}
 
       - name: Create Pull Request
@@ -119,6 +119,6 @@ jobs:
           token: ${{ secrets.PAT_TOKEN }}
           branch: ${{ env.BRANCH_NAME }}
           base: main
-          title: "Automated update of artifacts"
+          title: "Automated update of artifacts to neo4j version ${{ env.neo4j_version_base }}"
           body: "Workflow-made PR updating the grammar and semantic analysis artifacts from AWS CodeArtifact."
       
