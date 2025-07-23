@@ -40,6 +40,7 @@ import {
 
 import { lintKeymap } from '@codemirror/lint';
 import { getIconForType } from './icons';
+import resizableEditor from './resizableEditor';
 
 const insertTab: StateCommand = (cmd) => {
   // if there is a selection we should indent the selected text, but if not insert
@@ -63,10 +64,12 @@ const insertTab: StateCommand = (cmd) => {
 
 type SetupProps = {
   moveFocusOnTab?: boolean;
+  resizeable?: boolean;
 };
 
 export const basicNeo4jSetup = ({
   moveFocusOnTab = false,
+  resizeable = false
 }: SetupProps): Extension[] => {
   const keymaps: KeyBinding[] = [
     closeBracketsKeymap,
@@ -153,6 +156,10 @@ export const basicNeo4jSetup = ({
       { key: 'Escape', run: closeCompletionsOrClearSnippets },
     ]),
   );
+
+  if (resizeable) {
+    extensions.push(resizableEditor())
+  }
 
   return extensions;
 };
