@@ -1,6 +1,6 @@
 export const CONSTANTS = {
   COMMANDS: {
-    SWITCH_LINTWORKER_COMMAND: 'neo4j.switchLinter',
+    SWITCH_LINTER_COMMAND: 'neo4j.switchLinter',
     SAVE_CONNECTION_COMMAND: 'neo4j.saveConnection',
     CREATE_CONNECTION_COMMAND: 'neo4j.createConnection',
     EDIT_CONNECTION_COMMAND: 'neo4j.editConnection',
