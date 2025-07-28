@@ -113,6 +113,7 @@ jobs:
           git add ./packages/language-support/src/antlr-grammar
           git add ./packages/language-support/src/syntaxValidation
           git add ./packages/vscode-extension/syntaxes/cypher.json
+          git add ./packages/lint-worker/server-version-tag.txt
           git commit -m "Updates artifacts to those from latest dev snapshot ${{ env.neo4j_version_base }}"
           git push origin HEAD:${{ env.BRANCH_NAME }}
 
