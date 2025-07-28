@@ -15,7 +15,7 @@
     "build-vscode": "pnpm --filter='neo4j-for-vscode...' build",
     "dev-codemirror": "pnpm --recursive --parallel --filter='@neo4j-cypher/react-codemirror-playground...' dev",
     "dev-vscode": "pnpm --recursive --parallel --filter='neo4j-for-vscode...' dev",
-    "release": "pnpm build && pnpm --filter '!@neo4j-cypher/lint-worker' publish -r --tag next --access=public --registry http://localhost:4873  && pnpm --filter '@neo4j-cypher/lint-worker' publish -r --access=public --tag $(cat latestNeoVersion.txt) --registry http://localhost:4873",
+    "release": "pnpm build && pnpm --filter '!@neo4j-cypher/lint-worker' publish -r --tag next --access=public --registry http://localhost:4873  && pnpm --filter '@neo4j-cypher/lint-worker' publish -r --access=public --tag $(cat ./packages/lint-worker/server-version-tag.txt) --registry http://localhost:4873",
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
     "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig.tsbuildinfo} && pnpm clean",
     "clean": "pnpm --recursive --parallel clean",

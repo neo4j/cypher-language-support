@@ -61,7 +61,7 @@ jobs:
 
       - name: Store latest neo4j version in repo
         run:
-          echo "neo4j-$(echo "${{ env.neo4j_version_base }}" | grep -oE '^[0-9]+\.[0-9]+')" > latestNeoVersion.txt
+          echo "neo4j-$(echo "${{ env.neo4j_version_base }}" | grep -oE '^[0-9]+\.[0-9]+')" > ./packages/lint-worker/server-version-tag.txt
 
       - name: fetch parser artifacts from latest neo4j CI
         run: |
