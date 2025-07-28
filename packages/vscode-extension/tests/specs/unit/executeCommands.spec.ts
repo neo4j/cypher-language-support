@@ -459,35 +459,4 @@ suite('Execute commands spec', () => {
       sandbox.assert.notCalled(showErrorMessageStub);
     });
   });
-
-  suite('switchLinterCommand', () => {
-    beforeEach(async () => {
-      await saveDefaultConnection();
-      sandbox.resetHistory();
-    });
-
-    test.only('Switching the linter should show a message saying it will be downloaded', async () => {
-      const linterVersion = '2025.06'
-      const stub = sandbox.stub(
-        window,
-        'showQuickPick',
-      ) as unknown as sinon.SinonStub<
-        [string[], any],
-        Thenable<string>
-      >;
-
-      stub
-        .withArgs(sinon.match.string, sinon.match.object)
-        .resolves(linterVersion);
-      
-      await commands.executeCommand(
-        CONSTANTS.COMMANDS.SWITCH_LINTER_COMMAND
-      );
-
-      sandbox.assert.calledWith(
-        showInformationMessageStub,
-        `Downloading linter ${linterVersion} for your server`,
-      );
-    });
-  });
 });

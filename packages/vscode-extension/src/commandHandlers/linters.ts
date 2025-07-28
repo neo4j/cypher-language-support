@@ -33,6 +33,7 @@ export async function manuallyAdjustLinter(): Promise<void> {
   const picked = await window.showQuickPick(sanitizedVersions, {
     placeHolder: 'Select Cypher linter version',
   });
+
   //closing the quickpick menu will return undefined
   if (picked === undefined) {
     return;
