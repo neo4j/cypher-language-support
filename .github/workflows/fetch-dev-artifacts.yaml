@@ -59,6 +59,10 @@ jobs:
             echo "neo4j_version_base=$neo4j_version_base" >> $GITHUB_ENV
             echo "Found neo4j_version_base=$neo4j_version_base"
 
+      - name: Store latest neo4j version in repo
+        run:
+          echo "neo4j-$(echo "${{ env.neo4j_version_base }}" | grep -oE '^[0-9]+\.[0-9]+')" > latestNeoVersion.txt
+
       - name: fetch parser artifacts from latest neo4j CI
         run: |
             grammar_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
