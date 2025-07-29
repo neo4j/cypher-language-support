@@ -34,6 +34,8 @@ export async function waitUntilNotification(
       if (found) {
         await found.notification.dismiss();
         return true;
+      } else {
+        return false;
       }
     },
     {
