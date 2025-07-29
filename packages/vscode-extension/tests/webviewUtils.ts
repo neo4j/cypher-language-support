@@ -38,9 +38,7 @@ export async function waitUntilNotification(
     },
     {
       timeout: 20000,
-      timeoutMsg: `Notification ${notification} not found. Found: \n${notificationsAndMsgs
-        .map((n) => n.msg)
-        .join('\n')}`,
+      timeoutMsg: `Notification '${notification}' not found.`,
     },
   );
 }
