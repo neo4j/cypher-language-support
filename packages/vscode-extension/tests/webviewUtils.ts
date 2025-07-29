@@ -32,7 +32,17 @@ export async function waitUntilNotification(
         (value) => value.msg === notification,
       );
       if (found) {
-        await found.notification.dismiss();
+        await browser.waitUntil(
+          async function () {
+            try {
+              await found.notification.dismiss();
+              return true;
+            } catch (err) {
+              return false;
+            }
+          },
+          { timeout: 5000 },
+        );
         return true;
       } else {
         return false;
