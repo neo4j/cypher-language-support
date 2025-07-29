@@ -16,7 +16,7 @@ export async function waitUntilNotification(
     msg: string;
     notification: Notification;
   }[];
-  const notificationExists = await browser.waitUntil(
+  await browser.waitUntil(
     async function () {
       const wb = await browser.getWorkbench();
       const notifications = await wb.getNotifications();
@@ -36,15 +36,13 @@ export async function waitUntilNotification(
         return true;
       }
     },
-    { timeout: 20000 },
-  );
-  if (!notificationExists) {
-    throw new Error(
-      `Notification ${notification} not found. Found: \n${notificationsAndMsgs
+    {
+      timeout: 20000,
+      timeoutMsg: `Notification ${notification} not found. Found: \n${notificationsAndMsgs
         .map((n) => n.msg)
         .join('\n')}`,
-    );
-  }
+    },
+  );
 }
 
 type OpenFileOptions = {
