@@ -9,6 +9,7 @@ import {
 } from 'vscode';
 import { InMemoryMemento } from './inMemoryMemento';
 import { InMemorySecretStorage } from './inMemorySecretStorage';
+import { getExtensionStoragePath } from '../helpers';
 
 export class MockExtensionContext implements ExtensionContext {
   languageModelAccessInformation: LanguageModelAccessInformation;
@@ -24,7 +25,7 @@ export class MockExtensionContext implements ExtensionContext {
   }
   storageUri: Uri;
   storagePath: string;
-  globalStorageUri: Uri;
+  globalStorageUri: Uri = Uri.file(getExtensionStoragePath());
   globalStoragePath: string;
   logUri: Uri;
   logPath: string;

@@ -4,8 +4,9 @@ import {
   linterFileToServerVersion,
   npmTagToLinterVersion,
 } from '@neo4j-cypher/lint-worker';
-import { getFilesInExtensionStorage, switchToLinter } from '../linterSwitching';
+import { switchToLinter } from '../linterSwitching';
 import { window } from 'vscode';
+import { getFilesInExtensionStorage } from '../linterService';
 
 /**
  * Handler for SWITCH_LINTWORKER_COMMAND (neo4j.editLinter)
