@@ -124,7 +124,7 @@ suite.only('Params panel testing', () => {
     });
   });
 
-  test.only('Cannot set parameters when disconnected from the database', async function () {
+  test('Cannot set parameters when disconnected from the database', async function () {
     await ensureNotificationsAreDismissed(browser);
     await forceDisconnect();
     // This tries to add the params with the window prompts we cannot manipulate in the tests
