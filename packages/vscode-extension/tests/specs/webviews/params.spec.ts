@@ -10,7 +10,7 @@ import {
 } from '../../webviewUtils';
 import { sleep } from '../../helpers';
 
-suite.only('Params panel testing', () => {
+suite('Params panel testing', () => {
   let workbench: Workbench;
 
   before(async () => {
