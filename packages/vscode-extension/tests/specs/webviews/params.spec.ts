@@ -8,9 +8,8 @@ import {
   executeFile,
   waitUntilNotification,
 } from '../../webviewUtils';
-import { sleep } from '../../helpers';
 
-suite('Params panel testing', () => {
+suite.only('Params panel testing', () => {
   let workbench: Workbench;
 
   before(async () => {
@@ -137,7 +136,7 @@ suite('Params panel testing', () => {
     );
 
     await ensureNotificationsAreDismissed(browser);
-    await sleep(1000);
+    await new Promise((resolve) => setTimeout(resolve, 1000));
     await forceConnect(1);
   });
 
