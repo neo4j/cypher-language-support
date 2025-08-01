@@ -139,11 +139,11 @@ export const config: Options.Testrunner = {
           /**
            * Timeout for connecting to WebSocket inside of VSCode
            */
-          connectionTimeout: 5000,
+          connectionTimeout: 20000,
           /**
            * Timeout for command to be executed within VSCode
            */
-          commandTimeout: 5000,
+          commandTimeout: 20000,
         },
       },
     ],
