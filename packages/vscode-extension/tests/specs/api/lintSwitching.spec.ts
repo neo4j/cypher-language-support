@@ -20,13 +20,13 @@ import { LintWorkerSettings } from '@neo4j-cypher/language-server/src/types';
 
 suite('Lint switching spec', () => {
   let sandbox: sinon.SinonSandbox;
+  let mockLanguageClient: MockLanguageClient;
+  let textDocument: vscode.TextDocument;
+
   let switchWorkerOnLanguageServerSpy: sinon.SinonSpy;
   let sendNotificationSpy: sinon.SinonSpy;
-  let mockLanguageClient: MockLanguageClient;
-
   let showInformationMessageSpy: sinon.SinonSpy;
   let showErrorMessageSpy: sinon.SinonSpy;
-  let textDocument: vscode.TextDocument;
 
   before(async () => {
     textDocument = await newUntitledFileWithContent(`
@@ -220,5 +220,21 @@ suite('Lint switching spec', () => {
       CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
     );
     checkLinterUpdatedInLanguageServer('Default');
+  });
+
+  test('If a new version exists in npm, the new one gets downloaded', async () => {
+    const downloadLintWorkerStub = sandbox
+      .stub(linterService, 'downloadLintWorker')
+      .returns(Promise.resolve({ success: true, fileName: 'not relevant' }));
+    const deleteOutdatedLintersStub = sandbox
+      .stub(linterService, 'deleteOutdatedLinters')
+      .returns(Promise.resolve());
+
+    await switchToLinter('5.26', [{ tag: 'neo4j-5.26', version: '9000.0.0' }]);
+    assert(downloadLintWorkerStub.calledOnce);
+    assert(downloadLintWorkerStub.args.length === 1);
+    assert(downloadLintWorkerStub.args[0].length > 0);
+    assert(downloadLintWorkerStub.args[0][0] === '5.26');
+    assert(deleteOutdatedLintersStub.calledOnce);
   });
 });

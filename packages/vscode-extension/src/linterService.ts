@@ -63,7 +63,7 @@ export async function downloadLintWorker(
   linterVersion: string,
   storageUri: vscode.Uri,
   npmReleases: NpmRelease[],
-): Promise<boolean> {
+): Promise<{ success: false } | { success: true; fileName?: string }> {
   void vscode.window.showInformationMessage(
     `Downloading linter ${linterVersion} for your server`,
   );
@@ -75,7 +75,7 @@ export async function downloadLintWorker(
     void vscode.window.showErrorMessage(
       CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
     );
-    return false;
+    return { success: false };
   }
   const fileName = `${linterVersion}-lintWorker-${newestLegacyLinter.version}.cjs`;
   const fileUri = vscode.Uri.joinPath(storageUri, fileName);
@@ -104,12 +104,12 @@ export async function downloadLintWorker(
     });
     await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
     await deleteOutdatedLinters(linterVersion, fileName, storageUri);
-    return true;
+    return { success: true, fileName: fileName };
   } catch (error) {
     void vscode.window.showErrorMessage(
       CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED,
     );
-    return false;
+    return { success: false };
   }
 }
 

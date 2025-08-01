@@ -8,6 +8,7 @@ import { getSchemaPoller } from './contextService';
 import * as vscode from 'vscode';
 import { CONSTANTS } from './constants';
 import {
+  deleteOutdatedLinters,
   downloadLintWorker,
   getFilesInExtensionStorage,
   getStorageUri,
@@ -81,12 +82,17 @@ export async function switchToLinter(
       if (isExpectedLinterDownloaded) {
         await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        const success = await downloadLintWorker(
+        const downloadResult = await downloadLintWorker(
           linterVersion,
           storageUri,
           npmReleases,
         );
-        if (success) {
+        if (downloadResult.success) {
+          await deleteOutdatedLinters(
+            linterVersion,
+            downloadResult.fileName,
+            storageUri,
+          );
           await switchWorkerOnLanguageServer(expectedFileName, storageUri);
         } else {
           await switchToLocalLinter(linterVersion);
