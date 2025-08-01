@@ -28,6 +28,11 @@ export const linterStatusBarItem = window.createStatusBarItem(
   StatusBarAlignment.Right,
 );
 
+const buildingStatusBarItem = window.createStatusBarItem(
+  StatusBarAlignment.Left,
+  -100,
+);
+
 export async function activate(context: ExtensionContext) {
   // The server is implemented in node
   const runServer = context.asAbsolutePath(
@@ -96,6 +101,31 @@ export async function activate(context: ExtensionContext) {
 
     context.subscriptions.push(watcher);
   }
+
+  context.subscriptions.push(buildingStatusBarItem);
+
+  workspace.onDidChangeTextDocument((event) => {
+    if (event.document === window.activeTextEditor?.document) {
+      showBuildingIcon();
+    }
+  });
+
+  client.onNotification('semanticAnalysisDone', (params) => {
+    const query = (params as { query: string }).query;
+    if (query === window.activeTextEditor?.document.getText()) {
+      hideBuildingIcon();
+    }
+  });
+}
+
+function showBuildingIcon() {
+  buildingStatusBarItem.text = '$(loading~spin) Building...';
+  buildingStatusBarItem.tooltip = 'Build in progress';
+  buildingStatusBarItem.show();
+}
+
+function hideBuildingIcon() {
+  buildingStatusBarItem.hide();
 }
 
 export async function deactivate(): Promise<void> | undefined {

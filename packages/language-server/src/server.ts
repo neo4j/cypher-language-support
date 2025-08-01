@@ -42,6 +42,10 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
+      async (query: string) =>
+        await connection.sendNotification('semanticAnalysisDone', {
+          query: query,
+        }),
       neo4jSchemaPoller,
     );
   } else {
