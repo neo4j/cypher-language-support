@@ -640,7 +640,7 @@ reduceExpression
    ;
 
 allReduceExpression
-   : ALLREDUCE LPAREN variable EQ expression COMMA expression COMMA expression RPAREN
+   : ALLREDUCE LPAREN variable EQ expression COMMA variable IN expression BAR expression COMMA expression RPAREN
    ;
 
 listItemsPredicate
@@ -1572,6 +1572,7 @@ showPrivilege
 setPrivilege
    : SET (
       (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE (ACCESS | DEFAULT LANGUAGE) | AUTH) ON DBMS
+      | DATABASE (ACCESS | DEFAULT LANGUAGE) ON databaseScope
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
    )
@@ -1596,6 +1597,7 @@ writePrivilege
 databasePrivilege
    : (
       ACCESS
+      | ALTER COMPOSITE? DATABASE
       | START
       | STOP
       | (indexToken | constraintToken | NAME) MANAGEMENT?
