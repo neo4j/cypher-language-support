@@ -42,26 +42,6 @@ export async function switchWorkerOnLanguageServer(
   linterStatusBarItem.text = linterVersion ? linterVersion : 'Default';
 }
 
-export async function switchToLocalLinter(
-  linterVersion: string,
-): Promise<void> {
-  const fileNames = await getFilesInExtensionStorage();
-  const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
-    fileNames
-      .map((name) => [linterFileToServerVersion(name), name])
-      .filter(
-        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
-      ),
-  );
-  const matchingFile = downloadedLinterVersions[linterVersion];
-  const storageUri = await getStorageUri();
-  if (matchingFile) {
-    await switchWorkerOnLanguageServer(matchingFile, storageUri);
-  } else {
-    await switchWorkerOnLanguageServer();
-  }
-}
-
 async function getStorageUri(): Promise<vscode.Uri> {
   const storageUri = getExtensionContext().globalStorageUri;
   await vscode.workspace.fs.createDirectory(storageUri);

@@ -20,12 +20,12 @@ import { LintWorkerSettings } from '@neo4j-cypher/language-server/src/types';
 
 suite('Lint switching spec', () => {
   let sandbox: sinon.SinonSandbox;
-  let switchToLocalLinterSpy: sinon.SinonSpy;
+  let switchWorkerOnLanguageServerSpy: sinon.SinonSpy;
   let sendNotificationSpy: sinon.SinonSpy;
   let mockLanguageClient: MockLanguageClient;
 
-  let showInformationMessageStub: sinon.SinonStub;
-  let showErrorMessageStub: sinon.SinonStub;
+  let showInformationMessageSpy: sinon.SinonSpy;
+  let showErrorMessageSpy: sinon.SinonSpy;
   let textDocument: vscode.TextDocument;
 
   before(async () => {
@@ -40,12 +40,15 @@ suite('Lint switching spec', () => {
 
   beforeEach(async () => {
     sandbox = sinon.createSandbox();
-    showInformationMessageStub = sandbox.stub(window, 'showInformationMessage');
-    showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
+    showInformationMessageSpy = sandbox.spy(window, 'showInformationMessage');
+    showErrorMessageSpy = sandbox.spy(window, 'showErrorMessage');
 
     const stubs = setupMockContextStubs(sandbox);
     mockLanguageClient = stubs.mockLanguageClient;
-    switchToLocalLinterSpy = sandbox.spy(linterService, 'switchToLocalLinter');
+    switchWorkerOnLanguageServerSpy = sandbox.spy(
+      linterService,
+      'switchWorkerOnLanguageServer',
+    );
     sendNotificationSpy = sandbox.spy(mockLanguageClient, 'sendNotification');
     await saveDefaultConnection();
     sandbox.resetHistory();
@@ -60,7 +63,7 @@ suite('Lint switching spec', () => {
     await saveDefaultConnection();
   });
 
-  function checkLinterUpdatedInLanguageServer(version?: string) {
+  function checkLinterUpdatedInLanguageServer(version: string) {
     assert(sendNotificationSpy.calledOnce === true);
     assert(sendNotificationSpy.args.length === 1);
     assert(sendNotificationSpy.args[0].length === 2);
@@ -68,9 +71,9 @@ suite('Lint switching spec', () => {
 
     const { linterVersion, lintWorkerPath } = sendNotificationSpy
       .args[0][1] as LintWorkerSettings;
-    assert(linterVersion === version);
+    assert(linterVersion === (version != 'Default' ? version : undefined));
 
-    if (version) {
+    if (version != 'Default') {
       const versionRegex = new RegExp(`.*${version}.*\\.cjs`);
       assert(lintWorkerPath.match(versionRegex) !== null);
     } else {
@@ -123,7 +126,7 @@ suite('Lint switching spec', () => {
     await manuallyAdjustLinter();
 
     sandbox.assert.calledWith(
-      showInformationMessageStub,
+      showInformationMessageSpy,
       `Downloading linter ${linterVersion} for your server`,
     );
     checkLinterUpdatedInLanguageServer(linterVersion);
@@ -144,10 +147,35 @@ suite('Lint switching spec', () => {
     await manuallyAdjustLinter();
 
     sandbox.assert.neverCalledWith(
-      showInformationMessageStub,
+      showInformationMessageSpy,
       `Downloading linter ${linterVersion} for your server`,
     );
     checkLinterUpdatedInLanguageServer(linterVersion);
+  });
+
+  test('If no npm releases were retrieved but there is a matching local file, we switch to that local linter', async () => {
+    const linterVersion = '2025.06';
+    await switchToLinter(linterVersion, []);
+    sandbox.assert.calledOnce(switchWorkerOnLanguageServerSpy);
+    assert(switchWorkerOnLanguageServerSpy.args.length === 1);
+    assert(switchWorkerOnLanguageServerSpy.args[0].length === 2);
+    assert(
+      (switchWorkerOnLanguageServerSpy.args[0][0] as string).includes(
+        linterVersion,
+      ),
+    );
+    checkLinterUpdatedInLanguageServer(linterVersion);
+  });
+
+  test('If no npm releases were retrieved and there is not a matching local file, we switch to the default linter', async () => {
+    const linterVersion = '2025.06';
+    sandbox
+      .stub(linterService, 'getFilesInExtensionStorage')
+      .returns(Promise.resolve<string[]>([]));
+
+    await switchToLinter(linterVersion, []);
+    sandbox.assert.calledOnceWithExactly(switchWorkerOnLanguageServerSpy);
+    checkLinterUpdatedInLanguageServer('Default');
   });
 
   test('Switching the linter back to a new one should show different errors', async () => {
@@ -183,20 +211,14 @@ suite('Lint switching spec', () => {
     await manuallyAdjustLinter();
 
     sandbox.assert.calledWith(
-      showInformationMessageStub,
+      showInformationMessageSpy,
       `Downloading linter ${linterVersion} for your server`,
     );
 
     sandbox.assert.calledWith(
-      showErrorMessageStub,
+      showErrorMessageSpy,
       CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
     );
-    checkLinterUpdatedInLanguageServer(undefined);
-  });
-
-  test('If no npm releases were retrieved we switch to the default linter', async () => {
-    const linterVersion = '5.26';
-    await switchToLinter(linterVersion, []);
-    sandbox.assert.calledOnceWithExactly(switchToLocalLinterSpy, linterVersion);
+    checkLinterUpdatedInLanguageServer('Default');
   });
 });

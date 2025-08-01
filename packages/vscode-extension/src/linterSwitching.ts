@@ -12,7 +12,6 @@ import { CONSTANTS } from './constants';
 import { pipeline } from 'stream/promises';
 import {
   getFilesInExtensionStorage,
-  switchToLocalLinter,
   switchWorkerOnLanguageServer,
 } from './linterService';
 
@@ -178,6 +177,26 @@ export async function switchToLinter(
     }
   } catch (e) {
     // In case of error use default linter (i.e. the one included with the language server)
+    await switchWorkerOnLanguageServer();
+  }
+}
+
+export async function switchToLocalLinter(
+  linterVersion: string,
+): Promise<void> {
+  const fileNames = await getFilesInExtensionStorage();
+  const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
+    fileNames
+      .map((name) => [linterFileToServerVersion(name), name])
+      .filter(
+        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
+      ),
+  );
+  const matchingFile = downloadedLinterVersions[linterVersion];
+  if (matchingFile) {
+    const storageUri = await getStorageUri();
+    await switchWorkerOnLanguageServer(matchingFile, storageUri);
+  } else {
     await switchWorkerOnLanguageServer();
   }
 }
