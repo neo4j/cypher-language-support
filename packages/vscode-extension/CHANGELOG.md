@@ -1,5 +1,8 @@
 # neo4j-for-vscode
 
+## 1.14.0
+- Adds Building... button to the bottom panel for when the syntax errors are still being computed.
+
 ## 1.13.0
 - Adjusts linting automatically depending on the neo4j version.
 - Updates grammar and semantic analysis
