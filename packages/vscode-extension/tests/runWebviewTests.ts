@@ -121,7 +121,33 @@ export const config: Options.Testrunner = {
   // Services take over a specific job you don't want to take care of. They enhance
   // your test setup with almost no effort. Unlike plugins, they don't add new
   // commands. Instead, they hook themselves up into the test process.
-  services: ['vscode'],
+  services: [
+    [
+      'vscode',
+      {
+        vscodeProxyOptions: {
+          /**
+           * If set to true, the service tries to establish a connection with the
+           * VSCode workbench to enable access to the VSCode API
+           */
+          enable: true,
+          /**
+           * Port of the WebSocket connection used to connect to the workbench.
+           * By default set to an available port in your operating system.
+           */
+          // port?: number
+          /**
+           * Timeout for connecting to WebSocket inside of VSCode
+           */
+          connectionTimeout: 5000,
+          /**
+           * Timeout for command to be executed within VSCode
+           */
+          commandTimeout: 5000,
+        },
+      },
+    ],
+  ],
 
   // Framework you want to run your specs with.
   // The following are supported: Mocha, Jasmine, and Cucumber

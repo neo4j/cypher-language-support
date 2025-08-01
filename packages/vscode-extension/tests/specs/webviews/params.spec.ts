@@ -4,10 +4,10 @@ import { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
 import {
   checkResultsContent,
-  clickOnContextMenuItem,
+  // clickOnContextMenuItem,
   ensureNotificationsAreDismissed,
   executeFile,
-  getConnectionSection,
+  // getConnectionSection,
   waitUntilNotification,
 } from '../../webviewUtils';
 
@@ -89,13 +89,13 @@ suite('Params panel testing', () => {
     await waitUntilNotification(browser, `Switched to database '${database}'.`);
   }
 
-  // async function forceConnect(i: number) {
-  //   void browser.executeWorkbench((vscode, i) => {
-  //     // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  //     void vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
-  //   }, i);
-  //   await waitUntilNotification(browser, 'Connected to Neo4j.');
-  // }
+  async function forceConnect(i: number) {
+    void browser.executeWorkbench((vscode, i) => {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+      void vscode.commands.executeCommand('neo4j.internal.forceConnect', i);
+    }, i);
+    await waitUntilNotification(browser, 'Connected to Neo4j.');
+  }
 
   test.skip('Should correctly set and clear cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
@@ -138,12 +138,11 @@ suite('Params panel testing', () => {
     );
 
     await ensureNotificationsAreDismissed(browser);
-    // await new Promise((resolve) => setTimeout(resolve, 1000));
-    // await forceConnect(1);
+    await forceConnect(1);
 
-    const connectionSection = await getConnectionSection(workbench);
-    await clickOnContextMenuItem(connectionSection, 'Connect', 1);
-    await waitUntilNotification(browser, 'Connected to Neo4j.');
+    // const connectionSection = await getConnectionSection(workbench);
+    // await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    // await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
   test('Parameters cannot be set when connected to system', async function () {
