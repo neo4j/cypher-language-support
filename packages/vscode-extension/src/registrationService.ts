@@ -43,13 +43,13 @@ export function registerDisposables(): Disposable[] {
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
 
-  linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND;
+  linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTER_COMMAND;
   linterStatusBarItem.text = 'Default';
   linterStatusBarItem.tooltip = 'Current Cypher Linter. Click to switch';
   linterStatusBarItem.show();
   disposables.push(
     commands.registerCommand(
-      CONSTANTS.COMMANDS.SWITCH_LINTWORKER_COMMAND,
+      CONSTANTS.COMMANDS.SWITCH_LINTER_COMMAND,
       manuallyAdjustLinter,
     ),
     linterStatusBarItem,
