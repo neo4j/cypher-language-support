@@ -10,6 +10,7 @@ import {
   isNode,
   isPath,
   isRelationship,
+  Neo4jError,
   Node as Neo4jNode,
   Record as Neo4jRecord,
   Relationship as Neo4jRelationship,
@@ -250,6 +251,20 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   }
 
   private async runQuery(query: string): Promise<QueryResultWithLimit | Error> {
+    const isCallInTransactionError = ({ code, message }: Neo4jError) =>
+      (code === 'Neo.DatabaseError.Statement.ExecutionFailed' ||
+        code === 'Neo.DatabaseError.Transaction.TransactionStartFailed') &&
+      /in an implicit transaction/i.test(message);
+    const isPeriodicCommitError = ({ code, message }: Neo4jError) =>
+      code === 'Neo.ClientError.Statement.SemanticError' &&
+      [
+        /in an open transaction is not possible/i,
+        /tried to execute in an explicit transaction/i,
+      ].some((reg) => reg.test(message));
+
+    const isImplicitTransactionError = (error: Neo4jError): boolean =>
+      isPeriodicCommitError(error) || isCallInTransactionError(error);
+
     const connection = this.schemaPoller.connection;
     if (connection) {
       const parameters = getDeserializedParams();
@@ -259,6 +274,12 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
           parameters: parameters,
         });
       } catch (e) {
+        if (e instanceof Neo4jError && isImplicitTransactionError(e)) {
+          return await connection.runImplicitCypherTransaction({
+            query,
+            parameters: parameters,
+          });
+        }
         const error = e as Error;
         return error;
       }

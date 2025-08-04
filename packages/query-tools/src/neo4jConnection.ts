@@ -1,4 +1,4 @@
-import { Driver, QueryResult } from 'neo4j-driver';
+import { Driver, QueryResult, RecordShape, Result } from 'neo4j-driver';
 import { version } from '../package.json';
 import { Database } from './queries/databases.js';
 import { ExecuteQueryArgs, QueryType } from './types/sdkTypes';
@@ -52,6 +52,45 @@ export class Neo4jConnection {
     this.serverVersion = undefined;
   }
 
+  async runImplicitCypherTransaction({
+    query,
+    parameters,
+    database,
+  }: RunCypherQueryArgs): Promise<QueryResultWithLimit> {
+    const session = this.driver.session({
+      database: database ?? this.currentDb,
+    });
+    try {
+      const result = session.run(query, parameters, {
+        metadata: {
+          ...METADATA_BASE,
+          type: 'user-direct' satisfies QueryType,
+        },
+      });
+
+      const { records, recordLimitHit } = await this.getLimitedRecords(result);
+      const summary = await result.summary();
+      return { records, summary, recordLimitHit };
+    } finally {
+      await session.close();
+    }
+  }
+
+  async getLimitedRecords(result: Result<RecordShape>) {
+    const records = [];
+    let recordLimitHit = false;
+
+    for await (const record of result) {
+      if (records.length < RECORD_LIMIT) {
+        records.push(record);
+      } else {
+        recordLimitHit = true;
+        break;
+      }
+    }
+    return { records, recordLimitHit };
+  }
+
   async runCypherQuery({
     query,
     parameters,
@@ -73,18 +112,9 @@ export class Neo4jConnection {
       const result = await session.executeWrite(
         async (tx) => {
           const result = tx.run(query, parameters);
-
-          const records = [];
-          let recordLimitHit = false;
-
-          for await (const record of result) {
-            if (records.length < RECORD_LIMIT) {
-              records.push(record);
-            } else {
-              recordLimitHit = true;
-              break;
-            }
-          }
+          const { records, recordLimitHit } = await this.getLimitedRecords(
+            result,
+          );
 
           const summary = await result.summary();
 
