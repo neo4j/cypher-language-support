@@ -275,9 +275,10 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         });
       } catch (e) {
         if (e instanceof Neo4jError && isImplicitTransactionError(e)) {
-          return await connection.runImplicitCypherTransaction({
+          return await connection.runCypherQuery({
             query,
             parameters: parameters,
+            implicitTransaction: true,
           });
         }
         const error = e as Error;
