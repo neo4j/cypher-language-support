@@ -103,7 +103,6 @@ export async function downloadLintWorker(
       overwrite: true,
     });
     await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
-    await deleteOutdatedLinters(linterVersion, fileName, storageUri);
     return { success: true, fileName: fileName };
   } catch (error) {
     void vscode.window.showErrorMessage(
