@@ -4,8 +4,10 @@ import { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
 import {
   checkResultsContent,
+  // clickOnContextMenuItem,
   ensureNotificationsAreDismissed,
   executeFile,
+  // getConnectionSection,
   waitUntilNotification,
 } from '../../webviewUtils';
 
@@ -137,6 +139,10 @@ suite('Params panel testing', () => {
 
     await ensureNotificationsAreDismissed(browser);
     await forceConnect(1);
+
+    // const connectionSection = await getConnectionSection(workbench);
+    // await clickOnContextMenuItem(connectionSection, 'Connect', 1);
+    // await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
   test('Parameters cannot be set when connected to system', async function () {

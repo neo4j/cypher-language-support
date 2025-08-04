@@ -1,17 +1,27 @@
 import { integer } from 'vscode-languageclient';
-import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
+import {
+  TreeItem,
+  ViewSection,
+  WebView,
+  Workbench,
+  Notification,
+} from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 export async function waitUntilNotification(
   browser: WebdriverIO.Browser,
   notification: string,
 ) {
+  let notificationsAndMsgs: {
+    msg: string;
+    notification: Notification;
+  }[];
   await browser.waitUntil(
     async function () {
       const wb = await browser.getWorkbench();
       const notifications = await wb.getNotifications();
 
-      const notificationsAndMsgs = await Promise.all(
+      notificationsAndMsgs = await Promise.all(
         notifications.map(async (n) => {
           const msg = await n.getMessage();
           return { msg, notification: n };
@@ -22,17 +32,26 @@ export async function waitUntilNotification(
         (value) => value.msg === notification,
       );
       if (found) {
-        await found.notification.dismiss();
+        await browser.waitUntil(
+          async function () {
+            try {
+              await found.notification.dismiss();
+              return true;
+            } catch (err) {
+              return false;
+            }
+          },
+          { timeout: 5000 },
+        );
         return true;
       } else {
-        throw new Error(
-          `Notification ${notification} not found. Found: \n${notificationsAndMsgs
-            .map((n) => n.msg)
-            .join('\n')}`,
-        );
+        return false;
       }
     },
-    { timeout: 20000 },
+    {
+      timeout: 20000,
+      timeoutMsg: `Notification '${notification}' not found.`,
+    },
   );
 }
 
