@@ -10,7 +10,11 @@ import {
   waitUntilNotification,
 } from '../../webviewUtils';
 
-export async function expectSummaries(expectedSummaries: string[]) {
+//** Checks that the query result for each statement containts the expected summaries in query details.
+// If we pass an expected summary that is undefined we expect an empty result from query execution */
+export async function expectSummaries(
+  expectedSummaries: (string | undefined)[],
+) {
   const queryDetails = await $$('#queryDetails .collapsible');
   await expect(queryDetails.length).toBe(expectedSummaries.length);
 
@@ -26,8 +30,11 @@ export async function expectSummaries(expectedSummaries: string[]) {
     const queryResult = await queryDetail.$('.collapsible-content');
     await queryResult.waitForDisplayed();
     const summary = await queryResult.getText();
-
-    await expect(summary).toContain(expectedSummaries[i]);
+    if (expectedSummaries[i] !== undefined) {
+      await expect(summary).toContain(expectedSummaries[i]);
+    } else {
+      await expect(summary).toBe('');
+    }
   }
 }
 
@@ -89,7 +96,7 @@ suite('Query results testing', () => {
 
     await executeFile(workbench, 'match-for-create.cypher');
     await checkResultsContent(workbench, async () => {
-      await expectSummaries(['']);
+      await expectSummaries([undefined]);
     });
     await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
 
