@@ -1,4 +1,11 @@
-import { Driver, QueryResult } from 'neo4j-driver';
+import {
+  Driver,
+  ManagedTransaction,
+  QueryResult,
+  RecordShape,
+  Result,
+  Session,
+} from 'neo4j-driver';
 import { version } from '../package.json';
 import { Database } from './queries/databases.js';
 import { ExecuteQueryArgs, QueryType } from './types/sdkTypes';
@@ -34,6 +41,7 @@ type RunCypherQueryArgs = {
   parameters: Record<string, unknown>;
   database?: string;
   abortSignal?: AbortSignal;
+  implicitTransaction?: boolean;
 };
 
 export type QueryResultWithLimit = QueryResult & { recordLimitHit: boolean };
@@ -52,11 +60,43 @@ export class Neo4jConnection {
     this.serverVersion = undefined;
   }
 
+  async evalQuery(
+    session: Session,
+    query: string,
+    parameters: Record<string, unknown>,
+    metadata: object,
+    tx?: ManagedTransaction,
+  ) {
+    let result: Result<RecordShape>;
+    if (!tx) {
+      result = session.run(query, parameters, {
+        metadata,
+      });
+    } else {
+      result = tx.run(query, parameters);
+    }
+    const records = [];
+    let recordLimitHit = false;
+
+    for await (const record of result) {
+      if (records.length < RECORD_LIMIT) {
+        records.push(record);
+      } else {
+        recordLimitHit = true;
+        break;
+      }
+    }
+    const summary = await result.summary();
+
+    return { records, summary, recordLimitHit };
+  }
+
   async runCypherQuery({
     query,
     parameters,
     database,
     abortSignal,
+    implicitTransaction = false,
   }: RunCypherQueryArgs): Promise<QueryResultWithLimit> {
     // we'd like to use the drivers `executeQuery` method, but it doesn't support transaction metadata or cancelations yet
     const session = this.driver.session({
@@ -68,36 +108,32 @@ export class Neo4jConnection {
         void session.close();
       });
     }
-
+    const metadata = {
+      ...METADATA_BASE,
+      type: 'user-direct' satisfies QueryType,
+    };
     try {
-      const result = await session.executeWrite(
-        async (tx) => {
-          const result = tx.run(query, parameters);
-
-          const records = [];
-          let recordLimitHit = false;
-
-          for await (const record of result) {
-            if (records.length < RECORD_LIMIT) {
-              records.push(record);
-            } else {
-              recordLimitHit = true;
-              break;
-            }
-          }
-
-          const summary = await result.summary();
-
-          return { records, summary, recordLimitHit };
-        },
-        {
-          metadata: {
-            ...METADATA_BASE,
-            type: 'user-direct' satisfies QueryType,
+      let result: Promise<QueryResultWithLimit>;
+      if (implicitTransaction) {
+        result = this.evalQuery(session, query, parameters, metadata);
+      } else {
+        result = session.executeWrite(
+          async (tx) => {
+            const result = this.evalQuery(
+              session,
+              query,
+              parameters,
+              metadata,
+              tx,
+            );
+            return result;
           },
-        },
-      );
-      return result;
+          {
+            metadata,
+          },
+        );
+      }
+      return await result;
     } finally {
       await session.close();
     }
