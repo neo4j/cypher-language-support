@@ -16,10 +16,23 @@ We have access to a symbol table from the transpiled semantic analysis, which we
 
 ### Speed
 
-> in the demo we see it's quite quick, we have an outdated one already
-> in reality even with increased performance, the root problem si that we have a race condition typing vs table gerantion.
+Running the semantic analysis can be quite expensive and to keep the editor responsive, we run the semantic analysis in a separate worker thread and we don't kick off a job until the user has stopped typing for ~500ms. This means that a user typing the below example:
 
-adreesing this has the benefit of improving the exsitnign poreprty keys implemetnation
+```cypher
+MATCH (n:Person)-[:
+```
+
+will not get completions after `:` that use the symbol table, unless they take a 500ms+ pause in their typing. For codemirror this is built-in behaviour and for VSCode we've implemented it ourselves.
+
+To get an up to date symbol table, we'd need to start a semantic analysis job while the user is still typing. Running the semantic anaylsis for every key stroke will consume a lot of resources and will in most cases not finish computing one table before the new computation start.
+
+Another reason we don't run the semantic analysis until the user has stopped typing, is that we don't want to show outdated warning, many of which only make sense after the user is finished typing (like missing a RETURN for example).
+
+These diverging requirements between linting and the symbol table, makes me think we should crate one thread dedicated to linting and one to get the symbol table. Since we don't want to run the thread to get the symbol table on every keystroke, we need to determine a heuristic on when to kick off a job to get a new symbol table.
+
+This is a good area for experimentation, the first idea that comes to mind for me is to use the fast ANTLR4 parse has found a new variable that's not in the symbol table. We collect variable definitions already in the `collectedVariables` field for use in completion of variables.
+
+Addressing this speed question will also improve the existing use of the symbol table for the property key completions.
 
 ### Accuracy
 
@@ -29,9 +42,7 @@ We can either wait for that to be implemented, or we could cover the most basic 
 
 ### Alternatives to the symbol table
 
-We could implement client-side semantic analysis instead of relying on the transpiled version. This would lead us down a costly road, complex type inference is hard, differences/bugs between our and the main semantic analysis would be very confusing and we would incur significant maintenance costs.
-
-> Realistically this is a non-starter given the complexity of semantic analysis.
+We could implement client-side semantic analysis instead of relying on the transpiled version. This would lead us down a costly road, complex type inference is hard, differences/bugs between our and the main semantic analysis would be very confusing and we would incur significant maintenance costs. Realistically this is a non-starter given the complexity of semantic analysis.
 
 Alternatively, we could take a parser only approach, trying to infer the simple cases types from just the CST/AST without semantic analysis by parsing variable definitions directly from syntax and track only simple patterns like `(n:Person)`.
 
