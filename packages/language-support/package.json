@@ -22,7 +22,7 @@
     "highlighting",
     "formatting"
   ],
-  "version": "2.0.0-next.22",
+  "version": "2.0.0-next.23",
   "type": "module",
   "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/project/language-support/src/index.js",
