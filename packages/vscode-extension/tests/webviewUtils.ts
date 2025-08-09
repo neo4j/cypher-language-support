@@ -201,7 +201,7 @@ export async function checkResultsContent(
   check: () => Promise<void>,
 ) {
   const webviews = await workbench.getAllWebviews();
-  await expect(webviews.length).toBe(1);
+  await expect(webviews.length).toBe(2);
   const resultsWebview = (await workbench.getAllWebviews()).at(0);
   await resultsWebview.open();
   await check();
@@ -215,7 +215,7 @@ export async function executeFile(
   opts?: { selectLines?: number },
 ) {
   await openFixtureFile(browser, fileName, opts);
-  await workbench.executeCommand('neo4j.runCypher');
+  await workbench.executeCommand('neo4j: Run cypher statements');
 }
 
 export async function ensureNotificationsAreDismissed(

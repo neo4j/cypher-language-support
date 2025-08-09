@@ -11,6 +11,44 @@ import {
   waitUntilNotification,
 } from '../../webviewUtils';
 
+//** Checks that the query result for each statement containts the expected summaries in query details.
+// If we pass an expected summary that is undefined we expect an empty result from query execution */
+export async function expectSummaries(
+  expectedSummaries: (string | undefined)[],
+) {
+  const queryDetails = await $$('#queryDetails .collapsible');
+  await expect(queryDetails.length).toBe(expectedSummaries.length);
+
+  for (let i = 0; i < expectedSummaries.length; i++) {
+    const queryDetail = (await $$('#queryDetails .collapsible'))[i];
+    //This matches the expand/collapse button, but we only want to click when collapsed
+    const expandButton = await queryDetail.$('button[aria-label*="statement"]');
+    const isCollapsed =
+      (await expandButton.getAttribute('aria-expanded')) === 'false';
+    if (isCollapsed) {
+      await expandButton.click();
+    }
+    const queryResult = await queryDetail.$('.collapsible-content');
+    await queryResult.waitForDisplayed();
+    const summary = await queryResult.getText();
+    if (expectedSummaries[i] !== undefined) {
+      await expect(summary).toContain(expectedSummaries[i]);
+    } else {
+      await expect(summary).toBe('');
+    }
+  }
+}
+
+/** Checks that the visualization view contains a table with all the expected items in it's body */
+export async function expectTableContent(expectedItems: string[]) {
+  const tableItems = await $$('.vizWrapper-table-cell.n-code');
+  await expect(tableItems.length).toBe(expectedItems.length);
+  for (let i = 0; i < expectedItems.length; i++) {
+    const tableItem = await tableItems[i].getText();
+    await expect(tableItem).toContain(expectedItems[i]);
+  }
+}
+
 suite('Params panel testing', () => {
   let workbench: Workbench;
 
@@ -89,7 +127,7 @@ suite('Params panel testing', () => {
     await waitUntilNotification(browser, `Switched to database '${database}'.`);
   }
 
-  test.skip('Should correctly set and clear cypher parameters', async function () {
+  test('Should correctly set and clear cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -97,11 +135,12 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('charmander');
-      await expect(queryResult).toContain('caterpie');
-      await expect(queryResult).toContain('pikachu');
-      await expect(queryResult).toContain('bulbasur');
+      await expectTableContent([
+        'charmander',
+        'caterpie',
+        'pikachu',
+        'bulbasaur',
+      ]);
     });
 
     await clearParams();
@@ -111,10 +150,9 @@ suite('Params panel testing', () => {
     await escapeModal(4);
 
     await checkResultsContent(workbench, async () => {
-      const text = await (await $('#query-error')).getText();
-      await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b, some param, some-param',
-      );
+      await expectSummaries([
+        'Expected parameter(s): a, b, some param, some-param',
+      ]);
     });
   });
 
@@ -145,7 +183,7 @@ suite('Params panel testing', () => {
     await forceSwitchDatabase('neo4j');
   });
 
-  test.skip('Should correctly modify cypher parameters', async function () {
+  test('Should correctly modify cypher parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -153,27 +191,29 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('charmander');
-      await expect(queryResult).toContain('caterpie');
-      await expect(queryResult).toContain('pikachu');
-      await expect(queryResult).toContain('bulbasur');
+      await expectTableContent([
+        'charmander',
+        'caterpie',
+        'pikachu',
+        'bulbasaur',
+      ]);
     });
 
     await forceModifyParam('a', '"abra"');
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('abra');
-      await expect(queryResult).toContain('caterpie');
-      await expect(queryResult).toContain('pikachu');
-      await expect(queryResult).toContain('bulbasur');
-      await expect(queryResult).not.toContain('charmander');
+      await expectTableContent([
+        'abra',
+        'caterpie',
+        'pikachu',
+        'bulbasaur',
+        'charmander',
+      ]);
     });
   });
 
-  test.skip('Should correctly delete parameters', async function () {
+  test('Should correctly delete parameters', async function () {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
@@ -181,29 +221,30 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('charmander');
-      await expect(queryResult).toContain('caterpie');
-      await expect(queryResult).toContain('pikachu');
-      await expect(queryResult).toContain('bulbasur');
+      await expectTableContent([
+        'charmander',
+        'caterpie',
+        'pikachu',
+        'bulbasaur',
+      ]);
     });
 
     await forceDeleteParam('a');
     await forceDeleteParam('b');
+
+    //forceDeleteParam triggers vscode api to remove item from param tree, but refresh of tree can't be awaited
+    await browser.pause(1000);
 
     await executeFile(workbench, 'params.cypher');
 
     await escapeModal(2);
 
     await checkResultsContent(workbench, async () => {
-      const text = await (await $('#query-error')).getText();
-      await expect(text).toContain(
-        'Error executing query RETURN $a, $b, $`some param`, $`some-param`, $a + $b;:\nExpected parameter(s): a, b',
-      );
+      await expectSummaries(['Expected parameter(s): a, b']);
     });
   });
 
-  test.skip('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
+  test('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
     await clearParams();
     await forceAddParam('a', '1998');
     await executeFile(workbench, 'params.cypher');
@@ -221,39 +262,7 @@ suite('Params panel testing', () => {
     await browser.keys(['5', Key.Enter]);
 
     await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('1998');
-      await expect(queryResult).toContain('12');
-      await expect(queryResult).toContain('false');
-      await expect(queryResult).toContain('5');
-      await expect(queryResult).toContain('2010');
-    });
-  });
-
-  test.skip('Should trigger parameter add pop-up when running a query with an unknown parameter', async () => {
-    await clearParams();
-    await forceAddParam('a', '1998');
-    await executeFile(workbench, 'params.cypher');
-
-    // initial pop-up for param b
-    await browser.pause(1000);
-    await browser.keys(['1', '2', Key.Enter]);
-
-    // initial pop-up for param `some param`
-    await browser.pause(1000);
-    await browser.keys(['f', 'a', 'l', 's', 'e', Key.Enter]);
-
-    // initial pop-up for param `some-param`
-    await browser.pause(1000);
-    await browser.keys(['5', Key.Enter]);
-
-    await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-result')).getText();
-      await expect(queryResult).toContain('1998');
-      await expect(queryResult).toContain('12');
-      await expect(queryResult).toContain('false');
-      await expect(queryResult).toContain('5');
-      await expect(queryResult).toContain('2010');
+      await expectTableContent(['1998', '12', 'false', '5', '2010']);
     });
   });
 });
