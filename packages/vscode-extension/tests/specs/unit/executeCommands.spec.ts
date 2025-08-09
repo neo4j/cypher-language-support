@@ -3,14 +3,17 @@ import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import { commands, MessageOptions, window } from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
-import { getNeo4j2025Configuration } from '../../helpers';
+import {
+  getNeo4j2025Configuration,
+  getNeo4j5Configuration,
+} from '../../helpers';
 import {
   connectDefault,
   neo4j2025ConnectionKey,
   saveDefaultConnection,
 } from '../../suiteSetup';
 
-suite('Execute commands spec', () => {
+suite.only('Execute commands spec', () => {
   let sandbox: sinon.SinonSandbox;
   let showInformationMessageStub: sinon.SinonStub;
   let showErrorMessageStub: sinon.SinonStub;
@@ -457,6 +460,165 @@ suite('Execute commands spec', () => {
 
       sandbox.assert.notCalled(showInformationMessageStub);
       sandbox.assert.notCalled(showErrorMessageStub);
+    });
+  });
+
+  suite('deleteAllConnectionsCommand', () => {
+    const connection2025 = {
+      name: 'deleteAllConnectionsCommand 2025',
+      key: 'deleteAllConnectionsCommand 2025',
+      scheme: getNeo4j2025Configuration().scheme,
+      host: getNeo4j2025Configuration().host,
+      port: getNeo4j2025Configuration().port,
+      user: getNeo4j2025Configuration().user,
+      database: getNeo4j2025Configuration().database,
+      state: 'inactive',
+    };
+    const connection2025Password = getNeo4j2025Configuration().password;
+
+    const connection5 = {
+      name: 'deleteAllConnectionsCommand 5',
+      key: 'deleteAllConnectionsCommand 5',
+      scheme: getNeo4j5Configuration().scheme,
+      host: getNeo4j5Configuration().host,
+      port: getNeo4j5Configuration().port,
+      user: getNeo4j5Configuration().user,
+      database: getNeo4j5Configuration().database,
+      state: 'inactive',
+    };
+
+    const connection5Password = getNeo4j5Configuration().password;
+
+    test('Deleting all connections should show a success message', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection2025,
+        connection2025Password,
+      );
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection5,
+        connection5Password,
+      );
+
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('Yes');
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_ALL_CONNECTIONS_COMMAND,
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.ALL_CONNECTIONS_DELETED,
+      );
+    });
+
+    test('Deleting all connections should disconnect active connections', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection2025,
+        connection2025Password,
+      );
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection5,
+        connection5Password,
+      );
+
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('Yes');
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_ALL_CONNECTIONS_COMMAND,
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.ALL_CONNECTIONS_DELETED,
+      );
+
+      sandbox.assert.calledWith(
+        showInformationMessageStub,
+        CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE,
+      );
+    });
+
+    test('Dismissing delete all connections prompt should not show any messages', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection2025,
+        connection2025Password,
+      );
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection5,
+        connection5Password,
+      );
+
+      sandbox.stub(window, 'showWarningMessage').resolves(undefined);
+      showInformationMessageStub.reset();
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_ALL_CONNECTIONS_COMMAND,
+      );
+
+      sandbox.assert.notCalled(showInformationMessageStub);
+    });
+
+    test('Any other response from delete all connections prompt should not show any messages', async () => {
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection2025,
+        connection2025Password,
+      );
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+        connection5,
+        connection5Password,
+      );
+
+      const stub = sandbox.stub(
+        window,
+        'showWarningMessage',
+      ) as unknown as sinon.SinonStub<
+        [string, MessageOptions, ...string[]],
+        Thenable<string>
+      >;
+
+      stub
+        .withArgs(sinon.match.string, sinon.match.object, sinon.match.string)
+        .resolves('No');
+
+      showInformationMessageStub.reset();
+
+      await commands.executeCommand(
+        CONSTANTS.COMMANDS.DELETE_ALL_CONNECTIONS_COMMAND,
+      );
+
+      sandbox.assert.notCalled(showInformationMessageStub);
     });
   });
 });
