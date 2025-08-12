@@ -47,6 +47,15 @@ suite('Query results testing', () => {
     connectionSection = await getConnectionSection(workbench);
   });
 
+  test('should manage queries that need implicit transactions', async function () {
+    await executeFile(workbench, 'call-in-transactions.cypher');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummaries([
+        '6 nodes created, 12 properties set, 6 labels added.',
+      ]);
+    });
+  });
+
   test('should correctly execute valid Cypher', async function () {
     await executeFile(workbench, 'valid.cypher');
     await checkResultsContent(workbench, true, async () => {
