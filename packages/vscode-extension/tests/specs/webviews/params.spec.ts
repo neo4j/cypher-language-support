@@ -51,9 +51,14 @@ export async function expectTableContent(expectedItems: string[]) {
 
 suite('Params panel testing', () => {
   let workbench: Workbench;
+  // let bottomPanel: BottomBarPanel;
+  // let queryResultsTab;
 
   before(async () => {
     workbench = await browser.getWorkbench();
+    // bottomPanel = workbench.getBottomBar();
+    // bottomPanel.openProblemsView
+    // queryResultsTab = await bottomPanel.tab$("QUERY RESULTS")
   });
 
   async function escapeModal(count: number) {
@@ -131,15 +136,19 @@ suite('Params panel testing', () => {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
-    await forceAddParam('some-param', '"bulbasur"');
+    await forceAddParam('some-param', '"bulbasaur"');
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, async () => {
+    await executeFile(workbench, 'params.cypher');
+
+    await checkResultsContent(workbench, false, async () => {
+      await browser.pause(3000);
       await expectTableContent([
         'charmander',
         'caterpie',
         'pikachu',
         'bulbasaur',
+        'charmandercaterpie',
       ]);
     });
 
@@ -149,7 +158,7 @@ suite('Params panel testing', () => {
 
     await escapeModal(4);
 
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries([
         'Expected parameter(s): a, b, some param, some-param',
       ]);
@@ -184,31 +193,34 @@ suite('Params panel testing', () => {
   });
 
   test('Should correctly modify cypher parameters', async function () {
+    await browser.pause(1000);
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
-    await forceAddParam('some-param', '"bulbasur"');
+    await forceAddParam('some-param', '"bulbasaur"');
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, async () => {
+    await executeFile(workbench, 'params.cypher');
+    await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
         'charmander',
         'caterpie',
         'pikachu',
         'bulbasaur',
+        'charmandercaterpie',
       ]);
     });
 
     await forceModifyParam('a', '"abra"');
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
         'abra',
         'caterpie',
         'pikachu',
         'bulbasaur',
-        'charmander',
+        'abracaterpie',
       ]);
     });
   });
@@ -217,15 +229,20 @@ suite('Params panel testing', () => {
     await forceAddParam('a', '"charmander"');
     await forceAddParam('b', '"caterpie"');
     await forceAddParam('some param', '"pikachu"');
-    await forceAddParam('some-param', '"bulbasur"');
+    await forceAddParam('some-param', '"bulbasaur"');
+
+    await browser.pause(100);
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, async () => {
+    await executeFile(workbench, 'params.cypher');
+
+    await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
         'charmander',
         'caterpie',
         'pikachu',
         'bulbasaur',
+        'charmandercaterpie',
       ]);
     });
 
@@ -239,7 +256,7 @@ suite('Params panel testing', () => {
 
     await escapeModal(2);
 
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries(['Expected parameter(s): a, b']);
     });
   });
@@ -261,7 +278,7 @@ suite('Params panel testing', () => {
     await browser.pause(1000);
     await browser.keys(['5', Key.Enter]);
 
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, false, async () => {
       await expectTableContent(['1998', '12', 'false', '5', '2010']);
     });
   });

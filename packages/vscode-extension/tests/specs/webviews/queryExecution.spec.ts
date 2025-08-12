@@ -49,14 +49,14 @@ suite('Query results testing', () => {
 
   test('should correctly execute valid Cypher', async function () {
     await executeFile(workbench, 'valid.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries(['1 nodes created, 1 labels added.']);
     });
   });
 
   test('should correctly execute valid Cypher when highlighting several statements', async function () {
     await executeFile(workbench, 'multiline.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries([
         '1 nodes created, 1 labels added.',
         '2 nodes created, 2 labels added.',
@@ -67,7 +67,7 @@ suite('Query results testing', () => {
 
   test('should error on invalid cypher', async function () {
     await executeFile(workbench, 'invalid.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries(['Variable `n` not defined']);
     });
   });
@@ -81,11 +81,11 @@ suite('Query results testing', () => {
     await clickOnContextMenuItem(connectionSection, 'Connect', 1);
 
     await executeFile(workbench, 'create-for-match.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries(['1 nodes created, 1 labels added.']);
     });
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries(['Started streaming 1 record']);
     });
 
@@ -95,7 +95,7 @@ suite('Query results testing', () => {
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, async () => {
+    await checkResultsContent(workbench, true, async () => {
       await expectSummaries([undefined]);
     });
     await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);

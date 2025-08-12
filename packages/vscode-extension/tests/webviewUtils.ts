@@ -198,11 +198,34 @@ export async function closeActiveTab(browser: WebdriverIO.Browser) {
 
 export async function checkResultsContent(
   workbench: Workbench,
+  summaryWebView: boolean,
   check: () => Promise<void>,
 ) {
+  // if (summaryWebView) {
+  //   await browser.executeWorkbench(
+  //         async () => {
+  //           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  //               await workbench.executeCommand('Query Results: Focus on Query Details View');
+
+  //         },
+  //       );
+  //   // await workbench.executeCommand('Query Results: Focus on Query Details View');
+  // } else {
+  //   await browser.executeWorkbench(
+  //         async () => {
+  //           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+  //               await workbench.executeCommand('Query Results: Focus on Visualization View');
+
+  //         },
+  //       );
+  //   // await workbench.executeCommand('Query Results: Focus on Visualization View');
+  // }
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+
   const webviews = await workbench.getAllWebviews();
   await expect(webviews.length).toBe(2);
-  const resultsWebview = (await workbench.getAllWebviews()).at(0);
+  const webviewNbr = summaryWebView ? 0 : 1;
+  const resultsWebview = (await workbench.getAllWebviews()).at(webviewNbr);
   await resultsWebview.open();
   await check();
   await resultsWebview.close();
@@ -215,20 +238,24 @@ export async function executeFile(
   opts?: { selectLines?: number },
 ) {
   await openFixtureFile(browser, fileName, opts);
-  await workbench.executeCommand('neo4j: Run cypher statements');
+  await new Promise((resolve) => setTimeout(resolve, 1000));
+  await workbench.executeCommand('Neo4j: Run Cypher statements');
 }
 
 export async function ensureNotificationsAreDismissed(
   browser: WebdriverIO.Browser,
 ): Promise<void> {
   const wb = await browser.getWorkbench();
-  const notifications = await wb.getNotifications();
-  for (const notification of notifications) {
-    await notification.dismiss();
-  }
+  return await browser.waitUntil(async () => {
+    const notifications = await wb.getNotifications();
+    for (const notification of notifications) {
+      await notification.dismiss();
+    }
 
-  const remainingNotifications = await wb.getNotifications();
-  if (remainingNotifications.length > 0) {
-    return ensureNotificationsAreDismissed(browser);
-  }
+    const remainingNotifications = await wb.getNotifications();
+    if (remainingNotifications.length > 0) {
+      await ensureNotificationsAreDismissed(browser);
+    }
+    return true;
+  });
 }
