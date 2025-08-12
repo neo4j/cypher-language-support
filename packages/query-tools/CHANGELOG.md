@@ -1,5 +1,13 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.23
+
+### Patch Changes
+
+- 045424b: Fixes execution of queries that need to be ran in implicit transactions
+- Updated dependencies [c065d85]
+  - @neo4j-cypher/language-support@2.0.0-next.23
+
 ## 2.0.0-next.22
 
 ### Minor Changes
