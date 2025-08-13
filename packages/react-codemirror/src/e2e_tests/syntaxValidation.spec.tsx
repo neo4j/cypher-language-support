@@ -204,14 +204,13 @@ test('Strikethroughs are shown for deprecated functions', async ({
   mount,
 }) => {
   const editorPage = new CypherEditorPage(page);
-  const query = `RETURN id()`;
+  const query = `RETURN id(1)`;
 
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
     editorPage.page.locator('.cm-deprecated-element').last(),
   ).toBeVisible({ timeout: 10000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
-  await editorPage.checkErrorMessage('id', `Insufficient parameters for function 'id'`);
 });
 
 test('Strikethroughs are shown for deprecated procedures', async ({
@@ -219,7 +218,7 @@ test('Strikethroughs are shown for deprecated procedures', async ({
   mount,
 }) => {
   const editorPage = new CypherEditorPage(page);
-  const query = `CALL apoc.create.uuids()`;
+  const query = `CALL apoc.create.uuids(5)`;
 
   await mount(<CypherEditor value={query} schema={testData.mockSchema} />);
   await expect(
