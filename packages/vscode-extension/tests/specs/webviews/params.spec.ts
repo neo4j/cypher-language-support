@@ -13,13 +13,13 @@ import {
 
 //** Checks that the query result for each statement containts the expected summaries in query details.
 // If we pass an expected summary that is undefined we expect an empty result from query execution */
-export async function expectSummaries(
-  expectedSummaries: (string | undefined)[],
+export async function expectSummariesContain(
+  expectedSubstrings: (string | undefined)[],
 ) {
   const queryDetails = await $$('#queryDetails .collapsible');
-  await expect(queryDetails.length).toBe(expectedSummaries.length);
+  await expect(queryDetails.length).toBe(expectedSubstrings.length);
 
-  for (let i = 0; i < expectedSummaries.length; i++) {
+  for (let i = 0; i < expectedSubstrings.length; i++) {
     const queryDetail = (await $$('#queryDetails .collapsible'))[i];
     //This matches the expand/collapse button, but we only want to click when collapsed
     const expandButton = await queryDetail.$('button[aria-label*="statement"]');
@@ -31,8 +31,8 @@ export async function expectSummaries(
     const queryResult = await queryDetail.$('.collapsible-content');
     await queryResult.waitForDisplayed();
     const summary = await queryResult.getText();
-    if (expectedSummaries[i] !== undefined) {
-      await expect(summary).toContain(expectedSummaries[i]);
+    if (expectedSubstrings[i] !== undefined) {
+      await expect(summary).toContain(expectedSubstrings[i]);
     } else {
       await expect(summary).toBe('');
     }
@@ -54,6 +54,9 @@ suite('Params panel testing', () => {
 
   before(async () => {
     workbench = await browser.getWorkbench();
+    await workbench.executeCommand(
+      'Query Results: Focus on Query Details View',
+    );
   });
 
   async function escapeModal(count: number) {
@@ -134,7 +137,6 @@ suite('Params panel testing', () => {
     await forceAddParam('some-param', '"bulbasaur"');
 
     await executeFile(workbench, 'params.cypher');
-    await executeFile(workbench, 'params.cypher');
 
     await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
@@ -153,7 +155,7 @@ suite('Params panel testing', () => {
     await escapeModal(4);
 
     await checkResultsContent(workbench, true, async () => {
-      await expectSummaries([
+      await expectSummariesContain([
         'Expected parameter(s): a, b, some param, some-param',
       ]);
     });
@@ -184,6 +186,7 @@ suite('Params panel testing', () => {
       'Parameters cannot be added when on the system database. Please connect to a user database.',
     );
     await forceSwitchDatabase('neo4j');
+    await browser.pause(1000);
   });
 
   test('Should correctly modify cypher parameters', async function () {
@@ -192,7 +195,6 @@ suite('Params panel testing', () => {
     await forceAddParam('some param', '"pikachu"');
     await forceAddParam('some-param', '"bulbasaur"');
 
-    await executeFile(workbench, 'params.cypher');
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
@@ -225,7 +227,6 @@ suite('Params panel testing', () => {
     await forceAddParam('some-param', '"bulbasaur"');
 
     await executeFile(workbench, 'params.cypher');
-    await executeFile(workbench, 'params.cypher');
 
     await checkResultsContent(workbench, false, async () => {
       await expectTableContent([
@@ -240,15 +241,12 @@ suite('Params panel testing', () => {
     await forceDeleteParam('a');
     await forceDeleteParam('b');
 
-    //forceDeleteParam triggers vscode api to remove item from param tree, but refresh of tree can't be awaited
-    await browser.pause(1000);
-
     await executeFile(workbench, 'params.cypher');
 
     await escapeModal(2);
 
     await checkResultsContent(workbench, true, async () => {
-      await expectSummaries(['Expected parameter(s): a, b']);
+      await expectSummariesContain(['Expected parameter(s): a, b']);
     });
   });
 

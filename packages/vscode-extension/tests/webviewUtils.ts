@@ -201,27 +201,7 @@ export async function checkResultsContent(
   summaryWebView: boolean,
   check: () => Promise<void>,
 ) {
-  // if (summaryWebView) {
-  //   await browser.executeWorkbench(
-  //         async () => {
-  //           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  //               await workbench.executeCommand('Query Results: Focus on Query Details View');
-
-  //         },
-  //       );
-  //   // await workbench.executeCommand('Query Results: Focus on Query Details View');
-  // } else {
-  //   await browser.executeWorkbench(
-  //         async () => {
-  //           // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-  //               await workbench.executeCommand('Query Results: Focus on Visualization View');
-
-  //         },
-  //       );
-  //   // await workbench.executeCommand('Query Results: Focus on Visualization View');
-  // }
-  await new Promise((resolve) => setTimeout(resolve, 1000));
-
+  await browser.pause(1000);
   const webviews = await workbench.getAllWebviews();
   await expect(webviews.length).toBe(2);
   const webviewNbr = summaryWebView ? 0 : 1;
@@ -238,7 +218,6 @@ export async function executeFile(
   opts?: { selectLines?: number },
 ) {
   await openFixtureFile(browser, fileName, opts);
-  await new Promise((resolve) => setTimeout(resolve, 1000));
   await workbench.executeCommand('Neo4j: Run Cypher statements');
 }
 
