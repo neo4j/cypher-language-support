@@ -40,6 +40,7 @@ suite('Neo4j version specific linting spec', () => {
     await testSyntaxValidation({
       docUri,
       expected: [
+        //nothing
         new vscode.Diagnostic(
           new vscode.Range(
             new vscode.Position(1, 0),
