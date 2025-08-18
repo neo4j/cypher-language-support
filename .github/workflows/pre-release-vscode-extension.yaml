@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
   schedule:
     # Every weekday at 9:00 UTC
-    - cron: '0 9 * * 1-5'
+    - cron: '0 2 * * 1-5'
   push:
     branches:
       - main
@@ -50,7 +50,7 @@ jobs:
       - name: Set Up Git User
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
-          git config --global user.name "Dev Artifact Bot"
+          git config --global user.name "Pre-release Bot"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Bump version (odd minor rule)
