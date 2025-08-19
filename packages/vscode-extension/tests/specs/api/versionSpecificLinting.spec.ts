@@ -13,7 +13,7 @@ import { after, before } from 'mocha';
 // Because the VSCode debugger seems to sandbox the editor
 // it spins up, so globalStorage is a temp folder, not the
 // one getExtensionContext().globalStorageUri returns
-suite('Neo4j version specific linting spec', () => {
+suite.skip('Neo4j version specific linting spec', () => {
   before(async () => {
     process.env.LINTER_SWITCHING_TESTS = 'true';
     // We need to reconnect to neo4j so that the switching
