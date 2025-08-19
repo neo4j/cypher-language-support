@@ -10,7 +10,35 @@ import {
   waitUntilNotification,
 } from '../../webviewUtils';
 
-suite.skip('Query results testing', () => {
+//** Checks that the query result for each statement containts the expected summaries in query details.
+// If we pass an expected summary that is undefined we expect an empty result from query execution */
+export async function expectSummariesContain(
+  expectedSubstrings: (string | undefined)[],
+) {
+  const queryDetails = await $$('#queryDetails .collapsible');
+  await expect(queryDetails.length).toBe(expectedSubstrings.length);
+
+  for (let i = 0; i < expectedSubstrings.length; i++) {
+    const queryDetail = (await $$('#queryDetails .collapsible'))[i];
+    //This matches the expand/collapse button, but we only want to click when collapsed
+    const expandButton = await queryDetail.$('button[aria-label*="statement"]');
+    const isCollapsed =
+      (await expandButton.getAttribute('aria-expanded')) === 'false';
+    if (isCollapsed) {
+      await expandButton.click();
+    }
+    const queryResult = await queryDetail.$('.collapsible-content');
+    await queryResult.waitForDisplayed();
+    const summary = await queryResult.getText();
+    if (expectedSubstrings[i] !== undefined) {
+      await expect(summary).toContain(expectedSubstrings[i]);
+    } else {
+      await expect(summary).toBe('');
+    }
+  }
+}
+
+suite('Query results testing', () => {
   let workbench: Workbench;
   let connectionSection: ViewSection;
 
@@ -19,44 +47,37 @@ suite.skip('Query results testing', () => {
     connectionSection = await getConnectionSection(workbench);
   });
 
-  test('should correctly execute a valid Cypher', async function () {
-    await executeFile(workbench, 'valid.cypher');
-    await checkResultsContent(workbench, async () => {
-      const querySummary = await (await $('#query-summary')).getText();
-      await expect(querySummary).toContain('1 nodes created, 1 labels added.');
+  test('should manage queries that need implicit transactions', async function () {
+    await executeFile(workbench, 'call-in-transactions.cypher');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain([
+        '6 nodes created, 12 properties set, 6 labels added.',
+      ]);
     });
   });
 
-  test('should correctly execute a valid Cypher when highlighting several statements', async function () {
-    await executeFile(workbench, 'multiline.cypher');
-    await checkResultsContent(workbench, async () => {
-      // Take the first line query result summary
-      const firstCreateSummary = await (await $('#query-summary')).getText();
-      // Select the second tab to get the query result for the second line
-      await (
-        await $(
-          '#resultDiv > div > div.ndl-tabs.ndl-large.ndl-underline-tab.label > button:nth-child(2)',
-        )
-      ).click();
-      const secondCreateSummary = await (await $('#query-summary')).getText();
+  test('should correctly execute valid Cypher', async function () {
+    await executeFile(workbench, 'valid.cypher');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain(['1 nodes created, 1 labels added.']);
+    });
+  });
 
-      await expect(firstCreateSummary).toContain(
+  test('should correctly execute valid Cypher when highlighting several statements', async function () {
+    await executeFile(workbench, 'multiline.cypher');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain([
         '1 nodes created, 1 labels added.',
-      );
-      await expect(secondCreateSummary).toContain(
         '2 nodes created, 2 labels added.',
-      );
+        '',
+      ]);
     });
   });
 
   test('should error on invalid cypher', async function () {
     await executeFile(workbench, 'invalid.cypher');
-    await checkResultsContent(workbench, async () => {
-      const text = await (await $('#query-error')).getText();
-      await expect(text).toContain(
-        'Error executing query WITH (n:Person) RETURN n',
-      );
-      await expect(text).toContain('Variable `n` not defined');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain(['Variable `n` not defined']);
     });
   });
 
@@ -69,14 +90,12 @@ suite.skip('Query results testing', () => {
     await clickOnContextMenuItem(connectionSection, 'Connect', 1);
 
     await executeFile(workbench, 'create-for-match.cypher');
-    await checkResultsContent(workbench, async () => {
-      const querySummary = await (await $('#query-summary')).getText();
-      await expect(querySummary).toContain('1 nodes created, 1 labels added.');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain(['1 nodes created, 1 labels added.']);
     });
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, async () => {
-      const querySummary = await (await $('#query-summary')).getText();
-      await expect(querySummary).toContain('Started streaming 1 record');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain(['Started streaming 1 record']);
     });
 
     // Disconnect from the current instance
@@ -85,9 +104,8 @@ suite.skip('Query results testing', () => {
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, async () => {
-      const queryResult = await (await $('#query-empty-result')).getText();
-      await expect(queryResult).toContain('No records returned');
+    await checkResultsContent(workbench, true, async () => {
+      await expectSummariesContain([undefined]);
     });
     await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
 
