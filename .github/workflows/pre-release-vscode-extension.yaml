@@ -27,9 +27,7 @@ jobs:
         id: cache-pre-release-sha
         with:
           path: last-published-sha
-          key: vs-code-extension-pre-release-sha-${{ github.run_id }}
-          restore-keys: |
-            vs-code-extension-pre-release-sha-
+          key: vs-code-extension-pre-release-sha-
 
       - name: Check for changes
         id: check_changes
