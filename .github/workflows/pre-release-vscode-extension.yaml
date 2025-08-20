@@ -1,0 +1,97 @@
+name: Pre Release VSCode extension
+
+on:
+  workflow_dispatch:
+  schedule:
+    # Every weekday at 9:00 UTC
+    - cron: '0 2 * * 1-5'
+  push:
+    branches:
+      - main
+    paths:
+      - 'packages/vscode-extension/**'
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=4096'
+
+jobs:
+  pre-release-vscode-extension:
+    name: 'Pre Release VSCode extension'
+    environment: publish-vscode-extension
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Restore latest pre-released sha
+        uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        id: cache-pre-release-sha
+        with:
+          path: last-published-sha
+          key: vs-code-extension-pre-release-sha-
+
+      - name: Check for changes
+        id: check_changes
+        run: |
+          CURRENT_SHA=$GITHUB_SHA
+          echo "Current SHA: $CURRENT_SHA"
+          echo "Last published SHA: $(cat last-published-sha 2>/dev/null || echo 'none')"
+          if [[ ! -f last-published-sha || "$(cat last-published-sha 2>/dev/null)" != "$CURRENT_SHA" ]]; then
+            echo "has_changes=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_changes=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Setup and build project
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: ./.github/actions/setup-and-build
+
+      - name: Set Up Git User
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          git config --global user.name "Pre-release Bot"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump version (odd minor rule)
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          cd packages/vscode-extension
+          # obtain current version as "x.y.z"
+          CURRENT=$(node -p "require('./package.json').version")
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT"
+
+          if [ $((MINOR % 2)) -eq 0 ]; then
+            # even minor => switch to pre-release track with next odd minor
+            NEW_VERSION="$MAJOR.$((MINOR + 1)).0"
+          else
+            # already on pre-release track (odd minor) => bump patch
+            NEW_VERSION="$MAJOR.$MINOR.$((PATCH + 1))"
+          fi
+
+          echo "Bumping version from $CURRENT to $NEW_VERSION"
+          pnpm version "$NEW_VERSION" --no-git-tag-version
+          git add .
+          git commit -m "bump pre-release version to $NEW_VERSION"
+          git push
+
+      - name: Set the last published cached SHA
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          LATEST_SHA=$(git rev-parse HEAD)
+          echo "$LATEST_SHA" > last-published-sha
+          echo "Last published SHA set to: $LATEST_SHA"
+
+      - name: Cache the last published SHA
+        if: steps.check_changes.outputs.has_changes == 'true'
+        uses: actions/cache/save@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
+        with:
+          path: last-published-sha
+          key: vs-code-extension-pre-release-sha-${{ github.run_number }}
+
+      - name: Publish pre-release
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          VSX_PAT: ${{ secrets.VSX_PAT }}
+        run: |
+          cd packages/vscode-extension
+          pnpm package --pre-release
+          pnpm vsce publish --pre-release --no-dependencies --pat $VSX_PAT
