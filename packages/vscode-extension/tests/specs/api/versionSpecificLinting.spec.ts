@@ -13,7 +13,7 @@ import { after, before } from 'mocha';
 // Because the VSCode debugger seems to sandbox the editor
 // it spins up, so globalStorage is a temp folder, not the
 // one getExtensionContext().globalStorageUri returns
-suite.skip('Neo4j version specific linting spec', () => {
+suite('Neo4j version specific linting spec', () => {
   before(async () => {
     process.env.LINTER_SWITCHING_TESTS = 'true';
     // We need to reconnect to neo4j so that the switching
@@ -33,7 +33,7 @@ suite.skip('Neo4j version specific linting spec', () => {
   });
 
   async function testNeo4jSpecificLinting() {
-    const textFile = 'subquery-call.cypher';
+    const textFile = 'cypher-versioned.cypher';
     const docUri = getDocumentUri(textFile);
     await openDocument(docUri);
 
@@ -42,27 +42,11 @@ suite.skip('Neo4j version specific linting spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(1, 0),
-            new vscode.Position(4, 1),
+            new vscode.Position(0, 26),
+            new vscode.Position(0, 27),
           ),
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL (n) { ... }',
-          vscode.DiagnosticSeverity.Warning,
-        ),
-        new vscode.Diagnostic(
-          new vscode.Range(
-            new vscode.Position(5, 7),
-            new vscode.Position(5, 9),
-          ),
-          'Function id is deprecated. Alternative: elementId or an application-generated id',
-          vscode.DiagnosticSeverity.Warning,
-        ),
-        new vscode.Diagnostic(
-          new vscode.Range(
-            new vscode.Position(5, 7),
-            new vscode.Position(5, 12),
-          ),
-          "The query used a deprecated function. ('id' has been replaced by 'elementId or an application-generated id')",
-          vscode.DiagnosticSeverity.Warning,
+          'Variable `m` not defined',
+          vscode.DiagnosticSeverity.Error,
         ),
       ],
     });
@@ -73,11 +57,11 @@ suite.skip('Neo4j version specific linting spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(5, 7),
-            new vscode.Position(5, 12),
+            new vscode.Position(0, 0),
+            new vscode.Position(0, 6),
           ),
-          'The query used a deprecated function: `id`.',
-          vscode.DiagnosticSeverity.Warning,
+          'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
+          vscode.DiagnosticSeverity.Error,
         ),
       ],
     });
