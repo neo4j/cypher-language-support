@@ -85,10 +85,6 @@ export function listGraphSchema(
   };
 }
 
-//How much do we want to be "should work for generic query" vs "uses what we know will work for our specific query"?
-//I figure we will have needless parts in our method (ex handling multiple records/labels) if we go generic
-//but if something changes in what is returned from the query, I suppose things could break...
-//  Maybe some checks that disable the functionality if the query provides unexpected data?
 function extractRelationshipsWithNamedNodes(
   graphSchemas: GraphSchema[],
 ): Set<{ from: string; to: string; relType: string }> {
@@ -98,7 +94,6 @@ function extractRelationshipsWithNamedNodes(
     return items;
   }
   const graphSchema = graphSchemas[0];
-  // const nodes = record.get('nodes').map(node => { return { labels: node.labels, id: node.elementId }});
   const nodes: Record<string, string> = {};
 
   for (const node of graphSchema.nodes) {
