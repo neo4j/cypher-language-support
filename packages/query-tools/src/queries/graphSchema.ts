@@ -62,7 +62,7 @@ const validateGraphSchema = new Ajv({ useDefaults: true }).compile(
 export function listGraphSchema(
   database: string | undefined,
 ): ExecuteQueryArgs<{
-  graphSchema: Set<{ from: string; to: string; relType: string }>;
+  graphSchema: { from: string; to: string; relType: string }[];
 }> {
   const query = `CALL db.schema.visualization() YIELD *`;
   const resultTransformer = resultTransformers.mappedResultTransformer({
@@ -87,8 +87,8 @@ export function listGraphSchema(
 
 function extractRelationshipsWithNamedNodes(
   graphSchemas: GraphSchema[],
-): Set<{ from: string; to: string; relType: string }> {
-  const items = new Set<{ from: string; to: string; relType: string }>();
+): { from: string; to: string; relType: string }[] {
+  const items: { from: string; to: string; relType: string }[] = [];
 
   if (graphSchemas.length !== 1) {
     return items;
@@ -104,7 +104,7 @@ function extractRelationshipsWithNamedNodes(
     const from = nodes[rel.startNodeElementId];
     const to = nodes[rel.endNodeElementId];
     const relType = rel.type;
-    items.add({ from, to, relType });
+    items.push({ from, to, relType });
   }
 
   return items;

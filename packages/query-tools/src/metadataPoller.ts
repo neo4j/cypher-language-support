@@ -108,7 +108,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   private users: QueryPoller<{ users: Neo4jUser[] }>;
   private roles: QueryPoller<{ roles: Neo4jRole[] }>;
   private graphSchema: QueryPoller<{
-    graphSchema: Set<{ from: string; to: string; relType: string }>;
+    graphSchema: { from: string; to: string; relType: string }[];
   }>;
   private dbPollingInterval: NodeJS.Timeout | undefined;
 
