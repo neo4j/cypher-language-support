@@ -14,6 +14,7 @@ import { listProcedures } from './queries/procedures.js';
 import { listRoles, Neo4jRole } from './queries/roles.js';
 import { listUsers, Neo4jUser } from './queries/users.js';
 import { ExecuteQueryArgs } from './types/sdkTypes.js';
+import { listGraphSchema } from './queries/graphSchema.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -106,6 +107,9 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   > = {};
   private users: QueryPoller<{ users: Neo4jUser[] }>;
   private roles: QueryPoller<{ roles: Neo4jRole[] }>;
+  private graphSchema: QueryPoller<{
+    graphSchema: Set<{ from: string; to: string; relType: string }>;
+  }>;
   private dbPollingInterval: NodeJS.Timeout | undefined;
 
   public dbSchema: DbSchema = {};
@@ -160,6 +164,17 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       onRefetchDone: (result) => {
         if (result.success) {
           this.dbSchema.roleNames = result.data.roles.map((role) => role.role);
+        }
+      },
+    });
+
+    this.graphSchema = new QueryPoller({
+      connection,
+      queryArgs: listGraphSchema(connection.currentDb),
+      onRefetchDone: (result) => {
+        if (result.success) {
+          const { graphSchema } = result.data;
+          this.dbSchema.graphSchema = graphSchema;
         }
       },
     });
@@ -233,6 +248,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
+      this.graphSchema.refetch(),
       ...Object.values(this.procedures).map((version) => version?.refetch()),
       ...Object.values(this.functions).map((version) => version?.refetch()),
     ]);

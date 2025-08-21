@@ -15,4 +15,5 @@ export interface DbSchema {
   procedures?: ScopedRegistry<Neo4jProcedure>;
   functions?: ScopedRegistry<Neo4jFunction>;
   defaultLanguage?: CypherVersion;
+  graphSchema?: Set<{ from: string; to: string; relType: string }>;
 }
