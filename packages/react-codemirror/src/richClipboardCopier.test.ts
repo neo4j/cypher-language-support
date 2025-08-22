@@ -7,7 +7,7 @@ function createStyleSheet(rules: string): CSSStyleSheet {
   const styleEl = document.createElement('style');
   styleEl.textContent = rules;
   document.head.appendChild(styleEl);
-  return styleEl.sheet as CSSStyleSheet;
+  return styleEl.sheet;
 }
 
 describe('getCSSStyleForClass', () => {
