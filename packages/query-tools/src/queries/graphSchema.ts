@@ -2,7 +2,7 @@ import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs } from '../types/sdkTypes';
 import Ajv, { JSONSchemaType } from 'ajv';
 
-type NeoNode = {
+export type NeoNode = {
   labels: string[];
   elementId: string;
 };
@@ -12,7 +12,8 @@ type NeoRel = {
   startNodeElementId: string;
 };
 
-type GraphSchema = {
+//exported for testing
+export type GraphSchema = {
   nodes: NeoNode[];
   relationships: NeoRel[];
 };
@@ -47,15 +48,14 @@ const graphSchemaSchema: JSONSchemaType<GraphSchema> = {
         required: ['type', 'endNodeElementId', 'startNodeElementId'],
         additionalProperties: true,
       },
-      required: ['type', 'endNodeElementId', 'relationships'],
-      additionalProperties: true,
     },
   },
   required: ['nodes', 'relationships'],
   additionalProperties: false,
 };
 
-const validateGraphSchema = new Ajv({ useDefaults: true }).compile(
+//exported for testing
+export const validateGraphSchema = new Ajv({ useDefaults: true }).compile(
   graphSchemaSchema,
 );
 
@@ -85,7 +85,8 @@ export function listGraphSchema(
   };
 }
 
-function extractRelationshipsWithNamedNodes(
+//exported for testing
+export function extractRelationshipsWithNamedNodes(
   graphSchemas: GraphSchema[],
 ): { from: string; to: string; relType: string }[] {
   const items: { from: string; to: string; relType: string }[] = [];
