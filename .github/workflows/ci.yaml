@@ -55,7 +55,7 @@ jobs:
         run: pnpm test
 
   test-polling:
-    name: Polling tests
+    name: Polling integration tests
     needs: build
     runs-on: ubuntu-latest
     steps:
