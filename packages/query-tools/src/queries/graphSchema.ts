@@ -51,7 +51,7 @@ const graphSchemaSchema: JSONSchemaType<GraphSchema> = {
     },
   },
   required: ['nodes', 'relationships'],
-  additionalProperties: false,
+  additionalProperties: true,
 };
 
 //exported for testing

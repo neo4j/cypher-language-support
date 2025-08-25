@@ -28,10 +28,12 @@ describe('Polling integration', () => {
     await testDriver.close();
     await neo4jInstance.stop();
   });
+
   test('Polling graph schema query gives results in correct shape', async () => {
     const query = 'CALL db.schema.visualization() YIELD *';
     const result = await session.run(query);
-    expect(validateGraphSchema(result.records[0].toObject()));
+    validateGraphSchema(result.records[0].toObject());
+    expect(validateGraphSchema.errors).toBe(null);
   });
 
   test('Polled graph schema is correctly retrieved from polling query result', async () => {
@@ -40,8 +42,10 @@ describe('Polling integration', () => {
     const actualResult = [result.records[0].toObject()] as GraphSchema[];
     validateGraphSchema(actualResult[0]);
     const graphSchema = extractRelationshipsWithNamedNodes(actualResult);
-    expect(JSON.stringify(graphSchema[0])).toBe(
-      JSON.stringify({ from: 'Teacher', to: 'Nurse', relType: 'LIVES_WITH' }),
-    );
+    expect(graphSchema).toContainEqual({
+      from: 'Teacher',
+      to: 'Nurse',
+      relType: 'LIVES_WITH',
+    });
   });
 });
