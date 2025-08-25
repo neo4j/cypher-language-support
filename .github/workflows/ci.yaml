@@ -54,6 +54,17 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+  test-polling:
+    name: Polling integration tests
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-and-build
+
+      - name: Run tests
+        run: pnpm --filter @neo4j-cypher/query-tools test:polling
+
   firefox-react-codemirror-e2e-test:
     name: Firefox React Codemirror E2E tests
     needs: build

@@ -1,8 +1,9 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "package.json"],
+  "include": ["src", "package.json", "vitest.config.mts"],
   "compilerOptions": {
     "strict": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "types": ["vitest/globals"]
   }
 }
