@@ -38,6 +38,6 @@
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
-    "test": "vitest"
+    "test": "vitest run"
   }
 }
