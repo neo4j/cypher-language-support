@@ -1,11 +1,9 @@
 import { EditorView } from '@codemirror/view';
 
 export function getCSSStyleForClass(className: string): string {
-  let cssText = '';
-  for (const sheet of Array.from(document.styleSheets)) {
+  return Array.from(document.styleSheets).reduce((cssText, sheet) => {
     try {
-      const rules = sheet.cssRules;
-      if (!rules) continue;
+      const rules = sheet.cssRules ?? [];
       for (const rule of Array.from(rules)) {
         if (
           rule instanceof CSSStyleRule &&
@@ -13,44 +11,72 @@ export function getCSSStyleForClass(className: string): string {
             .split(',')
             .some((sel) => sel.trim() === `.${className}`)
         ) {
-          cssText += rule.style.cssText + ';';
+          cssText += rule.style.cssText;
         }
       }
     } catch {
-      // no-op, some stylesheets may not be accessible due to CORS
+      // Ignore CORS-protected stylesheets
     }
-  }
-  return cssText;
+    return cssText;
+  }, '');
 }
 
-export function getHTML(view: EditorView, from: number, to: number) {
-  const range = document.createRange();
+function replaceClassWithStyle(element: HTMLElement): void {
+  const classNames = element.className.split(/\s+/).filter(Boolean);
+  const computed = getComputedStyle(element);
 
+  // Always keep text color if present
+  let styleText = computed.color ? `color: ${computed.color};` : '';
+
+  for (const cls of classNames) {
+    styleText += getCSSStyleForClass(cls);
+  }
+
+  if (styleText) {
+    element.setAttribute('style', styleText);
+  }
+
+  element.removeAttribute('class');
+}
+
+export function getHTML(view: EditorView, from: number, to: number): string {
+  const range = document.createRange();
   const fromInfo = view.domAtPos(from);
   const toInfo = view.domAtPos(to);
 
   range.setStart(fromInfo.node, fromInfo.offset);
   range.setEnd(toInfo.node, toInfo.offset);
 
-  const fragment = range.cloneContents();
+  const commonAncestor = range.commonAncestorContainer;
+  const wrapperElement =
+    commonAncestor instanceof Text
+      ? commonAncestor.parentElement
+      : (commonAncestor as HTMLElement);
 
   const wrapper = document.createElement('div');
-  wrapper.setAttribute('style', 'font-family: monospace;');
-  wrapper.appendChild(fragment);
 
-  wrapper.querySelectorAll<HTMLElement>('[class]').forEach((el) => {
-    const classNames = el.className.split(/\s+/).filter(Boolean);
-    let styleText = el.getAttribute('style') || '';
-    for (const cls of classNames) {
-      styleText += getCSSStyleForClass(cls);
-    }
-    if (styleText) {
-      el.setAttribute('style', styleText);
-    }
-    el.removeAttribute('class');
-  });
+  if (wrapperElement) {
+    const style = wrapperElement.getAttribute('style');
+    const cls = wrapperElement.getAttribute('class');
+    if (style) wrapper.setAttribute('style', style);
+    if (cls) wrapper.setAttribute('class', cls);
+  }
 
-  return `<div style="font-family: monospace;">${wrapper.innerHTML}</div>`;
+  wrapper.appendChild(range.cloneContents());
+
+  replaceClassWithStyle(wrapper);
+  wrapper
+    .querySelectorAll<HTMLElement>('[class]')
+    .forEach(replaceClassWithStyle);
+
+  const editorElement = document.querySelector('.cm-editor');
+  const editorColor = editorElement
+    ? getComputedStyle(editorElement).color
+    : '';
+
+  return `<div style="font-family: monospace; ${
+    editorColor ? `color: ${editorColor};` : ''
+  }">${wrapper.outerHTML}</div>`;
 }
 
 export const richClipboardCopier = EditorView.domEventHandlers({
@@ -60,9 +86,7 @@ export const richClipboardCopier = EditorView.domEventHandlers({
     const { from, to } = view.state.selection.main;
     const selectedText = view.state.doc.sliceString(from, to);
 
-    if (!selectedText) {
-      return;
-    }
+    if (!selectedText) return;
 
     const richHtml = getHTML(view, from, to);
 

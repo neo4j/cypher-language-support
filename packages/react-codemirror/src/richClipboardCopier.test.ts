@@ -55,7 +55,7 @@ describe('getHTML', () => {
 
     const html = getHTML(mockView, 0, 1);
 
-    expect(html).toMatch(/^<div style="font-family: monospace;">/);
+    expect(html).toContain('font-family: monospace;');
     expect(html).toContain('color: red');
     expect(html).toContain('font-weight: bold');
     expect(html).toContain('background: yellow');
