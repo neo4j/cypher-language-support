@@ -25,7 +25,6 @@ function replaceClassWithStyle(element: HTMLElement): void {
   const classNames = element.className.split(/\s+/).filter(Boolean);
   const computed = getComputedStyle(element);
 
-  // Always keep text color if present
   let styleText = computed.color ? `color: ${computed.color};` : '';
 
   for (const cls of classNames) {
@@ -70,12 +69,14 @@ export function getHTML(view: EditorView, from: number, to: number): string {
     .forEach(replaceClassWithStyle);
 
   const editorElement = document.querySelector('.cm-editor');
-  const editorColor = editorElement
-    ? getComputedStyle(editorElement).color
-    : '';
+  const editorStyles = getComputedStyle(editorElement);
 
   return `<div style="font-family: monospace; ${
-    editorColor ? `color: ${editorColor};` : ''
+    editorStyles.color ? `color: ${editorStyles.color};` : ''
+  } ${
+    editorStyles.backgroundColor
+      ? `background-color: ${editorStyles.backgroundColor};`
+      : ''
   }">${wrapper.outerHTML}</div>`;
 }
 
