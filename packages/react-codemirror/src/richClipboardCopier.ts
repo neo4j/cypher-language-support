@@ -69,12 +69,12 @@ export function getHTML(view: EditorView, from: number, to: number): string {
     .forEach(replaceClassWithStyle);
 
   const editorElement = document.querySelector('.cm-editor');
-  const editorStyles = getComputedStyle(editorElement);
+  const editorStyles = editorElement ? getComputedStyle(editorElement) : null;
 
   return `<div style="font-family: monospace; ${
-    editorStyles.color ? `color: ${editorStyles.color};` : ''
+    editorStyles?.color ? `color: ${editorStyles.color};` : ''
   } ${
-    editorStyles.backgroundColor
+    editorStyles?.backgroundColor
       ? `background-color: ${editorStyles.backgroundColor};`
       : ''
   }">${wrapper.outerHTML}</div>`;
