@@ -13,10 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import {
-  formatQuery,
-  type DbSchema,
-} from '@neo4j-cypher/language-support';
+import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -28,6 +25,7 @@ import { cypher, CypherConfig } from './lang-cypher/langCypher';
 import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
+import { richClipboardCopier } from './richClipboardCopier';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
@@ -181,7 +179,9 @@ export interface CypherEditorProps {
 const format = (view: EditorView): void => {
   try {
     const doc = view.state.doc.toString();
-    const { formattedQuery, newCursorPos } = formatQuery(doc, { cursorPosition: view.state.selection.main.anchor });
+    const { formattedQuery, newCursorPos } = formatQuery(doc, {
+      cursorPosition: view.state.selection.main.anchor,
+    });
     view.dispatch({
       changes: {
         from: 0,
@@ -333,7 +333,10 @@ export class CypherEditor extends Component<
         to: currentCmValue.length,
         insert: normalizedValue,
       },
-      selection: { anchor: normalizedValue.length, head: normalizedValue.length },
+      selection: {
+        anchor: normalizedValue.length,
+        head: normalizedValue.length,
+      },
     });
     this.editorView.current?.focus();
   }
@@ -354,11 +357,11 @@ export class CypherEditor extends Component<
 
   private debouncedOnChange = this.props.onChange
     ? debounce(
-      ((value, viewUpdate) => {
-        this.props.onChange(value, viewUpdate);
-      }) satisfies CypherEditorProps['onChange'],
-      DEBOUNCE_TIME,
-    )
+        ((value, viewUpdate) => {
+          this.props.onChange(value, viewUpdate);
+        }) satisfies CypherEditorProps['onChange'],
+        DEBOUNCE_TIME,
+      )
     : undefined;
 
   componentDidMount(): void {
@@ -398,18 +401,18 @@ export class CypherEditor extends Component<
 
     const changeListener = this.debouncedOnChange
       ? [
-        EditorView.updateListener.of((upt: ViewUpdate) => {
-          const wasUserEdit = !upt.transactions.some((tr) =>
-            tr.annotation(ExternalEdit),
-          );
+          EditorView.updateListener.of((upt: ViewUpdate) => {
+            const wasUserEdit = !upt.transactions.some((tr) =>
+              tr.annotation(ExternalEdit),
+            );
 
-          if (upt.docChanged && wasUserEdit) {
-            const doc = upt.state.doc;
-            const value = doc.toString();
-            this.debouncedOnChange(value, upt);
-          }
-        }),
-      ]
+            if (upt.docChanged && wasUserEdit) {
+              const doc = upt.state.doc;
+              const value = doc.toString();
+              this.debouncedOnChange(value, upt);
+            }
+          }),
+        ]
       : [];
 
     this.editorState.current = EditorState.create({
@@ -422,6 +425,7 @@ export class CypherEditor extends Component<
             ...extraKeybindings,
           ]),
         ),
+        richClipboardCopier,
         historyNavigation(this.props),
         basicNeo4jSetup(this.props),
         themeCompartment.of(themeExtension),
@@ -445,8 +449,8 @@ export class CypherEditor extends Component<
         ),
         this.props.ariaLabel
           ? EditorView.contentAttributes.of({
-            'aria-label': this.props.ariaLabel,
-          })
+              'aria-label': this.props.ariaLabel,
+            })
           : [],
       ],
       doc: this.props.value,
@@ -494,7 +498,7 @@ export class CypherEditor extends Component<
     const didChangeTheme =
       prevProps.theme !== this.props.theme ||
       prevProps.overrideThemeBackgroundColor !==
-      this.props.overrideThemeBackgroundColor;
+        this.props.overrideThemeBackgroundColor;
 
     if (didChangeTheme) {
       this.editorView.current.dispatch({
