@@ -1,7 +1,6 @@
+import type { ParserRuleContext, Token } from 'antlr4';
 import {
-  ParserRuleContext,
   ParseTreeWalker,
-  Token,
   CharStreams,
   CommonTokenStream,
   ParseTreeListener,
