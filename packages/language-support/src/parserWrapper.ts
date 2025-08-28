@@ -1,5 +1,10 @@
 import type { ParserRuleContext, Token } from 'antlr4';
-import { CharStreams, CommonTokenStream, ParseTreeListener } from 'antlr4';
+import {
+  ParseTreeWalker,
+  CharStreams,
+  CommonTokenStream,
+  ParseTreeListener,
+} from 'antlr4';
 
 import CypherLexer from './generated-parser/CypherCmdLexer';
 
@@ -248,6 +253,22 @@ const getClearParamName = (name: string): string => {
   return name;
 };
 
+function hasErrorNodesUnder(ctx: ParserRuleContext): boolean {
+  let found: boolean = false;
+  ParseTreeWalker.DEFAULT.walk(
+    {
+      visitTerminal() {},
+      visitErrorNode() {
+        found = true;
+      },
+      enterEveryRule() {},
+      exitEveryRule() {},
+    },
+    ctx,
+  );
+  return found;
+}
+
 export function parseParameters(
   query: string,
   consoleCommandsEnabled: boolean,
@@ -275,11 +296,11 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof LabelNameContext) {
-      // If the parent ctx start doesn't coincide with this ctx start,
-      // it means the parser recovered from an error reading the label
+      // If the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
-      // RETURN would be idenfified as the label in that case
-      if (ctx.parentCtx && ctx.parentCtx.start === ctx.start) {
+      // RETURN would be incorrectly idenfified as the label
+      // If this is the case, the context containing the label would have an error node
+      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
@@ -298,17 +319,17 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       if (
         isDefined(symbolicName) &&
         ctx.parentCtx &&
-        ctx.parentCtx.start === ctx.start
+        !hasErrorNodesUnder(ctx.parentCtx)
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
           couldCreateNewLabel: couldCreateNewLabel(ctx),
-          line: ctx.start.line,
-          column: ctx.start.column,
+          line: symbolicName.start.line,
+          column: symbolicName.start.column,
           offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
+            start: symbolicName.start.start,
+            end: symbolicName.stop.stop + 1,
           },
         });
       }
