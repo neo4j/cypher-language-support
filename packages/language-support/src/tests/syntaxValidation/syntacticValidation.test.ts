@@ -225,7 +225,7 @@ describe('Syntactic validation spec', () => {
 
   //Needs adjusting of positions + should warn twice (both Person usages)
   test('Syntax validation warns on missing label in hint', () => {
-    const query = `MATCH (n: Person {Age:50}) USING INDEX n:Person(Age) RETURN n;`;
+    const query = `MATCH (n: Car {Age:20}) USING INDEX n:Car(Age) RETURN n;`;
 
     expect(
       getDiagnosticsForQuery({
@@ -234,19 +234,38 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        offsets: {
-          end: 17,
-          start: 11,
-        },
         message:
-          "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          "Label Car is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 13,
+          start: 10,
+        },
         range: {
           end: {
-            character: 17,
+            character: 13,
             line: 0,
           },
           start: {
-            character: 11,
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Label or relationship type Car is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 41,
+          start: 38,
+        },
+        range: {
+          end: {
+            character: 41,
+            line: 0,
+          },
+          start: {
+            character: 38,
             line: 0,
           },
         },
@@ -385,7 +404,7 @@ describe('Syntactic validation spec', () => {
   });
 
   //Needs adjusting of positions + should warn twice (both Rel usages)
-  test('Syntax validation warns on missing rel type when using !-syntax', () => {
+  test('Syntax validation warns on missing rel type in hint', () => {
     const query = `MATCH (n)-[r:Rel {k:3}]->(m) USING INDEX r:Rel(k) RETURN n`;
 
     expect(
@@ -408,6 +427,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Label or relationship type Rel is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 46,
+          start: 43,
+        },
+        range: {
+          end: {
+            character: 46,
+            line: 0,
+          },
+          start: {
+            character: 43,
             line: 0,
           },
         },
