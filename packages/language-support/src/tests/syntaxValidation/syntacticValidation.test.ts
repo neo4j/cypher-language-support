@@ -223,7 +223,6 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  //Needs adjusting of positions + should warn twice (both Person usages)
   test('Syntax validation warns on missing label in hint', () => {
     const query = `MATCH (n: Car {Age:20}) USING INDEX n:Car(Age) RETURN n;`;
 
