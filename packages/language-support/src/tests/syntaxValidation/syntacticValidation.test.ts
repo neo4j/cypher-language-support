@@ -223,6 +223,69 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
+  //Needs adjusting of positions + should warn twice (both Person usages)
+  test('Syntax validation warns on missing label in hint', () => {
+    const query = `MATCH (n: Person {Age:50}) USING INDEX n:Person(Age) RETURN n;`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([
+      {
+        offsets: {
+          end: 17,
+          start: 11,
+        },
+        message:
+          "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 11,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation warns on missing label using !-syntax', () => {
+    const query = `MATCH (n: !Person) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([
+      {
+        offsets: {
+          end: 17,
+          start: 11,
+        },
+        message:
+          "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 11,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
   test('Syntax validation warns on missing label when database can be contacted', () => {
     const query = `MATCH (n: Person) RETURN n`;
 
@@ -313,6 +376,69 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 24,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  //Needs adjusting of positions + should warn twice (both Rel usages)
+  test('Syntax validation warns on missing rel type when using !-syntax', () => {
+    const query = `MATCH (n)-[r:Rel {k:3}]->(m) USING INDEX r:Rel(k) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Relationship type Rel is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 16,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Syntax validation warns on missing rel type when using !-syntax', () => {
+    const query = `MATCH (n)-[:!Rel]->(m) RETURN n`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: { labels: ['Dog', 'Cat'], relationshipTypes: ['Person'] },
+      }),
+    ).toEqual([
+      {
+        message:
+          "Relationship type Rel is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 16,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 13,
             line: 0,
           },
         },
