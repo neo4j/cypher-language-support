@@ -402,7 +402,6 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  //Needs adjusting of positions + should warn twice (both Rel usages)
   test('Syntax validation warns on missing rel type in hint', () => {
     const query = `MATCH (n)-[r:Rel {k:3}]->(m) USING INDEX r:Rel(k) RETURN n`;
 
