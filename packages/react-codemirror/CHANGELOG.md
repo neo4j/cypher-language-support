@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.27
+
+### Patch Changes
+
+- 86f5c55: adding rich clipboard copier to codemirror
+- Updated dependencies [d77e8a1]
+  - @neo4j-cypher/language-support@2.0.0-next.24
+  - @neo4j-cypher/lint-worker@1.10.1-next.1
+
 ## 2.0.0-next.26
 
 ### Patch Changes

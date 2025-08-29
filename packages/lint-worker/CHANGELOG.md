@@ -1,5 +1,13 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.1
+
+### Patch Changes
+
+- Updated dependencies [d77e8a1]
+  - @neo4j-cypher/language-support@2.0.0-next.24
+  - @neo4j-cypher/query-tools@2.0.0-next.24
+
 ## 1.10.1-next.0
 
 ### Patch Changes
