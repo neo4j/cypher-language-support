@@ -98,6 +98,11 @@ jobs:
     if: ${{ needs.update-vscode-extension.outputs.has_changes == 'true' }}
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
+
       - name: Publish pre-release
         env:
           VSX_PAT: ${{ secrets.VSX_PAT }}
