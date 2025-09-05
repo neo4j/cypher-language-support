@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.24
+
+### Patch Changes
+
+- d77e8a1: Fixes "missing label/rel type" warnings for some special cases
+
 ## 2.0.0-next.23
 
 ### Patch Changes
