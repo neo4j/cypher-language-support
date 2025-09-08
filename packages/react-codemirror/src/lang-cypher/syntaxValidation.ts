@@ -11,7 +11,7 @@ const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 const pool = workerpool.pool(WorkerURL, {
   minWorkers: 2,
   workerOpts: { type: 'module' },
-  workerTerminateTimeout: 2000,
+  workerTerminateTimeout: 20000,
 });
 
 let lastSemanticJob: LinterTask | undefined;
@@ -64,7 +64,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       return a;
     } catch (err) {
       if (!(err instanceof workerpool.Promise.CancellationError)) {
-        console.error(String(err) + ' ' + query);
+        console.error(String(err));
       }
     }
     return [];
