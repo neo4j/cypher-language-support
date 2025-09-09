@@ -8,6 +8,7 @@ import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   CallClauseContext,
   Expression2Context,
+  GuideNameContext,
 } from '../generated-parser/CypherCmdParser';
 import {
   findParent,
@@ -515,6 +516,13 @@ export function completionCoreCompletion(
   symbolsInfo: SymbolsInfo | undefined,
   manualTrigger = false,
 ): CompletionItem[] {
+  const isGuideName = findParent(
+    parsingResult.stopNode,
+    (x) => x instanceof GuideNameContext,
+  );
+
+  if (isGuideName) return [];
+
   const cypherVersion = resolveCypherVersion(
     parsingResult.cypherVersion,
     dbSchema,

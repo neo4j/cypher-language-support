@@ -49,7 +49,9 @@ styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
 
-playCmd: PLAY;
+playCmd: PLAY guideName;
+
+guideName: (.)*?;
 
 accessModeArgs: (readCompletionRule | writeCompletionRule);
 
