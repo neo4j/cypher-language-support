@@ -640,7 +640,17 @@ reduceExpression
    ;
 
 allReduceExpression
+   :  allReduceExpressionValidArguments | allReduceExpressionInvalidArguments
+   ;
+
+allReduceExpressionValidArguments
    : ALLREDUCE LPAREN variable EQ expression COMMA variable IN expression BAR expression COMMA expression RPAREN
+   ;
+
+// Captures the case where the arguments are not valid, e.g. missing the variable or the bar expression.
+// This will be mapped to a FunctionInvocation which will throw a useful error during Semantic Analysis.
+allReduceExpressionInvalidArguments
+   : ALLREDUCE LPAREN expression ((COMMA | BAR) expression)* RPAREN
    ;
 
 listItemsPredicate
@@ -655,6 +665,7 @@ listItemsPredicate
 normalizeFunction
    : NORMALIZE LPAREN expression (COMMA normalForm)? RPAREN
    ;
+
 
 vectorFunction
    : VECTOR LPAREN vectorValue = expression COMMA dimension = expression COMMA vectorCoordinateType RPAREN
@@ -916,6 +927,7 @@ showCommand
    : SHOW (
       showAliases
       | showConstraintCommand
+      | showCurrentGraphTypeCommand
       | showCurrentUser
       | showDatabase
       | showFunctions
@@ -973,6 +985,7 @@ composableShowCommandClauses
    : SHOW (
       showIndexCommand
       | showConstraintCommand
+      | showCurrentGraphTypeCommand
       | showFunctions
       | showProcedures
       | showSettings
@@ -1020,6 +1033,10 @@ constraintExistType
 
 showConstraintsEnd
    : constraintToken showCommandYield? composableCommandClauses?
+   ;
+
+showCurrentGraphTypeCommand
+   : CURRENT GRAPH TYPE showCommandYield? composableCommandClauses?
    ;
 
 showProcedures
