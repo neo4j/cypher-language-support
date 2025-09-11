@@ -3,18 +3,16 @@ import { Extension } from '@codemirror/state';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
-import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import { parserWrapper } from '@neo4j-cypher/language-support';
 
 const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
 const pool = workerpool.pool(WorkerURL, {
-  minWorkers: 2,
+  minWorkers: 1,
   workerOpts: { type: 'module' },
-  workerTerminateTimeout: 20000,
+  workerTerminateTimeout: 2000,
 });
-
-let lastSemanticJob: LinterTask | undefined;
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter(async (view) => {
@@ -27,17 +25,16 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     }
 
     try {
-      if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
-        void lastSemanticJob.cancel();
+      if (pool.stats().busyWorkers > 0) {
+        await pool.terminate(true);
       }
 
       const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-      lastSemanticJob = proxyWorker.lintCypherQuery(
+      const result = await proxyWorker.lintCypherQuery(
         query,
         config.schema ?? {},
         config.featureFlags ?? {},
       );
-      const result = await lastSemanticJob;
 
       if (result.symbolTables) {
         parserWrapper.setSymbolsInfo({
@@ -63,8 +60,8 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       });
       return a;
     } catch (err) {
-      if (!(err instanceof workerpool.Promise.CancellationError)) {
-        console.error(String(err));
+      if (!String(err).includes('Worker terminated')) {
+        console.error(String(err) + ' ' + query);
       }
     }
     return [];

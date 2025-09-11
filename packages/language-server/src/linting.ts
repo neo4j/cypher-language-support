@@ -19,7 +19,7 @@ const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
-  workerTerminateTimeout: 20000,
+  workerTerminateTimeout: 2000,
 });
 export let workerPath = defaultWorkerPath;
 let linterVersion: string | undefined = undefined;
