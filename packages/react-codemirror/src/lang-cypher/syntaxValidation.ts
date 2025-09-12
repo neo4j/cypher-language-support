@@ -18,7 +18,7 @@ let lastSemanticJob: LinterTask | undefined;
 
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter(async (view) => {
-    if (!config.lint) {
+    if (!config.lint || false) {
       return [];
     }
 
