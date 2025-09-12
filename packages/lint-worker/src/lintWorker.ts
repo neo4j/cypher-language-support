@@ -15,7 +15,6 @@ function lintCypherQuery(
   featureFlags: { consoleCommands?: boolean } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
   // We allow to override the consoleCommands feature flag
-
   if (featureFlags.consoleCommands !== undefined) {
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
