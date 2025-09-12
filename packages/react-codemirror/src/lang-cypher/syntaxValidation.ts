@@ -21,6 +21,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
     if (!config.lint) {
       return [];
     }
+
     const query = view.state.doc.toString();
     if (query.length === 0) {
       return [];
