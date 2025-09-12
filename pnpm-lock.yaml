@@ -99,8 +99,8 @@ importers:
         specifier: ^1.0.8
         version: 1.0.12
       workerpool:
-        specifier: ^9.0.4
-        version: 9.0.4
+        specifier: ^9.3.3
+        version: 9.3.3
     devDependencies:
       '@types/lodash.debounce':
         specifier: ^4.0.9
@@ -149,8 +149,8 @@ importers:
         specifier: ^3.17.3
         version: 3.17.5
       workerpool:
-        specifier: ^9.0.4
-        version: 9.0.4
+        specifier: ^9.3.3
+        version: 9.3.3
     devDependencies:
       '@types/lodash.debounce':
         specifier: ^4.0.9
@@ -232,8 +232,8 @@ importers:
         specifier: ^3.17.3
         version: 3.17.5
       workerpool:
-        specifier: ^9.0.4
-        version: 9.0.4
+        specifier: ^9.3.3
+        version: 9.3.3
     devDependencies:
       '@neo4j-ndl/base':
         specifier: ^3.2.10
@@ -7579,8 +7579,8 @@ packages:
   workerpool@6.5.1:
     resolution: {integrity: sha512-Fs4dNYcsdpYSAfVxhnl1L5zTksjvOJxtC5hzMNl+1t9B8hTJTdKDyZ5ju7ztgPy+ft9tBFXoOlDNiOT9WUXZlA==}
 
-  workerpool@9.0.4:
-    resolution: {integrity: sha512-EDeF5re9hGJ88HH2vYDuvG0rV3+I0hlP+9lLQYYzXykW0kjDGyuw21vR1rRWUqNy9x+o5yPlqmyzpHvELzhyeQ==}
+  workerpool@9.3.3:
+    resolution: {integrity: sha512-slxCaKbYjEdFT/o2rH9xS1hf4uRDch1w7Uo+apxhZ+sf/1d9e0ZVkn42kPNGP2dgjIx6YFvSevj0zHvbWe2jdw==}
 
   wrap-ansi@6.2.0:
     resolution: {integrity: sha512-r6lPcBGxZXlIcymEu7InxDMhdW0KDxpLgoFLcguasxCaJ/SOIZwINatK9KY/tf+ZrlywOKU0UDj3ATXUBfxJXA==}
@@ -16359,7 +16359,7 @@ snapshots:
 
   workerpool@6.5.1: {}
 
-  workerpool@9.0.4: {}
+  workerpool@9.3.3: {}
 
   wrap-ansi@6.2.0:
     dependencies:
