@@ -430,13 +430,15 @@ async function connectToDatabaseAndNotifyLanguageClient(
     if (process.env.DEBUG_VSCODE_TESTS !== undefined) {
       // tests code
       if (process.env.LINTER_SWITCHING_TESTS === 'true') {
-        await dynamicallyAdjustLinter();
+        const x = 0
+        // await dynamicallyAdjustLinter();
       } else {
         await switchToLinter('Default', []);
       }
     } else {
+      const x = 0
       // production code
-      await dynamicallyAdjustLinter();
+      // await dynamicallyAdjustLinter();
     }
   }
 
