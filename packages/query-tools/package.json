@@ -6,8 +6,10 @@
   "version": "2.0.0-next.23",
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
+  "types": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
+      "types": "./dist/esm/index.d.ts",
       "require": "./dist/cjs/src/index.js",
       "import": "./dist/esm/src/index.js",
       "default": "./dist/cjs/src/index.js"
@@ -33,9 +35,10 @@
     "@testcontainers/neo4j": "^11.5.1"
   },
   "scripts": {
-    "build": "concurrently 'npm:build-esm' 'npm:build-commonjs'",
+    "build": "concurrently 'npm:build-esm' 'npm:build-commonjs' 'npm:build-types'",
     "build-esm": "tsc --module esnext --outDir dist/esm",
     "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
+    "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run extract-unique-nodes-and-relationships",
