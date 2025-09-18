@@ -28,11 +28,11 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
-    "ajv": "^8.12.0",
+    "ajv": "8.12.0",
     "neo4j-driver": "catalog:"
   },
   "devDependencies": {
-    "@testcontainers/neo4j": "^11.5.1"
+    "@testcontainers/neo4j": "11.5.1"
   },
   "scripts": {
     "build": "concurrently 'npm:build-esm' 'npm:build-commonjs' 'npm:build-types'",
