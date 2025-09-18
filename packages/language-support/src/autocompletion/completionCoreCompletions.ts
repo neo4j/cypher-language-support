@@ -42,9 +42,9 @@ import {
 } from '../types';
 import {
   completeRelationshipType,
-  fullLabelCompletions,
-  fullReltypeCompletions,
-} from './patternCompletion';
+  allLabelCompletions,
+  allReltypeCompletions,
+} from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
 
 const versionCompletions = () =>
@@ -702,7 +702,7 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return fullLabelCompletions(dbSchema);
+          return allLabelCompletions(dbSchema);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
@@ -710,8 +710,8 @@ export function completionCoreCompletion(
         }
 
         return [
-          ...fullLabelCompletions(dbSchema),
-          ...fullReltypeCompletions(dbSchema),
+          ...allLabelCompletions(dbSchema),
+          ...allReltypeCompletions(dbSchema),
         ];
       }
 
