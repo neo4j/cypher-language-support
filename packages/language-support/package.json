@@ -53,7 +53,7 @@
   "dependencies": {
     "antlr4": "4.13.2",
     "fastest-levenshtein": "1.0.16",
-    "vscode-languageserver-types": "3.17.3"
+    "vscode-languageserver-types": "3.17.5"
   },
   "scripts": {
     "gen-parser": "cross-env ANTLR4_TOOLS_ANTLR_VERSION=4.13.2 antlr4 -Dlanguage=TypeScript -visitor src/antlr-grammar/CypherCmdLexer.g4 src/antlr-grammar/CypherCmdParser.g4 -o src/generated-parser/ -Xexact-output-dir",
@@ -67,7 +67,7 @@
     "test": "vitest run"
   },
   "devDependencies": {
-    "@types/semver": "7.7.1",
-    "vscode-languageserver-textdocument": "1.0.8"
+    "@types/semver": "7.7.0",
+    "vscode-languageserver-textdocument": "1.0.12"
   }
 }

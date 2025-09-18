@@ -40,7 +40,7 @@
     "lodash.debounce": "4.0.8",
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "8.1.0",
-    "vscode-languageserver-textdocument": "1.0.8",
+    "vscode-languageserver-textdocument": "1.0.12",
     "workerpool": "9.3.3",
     "axios": "1.9.0"
   },
