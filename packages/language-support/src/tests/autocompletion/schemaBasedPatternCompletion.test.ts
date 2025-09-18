@@ -15,7 +15,7 @@ const dbSchema = {
 };
 
 describe('completeRelationshipType', () => {
-  test('Pokemon relationships', () => {
+  test('Trainer relationships', () => {
     const query = 'MATCH (t:Trainer)-[r:';
     const symbolTables: SymbolTable[] = [];
 
