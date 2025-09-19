@@ -15,61 +15,61 @@ importers:
   .:
     devDependencies:
       '@changesets/cli':
-        specifier: ^2.28.1
+        specifier: 2.28.1
         version: 2.28.1
       '@types/node':
-        specifier: ^22.15.0
+        specifier: 22.15.3
         version: 22.15.3
       '@typescript-eslint/eslint-plugin':
-        specifier: ^7.8.0
+        specifier: 7.18.0
         version: 7.18.0(@typescript-eslint/parser@7.18.0(eslint@8.57.0)(typescript@5.8.3))(eslint@8.57.0)(typescript@5.8.3)
       '@typescript-eslint/parser':
-        specifier: ^7.0.0
+        specifier: 7.18.0
         version: 7.18.0(eslint@8.57.0)(typescript@5.8.3)
       concurrently:
-        specifier: ^8.2.1
+        specifier: 8.2.2
         version: 8.2.2
       cross-env:
-        specifier: ^7.0.3
+        specifier: 7.0.3
         version: 7.0.3
       esbuild:
-        specifier: ^0.25.2
+        specifier: 0.25.2
         version: 0.25.2
       eslint:
-        specifier: ^8.32.0
+        specifier: 8.57.0
         version: 8.57.0
       eslint-config-prettier:
-        specifier: ^8.6.0
+        specifier: 8.10.0
         version: 8.10.0(eslint@8.57.0)
       husky:
-        specifier: ^8.0.0
+        specifier: 8.0.3
         version: 8.0.3
       lint-staged:
-        specifier: ^16.1.2
+        specifier: 16.1.2
         version: 16.1.2
       prettier:
-        specifier: ^2.8.1
+        specifier: 2.8.8
         version: 2.8.8
       prettier-plugin-organize-imports:
-        specifier: ^3.2.1
+        specifier: 3.2.4
         version: 3.2.4(prettier@2.8.8)(typescript@5.8.3)
       rimraf:
-        specifier: ^6.0.1
+        specifier: 6.0.1
         version: 6.0.1
       semver:
-        specifier: ^7.6.1
+        specifier: 7.7.1
         version: 7.7.1
       ts-node:
         specifier: 10.9.1
         version: 10.9.1(@types/node@22.15.3)(typescript@5.8.3)
       tsx:
-        specifier: ^4.19.4
+        specifier: 4.19.4
         version: 4.19.4
       typescript:
         specifier: 5.8.3
         version: 5.8.3
       vitest:
-        specifier: ^2.1.9
+        specifier: 2.1.9
         version: 2.1.9(@types/node@22.15.3)(jsdom@24.1.3)
 
   packages/language-server:
@@ -84,29 +84,29 @@ importers:
         specifier: workspace:*
         version: link:../query-tools
       axios:
-        specifier: ^1.9.0
+        specifier: 1.9.0
         version: 1.9.0
       lodash.debounce:
-        specifier: ^4.0.8
+        specifier: 4.0.8
         version: 4.0.8
       neo4j-driver:
         specifier: 'catalog:'
         version: 5.12.0
       vscode-languageserver:
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0
       vscode-languageserver-textdocument:
-        specifier: ^1.0.8
+        specifier: 1.0.12
         version: 1.0.12
       workerpool:
-        specifier: ^9.3.3
+        specifier: 9.3.3
         version: 9.3.3
     devDependencies:
       '@types/lodash.debounce':
-        specifier: ^4.0.9
+        specifier: 4.0.9
         version: 4.0.9
       copyfiles:
-        specifier: ^2.4.1
+        specifier: 2.4.1
         version: 2.4.1
 
   packages/language-support:
@@ -115,17 +115,17 @@ importers:
         specifier: 4.13.2
         version: 4.13.2
       fastest-levenshtein:
-        specifier: ^1.0.16
+        specifier: 1.0.16
         version: 1.0.16
       vscode-languageserver-types:
-        specifier: ^3.17.3
+        specifier: 3.17.5
         version: 3.17.5
     devDependencies:
       '@types/semver':
-        specifier: ^7.7.0
+        specifier: 7.7.0
         version: 7.7.0
       vscode-languageserver-textdocument:
-        specifier: ^1.0.8
+        specifier: 1.0.12
         version: 1.0.12
 
   packages/lint-worker:
@@ -137,26 +137,26 @@ importers:
         specifier: workspace:*
         version: link:../query-tools
       axios:
-        specifier: ^1.9.0
+        specifier: 1.9.0
         version: 1.9.0
       languageSupport-next.13:
         specifier: npm:@neo4j-cypher/language-support@2.0.0-next.13
         version: '@neo4j-cypher/language-support@2.0.0-next.13'
       vscode-languageserver:
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0
       vscode-languageserver-types:
-        specifier: ^3.17.3
+        specifier: 3.17.5
         version: 3.17.5
       workerpool:
-        specifier: ^9.3.3
+        specifier: 9.3.3
         version: 9.3.3
     devDependencies:
       '@types/lodash.debounce':
-        specifier: ^4.0.9
+        specifier: 4.0.9
         version: 4.0.9
       '@types/semver':
-        specifier: ^7.7.0
+        specifier: 7.7.0
         version: 7.7.0
 
   packages/query-tools:
@@ -165,44 +165,44 @@ importers:
         specifier: workspace:*
         version: link:../language-support
       ajv:
-        specifier: ^8.12.0
+        specifier: 8.17.1
         version: 8.17.1
       neo4j-driver:
         specifier: 'catalog:'
         version: 5.12.0
     devDependencies:
       '@testcontainers/neo4j':
-        specifier: ^11.5.1
+        specifier: 11.5.1
         version: 11.5.1
 
   packages/react-codemirror:
     dependencies:
       '@codemirror/autocomplete':
-        specifier: ^6.18.6
+        specifier: 6.18.6
         version: 6.18.6
       '@codemirror/commands':
-        specifier: ^6.8.1
+        specifier: 6.8.1
         version: 6.8.1
       '@codemirror/language':
-        specifier: ^6.11.2
+        specifier: 6.11.2
         version: 6.11.2
       '@codemirror/lint':
-        specifier: ^6.8.5
+        specifier: 6.8.5
         version: 6.8.5
       '@codemirror/search':
-        specifier: ^6.5.11
+        specifier: 6.5.11
         version: 6.5.11
       '@codemirror/state':
-        specifier: ^6.5.2
+        specifier: 6.5.2
         version: 6.5.2
       '@codemirror/view':
-        specifier: ^6.38.1
+        specifier: 6.38.1
         version: 6.38.1
       '@lezer/common':
-        specifier: ^1.0.2
+        specifier: 1.2.1
         version: 1.2.1
       '@lezer/highlight':
-        specifier: ^1.1.3
+        specifier: 1.2.1
         version: 1.2.1
       '@neo4j-cypher/language-support':
         specifier: workspace:*
@@ -211,89 +211,89 @@ importers:
         specifier: workspace:*
         version: link:../lint-worker
       '@types/prismjs':
-        specifier: ^1.26.3
+        specifier: 1.26.4
         version: 1.26.4
       '@types/workerpool':
-        specifier: ^6.4.7
+        specifier: 6.4.7
         version: 6.4.7
       fastest-levenshtein:
-        specifier: ^1.0.16
+        specifier: 1.0.16
         version: 1.0.16
       lodash.debounce:
-        specifier: ^4.0.8
+        specifier: 4.0.8
         version: 4.0.8
       prismjs:
-        specifier: ^1.29.0
+        specifier: 1.29.0
         version: 1.29.0
       style-mod:
-        specifier: ^4.1.2
+        specifier: 4.1.2
         version: 4.1.2
       vscode-languageserver-types:
-        specifier: ^3.17.3
+        specifier: 3.17.5
         version: 3.17.5
       workerpool:
-        specifier: ^9.3.3
+        specifier: 9.3.3
         version: 9.3.3
     devDependencies:
       '@neo4j-ndl/base':
-        specifier: ^3.2.10
+        specifier: 3.2.10
         version: 3.2.10
       '@playwright/experimental-ct-react':
-        specifier: ^1.54.2
+        specifier: 1.54.2
         version: 1.54.2(@types/node@22.15.3)(jiti@1.21.6)(tsx@4.19.4)(vite@4.5.11(@types/node@22.15.3))(yaml@2.8.0)
       '@playwright/test':
-        specifier: ^1.54.2
+        specifier: 1.54.2
         version: 1.54.2
       '@types/lodash.debounce':
-        specifier: ^4.0.9
+        specifier: 4.0.9
         version: 4.0.9
       '@types/react':
-        specifier: ^18.0.28
+        specifier: 18.3.5
         version: 18.3.5
       '@types/react-dom':
-        specifier: ^18.0.11
+        specifier: 18.3.0
         version: 18.3.0
       '@vitejs/plugin-react':
-        specifier: ^4.3.1
+        specifier: 4.3.1
         version: 4.3.1(vite@4.5.11(@types/node@22.15.3))
       copyfiles:
-        specifier: ^2.4.1
+        specifier: 2.4.1
         version: 2.4.1
       jsdom:
-        specifier: ^24.1.1
+        specifier: 24.1.3
         version: 24.1.3
       lodash:
-        specifier: ^4.17.21
+        specifier: 4.17.21
         version: 4.17.21
       playwright:
-        specifier: ^1.54.2
+        specifier: 1.54.2
         version: 1.54.2
       react:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       vite:
-        specifier: ^4.5.10
+        specifier: 4.5.11
         version: 4.5.11(@types/node@22.15.3)
 
   packages/react-codemirror-playground:
     dependencies:
       '@codemirror/autocomplete':
-        specifier: ^6.18.6
+        specifier: 6.18.6
         version: 6.18.6
       '@codemirror/commands':
-        specifier: ^6.8.1
+        specifier: 6.8.1
         version: 6.8.1
       '@codemirror/language':
-        specifier: ^6.11.2
+        specifier: 6.11.2
         version: 6.11.2
       '@lezer/common':
-        specifier: ^1.0.2
+        specifier: 1.2.1
         version: 1.2.1
       '@lezer/highlight':
-        specifier: ^1.1.3
+        specifier: 1.2.1
         version: 1.2.1
       '@neo4j-cypher/language-support':
         specifier: workspace:*
@@ -302,41 +302,41 @@ importers:
         specifier: workspace:*
         version: link:../react-codemirror
       react:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1
       react-d3-tree:
-        specifier: ^3.6.1
+        specifier: 3.6.2
         version: 3.6.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-dom:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       vite-plugin-node-stdlib-browser:
-        specifier: ^0.2.1
+        specifier: 0.2.1
         version: 0.2.1(node-stdlib-browser@1.3.1)(rollup@4.37.0)(vite@4.5.11(@types/node@22.15.3))
       vscode-languageserver-types:
-        specifier: ^3.17.3
+        specifier: 3.17.5
         version: 3.17.5
     devDependencies:
       '@types/react':
-        specifier: ^18.0.28
+        specifier: 18.3.5
         version: 18.3.5
       '@types/react-dom':
-        specifier: ^18.0.11
+        specifier: 18.3.0
         version: 18.3.0
       '@vitejs/plugin-react':
-        specifier: ^3.1.0
+        specifier: 3.1.0
         version: 3.1.0(vite@4.5.11(@types/node@22.15.3))
       autoprefixer:
-        specifier: ^10.4.14
+        specifier: 10.4.20
         version: 10.4.20(postcss@8.4.45)
       postcss:
-        specifier: ^8.4.23
+        specifier: 8.4.45
         version: 8.4.45
       tailwindcss:
-        specifier: ^3.3.1
+        specifier: 3.4.10
         version: 3.4.10(ts-node@10.9.1(@types/node@22.15.3)(typescript@5.8.3))
       vite:
-        specifier: ^4.5.10
+        specifier: 4.5.11
         version: 4.5.11(@types/node@22.15.3)
 
   packages/vscode-extension:
@@ -360,98 +360,95 @@ importers:
         specifier: 3.8.13
         version: 3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@5.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
-        specifier: ^1.9.0
+        specifier: 1.9.0
         version: 1.9.0
       neo4j-driver:
         specifier: 'catalog:'
         version: 5.12.0
       react:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1
       react-dom:
-        specifier: ^18.2.0
+        specifier: 18.3.1
         version: 18.3.1(react@18.3.1)
       tar:
-        specifier: ^7.4.3
+        specifier: 7.4.3
         version: 7.4.3
       vscode-languageclient:
-        specifier: ^8.1.0
+        specifier: 8.1.0
         version: 8.1.0
     devDependencies:
       '@testcontainers/neo4j':
-        specifier: ^10.4.0
+        specifier: 10.13.0
         version: 10.13.0
-      '@types/glob':
-        specifier: ^8.1.0
-        version: 8.1.0
       '@types/mocha':
-        specifier: ^10.0.1
+        specifier: 10.0.7
         version: 10.0.7
       '@types/react':
-        specifier: ^18.0.28
+        specifier: 18.3.5
         version: 18.3.5
       '@types/react-dom':
-        specifier: ^18.0.11
+        specifier: 18.3.0
         version: 18.3.0
       '@types/sinon':
-        specifier: ^17.0.3
+        specifier: 17.0.3
         version: 17.0.3
       '@types/vscode':
-        specifier: ^1.75.0
+        specifier: 1.93.0
         version: 1.93.0
       '@vscode/test-electron':
-        specifier: ^2.3.8
+        specifier: 2.4.1
         version: 2.4.1
       '@vscode/vsce':
-        specifier: ^3.3.2
+        specifier: 3.3.2
         version: 3.3.2
       '@wdio/cli':
-        specifier: ^8.41.0
+        specifier: 8.41.0
         version: 8.41.0
       '@wdio/globals':
-        specifier: ^8.41.0
+        specifier: 8.41.0
         version: 8.41.0
       '@wdio/local-runner':
-        specifier: ^8.41.0
+        specifier: 8.41.0
         version: 8.41.0
       '@wdio/mocha-framework':
-        specifier: ^8.39.0
+        specifier: 8.40.3
         version: 8.40.3
       '@wdio/spec-reporter':
-        specifier: ^8.39.0
+        specifier: 8.40.3
         version: 8.40.3
       '@wdio/types':
-        specifier: ^8.41.0
+        specifier: 8.41.0
         version: 8.41.0
       dotenv:
-        specifier: ^16.4.5
+        specifier: 16.4.5
         version: 16.4.5
       expect-webdriverio:
-        specifier: ^4.15.4
+        specifier: 4.15.4
         version: 4.15.4
       glob:
-        specifier: ^11.0.1
+        specifier: 11.0.1
         version: 11.0.1
       mocha:
-        specifier: ^10.2.0
+        specifier: 10.7.3
         version: 10.7.3
       ovsx:
-        specifier: ^0.9.1
+        specifier: 0.9.2
         version: 0.9.2
       sinon:
-        specifier: ^18.0.0
+        specifier: 18.0.0
         version: 18.0.0
       vscode-languageserver-textdocument:
-        specifier: ^1.0.12
+        specifier: 1.0.12
         version: 1.0.12
       wdio-vscode-service:
-        specifier: ^6.1.3
+        specifier: 6.1.3
         version: 6.1.3(webdriverio@8.41.0)
       wdio-wait-for:
-        specifier: ^3.0.11
+        specifier: 3.0.11
         version: 3.0.11
       webdriverio:
-        specifier: ^8.41.0
+        specifier: 8.41.0
         version: 8.41.0
 
   vendor/antlr4-c3:
@@ -2257,9 +2254,6 @@ packages:
   '@types/docker-modem@3.0.6':
     resolution: {integrity: sha512-yKpAGEuKRSS8wwx0joknWxsmLha78wNMe9R2S3UNsVOkZded8UqOrV8KoeDXoXsjndxwyF3eIhyClGbO1SEhEg==}
 
-  '@types/dockerode@3.3.31':
-    resolution: {integrity: sha512-42R9eoVqJDSvVspV89g7RwRqfNExgievLNWoHkg7NoWIqAmavIbgQBb4oc0qRtHkxE+I3Xxvqv7qVXFABKPBTg==}
-
   '@types/dockerode@3.3.43':
     resolution: {integrity: sha512-YCi0aKKpKeC9dhKTbuglvsWDnAyuIITd6CCJSTKiAdbDzPH4RWu0P9IK2XkJHdyplH6mzYtDYO+gB06JlzcPxg==}
 
@@ -2268,9 +2262,6 @@ packages:
 
   '@types/estree@1.0.6':
     resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
-
-  '@types/glob@8.1.0':
-    resolution: {integrity: sha512-IO+MJPVhoqz+28h1qLAcBEH2+xHMK6MTyHJc7MTnnYb6wsoLR29POVGJ7LycmVXIqyy/4/2ShP5sUwTXuOwb/w==}
 
   '@types/hast@2.3.10':
     resolution: {integrity: sha512-McWspRw8xx8J9HurkVBfYj0xKoE25tOFlHGdx4MJ5xORQrMGZNqJhVQWaIbm6Oyla5kYOXtDiopzKRJzEOkwJw==}
@@ -2301,9 +2292,6 @@ packages:
 
   '@types/lodash@4.17.7':
     resolution: {integrity: sha512-8wTvZawATi/lsmNu10/j2hk1KEP0IvjubqPE3cu1Xz7xfXXt5oCq3SNUz4fMIP4XGF9Ky+Ue2tBA3hcS7LSBlA==}
-
-  '@types/minimatch@5.1.2':
-    resolution: {integrity: sha512-K0VQKziLUWkVKiRVrx4a40iPaxTUefQmjtkQofBkYRcoaaL/8rhwDWww9qWbrgicNOgnpIsMxyNIUM4+n6dUIA==}
 
   '@types/mocha@10.0.7':
     resolution: {integrity: sha512-GN8yJ1mNTcFcah/wKEFIJckJx9iJLoMSzWcfRRuxz/Jk+U6KQNnml+etbtxFK8lPjzOw3zp4Ha/kjSst9fsHYw==}
@@ -3079,14 +3067,8 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  bare-events@2.4.2:
-    resolution: {integrity: sha512-qMKFd2qG/36aA4GwvKq8MxnPgCQAmBWmSyLWsJcbn8v03wvIPQ/hG1Ms8bPzndZxMDoHpxez5VOS+gC9Yi24/Q==}
-
   bare-events@2.5.4:
     resolution: {integrity: sha512-+gFfDkR8pj4/TrWCGUGWmJIkBwuxPS5F+a5yWjOHQt2hHvNZd5YLzadjmDUtFmMM4y429bnKLa8bYBMHcYdnQA==}
-
-  bare-fs@2.3.3:
-    resolution: {integrity: sha512-7RYKL+vZVCyAsMLi5SPu7QGauGGT8avnP/HO571ndEuV4MYdGXvLhtW67FuLPeEI8EiIY7zbbRR9x7x7HU0kgw==}
 
   bare-fs@4.1.2:
     resolution: {integrity: sha512-8wSeOia5B7LwD4+h465y73KOdj5QHsbbuoUfPBi+pXgFJIPuG7SsiOdJuijWMyfid49eD+WivpfY7KT8gbAzBA==}
@@ -3097,21 +3079,12 @@ packages:
       bare-buffer:
         optional: true
 
-  bare-os@2.4.2:
-    resolution: {integrity: sha512-HZoJwzC+rZ9lqEemTMiO0luOePoGYNBgsLLgegKR/cljiJvcDNhDZQkzC+NC5Oh0aHbdBNSOHpghwMuB5tqhjg==}
-
   bare-os@3.6.1:
     resolution: {integrity: sha512-uaIjxokhFidJP+bmmvKSgiMzj2sV5GPHaZVAIktcxcpCyBFFWO+YlikVAdhmUo2vYFvFhOXIAlldqV29L8126g==}
     engines: {bare: '>=1.14.0'}
 
-  bare-path@2.1.3:
-    resolution: {integrity: sha512-lh/eITfU8hrj9Ru5quUp0Io1kJWIk1bTjzo7JH1P5dWmQ2EL4hFUlfI8FonAhSlgIfhn63p84CDY/x+PisgcXA==}
-
   bare-path@3.0.0:
     resolution: {integrity: sha512-tyfW2cQcB5NN8Saijrhqn0Zh7AnFNsnczRcuWODH0eYAXBsJ5gVxAUuNr7tsHSC6IZ77cA0SitzT+s47kot8Mw==}
-
-  bare-stream@2.2.1:
-    resolution: {integrity: sha512-YTB47kHwBW9zSG8LD77MIBAAQXjU2WjAkMHeeb7hUplVs6+IoM5I7uEVQNPMB7lj9r8I76UMdoMkGnCodHOLqg==}
 
   bare-stream@2.6.5:
     resolution: {integrity: sha512-jSmxKJNJmHySi6hC42zlZnq00rga4jjxcgNZjY9N5WlOe/iOoGRtdwGsHzQv2RlH2KOYMwGUXhf2zXd32BA9RA==}
@@ -5934,9 +5907,6 @@ packages:
   pend@1.2.0:
     resolution: {integrity: sha512-F3asv42UuXchdzt+xXqfW1OGlVBe+mxa2mqI0pg5yAHZPvFmY3Y6drSf/GQ1A86WgWEN9Kzh/WrgKa6iGcHXLg==}
 
-  picocolors@1.1.0:
-    resolution: {integrity: sha512-TQ92mBOW0l3LeMeyLV6mzy/kWr8lkd/hp3mTg7wYK7zJhuBStmGMBG0BdeDZS/dZx1IukaX6Bk11zcln25o1Aw==}
-
   picocolors@1.1.1:
     resolution: {integrity: sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==}
 
@@ -6662,10 +6632,6 @@ packages:
     resolution: {integrity: sha512-vzn8aSqKgytVik0iwdBEi+zevbTYZogewTUM6dtpmGwEcdzbub/TX4bCzRhebDCRC3QzXgJsLRKB2V/Oof7HXg==}
     engines: {node: '>=0.10.0'}
 
-  source-map-js@1.2.0:
-    resolution: {integrity: sha512-itJW8lvSA0TXEphiRoawsCksnlf8SyvmFzIhltqAHluXd88pkCd+cXJVHTDwdCr0IzwptSm035IHQktUu1QUMg==}
-    engines: {node: '>=0.10.0'}
-
   source-map-js@1.2.1:
     resolution: {integrity: sha512-UXWMKhLOwVKb728IUtQPXxfYU+usdybtUrK/8uGE8CQMvrhOpwvzDBwj0QhSL7MQc7vIsISBG8VQ8+IDQxpfQA==}
     engines: {node: '>=0.10.0'}
@@ -6898,20 +6864,11 @@ packages:
   tar-fs@2.0.1:
     resolution: {integrity: sha512-6tzWDMeroL87uF/+lin46k+Q+46rAJ0SyPGz7OW7wTgblI273hsBqk2C1j0/xNadNLKDTUL9BukSjB7cwgmlPA==}
 
-  tar-fs@2.1.1:
-    resolution: {integrity: sha512-V0r2Y9scmbDRLCNex/+hYzvp/zyYjvFbHPNgVTKfQvVrb6guiE/fxP+XblDNR011utopbkex2nM4dHNV6GDsng==}
-
   tar-fs@2.1.3:
     resolution: {integrity: sha512-090nwYJDmlhwFwEW3QQl+vaNnxsO2yVsd45eTKRBzSzu+hlb1w2K9inVq5b0ngXuLVqQ4ApvsUHHnu/zQNkWAg==}
 
   tar-fs@3.0.4:
     resolution: {integrity: sha512-5AFQU8b9qLfZCX9zp2duONhPmZv0hGYiBPJsyUdqMjzq/mqVpy/rEUSeHk1+YitmxugaptgBh5oDGU3VsAJq4w==}
-
-  tar-fs@3.0.6:
-    resolution: {integrity: sha512-iokBDQQkUyeXhgPYaZxmczGPhnhXZ0CmrqI+MOb/WFGS9DW5wnfrLgtjUJBvz50vQ3qfRwJ62QVoCFu8mPVu5w==}
-
-  tar-fs@3.0.8:
-    resolution: {integrity: sha512-ZoROL70jptorGAlgAYiLoBLItEKw/fUxg9BSYK/dF/GAGYFJOJJJMvjPAKDJraCXFwadD456FCuvLWgfhMsPwg==}
 
   tar-fs@3.1.0:
     resolution: {integrity: sha512-5Mty5y/sOF1YWj1J6GiBodjlDc05CUR8PKXrsnFAiSG0xA+GHeWLovaZPYUDXkH/1iKRf2+M5+OrRgzC7O9b7w==}
@@ -7007,10 +6964,6 @@ packages:
   tmp@0.0.33:
     resolution: {integrity: sha512-jRCJlojKnZ3addtTOjdIqoRuPEKBvNXcGYqzO6zWZX8KfKEpnGY5jfggJQ3EjKuu8D4bJRr0y+cYJFmYbImXGw==}
     engines: {node: '>=0.6.0'}
-
-  tmp@0.2.3:
-    resolution: {integrity: sha512-nZD7m9iCPC5g0pYmcaxogYKggSfLsdxl8of3Q/oIbqCqLLIO9IAF0GWjX1z9NZRHPiXv8Wex4yDCaZsgEw0Y8w==}
-    engines: {node: '>=14.14'}
 
   tmp@0.2.5:
     resolution: {integrity: sha512-voyz6MApa1rQGUxT3E+BK7/ROe8itEx7vD8/HEvt4xwXucvQ5G5oeEiHkmHZJuBO21RpOf+YYm9MOivj709jow==}
@@ -7662,11 +7615,6 @@ packages:
     resolution: {integrity: sha512-r3vXyErRCYJ7wg28yvBY5VSoAF8ZvlcW9/BwUzEtUsjvX/DKs24dIkuwjtuprwJJHsbyUbLApepYTR1BN4uHrg==}
     engines: {node: '>= 6'}
 
-  yaml@2.7.0:
-    resolution: {integrity: sha512-+hSoy/QHluxmC9kCIJyL/uyFmLmc+e5CFR5Wa+bpIhIj85LVb9ZH2nVnqrHoSvKogwODv0ClqZkmiSSaIH5LTA==}
-    engines: {node: '>= 14'}
-    hasBin: true
-
   yaml@2.8.0:
     resolution: {integrity: sha512-4lLa/EcQCB0cJkyts+FpIRx5G/llPxfP6VQU5KByHEhLxY3IJCH0f0Hy1MHI8sClTvsIb8qwRJ6R/ZdlDJ/leQ==}
     engines: {node: '>= 14.6'}
@@ -7813,7 +7761,7 @@ snapshots:
   '@babel/code-frame@7.24.7':
     dependencies:
       '@babel/highlight': 7.24.7
-      picocolors: 1.1.0
+      picocolors: 1.1.1
 
   '@babel/compat-data@7.25.4': {}
 
@@ -7830,7 +7778,7 @@ snapshots:
       '@babel/traverse': 7.25.6
       '@babel/types': 7.25.6
       convert-source-map: 2.0.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       gensync: 1.0.0-beta.2
       json5: 2.2.3
       semver: 6.3.1
@@ -7894,7 +7842,7 @@ snapshots:
       '@babel/helper-validator-identifier': 7.24.7
       chalk: 2.4.2
       js-tokens: 4.0.0
-      picocolors: 1.1.0
+      picocolors: 1.1.1
 
   '@babel/parser@7.25.6':
     dependencies:
@@ -7927,7 +7875,7 @@ snapshots:
       '@babel/parser': 7.25.6
       '@babel/template': 7.25.0
       '@babel/types': 7.25.6
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       globals: 11.12.0
     transitivePeerDependencies:
       - supports-color
@@ -8005,7 +7953,7 @@ snapshots:
       mri: 1.2.0
       p-limit: 2.3.0
       package-manager-detector: 0.2.0
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       resolve-from: 5.0.0
       semver: 7.7.1
       spawndamnit: 3.0.1
@@ -8029,7 +7977,7 @@ snapshots:
     dependencies:
       '@changesets/types': 6.1.0
       '@manypkg/get-packages': 1.1.3
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       semver: 7.7.1
 
   '@changesets/get-release-plan@4.0.8':
@@ -8053,7 +8001,7 @@ snapshots:
 
   '@changesets/logger@0.1.1':
     dependencies:
-      picocolors: 1.1.0
+      picocolors: 1.1.1
 
   '@changesets/parse@0.4.1':
     dependencies:
@@ -8075,7 +8023,7 @@ snapshots:
       '@changesets/types': 6.1.0
       fs-extra: 7.0.1
       p-filter: 2.1.0
-      picocolors: 1.1.0
+      picocolors: 1.1.1
 
   '@changesets/should-skip-package@0.1.2':
     dependencies:
@@ -8466,7 +8414,7 @@ snapshots:
   '@eslint/eslintrc@2.1.4':
     dependencies:
       ajv: 6.12.6
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       espree: 9.6.1
       globals: 13.24.0
       ignore: 5.3.2
@@ -8591,7 +8539,7 @@ snapshots:
   '@humanwhocodes/config-array@0.11.14':
     dependencies:
       '@humanwhocodes/object-schema': 2.0.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       minimatch: 3.1.2
     transitivePeerDependencies:
       - supports-color
@@ -9988,6 +9936,7 @@ snapshots:
     dependencies:
       testcontainers: 10.13.0
     transitivePeerDependencies:
+      - bare-buffer
       - supports-color
 
   '@testcontainers/neo4j@11.5.1':
@@ -10039,12 +9988,6 @@ snapshots:
       '@types/node': 22.15.3
       '@types/ssh2': 1.15.1
 
-  '@types/dockerode@3.3.31':
-    dependencies:
-      '@types/docker-modem': 3.0.6
-      '@types/node': 22.15.3
-      '@types/ssh2': 1.15.1
-
   '@types/dockerode@3.3.43':
     dependencies:
       '@types/docker-modem': 3.0.6
@@ -10057,11 +10000,6 @@ snapshots:
       '@types/json-schema': 7.0.15
 
   '@types/estree@1.0.6': {}
-
-  '@types/glob@8.1.0':
-    dependencies:
-      '@types/minimatch': 5.1.2
-      '@types/node': 22.15.3
 
   '@types/hast@2.3.10':
     dependencies:
@@ -10090,8 +10028,6 @@ snapshots:
       '@types/lodash': 4.17.7
 
   '@types/lodash@4.17.7': {}
-
-  '@types/minimatch@5.1.2': {}
 
   '@types/mocha@10.0.7': {}
 
@@ -10181,7 +10117,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.56.0
       '@typescript-eslint/type-utils': 5.56.0(eslint@8.36.0)(typescript@5.8.3)
       '@typescript-eslint/utils': 5.56.0(eslint@8.36.0)(typescript@5.8.3)
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       eslint: 8.36.0
       grapheme-splitter: 1.0.4
       ignore: 5.3.2
@@ -10216,7 +10152,7 @@ snapshots:
       '@typescript-eslint/scope-manager': 5.56.0
       '@typescript-eslint/types': 5.56.0
       '@typescript-eslint/typescript-estree': 5.56.0(typescript@5.8.3)
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       eslint: 8.36.0
     optionalDependencies:
       typescript: 5.8.3
@@ -10229,7 +10165,7 @@ snapshots:
       '@typescript-eslint/types': 7.18.0
       '@typescript-eslint/typescript-estree': 7.18.0(typescript@5.8.3)
       '@typescript-eslint/visitor-keys': 7.18.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       eslint: 8.57.0
     optionalDependencies:
       typescript: 5.8.3
@@ -10250,7 +10186,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 5.56.0(typescript@5.8.3)
       '@typescript-eslint/utils': 5.56.0(eslint@8.36.0)(typescript@5.8.3)
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       eslint: 8.36.0
       tsutils: 3.21.0(typescript@5.8.3)
     optionalDependencies:
@@ -10262,7 +10198,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/typescript-estree': 7.18.0(typescript@5.8.3)
       '@typescript-eslint/utils': 7.18.0(eslint@8.57.0)(typescript@5.8.3)
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       eslint: 8.57.0
       ts-api-utils: 1.3.0(typescript@5.8.3)
     optionalDependencies:
@@ -10278,7 +10214,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 5.56.0
       '@typescript-eslint/visitor-keys': 5.56.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       globby: 11.1.0
       is-glob: 4.0.3
       semver: 7.7.1
@@ -10292,7 +10228,7 @@ snapshots:
     dependencies:
       '@typescript-eslint/types': 7.18.0
       '@typescript-eslint/visitor-keys': 7.18.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       globby: 11.1.0
       is-glob: 4.0.3
       minimatch: 9.0.5
@@ -10672,7 +10608,7 @@ snapshots:
       parse-semver: 1.1.1
       read: 1.0.7
       semver: 7.7.1
-      tmp: 0.2.3
+      tmp: 0.2.5
       typed-rest-client: 1.8.11
       url-join: 4.0.1
       xml2js: 0.5.0
@@ -10703,7 +10639,7 @@ snapshots:
       parse-semver: 1.1.1
       read: 1.0.7
       semver: 7.7.1
-      tmp: 0.2.3
+      tmp: 0.2.5
       typed-rest-client: 1.8.11
       url-join: 4.0.1
       xml2js: 0.5.0
@@ -10814,6 +10750,7 @@ snapshots:
       '@wdio/utils': 8.40.3
       mocha: 10.7.3
     transitivePeerDependencies:
+      - bare-buffer
       - supports-color
 
   '@wdio/protocols@8.40.3': {}
@@ -10883,6 +10820,7 @@ snapshots:
       split2: 4.2.0
       wait-port: 1.1.0
     transitivePeerDependencies:
+      - bare-buffer
       - supports-color
 
   '@wdio/utils@8.41.0':
@@ -11162,7 +11100,7 @@ snapshots:
       caniuse-lite: 1.0.30001658
       fraction.js: 4.3.7
       normalize-range: 0.1.2
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       postcss: 8.4.45
       postcss-value-parser: 4.2.0
 
@@ -11198,17 +11136,7 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  bare-events@2.4.2:
-    optional: true
-
   bare-events@2.5.4:
-    optional: true
-
-  bare-fs@2.3.3:
-    dependencies:
-      bare-events: 2.4.2
-      bare-path: 2.1.3
-      bare-stream: 2.2.1
     optional: true
 
   bare-fs@4.1.2:
@@ -11218,26 +11146,12 @@ snapshots:
       bare-stream: 2.6.5(bare-events@2.5.4)
     optional: true
 
-  bare-os@2.4.2:
-    optional: true
-
   bare-os@3.6.1:
-    optional: true
-
-  bare-path@2.1.3:
-    dependencies:
-      bare-os: 2.4.2
     optional: true
 
   bare-path@3.0.0:
     dependencies:
       bare-os: 3.6.1
-    optional: true
-
-  bare-stream@2.2.1:
-    dependencies:
-      b4a: 1.6.6
-      streamx: 2.22.0
     optional: true
 
   bare-stream@2.6.5(bare-events@2.5.4):
@@ -11905,15 +11819,15 @@ snapshots:
     dependencies:
       ms: 2.1.2
 
-  debug@4.4.0(supports-color@8.1.1):
+  debug@4.4.0:
+    dependencies:
+      ms: 2.1.3
+
+  debug@4.4.1(supports-color@8.1.1):
     dependencies:
       ms: 2.1.3
     optionalDependencies:
       supports-color: 8.1.1
-
-  debug@4.4.1:
-    dependencies:
-      ms: 2.1.3
 
   decamelize@4.0.0: {}
 
@@ -12008,7 +11922,7 @@ snapshots:
 
   docker-compose@0.24.8:
     dependencies:
-      yaml: 2.7.0
+      yaml: 2.8.0
 
   docker-compose@1.2.0:
     dependencies:
@@ -12016,7 +11930,7 @@ snapshots:
 
   docker-modem@3.0.8:
     dependencies:
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       readable-stream: 3.6.2
       split-ca: 1.0.1
       ssh2: 1.15.0
@@ -12025,7 +11939,7 @@ snapshots:
 
   docker-modem@5.0.6:
     dependencies:
-      debug: 4.4.1
+      debug: 4.4.1(supports-color@8.1.1)
       readable-stream: 3.6.2
       split-ca: 1.0.1
       ssh2: 1.15.0
@@ -12414,7 +12328,7 @@ snapshots:
       '@es-joy/jsdoccomment': 0.43.1
       are-docs-informative: 0.0.2
       comment-parser: 1.4.1
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       escape-string-regexp: 4.0.0
       eslint: 8.36.0
       esquery: 1.6.0
@@ -12452,7 +12366,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.0
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -12498,7 +12412,7 @@ snapshots:
       ajv: 6.12.6
       chalk: 4.1.2
       cross-spawn: 7.0.6
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       doctrine: 3.0.0
       escape-string-regexp: 4.0.0
       eslint-scope: 7.2.2
@@ -12641,7 +12555,7 @@ snapshots:
 
   extract-zip@2.0.1:
     dependencies:
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       get-stream: 5.2.0
       yauzl: 2.10.0
     optionalDependencies:
@@ -12904,7 +12818,7 @@ snapshots:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       node-fetch: 3.3.2
-      tar-fs: 3.0.8
+      tar-fs: 3.1.0
       unzipper: 0.10.14
       which: 4.0.0
     transitivePeerDependencies:
@@ -12919,9 +12833,10 @@ snapshots:
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       node-fetch: 3.3.2
-      tar-fs: 3.0.6
+      tar-fs: 3.1.0
       which: 4.0.0
     transitivePeerDependencies:
+      - bare-buffer
       - supports-color
 
   gensync@1.0.0-beta.2: {}
@@ -12989,7 +12904,7 @@ snapshots:
     dependencies:
       basic-ftp: 5.0.5
       data-uri-to-buffer: 6.0.2
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       fs-extra: 11.2.0
     transitivePeerDependencies:
       - supports-color
@@ -13234,7 +13149,7 @@ snapshots:
   http-proxy-agent@7.0.2:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13248,7 +13163,7 @@ snapshots:
   https-proxy-agent@7.0.6:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -13757,7 +13672,7 @@ snapshots:
     dependencies:
       chalk: 5.4.1
       commander: 14.0.0
-      debug: 4.4.1
+      debug: 4.4.1(supports-color@8.1.1)
       lilconfig: 3.1.3
       listr2: 8.3.3
       micromatch: 4.0.8
@@ -14022,7 +13937,7 @@ snapshots:
       ansi-colors: 4.1.3
       browser-stdout: 1.3.1
       chokidar: 3.6.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       diff: 5.2.0
       escape-string-regexp: 4.0.0
       find-up: 5.0.0
@@ -14297,7 +14212,7 @@ snapshots:
       is-ci: 2.0.0
       leven: 3.1.0
       semver: 7.7.1
-      tmp: 0.2.3
+      tmp: 0.2.5
     transitivePeerDependencies:
       - debug
       - supports-color
@@ -14340,7 +14255,7 @@ snapshots:
     dependencies:
       '@tootallnate/quickjs-emscripten': 0.23.0
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       get-uri: 6.0.3
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
@@ -14460,8 +14375,6 @@ snapshots:
 
   pend@1.2.0: {}
 
-  picocolors@1.1.0: {}
-
   picocolors@1.1.1: {}
 
   picomatch@2.3.1: {}
@@ -14527,7 +14440,7 @@ snapshots:
   postcss-load-config@4.0.2(postcss@8.4.45)(ts-node@10.9.1(@types/node@22.15.3)(typescript@5.8.3)):
     dependencies:
       lilconfig: 3.1.3
-      yaml: 2.7.0
+      yaml: 2.8.0
     optionalDependencies:
       postcss: 8.4.45
       ts-node: 10.9.1(@types/node@22.15.3)(typescript@5.8.3)
@@ -14547,8 +14460,8 @@ snapshots:
   postcss@8.4.45:
     dependencies:
       nanoid: 3.3.11
-      picocolors: 1.1.0
-      source-map-js: 1.2.0
+      picocolors: 1.1.1
+      source-map-js: 1.2.1
 
   postcss@8.5.6:
     dependencies:
@@ -14568,7 +14481,7 @@ snapshots:
       pump: 3.0.0
       rc: 1.2.8
       simple-get: 4.0.1
-      tar-fs: 2.1.1
+      tar-fs: 2.1.3
       tunnel-agent: 0.6.0
     optional: true
 
@@ -14648,7 +14561,7 @@ snapshots:
   proxy-agent@6.3.1:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       http-proxy-agent: 7.0.2
       https-proxy-agent: 7.0.6
       lru-cache: 7.18.3
@@ -15313,7 +15226,7 @@ snapshots:
   socks-proxy-agent@8.0.5:
     dependencies:
       agent-base: 7.1.3
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       socks: 2.8.3
     transitivePeerDependencies:
       - supports-color
@@ -15339,8 +15252,6 @@ snapshots:
   sort-keys@1.1.2:
     dependencies:
       is-plain-obj: 1.1.0
-
-  source-map-js@1.2.0: {}
 
   source-map-js@1.2.1: {}
 
@@ -15590,7 +15501,7 @@ snapshots:
       micromatch: 4.0.8
       normalize-path: 3.0.0
       object-hash: 3.0.0
-      picocolors: 1.1.0
+      picocolors: 1.1.1
       postcss: 8.4.45
       postcss-import: 15.1.0(postcss@8.4.45)
       postcss-js: 4.0.1(postcss@8.4.45)
@@ -15609,14 +15520,6 @@ snapshots:
       pump: 3.0.0
       tar-stream: 2.2.0
 
-  tar-fs@2.1.1:
-    dependencies:
-      chownr: 1.1.4
-      mkdirp-classic: 0.5.3
-      pump: 3.0.0
-      tar-stream: 2.2.0
-    optional: true
-
   tar-fs@2.1.3:
     dependencies:
       chownr: 1.1.4
@@ -15629,24 +15532,6 @@ snapshots:
       mkdirp-classic: 0.5.3
       pump: 3.0.0
       tar-stream: 3.1.7
-
-  tar-fs@3.0.6:
-    dependencies:
-      pump: 3.0.0
-      tar-stream: 3.1.7
-    optionalDependencies:
-      bare-fs: 2.3.3
-      bare-path: 2.1.3
-
-  tar-fs@3.0.8:
-    dependencies:
-      pump: 3.0.0
-      tar-stream: 3.1.7
-    optionalDependencies:
-      bare-fs: 4.1.2
-      bare-path: 3.0.0
-    transitivePeerDependencies:
-      - bare-buffer
 
   tar-fs@3.1.0:
     dependencies:
@@ -15686,21 +15571,22 @@ snapshots:
   testcontainers@10.13.0:
     dependencies:
       '@balena/dockerignore': 1.0.2
-      '@types/dockerode': 3.3.31
+      '@types/dockerode': 3.3.43
       archiver: 7.0.1
       async-lock: 1.4.1
       byline: 5.0.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       docker-compose: 0.24.8
       dockerode: 3.3.5
       get-port: 5.1.1
       proper-lockfile: 4.1.2
       properties-reader: 2.3.0
       ssh-remote-port-forward: 1.0.4
-      tar-fs: 3.0.6
-      tmp: 0.2.3
+      tar-fs: 3.1.0
+      tmp: 0.2.5
       undici: 5.28.4
     transitivePeerDependencies:
+      - bare-buffer
       - supports-color
 
   testcontainers@11.5.1:
@@ -15710,7 +15596,7 @@ snapshots:
       archiver: 7.0.1
       async-lock: 1.4.1
       byline: 5.0.0
-      debug: 4.4.1
+      debug: 4.4.1(supports-color@8.1.1)
       docker-compose: 1.2.0
       dockerode: 4.0.7
       get-port: 7.1.0
@@ -15785,13 +15671,11 @@ snapshots:
 
   tmp-promise@3.0.3:
     dependencies:
-      tmp: 0.2.3
+      tmp: 0.2.5
 
   tmp@0.0.33:
     dependencies:
       os-tmpdir: 1.0.2
-
-  tmp@0.2.3: {}
 
   tmp@0.2.5: {}
 
@@ -16006,7 +15890,7 @@ snapshots:
     dependencies:
       browserslist: 4.23.3
       escalade: 3.2.0
-      picocolors: 1.1.0
+      picocolors: 1.1.1
 
   uri-js@4.4.1:
     dependencies:
@@ -16082,7 +15966,7 @@ snapshots:
   vite-node@2.1.9(@types/node@22.15.3):
     dependencies:
       cac: 6.7.14
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       es-module-lexer: 1.6.0
       pathe: 1.1.2
       vite: 5.4.15(@types/node@22.15.3)
@@ -16148,7 +16032,7 @@ snapshots:
       '@vitest/spy': 2.1.9
       '@vitest/utils': 2.1.9
       chai: 5.2.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
       expect-type: 1.2.0
       magic-string: 0.30.12
       pathe: 1.1.2
@@ -16211,7 +16095,7 @@ snapshots:
     dependencies:
       chalk: 4.1.2
       commander: 9.5.0
-      debug: 4.4.0(supports-color@8.1.1)
+      debug: 4.4.1(supports-color@8.1.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -16413,8 +16297,6 @@ snapshots:
   yallist@5.0.0: {}
 
   yaml@1.10.2: {}
-
-  yaml@2.7.0: {}
 
   yaml@2.8.0: {}
 

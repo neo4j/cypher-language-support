@@ -37,12 +37,12 @@
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/lint-worker": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
-    "lodash.debounce": "^4.0.8",
+    "lodash.debounce": "4.0.8",
     "neo4j-driver": "catalog:",
-    "vscode-languageserver": "^8.1.0",
-    "vscode-languageserver-textdocument": "^1.0.8",
-    "workerpool": "^9.3.3",
-    "axios": "^1.9.0"
+    "vscode-languageserver": "8.1.0",
+    "vscode-languageserver-textdocument": "1.0.12",
+    "workerpool": "9.3.3",
+    "axios": "1.9.0"
   },
   "scripts": {
     "build": "tsc -b && pnpm bundle && pnpm make-executable && pnpm copy-lint-worker",
@@ -53,7 +53,7 @@
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9",
-    "copyfiles": "^2.4.1"
+    "@types/lodash.debounce": "4.0.9",
+    "copyfiles": "2.4.1"
   }
 }
