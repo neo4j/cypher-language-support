@@ -2,9 +2,10 @@ import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
-  UnescapedSymbolicNameString_Context,
+  UnescapedSymbolicNameStringContext,
 } from '../generated-parser/CypherCmdParser';
 import { lexerKeywords } from '../lexerSymbols';
+import { findParent } from '../helpers';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -103,12 +104,20 @@ export function isComment(token: Token) {
 export const isInlineComment = (chunk: Chunk) =>
   chunk.comment && chunk.comment.startsWith('/*');
 
-// Variables or property names that have the same name as a keyword should not be
+// Variables, functions/procedures namespaces or property names that have the same name as a keyword should not be
 // treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
-  return (
-    node.parentCtx instanceof UnescapedSymbolicNameString_Context ||
-    node.parentCtx instanceof EscapedSymbolicNameStringContext
+  const unescapedSymbolicNameStringParent = findParent(
+    node,
+    (x) => x instanceof UnescapedSymbolicNameStringContext,
+  );
+  const escapedSymbolicNameStringParent = findParent(
+    node,
+    (x) => x instanceof EscapedSymbolicNameStringContext,
+  );
+  return !(
+    unescapedSymbolicNameStringParent == null &&
+    escapedSymbolicNameStringParent == null
   );
 }
 
