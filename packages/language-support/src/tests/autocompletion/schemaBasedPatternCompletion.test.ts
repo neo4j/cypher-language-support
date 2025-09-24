@@ -245,7 +245,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('limitation: Does not handle anonymous variables as context ', () => {
+  test('Limitation: Does not handle anonymous variables as context ', () => {
     const query = 'MATCH (:Trainer)-[r:';
     const symbolTables: SymbolTable = [];
 
@@ -263,7 +263,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('limitation: Does not properly handle quantifiers ', () => {
+  test('Limitation: Does not properly handle quantifiers ', () => {
     const query = 'MATCH (t:Trainer)-[r:CATCHES*1..3]->(p:Pokemon)-[r2:';
     const symbolTables: SymbolTable = [
       {
@@ -289,14 +289,14 @@ RETURN [(p)-[:`;
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-        // below should be included
+        // below should be included, as we should bail out
         // { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
         // { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
 
-  test('limitation: Does not handle direction-aware completions ', () => {
+  test('Limitation: Does not handle direction-aware completions ', () => {
     const query = 'MATCH (p:Pokemon)<-[r:';
     const symbolTables: SymbolTable = [
       {
@@ -317,6 +317,84 @@ RETURN [(p)-[:`;
         // below should be excluded
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Does not handle mid query cursor', () => {
+    const beforeCursor = 'MATCH (p:Pokemon)-[r:';
+    const query = beforeCursor + ']-(t:Trainer)--(u:UnrelatedLabel)';
+
+    const symbolTables: SymbolTable = [
+      {
+        variable: 'p',
+        definitionPosition: 7,
+        types: ['Pokemon'],
+        references: [],
+      },
+      {
+        variable: 't',
+        definitionPosition: 26,
+        types: ['Trainer'],
+        references: [],
+      },
+      {
+        variable: 'u',
+        definitionPosition: 43,
+        types: ['UnrelatedLabel'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      offset: beforeCursor.length,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        // always takes the latest finished node, rather than the correct one
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Does not handle direction-aware completions ', () => {
+    const beforeCursor = 'MATCH (p:Pokemon)-[r:';
+    const query = beforeCursor + ']->(t:Trainer)';
+
+    const symbolTables: SymbolTable = [
+      {
+        variable: 'p',
+        definitionPosition: 7,
+        types: ['Pokemon'],
+        references: [],
+      },
+      {
+        variable: 't',
+        definitionPosition: 26,
+        types: ['Trainer'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      offset: beforeCursor.length,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        // all should be excluded as there is no relationship from pokemon to trainer
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
@@ -373,6 +451,49 @@ RETURN [(p)-[:`;
       excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Does not handle cursor position', () => {
+    const query = 'MATCH (t1:Trainer)-[r1:CATCHES]-(p1:Pokemon)-[r2:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't1',
+        definitionPosition: 7,
+        types: ['Trainer'],
+        references: [],
+      },
+      {
+        variable: 'p1',
+        definitionPosition: 26,
+        types: ['Pokemon'],
+        references: [],
+      },
+      {
+        variable: 'r1',
+        definitionPosition: 16,
+        types: ['CATCHES'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      offset: 'MATCH (t1:Trainer)-[r1:'.length,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      // this should give the suggestions for trainer, not pokemon
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        // below should be excluded
+        // { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        // { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        // { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
