@@ -13,6 +13,7 @@ import {
 } from '../generated-parser/CypherCmdParser';
 import { ParserRuleContext } from 'antlr4';
 import { backtickIfNeeded } from './autocompletionHelpers';
+import { _internalFeatureFlags } from '../featureFlags';
 
 export const labelToCompletions = (labelNames?: string[]) =>
   labelNames?.map((labelName) => {
@@ -55,6 +56,10 @@ export function completeRelationshipType(
   parsingResult: ParsedStatement,
   symbolsInfo: SymbolsInfo,
 ): CompletionItem[] {
+  if (!_internalFeatureFlags.schemaBasedPatternCompletion) {
+    return allReltypeCompletions(dbSchema);
+  }
+
   if (dbSchema.graphSchema === undefined) {
     return allReltypeCompletions(dbSchema);
   }
