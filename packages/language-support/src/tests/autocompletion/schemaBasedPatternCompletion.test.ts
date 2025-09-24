@@ -154,10 +154,10 @@ describe('completeRelationshipType', () => {
     });
   });
 
-  test.todo('Works in pattern expression ', () => {
+  test('Works in pattern expression ', () => {
     const query = `MATCH (p:Pokemon)
 WHERE EXISTS {
-  MATCH (p)-[:`;
+  (p)-[:`;
 
     const symbolTables: SymbolTable = [
       {
@@ -179,6 +179,35 @@ WHERE EXISTS {
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Works in pattern comprehension ', () => {
+    const query = `MATCH (p:Pokemon)
+RETURN [(p)-[:`;
+
+    const symbolTables: SymbolTable = [
+      {
+        variable: 'p',
+        definitionPosition: 7,
+        types: ['Pokemon'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        // below should be excluded
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -292,7 +321,7 @@ WHERE EXISTS {
     });
   });
 
-  test.todo('limitation: Does not handle union types ', () => {
+  test('Handles union types ', () => {
     const query = 'MATCH (x:Pokemon|Trainer)-[r:';
     const symbolTables: SymbolTable = [
       {
@@ -320,7 +349,7 @@ WHERE EXISTS {
     });
   });
 
-  test('Limitation: does not deduplicate existing relationship types in pattern ', () => {
+  test('Limitation: Does not deduplicate existing relationship types in pattern ', () => {
     const query = 'MATCH (t:Trainer)-[r:CATCHES|TRAINS|';
     const symbolTables: SymbolTable = [
       {
@@ -347,7 +376,4 @@ WHERE EXISTS {
       ],
     });
   });
-
-  test.todo('limitation: Does not respect scope rules ', () => {});
-  test.todo('works in other contexts (todo)', () => {});
 });
