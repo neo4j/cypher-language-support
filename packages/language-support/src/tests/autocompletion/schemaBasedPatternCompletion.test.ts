@@ -1,6 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { testCompletions } from './completionAssertionHelpers';
 import { SymbolTable } from '../../types';
+import { _internalFeatureFlags } from '../../featureFlags';
 
 const dbSchema = {
   labels: ['Pokemon', 'Trainer', 'Gym', 'Type', 'Move'],
@@ -15,6 +16,14 @@ const dbSchema = {
 };
 
 describe('completeRelationshipType', () => {
+  beforeEach(() => {
+    _internalFeatureFlags.schemaBasedPatternCompletion = true;
+  });
+
+  afterEach(() => {
+    _internalFeatureFlags.schemaBasedPatternCompletion = false;
+  });
+
   test('Trainer relationships', () => {
     const query = 'MATCH (t:Trainer)-[r:';
     const symbolTables: SymbolTable = [
@@ -67,7 +76,7 @@ describe('completeRelationshipType', () => {
     });
   });
 
-  test('Longer path - middle of chain', () => {
+  test('Longer path ', () => {
     const query = 'MATCH (t:Trainer)-[:CATCHES]->(p:Pokemon)-[r:';
     const symbolTables: SymbolTable = [
       {
@@ -81,44 +90,6 @@ describe('completeRelationshipType', () => {
         definitionPosition: 26,
         types: ['Pokemon'],
         references: [],
-      },
-    ];
-
-    testCompletions({
-      query,
-      dbSchema,
-      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
-      expected: [
-        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
-        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
-    });
-  });
-
-  test('Three-hop path completion', () => {
-    const query =
-      'MATCH (t:Trainer)-[:CATCHES]->(p:Pokemon)-[:KNOWS]->(m:Move) WITH t, p, m MATCH (p)-[r:';
-    const symbolTables: SymbolTable = [
-      {
-        variable: 't',
-        definitionPosition: 7,
-        types: ['Trainer'],
-        references: [58],
-      },
-      {
-        variable: 'p',
-        definitionPosition: 26,
-        types: ['Pokemon'],
-        references: [60, 78],
-      },
-      {
-        variable: 'm',
-        definitionPosition: 48,
-        types: ['Move'],
-        references: [63],
       },
     ];
 

@@ -639,30 +639,4 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
   });
-
-  test('Correctly completes relationship based on graph schema if available', () => {
-    const query = 'MATCH (n:Person)-[r:';
-
-    testCompletions({
-      query,
-      dbSchema: {
-        labels: ['Person', 'PokemonTrainer', 'Pokemon'],
-        relationshipTypes: ['KNOWS', 'CATCHES'],
-        graphSchema: [
-          {
-            from: 'Person',
-            relType: 'KNOWS',
-            to: 'Person',
-          },
-          {
-            from: 'PokemonTrainer',
-            relType: 'CATCHES',
-            to: 'Pokemon',
-          },
-        ],
-      },
-      expected: [{ label: 'KNOWS', kind: CompletionItemKind.TypeParameter }],
-      excluded: [{ label: 'CATCHES', kind: CompletionItemKind.TypeParameter }],
-    });
-  });
 });
