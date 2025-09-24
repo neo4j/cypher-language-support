@@ -216,5 +216,90 @@ describe('completeRelationshipType', () => {
     });
   });
 
+  test.skip('Handles parenthesized paths', () => {
+    const query = 'MATCH (t:Trainer)-[((p:Pokemon)-[r:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't',
+        definitionPosition: 7,
+        types: ['Trainer'],
+        references: [],
+      },
+      {
+        variable: 'p',
+        definitionPosition: 21,
+        types: ['Pokemon'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test.skip('Handles multiple relationship types in pattern', () => {
+    const query = 'MATCH (t:Trainer)-[r:CATCHES|TRAINS|';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't',
+        definitionPosition: 7,
+        types: ['Trainer'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test.skip('Handles PathPatternNonEmptyContext patterns', () => {
+    const query = 'MATCH p = (t:Trainer)-[r:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't',
+        definitionPosition: 11,
+        types: ['Trainer'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test.skip('Respects scope rules', () => {});
 });
