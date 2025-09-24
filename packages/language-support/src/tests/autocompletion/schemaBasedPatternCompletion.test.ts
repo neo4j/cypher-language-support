@@ -42,6 +42,100 @@ describe('completeRelationshipType', () => {
     });
   });
 
+  test('Pokemon relationships', () => {
+    const query = 'MATCH (p:Pokemon)-[r:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 'p',
+        definitionPosition: 7,
+        types: ['Pokemon'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Longer path - middle of chain', () => {
+    const query = 'MATCH (t:Trainer)-[:CATCHES]->(p:Pokemon)-[r:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't',
+        definitionPosition: 7,
+        types: ['Trainer'],
+        references: [],
+      },
+      {
+        variable: 'p',
+        definitionPosition: 26,
+        types: ['Pokemon'],
+        references: [],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Three-hop path completion', () => {
+    const query =
+      'MATCH (t:Trainer)-[:CATCHES]->(p:Pokemon)-[:KNOWS]->(m:Move) WITH t, p, m MATCH (p)-[r:';
+    const symbolTables: SymbolTable = [
+      {
+        variable: 't',
+        definitionPosition: 7,
+        types: ['Trainer'],
+        references: [58],
+      },
+      {
+        variable: 'p',
+        definitionPosition: 26,
+        types: ['Pokemon'],
+        references: [60, 78],
+      },
+      {
+        variable: 'm',
+        definitionPosition: 48,
+        types: ['Move'],
+        references: [63],
+      },
+    ];
+
+    testCompletions({
+      query,
+      dbSchema,
+      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
   // Test cases for current limitations of the implementations
   test.skip('Can use anonymous variables as context', () => {
     const query = 'MATCH (:Trainer)-[r:';
