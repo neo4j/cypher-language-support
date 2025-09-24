@@ -133,6 +133,7 @@ export function completeRelationshipType(
       return allReltypeCompletions(dbSchema);
     }
 
+    
     if (lastValidElement instanceof NodePatternContext) {
       // if it's anonomyous, we don't have it in the schema
       // only variables we have
