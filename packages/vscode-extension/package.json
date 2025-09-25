@@ -355,6 +355,16 @@
       },
       {
         "injectTo": [
+          "text.asciidoc"
+        ],
+        "scopeName": "inline.cypher.asciidoc.codeblock",
+        "path": "./syntaxes/cypher.adoc.json",
+        "embeddedLanguages": {
+          "meta.embedded.block.cypher": "cypher"
+        }
+      },
+      {
+        "injectTo": [
           "source.js",
           "source.ts",
           "text.html.markdown"
