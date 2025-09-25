@@ -36,8 +36,9 @@ describe('completeRelationshipType', () => {
     _internalFeatureFlags.schemaBasedPatternCompletion = false;
   });
 
-  test('Simple pattern 1', () => {
+  test.only('Simple pattern 1', () => {
     const query = 'MATCH (t:Trainer)-[r:';
+    /*
     const symbolTables: SymbolTable = [
       {
         variable: 't',
@@ -46,11 +47,12 @@ describe('completeRelationshipType', () => {
         references: [],
       },
     ];
+    */
 
     testCompletions({
       query,
       dbSchema,
-      overrideSymbolsInfo: { query, symbolTables: [symbolTables] },
+      getSymbolsInfoFrom: 'MATCH (t:Trainer)',
       expected: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },

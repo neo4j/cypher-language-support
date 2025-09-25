@@ -1,6 +1,8 @@
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
-import { CompletionItem, SymbolsInfo } from '../../types';
+import { parserWrapper } from '../../parserWrapper';
+import { CompletionItem } from '../../types';
+import { getSymbolTablesForQuery } from '../syntaxValidation/helpers';
 
 export function testCompletionsExactly({
   query,
@@ -25,7 +27,7 @@ export function testCompletions({
   expected = [],
   assertEmpty = false,
   manualTrigger = false,
-  overrideSymbolsInfo,
+  getSymbolsInfoFrom,
 }: {
   query: string;
   offset?: number;
@@ -34,14 +36,27 @@ export function testCompletions({
   expected?: CompletionItem[];
   assertEmpty?: boolean;
   manualTrigger?: boolean;
-  overrideSymbolsInfo?: SymbolsInfo;
+  getSymbolsInfoFrom?: string;
 }) {
+  if (typeof getSymbolsInfoFrom === 'string') {
+    parserWrapper.parse(getSymbolsInfoFrom);
+    const symbolTables = getSymbolTablesForQuery({
+      query: getSymbolsInfoFrom,
+      dbSchema,
+    });
+    console.log(JSON.stringify(symbolTables, null, 2));
+
+    parserWrapper.setSymbolsInfo({
+      query,
+      symbolTables,
+    });
+  }
+
   const actualCompletionList = autocomplete(
     query,
     dbSchema,
     offset,
     manualTrigger,
-    overrideSymbolsInfo,
   );
 
   if (assertEmpty) {
