@@ -2,8 +2,7 @@ import {
   Extension,
   ExtensionContext,
   ExtensionMode,
-  GlobalEnvironmentVariableCollection,
-  LanguageModelAccessInformation,
+  EnvironmentVariableCollection,
   Memento,
   Uri,
 } from 'vscode';
@@ -12,14 +11,13 @@ import { InMemorySecretStorage } from './inMemorySecretStorage';
 import { getExtensionStoragePath } from '../helpers';
 
 export class MockExtensionContext implements ExtensionContext {
-  languageModelAccessInformation: LanguageModelAccessInformation;
   subscriptions: { dispose(): unknown }[] = [];
   workspaceState: Memento;
   globalState = new InMemoryMemento();
   secrets = new InMemorySecretStorage();
   extensionUri: Uri;
   extensionPath: string;
-  environmentVariableCollection: GlobalEnvironmentVariableCollection;
+  environmentVariableCollection: EnvironmentVariableCollection;
   asAbsolutePath(relativePath: string): string {
     return relativePath;
   }

@@ -1158,4 +1158,11 @@ RETURN
   }[1..10]`;
     verifyFormatting(query, expected);
   });
+
+  test('Preparser keywords do not break in procedures', () => {
+    const query = `cypher CALL apoc.cypher.run("RETURN 5", {})`;
+    const expected = `CYPHER
+CALL apoc.cypher.run("RETURN 5", {})`;
+    verifyFormatting(query, expected);
+  });
 });
