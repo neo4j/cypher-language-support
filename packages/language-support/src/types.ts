@@ -57,7 +57,25 @@ export type SymbolTable = {
   types: string[];
   // Offsets of each one of the references to that variable
   references: number[];
+
+  labels: LabelOrCondition;
 }[];
+
+export type SimpleLabel = {
+  label: string[];
+};
+
+export type LabelOrCondition = LabelLeaf | ConditionNode;
+
+export type LabelLeaf = {
+  value: string;
+  validFrom: number;
+};
+
+export type ConditionNode = {
+  andOr: string;
+  children: LabelOrCondition[];
+};
 
 export type SymbolsInfo = {
   query: string;
