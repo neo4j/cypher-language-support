@@ -15,16 +15,14 @@ env:
   NODE_OPTIONS: '--max_old_space_size=4096'
 
 jobs:
-  update-vscode-extension:
-    name: 'Update VSCode extension'
-    environment: aws-artifacts
+  pre-release-vscode-extension:
+    name: 'Pre Release VSCode extension'
+    environment: publish-vscode-extension
     runs-on: ubuntu-latest
-    outputs:
-      has_changes: ${{ steps.check_changes.outputs.has_changes }}
     steps:
       - uses: actions/checkout@v4
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.BROWSER_BOT_PAT }}
 
       - name: Restore latest pre-released sha
         uses: actions/cache/restore@1bd1e32a3bdc45362d1e726936510720a7c30a57 # v4
@@ -56,6 +54,7 @@ jobs:
           git config --global user.email "browser@neo4j.com"
 
       - name: Bump version (odd minor rule)
+        id: bump_version
         if: steps.check_changes.outputs.has_changes == 'true'
         run: |
           cd packages/vscode-extension
@@ -73,8 +72,23 @@ jobs:
 
           echo "Bumping version from $CURRENT to $NEW_VERSION"
           pnpm version "$NEW_VERSION" --no-git-tag-version
+          echo "new_version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Publish pre-release
+        if: steps.check_changes.outputs.has_changes == 'true'
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}
+        run: |
+          cd packages/vscode-extension
+          pnpm package --pre-release
+          pnpm vsce publish --pre-release --no-dependencies --pat $VSCE_PAT
+
+      - name: Push version bump if publish succeeded
+        if: steps.check_changes.outputs.has_changes == 'true'
+        run: |
+          cd packages/vscode-extension
           git add .
-          git commit -m "bump pre-release version to $NEW_VERSION"
+          git commit -m "bump pre-release version to ${{steps.bump_version.outputs.new_version}}"
           git push
 
       - name: Set the last published cached SHA
@@ -90,23 +104,3 @@ jobs:
         with:
           path: last-published-sha
           key: vs-code-extension-pre-release-sha-${{ github.run_number }}
-
-  pre-release-vscode-extension:
-    name: 'Pre Release VSCode extension'
-    environment: publish-vscode-extension
-    needs: [update-vscode-extension]
-    if: ${{ needs.update-vscode-extension.outputs.has_changes == 'true' }}
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Setup and build project
-        uses: ./.github/actions/setup-and-build
-
-      - name: Publish pre-release
-        env:
-          VSX_PAT: ${{ secrets.VSX_PAT }}
-        run: |
-          cd packages/vscode-extension
-          pnpm package --pre-release
-          pnpm vsce publish --pre-release --no-dependencies --pat $VSX_PAT

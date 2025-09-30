@@ -6,6 +6,7 @@ import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
 import {
   CypherVersion,
+  LabelOrCondition,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
@@ -60,15 +61,28 @@ function copySettingSeverity(
 
 function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
   return symbolTable.map(
-    ({ variable, definitionPosition, types, references }) => {
+    ({ variable, definitionPosition, types, references, labels }) => {
       return {
         variable,
         definitionPosition,
         types: Array.from(types),
         references: Array.from(references),
+        labels: labelTreeFromJava(labels),
       };
     },
   );
+}
+
+function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
+  if ('children' in labels) {
+    const children = [];
+    for (const c of labels.children) {
+      children.push(labelTreeFromJava(c));
+    }
+    return { andOr: labels.andOr, children };
+  } else {
+    return { value: labels.value, validFrom: labels.validFrom };
+  }
 }
 
 function updateResolverForVersion(
