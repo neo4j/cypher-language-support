@@ -61,12 +61,10 @@ export type SymbolTable = {
   labels: LabelOrCondition;
 }[];
 
-export type SimpleLabel = {
-  label: string[];
-};
-
 export type LabelOrCondition = LabelLeaf | ConditionNode;
 
+//We've decided to use the name "Label" for relationship types too, since these are the labels of relationships
+//This is how the naming works in GQL as well
 export type LabelLeaf = {
   value: string;
   validFrom: number;
