@@ -324,6 +324,7 @@ function fixSymbolTableOffsets({
       definitionPosition: symbol.definitionPosition + offsetAdjust,
       types: symbol.types,
       references: symbol.references.map((ref) => ref + offsetAdjust),
+      labels: symbol.labels,
     };
   });
 }

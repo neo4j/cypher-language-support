@@ -57,7 +57,23 @@ export type SymbolTable = {
   types: string[];
   // Offsets of each one of the references to that variable
   references: number[];
+
+  labels: LabelOrCondition;
 }[];
+
+export type LabelOrCondition = LabelLeaf | ConditionNode;
+
+//We've decided to use the name "Label" for relationship types too, since these are the labels of relationships
+//This is how the naming works in GQL as well
+export type LabelLeaf = {
+  value: string;
+  validFrom: number;
+};
+
+export type ConditionNode = {
+  andOr: string;
+  children: LabelOrCondition[];
+};
 
 export type SymbolsInfo = {
   query: string;
