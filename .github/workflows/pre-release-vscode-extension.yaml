@@ -16,7 +16,7 @@ env:
 
 jobs:
   pre-release-vscode-extension:
-    name: 'Update VSCode extension'
+    name: 'Pre Release VSCode extension'
     environment: publish-vscode-extension
     runs-on: ubuntu-latest
     outputs:
