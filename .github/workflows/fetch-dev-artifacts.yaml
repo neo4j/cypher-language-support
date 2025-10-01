@@ -122,7 +122,7 @@ jobs:
         if: steps.git-check.outputs.modified == 'true'
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.PAT_TOKEN }}
+          token: ${{ secrets.BROWSER_BOT_PAT }}
           branch: ${{ env.BRANCH_NAME }}
           base: main
           title: "Automated update of artifacts to neo4j version ${{ env.neo4j_version_base }}"
