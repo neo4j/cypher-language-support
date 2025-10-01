@@ -45,6 +45,7 @@ export async function setLintWorker(
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
+  notifySymbolTableDone: () => Promise<void>,
   neo4j: Neo4jSchemaPoller,
 ) {
   const query = document.getText();
@@ -78,6 +79,7 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
+      await notifySymbolTableDone();
       parserWrapper.setSymbolsInfo({
         query,
         symbolTables: result.symbolTables,

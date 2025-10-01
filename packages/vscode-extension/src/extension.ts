@@ -23,6 +23,7 @@ import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 
 let client: LanguageClient;
+let i = 0;
 
 export const linterStatusBarItem = window.createStatusBarItem(
   StatusBarAlignment.Right,
@@ -96,6 +97,11 @@ export async function activate(context: ExtensionContext) {
 
     context.subscriptions.push(watcher);
   }
+
+  client.onNotification('symbolTableDone', () => {
+    i++;
+    void window.showInformationMessage('Calculated symbol table nbr' + i);
+  });
 }
 
 export async function deactivate(): Promise<void> | undefined {

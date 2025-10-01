@@ -42,6 +42,7 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
+      async () => await connection.sendNotification('symbolTableDone'),
       neo4jSchemaPoller,
     );
   } else {
