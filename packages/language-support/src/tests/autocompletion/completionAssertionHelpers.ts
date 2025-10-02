@@ -1,6 +1,6 @@
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
-import { CompletionItem } from '../../types';
+import { CompletionItem, SymbolsInfo } from '../../types';
 
 export function testCompletionsExactly({
   query,
@@ -25,6 +25,7 @@ export function testCompletions({
   expected = [],
   assertEmpty = false,
   manualTrigger = false,
+  overrideSymbolsInfo,
 }: {
   query: string;
   offset?: number;
@@ -33,12 +34,14 @@ export function testCompletions({
   expected?: CompletionItem[];
   assertEmpty?: boolean;
   manualTrigger?: boolean;
+  overrideSymbolsInfo?: SymbolsInfo;
 }) {
   const actualCompletionList = autocomplete(
     query,
     dbSchema,
     offset,
     manualTrigger,
+    overrideSymbolsInfo,
   );
 
   if (assertEmpty) {
