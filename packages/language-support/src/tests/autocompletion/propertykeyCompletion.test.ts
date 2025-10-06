@@ -252,7 +252,7 @@ RETURN movie {
       query,
       symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    parserWrapper.setSymbolsInfo(symbolsInfo, undefined);
 
     testCompletions({
       query,
@@ -274,7 +274,7 @@ RETURN movie {
       query,
       symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    parserWrapper.setSymbolsInfo(symbolsInfo, undefined);
 
     testCompletions({
       query,
@@ -296,7 +296,7 @@ RETURN movie {
       query,
       symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    parserWrapper.setSymbolsInfo(symbolsInfo, undefined);
 
     testCompletions({
       query,

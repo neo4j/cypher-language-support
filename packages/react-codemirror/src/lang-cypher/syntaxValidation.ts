@@ -37,10 +37,13 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
 
       if (result.symbolTables) {
-        parserWrapper.setSymbolsInfo({
-          query,
-          symbolTables: result.symbolTables,
-        });
+        parserWrapper.setSymbolsInfo(
+          {
+            query,
+            symbolTables: result.symbolTables,
+          },
+          undefined,
+        ); //TODO - maybe move continous symbol creation to outside linting... but still need access to latest query
       }
 
       const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {

@@ -11,7 +11,11 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
+import {
+  parserWrapper,
+  SymbolTable,
+  syntaxColouringLegend,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
@@ -24,6 +28,9 @@ import {
   Neo4jParameters,
   Neo4jSettings,
 } from './types';
+import workerpool from 'workerpool';
+import { join } from 'path';
+import { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
 const connection = createConnection(ProposedFeatures.all);
 let settings: Neo4jSettings | undefined = undefined;
@@ -32,7 +39,45 @@ let settings: Neo4jSettings | undefined = undefined;
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
 
+const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+
+const symbolTablePool = workerpool.pool(defaultWorkerPath, {
+  maxWorkers: 1,
+  workerTerminateTimeout: 2000,
+});
+
+let lastSemanticJob: LinterTask | undefined;
+
+async function getSymbolTable(
+  document: TextDocument,
+  neo4j: Neo4jSchemaPoller,
+) {
+  const query = document.getText();
+  document.version;
+  const dbSchema = neo4j.metadata?.dbSchema ?? {};
+  if (lastSemanticJob === undefined || lastSemanticJob.resolved) {
+    const proxyWorker =
+      (await symbolTablePool.proxy()) as unknown as LintWorker;
+
+    lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+    const documentVersion = document.version;
+    const result = await lastSemanticJob;
+    if (result.symbolTables) {
+      parserWrapper.setSymbolsInfo(
+        {
+          query,
+          symbolTables: result.symbolTables,
+        },
+        documentVersion,
+        async (symbolTable: SymbolTable) =>
+          await connection.sendNotification('symbolTableDone', { symbolTable }),
+      );
+    }
+  }
+}
+
 async function lintSingleDocument(document: TextDocument): Promise<void> {
+  void getSymbolTable(document, neo4jSchemaPoller);
   if (settings?.features?.linting) {
     return lintDocument(
       document,
@@ -42,7 +87,10 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
-      async () => await connection.sendNotification('symbolTableDone'),
+      async (symbolTable: SymbolTable) =>
+        await connection.sendNotification('symbolTableDone', {
+          symbolTable: symbolTable,
+        }),
       neo4jSchemaPoller,
     );
   } else {

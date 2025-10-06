@@ -2,6 +2,7 @@ import {
   _internalFeatureFlags,
   clampUnsafePositions,
   parserWrapper,
+  SymbolTable,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
@@ -45,7 +46,7 @@ export async function setLintWorker(
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
-  notifySymbolTableDone: () => Promise<void>,
+  notifySymbolTableDone: (symbolTable: SymbolTable) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
 ) {
   const query = document.getText();
@@ -68,7 +69,7 @@ async function rawLintDocument(
       fixedDbSchema,
       _internalFeatureFlags,
     );
-
+    const documentVersion = document.version;
     const result = await lastSemanticJob;
 
     //marks the entire text if any position is negative
@@ -79,11 +80,14 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
-      await notifySymbolTableDone();
-      parserWrapper.setSymbolsInfo({
-        query,
-        symbolTables: result.symbolTables,
-      });
+      parserWrapper.setSymbolsInfo(
+        {
+          query,
+          symbolTables: result.symbolTables,
+        },
+        documentVersion,
+        notifySymbolTableDone,
+      );
     }
 
     sendDiagnostics(positionSafeResult);

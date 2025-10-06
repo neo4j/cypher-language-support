@@ -21,6 +21,7 @@ import {
 import { setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
+import { SymbolTable } from '@neo4j-cypher/language-support';
 
 let client: LanguageClient;
 let i = 0;
@@ -98,10 +99,28 @@ export async function activate(context: ExtensionContext) {
     context.subscriptions.push(watcher);
   }
 
-  client.onNotification('symbolTableDone', () => {
+  client.onNotification('symbolTableDone', (params) => {
     i++;
-    void window.showInformationMessage('Calculated symbol table nbr' + i);
+    const symbolTable = (params as { symbolTable: SymbolTable }).symbolTable;
+    void window.showInformationMessage(
+      'Calculated symbol table nbr' +
+        i +
+        '\n' +
+        stringifySymbolTable(symbolTable),
+    );
   });
+}
+
+function stringifySymbolTable(symbolTable: SymbolTable): string {
+  let result = '';
+  if (!symbolTable) {
+    return result;
+  }
+
+  symbolTable.map((symbol) => {
+    result += symbol.variable + ': ' + symbol.types.toString() + ', ';
+  });
+  return result;
 }
 
 export async function deactivate(): Promise<void> | undefined {

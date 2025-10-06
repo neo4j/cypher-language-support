@@ -41,6 +41,7 @@ import {
   cypherVersionNumbers,
   allCypherVersions,
   SymbolsInfo,
+  SymbolTable,
 } from './types';
 
 export interface ParsedStatement {
@@ -798,6 +799,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 class ParserWrapper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
+  documentVersion: number;
 
   parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
@@ -820,8 +822,16 @@ class ParserWrapper {
     this.symbolsInfo = undefined;
   }
 
-  setSymbolsInfo(symbolsInfo: SymbolsInfo) {
-    this.symbolsInfo = symbolsInfo;
+  setSymbolsInfo(
+    symbolsInfo: SymbolsInfo,
+    documentVersion: number,
+    sendMessage?: (symbolTable: SymbolTable) => Promise<void>,
+  ) {
+    if (!this.documentVersion || this.documentVersion < documentVersion) {
+      if (sendMessage) void sendMessage(symbolsInfo.symbolTables[0]); //TODO maybe fix handling of multiple symbol table
+      this.symbolsInfo = symbolsInfo;
+      this.documentVersion = documentVersion;
+    }
   }
 }
 

@@ -5,11 +5,15 @@ import {
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
+import { SymbolTable } from '@neo4j-cypher/language-support';
 
 type LanguageClient = {
   sendNotification: (
     method: string,
-    settings?: Neo4jConnectionSettings | LintWorkerSettings,
+    settings?:
+      | Neo4jConnectionSettings
+      | LintWorkerSettings
+      | { symbolTable: SymbolTable },
   ) => Promise<void>;
 };
 
