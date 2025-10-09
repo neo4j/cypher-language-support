@@ -69,9 +69,14 @@ export type LabelLeaf = {
   value: string;
   validFrom: number;
 };
+export const isLabelLeaf = (
+  labelOrCondition: LabelOrCondition,
+): labelOrCondition is LabelLeaf => {
+  return 'value' in labelOrCondition;
+};
 
 export type ConditionNode = {
-  andOr: string;
+  andOr: 'AND' | 'OR';
   children: LabelOrCondition[];
 };
 

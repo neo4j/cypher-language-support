@@ -4,7 +4,7 @@ import {
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { ParsedStatement } from '../parserWrapper';
-import { SymbolsInfo } from '../types';
+import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types';
 import { findParent } from '../helpers';
 import {
   NodePatternContext,
@@ -101,13 +101,25 @@ export function completeRelationshipType(
         return allReltypeCompletions(dbSchema);
       }
 
+      const labelTreeMayHaveLabel = (
+        labelTree: LabelOrCondition,
+        wantedLabels: string[],
+      ) => {
+        if (isLabelLeaf(labelTree)) {
+          return wantedLabels.includes(labelTree.value);
+        }
+        // check both or & and branches
+        return labelTree.children.some((child) =>
+          labelTreeMayHaveLabel(child, wantedLabels),
+        );
+      };
+
       // limitation: not checking union types properly
       // limitation: not direction-aware (ignores <- vs ->)
-      // limitation: not handling multiple relationship types (r:TYPE1|TYPE2)
+      // limitation: not handling multiple relationship types [r:TYPE1|TYPE2]
       // limitation: not checking relationship variable reuse
       const rels = dbSchema.graphSchema.flatMap((schema) =>
-        foundVariable.types.includes(schema.from) ||
-        foundVariable.types.includes(schema.to)
+        labelTreeMayHaveLabel(foundVariable.labels, [schema.from, schema.to])
           ? [schema.relType]
           : [],
       );

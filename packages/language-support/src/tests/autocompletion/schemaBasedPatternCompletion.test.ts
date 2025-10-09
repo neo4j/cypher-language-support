@@ -3,7 +3,15 @@ import { testCompletions } from './completionAssertionHelpers';
 import { _internalFeatureFlags } from '../../featureFlags';
 
 const dbSchema = {
-  labels: ['Pokemon', 'Trainer', 'Gym', 'Type', 'Move', 'UnrelatedLabel'],
+  labels: [
+    'Pokemon',
+    'Trainer',
+    'Gym',
+    'Type',
+    'Move',
+    'UnrelatedLabel',
+    'Unconnected',
+  ],
   relationshipTypes: [
     'CATCHES',
     'TRAINS',
@@ -35,7 +43,7 @@ describe('completeRelationshipType', () => {
     _internalFeatureFlags.schemaBasedPatternCompletion = false;
   });
 
-  test.only('Simple pattern 1', () => {
+  test('Simple pattern 1', () => {
     const query = 'MATCH (t:Trainer)-[r:';
 
     testCompletions({
@@ -174,6 +182,47 @@ RETURN [(p)-[:`;
     });
   });
 
+  test('Handles unconnected label', () => {
+    const query = 'MATCH (t:Unconnected)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Handles union types ', () => {
+    const query = 'MATCH (x:Pokemon|Trainer)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        /* These should be included
+         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+         */
+      ],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test('Limitation: Does not handle anonymous variables as context ', () => {
     const query = 'MATCH (:Trainer)-[r:';
 
@@ -264,26 +313,6 @@ RETURN [(p)-[:`;
       excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
-      ],
-    });
-  });
-
-  test('Handles union types ', () => {
-    const query = 'MATCH (x:Pokemon|Trainer)-[r:';
-
-    testCompletions({
-      query,
-      dbSchema,
-      computeSymbolsInfo: true,
-      expected: [
-        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
-        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });

@@ -44,8 +44,6 @@ export function testCompletions({
       query,
       symbolTables: result.symbolTables,
     });
-
-    console.log(JSON.stringify(parserWrapper.symbolsInfo, null, 2));
   }
 
   const actualCompletionList = autocomplete(
