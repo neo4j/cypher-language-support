@@ -257,4 +257,89 @@ describe('Symbol table spec', () => {
       ],
     ]);
   });
+
+  test('Symbol table contains labels and rels for unfinished rel chain', () => {
+    const query = 'MATCH (t:Trainer)-[r:';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 16,
+                value: 'Trainer',
+              },
+            ],
+          },
+          references: [7],
+          types: ['Node'],
+          variable: 't',
+        },
+        {
+          definitionPosition: 19,
+          labels: {
+            andOr: 'and',
+            children: [],
+          },
+          references: [19],
+          types: ['Relationship'],
+          variable: 'r',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table contains labels and rels for unfinished long rel chain', () => {
+    const query = 'MATCH (n:Person)-[r:KNOWS]->()-[:MET]-';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 18,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 25,
+                value: 'KNOWS',
+              },
+            ],
+          },
+          references: [18],
+          types: ['Relationship'],
+          variable: 'r',
+        },
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 15,
+                value: 'Person',
+              },
+            ],
+          },
+          references: [7],
+          types: ['Node'],
+          variable: 'n',
+        },
+      ],
+    ]);
+  });
 });
