@@ -1,7 +1,7 @@
 import { DbSchema } from '../dbSchema';
 import { findCaret } from '../helpers';
 import { parserWrapper } from '../parserWrapper';
-import { CompletionItem, SymbolsInfo } from '../types';
+import { CompletionItem } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
 
 export function autocomplete(
@@ -9,10 +9,9 @@ export function autocomplete(
   dbSchema: DbSchema,
   caretPosition: number = query.length,
   manual = false,
-  externalSymbolsInfo?: SymbolsInfo,
 ): CompletionItem[] {
   const parsingResult = parserWrapper.parse(query);
-  const symbolsInfo = externalSymbolsInfo ?? parserWrapper.symbolsInfo;
+  const symbolsInfo = parserWrapper.symbolsInfo;
   /* We try to locate the statement where the caret is and the token of the caret
 
      The reason for doing that is we need a way to "resynchronise" when the 

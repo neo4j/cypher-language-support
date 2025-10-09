@@ -1,6 +1,8 @@
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
-import { CompletionItem, SymbolsInfo } from '../../types';
+import { parserWrapper } from '../../parserWrapper';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
+import { CompletionItem } from '../../types';
 
 export function testCompletionsExactly({
   query,
@@ -25,7 +27,7 @@ export function testCompletions({
   expected = [],
   assertEmpty = false,
   manualTrigger = false,
-  overrideSymbolsInfo,
+  computeSymbolsInfo = false,
 }: {
   query: string;
   offset?: number;
@@ -34,14 +36,23 @@ export function testCompletions({
   expected?: CompletionItem[];
   assertEmpty?: boolean;
   manualTrigger?: boolean;
-  overrideSymbolsInfo?: SymbolsInfo;
+  computeSymbolsInfo?: boolean;
 }) {
+  if (computeSymbolsInfo) {
+    const result = lintCypherQuery(query, dbSchema);
+    parserWrapper.setSymbolsInfo({
+      query,
+      symbolTables: result.symbolTables,
+    });
+
+    console.log(JSON.stringify(parserWrapper.symbolsInfo, null, 2));
+  }
+
   const actualCompletionList = autocomplete(
     query,
     dbSchema,
     offset,
     manualTrigger,
-    overrideSymbolsInfo,
   );
 
   if (assertEmpty) {
