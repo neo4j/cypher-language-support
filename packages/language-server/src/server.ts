@@ -48,6 +48,8 @@ const symbolTablePool = workerpool.pool(defaultWorkerPath, {
 
 let lastSemanticJob: LinterTask | undefined;
 
+let nextJob: { document: TextDocument; neo4j: Neo4jSchemaPoller };
+
 async function getSymbolTable(
   document: TextDocument,
   neo4j: Neo4jSchemaPoller,
@@ -56,13 +58,18 @@ async function getSymbolTable(
   document.version;
   const dbSchema = neo4j.metadata?.dbSchema ?? {};
   if (lastSemanticJob === undefined || lastSemanticJob.resolved) {
+    nextJob = undefined;
     const proxyWorker =
       (await symbolTablePool.proxy()) as unknown as LintWorker;
 
     lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
     const documentVersion = document.version;
     const result = await lastSemanticJob;
-    if (result.symbolTables) {
+    //If we get a symboltable, we want to pass it on, but not if we've moved documents during a slow calculation
+    if (
+      result.symbolTables &&
+      !(nextJob && nextJob.document.uri != document.uri)
+    ) {
       parserWrapper.setSymbolsInfo(
         {
           query,
@@ -74,7 +81,14 @@ async function getSymbolTable(
             symbolTables,
           }),
       );
+      //If any jobs were requested during our calculation, the latest one will be in nextJob
+      if (nextJob) {
+        const { document, neo4j } = nextJob;
+        void getSymbolTable(document, neo4j);
+      }
     }
+  } else {
+    nextJob = { document, neo4j };
   }
 }
 
