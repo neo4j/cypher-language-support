@@ -46,7 +46,7 @@ export async function setLintWorker(
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
-  notifySymbolTableDone: (symbolTable: SymbolTable) => Promise<void>,
+  notifySymbolTableDone: (symbolTable: SymbolTable[]) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
 ) {
   const query = document.getText();

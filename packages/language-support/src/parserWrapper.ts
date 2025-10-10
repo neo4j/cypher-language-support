@@ -825,10 +825,11 @@ class ParserWrapper {
   setSymbolsInfo(
     symbolsInfo: SymbolsInfo,
     documentVersion: number,
-    sendMessage?: (symbolTable: SymbolTable) => Promise<void>,
+    sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>,
   ) {
     if (!this.documentVersion || this.documentVersion < documentVersion) {
-      if (sendMessage) void sendMessage(symbolsInfo.symbolTables[0]); //TODO maybe fix handling of multiple symbol table
+      if (_internalFeatureFlags.schemaBasedPatternCompletion && sendMessage)
+        void sendMessage(symbolsInfo.symbolTables);
       this.symbolsInfo = symbolsInfo;
       this.documentVersion = documentVersion;
     }

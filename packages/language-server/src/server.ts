@@ -69,8 +69,10 @@ async function getSymbolTable(
           symbolTables: result.symbolTables,
         },
         documentVersion,
-        async (symbolTable: SymbolTable) =>
-          await connection.sendNotification('symbolTableDone', { symbolTable }),
+        async (symbolTables: SymbolTable[]) =>
+          await connection.sendNotification('symbolTableDone', {
+            symbolTables,
+          }),
       );
     }
   }
@@ -87,9 +89,9 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
-      async (symbolTable: SymbolTable) =>
+      async (symbolTables: SymbolTable[]) =>
         await connection.sendNotification('symbolTableDone', {
-          symbolTable: symbolTable,
+          symbolTables: symbolTables,
         }),
       neo4jSchemaPoller,
     );

@@ -101,26 +101,33 @@ export async function activate(context: ExtensionContext) {
 
   client.onNotification('symbolTableDone', (params) => {
     i++;
-    const symbolTable = (params as { symbolTable: SymbolTable }).symbolTable;
+    const symbolTables = (params as { symbolTables: SymbolTable[] })
+      .symbolTables;
     void window.showInformationMessage(
       'Calculated symbol table nbr' +
         i +
         '\n' +
-        stringifySymbolTable(symbolTable),
+        stringifySymbolTables(symbolTables),
     );
   });
 }
 
-function stringifySymbolTable(symbolTable: SymbolTable): string {
-  let result = '';
-  if (!symbolTable) {
-    return result;
+function stringifySymbolTables(symbolTables: SymbolTable[]): string {
+  if (!symbolTables) {
+    return '';
   }
-
-  symbolTable.map((symbol) => {
-    result += symbol.variable + ': ' + symbol.types.toString() + ', ';
-  });
-  return result;
+  return symbolTables
+    .map((symbolTable) => {
+      if (symbolTable.length == 0) {
+        return '';
+      }
+      let result = ' [';
+      symbolTable.map((symbol) => {
+        result += symbol.variable + ': ' + symbol.types.toString() + ', ';
+      });
+      return result.substring(0, result.length - 2) + ']';
+    })
+    .toString();
 }
 
 export async function deactivate(): Promise<void> | undefined {
