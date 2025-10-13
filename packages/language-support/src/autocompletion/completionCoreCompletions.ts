@@ -40,37 +40,12 @@ import {
   SymbolTable,
   SymbolsInfo,
 } from '../types';
-
-const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
-
-type BacktickVariant = 'label' | 'propertyKey' | 'relType' | 'dbName' | 'param';
-
-export function backtickIfNeeded(
-  e: string,
-  variant: BacktickVariant,
-): string | undefined {
-  if (e == null || e == '') {
-    return undefined;
-  } else if (
-    (variant === 'label' ||
-      variant === 'propertyKey' ||
-      variant === 'relType') &&
-    (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0]))
-  ) {
-    return `\`${e}\``;
-  } else if (
-    variant === 'dbName' &&
-    (/[^\p{L}\p{N}_.]/u.test(e) ||
-      /[^\p{L}_]/u.test(e[0]) ||
-      /[^\p{L}\p{N}_]/u.test(e.at(-1)))
-  ) {
-    return `\`${e}\``;
-  } else if (variant === 'param' && /[^\p{L}\p{N}_]/u.test(e)) {
-    return `\`${e}\``;
-  } else {
-    return undefined;
-  }
-}
+import {
+  completeRelationshipType,
+  allLabelCompletions,
+  allReltypeCompletions,
+} from './schemaBasedCompletions';
+import { backtickIfNeeded, uniq } from './autocompletionHelpers';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
@@ -89,36 +64,6 @@ const cypherVersionCompletions = () =>
     };
     return result;
   });
-
-const labelCompletions = (dbSchema: DbSchema) =>
-  dbSchema.labels?.map((labelName) => {
-    const backtickedName = backtickIfNeeded(labelName, 'label');
-    const maybeInsertText = backtickedName
-      ? { insertText: backtickedName }
-      : {};
-
-    const result: CompletionItem = {
-      label: labelName,
-      kind: CompletionItemKind.TypeParameter,
-      ...maybeInsertText,
-    };
-    return result;
-  }) ?? [];
-
-const reltypeCompletions = (dbSchema: DbSchema) =>
-  dbSchema.relationshipTypes?.map((relType) => {
-    const backtickedName = backtickIfNeeded(relType, 'relType');
-    const maybeInsertText = backtickedName
-      ? { insertText: backtickedName }
-      : {};
-
-    const result: CompletionItem = {
-      label: relType,
-      kind: CompletionItemKind.TypeParameter,
-      ...maybeInsertText,
-    };
-    return result;
-  }) ?? [];
 
 const procedureReturnCompletions = (
   procedureName: string,
@@ -757,14 +702,17 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return labelCompletions(dbSchema);
+          return allLabelCompletions(dbSchema);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
-          return reltypeCompletions(dbSchema);
+          return completeRelationshipType(dbSchema, parsingResult, symbolsInfo);
         }
 
-        return [...labelCompletions(dbSchema), ...reltypeCompletions(dbSchema)];
+        return [
+          ...allLabelCompletions(dbSchema),
+          ...allReltypeCompletions(dbSchema),
+        ];
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
