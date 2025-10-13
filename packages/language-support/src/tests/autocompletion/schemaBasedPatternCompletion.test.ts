@@ -43,6 +43,18 @@ describe('completeRelationshipType', () => {
     _internalFeatureFlags.schemaBasedPatternCompletion = false;
   });
 
+  test('Completion dont crash on missing db connection', () => {
+    const query = 'MATCH (t:Trainer)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema: undefined,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [],
+    });
+  });
+
   test('Simple pattern 1', () => {
     const query = 'MATCH (t:Trainer)-[r:';
 
@@ -98,6 +110,29 @@ describe('completeRelationshipType', () => {
       ],
       excluded: [
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles scope', () => {
+    const query = `MATCH (t:Trainer)
+                    CALL () {
+                        MATCH (t:UnrelatedLabel)
+                        RETURN t as x
+                    }
+                    MATCH (t)-[:`;
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      offset: query.length,
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
@@ -201,7 +236,27 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Handles union types ', () => {
+  test('Handles nodes with multiple labels properly', () => {
+    const query = 'MATCH (n:Trainer) WHERE n:Pokemon MATCH (n)-[:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Does not handle union types, as they are not yet supported in symbol table ', () => {
     const query = 'MATCH (x:Pokemon|Trainer)-[r:';
 
     testCompletions({
@@ -219,6 +274,29 @@ RETURN [(p)-[:`;
       ],
       excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Limitation: Does not handle AND, OR, NOT, etc. ', () => {
+    const query = 'MATCH (x:Pokemon) WHERE x:Trainer MATCH (x)-[:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        // no valid outgoing types something that's both a pokemon and a trainer
+        /* 
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+         */
       ],
     });
   });
@@ -338,7 +416,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not handle cursor position', () => {
+  test('Handles cursor position', () => {
     const query = 'MATCH (t1:Trainer)-[r1:CATCHES]-(p1:Pokemon)-[r2:';
 
     testCompletions({
@@ -346,17 +424,19 @@ RETURN [(p)-[:`;
       dbSchema,
       computeSymbolsInfo: true,
       offset: 'MATCH (t1:Trainer)-[r1:'.length,
-      // this should give the suggestions for trainer, not pokemon
       expected: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-        // below should be excluded
-        // { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-        // { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        // { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+
+        // there's no outoing knows from trainer
+        // { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        // { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+
+        // there's no BATTLE between trainer and pokemon
+        // { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });

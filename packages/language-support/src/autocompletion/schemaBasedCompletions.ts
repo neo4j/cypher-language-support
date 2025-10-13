@@ -15,8 +15,8 @@ import { ParserRuleContext } from 'antlr4';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import { _internalFeatureFlags } from '../featureFlags';
 
-export const labelToCompletions = (labelNames?: string[]) =>
-  labelNames?.map((labelName) => {
+export const labelsToCompletions = (labelNames: string[] = []) =>
+  labelNames.map((labelName) => {
     const backtickedName = backtickIfNeeded(labelName, 'label');
     const maybeInsertText = backtickedName
       ? { insertText: backtickedName }
@@ -28,12 +28,12 @@ export const labelToCompletions = (labelNames?: string[]) =>
       ...maybeInsertText,
     };
     return result;
-  }) ?? [];
+  });
 
 export const allLabelCompletions = (dbSchema: DbSchema) =>
-  labelToCompletions(dbSchema.labels);
+  labelsToCompletions(dbSchema.labels);
 
-export const reltypesToCompletions = (reltypes?: string[]) =>
+export const reltypesToCompletions = (reltypes: string[] = []) =>
   reltypes.map((relType) => {
     const backtickedName = backtickIfNeeded(relType, 'relType');
     const maybeInsertText = backtickedName
@@ -46,7 +46,7 @@ export const reltypesToCompletions = (reltypes?: string[]) =>
       ...maybeInsertText,
     };
     return result;
-  }) ?? [];
+  });
 
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
@@ -92,10 +92,9 @@ export function completeRelationshipType(
         return allReltypeCompletions(dbSchema);
       }
 
-      // limitation: ignoring scope
       const foundVariable = symbolsInfo?.symbolTables
         ?.flat()
-        .find((entry) => entry.variable === variable.getText());
+        .find((entry) => entry.references.includes(variable.start.start));
 
       if (foundVariable === undefined) {
         return allReltypeCompletions(dbSchema);
