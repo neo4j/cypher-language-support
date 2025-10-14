@@ -37,13 +37,10 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
 
       if (result.symbolTables) {
-        parserWrapper.setSymbolsInfo(
-          {
-            query,
-            symbolTables: result.symbolTables,
-          },
-          undefined,
-        );
+        parserWrapper.setSymbolsInfo({
+          query,
+          symbolTables: result.symbolTables,
+        });
       }
 
       const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {

@@ -12,6 +12,7 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
+  DbSchema,
   parserWrapper,
   SymbolTable,
   syntaxColouringLegend,
@@ -32,68 +33,80 @@ import workerpool from 'workerpool';
 import { join } from 'path';
 import { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
 
+class SymbolFetcher {
+  private processing = false;
+  private lastSemanticJob: LinterTask | undefined;
+  private nextJob: {
+    query: string;
+    uri: string;
+    schema: DbSchema;
+  };
+  private defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+  private symbolTablePool = workerpool.pool(this.defaultWorkerPath, {
+    maxWorkers: 1,
+    workerTerminateTimeout: 0,
+  });
+
+  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+    this.nextJob = { query, uri, schema };
+    if (!this.processing) {
+      void this.getSymbolTable();
+    }
+  }
+
+  public async getSymbolTable() {
+    this.processing = true;
+    const proxyWorker =
+      (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+    while (this.nextJob) {
+      try {
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        const docUri = this.nextJob.uri;
+        this.nextJob = undefined;
+
+        this.lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+
+        const result = await this.lastSemanticJob;
+        if (
+          //if this.nextJob has new doc, our result is no longer valid
+          result.symbolTables &&
+          !(this.nextJob && this.nextJob.uri != docUri)
+        ) {
+          parserWrapper.setSymbolsInfo(
+            {
+              query,
+              symbolTables: result.symbolTables,
+            },
+            async (symbolTables: SymbolTable[]) =>
+              await connection.sendNotification('symbolTableDone', {
+                symbolTables,
+              }),
+          );
+        }
+      } catch (e) {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed');
+      }
+    }
+    this.processing = false;
+  }
+}
+
 const connection = createConnection(ProposedFeatures.all);
 let settings: Neo4jSettings | undefined = undefined;
 
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
-
-const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
-
-const symbolTablePool = workerpool.pool(defaultWorkerPath, {
-  maxWorkers: 1,
-  workerTerminateTimeout: 2000,
-});
-
-let lastSemanticJob: LinterTask | undefined;
-
-let nextJob: { document: TextDocument; neo4j: Neo4jSchemaPoller };
-
-async function getSymbolTable(
-  document: TextDocument,
-  neo4j: Neo4jSchemaPoller,
-) {
-  const query = document.getText();
-  document.version;
-  const dbSchema = neo4j.metadata?.dbSchema ?? {};
-  if (lastSemanticJob === undefined || lastSemanticJob.resolved) {
-    nextJob = undefined;
-    const proxyWorker =
-      (await symbolTablePool.proxy()) as unknown as LintWorker;
-
-    lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
-    const documentVersion = document.version;
-    const result = await lastSemanticJob;
-    //If we get a symboltable, we want to pass it on, but not if we've moved documents during a slow calculation
-    if (
-      result.symbolTables &&
-      !(nextJob && nextJob.document.uri != document.uri)
-    ) {
-      parserWrapper.setSymbolsInfo(
-        {
-          query,
-          symbolTables: result.symbolTables,
-        },
-        documentVersion,
-        async (symbolTables: SymbolTable[]) =>
-          await connection.sendNotification('symbolTableDone', {
-            symbolTables,
-          }),
-      );
-      //If any jobs were requested during our calculation, the latest one will be in nextJob
-      if (nextJob) {
-        const { document, neo4j } = nextJob;
-        void getSymbolTable(document, neo4j);
-      }
-    }
-  } else {
-    nextJob = { document, neo4j };
-  }
-}
+const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
-  void getSymbolTable(document, neo4jSchemaPoller);
+  symbolFetcher.queueSymbolJob(
+    document.getText(),
+    document.uri,
+    neo4jSchemaPoller?.metadata?.dbSchema,
+  );
   if (settings?.features?.linting) {
     return lintDocument(
       document,
@@ -203,6 +216,25 @@ connection.onNotification(
   (connectionSettings: Neo4jConnectionSettings) => {
     changeConnection(connectionSettings);
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
+  },
+);
+
+connection.onNotification(
+  'fetchSymbolTable',
+  (params: {
+    query: string;
+    uri: string;
+    version: number;
+    schema: DbSchema;
+  }) => {
+    neo4jSchemaPoller.events.once(
+      'schemaFetched',
+      void symbolFetcher.queueSymbolJob(
+        params.query,
+        params.uri,
+        params.schema,
+      ),
+    );
   },
 );
 

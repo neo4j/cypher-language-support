@@ -18,13 +18,14 @@ import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
-import { setContext } from './contextService';
+import { getSchemaPoller, setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 import { SymbolTable } from '@neo4j-cypher/language-support';
+import { sendNotificationToLanguageClient } from './languageClientService';
 
 let client: LanguageClient;
-let i = 0;
+let symbolTableVersion = 0;
 
 export const linterStatusBarItem = window.createStatusBarItem(
   StatusBarAlignment.Right,
@@ -100,15 +101,28 @@ export async function activate(context: ExtensionContext) {
   }
 
   client.onNotification('symbolTableDone', (params) => {
-    i++;
+    symbolTableVersion++;
     const symbolTables = (params as { symbolTables: SymbolTable[] })
       .symbolTables;
     void window.showInformationMessage(
       'Calculated symbol table nbr' +
-        i +
+        symbolTableVersion +
         '\n' +
         stringifySymbolTables(symbolTables),
     );
+  });
+
+  window.onDidChangeActiveTextEditor((editor) => {
+    const doc = editor.document;
+    const query = doc.getText();
+    const uri = doc.uri.fsPath;
+    const schema = getSchemaPoller().metadata?.dbSchema;
+    void window.showInformationMessage('Switched textfile');
+    void sendNotificationToLanguageClient('fetchSymbolTable', {
+      query,
+      uri,
+      schema,
+    });
   });
 }
 

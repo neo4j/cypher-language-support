@@ -799,7 +799,6 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 class ParserWrapper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
-  documentVersion: number;
 
   parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
@@ -824,15 +823,11 @@ class ParserWrapper {
 
   setSymbolsInfo(
     symbolsInfo: SymbolsInfo,
-    documentVersion: number,
     sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>,
   ) {
-    if (!this.documentVersion || this.documentVersion < documentVersion) {
-      if (_internalFeatureFlags.schemaBasedPatternCompletion && sendMessage)
-        void sendMessage(symbolsInfo.symbolTables);
-      this.symbolsInfo = symbolsInfo;
-      this.documentVersion = documentVersion;
-    }
+    if (_internalFeatureFlags.schemaBasedPatternCompletion && sendMessage)
+      void sendMessage(symbolsInfo.symbolTables);
+    this.symbolsInfo = symbolsInfo;
   }
 }
 

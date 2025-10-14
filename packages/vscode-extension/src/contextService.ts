@@ -1,6 +1,7 @@
 import {
   LintWorkerSettings,
   Neo4jConnectionSettings,
+  SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { ExtensionContext } from 'vscode';
@@ -10,10 +11,11 @@ import { SymbolTable } from '@neo4j-cypher/language-support';
 type LanguageClient = {
   sendNotification: (
     method: string,
-    settings?:
+    params?:
       | Neo4jConnectionSettings
       | LintWorkerSettings
-      | { symbolTable: SymbolTable },
+      | { symbolTable: SymbolTable }
+      | SymbolFetchingParams,
   ) => Promise<void>;
 };
 

@@ -20,7 +20,7 @@ const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
-  workerTerminateTimeout: 2000,
+  workerTerminateTimeout: 0,
 });
 export let workerPath = defaultWorkerPath;
 let linterVersion: string | undefined = undefined;
@@ -38,7 +38,7 @@ export async function setLintWorker(
     linterVersion = linter;
     pool = workerpool.pool(workerPath, {
       minWorkers: 2,
-      workerTerminateTimeout: 2000,
+      workerTerminateTimeout: 0,
     });
   }
 }
@@ -69,7 +69,6 @@ async function rawLintDocument(
       fixedDbSchema,
       _internalFeatureFlags,
     );
-    const documentVersion = document.version;
     const result = await lastSemanticJob;
 
     //marks the entire text if any position is negative
@@ -85,7 +84,6 @@ async function rawLintDocument(
           query,
           symbolTables: result.symbolTables,
         },
-        documentVersion,
         notifySymbolTableDone,
       );
     }
