@@ -117,7 +117,6 @@ export async function activate(context: ExtensionContext) {
     const query = doc.getText();
     const uri = doc.uri.fsPath;
     const schema = getSchemaPoller().metadata?.dbSchema;
-    void window.showInformationMessage('Switched textfile');
     void sendNotificationToLanguageClient('fetchSymbolTable', {
       query,
       uri,
