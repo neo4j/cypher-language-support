@@ -1,9 +1,10 @@
 import {
   LintWorkerSettings,
   Neo4jConnectionSettings,
+  SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
 import { getLanguageClient } from './contextService';
-import { DbSchema, SymbolTable } from '@neo4j-cypher/language-support';
+import { SymbolTable } from '@neo4j-cypher/language-support';
 
 export type MethodName =
   | 'connectionUpdated'
@@ -24,7 +25,7 @@ export async function sendNotificationToLanguageClient(
     | Neo4jConnectionSettings
     | LintWorkerSettings
     | { symbolTable: SymbolTable }
-    | { query: string; uri: string; schema: DbSchema },
+    | SymbolFetchingParams,
 ) {
   const languageClient = getLanguageClient();
   await languageClient.sendNotification(methodName, params);

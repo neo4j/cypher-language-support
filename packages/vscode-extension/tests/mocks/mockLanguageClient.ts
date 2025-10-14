@@ -2,8 +2,9 @@ import {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jSettings,
+  SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
-import { DbSchema, SymbolTable } from '@neo4j-cypher/language-support';
+import { SymbolTable } from '@neo4j-cypher/language-support';
 
 export class MockLanguageClient {
   async sendNotification(
@@ -13,7 +14,7 @@ export class MockLanguageClient {
       | Neo4jConnectionSettings
       | Neo4jSettings
       | { symbolTable: SymbolTable }
-      | { query: string; uri: string; schema: DbSchema },
+      | SymbolFetchingParams,
   ): Promise<void> {
     if (settings) {
       if ('trace' in settings) {
