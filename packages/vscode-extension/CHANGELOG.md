@@ -1,5 +1,9 @@
 # neo4j-for-vscode
 
+## 1.14.0
+- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions,)
+- Speed up symbol table reliant completions
+
 ## 1.13.0
 - Adjusts linting automatically depending on the neo4j version.
 - Updates grammar and semantic analysis
