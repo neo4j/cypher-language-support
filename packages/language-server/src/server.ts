@@ -64,9 +64,8 @@ class SymbolFetcher {
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
 
-        const lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
 
-        const result = await lastSemanticJob;
         if (
           //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
