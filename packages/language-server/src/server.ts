@@ -31,11 +31,10 @@ import {
 } from './types';
 import workerpool from 'workerpool';
 import { join } from 'path';
-import { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import { LintWorker } from '@neo4j-cypher/lint-worker';
 
 class SymbolFetcher {
   private processing = false;
-  private lastSemanticJob: LinterTask | undefined;
   private nextJob: {
     query: string;
     uri: string;
@@ -50,11 +49,11 @@ class SymbolFetcher {
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
     this.nextJob = { query, uri, schema };
     if (!this.processing) {
-      void this.getSymbolTable();
+      void this.processJobQueue();
     }
   }
 
-  public async getSymbolTable() {
+  private async processJobQueue() {
     this.processing = true;
     const proxyWorker =
       (await this.symbolTablePool.proxy()) as unknown as LintWorker;
@@ -65,9 +64,9 @@ class SymbolFetcher {
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
 
-        this.lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
+        const lastSemanticJob = proxyWorker.lintCypherQuery(query, dbSchema);
 
-        const result = await this.lastSemanticJob;
+        const result = await lastSemanticJob;
         if (
           //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
