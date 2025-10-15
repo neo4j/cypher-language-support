@@ -1,7 +1,7 @@
 # neo4j-for-vscode
 
 ## 1.14.0
-- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions,)
+- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions)
 - Speed up symbol table reliant completions
 - Adds first iteration of schema aware completions for paths, behind feature flag
 
