@@ -65,7 +65,7 @@ export function serverVersionToLinter(serverVersion: string): {
 }
 
 export function linterFileToServerVersion(fileName: string) {
-  const linterFileRegex = /^([\d.]+)-lintWorker-([\d.]+)\.cjs$/;
+  const linterFileRegex = /^([\d.]+)-lintWorker-([\d.]+).*?\.cjs$/;
   return fileName ? fileName.match(linterFileRegex)?.[1] : undefined;
 }
 
