@@ -11,7 +11,12 @@ import {
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { syntaxColouringLegend } from '@neo4j-cypher/language-support';
+import {
+  DbSchema,
+  parserWrapper,
+  SymbolTable,
+  syntaxColouringLegend,
+} from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
@@ -24,6 +29,67 @@ import {
   Neo4jParameters,
   Neo4jSettings,
 } from './types';
+import workerpool from 'workerpool';
+import { join } from 'path';
+import { LintWorker } from '@neo4j-cypher/lint-worker';
+
+class SymbolFetcher {
+  private processing = false;
+  private nextJob: {
+    query: string;
+    uri: string;
+    schema: DbSchema;
+  };
+  private defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+  private symbolTablePool = workerpool.pool(this.defaultWorkerPath, {
+    maxWorkers: 1,
+    workerTerminateTimeout: 0,
+  });
+
+  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+    this.nextJob = { query, uri, schema };
+    if (!this.processing) {
+      void this.processJobQueue();
+    }
+  }
+
+  private async processJobQueue() {
+    this.processing = true;
+    const proxyWorker =
+      (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+    while (this.nextJob) {
+      try {
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        const docUri = this.nextJob.uri;
+        this.nextJob = undefined;
+
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+
+        if (
+          //if this.nextJob has new doc, our result is no longer valid
+          result.symbolTables &&
+          !(this.nextJob && this.nextJob.uri != docUri)
+        ) {
+          parserWrapper.setSymbolsInfo(
+            {
+              query,
+              symbolTables: result.symbolTables,
+            },
+            async (symbolTables: SymbolTable[]) =>
+              await connection.sendNotification('symbolTableDone', {
+                symbolTables,
+              }),
+          );
+        }
+      } catch (e) {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed');
+      }
+    }
+    this.processing = false;
+  }
+}
 
 const connection = createConnection(ProposedFeatures.all);
 let settings: Neo4jSettings | undefined = undefined;
@@ -31,8 +97,14 @@ let settings: Neo4jSettings | undefined = undefined;
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
+const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
+  symbolFetcher.queueSymbolJob(
+    document.getText(),
+    document.uri,
+    neo4jSchemaPoller?.metadata?.dbSchema,
+  );
   if (settings?.features?.linting) {
     return lintDocument(
       document,
@@ -42,6 +114,10 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
+      async (symbolTables: SymbolTable[]) =>
+        await connection.sendNotification('symbolTableDone', {
+          symbolTables: symbolTables,
+        }),
       neo4jSchemaPoller,
     );
   } else {
@@ -138,6 +214,25 @@ connection.onNotification(
   (connectionSettings: Neo4jConnectionSettings) => {
     changeConnection(connectionSettings);
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
+  },
+);
+
+connection.onNotification(
+  'fetchSymbolTable',
+  (params: {
+    query: string;
+    uri: string;
+    version: number;
+    schema: DbSchema;
+  }) => {
+    neo4jSchemaPoller.events.once(
+      'schemaFetched',
+      void symbolFetcher.queueSymbolJob(
+        params.query,
+        params.uri,
+        params.schema,
+      ),
+    );
   },
 );
 

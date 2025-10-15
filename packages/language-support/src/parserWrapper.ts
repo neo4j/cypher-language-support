@@ -41,6 +41,7 @@ import {
   cypherVersionNumbers,
   allCypherVersions,
   SymbolsInfo,
+  SymbolTable,
 } from './types';
 
 export interface ParsedStatement {
@@ -820,7 +821,12 @@ class ParserWrapper {
     this.symbolsInfo = undefined;
   }
 
-  setSymbolsInfo(symbolsInfo: SymbolsInfo) {
+  setSymbolsInfo(
+    symbolsInfo: SymbolsInfo,
+    sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>,
+  ) {
+    if (_internalFeatureFlags.schemaBasedPatternCompletion && sendMessage)
+      void sendMessage(symbolsInfo.symbolTables);
     this.symbolsInfo = symbolsInfo;
   }
 }

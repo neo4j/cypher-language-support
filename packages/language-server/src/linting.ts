@@ -2,6 +2,7 @@ import {
   _internalFeatureFlags,
   clampUnsafePositions,
   parserWrapper,
+  SymbolTable,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
@@ -19,7 +20,7 @@ const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
-  workerTerminateTimeout: 2000,
+  workerTerminateTimeout: 0,
 });
 export let workerPath = defaultWorkerPath;
 let linterVersion: string | undefined = undefined;
@@ -37,7 +38,7 @@ export async function setLintWorker(
     linterVersion = linter;
     pool = workerpool.pool(workerPath, {
       minWorkers: 2,
-      workerTerminateTimeout: 2000,
+      workerTerminateTimeout: 0,
     });
   }
 }
@@ -45,6 +46,7 @@ export async function setLintWorker(
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
+  notifySymbolTableDone: (symbolTable: SymbolTable[]) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
 ) {
   const query = document.getText();
@@ -67,7 +69,6 @@ async function rawLintDocument(
       fixedDbSchema,
       _internalFeatureFlags,
     );
-
     const result = await lastSemanticJob;
 
     //marks the entire text if any position is negative
@@ -78,10 +79,13 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
-      parserWrapper.setSymbolsInfo({
-        query,
-        symbolTables: result.symbolTables,
-      });
+      parserWrapper.setSymbolsInfo(
+        {
+          query,
+          symbolTables: result.symbolTables,
+        },
+        notifySymbolTableDone,
+      );
     }
 
     sendDiagnostics(positionSafeResult);

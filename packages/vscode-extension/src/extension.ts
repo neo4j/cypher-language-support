@@ -18,11 +18,14 @@ import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
-import { setContext } from './contextService';
+import { getSchemaPoller, setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
+import { SymbolTable } from '@neo4j-cypher/language-support';
+import { sendNotificationToLanguageClient } from './languageClientService';
 
 let client: LanguageClient;
+let symbolTableVersion = 0;
 
 export const linterStatusBarItem = window.createStatusBarItem(
   StatusBarAlignment.Right,
@@ -96,6 +99,48 @@ export async function activate(context: ExtensionContext) {
 
     context.subscriptions.push(watcher);
   }
+
+  client.onNotification('symbolTableDone', (params) => {
+    symbolTableVersion++;
+    const symbolTables = (params as { symbolTables: SymbolTable[] })
+      .symbolTables;
+    void window.showInformationMessage(
+      'Calculated symbol table nbr' +
+        symbolTableVersion +
+        '\n' +
+        stringifySymbolTables(symbolTables),
+    );
+  });
+
+  window.onDidChangeActiveTextEditor((editor) => {
+    const doc = editor.document;
+    const query = doc.getText();
+    const uri = doc.uri.fsPath;
+    const schema = getSchemaPoller().metadata?.dbSchema;
+    void sendNotificationToLanguageClient('fetchSymbolTable', {
+      query,
+      uri,
+      schema,
+    });
+  });
+}
+
+function stringifySymbolTables(symbolTables: SymbolTable[]): string {
+  if (!symbolTables) {
+    return '';
+  }
+  return symbolTables
+    .map((symbolTable) => {
+      if (symbolTable.length == 0) {
+        return '';
+      }
+      let result = ' [';
+      symbolTable.map((symbol) => {
+        result += symbol.variable + ': ' + symbol.types.toString() + ', ';
+      });
+      return result.substring(0, result.length - 2) + ']';
+    })
+    .toString();
 }
 
 export async function deactivate(): Promise<void> | undefined {
