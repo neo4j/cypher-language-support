@@ -5,6 +5,7 @@
 - Speed up symbol table reliant completions
 - Adds first iteration of schema aware completions for paths, behind feature flag
 - Adds command to run single cypher query
+- Auto-focus on query results panel when running query
 
 ## 1.13.0
 - Adjusts linting automatically depending on the neo4j version.
