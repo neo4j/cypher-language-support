@@ -825,7 +825,7 @@ class ParserWrapper {
     symbolsInfo: SymbolsInfo,
     sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>,
   ) {
-    if (_internalFeatureFlags.schemaBasedPatternCompletion && sendMessage)
+    if (_internalFeatureFlags.schemaBasedPatternCompletions && sendMessage)
       void sendMessage(symbolsInfo.symbolTables);
     this.symbolsInfo = symbolsInfo;
   }

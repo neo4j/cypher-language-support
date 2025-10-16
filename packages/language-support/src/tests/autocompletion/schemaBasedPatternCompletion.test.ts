@@ -36,11 +36,11 @@ const dbSchema = {
 
 describe('completeRelationshipType', () => {
   beforeEach(() => {
-    _internalFeatureFlags.schemaBasedPatternCompletion = true;
+    _internalFeatureFlags.schemaBasedPatternCompletions = true;
   });
 
   afterEach(() => {
-    _internalFeatureFlags.schemaBasedPatternCompletion = false;
+    _internalFeatureFlags.schemaBasedPatternCompletions = false;
   });
 
   test('Completion dont crash on missing db connection', () => {
