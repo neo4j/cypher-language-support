@@ -92,6 +92,12 @@
         "icon": "$(play)"
       },
       {
+        "command": "neo4j.runSingleCypher",
+        "title": "Run single Cypher statement",
+        "category": "Neo4j",
+        "icon": "$(play)"
+      },
+      {
         "command": "neo4j.cypherFileFromSelection",
         "title": "Create Cypher file from selection",
         "category": "Neo4j"
@@ -126,6 +132,11 @@
         "command": "neo4j.runCypher",
         "key": "ctrl+alt+space",
         "mac": "ctrl+cmd+space"
+      },
+      {
+        "command": "neo4j.runSingleCypher",
+        "key": "ctrl+enter",
+        "mac": "ctrl+enter"
       }
     ],
     "viewsWelcome": [
@@ -142,6 +153,11 @@
       "editor/context": [
         {
           "command": "neo4j.runCypher",
+          "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
+          "group": "z_commands"
+        },
+        {
+          "command": "neo4j.runSingleCypher",
           "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))",
           "group": "z_commands"
         },

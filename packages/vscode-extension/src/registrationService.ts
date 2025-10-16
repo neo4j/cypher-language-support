@@ -4,6 +4,8 @@ import {
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
+  getCurrentStatement,
+  getSelectedText,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -112,16 +114,28 @@ export function registerDisposables(): Disposable[] {
         databaseInformationTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () =>
-      runCypher(async (statements: string[]) => {
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_SINGLE_CYPHER, () => {
+      const currentStatement = getCurrentStatement();
+      void runCypher(async (statements: string[]) => {
         views.detailsView ??
           (await commands.executeCommand('neo4jQueryDetails.focus'));
         views.visualizationView ??
           (await commands.executeCommand('neo4jQueryVisualization.focus'));
         await queryVisualizationProvider.viewReadyPromise;
         await queryDetailsProvider.executeStatements(statements);
-      }),
-    ),
+      }, currentStatement);
+    }),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () => {
+      const selectedText = getSelectedText();
+      void runCypher(async (statements: string[]) => {
+        views.detailsView ??
+          (await commands.executeCommand('neo4jQueryDetails.focus'));
+        views.visualizationView ??
+          (await commands.executeCommand('neo4jQueryVisualization.focus'));
+        await queryVisualizationProvider.viewReadyPromise;
+        await queryDetailsProvider.executeStatements(statements);
+      }, selectedText);
+    }),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),
