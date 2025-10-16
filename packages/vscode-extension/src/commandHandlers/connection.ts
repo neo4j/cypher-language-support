@@ -226,12 +226,11 @@ export function getCurrentStatement(): string | undefined {
 //exported for testing
 export function getStatementAtCaret(input: string, caret: number): string {
   const statements = parserWrapper.parse(input);
-  // Since the find goes through the statements in order this will work out. // statement.ctx.start.start > caret ||
-  // Also, since initial spaces are skipped -> "^  RETURN 5"  (^ denotes caret pos) -> statement.ctx.start.start == 2, caret == 0, which is why we have the start-check
+  // Since the find goes through the statements in order this will work out.
   let currentStatement = statements.statementsParsing.find(
     (statement) => statement.ctx.stop.stop >= caret,
   );
-
+  //Special case for when the caret is after the final token
   currentStatement =
     !currentStatement && statements.statementsParsing
       ? statements.statementsParsing.at(-1)
