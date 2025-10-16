@@ -1,5 +1,15 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.24
+
+### Patch Changes
+
+- 8eacddd: Adds support for labels/reltypes in symbol table
+- 3a29711: Update grammar and semantic analysis to version 2025.09
+- b9c0e9d: Updates semantic analysis and grammar to 2025.10
+- d77e8a1: Fixes "missing label/rel type" warnings for some special cases
+- 7183c63: Fixes a bug in formatting when using preparser keywords in function/procedure namespaces
+
 ## 2.0.0-next.23
 
 ### Patch Changes

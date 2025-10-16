@@ -1,5 +1,21 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.1
+
+### Patch Changes
+
+- 246d60c: Fixes bug when switching to linters with new npm version scheme
+- 3a29711: Update grammar and semantic analysis to version 2025.09
+- b9c0e9d: Updates semantic analysis and grammar to 2025.10
+- 5fdc6dd: Fixes faulty worker termination on big queries
+- Updated dependencies [8eacddd]
+- Updated dependencies [3a29711]
+- Updated dependencies [b9c0e9d]
+- Updated dependencies [d77e8a1]
+- Updated dependencies [7183c63]
+  - @neo4j-cypher/language-support@2.0.0-next.24
+  - @neo4j-cypher/query-tools@2.0.0-next.24
+
 ## 1.10.1-next.0
 
 ### Patch Changes

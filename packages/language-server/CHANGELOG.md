@@ -1,5 +1,21 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.25
+
+### Patch Changes
+
+- 5fdc6dd: Fixes faulty worker termination on big queries
+- Updated dependencies [246d60c]
+- Updated dependencies [8eacddd]
+- Updated dependencies [3a29711]
+- Updated dependencies [b9c0e9d]
+- Updated dependencies [d77e8a1]
+- Updated dependencies [5fdc6dd]
+- Updated dependencies [7183c63]
+  - @neo4j-cypher/lint-worker@1.10.1-next.1
+  - @neo4j-cypher/language-support@2.0.0-next.24
+  - @neo4j-cypher/query-tools@2.0.0-next.24
+
 ## 2.0.0-next.24
 
 ### Patch Changes
