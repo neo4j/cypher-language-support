@@ -56,7 +56,7 @@ export function completeRelationshipType(
   parsingResult: ParsedStatement,
   symbolsInfo: SymbolsInfo,
 ): CompletionItem[] {
-  if (!_internalFeatureFlags.schemaBasedPatternCompletion) {
+  if (!_internalFeatureFlags.schemaBasedPatternCompletions) {
     return allReltypeCompletions(dbSchema);
   }
 
