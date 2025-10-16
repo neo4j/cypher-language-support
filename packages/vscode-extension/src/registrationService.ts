@@ -117,10 +117,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(CONSTANTS.COMMANDS.RUN_SINGLE_CYPHER, () => {
       const currentStatement = getCurrentStatement();
       void runCypher(async (statements: string[]) => {
-        views.detailsView ??
-          (await commands.executeCommand('neo4jQueryDetails.focus'));
-        views.visualizationView ??
-          (await commands.executeCommand('neo4jQueryVisualization.focus'));
+        if (views.detailsView.visible)
+          await commands.executeCommand('neo4jQueryDetails.focus');
+        if (views.visualizationView.visible)
+          await commands.executeCommand('neo4jQueryVisualization.focus');
         await queryVisualizationProvider.viewReadyPromise;
         await queryDetailsProvider.executeStatements(statements);
       }, currentStatement);
@@ -128,10 +128,10 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () => {
       const selectedText = getSelectedText();
       void runCypher(async (statements: string[]) => {
-        views.detailsView ??
-          (await commands.executeCommand('neo4jQueryDetails.focus'));
-        views.visualizationView ??
-          (await commands.executeCommand('neo4jQueryVisualization.focus'));
+        if (views.detailsView.visible)
+          await commands.executeCommand('neo4jQueryDetails.focus');
+        if (views.visualizationView.visible)
+          await commands.executeCommand('neo4jQueryVisualization.focus');
         await queryVisualizationProvider.viewReadyPromise;
         await queryDetailsProvider.executeStatements(statements);
       }, selectedText);
