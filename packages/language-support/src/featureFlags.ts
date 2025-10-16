@@ -13,5 +13,5 @@ export const _internalFeatureFlags: FeatureFlags = {
   */
   consoleCommands: false,
   schemaBasedPatternCompletions:
-    process.env.schemaBasedPatternCompletions == 'true',
+    process?.env.schemaBasedPatternCompletions == 'true',
 };
