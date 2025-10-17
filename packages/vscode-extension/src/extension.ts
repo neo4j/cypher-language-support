@@ -124,14 +124,16 @@ export async function activate(context: ExtensionContext) {
 
   window.onDidChangeActiveTextEditor((editor) => {
     const doc = editor.document;
-    const query = doc.getText();
-    const uri = doc.uri.fsPath;
-    const schema = getSchemaPoller().metadata?.dbSchema;
-    void sendNotificationToLanguageClient('fetchSymbolTable', {
-      query,
-      uri,
-      schema,
-    });
+    if (doc.languageId === 'cypher') {
+      const query = doc.getText();
+      const uri = doc.uri.fsPath;
+      const schema = getSchemaPoller().metadata?.dbSchema;
+      void sendNotificationToLanguageClient('fetchSymbolTable', {
+        query,
+        uri,
+        schema,
+      });
+    }
   });
 }
 
