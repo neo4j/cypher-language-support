@@ -10,6 +10,7 @@ export const CONSTANTS = {
     DISCONNECT_COMMAND: 'neo4j.disconnect',
     SWITCH_DATABASE_COMMAND: 'neo4j.switchDatabase',
     RUN_CYPHER: 'neo4j.runCypher',
+    RUN_SINGLE_CYPHER: 'neo4j.runSingleCypher',
     CYPHER_FILE_FROM_SELECTION: 'neo4j.cypherFileFromSelection',
     ADD_PARAMETER: 'neo4j.addParameter',
     DELETE_PARAMETER: 'neo4j.deleteParameter',
