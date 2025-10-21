@@ -139,7 +139,7 @@ MATCH (n) RETURN n`,
       },
       {
         name: 'Empty statement between 2 queries',
-        query: ' MATCH (n) RETURN n; \n ;',
+        query: ' MATCH (n) RETURN n; \n ; \n RETURN 50',
         caret: ' MATCH (n) RETURN n; \n '.length,
         expected: '',
       },
