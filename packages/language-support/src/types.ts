@@ -76,7 +76,7 @@ export const isLabelLeaf = (
 };
 
 export type ConditionNode = {
-  andOr: 'AND' | 'OR';
+  andOr: 'and' | 'or';
   children: LabelOrCondition[];
 };
 
