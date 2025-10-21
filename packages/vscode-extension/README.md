@@ -117,9 +117,9 @@ Parameters can be edited / deleted hovering over them.
 ## Executing a Cypher file
 
 Once you've written your desired query (for example `CREATE (n)-[r:Rel]->(m) RETURN n, r, m, $a, $b`) you can execute it by either of:
-* Using the `Neo4j: Run cypher statements` command from the Command Palette.
-* Right clicking inside the file you want to run and clicking on the `Neo4j: Run cypher statements` item.
-* Using the shortcut `Ctrl+Command+Space` (where `Command` is either the `⌘` key or the `alt` key depending on your keyboard).
+* Using the `Neo4j: Run cypher statements` command from the Command Palette. This executes the statements selected, or if no selection is made, the statement the caret is in.
+* Right clicking inside the file you want to run and clicking on the `Neo4j: Run Cypher statements` or the `Neo4j: Run Single Cypher statement` item.
+* Using the shortcuts `⌘/Ctrl+Enter` to run single statement or `Ctrl+⌘/alt+Enter` to run all/selected statements. For legacy reasons we also have the alias  `Ctrl+Command+Space` to run all/selected.
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 

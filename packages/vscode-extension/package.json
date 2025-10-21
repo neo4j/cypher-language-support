@@ -135,9 +135,15 @@
         "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))"
       },
       {
+        "command": "neo4j.runCypher",
+        "key": "ctrl+alt+enter",
+        "mac": "ctrl+cmd+enter",
+        "when": "resourceLangId == cypher || (editorHasSelection && (resourceLangId == java || resourceLangId == javascript || resourceLangId == typescript || resourceLangId == go || resourceLangId == fsharp || resourceLangId == csharp || resourceLangId == markdown || resourceLangId == python))"
+      },
+      {
         "command": "neo4j.runSingleCypher",
         "key": "ctrl+enter",
-        "mac": "ctrl+enter",
+        "mac": "cmd+enter",
         "when": "resourceLangId == cypher"
       }
     ],
@@ -172,7 +178,12 @@
       "editor/title": [
         {
           "command": "neo4j.runCypher",
-          "when": "resourceLangId == cypher",
+          "when": "resourceLangId == cypher && editorHasSelection",
+          "group": "navigation"
+        },
+        {
+          "command": "neo4j.runSingleCypher",
+          "when": "resourceLangId == cypher && !editorHasSelection",
           "group": "navigation"
         }
       ],
