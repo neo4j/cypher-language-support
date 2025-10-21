@@ -220,7 +220,7 @@ export function getCurrentStatement(): string | undefined {
   if (editor) {
     const currentOffset = editor.document.offsetAt(editor.selection.active);
     return getStatementAtCaret(editor.document.getText(), currentOffset);
-  } else return ''; //Maybe error notification here
+  } else return '';
 }
 
 //exported for testing
