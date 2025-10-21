@@ -1,5 +1,5 @@
 import { ConnnectionResult } from '@neo4j-cypher/query-tools';
-import { commands, Selection, TextEditor, window, workspace } from 'vscode';
+import { commands, Selection, window, workspace } from 'vscode';
 import {
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
@@ -21,6 +21,7 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
+import { parserWrapper } from '@neo4j-cypher/language-support';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -169,32 +170,36 @@ function sortByPosition(a: Selection, b: Selection): number {
   return columnDiff;
 }
 
-function getSelectedText(editor: TextEditor): string {
-  const selections = editor.selections.filter(
-    (selection) => !selection.isEmpty && editor.document.getText(selection),
-  );
-  const text =
-    selections.length === 0
-      ? editor.document.getText()
-      : selections
-          .sort(sortByPosition)
-          .map((selection) => {
-            return editor.document.getText(selection);
-          })
-          .join(' ');
+export function getSelectedText(): string {
+  // Get the active text editor
+  const editor = window.activeTextEditor;
+  if (editor) {
+    const selections = editor.selections.filter(
+      (selection) => !selection.isEmpty && editor.document.getText(selection),
+    );
+    const text =
+      selections.length === 0
+        ? editor.document.getText()
+        : selections
+            .sort(sortByPosition)
+            .map((selection) => {
+              return editor.document.getText(selection);
+            })
+            .join(' ');
 
-  return text;
+    return text;
+  } else {
+    return '';
+  }
 }
 
 export async function runCypher(
   renderBottomPanel: (statements: string[]) => Promise<void>,
+  input: string,
 ): Promise<void> {
   const cypherRunner = getQueryRunner();
 
-  // Get the active text editor
-  const editor = window.activeTextEditor;
-
-  if (editor) {
+  if (input) {
     const activeConnection = getActiveConnection();
 
     if (!activeConnection) {
@@ -205,18 +210,43 @@ export async function runCypher(
       return;
     }
 
-    const selectedText = getSelectedText(editor);
-
-    await cypherRunner.run(selectedText, renderBottomPanel);
+    await cypherRunner.run(input, renderBottomPanel);
   }
 }
 
-export async function cypherFileFromSelection(): Promise<void> {
+export function getCurrentStatement(): string | undefined {
   const editor = window.activeTextEditor;
 
   if (editor) {
-    const selectedText = getSelectedText(editor);
+    const currentOffset = editor.document.offsetAt(editor.selection.active);
+    return getStatementAtCaret(editor.document.getText(), currentOffset);
+  } else return '';
+}
 
+//exported for testing
+export function getStatementAtCaret(
+  input: string,
+  caretOffset: number,
+): string {
+  const statements = parserWrapper.parse(input);
+  // Since the find goes through the statements in order this will work out.
+  let currentStatement = statements.statementsParsing.find((statement) => {
+    const stopOffset = statement?.ctx?.stop?.stop;
+    return stopOffset ? stopOffset >= caretOffset : false;
+  });
+  //Special case for when the caret is after the final token
+  currentStatement =
+    !currentStatement && statements.statementsParsing
+      ? statements.statementsParsing.at(-1)
+      : currentStatement;
+  const command = currentStatement.command;
+  const result = command.type == 'cypher' ? command.statement : '';
+  return result;
+}
+
+export async function cypherFileFromSelection(): Promise<void> {
+  const selectedText = getSelectedText();
+  if (selectedText) {
     // Creates a new Cypher document with the selection
     const textDocument = await workspace.openTextDocument({
       content: selectedText,
