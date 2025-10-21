@@ -119,6 +119,30 @@ MATCH (n) RETURN n`,
         caret: ' MATCH (n) RETURN n; \n RETURN '.length,
         expected: 'RETURN 50',
       },
+      {
+        name: 'After semicolon, but before first token of next statement',
+        query: ' MATCH (n) RETURN n; \n RETURN 50; ',
+        caret: ' MATCH (n) RETURN n; '.length,
+        expected: 'RETURN 50',
+      },
+      {
+        name: 'After semicolon, on newline before first token of next statement',
+        query: ' MATCH (n) RETURN n; \n\n\n RETURN 50; ',
+        caret: ' MATCH (n) RETURN n; \n\n'.length,
+        expected: 'RETURN 50',
+      },
+      {
+        name: 'Empty statement at the end of a query',
+        query: ' MATCH (n) RETURN n; \n RETURN 50; ',
+        caret: ' MATCH (n) RETURN n; \n RETURN 50; '.length,
+        expected: '',
+      },
+      {
+        name: 'Empty statement between 2 queries',
+        query: ' MATCH (n) RETURN n; \n ;',
+        caret: ' MATCH (n) RETURN n; \n '.length,
+        expected: '',
+      },
     ];
     cases.forEach((c) => {
       const statement = getStatementAtCaret(c.query, c.caret);
