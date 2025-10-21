@@ -218,18 +218,22 @@ export function getCurrentStatement(): string | undefined {
   const editor = window.activeTextEditor;
 
   if (editor) {
-    const currentCaret = editor.document.offsetAt(editor.selection.active);
-    return getStatementAtCaret(editor.document.getText(), currentCaret);
+    const currentOffset = editor.document.offsetAt(editor.selection.active);
+    return getStatementAtCaret(editor.document.getText(), currentOffset);
   } else return ''; //Maybe error notification here
 }
 
 //exported for testing
-export function getStatementAtCaret(input: string, caret: number): string {
+export function getStatementAtCaret(
+  input: string,
+  caretOffset: number,
+): string {
   const statements = parserWrapper.parse(input);
   // Since the find goes through the statements in order this will work out.
-  let currentStatement = statements.statementsParsing.find(
-    (statement) => statement.ctx.stop.stop >= caret,
-  );
+  let currentStatement = statements.statementsParsing.find((statement) => {
+    const stopOffset = statement?.ctx?.stop?.stop;
+    return stopOffset ? stopOffset >= caretOffset : false;
+  });
   //Special case for when the caret is after the final token
   currentStatement =
     !currentStatement && statements.statementsParsing
