@@ -52,9 +52,9 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
 function intersectChildren(
-  relsFromLabels: Map<string, string[]>,
+  relsFromLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
-): string[] {
+): Set<string> {
   let intersection: Set<string> = undefined;
   children.forEach((c) => {
     intersection = intersection
@@ -63,24 +63,24 @@ function intersectChildren(
         ))
       : new Set(walkLabelTree(relsFromLabels, c));
   });
-  return Array.from(intersection);
+  return intersection;
 }
 
 function unionChildren(
-  relsFromLabels: Map<string, string[]>,
+  relsFromLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
-): string[] {
+): Set<string> {
   let union: Set<string> = new Set();
   children.forEach(
     (c) => (union = union.union(new Set(walkLabelTree(relsFromLabels, c)))),
   );
-  return Array.from(union);
+  return union;
 }
 
 function walkLabelTree(
-  relsFromLabels: Map<string, string[]>,
+  relsFromLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
-): string[] {
+): Set<string> {
   if (isLabelLeaf(labelTree)) {
     return relsFromLabels.get(labelTree.value);
   } else if (labelTree.andOr == 'and') {
@@ -90,8 +90,7 @@ function walkLabelTree(
   }
 }
 
-//This should be a generalised approach that works... but really when we
-function getRelsFromLabelsSet(dbSchema: DbSchema): Map<string, string[]> {
+function getRelsFromLabelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
   if (dbSchema.graphSchema) {
     const relsFromLabelsSet: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
@@ -108,11 +107,7 @@ function getRelsFromLabelsSet(dbSchema: DbSchema): Map<string, string[]> {
       currentToLabelEntry.add(rel.relType);
       currentFromLabelEntry.add(rel.relType);
     });
-    const relsFromLabels: Map<string, string[]> = new Map();
-    relsFromLabelsSet.forEach((rels, label) =>
-      relsFromLabels.set(label, Array.from(rels)),
-    );
-    return relsFromLabels;
+    return relsFromLabelsSet;
   }
   return undefined;
 }
@@ -175,7 +170,7 @@ export function completeRelationshipType(
       const relsFromLabelsSet = getRelsFromLabelsSet(dbSchema);
       const rels = walkLabelTree(relsFromLabelsSet, foundVariable.labels);
 
-      return reltypesToCompletions(rels);
+      return reltypesToCompletions(Array.from(rels));
     }
   }
 
