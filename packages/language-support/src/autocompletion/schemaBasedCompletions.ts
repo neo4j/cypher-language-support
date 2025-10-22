@@ -59,20 +59,20 @@ function intersectChildren(
   children.forEach((c) => {
     intersection = intersection
       ? (intersection = intersection.intersection(
-          new Set(walkLabelTree(relsFromLabels, c)),
+          walkLabelTree(relsFromLabels, c),
         ))
-      : new Set(walkLabelTree(relsFromLabels, c));
+      : walkLabelTree(relsFromLabels, c);
   });
-  return intersection;
+  return intersection ?? new Set();
 }
 
-function unionChildren(
+function uniteChildren(
   relsFromLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
 ): Set<string> {
   let union: Set<string> = new Set();
   children.forEach(
-    (c) => (union = union.union(new Set(walkLabelTree(relsFromLabels, c)))),
+    (c) => (union = union.union(walkLabelTree(relsFromLabels, c))),
   );
   return union;
 }
@@ -86,7 +86,7 @@ function walkLabelTree(
   } else if (labelTree.andOr == 'and') {
     return intersectChildren(relsFromLabels, labelTree.children);
   } else {
-    return unionChildren(relsFromLabels, labelTree.children);
+    return uniteChildren(relsFromLabels, labelTree.children);
   }
 }
 
