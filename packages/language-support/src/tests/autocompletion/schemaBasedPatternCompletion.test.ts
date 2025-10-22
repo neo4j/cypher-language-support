@@ -248,7 +248,9 @@ RETURN [(p)-[:`;
       computeSymbolsInfo: true,
       expected: [
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
-        // Limitation: These should actually be excluded, but since we dont track direction yet, they dont
+        // Limitation: These should actually be excluded, but since we dont track direction yet, they are not
+        // Note that even though we don't know the direction in the query, we can see in the graph schema that we don't
+        // have ex. 'CATCHES' going to/from both Trainer and Pokemon, meaning it cant be going to/from a Pokemon&Trainer node
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
       ],
@@ -299,6 +301,7 @@ RETURN [(p)-[:`;
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
          */
+        // For now, test bail working
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
@@ -320,6 +323,7 @@ RETURN [(p)-[:`;
       dbSchema,
       computeSymbolsInfo: true,
       expected: [
+        // For now, test bail working
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },

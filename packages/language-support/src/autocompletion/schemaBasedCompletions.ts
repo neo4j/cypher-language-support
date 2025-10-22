@@ -159,7 +159,7 @@ export function completeRelationshipType(
 
       if (
         foundVariable === undefined ||
-        ('andOr' in foundVariable.labels &&
+        ('children' in foundVariable.labels &&
           foundVariable.labels.children.length == 0)
       ) {
         return allReltypeCompletions(dbSchema);
