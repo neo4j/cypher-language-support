@@ -4,6 +4,8 @@ import {
   cypherFileFromSelection,
   forceConnect,
   forceDisconnect,
+  getCurrentStatement,
+  getSelectedText,
   promptUserToDeleteConnectionAndDisplayConnectionResult,
   runCypher,
   saveConnectionAndDisplayConnectionResult,
@@ -12,7 +14,6 @@ import {
   switchToDatabaseWithName,
   toggleConnectionItemsConnectionState,
 } from './commandHandlers/connection';
-import { views } from './webviews/queryResults/queryResultsTypes';
 import {
   addParameter,
   clearAllParameters,
@@ -42,6 +43,12 @@ export function registerDisposables(): Disposable[] {
   const disposables = Array<Disposable>();
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
+  const renderBottomPanel = async (statements: string[]) => {
+    await commands.executeCommand('neo4jQueryDetails.focus');
+    await commands.executeCommand('neo4jQueryVisualization.focus');
+    await queryVisualizationProvider.viewReadyPromise;
+    await queryDetailsProvider.executeStatements(statements);
+  };
 
   linterStatusBarItem.command = CONSTANTS.COMMANDS.SWITCH_LINTER_COMMAND;
   linterStatusBarItem.text = 'Default';
@@ -112,16 +119,14 @@ export function registerDisposables(): Disposable[] {
         databaseInformationTreeDataProvider.refresh();
       },
     ),
-    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () =>
-      runCypher(async (statements: string[]) => {
-        views.detailsView ??
-          (await commands.executeCommand('neo4jQueryDetails.focus'));
-        views.visualizationView ??
-          (await commands.executeCommand('neo4jQueryVisualization.focus'));
-        await queryVisualizationProvider.viewReadyPromise;
-        await queryDetailsProvider.executeStatements(statements);
-      }),
-    ),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_SINGLE_CYPHER, () => {
+      const currentStatement = getCurrentStatement();
+      void runCypher(renderBottomPanel, currentStatement);
+    }),
+    commands.registerCommand(CONSTANTS.COMMANDS.RUN_CYPHER, () => {
+      const selectedText = getSelectedText();
+      void runCypher(renderBottomPanel, selectedText);
+    }),
     commands.registerCommand(
       CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
       (connectionItem: ConnectionItem) => switchToDatabase(connectionItem),

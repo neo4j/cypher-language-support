@@ -1,9 +1,12 @@
 # neo4j-for-vscode
 
 ## 1.14.0
-- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions)
+- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions, prevents "run cypher" keybind from being active when cypher can't be run)
 - Speed up symbol table reliant completions
 - Adds first iteration of schema aware completions for paths, behind feature flag
+- Adds command to run single cypher query
+- Auto-focus on query results panel when running query
+- Modify run button to run selected text on selection and otherwise run single statement at cursor
 
 ## 1.13.0
 - Adjusts linting automatically depending on the neo4j version.
