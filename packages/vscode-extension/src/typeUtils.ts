@@ -11,6 +11,7 @@ import {
   isInt,
   isLocalDateTime,
   isLocalTime,
+  isPoint,
   isTime,
 } from 'neo4j-driver';
 import { isDate } from 'util/types';
@@ -43,7 +44,8 @@ function valueToNativeType(value: unknown) {
     isTime(value) ||
     isLocalDateTime(value) ||
     isLocalTime(value) ||
-    isDuration(value)
+    isDuration(value) ||
+    isPoint(value)
   ) {
     value = value.toString();
   } else if (
