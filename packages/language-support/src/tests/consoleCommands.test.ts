@@ -55,6 +55,7 @@ describe('sanity checks', () => {
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
     expectParsedCommands(':play', [{ type: 'play' }]);
+    expectParsedCommands(':help', [{ type: 'help' }]);
   });
 
   test('properly highlights simple commands', () => {
@@ -218,12 +219,28 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+
+    expect(applySyntaxColouring(':help')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'help',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'help' },
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
@@ -270,7 +287,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');

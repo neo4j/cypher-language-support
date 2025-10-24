@@ -566,7 +566,8 @@ export type ParsedCommandNoPosition =
   | { type: 'sysinfo' }
   | { type: 'style'; operation?: 'reset' }
   | { type: 'play' }
-  | { type: 'access-mode'; operation?: string };
+  | { type: 'access-mode'; operation?: string }
+  | { type: 'help' };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -757,6 +758,11 @@ function parseToCommand(
             stop,
           };
         }
+      }
+
+      const helpCmd = consoleCmd.helpCmd();
+      if (helpCmd) {
+        return { type: 'help', start, stop };
       }
 
       return { type: 'parse-error', start, stop };
