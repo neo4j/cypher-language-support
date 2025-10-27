@@ -11,7 +11,6 @@ import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
   NodePatternContext,
   RelationshipPatternContext,
-  StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
 import { CypherVersion } from './types';
@@ -32,30 +31,6 @@ of the time
 export type EnrichedParseTree = ParseTree & {
   parentCtx: ParserRuleContext | undefined;
 };
-
-export function findStopNode(root: StatementsOrCommandsContext) {
-  let children = root.children;
-  let current: ParserRuleContext = root;
-
-  while (children && children.length > 0) {
-    let index = children.length - 1;
-    let child = children[index];
-
-    while (
-      index > 0 &&
-      (child === root.EOF() ||
-        child.getText() === '' ||
-        child.getText().startsWith('<missing'))
-    ) {
-      index--;
-      child = children[index];
-    }
-    current = child as ParserRuleContext;
-    children = current.children;
-  }
-
-  return current;
-}
 
 export function findParent(
   leaf: EnrichedParseTree | undefined,
@@ -88,9 +63,9 @@ type AntlrDefaultExport = {
 };
 export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
-export function inNodeLabel(stopNode: ParserRuleContext) {
+export function inNodeLabel(lastNode: ParserRuleContext) {
   const nodePattern = findParent(
-    stopNode,
+    lastNode,
     (p) =>
       p instanceof NodePatternContext ||
       p instanceof RelationshipPatternContext,
@@ -99,9 +74,9 @@ export function inNodeLabel(stopNode: ParserRuleContext) {
   return nodePattern instanceof NodePatternContext;
 }
 
-export function inRelationshipType(stopNode: ParserRuleContext) {
+export function inRelationshipType(lastNode: ParserRuleContext) {
   const relPattern = findParent(
-    stopNode,
+    lastNode,
     (p) =>
       p instanceof NodePatternContext ||
       p instanceof RelationshipPatternContext,

@@ -10,7 +10,7 @@ export function autocomplete(
   caretPosition: number = query.length,
   manual = false,
 ): CompletionItem[] {
-  const parsingResult = parserWrapper.parse(query);
+  const parsingResult = parserWrapper.parse(query, undefined, caretPosition);
   const symbolsInfo = parserWrapper.symbolsInfo;
   /* We try to locate the statement where the caret is and the token of the caret
 

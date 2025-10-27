@@ -563,7 +563,7 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
-          parsingResult.stopNode.parentCtx,
+          parsingResult.lastRule.parentCtx,
           (x) => x instanceof CallClauseContext,
         );
         if (callContext instanceof CallClauseContext) {
@@ -632,7 +632,7 @@ export function completionCoreCompletion(
           grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
-          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
+          const expr2 = parsingResult.lastRule?.parentCtx?.parentCtx?.parentCtx;
           if (expr2 instanceof Expression2Context) {
             const variable = expr2.expression1().variable();
             const variablePosition = variable?.start?.start;

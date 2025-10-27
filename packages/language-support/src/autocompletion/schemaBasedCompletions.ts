@@ -127,19 +127,21 @@ export function completeRelationshipType(
 
   // limitation: not checking PathPatternNonEmptyContext
   // limitation: not handling parenthesized paths
-  const callContext = findParent(
-    parsingResult.stopNode.parentCtx,
+  const patternContext = findParent(
+    parsingResult.lastRule.parentCtx,
     (x) => x instanceof PatternElementContext,
   );
 
-  if (callContext instanceof PatternElementContext) {
-    const lastValidElement = callContext.children.toReversed().find((child) => {
-      if (child instanceof ParserRuleContext) {
-        if (child.exception === null) {
-          return true;
+  if (patternContext instanceof PatternElementContext) {
+    const lastValidElement = patternContext.children
+      .toReversed()
+      .find((child) => {
+        if (child instanceof ParserRuleContext) {
+          if (child.exception === null) {
+            return true;
+          }
         }
-      }
-    });
+      });
 
     // limitation: bailing out on quantifiers
     if (lastValidElement instanceof QuantifierContext) {
