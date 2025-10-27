@@ -632,7 +632,10 @@ export function completionCoreCompletion(
           grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
-          const expr2 = parsingResult.lastRule?.parentCtx?.parentCtx?.parentCtx;
+          const expr2 = findParent(
+            parsingResult.lastRule,
+            (x) => x instanceof Expression2Context,
+          );
           if (expr2 instanceof Expression2Context) {
             const variable = expr2.expression1().variable();
             const variablePosition = variable?.start?.start;
