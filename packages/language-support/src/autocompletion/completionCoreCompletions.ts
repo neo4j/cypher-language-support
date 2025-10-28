@@ -44,6 +44,7 @@ import {
   completeRelationshipType,
   allLabelCompletions,
   allReltypeCompletions,
+  completeNodeLabel,
 } from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
 
@@ -705,7 +706,7 @@ export function completionCoreCompletion(
         }
 
         if (topExprParent === CypherParser.RULE_nodePattern) {
-          return allLabelCompletions(dbSchema);
+          return completeNodeLabel(dbSchema, parsingResult, symbolsInfo);
         }
 
         if (topExprParent === CypherParser.RULE_relationshipPattern) {
