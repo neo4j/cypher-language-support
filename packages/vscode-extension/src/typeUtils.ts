@@ -15,6 +15,7 @@ import {
   isTime,
 } from 'neo4j-driver';
 import { isDate } from 'util/types';
+import { spacialFormat } from '@neo4j-cypher/query-tools';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toNativeTypes(properties: Record<string, any>) {
@@ -44,10 +45,11 @@ function valueToNativeType(value: unknown) {
     isTime(value) ||
     isLocalDateTime(value) ||
     isLocalTime(value) ||
-    isDuration(value) ||
-    isPoint(value)
+    isDuration(value)
   ) {
     value = value.toString();
+  } else if (isPoint(value)) {
+    value = spacialFormat(value);
   } else if (
     typeof value === 'object' &&
     value !== undefined &&

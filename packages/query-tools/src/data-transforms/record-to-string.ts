@@ -1,4 +1,4 @@
-import type { Node, Path, Relationship } from 'neo4j-driver';
+import type { Node, Path, Point, Relationship } from 'neo4j-driver';
 import { isInt, isNode, isPath, isPoint, isRelationship } from 'neo4j-driver';
 
 import type {
@@ -11,6 +11,19 @@ import {
   isInt8Array,
 } from '../types/cypher-data-types';
 import { formatFloat } from './format-float';
+
+export const spacialFormat = (p: Point): string => {
+  const xString = floatifyIfInt(p.x);
+  const yString = floatifyIfInt(p.y);
+  const zString = p.z !== undefined ? `, z:${floatifyIfInt(p.z)}` : '';
+  return `point({srid:${p.srid.toString()}, x:${xString}, y:${yString}${zString}})`;
+};
+
+const floatifyIfInt = (x: number) => {
+  const xFixed1 = x.toFixed(1);
+  const xString = x.toString();
+  return Number(xString) === Number(xFixed1) ? xFixed1 : xString;
+};
 
 export function propertyToString(
   property: CypherProperty,
@@ -28,10 +41,12 @@ export function propertyToString(
     typeof property === 'boolean' ||
     isInt(property) ||
     typeof property === 'bigint' ||
-    isCypherTemporalType(property) ||
-    isPoint(property)
+    isCypherTemporalType(property)
   ) {
     return property.toString();
+  }
+  if (isPoint(property)) {
+    spacialFormat(property);
   }
   if (typeof property === 'number') {
     return formatFloat(property);

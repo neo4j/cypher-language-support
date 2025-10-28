@@ -11,7 +11,10 @@ export {
   getPropertyTypeDisplayName,
 } from './data-transforms/cypher-type-names';
 export type { CypherDataTypeName } from './data-transforms/cypher-type-names';
-export { cypherDataToString } from './data-transforms/record-to-string';
+export {
+  cypherDataToString,
+  spacialFormat,
+} from './data-transforms/record-to-string';
 export type { CypherProperty } from './data-types/cypher-data-types';
 export type {
   ConnectedMetadataPoller as CypherMetadataPoller,
