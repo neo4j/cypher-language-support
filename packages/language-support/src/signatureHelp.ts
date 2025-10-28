@@ -185,7 +185,7 @@ export function signatureHelp(
   const prevCaretPosition = caretPosition - 1;
 
   if (prevCaretPosition > 0) {
-    const parserResult = parserWrapper.parse(query, { caretPosition });
+    const parserResult = parserWrapper.parse(query);
     const caret = findCaret(parserResult, prevCaretPosition);
 
     if (caret) {

@@ -31,7 +31,8 @@ export function doAutoCompletion(
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
       const completions: CompletionItem[] = autocomplete(
-        textDocument.getText(),
+        // TODO This is a temporary hack because completions are not working well
+        textDocument.getText().slice(0, offset),
         neo4j.metadata?.dbSchema ?? {},
         offset,
         completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
