@@ -10,8 +10,8 @@ import {
   NodePatternContext,
   PatternElementContext,
   QuantifierContext,
+  RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
-import { ParserRuleContext } from 'antlr4';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import { _internalFeatureFlags } from '../featureFlags';
 
@@ -52,45 +52,47 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
 function intersectChildren(
-  relsFromLabels: Map<string, Set<string>>,
+  labelToConnectedLabelsMap: Map<string, Set<string>>,
   children: LabelOrCondition[],
 ): Set<string> {
   let intersection: Set<string> = undefined;
   children.forEach((c) => {
     intersection = intersection
       ? (intersection = intersection.intersection(
-          walkLabelTree(relsFromLabels, c),
+          walkLabelTree(labelToConnectedLabelsMap, c),
         ))
-      : walkLabelTree(relsFromLabels, c);
+      : walkLabelTree(labelToConnectedLabelsMap, c);
   });
   return intersection ?? new Set();
 }
 
 function uniteChildren(
-  relsFromLabels: Map<string, Set<string>>,
+  labelToConnectedLabelsMap: Map<string, Set<string>>,
   children: LabelOrCondition[],
 ): Set<string> {
   let union: Set<string> = new Set();
   children.forEach(
-    (c) => (union = union.union(walkLabelTree(relsFromLabels, c))),
+    (c) => (union = union.union(walkLabelTree(labelToConnectedLabelsMap, c))),
   );
   return union;
 }
 
+// outgoingLabelsMap is here a map that takes a "label" = Label/ RelType
+//  and returns the "labels" of rels/nodes going out/in of the node/rel in the graph schema
 function walkLabelTree(
-  relsFromLabels: Map<string, Set<string>>,
+  labelToConnectedLabelsMap: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
 ): Set<string> {
   if (isLabelLeaf(labelTree)) {
-    return relsFromLabels.get(labelTree.value);
+    return labelToConnectedLabelsMap.get(labelTree.value);
   } else if (labelTree.andOr == 'and') {
-    return intersectChildren(relsFromLabels, labelTree.children);
+    return intersectChildren(labelToConnectedLabelsMap, labelTree.children);
   } else {
-    return uniteChildren(relsFromLabels, labelTree.children);
+    return uniteChildren(labelToConnectedLabelsMap, labelTree.children);
   }
 }
 
-function getRelsFromLabelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
+function getRelsFromNodesSet(dbSchema: DbSchema): Map<string, Set<string>> {
   if (dbSchema.graphSchema) {
     const relsFromLabelsSet: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
@@ -112,21 +114,35 @@ function getRelsFromLabelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
   return undefined;
 }
 
-export function completeRelationshipType(
+function getNodesFromRelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
+  if (dbSchema.graphSchema) {
+    const nodesFromRelsSet: Map<string, Set<string>> = new Map();
+    dbSchema.graphSchema.forEach((rel) => {
+      let currentRelEntry = nodesFromRelsSet.get(rel.relType);
+      if (!currentRelEntry) {
+        nodesFromRelsSet.set(rel.relType, new Set());
+        currentRelEntry = nodesFromRelsSet.get(rel.relType);
+      }
+      currentRelEntry.add(rel.to);
+      currentRelEntry.add(rel.from);
+    });
+    return nodesFromRelsSet;
+  }
+  return undefined;
+}
+
+export function completeNodeLabel(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
   symbolsInfo: SymbolsInfo,
 ): CompletionItem[] {
-  if (!_internalFeatureFlags.schemaBasedPatternCompletions) {
-    return allReltypeCompletions(dbSchema);
+  if (
+    !_internalFeatureFlags.schemaBasedPatternCompletions ||
+    dbSchema.graphSchema === undefined
+  ) {
+    return allLabelCompletions(dbSchema);
   }
 
-  if (dbSchema.graphSchema === undefined) {
-    return allReltypeCompletions(dbSchema);
-  }
-
-  // limitation: not checking PathPatternNonEmptyContext
-  // limitation: not handling parenthesized paths
   const callContext = findParent(
     parsingResult.stopNode.parentCtx,
     (x) => x instanceof PatternElementContext,
@@ -134,12 +150,78 @@ export function completeRelationshipType(
 
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
-      if (child instanceof ParserRuleContext) {
+      if (child instanceof RelationshipPatternContext) {
         if (child.exception === null) {
           return true;
         }
       }
     });
+
+    // limitation: bailing out on quantifiers
+    if (lastValidElement instanceof QuantifierContext) {
+      return allLabelCompletions(dbSchema);
+    }
+
+    if (lastValidElement instanceof RelationshipPatternContext) {
+      // limitation: not checking anonymous variables
+      const variable = lastValidElement.variable();
+      if (variable === null) {
+        return allLabelCompletions(dbSchema);
+      }
+
+      const foundVariable = symbolsInfo?.symbolTables
+        ?.flat()
+        .find((entry) => entry.references.includes(variable.start.start));
+
+      if (
+        foundVariable === undefined ||
+        ('children' in foundVariable.labels &&
+          foundVariable.labels.children.length == 0)
+      ) {
+        return allLabelCompletions(dbSchema);
+      }
+
+      // limitation: not direction-aware (ignores <- vs ->)
+      // limitation: not checking relationship variable reuse
+      const nodesFromRelsSet = getNodesFromRelsSet(dbSchema);
+      const rels = walkLabelTree(nodesFromRelsSet, foundVariable.labels);
+
+      return labelsToCompletions(Array.from(rels));
+    }
+  }
+
+  return allLabelCompletions(dbSchema);
+}
+
+export function completeRelationshipType(
+  dbSchema: DbSchema,
+  parsingResult: ParsedStatement,
+  symbolsInfo: SymbolsInfo,
+): CompletionItem[] {
+  if (
+    !_internalFeatureFlags.schemaBasedPatternCompletions ||
+    dbSchema.graphSchema === undefined
+  ) {
+    return allReltypeCompletions(dbSchema);
+  }
+
+  // limitation: not checking PathPatternNonEmptyContext
+  // limitation: not handling parenthesized paths
+  const patternContext = findParent(
+    parsingResult.stopNode.parentCtx,
+    (x) => x instanceof PatternElementContext,
+  );
+
+  if (patternContext instanceof PatternElementContext) {
+    const lastValidElement = patternContext.children
+      .toReversed()
+      .find((child) => {
+        if (child instanceof NodePatternContext) {
+          if (child.exception === null) {
+            return true;
+          }
+        }
+      });
 
     // limitation: bailing out on quantifiers
     if (lastValidElement instanceof QuantifierContext) {
@@ -167,7 +249,7 @@ export function completeRelationshipType(
 
       // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking relationship variable reuse
-      const relsFromLabelsSet = getRelsFromLabelsSet(dbSchema);
+      const relsFromLabelsSet = getRelsFromNodesSet(dbSchema);
       const rels = walkLabelTree(relsFromLabelsSet, foundVariable.labels);
 
       return reltypesToCompletions(Array.from(rels));
