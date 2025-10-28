@@ -335,7 +335,7 @@ export function lintCypherQuery(
   consoleCommandsEnabled?: boolean,
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
-    const cachedParse = parserWrapper.parse(query, { consoleCommandsEnabled });
+    const cachedParse = parserWrapper.parse(query, consoleCommandsEnabled);
     const statements = cachedParse.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
