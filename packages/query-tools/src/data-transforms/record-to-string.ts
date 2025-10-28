@@ -12,9 +12,11 @@ import {
 } from '../types/cypher-data-types';
 import { formatFloat } from './format-float';
 
-const spacialFormat = (p: Point): string => {
-  const zString = p.z !== undefined ? `, z:${p.z}` : '';
-  return `point({srid:${p.srid.toString()}, x:${p.x}, y:${p.y}${zString}})`;
+export const spacialFormat = (p: Point): string => {
+  const zString = p.z !== undefined ? `, z:${formatFloat(p.z)}` : '';
+  return `point({srid:${p.srid.toString()}, x:${formatFloat(
+    p.x,
+  )}, y:${formatFloat(p.y)}${zString}})`;
 };
 
 export function propertyToString(
@@ -29,14 +31,16 @@ export function propertyToString(
   if (property === null) {
     return 'null';
   }
-  if (typeof property === 'boolean') {
+  if (
+    typeof property === 'boolean' ||
+    isInt(property) ||
+    typeof property === 'bigint' ||
+    isCypherTemporalType(property)
+  ) {
     return property.toString();
   }
-  if (isInt(property)) {
-    return property.toString();
-  }
-  if (typeof property === 'bigint') {
-    return property.toString();
+  if (isPoint(property)) {
+    spacialFormat(property);
   }
   if (typeof property === 'number') {
     return formatFloat(property);
@@ -51,14 +55,6 @@ export function propertyToString(
 
   if (isInt8Array(property)) {
     return 'ByteArray';
-  }
-
-  if (isCypherTemporalType(property)) {
-    return property.toString();
-  }
-
-  if (isPoint(property)) {
-    return spacialFormat(property);
   }
 
   // This case shouldn't be used, but added as a fallback
