@@ -150,11 +150,7 @@ export function completeNodeLabel(
 
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
-      if (
-        child instanceof RelationshipPatternContext &&
-        child.stop.stop <= parsingResult.stopNode.stop.stop
-      ) {
-        //For some reason this null check doesnt seem to work the same on nodes -> old check gets current broken node as "lastValid"
+      if (child instanceof RelationshipPatternContext) {
         if (child.exception === null) {
           return true;
         }
@@ -220,10 +216,7 @@ export function completeRelationshipType(
     const lastValidElement = patternContext.children
       .toReversed()
       .find((child) => {
-        if (
-          child instanceof NodePatternContext &&
-          child.stop.stop <= parsingResult.stopNode.stop.stop
-        ) {
+        if (child instanceof NodePatternContext) {
           if (child.exception === null) {
             return true;
           }
