@@ -64,6 +64,45 @@ describe('completeRelationshipType', () => {
     });
   });
 
+  test('Simple node completion pattern', () => {
+    const query = 'MATCH (t:Trainer)-[r:CATCHES]->(:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        //Limitation: does not handle direction
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Simple node completion pattern with WHERE', () => {
+    const query = 'MATCH (n)-[r]->(m) WHERE r:IS_IN MATCH (n)-[r]->(:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+        //Limitation: does not handle direction
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test('Simple pattern 1', () => {
     const query = 'MATCH (t:Trainer)-[r:';
 
@@ -183,6 +222,29 @@ WHERE EXISTS {
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Node completion works in pattern expression ', () => {
+    const query = `MATCH (p:Pokemon)-[r:KNOWS]->(m)
+WHERE EXISTS {
+  (p)-[r]->(:`;
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        //Limitation: does not handle direction
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -315,7 +377,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles AND logic with self-referencing ', () => {
+  test('Handles AND logic with self-referencing', () => {
     const query = 'MATCH (x) WHERE x:Pokemon OR x:Type MATCH (x)-[:';
     testCompletions({
       query,
@@ -450,26 +512,6 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not handle mid query cursor', () => {
-    const beforeCursor = 'MATCH (p:Pokemon)-[r:';
-    const query = beforeCursor + ']-(t:Trainer)--(u:UnrelatedLabel)';
-
-    testCompletions({
-      query,
-      dbSchema,
-      computeSymbolsInfo: true,
-      offset: beforeCursor.length,
-      expected: [
-        // always takes the latest finished node, rather than the correct one
-        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
-        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-      ],
-    });
-  });
-
   test('Limitation: Does not handle direction-aware completions ', () => {
     const beforeCursor = 'MATCH (p:Pokemon)-[r:';
     const query = beforeCursor + ']->(t:Trainer)';
@@ -483,10 +525,10 @@ RETURN [(p)-[:`;
         // all should be excluded as there is no relationship from pokemon to trainer
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
@@ -512,27 +554,52 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles cursor position', () => {
-    const query = 'MATCH (t1:Trainer)-[r1:CATCHES]-(p1:Pokemon)-[r2:';
+  test('Handles cursor position for rel completion', () => {
+    const beforeCursor = 'MATCH (t1:Trainer)-[r1:';
+    const query = beforeCursor + 'CATCHES]-(p1:Pokemon)-[r2:';
 
     testCompletions({
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      offset: 'MATCH (t1:Trainer)-[r1:'.length,
+      offset: beforeCursor.length,
       expected: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        //Limitation: Only take preceding node into account
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
 
-        // there's no outoing knows from trainer
-        // { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        // { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        // there's no in/outoing knows from trainer
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
 
         // there's no BATTLE between trainer and pokemon
         // { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles cursor position for node completion', () => {
+    const beforeCursor = 'MATCH (t1:Trainer)-[r1:CATCHES]-(p1:';
+    const query = beforeCursor + 'Pokemon)-[r2:IS_IN]->(:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      offset: beforeCursor.length,
+      expected: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        //limitation: direction
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });

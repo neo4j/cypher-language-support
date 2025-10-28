@@ -12,7 +12,6 @@ import {
   QuantifierContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
-import { ParserRuleContext } from 'antlr4';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import { _internalFeatureFlags } from '../featureFlags';
 
@@ -151,7 +150,10 @@ export function completeNodeLabel(
 
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
-      if (child instanceof RelationshipPatternContext) {
+      if (
+        child instanceof RelationshipPatternContext &&
+        child.stop.stop <= parsingResult.lastRule.stop.stop
+      ) {
         //For some reason this null check doesnt seem to work the same on nodes -> old check gets current broken node as "lastValid"
         if (child.exception === null) {
           return true;
@@ -218,7 +220,10 @@ export function completeRelationshipType(
     const lastValidElement = patternContext.children
       .toReversed()
       .find((child) => {
-        if (child instanceof ParserRuleContext) {
+        if (
+          child instanceof NodePatternContext &&
+          child.stop.stop <= parsingResult.lastRule.stop.stop
+        ) {
           if (child.exception === null) {
             return true;
           }
