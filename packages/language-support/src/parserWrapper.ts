@@ -27,6 +27,7 @@ import {
 } from './generated-parser/CypherCmdParser';
 import {
   findParent,
+  findStopNode,
   inNodeLabel,
   inRelationshipType,
   isDefined,
@@ -44,7 +45,6 @@ import {
 } from './types';
 
 export interface ParsedStatement {
-  lastRule?: ParserRuleContext;
   command: ParsedCommand;
   parser: CypherParser;
   tokens: Token[];
@@ -53,6 +53,7 @@ export interface ParsedStatement {
   ctx: StatementsOrCommandsContext;
   syntaxErrors: SyntaxDiagnostic[];
   cypherVersionError: SyntaxDiagnostic | undefined;
+  stopNode: ParserRuleContext;
   collectedLabelOrRelTypes: LabelOrRelType[];
   collectedVariables: string[];
   collectedParameters: ParsedParameter[];
@@ -184,12 +185,8 @@ export function parse(query: string): StatementOrCommandContext[] {
 
 export function createParsingResult(
   query: string,
-  options: {
-    consoleCommandsEnabled: boolean;
-    caretPosition?: number;
-  },
+  consoleCommandsEnabled: boolean,
 ): ParsingResult {
-  const { consoleCommandsEnabled, caretPosition } = options;
   const parsingScaffolding = createParsingScaffolding(query);
 
   const results: ParsedStatement[] =
@@ -204,14 +201,12 @@ export function createParsingResult(
         tokens,
         consoleCommandsEnabled,
       );
-      const lastRuleListener = new LastRuleListener(caretPosition);
       parser._parseListeners = [
         labelsCollector,
         parameterFinder,
         variableFinder,
         methodsFinder,
         cypherVersionCollector,
-        lastRuleListener,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -228,13 +223,13 @@ export function createParsingResult(
       }
 
       return {
-        lastRule: lastRuleListener.lastRule,
         command: collectedCommand,
         parser: parser,
         tokens: tokens,
         syntaxErrors: syntaxErrors,
         cypherVersionError: cypherVersionCollector.invalidVersionError,
         ctx: ctx,
+        stopNode: findStopNode(ctx),
         collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
         collectedVariables: variableFinder.variables,
         collectedParameters: parameterFinder.parameters,
@@ -279,7 +274,7 @@ export function parseParameters(
   query: string,
   consoleCommandsEnabled: boolean,
 ): string[] {
-  const parsingResult = createParsingResult(query, { consoleCommandsEnabled });
+  const parsingResult = createParsingResult(query, consoleCommandsEnabled);
   const parameters = parsingResult.statementsParsing.flatMap((statement) =>
     statement.collectedParameters.map((param) => getClearParamName(param.name)),
   );
@@ -370,43 +365,6 @@ class ParameterCollector implements ParseTreeListener {
           },
         });
       }
-    }
-  }
-}
-
-class LastRuleListener implements ParseTreeListener {
-  caret: number | undefined;
-  lastRule: ParserRuleContext;
-
-  constructor(caret: number | undefined) {
-    this.caret = caret;
-  }
-
-  visitTerminal(): void {
-    /* no-op */
-  }
-  visitErrorNode(): void {
-    /* no-op */
-  }
-  enterEveryRule(): void {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: ParserRuleContext): void {
-    const ctxStart = ctx?.start?.start;
-    const ctxStop = ctx?.stop?.stop;
-    const lastRuleInsideThis =
-      this.lastRule && ctxStart ? this.lastRule.start.start > ctxStart : false;
-    // Looks like we can get ctxStart < ctxStop when reaching the part of a query that can't be parsed properly
-    if (
-      this.caret &&
-      ctxStart &&
-      ctxStop &&
-      ctxStop >= ctxStart &&
-      ctxStop <= this.caret &&
-      !lastRuleInsideThis
-    ) {
-      this.lastRule = ctx;
     }
   }
 }
@@ -842,25 +800,17 @@ class ParserWrapper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 
-  parse(
-    query: string,
-    options?: {
-      consoleCommandsEnabled?: boolean;
-      caretPosition?: number;
-    },
-  ): ParsingResult {
+  parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
     ) {
       return this.parsingResult;
     } else {
-      const parsingResult = createParsingResult(query, {
-        ...options,
-        consoleCommandsEnabled:
-          options?.consoleCommandsEnabled ??
-          _internalFeatureFlags.consoleCommands,
-      });
+      const parsingResult = createParsingResult(
+        query,
+        consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
+      );
 
       return parsingResult;
     }
