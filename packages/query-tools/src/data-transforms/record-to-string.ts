@@ -13,16 +13,10 @@ import {
 import { formatFloat } from './format-float';
 
 export const spacialFormat = (p: Point): string => {
-  const xString = floatifyIfInt(p.x);
-  const yString = floatifyIfInt(p.y);
-  const zString = p.z !== undefined ? `, z:${floatifyIfInt(p.z)}` : '';
-  return `point({srid:${p.srid.toString()}, x:${xString}, y:${yString}${zString}})`;
-};
-
-const floatifyIfInt = (x: number) => {
-  const xFixed1 = x.toFixed(1);
-  const xString = x.toString();
-  return Number(xString) === Number(xFixed1) ? xFixed1 : xString;
+  const zString = p.z !== undefined ? `, z:${formatFloat(p.z)}` : '';
+  return `point({srid:${p.srid.toString()}, x:${formatFloat(
+    p.x,
+  )}, y:${formatFloat(p.y)}${zString}})`;
 };
 
 export function propertyToString(
