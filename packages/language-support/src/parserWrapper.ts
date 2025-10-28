@@ -184,9 +184,12 @@ export function parse(query: string): StatementOrCommandContext[] {
 
 export function createParsingResult(
   query: string,
-  consoleCommandsEnabled: boolean,
-  caretPosition?: number,
+  options: {
+    consoleCommandsEnabled: boolean;
+    caretPosition?: number;
+  },
 ): ParsingResult {
+  const { consoleCommandsEnabled, caretPosition } = options;
   const parsingScaffolding = createParsingScaffolding(query);
 
   const results: ParsedStatement[] =
@@ -276,7 +279,7 @@ export function parseParameters(
   query: string,
   consoleCommandsEnabled: boolean,
 ): string[] {
-  const parsingResult = createParsingResult(query, consoleCommandsEnabled);
+  const parsingResult = createParsingResult(query, { consoleCommandsEnabled });
   const parameters = parsingResult.statementsParsing.flatMap((statement) =>
     statement.collectedParameters.map((param) => getClearParamName(param.name)),
   );
@@ -841,8 +844,10 @@ class ParserWrapper {
 
   parse(
     query: string,
-    consoleCommandsEnabled?: boolean,
-    caretPosition?: number,
+    options?: {
+      consoleCommandsEnabled?: boolean;
+      caretPosition?: number;
+    },
   ): ParsingResult {
     if (
       this.parsingResult !== undefined &&
@@ -850,11 +855,12 @@ class ParserWrapper {
     ) {
       return this.parsingResult;
     } else {
-      const parsingResult = createParsingResult(
-        query,
-        consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
-        caretPosition,
-      );
+      const parsingResult = createParsingResult(query, {
+        ...options,
+        consoleCommandsEnabled:
+          options?.consoleCommandsEnabled ??
+          _internalFeatureFlags.consoleCommands,
+      });
 
       return parsingResult;
     }
