@@ -1,20 +1,24 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
-import antlrDefaultExport, {
+//TODO check how we can import this from -> antlrDefaultExport,
+
+import {
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
   Token,
-} from 'antlr4';
+} from 'antlr4ng';
 import { DbSchema } from './dbSchema';
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer';
+import { CypherCmdParser as CypherParser,
   NodePatternContext,
   RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
 import { CypherVersion } from './types';
 
+
+const x = Token.EOF;
 /* In antlr we have 
 
         ParseTree
@@ -28,18 +32,18 @@ Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
 This type fixes that because it's what we need to traverse the tree most
 of the time
 */
-export type EnrichedParseTree = ParseTree & {
-  parentCtx: ParserRuleContext | undefined;
-};
+// export type EnrichedParseTree = ParseTree & {
+//   parentCtx: ParserRuleContext | undefined;
+// };
 
 export function findParent(
-  leaf: EnrichedParseTree | undefined,
-  condition: (node: EnrichedParseTree) => boolean,
-): EnrichedParseTree {
-  let current: EnrichedParseTree | undefined = leaf;
-
+  leaf: ParseTree | undefined,
+  condition: (node: ParseTree) => boolean,
+): ParseTree {
+  let current: ParseTree | undefined = leaf;
+  
   while (current && !condition(current)) {
-    current = current.parentCtx;
+    current = current.parent;
   }
 
   return current;
@@ -61,7 +65,7 @@ type AntlrDefaultExport = {
     };
   };
 };
-export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
+// export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
 export function inNodeLabel(lastNode: ParserRuleContext) {
   const nodePattern = findParent(
@@ -118,29 +122,32 @@ export function findCaret(
 export function splitIntoStatements(
   tokenStream: CommonTokenStream,
   lexer: CypherLexer,
-): CommonTokenStream[] {
+): Token[][] {
   tokenStream.fill();
-  const tokens = tokenStream.tokens;
-
+  const tokens = tokenStream.getTokens();
+  
   let i = 0;
-  const result: CommonTokenStream[] = [];
+  const result: Token[][] = [];
   let chunk: Token[] = [];
   let offset = 0;
 
   while (i < tokens.length) {
-    const current = tokens[i].clone();
+    const current = tokens[i]//.clone();
     current.tokenIndex -= offset;
 
     chunk.push(current);
 
     if (
       current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
+      current.type === CypherLexer.cEOF
     ) {
+      //TODO check if this works
       // This does not relex since we are not calling fill on the token stream
-      const tokenStream = new CommonTokenStream(lexer);
-      tokenStream.tokens = chunk;
-      result.push(tokenStream);
+      //const tokenStream = new CommonTokenStream(chunk)// lexer);
+      //tokenStream........
+      //tokenStream.tokens = chunk;
+      result.push(chunk);
+      // const newStream = new CommonTokenStream()
       offset = i + 1;
       chunk = [];
     }

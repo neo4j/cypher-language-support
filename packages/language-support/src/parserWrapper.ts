@@ -1,19 +1,19 @@
-import type { ParserRuleContext, Token } from 'antlr4';
+import { ParserRuleContext, Token } from 'antlr4ng';
 import {
   ParseTreeWalker,
-  CharStreams,
+  CharStream,
   CommonTokenStream,
   ParseTreeListener,
-} from 'antlr4';
+} from 'antlr4ng';
 
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { _internalFeatureFlags } from './featureFlags';
 import {
   ClauseContext,
   CypherVersionContext,
-  default as CypherParser,
+  CypherCmdParser as CypherParser,
   FunctionNameContext,
   LabelNameContext,
   LabelOrRelTypeContext,
@@ -127,15 +127,16 @@ export type ParsedFunction = HasPosition & {
 export type ParsedProcedure = ParsedFunction;
 
 export function createParsingScaffolding(query: string): ParsingScaffolding {
-  const inputStream = CharStreams.fromString(query);
+  const inputStream = CharStream.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
   const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
 
   const statementsScaffolding: StatementParsingScaffolding[] =
     stmTokenStreams.map((t) => {
-      const tokens = [...t.tokens];
-      const parser = new CypherParser(t);
+      const tokens = [...t];
+      //TODO check if this works (now passing full stream)
+      const parser = new CypherParser(tokenStream);
       parser.removeErrorListeners();
 
       return {
@@ -155,12 +156,21 @@ export function parseStatementsStrs(query: string): string[] {
   const result: string[] = [];
 
   for (const statement of statements) {
-    const tokenStream = statement.parser?.getTokenStream() ?? [];
-    const tokens = (tokenStream as CommonTokenStream).tokens;
-    const statementStr = tokens
-      .filter((token) => token.type !== CypherLexer.EOF)
-      .map((token) => token.text)
-      .join('');
+    const fullStatement = statement.getText();
+    //Suppose this is what we were doing before... but constant ";" is not nice
+    let statementStr: string;
+    if(fullStatement.at(-1) == ";") {
+      statementStr = fullStatement.substring(0, fullStatement.length-1)
+    } else {
+      statementStr = fullStatement;
+    }
+    
+    // const tokenStream = statement.parser?.getTokenStream() ?? [];
+    // const tokens = (tokenStream as CommonTokenStream).getTokens();
+    // const statementStr = tokens
+    //   .filter((token) => token.type !== CypherLexer.EOF)
+    //   .map((token) => token.text)
+    //   .join('');
 
     // Do not return empty statements
     if (statementStr.trimLeft().length != 0) {
@@ -205,7 +215,9 @@ export function createParsingResult(
         consoleCommandsEnabled,
       );
       const lastRuleListener = new LastRuleListener(caretPosition);
-      parser._parseListeners = [
+      
+      
+      const listeners = [
         labelsCollector,
         parameterFinder,
         variableFinder,
@@ -213,6 +225,7 @@ export function createParsingResult(
         cypherVersionCollector,
         lastRuleListener,
       ];
+      listeners.forEach(x => parser.addParseListener(x))
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -287,7 +300,7 @@ export function parseParameters(
 }
 
 // This listener collects all labels and relationship types
-class LabelAndRelTypesCollector extends ParseTreeListener {
+class LabelAndRelTypesCollector implements ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
   enterEveryRule() {
@@ -306,7 +319,7 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // like in the case MATCH (n:) RETURN n
       // RETURN would be incorrectly idenfified as the label
       // If this is the case, the context containing the label would have an error node
-      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+      if (ctx.parent && !hasErrorNodesUnder(ctx.parent)) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
@@ -324,8 +337,8 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // Read comment for the label name case
       if (
         isDefined(symbolicName) &&
-        ctx.parentCtx &&
-        !hasErrorNodesUnder(ctx.parentCtx)
+        ctx.parent &&
+        !hasErrorNodesUnder(ctx.parent)
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
@@ -434,10 +447,10 @@ class VariableCollector implements ParseTreeListener {
       // We check if the variable is in the end of the statement
       const nextTokenIndex = ctx.stop?.tokenIndex;
 
-      const nextTokenIsEOF =
-        nextTokenIndex !== undefined &&
-        ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
-          CypherParser.EOF;
+      const nextTokenIsEOF = false
+        // nextTokenIndex !== undefined &&
+        // ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
+        //   CypherParser.cEOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
         // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
@@ -460,7 +473,7 @@ class VariableCollector implements ParseTreeListener {
 export function getMethodName(
   ctx: ProcedureNameContext | FunctionNameContext,
 ): string {
-  const namespaces = ctx.namespace().symbolicNameString_list();
+  const namespaces = ctx.namespace().symbolicNameString();
   const methodName = ctx.symbolicNameString();
 
   const normalizedName = [...namespaces, methodName]
@@ -485,13 +498,12 @@ function getNamespaceString(ctx: SymbolicNameStringContext): string {
 }
 
 // This listener collects all functions and procedures
-class MethodsCollector extends ParseTreeListener {
+class MethodsCollector implements ParseTreeListener {
   public procedures: ParsedProcedure[] = [];
   public functions: ParsedFunction[] = [];
   private tokens: Token[];
 
   constructor(tokens: Token[]) {
-    super();
     this.tokens = tokens;
   }
 
@@ -542,13 +554,9 @@ class MethodsCollector extends ParseTreeListener {
   }
 }
 
-class CypherVersionCollector extends ParseTreeListener {
+class CypherVersionCollector implements ParseTreeListener {
   public cypherVersion: CypherVersion;
   public invalidVersionError: SyntaxDiagnostic;
-
-  constructor() {
-    super();
-  }
 
   enterEveryRule() {
     /* no-op */
@@ -617,7 +625,7 @@ function parseToCommand(
   tokens: Token[],
   isEmptyStatement: boolean,
 ): ParsedCommand {
-  const stmt = stmts.statementOrCommand_list().at(0);
+  const stmt = stmts.statementOrCommand().at(0);
 
   if (stmt) {
     const start = stmts.start;
@@ -626,13 +634,13 @@ function parseToCommand(
     if (stop && stop.type === CypherLexer.SEMICOLON) {
       stop = tokens[stop.tokenIndex - 1];
     }
-    const inputstream = start.getInputStream();
+    const inputstream = start.inputStream;
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       // stripping the preparser part of it
       const stmtStart = cypherStmt.start;
-      const statement = inputstream.getText(stmtStart.start, stop.stop);
+      const statement = inputstream.getTextFromRange(stmtStart.start, stop.stop);
 
       return { type: 'cypher', statement, start: stmtStart, stop: stop };
     }
@@ -676,10 +684,10 @@ function parseToCommand(
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            ?.propertyKeyName_list()
+            ?.propertyKeyName()
             .map((name) => name.getText());
           const expressions = cypherMap
-            ?.expression_list()
+            ?.expression()
             .map((expr) => expr.getText());
 
           if (names && expressions && names.length === expressions.length) {
@@ -804,7 +812,7 @@ function parseToCommand(
       return { type: 'parse-error', start, stop };
     }
     const stopToken = stop ?? tokens.at(-1);
-    const statement = inputstream.getText(start.start, stopToken.stop);
+    const statement = inputstream.getTextFromRange(start.start, stopToken.stop);
     return { type: 'cypher', statement, start: start, stop: stopToken };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };

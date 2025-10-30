@@ -1,6 +1,6 @@
-import { TerminalNode } from 'antlr4';
+import { TerminalNode } from 'antlr4ng';
 import { StatementsOrCommandsContext } from '../generated-parser/CypherCmdParser';
-import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
+import {CypherCmdParserVisitor} from '../generated-parser/CypherCmdParserVisitor';
 import { getParseTreeAndTokens } from './formattingHelpers';
 
 class StandardizingVisitor extends CypherCmdParserVisitor<void> {

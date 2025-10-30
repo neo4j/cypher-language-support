@@ -11,7 +11,7 @@ import {
   PatternElementContext,
   QuantifierContext,
 } from '../generated-parser/CypherCmdParser';
-import { ParserRuleContext } from 'antlr4';
+import { ParserRuleContext } from 'antlr4ng';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import { _internalFeatureFlags } from '../featureFlags';
 
@@ -128,7 +128,7 @@ export function completeRelationshipType(
   // limitation: not checking PathPatternNonEmptyContext
   // limitation: not handling parenthesized paths
   const patternContext = findParent(
-    parsingResult.lastRule.parentCtx,
+    parsingResult.lastRule.parent,
     (x) => x instanceof PatternElementContext,
   );
 
@@ -137,9 +137,7 @@ export function completeRelationshipType(
       .toReversed()
       .find((child) => {
         if (child instanceof ParserRuleContext) {
-          if (child.exception === null) {
-            return true;
-          }
+          return true; 
         }
       });
 

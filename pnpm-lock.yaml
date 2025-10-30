@@ -111,9 +111,12 @@ importers:
 
   packages/language-support:
     dependencies:
-      antlr4:
-        specifier: 4.13.2
-        version: 4.13.2
+      antlr4-c3:
+        specifier: 3.4.4
+        version: 3.4.4
+      antlr4ng:
+        specifier: 3.0.16
+        version: 3.0.16
       fastest-levenshtein:
         specifier: ^1.0.16
         version: 1.0.16

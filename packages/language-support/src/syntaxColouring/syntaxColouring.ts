@@ -1,4 +1,4 @@
-import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
+import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
 
 import {
   AccessModeArgsContext,
@@ -35,8 +35,8 @@ import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParserListener from '../generated-parser/CypherCmdParserListener';
+import {CypherCmdLexer as CypherLexer} from '../generated-parser/CypherCmdLexer';
+import {CypherCmdParserListener as CypherParserListener} from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
@@ -169,7 +169,7 @@ class SyntaxHighlighter extends CypherParserListener {
   ) {
     const namespace = ctx.namespace();
 
-    namespace.symbolicNameString_list().forEach((namespaceName) => {
+    namespace.symbolicNameString().forEach((namespaceName) => {
       this.addToken(namespaceName.start, tokenType, namespaceName.getText());
     });
 
@@ -338,7 +338,7 @@ function colourLexerTokens(tokens: Token[]) {
 
       if (!tokenFinished) {
         tokens.slice(i + 1, tokens.length).forEach((nextToken) => {
-          if (nextToken.type !== CypherLexer.EOF) {
+          if (nextToken.type !== CypherLexer.cEOF) {
             tokenStr += nextToken.text;
           }
         });

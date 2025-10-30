@@ -1,4 +1,4 @@
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import {CypherCmdLexer as CypherLexer} from './generated-parser/CypherCmdLexer';
 
 export enum CypherTokenType {
   comment = 'comment',
@@ -84,7 +84,7 @@ export const lexerStringLiteral = [
 
 export const lexerGarbage = [
   CypherLexer.ErrorChar,
-  CypherLexer.EOF,
+  CypherLexer.cEOF,
   CypherLexer.SPACE,
 ];
 

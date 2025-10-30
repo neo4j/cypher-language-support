@@ -4,8 +4,9 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
+import {
+  CypherCmdParser as CypherParser,
   CallClauseContext,
   Expression2Context,
 } from '../generated-parser/CypherCmdParser';
@@ -24,12 +25,13 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
-import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import type { ICandidateRule } from 'antlr4-c3';
 import {
   CandidatesCollection,
   CodeCompletionCore,
-  Token,
-} from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+} from 'antlr4-c3';
+import { Token } from 'antlr4ng';
+
 import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
@@ -80,7 +82,7 @@ const procedureReturnCompletions = (
 };
 
 const functionNameCompletions = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
   cypherVersion: CypherVersion,
@@ -93,7 +95,7 @@ const functionNameCompletions = (
   );
 
 const procedureNameCompletions = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
   cypherVersion: CypherVersion,
@@ -143,7 +145,7 @@ function getMethodCompletionItem(
 }
 
 const namespacedCompletion = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   signatures: Record<string, Neo4jFunction> | Record<string, Neo4jProcedure>,
   type: 'procedure' | 'function',
@@ -246,8 +248,10 @@ function getTokenCompletions(
       const firstToken = isConsoleCommand
         ? tokenNames[tokenNumber].toLowerCase()
         : tokenNames[tokenNumber];
+        
+        
 
-      const followUpIndexes = followUpList.indexes;
+      const followUpIndexes = followUpList;
       const firstIgnoredToken = followUpIndexes.findIndex((t) =>
         ignoredTokens.has(t),
       );
@@ -269,12 +273,12 @@ function getTokenCompletions(
           ' ' +
           (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
 
-        if (followUpList.optional) {
-          return [
-            { label: firstToken, kind },
-            { label: followUp, kind },
-          ];
-        }
+        // if (followUpList.optional) {
+        //   return [
+        //     { label: firstToken, kind },
+        //     { label: followUp, kind },
+        //   ];
+        // }
 
         return [{ label: followUp, kind }];
       }
@@ -345,7 +349,7 @@ enum ExpectedParameterType {
   Any = 'ANY',
 }
 
-const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
+const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
   const parentRule = context.ruleList.at(-1);
 
   if (
@@ -421,7 +425,7 @@ function couldBeNodeOrRel(
 }
 
 function calculateNamespacePrefix(
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
 ): string | null {
   const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
@@ -429,7 +433,7 @@ function calculateNamespacePrefix(
 
   const nonSpaceTokens = ruleTokens.filter(
     (token) =>
-      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.cEOF,
   );
 
   const lastNonSpaceIsDot = nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
@@ -478,7 +482,7 @@ export function completionCoreCompletion(
   // When we have EOF with a different text in the token, it means the parser has failed to parse it.
   // We give empty completions in that case because the query is severely broken at the
   // point of completion (e.g. an unclosed string)
-  if (eof.type === CypherLexer.EOF && eof.text !== '<EOF>') {
+  if (eof.type === CypherLexer.cEOF && eof.text !== '<EOF>') {
     return [];
   }
 
@@ -563,13 +567,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
-          parsingResult.lastRule.parentCtx,
+          parsingResult.lastRule.parent,
           (x) => x instanceof CallClauseContext,
         );
         if (callContext instanceof CallClauseContext) {
           const procedureNameCtx = callContext.procedureName();
           const existingYieldItems = new Set(
-            callContext.procedureResultItem_list().map((a) => a.getText()),
+            callContext.procedureResultItem().map((a) => a.getText()),
           );
           const name = getMethodName(procedureNameCtx);
           return procedureReturnCompletions(
@@ -794,7 +798,7 @@ type CompletionHelperArgs = {
   dbSchema: DbSchema;
   previousToken?: Token;
   tokens: Token[];
-  candidateRule: CandidateRule;
+  candidateRule: ICandidateRule;
 };
 function completeAliasName({
   candidateRule,

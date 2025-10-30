@@ -1,6 +1,6 @@
-import { CharStreams, CommonTokenStream } from 'antlr4';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import { CharStream, CommonTokenStream } from 'antlr4ng';
+import { CypherCmdLexer as CypherLexer} from '../generated-parser/CypherCmdLexer';
+import { CypherCmdParser as CypherParser} from '../generated-parser/CypherCmdParser';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 
 describe('Lexer tokens', () => {
@@ -14,7 +14,7 @@ describe('Lexer tokens', () => {
       const symbolNumber = parseInt(k, 10);
 
       // There is no "-1" position in the symbolic name list so we handle EOF separately
-      if (symbolNumber === CypherParser.EOF) {
+      if (symbolNumber === CypherParser.cEOF) {
         return 'EOF';
       }
       return symbolicNames[symbolNumber];
@@ -41,13 +41,13 @@ describe('Lexer tokens', () => {
 
     keywordTokens.forEach((token) => {
       const tokenName = tokenNames[token];
-      const inputStream = CharStreams.fromString(tokenName);
+      const inputStream = CharStream.fromString(tokenName);
       const lexer = new CypherLexer(inputStream);
 
       const tokenStream = new CommonTokenStream(lexer);
       tokenStream.fill();
 
-      const tokens = tokenStream.tokens;
+      const tokens = tokenStream.getTokens();
 
       expect(tokens.length).toBe(2);
       // If the test fails, it is useful to see the token that was parsed
@@ -68,7 +68,7 @@ describe('Lexer tokens', () => {
         );
       }
       expect(tokens[0].type).toBe(token);
-      expect(tokens[1].type).toBe(CypherLexer.EOF);
+      expect(tokens[1].type).toBe(CypherLexer.cEOF);
     });
   });
 });

@@ -1,8 +1,8 @@
 import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
-import { Token } from 'antlr4';
+import { Token } from 'antlr4ng';
 
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import {CypherCmdLexer as CypherLexer} from '../generated-parser/CypherCmdLexer';
 
 import { isCommentOpener } from '../helpers';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols';

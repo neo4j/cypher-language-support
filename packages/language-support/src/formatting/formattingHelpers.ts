@@ -1,6 +1,6 @@
-import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
-import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
-import CypherCmdParser, {
+import { CharStream, CommonTokenStream, TerminalNode, Token } from 'antlr4ng';
+import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
+import { CypherCmdParser,
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
 } from '../generated-parser/CypherCmdParser';
@@ -122,7 +122,7 @@ function isSymbolicName(node: TerminalNode): boolean {
 }
 
 export function getParseTreeAndTokens(query: string) {
-  const inputStream = CharStreams.fromString(query);
+  const inputStream = CharStream.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
@@ -131,20 +131,21 @@ export function getParseTreeAndTokens(query: string) {
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
-  if (tree.exception) {
-    const idx = tree.exception.offendingToken.tokenIndex;
-    const errorTokens = tokens.tokens.slice(idx);
-    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
-      .map((t) => t.text)
-      .join('');
-    unParseable =
-      hiddenBefore +
-      errorTokens
-        .slice(0, -1)
-        .map((t) => t.text)
-        .join('');
-    firstUnParseableToken = tree.exception.offendingToken;
-  }
+  //TODO Undo
+  // if (tree.exception) {
+  //   const idx = tree.exception.offendingToken.tokenIndex;
+  //   const errorTokens = tokens.getTokens().slice(idx);
+  //   const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
+  //     .map((t) => t.text)
+  //     .join('');
+  //   unParseable =
+  //     hiddenBefore +
+  //     errorTokens
+  //       .slice(0, -1)
+  //       .map((t) => t.text)
+  //       .join('');
+  //   firstUnParseableToken = tree.exception.offendingToken;
+  // }
   return { tree, tokens, unParseable, firstUnParseableToken };
 }
 

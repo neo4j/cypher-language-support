@@ -1,13 +1,14 @@
 import {
   CommonToken,
-  ErrorListener as ANTLRErrorListener,
+  ANTLRErrorListener,
   ParserRuleContext,
   Recognizer,
   Token,
-} from 'antlr4';
+  ATNSimulator,
+} from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import {CypherCmdLexer as CypherLexer} from '../generated-parser/CypherCmdLexer';
+import {CypherCmdParser as CypherParser,
   ConsoleCommandContext,
   PreparserOptionContext,
 } from '../generated-parser/CypherCmdParser';
@@ -15,7 +16,7 @@ import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
-export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
+export class SyntaxErrorsListener implements ANTLRErrorListener {
   errors: SyntaxDiagnostic[];
   unfinishedToken: boolean;
   tokens: Token[];
@@ -28,9 +29,9 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
-  public syntaxError<T extends Token>(
+  public syntaxError<S extends Token, T extends ATNSimulator>(
     recognizer: Recognizer<T>,
-    offendingSymbol: T,
+    offendingSymbol: S,
     line: number,
     charPositionInLine: number,
   ): void {
@@ -40,8 +41,8 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     if (!this.unfinishedToken) {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
-      const parser = recognizer as CypherParser;
-      const ctx: ParserRuleContext = parser._ctx;
+      const parser = recognizer as unknown as CypherParser;
+      const ctx: ParserRuleContext = parser.context;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
@@ -105,7 +106,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
         if (errorMessage) {
           const endColumn =
-            offendingSymbol.type === CypherLexer.EOF
+            offendingSymbol.type === CypherLexer.cEOF
               ? startColumn
               : startColumn + offendingSymbol.text.length;
 

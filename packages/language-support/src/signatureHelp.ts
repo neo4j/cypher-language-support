@@ -3,16 +3,16 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { ParseTreeWalker } from 'antlr4';
-import CypherParser, {
+import { ParseTreeWalker } from 'antlr4ng';
+import {CypherCmdParser as CypherParser,
   CallClauseContext,
   ExpressionContext,
   FunctionInvocationContext,
 } from './generated-parser/CypherCmdParser';
 
-import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
+import { Token } from 'antlr4ng';
 import { DbSchema } from './dbSchema';
-import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
+import {CypherCmdParserListener} from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
 import { parserWrapper } from './parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
@@ -135,7 +135,7 @@ class SignatureHelper extends CypherCmdParserListener {
       isDefined(ctx.LPAREN())
     ) {
       const methodName = ctx.functionName().getText();
-      const previousArguments = ctx.COMMA_list().filter((arg) => {
+      const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
 
@@ -156,7 +156,7 @@ class SignatureHelper extends CypherCmdParserListener {
       isDefined(ctx.LPAREN())
     ) {
       const methodName = ctx.procedureName().getText();
-      const previousArguments = ctx.COMMA_list().filter((arg) => {
+      const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
 
