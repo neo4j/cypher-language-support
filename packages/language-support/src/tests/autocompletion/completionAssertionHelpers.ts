@@ -52,8 +52,7 @@ export function testCompletions({
   }
 
   const actualCompletionList = autocomplete(
-    // TODO This is to match slicing happening in autocompletion.ts
-    query.slice(0, offset),
+    query,
     dbSchema,
     offset,
     manualTrigger,
