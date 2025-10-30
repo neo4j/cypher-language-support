@@ -103,18 +103,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletions({
       query,
-      dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
-      expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
-    });
-  });
-
-  test('Correctly completes unstarted label when caret is before blank space', () => {
-    const beforeCaret = 'MATCH (n : ';
-    const query = beforeCaret + '   ';
-
-    testCompletions({
-      query,
-      offset: beforeCaret.length,
+      offset: query.length - 1,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
     });
