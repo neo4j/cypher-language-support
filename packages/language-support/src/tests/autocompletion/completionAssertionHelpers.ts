@@ -15,12 +15,7 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  // TODO This is to match slicing happening in autocompletion.ts
-  const actualCompletionList = autocomplete(
-    query.slice(0, offset),
-    dbSchema,
-    offset,
-  );
+  const actualCompletionList = autocomplete(query, dbSchema, offset);
   expect(actualCompletionList).toEqual(expected);
 }
 
