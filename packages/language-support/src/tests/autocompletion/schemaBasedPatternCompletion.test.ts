@@ -460,12 +460,12 @@ RETURN [(p)-[:`;
       computeSymbolsInfo: true,
       offset: beforeCursor.length,
       expected: [
-        // always takes the latest finished node, rather than the correct one
-        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        // always takes the latest finished node, rather than the correct one
+      ],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
@@ -483,10 +483,11 @@ RETURN [(p)-[:`;
         // all should be excluded as there is no relationship from pokemon to trainer
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
