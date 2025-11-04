@@ -103,6 +103,7 @@ describe('MATCH auto-completion', () => {
 
     testCompletions({
       query,
+      offset: query.length - 1,
       dbSchema: { labels: ['Cat', 'Person', 'Dog'] },
       expected: [{ label: 'Person', kind: CompletionItemKind.TypeParameter }],
     });

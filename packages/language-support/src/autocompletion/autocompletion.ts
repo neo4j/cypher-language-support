@@ -10,6 +10,8 @@ export function autocomplete(
   caretPosition: number = query.length,
   manual = false,
 ): CompletionItem[] {
+  // TODO This is a temporary hack because completions are not working well
+  query = query.slice(0, caretPosition);
   const parsingResult = parserWrapper.parse(query);
   const symbolsInfo = parserWrapper.symbolsInfo;
   /* We try to locate the statement where the caret is and the token of the caret

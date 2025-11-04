@@ -82,8 +82,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     }
 
     const options = autocomplete(
-      // TODO This is a temporary hack because completions are not working well
-      documentText.slice(0, offset),
+      documentText,
       config.schema ?? {},
       offset,
       context.explicit,
