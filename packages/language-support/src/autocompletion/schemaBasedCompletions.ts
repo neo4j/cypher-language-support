@@ -52,43 +52,41 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
 function intersectChildren(
-  labelToConnectedLabelsMap: Map<string, Set<string>>,
+  connectedLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
 ): Set<string> {
   let intersection: Set<string> = undefined;
   children.forEach((c) => {
     intersection = intersection
       ? (intersection = intersection.intersection(
-          walkLabelTree(labelToConnectedLabelsMap, c),
+          walkLabelTree(connectedLabels, c),
         ))
-      : walkLabelTree(labelToConnectedLabelsMap, c);
+      : walkLabelTree(connectedLabels, c);
   });
   return intersection ?? new Set();
 }
 
 function uniteChildren(
-  labelToConnectedLabelsMap: Map<string, Set<string>>,
+  connectedLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
 ): Set<string> {
   let union: Set<string> = new Set();
   children.forEach(
-    (c) => (union = union.union(walkLabelTree(labelToConnectedLabelsMap, c))),
+    (c) => (union = union.union(walkLabelTree(connectedLabels, c))),
   );
   return union;
 }
 
-// outgoingLabelsMap is here a map that takes a "label" = Label/ RelType
-//  and returns the "labels" of rels/nodes going out/in of the node/rel in the graph schema
 function walkLabelTree(
-  labelToConnectedLabelsMap: Map<string, Set<string>>,
+  connectedLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
 ): Set<string> {
   if (isLabelLeaf(labelTree)) {
-    return labelToConnectedLabelsMap.get(labelTree.value);
+    return connectedLabels.get(labelTree.value);
   } else if (labelTree.andOr == 'and') {
-    return intersectChildren(labelToConnectedLabelsMap, labelTree.children);
+    return intersectChildren(connectedLabels, labelTree.children);
   } else {
-    return uniteChildren(labelToConnectedLabelsMap, labelTree.children);
+    return uniteChildren(connectedLabels, labelTree.children);
   }
 }
 
@@ -118,11 +116,10 @@ function getNodesFromRelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
   if (dbSchema.graphSchema) {
     const nodesFromRelsSet: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
-      let currentRelEntry = nodesFromRelsSet.get(rel.relType);
-      if (!currentRelEntry) {
+      if (!nodesFromRelsSet.has(rel.relType)) {
         nodesFromRelsSet.set(rel.relType, new Set());
-        currentRelEntry = nodesFromRelsSet.get(rel.relType);
       }
+      const currentRelEntry = nodesFromRelsSet.get(rel.relType);
       currentRelEntry.add(rel.to);
       currentRelEntry.add(rel.from);
     });
@@ -182,7 +179,7 @@ export function completeNodeLabel(
       }
 
       // limitation: not direction-aware (ignores <- vs ->)
-      // limitation: not checking relationship variable reuse
+      // limitation: not checking node label repetition
       const nodesFromRelsSet = getNodesFromRelsSet(dbSchema);
       const rels = walkLabelTree(nodesFromRelsSet, foundVariable.labels);
 
@@ -248,7 +245,7 @@ export function completeRelationshipType(
       }
 
       // limitation: not direction-aware (ignores <- vs ->)
-      // limitation: not checking relationship variable reuse
+      // limitation: not checking relationship type repetition
       const relsFromLabelsSet = getRelsFromNodesSet(dbSchema);
       const rels = walkLabelTree(relsFromLabelsSet, foundVariable.labels);
 
