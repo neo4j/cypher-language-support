@@ -38,9 +38,6 @@ export function testCompletions({
   manualTrigger?: boolean;
   computeSymbolsInfo?: boolean;
 }) {
-  if (query.length > offset) {
-    query = query.slice(0, offset);
-  }
   if (computeSymbolsInfo) {
     const result = lintCypherQuery(query, dbSchema);
     parserWrapper.setSymbolsInfo({
