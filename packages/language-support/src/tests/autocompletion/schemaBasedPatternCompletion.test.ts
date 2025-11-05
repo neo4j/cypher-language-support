@@ -462,6 +462,45 @@ RETURN [(p)-[:`;
     });
   });
 
+  test('Handles undirected rels for node completions', () => {
+    const query = 'MATCH (p:Pokemon)-[r:KNOWS]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles undirected rels for rel completions', () => {
+    const query =
+      'MATCH (p:Pokemon)-[r:CHALLENGES]-(m:Gym)-[r2:IS_IN]->(reg:Region)-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [{ label: 'IS_IN', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test('Limitation: Does not handle union types, as they are not yet supported in symbol table ', () => {
     const query = 'MATCH (x:Pokemon|Trainer)-[r:';
 
