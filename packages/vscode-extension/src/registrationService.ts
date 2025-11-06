@@ -44,8 +44,8 @@ export function registerDisposables(): Disposable[] {
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
   const renderBottomPanel = async (statements: string[]) => {
-    await commands.executeCommand('neo4jQueryDetails.focus');
-    await commands.executeCommand('neo4jQueryVisualization.focus');
+    await commands.executeCommand('neo4jQueryDetails.open', { preserveFocus: true });
+    await commands.executeCommand('neo4jQueryVisualization.open', { preserveFocus: true });
     await queryVisualizationProvider.viewReadyPromise;
     await queryDetailsProvider.executeStatements(statements);
   };
