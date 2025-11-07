@@ -54,9 +54,8 @@ suite('Params panel testing', () => {
 
   before(async () => {
     workbench = await browser.getWorkbench();
-    await workbench.executeCommand(
-      'Query Results: Focus on Query Details View',
-    );
+    await workbench.executeCommand('neo4jQueryDetails.focus');
+    await workbench.executeCommand('neo4jQueryVisualization.focus');
   });
 
   async function escapeModal(count: number) {
