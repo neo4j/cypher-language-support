@@ -135,6 +135,22 @@ whereClause
    : WHERE expression
    ;
 
+searchClause
+   : SEARCH variable IN LPAREN indexSpecificationClause forClause limit RPAREN scoreClause?
+   ;
+
+indexSpecificationClause
+   : VECTOR INDEX symbolicNameOrStringParameter
+   ;
+
+forClause
+   : FOR expression
+   ;
+
+scoreClause
+  : SCORE AS variable
+  ;
+
 withClause
    : WITH returnBody whereClause?
    ;
@@ -176,7 +192,7 @@ deleteClause
    ;
 
 matchClause
-   : OPTIONAL? MATCH matchMode? patternList hint* whereClause?
+   : OPTIONAL? MATCH matchMode? patternList hint* (whereClause? searchClause? | searchClause whereClause)
    ;
 
 matchMode
@@ -288,7 +304,7 @@ insertPatternList
    ;
 
 pattern
-   : (variable EQ)? selector? anonymousPattern
+   : (variable EQ)? pathPatternPrefix? anonymousPattern
    ;
 
 insertPattern
@@ -315,18 +331,23 @@ patternElement
    : (nodePattern (relationshipPattern quantifier? nodePattern)* | parenthesizedPath)+
    ;
 
-selector
-   : ANY SHORTEST pathToken?                                         # AnyShortestPath
-   | ALL SHORTEST pathToken?                                         # AllShortestPath
-   | ANY nonNegativeIntegerSpecification? pathToken?                 # AnyPath
-   | ALL pathToken?                                                  # AllPath
-   | SHORTEST nonNegativeIntegerSpecification? pathToken? groupToken # ShortestGroup
-   | SHORTEST nonNegativeIntegerSpecification pathToken?             # AnyShortestPath
+pathPatternPrefix
+   : pathMode pathToken?                                                       # AllPath
+   | ANY SHORTEST pathMode? pathToken?                                         # AnyShortestPath
+   | ALL SHORTEST pathMode? pathToken?                                         # AllShortestPath
+   | ANY nonNegativeIntegerSpecification? pathMode? pathToken?                 # AnyPath
+   | ALL pathMode? pathToken?                                                  # AllPath
+   | SHORTEST nonNegativeIntegerSpecification? pathMode? pathToken? groupToken # ShortestGroup
+   | SHORTEST nonNegativeIntegerSpecification pathMode? pathToken?             # AnyShortestPath
    ;
    
 nonNegativeIntegerSpecification
    : UNSIGNED_DECIMAL_INTEGER | parameter["INTEGER"]
    ;
+
+pathMode
+    : WALK | TRAIL | ACYCLIC
+    ;
 
 groupToken
    : GROUP | GROUPS
@@ -1115,7 +1136,7 @@ createIndex
    : RANGE INDEX createIndex_
    | TEXT INDEX createIndex_
    | POINT INDEX createIndex_
-   | VECTOR INDEX createIndex_
+   | VECTOR INDEX createVectorIndex
    | LOOKUP INDEX createLookupIndex
    | FULLTEXT INDEX createFulltextIndex
    | INDEX createIndex_
@@ -1126,14 +1147,18 @@ createIndex_
    ;
 
 createFulltextIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (fulltextNodePattern | fulltextRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
+   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
    ;
 
-fulltextNodePattern
+createVectorIndex
+   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON propertyList withProperties? commandOptions?
+   ;
+
+multiLabelNodePattern
    : LPAREN variable COLON symbolicNameString (BAR symbolicNameString)* RPAREN
    ;
 
-fulltextRelPattern
+multiRelTypeRelPattern
    : LPAREN RPAREN leftArrow? arrowLine LBRACKET variable COLON symbolicNameString (BAR symbolicNameString)* RBRACKET arrowLine rightArrow? LPAREN RPAREN
    ;
 
@@ -1159,6 +1184,10 @@ propertyList
 
 enclosedPropertyList
    : variable property (COMMA variable property)*
+   ;
+
+withProperties
+   : WITH LBRACKET enclosedPropertyList RBRACKET
    ;
 
 // Graph Type Specification
@@ -1888,8 +1917,13 @@ aliasTargetName
 // Alias commands
 
 createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter remoteTargetConnectionCredentials (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
    ;
+
+remoteTargetConnectionCredentials
+    : USER commandNameExpression PASSWORD passwordExpression
+    | OIDC CREDENTIAL FORWARDING
+    ;
 
 dropAlias
    : ALIAS aliasName (IF EXISTS)? FOR DATABASE
@@ -2034,6 +2068,7 @@ unescapedSymbolicNameString_
    : IDENTIFIER
    | ACCESS
    | ACTIVE
+   | ACYCLIC
    | ADD
    | ADMIN
    | ADMINISTRATOR
@@ -2078,6 +2113,7 @@ unescapedSymbolicNameString_
    | COSINE
    | COUNT
    | CREATE
+   | CREDENTIAL
    | CSV
    | CURRENT
    | CYPHER
@@ -2131,6 +2167,7 @@ unescapedSymbolicNameString_
    | FLOAT32
    | FOREACH
    | FOR
+   | FORWARDING
    | FROM
    | FULLTEXT
    | FUNCTION
@@ -2203,6 +2240,7 @@ unescapedSymbolicNameString_
    | NULL
    | OF
    | OFFSET
+   | OIDC
    | ON
    | ONLY
    | OPTIONAL
@@ -2252,6 +2290,8 @@ unescapedSymbolicNameString_
    | ROW
    | ROWS
    | SCAN
+   | SCORE
+   | SEARCH
    | SECONDARY
    | SECONDARIES
    | SEC
@@ -2288,6 +2328,7 @@ unescapedSymbolicNameString_
    | TIMEZONE
    | TO
    | TOPOLOGY
+   | TRAIL
    | TRAILING
    | TRANSACTION
    | TRANSACTIONS
@@ -2312,6 +2353,7 @@ unescapedSymbolicNameString_
    | VECTOR_NORM
    | VERTEX
    | WAIT
+   | WALK
    | WHEN
    | WHERE
    | WITH
