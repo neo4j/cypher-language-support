@@ -44,8 +44,18 @@ export function registerDisposables(): Disposable[] {
   const queryDetailsProvider = new Neo4jQueryDetailsProvider();
   const queryVisualizationProvider = new Neo4jQueryVisualizationProvider();
   const renderBottomPanel = async (statements: string[]) => {
-    await commands.executeCommand('neo4jQueryDetails.focus');
-    await commands.executeCommand('neo4jQueryVisualization.focus');
+    try {
+      await commands.executeCommand('neo4jQueryDetails.open', {
+        preserveFocus: true,
+      });
+      await commands.executeCommand('neo4jQueryVisualization.open', {
+        preserveFocus: true,
+      });
+    } catch (e) {
+      /* no-op */
+      //If a user (or a test framework) has an old version of vscode, <webview>.open won't exist
+      //A user can still open the webview manually, so we prefer not to remove focus from the editor
+    }
     await queryVisualizationProvider.viewReadyPromise;
     await queryDetailsProvider.executeStatements(statements);
   };
