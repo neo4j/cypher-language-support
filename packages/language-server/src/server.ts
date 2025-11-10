@@ -32,6 +32,7 @@ import {
 import workerpool from 'workerpool';
 import { join } from 'path';
 import { LintWorker } from '@neo4j-cypher/lint-worker';
+import { shouldBail } from './helpers';
 
 class SymbolFetcher {
   private processing = false;
@@ -45,8 +46,15 @@ class SymbolFetcher {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
+  private lastQuery: string = '';
 
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+    const bailEarly = shouldBail(query, this.lastQuery);
+    this.lastQuery = query;
+    if (bailEarly) {
+      return;
+    }
+
     this.nextJob = { query, uri, schema };
     if (!this.processing) {
       void this.processJobQueue();
