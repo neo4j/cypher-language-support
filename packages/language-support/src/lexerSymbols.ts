@@ -145,6 +145,7 @@ export const lexerKeywords = [
   CypherLexer.COSINE,
   CypherLexer.COUNT,
   CypherLexer.CREATE,
+  CypherLexer.CREDENTIAL,
   CypherLexer.CSV,
   CypherLexer.CONCURRENT,
   CypherLexer.CURRENT,
@@ -199,6 +200,7 @@ export const lexerKeywords = [
   CypherLexer.FLOAT64,
   CypherLexer.FOR,
   CypherLexer.FOREACH,
+  CypherLexer.FORWARDING,
   CypherLexer.FROM,
   CypherLexer.FULLTEXT,
   CypherLexer.FUNCTION,
@@ -271,6 +273,7 @@ export const lexerKeywords = [
   CypherLexer.NULL,
   CypherLexer.OF,
   CypherLexer.OFFSET,
+  CypherLexer.OIDC,
   CypherLexer.ON,
   CypherLexer.ONLY,
   CypherLexer.OPTION,
@@ -320,6 +323,8 @@ export const lexerKeywords = [
   CypherLexer.ROW,
   CypherLexer.ROWS,
   CypherLexer.SCAN,
+  CypherLexer.SCORE,
+  CypherLexer.SEARCH,
   CypherLexer.SECONDARY,
   CypherLexer.SECONDARIES,
   CypherLexer.SEC,
@@ -410,6 +415,12 @@ export const lexerConsoleCmds = [
   CypherLexer.HELP,
 ];
 
+export const lexerSettingValues = [
+  CypherLexer.WALK,
+  CypherLexer.TRAIL,
+  CypherLexer.ACYCLIC,
+];
+
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -429,6 +440,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
+  ...toTokentypeObject(lexerSettingValues, CypherTokenType.settingValue),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {

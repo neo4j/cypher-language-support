@@ -107,6 +107,10 @@ ACTIVE
    : A C T I V E
    ;
 
+ACYCLIC
+   : A C Y C L I C
+   ;
+
 ADD
    : A D D
    ;
@@ -297,6 +301,10 @@ COUNT
 
 CREATE
    : C R E A T E
+   ;
+
+CREDENTIAL
+   : C R E D E N T I A L
    ;
 
 CSV
@@ -532,6 +540,10 @@ FOR
 
 FOREACH
    : F O R E A C H
+   ;
+
+FORWARDING
+   : F O R W A R D I N G
    ;
 
 FROM
@@ -868,6 +880,10 @@ OFFSET
    : O F F S E T
    ;
 
+OIDC
+    : O I D C
+    ;
+
 ON
    : O N
    ;
@@ -1096,6 +1112,14 @@ SCAN
    : S C A N
    ;
 
+SCORE
+   : S C O R E
+   ;
+
+SEARCH
+   : S E A R C H
+   ;
+
 SEC
    : S E C
    ;
@@ -1244,6 +1268,10 @@ TOPOLOGY
    : T O P O L O G Y
    ;
 
+TRAIL
+    : T R A I L
+    ;
+
 TRAILING
    : T R A I L I N G
    ;
@@ -1343,6 +1371,10 @@ VERTEX
 WAIT
    : W A I T
    ;
+
+WALK
+    : W A L K
+    ;
 
 WHEN
    : W H E N
