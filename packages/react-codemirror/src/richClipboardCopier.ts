@@ -89,11 +89,11 @@ export const richClipboardCopier = EditorView.domEventHandlers({
 
     if (!selectedText) return;
 
-    const richHtml = getHTML(view, from, to);
-
     if (event.clipboardData) {
       event.clipboardData.setData('text/plain', selectedText);
-      event.clipboardData.setData('text/html', richHtml);
+      if (selectedText.length < 1000) {
+        event.clipboardData.setData('text/html', getHTML(view, from, to));
+      }
     }
   },
 });
