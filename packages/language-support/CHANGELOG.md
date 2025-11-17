@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.25
+
+### Patch Changes
+
+- b1e686e: adding support for the help command
+
 ## 2.0.0-next.24
 
 ### Patch Changes
