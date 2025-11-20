@@ -47,6 +47,7 @@ import {
   ExtendedCaseExpressionContext,
   FilterClauseContext,
   ForeachClauseContext,
+  FulltextNodePatternContext,
   FunctionInvocationContext,
   IndexPostfixContext,
   InsertClauseContext,
@@ -67,7 +68,6 @@ import {
   MatchClauseContext,
   MergeActionContext,
   MergeClauseContext,
-  MultiLabelNodePatternContext,
   NamespaceContext,
   NodePatternContext,
   NormalizeFunctionContext,
@@ -717,8 +717,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
-    this._visit(ctx.multiLabelNodePattern());
-    this._visit(ctx.multiRelTypeRelPattern());
+    this._visit(ctx.fulltextNodePattern());
+    this._visit(ctx.fulltextRelPattern());
     this.breakLine();
     this.visit(ctx.ON());
     this.visit(ctx.EACH());
@@ -740,7 +740,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(optionsGrp);
   };
 
-  visitMultiLabelNodePattern = (ctx: MultiLabelNodePatternContext) => {
+  visitFulltextNodePattern = (ctx: FulltextNodePatternContext) => {
     this.visit(ctx.LPAREN());
     this.visit(ctx.variable());
     this.avoidSpaceBetween();
@@ -1437,7 +1437,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitPattern = (ctx: PatternContext) => {
     // Don't create an unnecessary group if we don't also have a path
-    if (!ctx.variable() && !ctx.pathPatternPrefix()) {
+    if (!ctx.variable() && !ctx.selector()) {
       this.visitChildren(ctx);
       return;
     }
@@ -1451,9 +1451,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       patternIndent = this.addIndentation();
     }
     const selectorAnonymousPatternGrp = this.startGroup();
-    if (ctx.pathPatternPrefix()) {
+    if (ctx.selector()) {
       const selectorGroup = this.startGroup();
-      this._visit(ctx.pathPatternPrefix());
+      this._visit(ctx.selector());
       this.endGroup(selectorGroup);
     }
     const anonymousPatternGrp = this.startGroup();
