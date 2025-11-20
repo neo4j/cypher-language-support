@@ -415,12 +415,6 @@ export const lexerConsoleCmds = [
   CypherLexer.HELP,
 ];
 
-export const lexerSettingValues = [
-  CypherLexer.WALK,
-  CypherLexer.TRAIL,
-  CypherLexer.ACYCLIC,
-];
-
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -440,7 +434,6 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
-  ...toTokentypeObject(lexerSettingValues, CypherTokenType.settingValue),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {
