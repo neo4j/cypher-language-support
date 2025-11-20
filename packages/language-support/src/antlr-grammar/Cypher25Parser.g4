@@ -135,6 +135,22 @@ whereClause
    : WHERE expression
    ;
 
+searchClause
+   : SEARCH variable IN LPAREN indexSpecificationClause forClause limit RPAREN scoreClause?
+   ;
+
+indexSpecificationClause
+   : VECTOR INDEX symbolicNameOrStringParameter
+   ;
+
+forClause
+   : FOR expression
+   ;
+
+scoreClause
+  : SCORE AS variable
+  ;
+
 withClause
    : WITH returnBody whereClause?
    ;
@@ -176,7 +192,7 @@ deleteClause
    ;
 
 matchClause
-   : OPTIONAL? MATCH matchMode? patternList hint* whereClause?
+   : OPTIONAL? MATCH matchMode? patternList hint* (whereClause? searchClause? | searchClause whereClause)
    ;
 
 matchMode
@@ -1888,8 +1904,13 @@ aliasTargetName
 // Alias commands
 
 createAlias
-   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter USER commandNameExpression PASSWORD passwordExpression (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
+   : ALIAS aliasName (IF NOT EXISTS)? FOR DATABASE aliasTargetName (AT stringOrParameter remoteTargetConnectionCredentials (DRIVER mapOrParameter)? defaultLanguageSpecification?)? (PROPERTIES mapOrParameter)?
    ;
+
+remoteTargetConnectionCredentials
+    : USER commandNameExpression PASSWORD passwordExpression
+    | OIDC CREDENTIAL FORWARDING
+    ;
 
 dropAlias
    : ALIAS aliasName (IF EXISTS)? FOR DATABASE
@@ -2078,6 +2099,7 @@ unescapedSymbolicNameString_
    | COSINE
    | COUNT
    | CREATE
+   | CREDENTIAL
    | CSV
    | CURRENT
    | CYPHER
@@ -2131,6 +2153,7 @@ unescapedSymbolicNameString_
    | FLOAT32
    | FOREACH
    | FOR
+   | FORWARDING
    | FROM
    | FULLTEXT
    | FUNCTION
@@ -2203,6 +2226,7 @@ unescapedSymbolicNameString_
    | NULL
    | OF
    | OFFSET
+   | OIDC
    | ON
    | ONLY
    | OPTIONAL
@@ -2252,6 +2276,8 @@ unescapedSymbolicNameString_
    | ROW
    | ROWS
    | SCAN
+   | SCORE
+   | SEARCH
    | SECONDARY
    | SECONDARIES
    | SEC
