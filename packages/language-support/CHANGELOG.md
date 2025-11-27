@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.26
+
+### Patch Changes
+
+- 8e8d7f1: Add vector support to linting
+- 808aa73: Updates grammar and semantic analysis to 2025.11
+
 ## 2.0.0-next.25
 
 ### Patch Changes

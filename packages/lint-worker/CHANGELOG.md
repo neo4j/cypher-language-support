@@ -1,5 +1,16 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.3
+
+### Patch Changes
+
+- 8e8d7f1: Add vector support to linting
+- 808aa73: Updates grammar and semantic analysis to 2025.11
+- Updated dependencies [8e8d7f1]
+- Updated dependencies [808aa73]
+  - @neo4j-cypher/language-support@2.0.0-next.26
+  - @neo4j-cypher/query-tools@2.0.0-next.26
+
 ## 1.10.1-next.2
 
 ### Patch Changes

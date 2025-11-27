@@ -16,7 +16,7 @@
     "cypher",
     "language server"
   ],
-  "version": "2.0.0-next.26",
+  "version": "2.0.0-next.27",
   "main": "./dist/server.js",
   "types": "src/server.ts",
   "repository": {
