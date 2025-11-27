@@ -1677,4 +1677,18 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('No linting on vectors in Cypher 25', () => {
+    const query = 'CYPHER 25 RETURN VECTOR([1,2,3], 3, INT64)';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([]);
+  });
 });
