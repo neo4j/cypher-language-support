@@ -45,6 +45,7 @@ export function serverVersionToLinter(serverVersion: string): {
 } {
   // Extract only the major and minor
   const versionRegex = /^\d+\.\d+/;
+  const auraRegex = /aura/;
   const linterVersion = serverVersion.match(versionRegex)?.[0];
 
   // If we have a version lower than 5.23, use that linter
@@ -52,9 +53,9 @@ export function serverVersionToLinter(serverVersion: string): {
     return { linterVersion: '5.23', notSupported: true };
     // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
     // so we have to assume we are on the most modern database from all those
-    //
-    // This case should never happen though because we should have cleaned up the
-    // version by the moment we call this method
+    // Also, aura (so far) returns 5.27-aura, so we should check for that first
+  } else if (serverVersion.match(auraRegex)) {
+    return { linterVersion: 'Default' };
   } else if (compareMajorMinorVersions(serverVersion, '5.27') === 0) {
     return { linterVersion: '2025.03' };
   } else if (linterVersion) {
