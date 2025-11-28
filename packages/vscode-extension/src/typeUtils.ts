@@ -13,6 +13,7 @@ import {
   isLocalTime,
   isPoint,
   isTime,
+  isVector,
 } from 'neo4j-driver';
 import { isDate } from 'util/types';
 import { spacialFormat } from '@neo4j-cypher/query-tools';
@@ -45,7 +46,8 @@ function valueToNativeType(value: unknown) {
     isTime(value) ||
     isLocalDateTime(value) ||
     isLocalTime(value) ||
-    isDuration(value)
+    isDuration(value) ||
+    isVector(value)
   ) {
     value = value.toString();
   } else if (isPoint(value)) {

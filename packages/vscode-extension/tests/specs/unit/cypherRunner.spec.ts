@@ -86,7 +86,7 @@ MATCH (n) RETURN n`,
     });
     await runCypher(async () => {}, getCurrentStatement());
     const arg = runMethod.firstCall.args.at(0) as string;
-    assert.equal(arg, 'MATCH (n) RETURN n');
+    assert.equal(arg, '\nMATCH (n) RETURN n');
   });
 
   test('Should find correct statements for executing single query', () => {
@@ -95,13 +95,13 @@ MATCH (n) RETURN n`,
         name: 'single statement, caret before parsed statement',
         query: '  MATCH (n) RETURN n',
         caret: 0,
-        expected: 'MATCH (n) RETURN n',
+        expected: '  MATCH (n) RETURN n',
       },
       {
         name: 'second statement',
         query: ' MATCH (n) RETURN n; \n RETURN 50',
         caret: ' MATCH (n) RETURN n; \nRETURN'.length,
-        expected: 'RETURN 50',
+        expected: ' \n RETURN 50',
       },
       {
         name: 'multi-lined statement',
@@ -110,38 +110,38 @@ MATCH (n) RETURN n`,
         caret:
           ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y  '
             .length,
-        expected: 'MATCH (x:Person)\n RETURN y',
+        expected: '  \n MATCH (x:Person)\n RETURN y  ',
       },
       {
         name: 'middle statement of three',
         query:
           ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y ',
         caret: ' MATCH (n) RETURN n; \n RETURN '.length,
-        expected: 'RETURN 50',
+        expected: ' \n RETURN 50;',
       },
       {
         name: 'After semicolon, but before first token of next statement',
         query: ' MATCH (n) RETURN n; \n RETURN 50; ',
         caret: ' MATCH (n) RETURN n; '.length,
-        expected: 'RETURN 50',
+        expected: ' \n RETURN 50;',
       },
       {
         name: 'After semicolon, on newline before first token of next statement',
         query: ' MATCH (n) RETURN n; \n\n\n RETURN 50; ',
         caret: ' MATCH (n) RETURN n; \n\n'.length,
-        expected: 'RETURN 50',
+        expected: ' \n\n\n RETURN 50;',
       },
       {
         name: 'Empty statement at the end of a query',
         query: ' MATCH (n) RETURN n; \n RETURN 50; ',
         caret: ' MATCH (n) RETURN n; \n RETURN 50; '.length,
-        expected: '',
+        expected: ' ',
       },
       {
         name: 'Empty statement between 2 queries',
         query: ' MATCH (n) RETURN n; \n ; \n RETURN 50',
         caret: ' MATCH (n) RETURN n; \n '.length,
-        expected: '',
+        expected: ' \n ;',
       },
     ];
     cases.forEach((c) => {

@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
-import { Integer, Record } from 'neo4j-driver';
+import { Integer, Record, Vector } from 'neo4j-driver';
 import * as sinon from 'sinon';
 import { window } from 'vscode';
 import { evaluateParam } from '../../../src/commandHandlers/params';
@@ -9,6 +9,13 @@ import * as parameters from '../../../src/parameterService';
 import { MockLanguageClient } from '../../mocks/mockLanguageClient';
 import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
+
+function getTestVector(): Vector<BigInt64Array> {
+  const innerValues = new BigInt64Array(3);
+  innerValues.set([1, 2, 3].map((x) => BigInt(x)));
+  const testVector = new Vector(innerValues);
+  return testVector;
+}
 
 suite('Parameter service spec', () => {
   let sandbox: sinon.SinonSandbox;
@@ -42,6 +49,17 @@ suite('Parameter service spec', () => {
       .withArgs({ query: 'RETURN 1234 AS param', parameters: {} })
       .resolves({
         records: [new Record(['param'], [Integer.fromInt(1234)])],
+        summary: undefined,
+        recordLimitHit: false,
+      });
+
+    runCypherQueryStub
+      .withArgs({
+        query: 'RETURN VECTOR([1,2,3], 3, INT64) AS param',
+        parameters: {},
+      })
+      .resolves({
+        records: [new Record(['param'], [getTestVector()])],
         summary: undefined,
         recordLimitHit: false,
       });
@@ -125,6 +143,35 @@ suite('Parameter service spec', () => {
       assert.deepStrictEqual(params, {
         a: 'charmander',
         b: Integer.fromInt(1234),
+      });
+    });
+  });
+
+  suite('Vector handling', () => {
+    test('Should correctly add serialized vector param', async () => {
+      await evaluateParam('vec', 'VECTOR([1,2,3], 3, INT64)');
+      const serializedParams = parameters.getParameters();
+      assert.deepStrictEqual(serializedParams, {
+        vec: {
+          key: 'vec',
+          serializedValue: {
+            _type: 'INT64',
+            _values: ['1', '2', '3'],
+            'transport-class': 'Vector',
+          },
+          stringValue: 'vector([1, 2, 3], 3, INTEGER NOT NULL)',
+          type: 'Vector',
+          evaluatedStatement: 'VECTOR([1,2,3], 3, INT64)',
+        },
+      });
+    });
+
+    test('Should correctly deserialize vector param', async () => {
+      await evaluateParam('vec', 'VECTOR([1,2,3], 3, INT64)');
+      const params = parameters.getDeserializedParams();
+
+      assert.deepStrictEqual(params, {
+        vec: getTestVector(),
       });
     });
   });

@@ -1,5 +1,12 @@
 import type { Node, Path, Point, Relationship } from 'neo4j-driver';
-import { isInt, isNode, isPath, isPoint, isRelationship } from 'neo4j-driver';
+import {
+  isInt,
+  isNode,
+  isPath,
+  isPoint,
+  isRelationship,
+  isVector,
+} from 'neo4j-driver';
 
 import type {
   CypherDataType,
@@ -28,20 +35,25 @@ export function propertyToString(
       .map((p) => propertyToString(p, quoteStrings))
       .join(', ')}]`;
   }
+
   if (property === null) {
     return 'null';
   }
+
   if (
     typeof property === 'boolean' ||
     isInt(property) ||
     typeof property === 'bigint' ||
-    isCypherTemporalType(property)
+    isCypherTemporalType(property) ||
+    isVector(property)
   ) {
     return property.toString();
   }
+
   if (isPoint(property)) {
-    spacialFormat(property);
+    return spacialFormat(property);
   }
+
   if (typeof property === 'number') {
     return formatFloat(property);
   }
