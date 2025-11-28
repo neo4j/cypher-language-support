@@ -234,17 +234,15 @@ export function getStatementAtCaret(
     const stopOffset = statement?.ctx?.stop?.stop;
     return stopOffset ? stopOffset >= caretOffset : false;
   });
-  //Special case for when the caret is after the final token
+  // Special case for when the caret is after the final token
   currentStatement =
     !currentStatement && statements.statementsParsing
       ? statements.statementsParsing.at(-1)
       : currentStatement;
-  const command = currentStatement.command;
-  const versionPrefix = currentStatement.cypherVersion
-    ? currentStatement.cypherVersion + ' '
-    : '';
-  const result =
-    command.type == 'cypher' ? versionPrefix + command.statement : '';
+  const result = input.slice(
+    currentStatement.tokens.at(0).start,
+    currentStatement.tokens.at(-1).stop + 1,
+  );
   return result;
 }
 
