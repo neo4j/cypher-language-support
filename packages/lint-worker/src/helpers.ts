@@ -51,13 +51,8 @@ export function serverVersionToLinter(serverVersion: string): {
   // If we have a version lower than 5.23, use that linter
   if (compareMajorMinorVersions(serverVersion, '5.23') < 0) {
     return { linterVersion: '5.23', notSupported: true };
-    // Unfortunately 2025.01, 2025.02 and 2025.03 all return 5.27
-    // so we have to assume we are on the most modern database from all those
-    // Also, aura (so far) returns 5.27-aura, so we should check for that first
   } else if (serverVersion.match(auraRegex)) {
     return { linterVersion: 'Default' };
-  } else if (compareMajorMinorVersions(serverVersion, '5.27') === 0) {
-    return { linterVersion: '2025.03' };
   } else if (linterVersion) {
     return { linterVersion: linterVersion };
   }
