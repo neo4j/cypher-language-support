@@ -240,7 +240,11 @@ export function getStatementAtCaret(
       ? statements.statementsParsing.at(-1)
       : currentStatement;
   const command = currentStatement.command;
-  const result = command.type == 'cypher' ? command.statement : '';
+  const versionPrefix = currentStatement.cypherVersion
+    ? currentStatement.cypherVersion + ' '
+    : '';
+  const result =
+    command.type == 'cypher' ? versionPrefix + command.statement : '';
   return result;
 }
 

@@ -110,6 +110,6 @@ async function updateParameters(parameters: Parameters): Promise<void> {
  *          Parameters object has been sent the language server.
  */
 export async function sendParametersToLanguageServer() {
-  const params = getDeserializedParams();
+  const params = getParameters();
   await sendNotificationToLanguageClient('updateParameters', params);
 }

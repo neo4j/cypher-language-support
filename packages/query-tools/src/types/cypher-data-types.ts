@@ -10,6 +10,7 @@ import type {
   Point,
   Relationship,
   Time,
+  Vector,
 } from 'neo4j-driver';
 import {
   isDate,
@@ -20,6 +21,7 @@ import {
   isLocalTime,
   isPoint,
   isTime,
+  isVector,
 } from 'neo4j-driver';
 type NumberOrInteger = number | Integer | bigint;
 
@@ -58,7 +60,15 @@ export type CypherBasicPropertyType =
   | bigint
   | Int8Array
   | CypherTemporalType
-  | Point;
+  | Point
+  | Vector<
+      | BigInt64Array
+      | Float32Array
+      | Float64Array
+      | Int8Array
+      | Int16Array
+      | Int32Array
+    >;
 
 export type CypherTemporalType =
   | Date<NumberOrInteger>
@@ -129,7 +139,8 @@ export const isCypherBasicPropertyType = (
     value?.constructor === Int8Array ||
     isInt(value) ||
     isCypherTemporalType(value) ||
-    isPoint(value)
+    isPoint(value) ||
+    isVector(value)
   );
 };
 
