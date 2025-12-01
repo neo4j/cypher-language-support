@@ -128,6 +128,26 @@ function getNodesFromRelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
   return undefined;
 }
 
+function findLastVariable(
+  lastValidElement: NodePatternContext | RelationshipPatternContext,
+  symbolsInfo: SymbolsInfo,
+) {
+  const variable = lastValidElement.variable();
+  const isAnonVar = variable === null;
+  const foundVariable = isAnonVar
+    ? symbolsInfo?.symbolTables
+        ?.flat()
+        .find(
+          (entry) =>
+            entry.definitionPosition >= lastValidElement.start.start &&
+            entry.definitionPosition <= lastValidElement.stop.stop,
+        )
+    : symbolsInfo?.symbolTables
+        ?.flat()
+        .find((entry) => entry.references.includes(variable.start.start));
+  return foundVariable;
+}
+
 export function completeNodeLabel(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
@@ -160,16 +180,7 @@ export function completeNodeLabel(
     }
 
     if (lastValidElement instanceof RelationshipPatternContext) {
-      // limitation: not checking anonymous variables
-      const variable = lastValidElement.variable();
-      if (variable === null) {
-        return allLabelCompletions(dbSchema);
-      }
-
-      const foundVariable = symbolsInfo?.symbolTables
-        ?.flat()
-        .find((entry) => entry.references.includes(variable.start.start));
-
+      const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
       if (
         foundVariable === undefined ||
         ('children' in foundVariable.labels &&
@@ -226,16 +237,7 @@ export function completeRelationshipType(
     }
 
     if (lastValidElement instanceof NodePatternContext) {
-      // limitation: not checking anonymous variables
-      const variable = lastValidElement.variable();
-      if (variable === null) {
-        return allReltypeCompletions(dbSchema);
-      }
-
-      const foundVariable = symbolsInfo?.symbolTables
-        ?.flat()
-        .find((entry) => entry.references.includes(variable.start.start));
-
+      const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
       if (
         foundVariable === undefined ||
         ('children' in foundVariable.labels &&
