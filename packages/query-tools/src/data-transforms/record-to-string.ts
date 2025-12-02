@@ -1,6 +1,8 @@
 import type { Node, Path, Point, Relationship } from 'neo4j-driver';
 import {
+  isDate,
   isInt,
+  isLocalDateTime,
   isNode,
   isPath,
   isPoint,
@@ -29,6 +31,7 @@ export const spacialFormat = (p: Point): string => {
 export function propertyToString(
   property: CypherProperty,
   quoteStrings = true,
+  localeFormattedDates = false,
 ): string {
   if (Array.isArray(property)) {
     return `[${property
@@ -40,11 +43,20 @@ export function propertyToString(
     return 'null';
   }
 
+  if (isCypherTemporalType(property)) {
+    if (isDate(property) && localeFormattedDates) {
+      return property.toStandardDate().toLocaleDateString();
+    }
+    if (isLocalDateTime(property) && localeFormattedDates) {
+      return property.toStandardDate().toLocaleString();
+    }
+    return property.toString();
+  }
+
   if (
     typeof property === 'boolean' ||
     isInt(property) ||
     typeof property === 'bigint' ||
-    isCypherTemporalType(property) ||
     isVector(property)
   ) {
     return property.toString();
@@ -191,13 +203,17 @@ type RecursiveStringifyOptions = {
   stringStyle?: StringStyle;
 };
 const recursiveStringify = (
-  value: CypherDataType,
+  value: CypherDataType | undefined,
   {
     indentationLevel = 0,
     quoteStrings = true,
     stringStyle = 'json',
   }: RecursiveStringifyOptions = {},
 ): string => {
+  if (value === undefined) {
+    return '';
+  }
+
   const indentation = '  '.repeat(indentationLevel);
 
   const nextIndentationLevel = indentationLevel + 1;
@@ -248,9 +264,17 @@ ${indentation}}`;
 };
 
 export const cypherDataToString = (
-  map: CypherDataType,
+  map: CypherDataType | undefined,
   stringStyle: StringStyle = 'json',
   quoteStrings = true,
 ): string => {
   return recursiveStringify(map, { quoteStrings, stringStyle });
+};
+
+export const cypherDataToCypherCSVString = (
+  map: CypherDataType | undefined,
+  stringStyle: StringStyle,
+): string => {
+  // For CSV export we don't need quoted strings
+  return recursiveStringify(map, { quoteStrings: false, stringStyle });
 };
