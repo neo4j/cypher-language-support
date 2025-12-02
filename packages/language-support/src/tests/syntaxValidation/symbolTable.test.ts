@@ -310,6 +310,21 @@ describe('Symbol table spec', () => {
     ).toEqual([
       [
         {
+          definitionPosition: 30,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 36,
+                value: 'MET',
+              },
+            ],
+          },
+          references: [30],
+          types: ['Relationship'],
+          variable: '  UNNAMED0',
+        },
+        {
           definitionPosition: 18,
           labels: {
             andOr: 'and',

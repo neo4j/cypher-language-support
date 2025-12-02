@@ -564,7 +564,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not handle anonymous variables as context - relationship completion ', () => {
+  test('Handles anonymous variables as context - relationship completion ', () => {
     const query = 'MATCH (:Trainer)-[r:';
 
     testCompletions({
@@ -575,13 +575,13 @@ RETURN [(p)-[:`;
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
 
-  test('Limitation: Does not handle anonymous variables as context - node completion', () => {
+  test('Handles anonymous variables as context - node completion', () => {
     const query = 'MATCH (:Trainer)-[:TRAINS]->(:';
 
     testCompletions({
@@ -592,13 +592,6 @@ RETURN [(p)-[:`;
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
         //Limitation - does not handle direction
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
-        //Limitation - bails on anon
-        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
-        { label: 'Region', kind: CompletionItemKind.TypeParameter },
-        { label: 'Type', kind: CompletionItemKind.TypeParameter },
-        { label: 'Move', kind: CompletionItemKind.TypeParameter },
-        { label: 'UnrelatedLabel', kind: CompletionItemKind.TypeParameter },
-        { label: 'Unconnected', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
