@@ -1,5 +1,5 @@
 import type { QueryResult, Record as Neo4jRecord } from 'neo4j-driver';
-import { int, isInt, types } from 'neo4j-driver';
+import { int, isInt, isVector, types, Vector } from 'neo4j-driver';
 
 export const RESERVED_TYPE_PROPERTY_NAME = 'transport-class';
 export const ESCAPE_CHAR = '_';
@@ -20,6 +20,7 @@ export type Neo4jType =
   | typeof types.LocalTime
   | typeof types.Time
   | typeof types.Integer
+  | typeof types.Vector
   | Record<string, unknown>
   | Neo4jType[]
   | undefined
@@ -159,6 +160,21 @@ export function serializeTypeAnnotations(
   if (isInt(item)) {
     const tmp = { ...item };
     return addAnnotationProp(tmp, 'Integer');
+  }
+  if (isVector(item)) {
+    const typedArray = item.asTypedArray();
+    const values =
+      typedArray instanceof BigInt64Array
+        ? Array.from(typedArray, (v) => v.toString())
+        : Array.from(typedArray);
+
+    return addAnnotationProp(
+      {
+        _type: item.getType(),
+        _values: values,
+      },
+      'Vector',
+    );
   }
   if (typeof item === 'object') {
     const tmp = copyAndAnnotate(item);
@@ -334,6 +350,43 @@ export function deserializeTypeAnnotations(
       );
     case 'Integer':
       return int(item);
+
+    case 'Vector': {
+      // Reconstruct the appropriate TypedArray from serialized values
+      const type = item._type;
+      const values = item._values;
+      let typedArray;
+
+      switch (type) {
+        case 'INT8':
+          typedArray = new Int8Array(values);
+          break;
+        case 'INT16':
+          typedArray = new Int16Array(values);
+          break;
+        case 'INT32':
+          typedArray = new Int32Array(values);
+          break;
+        case 'INT64':
+          // For INT64, values are stored as strings to avoid BigInt serialization issues
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+          typedArray = new BigInt64Array(values.map((v: any) => BigInt(v)));
+          break;
+        case 'FLOAT32':
+          typedArray = new Float32Array(values);
+          break;
+        case 'FLOAT64':
+          typedArray = new Float64Array(values);
+          break;
+        default:
+          // TODO test and veriy
+          // fallback to plain object handling to avoid crashing
+          // if someone were to add a new vector type, we don't want to crash the entire application
+          return item;
+      }
+
+      return new Vector(typedArray);
+    }
     case 'Object':
       return Object.keys(item).reduce<Record<string, unknown>>(
         (newObj, key) => {

@@ -1,5 +1,14 @@
 import type { Node, Path, Point, Relationship } from 'neo4j-driver';
-import { isInt, isNode, isPath, isPoint, isRelationship } from 'neo4j-driver';
+import {
+  isDate,
+  isInt,
+  isLocalDateTime,
+  isNode,
+  isPath,
+  isPoint,
+  isRelationship,
+  isVector,
+} from 'neo4j-driver';
 
 import type {
   CypherDataType,
@@ -22,26 +31,41 @@ export const spacialFormat = (p: Point): string => {
 export function propertyToString(
   property: CypherProperty,
   quoteStrings = true,
+  localeFormattedDates = false,
 ): string {
   if (Array.isArray(property)) {
     return `[${property
       .map((p) => propertyToString(p, quoteStrings))
       .join(', ')}]`;
   }
+
   if (property === null) {
     return 'null';
   }
+
+  if (isCypherTemporalType(property)) {
+    if (isDate(property) && localeFormattedDates) {
+      return property.toStandardDate().toLocaleDateString();
+    }
+    if (isLocalDateTime(property) && localeFormattedDates) {
+      return property.toStandardDate().toLocaleString();
+    }
+    return property.toString();
+  }
+
   if (
     typeof property === 'boolean' ||
     isInt(property) ||
     typeof property === 'bigint' ||
-    isCypherTemporalType(property)
+    isVector(property)
   ) {
     return property.toString();
   }
+
   if (isPoint(property)) {
-    spacialFormat(property);
+    return spacialFormat(property);
   }
+
   if (typeof property === 'number') {
     return formatFloat(property);
   }
@@ -179,13 +203,17 @@ type RecursiveStringifyOptions = {
   stringStyle?: StringStyle;
 };
 const recursiveStringify = (
-  value: CypherDataType,
+  value: CypherDataType | undefined,
   {
     indentationLevel = 0,
     quoteStrings = true,
     stringStyle = 'json',
   }: RecursiveStringifyOptions = {},
 ): string => {
+  if (value === undefined) {
+    return '';
+  }
+
   const indentation = '  '.repeat(indentationLevel);
 
   const nextIndentationLevel = indentationLevel + 1;
@@ -236,9 +264,17 @@ ${indentation}}`;
 };
 
 export const cypherDataToString = (
-  map: CypherDataType,
+  map: CypherDataType | undefined,
   stringStyle: StringStyle = 'json',
   quoteStrings = true,
 ): string => {
   return recursiveStringify(map, { quoteStrings, stringStyle });
+};
+
+export const cypherDataToCypherCSVString = (
+  map: CypherDataType | undefined,
+  stringStyle: StringStyle,
+): string => {
+  // For CSV export we don't need quoted strings
+  return recursiveStringify(map, { quoteStrings: false, stringStyle });
 };

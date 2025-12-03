@@ -7,7 +7,7 @@ import type {
   Relationship,
 } from 'neo4j-driver';
 import { isNode, isPath, isRelationship } from 'neo4j-driver';
-import { CypherProperty } from '../data-types/cypher-data-types';
+import { CypherProperty } from '../types/cypher-data-types';
 
 export type Properties = RecordShape<string, CypherProperty>;
 
