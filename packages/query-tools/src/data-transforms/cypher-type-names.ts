@@ -10,6 +10,7 @@ import {
   isPoint,
   isRelationship,
   isTime,
+  isVector,
 } from 'neo4j-driver';
 
 import type {
@@ -37,6 +38,7 @@ type CypherPropertyName =
   | 'Duration'
   | 'Point'
   | 'ByteArray'
+  | 'Vector'
   | 'Unknown';
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
@@ -113,6 +115,10 @@ export const getPropertyTypeDisplayName = (
     return 'ByteArray';
   }
 
+  if (isVector(val)) {
+    return 'Vector';
+  }
+
   return 'Unknown';
 };
 
@@ -121,7 +127,8 @@ export type CypherDataTypeName =
   | 'Node'
   | 'Relationship'
   | 'Path'
-  | 'Map';
+  | 'Map'
+  | 'Vector';
 export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
   if (Array.isArray(val)) {
     return 'List';
@@ -140,6 +147,10 @@ export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
 
   if (isPath(val)) {
     return 'Path';
+  }
+
+  if (isVector(val)) {
+    return 'Vector';
   }
 
   return 'Map';

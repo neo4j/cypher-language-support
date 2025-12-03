@@ -7,8 +7,8 @@ settings:
 catalogs:
   default:
     neo4j-driver:
-      specifier: 5.12.0
-      version: 5.12.0
+      specifier: 6.0.1
+      version: 6.0.1
 
 importers:
 
@@ -91,7 +91,7 @@ importers:
         version: 4.0.8
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.12.0
+        version: 6.0.1
       vscode-languageserver:
         specifier: ^8.1.0
         version: 8.1.0
@@ -169,7 +169,7 @@ importers:
         version: 8.17.1
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.12.0
+        version: 6.0.1
     devDependencies:
       '@testcontainers/neo4j':
         specifier: ^11.5.1
@@ -358,13 +358,13 @@ importers:
         version: 3.7.7
       '@neo4j-ndl/react':
         specifier: 3.8.13
-        version: 3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@5.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+        version: 3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       axios:
         specifier: 1.9.0
         version: 1.9.0
       neo4j-driver:
         specifier: 'catalog:'
-        version: 5.12.0
+        version: 6.0.1
       react:
         specifier: 18.3.1
         version: 18.3.1
@@ -5745,14 +5745,15 @@ packages:
   natural-compare@1.4.0:
     resolution: {integrity: sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==}
 
-  neo4j-driver-bolt-connection@5.12.0:
-    resolution: {integrity: sha512-dlYbFsfT0HopGItitG5uDK4nAkcqSPNtRqMz318qy//7fb/7OXVLGYikj57Ve1toJiJD8IIVErt/dVuEUHVxGA==}
+  neo4j-driver-bolt-connection@6.0.1:
+    resolution: {integrity: sha512-1KyG73TO+CwnYJisdHD0sjUw9yR+P5q3JFcmVPzsHT4/whzCjuXSMpmY4jZcHH2PdY2cBUq4l/6WcDiPMxW2UA==}
 
-  neo4j-driver-core@5.12.0:
-    resolution: {integrity: sha512-xBRi5oezysDUvtvBiIgBchzumkDZxvR9ol9sUtA9PBgVENeSmPH3CncitY8S979CFELS6wH7kydcjPLB4QMOzA==}
+  neo4j-driver-core@6.0.1:
+    resolution: {integrity: sha512-5I2KxICAvcHxnWdJyDqwu8PBAQvWVTlQH2ve3VQmtVdJScPqWhpXN1PiX5IIl+cRF3pFpz9GQF53B5n6s0QQUQ==}
 
-  neo4j-driver@5.12.0:
-    resolution: {integrity: sha512-T2Vz63XDkL9TomM16dBusuXbo7d9SIGw2g3VR/rmrWTdbl1V1LYFx/u1P7AwBsFuX08oncKHfZwHGsWrCvdMyA==}
+  neo4j-driver@6.0.1:
+    resolution: {integrity: sha512-8DDF2MwEJNz7y7cp97x4u8fmVIP4CWS8qNBxdwxTG0fWtsS+2NdeC+7uXwmmuFOpHvkfXqv63uWY73bfDtOH8Q==}
+    engines: {node: '>=18.0.0'}
 
   netmask@2.0.2:
     resolution: {integrity: sha512-dBpDMdxv9Irdq66304OLfEmQ9tbNRFnFTuZiLo+bD+r332bBmMJ8GBLXklIXXgxd3+v9+KUnZaUR5PJMa75Gsg==}
@@ -6616,6 +6617,9 @@ packages:
 
   rxjs@7.8.1:
     resolution: {integrity: sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==}
+
+  rxjs@7.8.2:
+    resolution: {integrity: sha512-dhKf903U/PQZY6boNNtAGdWbG85WAbjT/1xYoZIC7FAY0yWapOBQVsVrDl58W86//e1VpMNBtRV4MaXfdMySFA==}
 
   safaridriver@0.1.2:
     resolution: {integrity: sha512-4R309+gWflJktzPXBQCobbWEHlzC4aK3a+Ov3tz2Ib2aBxiwd11phkdIBH1l0EO22x24CJMUQkpKFumRriCSRg==}
@@ -8931,7 +8935,7 @@ snapshots:
 
   '@neo4j-ndl/base@3.7.7': {}
 
-  '@neo4j-ndl/react@3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@5.12.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
+  '@neo4j-ndl/react@3.8.13(@babel/runtime@7.27.0)(@neo4j-ndl/base@3.7.7)(@tanstack/react-table@8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(@types/react@18.3.5)(neo4j-driver@6.0.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)':
     dependencies:
       '@dnd-kit/core': 6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@dnd-kit/sortable': 8.0.0(@dnd-kit/core@6.1.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1))(react@18.3.1)
@@ -8940,9 +8944,9 @@ snapshots:
       '@heroicons/react': 2.1.5(react@18.3.1)
       '@neo4j-devtools/word-color': 0.0.8
       '@neo4j-ndl/base': 3.7.7
-      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@5.12.0)
-      '@neo4j-nvl/interaction-handlers': 0.3.8-859d66de(neo4j-driver@5.12.0)
-      '@neo4j-nvl/react': 0.3.8-859d66de(neo4j-driver@5.12.0)
+      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@6.0.1)
+      '@neo4j-nvl/interaction-handlers': 0.3.8-859d66de(neo4j-driver@6.0.1)
+      '@neo4j-nvl/react': 0.3.8-859d66de(neo4j-driver@6.0.1)
       '@tanstack/react-table': 8.11.8(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       '@uiw/react-color': 2.5.4(@babel/runtime@7.27.0)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       classnames: 2.5.1
@@ -8970,7 +8974,7 @@ snapshots:
       - neo4j-driver
       - supports-color
 
-  '@neo4j-nvl/base@0.3.8-859d66de(neo4j-driver@5.12.0)':
+  '@neo4j-nvl/base@0.3.8-859d66de(neo4j-driver@6.0.1)':
     dependencies:
       '@neo4j-nvl/layout-workers': 0.3.8-859d66de
       '@segment/analytics-next': 1.81.0
@@ -8981,7 +8985,7 @@ snapshots:
       lodash: 4.17.21
       loglevel: 1.9.1
       mobx: 3.6.2
-      neo4j-driver: 5.12.0
+      neo4j-driver: 6.0.1
       node-pid-controller: 1.0.1
       resizelistener: 1.1.0
       tinycolor2: 1.6.0
@@ -8989,9 +8993,9 @@ snapshots:
     transitivePeerDependencies:
       - encoding
 
-  '@neo4j-nvl/interaction-handlers@0.3.8-859d66de(neo4j-driver@5.12.0)':
+  '@neo4j-nvl/interaction-handlers@0.3.8-859d66de(neo4j-driver@6.0.1)':
     dependencies:
-      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@5.12.0)
+      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@6.0.1)
       concaveman: 1.2.1
       lodash: 4.17.21
     transitivePeerDependencies:
@@ -9006,10 +9010,10 @@ snapshots:
       cytoscape-cose-bilkent: 4.1.0(cytoscape@3.32.0)
       graphlib: 2.1.8
 
-  '@neo4j-nvl/react@0.3.8-859d66de(neo4j-driver@5.12.0)':
+  '@neo4j-nvl/react@0.3.8-859d66de(neo4j-driver@6.0.1)':
     dependencies:
-      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@5.12.0)
-      '@neo4j-nvl/interaction-handlers': 0.3.8-859d66de(neo4j-driver@5.12.0)
+      '@neo4j-nvl/base': 0.3.8-859d66de(neo4j-driver@6.0.1)
+      '@neo4j-nvl/interaction-handlers': 0.3.8-859d66de(neo4j-driver@6.0.1)
       lodash: 4.17.21
       react: 18.3.1
       react-dom: 18.3.1(react@18.3.1)
@@ -14278,19 +14282,19 @@ snapshots:
 
   natural-compare@1.4.0: {}
 
-  neo4j-driver-bolt-connection@5.12.0:
+  neo4j-driver-bolt-connection@6.0.1:
     dependencies:
       buffer: 6.0.3
-      neo4j-driver-core: 5.12.0
+      neo4j-driver-core: 6.0.1
       string_decoder: 1.3.0
 
-  neo4j-driver-core@5.12.0: {}
+  neo4j-driver-core@6.0.1: {}
 
-  neo4j-driver@5.12.0:
+  neo4j-driver@6.0.1:
     dependencies:
-      neo4j-driver-bolt-connection: 5.12.0
-      neo4j-driver-core: 5.12.0
-      rxjs: 7.8.1
+      neo4j-driver-bolt-connection: 6.0.1
+      neo4j-driver-core: 6.0.1
+      rxjs: 7.8.2
 
   netmask@2.0.2: {}
 
@@ -15348,6 +15352,10 @@ snapshots:
       queue-microtask: 1.2.3
 
   rxjs@7.8.1:
+    dependencies:
+      tslib: 2.7.0
+
+  rxjs@7.8.2:
     dependencies:
       tslib: 2.7.0
 
