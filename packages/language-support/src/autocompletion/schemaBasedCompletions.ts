@@ -52,78 +52,116 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
 function intersectChildren(
-  connectedLabels: Map<string, Set<string>>,
+  incomingLabels: Map<string, Set<string>>,
+  outGoingLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
-): Set<string> {
-  let intersection: Set<string> = undefined;
+): { inLabels: Set<string>; outLabels: Set<string> } {
+  let inLabels: Set<string> = undefined;
+  let outLabels: Set<string> = undefined;
   children.forEach((c) => {
-    intersection = intersection
-      ? (intersection = intersection.intersection(
-          walkLabelTree(connectedLabels, c),
-        ))
-      : walkLabelTree(connectedLabels, c);
+    const { inLabels: incoming, outLabels: outgoing } = walkLabelTree(
+      incomingLabels,
+      outGoingLabels,
+      c,
+    );
+    if (!inLabels) {
+      inLabels = incoming;
+      outLabels = outgoing;
+    } else {
+      inLabels = inLabels.intersection(incoming);
+      outLabels = outLabels.intersection(outgoing);
+    }
   });
-  return intersection ?? new Set();
+  if (!inLabels) {
+    inLabels = new Set();
+    outLabels = new Set();
+  }
+  return { inLabels, outLabels };
 }
 
 function uniteChildren(
-  connectedLabels: Map<string, Set<string>>,
+  incomingLabels: Map<string, Set<string>>,
+  outGoingLabels: Map<string, Set<string>>,
   children: LabelOrCondition[],
-): Set<string> {
-  let union: Set<string> = new Set();
-  children.forEach(
-    (c) => (union = union.union(walkLabelTree(connectedLabels, c))),
-  );
-  return union;
+): { inLabels: Set<string>; outLabels: Set<string> } {
+  let inLabels: Set<string> = new Set();
+  let outLabels: Set<string> = new Set();
+  children.forEach((c) => {
+    const { inLabels: incoming, outLabels: outgoing } = walkLabelTree(
+      incomingLabels,
+      outGoingLabels,
+      c,
+    );
+    inLabels = inLabels.union(incoming);
+    outLabels = outLabels.union(outgoing);
+  });
+  return { inLabels, outLabels };
 }
 
 function walkLabelTree(
-  connectedLabels: Map<string, Set<string>>,
+  incomingLabels: Map<string, Set<string>>,
+  outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
-): Set<string> {
+): { inLabels: Set<string>; outLabels: Set<string> } {
   if (isLabelLeaf(labelTree)) {
-    return connectedLabels.get(labelTree.value);
+    const incoming = incomingLabels.get(labelTree.value);
+    const outgoing = outGoingLabels.get(labelTree.value);
+    return {
+      inLabels: incoming ?? new Set(),
+      outLabels: outgoing ?? new Set(),
+    };
   } else if (labelTree.andOr == 'and') {
-    return intersectChildren(connectedLabels, labelTree.children);
+    return intersectChildren(
+      incomingLabels,
+      outGoingLabels,
+      labelTree.children,
+    );
   } else {
-    return uniteChildren(connectedLabels, labelTree.children);
+    return uniteChildren(incomingLabels, outGoingLabels, labelTree.children);
   }
 }
 
-function getRelsFromNodesSet(dbSchema: DbSchema): Map<string, Set<string>> {
+function getRelsFromNodesSets(dbSchema: DbSchema): {
+  toNodes: Map<string, Set<string>>;
+  fromNodes: Map<string, Set<string>>;
+} {
   if (dbSchema.graphSchema) {
-    const relsFromLabelsSet: Map<string, Set<string>> = new Map();
+    const toNodes: Map<string, Set<string>> = new Map();
+    const fromNodes: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
-      let currentFromLabelEntry = relsFromLabelsSet.get(rel.from);
-      let currentToLabelEntry = relsFromLabelsSet.get(rel.to);
-      if (!currentFromLabelEntry) {
-        relsFromLabelsSet.set(rel.from, new Set());
-        currentFromLabelEntry = relsFromLabelsSet.get(rel.from);
+      //rels in schema defined like (from)-(relType)->(to)
+      //Means 'from' is "node going to rel", hence why we
+      //pass rel.from into toNodes
+      if (!toNodes.has(rel.from)) {
+        toNodes.set(rel.from, new Set());
       }
-      if (!currentToLabelEntry) {
-        relsFromLabelsSet.set(rel.to, new Set());
-        currentToLabelEntry = relsFromLabelsSet.get(rel.to);
+      if (!fromNodes.has(rel.to)) {
+        fromNodes.set(rel.to, new Set());
       }
-      currentToLabelEntry.add(rel.relType);
-      currentFromLabelEntry.add(rel.relType);
+      toNodes.get(rel.from).add(rel.relType);
+      fromNodes.get(rel.to).add(rel.relType);
     });
-    return relsFromLabelsSet;
+    return { toNodes, fromNodes };
   }
   return undefined;
 }
 
-function getNodesFromRelsSet(dbSchema: DbSchema): Map<string, Set<string>> {
+function getNodesFromRelsSet(dbSchema: DbSchema): {
+  toRels: Map<string, Set<string>>;
+  fromRels: Map<string, Set<string>>;
+} {
   if (dbSchema.graphSchema) {
-    const nodesFromRelsSet: Map<string, Set<string>> = new Map();
+    const toRels: Map<string, Set<string>> = new Map();
+    const fromRels: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
-      if (!nodesFromRelsSet.has(rel.relType)) {
-        nodesFromRelsSet.set(rel.relType, new Set());
+      if (!toRels.has(rel.relType)) {
+        toRels.set(rel.relType, new Set());
+        fromRels.set(rel.relType, new Set());
       }
-      const currentRelEntry = nodesFromRelsSet.get(rel.relType);
-      currentRelEntry.add(rel.to);
-      currentRelEntry.add(rel.from);
+      toRels.get(rel.relType).add(rel.to);
+      fromRels.get(rel.relType).add(rel.from);
     });
-    return nodesFromRelsSet;
+    return { toRels, fromRels };
   }
   return undefined;
 }
@@ -189,12 +227,28 @@ export function completeNodeLabel(
         return allLabelCompletions(dbSchema);
       }
 
+      const direction = lastValidElement.leftArrow()
+        ? 'outgoing'
+        : lastValidElement.rightArrow()
+        ? 'incoming'
+        : 'bidirectional';
+
       // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking node label repetition
-      const nodesFromRelsSet = getNodesFromRelsSet(dbSchema);
-      const rels = walkLabelTree(nodesFromRelsSet, foundVariable.labels);
-
-      return labelsToCompletions(Array.from(rels));
+      const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+        getNodesFromRelsSet(dbSchema);
+      const { inLabels, outLabels } = walkLabelTree(
+        nodesToRelsSet,
+        nodesFromRelsSet,
+        foundVariable.labels,
+      );
+      const allNodes =
+        direction === 'outgoing'
+          ? outLabels
+          : direction === 'incoming'
+          ? inLabels
+          : inLabels.union(outLabels);
+      return labelsToCompletions(Array.from(allNodes));
     }
   }
 
@@ -231,6 +285,19 @@ export function completeRelationshipType(
         }
       });
 
+    const thisCtx = findParent(
+      parsingResult.stopNode,
+      (x) => x instanceof RelationshipPatternContext,
+    );
+    let direction = 'bidirectional';
+    if (thisCtx instanceof RelationshipPatternContext) {
+      direction = thisCtx.leftArrow()
+        ? 'outgoing'
+        : thisCtx.rightArrow()
+        ? 'incoming'
+        : 'bidirectional';
+    }
+
     // limitation: bailing out on quantifiers
     if (lastValidElement instanceof QuantifierContext) {
       return allReltypeCompletions(dbSchema);
@@ -246,12 +313,21 @@ export function completeRelationshipType(
         return allReltypeCompletions(dbSchema);
       }
 
-      // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking relationship type repetition
-      const relsFromLabelsSet = getRelsFromNodesSet(dbSchema);
-      const rels = walkLabelTree(relsFromLabelsSet, foundVariable.labels);
-
-      return reltypesToCompletions(Array.from(rels));
+      const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
+        getRelsFromNodesSets(dbSchema);
+      const { inLabels, outLabels } = walkLabelTree(
+        relsToNodesSet,
+        relsFromNodesSet,
+        foundVariable.labels,
+      );
+      const allRels =
+        direction === 'outgoing'
+          ? outLabels
+          : direction === 'incoming'
+          ? inLabels
+          : inLabels.union(outLabels);
+      return reltypesToCompletions(Array.from(allRels));
     }
   }
 
