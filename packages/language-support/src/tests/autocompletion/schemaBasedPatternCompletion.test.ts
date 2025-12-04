@@ -711,6 +711,31 @@ RETURN [(p)-[:`;
     });
   });
 
+  test('Does not break on intersection where first label has no matches', () => {
+    const query = 'MATCH (n:Unconnected) MATCH (n:Trainer)-[:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
   test('Limitation: Does not deduplicate existing relationship types in pattern ', () => {
     const query = 'MATCH (t:Trainer)-[r:CATCHES|TRAINS|';
 
