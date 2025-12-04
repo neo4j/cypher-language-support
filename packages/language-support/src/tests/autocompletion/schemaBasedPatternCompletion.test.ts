@@ -71,12 +71,9 @@ describe('completeRelationshipType', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-        //Limitation: does not handle direction
-        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
-      ],
+      expected: [{ label: 'Pokemon', kind: CompletionItemKind.TypeParameter }],
       excluded: [
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
         { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
       ],
@@ -93,10 +90,9 @@ describe('completeRelationshipType', () => {
       expected: [
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
-        //Limitation: does not handle direciton
-        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Region', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
         { label: 'Move', kind: CompletionItemKind.TypeParameter },
@@ -112,13 +108,10 @@ describe('completeRelationshipType', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-        { label: 'Region', kind: CompletionItemKind.TypeParameter },
-        //Limitation: does not handle direction
+      expected: [{ label: 'Region', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
         { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
       ],
@@ -192,12 +185,9 @@ describe('completeRelationshipType', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-        { label: 'Type', kind: CompletionItemKind.TypeParameter },
-        //Limitation: Does not handle direction
-        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-      ],
+      expected: [{ label: 'Type', kind: CompletionItemKind.TypeParameter }],
       excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
         { label: 'UnrelatedLabel', kind: CompletionItemKind.TypeParameter },
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
         { label: 'Gym', kind: CompletionItemKind.TypeParameter },
@@ -300,12 +290,9 @@ WHERE EXISTS {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-        { label: 'Move', kind: CompletionItemKind.TypeParameter },
-        //Limitation: does not handle direction
-        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-      ],
+      expected: [{ label: 'Move', kind: CompletionItemKind.TypeParameter }],
       excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
         { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
@@ -423,13 +410,10 @@ RETURN [(p)-[:`;
       expected: [
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
         { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
-        // Limitation: These should actually be excluded, but since we dont track direction yet, they are not
-        // Note that even though we don't know the direction in the query, we can see in the graph schema that we don't
-        // have ex. 'CATCHES' going to/from both Trainer and Pokemon, meaning it cant be going to/from a Pokemon&Trainer node
-        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
-        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
@@ -583,11 +567,8 @@ RETURN [(p)-[:`;
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-        //Limitation - does not handle direction
-        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
-      ],
+      expected: [{ label: 'Pokemon', kind: CompletionItemKind.TypeParameter }],
+      excluded: [{ label: 'Trainer', kind: CompletionItemKind.TypeParameter }],
     });
   });
 
@@ -610,7 +591,67 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not handle direction-aware completions ', () => {
+  test('Handles direction-aware completions for nodes with leftArrow', () => {
+    const query = 'MATCH (p:Move)<-[r:KNOWS]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [{ label: 'Pokemon', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'UnrelatedLabel', kind: CompletionItemKind.TypeParameter },
+        { label: 'Unconnected', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles direction-aware completions for nodes with rightArrow', () => {
+    const query = 'MATCH (t:Trainer)-[r:IS_IN]->(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [{ label: 'Region', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'UnrelatedLabel', kind: CompletionItemKind.TypeParameter },
+        { label: 'Unconnected', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles direction-aware completions for nodes with bidirectional rel', () => {
+    const query = 'MATCH (t:Trainer)-[r:IS_IN]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+        // Limitation: Only takes one step back in account
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'UnrelatedLabel', kind: CompletionItemKind.TypeParameter },
+        { label: 'Unconnected', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles direction-aware completions with arrow before rel', () => {
     const query = 'MATCH (p:Pokemon)<-[r:';
 
     testCompletions({
@@ -620,14 +661,33 @@ RETURN [(p)-[:`;
       expected: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-        // below should be excluded
+      ],
+      excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });
 
-  test('Limitation: Does not handle direction-aware completions with context after caret ', () => {
+  test('Handles schema-aware completions with directionless rel', () => {
+    const query = 'MATCH (p:Pokemon)-[r:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'IS_IN', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Limitation: Does not handle direction-aware completions with context after caret', () => {
     const beforeCursor = 'MATCH (p:Pokemon)-[r:';
     const query = beforeCursor + ']->(t:Trainer)';
 
@@ -645,6 +705,7 @@ RETURN [(p)-[:`;
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
     });
@@ -681,10 +742,9 @@ RETURN [(p)-[:`;
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
         // below should be excluded
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-        //Limitation - does not handle direction
-        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
         { label: 'Region', kind: CompletionItemKind.TypeParameter },
         { label: 'Move', kind: CompletionItemKind.TypeParameter },
@@ -704,10 +764,9 @@ RETURN [(p)-[:`;
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
         // below should be excluded
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-        //Limitation - does not handle direction
-        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
         { label: 'Type', kind: CompletionItemKind.TypeParameter },
         { label: 'Region', kind: CompletionItemKind.TypeParameter },
         { label: 'Move', kind: CompletionItemKind.TypeParameter },
@@ -756,7 +815,7 @@ RETURN [(p)-[:`;
       offset: beforeCursor.length,
       expected: [
         { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
-        //limitation: direction
+        //limitation: only takes one step back into account
         { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [

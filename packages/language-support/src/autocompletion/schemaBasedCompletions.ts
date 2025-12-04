@@ -104,9 +104,11 @@ function walkLabelTree(
   labelTree: LabelOrCondition,
 ): { inLabels: Set<string>; outLabels: Set<string> } {
   if (isLabelLeaf(labelTree)) {
+    const incoming = incomingLabels.get(labelTree.value);
+    const outgoing = outGoingLabels.get(labelTree.value);
     return {
-      inLabels: incomingLabels.get(labelTree.value),
-      outLabels: outGoingLabels.get(labelTree.value),
+      inLabels: incoming ?? new Set(),
+      outLabels: outgoing ?? new Set(),
     };
   } else if (labelTree.andOr == 'and') {
     return intersectChildren(
@@ -127,14 +129,17 @@ function getRelsFromNodesSets(dbSchema: DbSchema): {
     const toNodes: Map<string, Set<string>> = new Map();
     const fromNodes: Map<string, Set<string>> = new Map();
     dbSchema.graphSchema.forEach((rel) => {
-      if (!toNodes.has(rel.to)) {
-        toNodes.set(rel.to, new Set());
+      //rels in schema defined like (from)-(relType)->(to)
+      //Means 'from' is "node going to rel", hence why we
+      //pass rel.from into toNodes
+      if (!toNodes.has(rel.from)) {
+        toNodes.set(rel.from, new Set());
       }
-      if (!fromNodes.has(rel.from)) {
-        fromNodes.set(rel.from, new Set());
+      if (!fromNodes.has(rel.to)) {
+        fromNodes.set(rel.to, new Set());
       }
-      toNodes.get(rel.to).add(rel.relType);
-      fromNodes.get(rel.from).add(rel.relType);
+      toNodes.get(rel.from).add(rel.relType);
+      fromNodes.get(rel.to).add(rel.relType);
     });
     return { toNodes, fromNodes };
   }
@@ -154,7 +159,7 @@ function getNodesFromRelsSet(dbSchema: DbSchema): {
         fromRels.set(rel.relType, new Set());
       }
       toRels.get(rel.relType).add(rel.to);
-      toRels.get(rel.relType).add(rel.from);
+      fromRels.get(rel.relType).add(rel.from);
     });
     return { toRels, fromRels };
   }
@@ -222,6 +227,12 @@ export function completeNodeLabel(
         return allLabelCompletions(dbSchema);
       }
 
+      const direction = lastValidElement.leftArrow()
+        ? 'outgoing'
+        : lastValidElement.rightArrow()
+        ? 'incoming'
+        : 'bidirectional';
+
       // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
@@ -231,7 +242,12 @@ export function completeNodeLabel(
         nodesFromRelsSet,
         foundVariable.labels,
       );
-      const allNodes = inLabels.union(outLabels);
+      const allNodes =
+        direction === 'outgoing'
+          ? outLabels
+          : direction === 'incoming'
+          ? inLabels
+          : inLabels.union(outLabels);
       return labelsToCompletions(Array.from(allNodes));
     }
   }
@@ -269,6 +285,19 @@ export function completeRelationshipType(
         }
       });
 
+    const thisCtx = findParent(
+      parsingResult.stopNode,
+      (x) => x instanceof RelationshipPatternContext,
+    );
+    let direction = 'bidirectional';
+    if (thisCtx instanceof RelationshipPatternContext) {
+      direction = thisCtx.leftArrow()
+        ? 'outgoing'
+        : thisCtx.rightArrow()
+        ? 'incoming'
+        : 'bidirectional';
+    }
+
     // limitation: bailing out on quantifiers
     if (lastValidElement instanceof QuantifierContext) {
       return allReltypeCompletions(dbSchema);
@@ -292,7 +321,12 @@ export function completeRelationshipType(
         relsFromNodesSet,
         foundVariable.labels,
       );
-      const allRels = inLabels.union(outLabels);
+      const allRels =
+        direction === 'outgoing'
+          ? outLabels
+          : direction === 'incoming'
+          ? inLabels
+          : inLabels.union(outLabels);
       return reltypesToCompletions(Array.from(allRels));
     }
   }
