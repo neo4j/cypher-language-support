@@ -591,7 +591,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles direction-aware completions for nodes with leftArrow', () => {
+  test('Handles direction-aware completions for nodes with leftArrow-rel', () => {
     const query = 'MATCH (p:Move)<-[r:KNOWS]-(:';
     testCompletions({
       query,
@@ -610,7 +610,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles direction-aware completions for nodes with rightArrow', () => {
+  test('Handles direction-aware completions for nodes with rightArrow-rel', () => {
     const query = 'MATCH (t:Trainer)-[r:IS_IN]->(:';
     testCompletions({
       query,
