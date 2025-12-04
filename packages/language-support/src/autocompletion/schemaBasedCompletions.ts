@@ -135,13 +135,13 @@ function findLastVariable(
   const variable = lastValidElement.variable();
   const isAnonVar = variable === null;
   const foundVariable = isAnonVar
-    ? symbolsInfo?.symbolTables
-        ?.flat()
-        .find(
-          (entry) =>
-            entry.definitionPosition >= lastValidElement.start.start &&
-            entry.definitionPosition <= lastValidElement.stop.stop,
-        )
+    ? symbolsInfo?.symbolTables?.flat().find(
+        (entry) =>
+          // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
+          // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
+          entry.definitionPosition >= lastValidElement.start.start &&
+          entry.definitionPosition <= lastValidElement.stop.stop,
+      )
     : symbolsInfo?.symbolTables
         ?.flat()
         .find((entry) => entry.references.includes(variable.start.start));
