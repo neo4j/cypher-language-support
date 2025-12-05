@@ -23,7 +23,45 @@ statements
    ;
 
 statement
-   : command | nextStatement
+   : command | queryWithLocalDefinitions
+   ;
+
+queryWithLocalDefinitions
+   : (DEFINE localDefinition)* nextStatement
+   ;
+
+localDefinition
+   : PROCEDURE localProcedureDefinition
+   | FUNCTION localFunctionDefinition
+   ;
+
+localProcedureDefinition
+   : procedureName localInputFieldsSignature (typed outputType = localOutputFieldsSignature)? LCURLY queryWithLocalDefinitions RCURLY
+   ;
+
+localFunctionDefinition
+   : functionName localInputFieldsSignature (typed outputType = type)? localFunctionBody
+   ;
+
+localInputFieldsSignature
+    : LPAREN (localOptionalFieldSignature ( COMMA localOptionalFieldSignature )*)? RPAREN
+    ;
+
+localOutputFieldsSignature
+    : LPAREN (localMandatoryFieldSignature ( COMMA localMandatoryFieldSignature )*)? RPAREN
+    ;
+
+localMandatoryFieldSignature
+    : symbolicNameString (typed? type)?
+    ;
+
+localOptionalFieldSignature
+    : symbolicNameString (typed? type)? (EQ expression)?
+    ;
+
+localFunctionBody
+   : EQ expression                           # ExpressionBody
+   | LCURLY queryWithLocalDefinitions RCURLY # QueryBody
    ;
 
 nextStatement
@@ -52,7 +90,7 @@ elseBranch
 
 singleQuery
    : clause+
-   | useClause? LCURLY nextStatement RCURLY
+   | useClause? LCURLY queryWithLocalDefinitions RCURLY
    ;
 
 clause
@@ -261,7 +299,7 @@ foreachClause
    ;
 
 subqueryClause
-   : OPTIONAL? CALL subqueryScope? LCURLY nextStatement RCURLY subqueryInTransactionsParameters?
+   : OPTIONAL? CALL subqueryScope? LCURLY queryWithLocalDefinitions RCURLY subqueryInTransactionsParameters?
    ;
 
 subqueryScope
@@ -304,7 +342,7 @@ insertPatternList
    ;
 
 pattern
-   : (variable EQ)? selector? anonymousPattern
+   : (variable EQ)? pathPatternPrefix? anonymousPattern
    ;
 
 insertPattern
@@ -331,18 +369,23 @@ patternElement
    : (nodePattern (relationshipPattern quantifier? nodePattern)* | parenthesizedPath)+
    ;
 
-selector
-   : ANY SHORTEST pathToken?                                         # AnyShortestPath
-   | ALL SHORTEST pathToken?                                         # AllShortestPath
-   | ANY nonNegativeIntegerSpecification? pathToken?                 # AnyPath
-   | ALL pathToken?                                                  # AllPath
-   | SHORTEST nonNegativeIntegerSpecification? pathToken? groupToken # ShortestGroup
-   | SHORTEST nonNegativeIntegerSpecification pathToken?             # AnyShortestPath
+pathPatternPrefix
+   : pathMode pathToken?                                                       # AllPath
+   | ANY SHORTEST pathMode? pathToken?                                         # AnyShortestPath
+   | ALL SHORTEST pathMode? pathToken?                                         # AllShortestPath
+   | ANY nonNegativeIntegerSpecification? pathMode? pathToken?                 # AnyPath
+   | ALL pathMode? pathToken?                                                  # AllPath
+   | SHORTEST nonNegativeIntegerSpecification? pathMode? pathToken? groupToken # ShortestGroup
+   | SHORTEST nonNegativeIntegerSpecification pathMode? pathToken?             # AnyShortestPath
    ;
    
 nonNegativeIntegerSpecification
    : UNSIGNED_DECIMAL_INTEGER | parameter["INTEGER"]
    ;
+
+pathMode
+    : WALK | TRAIL | ACYCLIC
+    ;
 
 groupToken
    : GROUP | GROUPS
@@ -598,7 +641,7 @@ expression1
    ;
 
 literal
-   : numberLiteral # NummericLiteral
+   : numberLiteral # NumericLiteral
    | stringLiteral # StringsLiteral
    | map           # OtherLiteral
    | TRUE          # BooleanLiteral
@@ -741,15 +784,15 @@ countStar
    ;
 
 existsExpression
-   : EXISTS LCURLY (nextStatement | matchMode? patternList whereClause?) RCURLY
+   : EXISTS LCURLY (queryWithLocalDefinitions | matchMode? patternList whereClause?) RCURLY
    ;
 
 countExpression
-   : COUNT LCURLY (nextStatement | matchMode? patternList whereClause?) RCURLY
+   : COUNT LCURLY (queryWithLocalDefinitions | matchMode? patternList whereClause?) RCURLY
    ;
 
 collectExpression
-   : COLLECT LCURLY nextStatement RCURLY
+   : COLLECT LCURLY queryWithLocalDefinitions RCURLY
    ;
 
 numberLiteral
@@ -913,6 +956,7 @@ createCommand
       | createIndex
       | createRole
       | createUser
+      | createAuthRule
    )
    ;
 
@@ -936,6 +980,7 @@ dropCommand
       | dropRole
       | dropServer
       | dropUser
+      | dropAuthRule
    )
    ;
 
@@ -1131,7 +1176,7 @@ createIndex
    : RANGE INDEX createIndex_
    | TEXT INDEX createIndex_
    | POINT INDEX createIndex_
-   | VECTOR INDEX createIndex_
+   | VECTOR INDEX createVectorIndex
    | LOOKUP INDEX createLookupIndex
    | FULLTEXT INDEX createFulltextIndex
    | INDEX createIndex_
@@ -1142,14 +1187,18 @@ createIndex_
    ;
 
 createFulltextIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (fulltextNodePattern | fulltextRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
+   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
    ;
 
-fulltextNodePattern
+createVectorIndex
+   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON propertyList withProperties? commandOptions?
+   ;
+
+multiLabelNodePattern
    : LPAREN variable COLON symbolicNameString (BAR symbolicNameString)* RPAREN
    ;
 
-fulltextRelPattern
+multiRelTypeRelPattern
    : LPAREN RPAREN leftArrow? arrowLine LBRACKET variable COLON symbolicNameString (BAR symbolicNameString)* RBRACKET arrowLine rightArrow? LPAREN RPAREN
    ;
 
@@ -1175,6 +1224,10 @@ propertyList
 
 enclosedPropertyList
    : variable property (COMMA variable property)*
+   ;
+
+withProperties
+   : WITH LBRACKET enclosedPropertyList RBRACKET
    ;
 
 // Graph Type Specification
@@ -1339,10 +1392,18 @@ roleNames
    : symbolicNameOrStringParameterList
    ;
 
+authRuleNames
+   : symbolicNameOrStringParameterList
+   ;
+
 roleToken
    : ROLES
    | ROLE
    ;
+
+authRuleKeywords
+    : AUTH (RULE | RULES)
+    ;
 
 // Server commands
 
@@ -1397,12 +1458,17 @@ showRoles
    ;
 
 grantRole
-   : roleNames TO userNames
+   : roleNames TO usersOrAuthRule
    ;
 
 revokeRole
-   : roleNames FROM userNames
+   : roleNames FROM usersOrAuthRule
    ;
+
+usersOrAuthRule
+    : authRuleKeywords authRuleNames
+    | (USER | USERS)? userNames
+    ;
 
 // User commands
 
@@ -1643,7 +1709,7 @@ dbmsPrivilege
    : (
       ALTER (ALIAS | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER) MANAGEMENT
+      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER | AUTH RULE) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (ROLE | USER)
       | IMPERSONATE userQualifier?
@@ -1781,6 +1847,28 @@ graphScope
    : HOME GRAPH
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)
    ;
+
+// Attribute based role assignment
+
+createAuthRule
+    : AUTH RULE commandNameExpression (IF NOT EXISTS)? (authRuleSetClause)+
+    ;
+
+authRuleSetClause
+    : SET (authRuleSetCondition | authRuleSetEnabled)
+    ;
+
+authRuleSetCondition
+    : CONDITION expression
+    ;
+
+authRuleSetEnabled
+    : ENABLED (TRUE | FALSE) // do we not have a booleanLiteral??
+    ;
+
+dropAuthRule
+    : AUTH RULE commandNameExpression (IF EXISTS)?
+    ;
 
 // Database commands
 
@@ -2055,6 +2143,7 @@ unescapedSymbolicNameString_
    : IDENTIFIER
    | ACCESS
    | ACTIVE
+   | ACYCLIC
    | ADD
    | ADMIN
    | ADMINISTRATOR
@@ -2096,6 +2185,7 @@ unescapedSymbolicNameString_
    | CONTAINS
    | CONTINUE
    | COPY
+   | CONDITION
    | COSINE
    | COUNT
    | CREATE
@@ -2111,6 +2201,7 @@ unescapedSymbolicNameString_
    | DBMS
    | DEALLOCATE
    | DEFAULT
+   | DEFINE
    | DEFINED
    | DELETE
    | DENY
@@ -2131,6 +2222,7 @@ unescapedSymbolicNameString_
    | ELEMENT
    | ELEMENTS
    | ELSE
+   | ENABLED
    | ENABLE
    | ENCRYPTED
    | END
@@ -2275,6 +2367,8 @@ unescapedSymbolicNameString_
    | ROLES
    | ROW
    | ROWS
+   | RULE
+   | RULES
    | SCAN
    | SCORE
    | SEARCH
@@ -2314,6 +2408,7 @@ unescapedSymbolicNameString_
    | TIMEZONE
    | TO
    | TOPOLOGY
+   | TRAIL
    | TRAILING
    | TRANSACTION
    | TRANSACTIONS
@@ -2338,6 +2433,7 @@ unescapedSymbolicNameString_
    | VECTOR_NORM
    | VERTEX
    | WAIT
+   | WALK
    | WHEN
    | WHERE
    | WITH
