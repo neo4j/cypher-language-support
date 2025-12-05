@@ -52,7 +52,10 @@ export function listDatabases(): ExecuteQueryArgs<{
       return obj as Database;
     },
     collect(databases, summary) {
-      return { databases, summary };
+      return {
+        databases: databases.filter((x) => x?.writer === true),
+        summary,
+      };
     },
   });
 
