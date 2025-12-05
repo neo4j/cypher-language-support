@@ -1,5 +1,11 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.27
+
+### Patch Changes
+
+- 8c4d12d: Fix vector serialization for query running/params
+
 ## 2.0.0-next.26
 
 ### Patch Changes

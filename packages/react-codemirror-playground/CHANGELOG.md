@@ -1,5 +1,11 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- @neo4j-cypher/react-codemirror@2.0.0-next.30
+
 ## 2.0.0-next.29
 
 ### Patch Changes
