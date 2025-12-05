@@ -20,10 +20,6 @@ jobs:
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
       - uses: actions/checkout@v4
 
       - name: Setup and build project
@@ -39,10 +35,6 @@ jobs:
     environment: publish-npm
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          registry-url: https://registry.npmjs.org
       - uses: actions/checkout@v4
       
       - name: Setup and build project
