@@ -5,7 +5,7 @@ const ctx = await esbuild.context({
   entryPoints: ['src/extension.ts'],
   bundle: true,
   format: 'cjs',
-  minify: false,
+  minify: true,
   sourcemap: !production,
   sourcesContent: false,
   platform: 'node',
