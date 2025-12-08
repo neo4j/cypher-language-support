@@ -1165,4 +1165,18 @@ RETURN
 CALL apoc.cypher.run("RETURN 5", {})`;
     verifyFormatting(query, expected);
   });
+
+  test('Dynamic labels are correctly formatted', () => {
+    const query = `MATCH (p:$ ANY ( ["Actor", "Director"]) {birthYear: 1983}) RETURN p.name`;
+    const expected = `MATCH (p:$any(["Actor", "Director"]) {birthYear: 1983})
+RETURN p.name`;
+    verifyFormatting(query, expected);
+  });
+
+  test('Dynamic labels are correctly formatted without ANY/ALL', () => {
+    const query = `MATCH (p:$  ( ["Actor", "Director"]) {birthYear: 1983}) RETURN p.name`;
+    const expected = `MATCH (p:$(["Actor", "Director"]) {birthYear: 1983})
+RETURN p.name`;
+    verifyFormatting(query, expected);
+  });
 });
