@@ -31,6 +31,7 @@ import {
   CreateFulltextIndexContext,
   CreateIndex_Context,
   DeleteClauseContext,
+  DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
   DynamicPropertyExpressionContext,
   ElseBranchContext,
@@ -1175,6 +1176,17 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this._visit(ctx.labelExpression1());
+  };
+
+  visitDynamicAnyAllExpression = (ctx: DynamicAnyAllExpressionContext) => {
+    this.visit(ctx.DOLLAR());
+    this.avoidSpaceBetween();
+    const allOrAny = ctx.ALL() ?? ctx.ANY();
+    if (allOrAny) this.visitTerminalRaw(allOrAny, { lowerCase: true });
+    this.avoidSpaceBetween();
+    this.visit(ctx.LPAREN());
+    this.visit(ctx.expression());
+    this.visit(ctx.RPAREN());
   };
 
   visitTerminal = (node: TerminalNode) => {
