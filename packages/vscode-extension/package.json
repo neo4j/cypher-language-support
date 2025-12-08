@@ -32,7 +32,7 @@
   },
   "engineStrict": true,
   "engines": {
-    "node": ">=22.15.0",
+    "node": ">=24.11.1",
     "vscode": "^1.75.0"
   },
   "contributes": {

@@ -10,6 +10,9 @@ on:
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
 
+permissions:
+  id-token: write
+
 jobs:
   canary-release-to-npm:
     name: 'Canary release to npm'
@@ -24,8 +27,6 @@ jobs:
 
       - name: Build and release canary package to npm
         run: pnpm snapshot-release
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
   stable-release-to-npm:
     name: 'Stable release to npm'
@@ -44,5 +45,3 @@ jobs:
           publish: pnpm release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
