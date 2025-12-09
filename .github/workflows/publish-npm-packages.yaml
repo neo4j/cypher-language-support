@@ -12,6 +12,8 @@ env:
 
 permissions:
   id-token: write
+  pull-requests: write
+  contents: write
 
 jobs:
   canary-release-to-npm:
@@ -44,5 +46,5 @@ jobs:
         with:
           publish: pnpm release
         env:
-          GITHUB_TOKEN: ${{ secrets.BROWSER_BOT_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ''
