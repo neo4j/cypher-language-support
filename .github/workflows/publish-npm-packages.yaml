@@ -44,5 +44,5 @@ jobs:
         with:
           publish: pnpm release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.BROWSER_BOT_PAT }}
           NPM_TOKEN: ''
