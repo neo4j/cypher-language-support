@@ -174,7 +174,7 @@ whereClause
    ;
 
 searchClause
-   : SEARCH variable IN LPAREN indexSpecificationClause forClause limit RPAREN scoreClause?
+   : SEARCH variable IN LPAREN indexSpecificationClause forClause whereClause? limit RPAREN scoreClause?
    ;
 
 indexSpecificationClause
