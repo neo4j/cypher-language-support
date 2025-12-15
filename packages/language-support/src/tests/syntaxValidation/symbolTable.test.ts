@@ -251,6 +251,51 @@ describe('Symbol table spec', () => {
     ]);
   });
 
+  test('Symbol table contains labels and rels from simple WHERE inside node/rel pattern', () => {
+    const query = 'MATCH (n WHERE n:Person)-[r WHERE r:KNOWS] RETURN n';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 26,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 41,
+                value: 'KNOWS',
+              },
+            ],
+          },
+          references: [26, 34],
+          types: ['Relationship'],
+          variable: 'r',
+        },
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 23,
+                value: 'Person',
+              },
+            ],
+          },
+          references: [7, 15],
+          types: ['Node'],
+          variable: 'n',
+        },
+      ],
+    ]);
+  });
+
   test('Symbol table contains labels and rels from mixed MATCH and WHERE', () => {
     const query =
       'MATCH (n:Person)-[r:KNOWS]->(p:Person) WHERE n:Driver RETURN n';
