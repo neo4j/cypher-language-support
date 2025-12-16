@@ -1,9 +1,9 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import { testData } from '@neo4j-cypher/language-support';
 import assert from 'assert';
-import { validateParamInput } from '../../../src/commandHandlers/params';
+import { validateParamInput } from '../src/helpers';
 
-suite('Parameter validation spec', () => {
-  const dbSchema: DbSchema = {
+describe('Parameter validation spec', () => {
+  const dbSchema = {
     functions: {
       'CYPHER 5': {
         datetime: {
@@ -19,12 +19,12 @@ suite('Parameter validation spec', () => {
     },
   };
 
-  test('Parameter validation succeeds for correct inputs', () => {
+  it('Parameter validation succeeds for correct inputs', () => {
     assert.strictEqual(validateParamInput('datetime()', dbSchema), undefined);
     assert.strictEqual(validateParamInput('500', dbSchema), undefined);
   });
 
-  test('Parameter validation fails for incorrect inputs', () => {
+  it('Parameter validation fails for incorrect inputs', () => {
     assert.strictEqual(
       validateParamInput('datetime(', dbSchema),
       "Value cannot be evaluated: Variable `datetime` not defined. Invalid input '(': expected an expression, ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
@@ -39,7 +39,7 @@ suite('Parameter validation spec', () => {
     );
   });
 
-  test('Parameter validation succeeds on warnings', () => {
+  it('Parameter validation succeeds on warnings', () => {
     assert.strictEqual(
       validateParamInput('deprecatedFunction()', dbSchema),
       undefined,
