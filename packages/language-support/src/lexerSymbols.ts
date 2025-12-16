@@ -27,6 +27,12 @@ export enum CypherTokenType {
   setting = 'setting',
 }
 
+export const lexerSettingValues = [
+  CypherLexer.ACYCLIC,
+  CypherLexer.TRAIL,
+  CypherLexer.WALK,
+];
+
 export const lexerOperators = [
   CypherLexer.AMPERSAND,
   CypherLexer.BAR,
@@ -137,6 +143,7 @@ export const lexerKeywords = [
   CypherLexer.COMMAND,
   CypherLexer.COMMANDS,
   CypherLexer.COMPOSITE,
+  CypherLexer.CONDITION,
   CypherLexer.CONSTRAINT,
   CypherLexer.CONSTRAINTS,
   CypherLexer.CONTAINS,
@@ -157,6 +164,7 @@ export const lexerKeywords = [
   CypherLexer.DBMS,
   CypherLexer.DEALLOCATE,
   CypherLexer.DEFAULT,
+  CypherLexer.DEFINE,
   CypherLexer.DEFINED,
   CypherLexer.DELETE,
   CypherLexer.DENY,
@@ -178,6 +186,7 @@ export const lexerKeywords = [
   CypherLexer.ELEMENTS,
   CypherLexer.ELSE,
   CypherLexer.ENABLE,
+  CypherLexer.ENABLED,
   CypherLexer.ENCRYPTED,
   CypherLexer.END,
   CypherLexer.ENDS,
@@ -322,6 +331,8 @@ export const lexerKeywords = [
   CypherLexer.ROLES,
   CypherLexer.ROW,
   CypherLexer.ROWS,
+  CypherLexer.RULE,
+  CypherLexer.RULES,
   CypherLexer.SCAN,
   CypherLexer.SCORE,
   CypherLexer.SEARCH,
@@ -423,6 +434,7 @@ function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
 }
 
 export const lexerSymbols: Record<number, CypherTokenType> = {
+  ...toTokentypeObject(lexerSettingValues, CypherTokenType.settingValue),
   ...toTokentypeObject(lexerOperators, CypherTokenType.operator),
   ...toTokentypeObject(lexerKeywords, CypherTokenType.keyword),
   ...toTokentypeObject(lexerBrackets, CypherTokenType.bracket),

@@ -497,8 +497,9 @@
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "package": "pnpm vsce package --pre-release --no-dependencies",
     "test:e2e": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false pnpm test:apiAndUnit && cross-env DEBUG_VSCODE_TESTS=false pnpm test:webviews",
-    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && cross-env DEBUG_VSCODE_TESTS=false node ./dist/tests/runApiAndUnitTests.js",
-    "test:webviews": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false wdio run ./dist/tests/runWebviewTests.js"
+    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && cross-env DEBUG_VSCODE_TESTS=false node ./dist/tests/runApiAndUnitTests.js && pnpm test:mocha",
+    "test:webviews": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false wdio run ./dist/tests/runWebviewTests.js",
+    "test:mocha": "pnpm build:dev && cross-env mocha ./dist/test/paramUnitTest.test.js"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",
