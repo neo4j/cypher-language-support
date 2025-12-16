@@ -1,5 +1,17 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.4
+
+### Patch Changes
+
+- 6a2a408: Fix aura linter version
+- 68d92a8: Updates dev artifacts to 2025.12
+- Updated dependencies [20b31b6]
+- Updated dependencies [8c4d12d]
+- Updated dependencies [68d92a8]
+  - @neo4j-cypher/language-support@2.0.0-next.27
+  - @neo4j-cypher/query-tools@2.0.0-next.27
+
 ## 1.10.1-next.3
 
 ### Patch Changes
