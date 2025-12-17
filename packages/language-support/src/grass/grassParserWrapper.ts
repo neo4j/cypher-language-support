@@ -14,9 +14,6 @@ import type {
   Style,
 } from './grass-definition';
 
-// Generated parser imports
-// The grammar imports CypherPreParser, so we get Cypher's tokens and some rules.
-// Grass-specific rules are prefixed with "Grass" to avoid conflicts with Cypher labels.
 import GrassLexer from './generated-parser/GrassLexer.js';
 import GrassParser, {
   StyleSheetContext,
@@ -602,8 +599,6 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
     return { type: 'labelCheck', variable, label };
   };
 
-  // Property existence check: `n.property` means "property exists"
-  // The actual IS NOT NULL semantics are handled by the rule execution engine
   visitPropertyExistenceCheck = (
     ctx: PropertyExistenceCheckContext,
   ): GrassWhereAST => {
@@ -899,21 +894,6 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
 
 /**
  * Parse a grass DSL string into StyleRule objects.
- *
- * @param input - The grass DSL string to parse
- * @returns Parse result with rules and any errors
- *
- * @example
- * ```typescript
- * const result = parseGrass(`
- *   MATCH (n:Person) WHERE n.age > 18
- *   APPLY {color: '#ff0000', size: 30}
- * `);
- *
- * if (result.errors.length === 0) {
- *   console.log(result.rules);
- * }
- * ```
  */
 export function parseGrass(input: string): GrassParseResult {
   if (input.trim().length === 0) {
@@ -1005,11 +985,6 @@ export function parseGrass(input: string): GrassParseResult {
   };
 }
 
-/**
- * Recursively check for null comparisons in WHERE clauses
- * Comparing with null using = or <> is semantically incorrect in Cypher
- * (always evaluates to null/unknown, never true/false)
- */
 function checkForNullComparisons(
   where: GrassWhereAST,
   input: string,
@@ -1068,10 +1043,6 @@ function checkForNullComparisons(
 
 /**
  * Convert StyleRule objects back to grass DSL string.
- * This is the inverse of parseGrass.
- *
- * @param rules - Array of StyleRule objects to convert
- * @returns The grass DSL string representation
  */
 export function stringifyGrass(rules: StyleRule[]): string {
   return rules.map(stringifyRule).join('\n\n');

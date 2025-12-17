@@ -64,7 +64,7 @@
     "build-cypherfmt-cli": "esbuild ./src/formatting/cli.ts --bundle --format=esm --sourcemap --outfile=dist/esm/formatting/cli.mjs --external:fs --external:path",
     "dev": "pnpm build && concurrently 'tsc --module esnext --outDir dist/esm/project/language-support --watch' 'npm:build-commonjs -- --watch'",
     "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
-    "clean": "rm -rf {dist,src/generated-parser,src/grass/generated-parser}",
+    "clean": "rm -rf {dist,coverage,src/generated-parser,src/grass/generated-parser}",
     "test": "vitest run"
   },
   "devDependencies": {

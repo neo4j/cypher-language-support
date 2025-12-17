@@ -87,8 +87,6 @@ export interface NVLRelationshipStyle extends GraphElement {
 
 export type StyleRule = {
   match: Match;
-
-  // if left out, the style is always applied to all matched nodes/relationships
   where?: Where;
   apply: Style;
 
@@ -104,19 +102,14 @@ export type StyleRule = {
   priority?: number;
 };
 
-type Match =
-  | { label: string | null /* null symbolizing any, as in MATCH (n) */ }
-  | { reltype: string | null };
+type Match = { label: string | null } | { reltype: string | null };
 
-// Subset of valid types for now
 export type CypherValue = string | number | boolean | null;
-// Value in comparisons: properties or primitives (not label/reltype selectors)
+
 export type Value = { property: string } | CypherValue;
 
 export type Where =
   | { equal: [Value, Value] }
-
-  // {notEqual} and friends can be implemented with this not clause
   | { not: Where }
   | { lessThan: [Value, Value] }
   | { lessThanOrEqual: [Value, Value] }
@@ -125,31 +118,11 @@ export type Where =
   | { contains: [Value, Value] }
   | { startsWith: [Value, Value] }
   | { endsWith: [Value, Value] }
-
-  // Null check matching Cypher's IS NULL
-  // Returns true/false (not null), making it safe for null checking
-  // Use { not: { isNull: ... } } for IS NOT NULL
-  // @see https://neo4j.com/docs/cypher-manual/current/values-and-types/working-with-null/
   | { isNull: Value }
-  // we let people a plain property, as a short hand for is not null
   | { property: string }
-
-  // Between can be implemented using "and" | "or".
-  // between would be greaterThan AND lessThan
-  // not between would be lessThan OR greaterThan
-  // using a list like this makes it possible to have an arbitrary amount of checks
   | { and: Where[] }
   | { or: Where[] }
-
-  // sometimes we need to find nodes that have two labels.
-  // instead of making this a special case
-  // | {hasLabel: string | null}
-  // | {hasReltype: string | null}
-  // we can do simply
   | Match;
-// so for example
-// {match: {label: "Person"}, where: {label: "Actor"}}
-// matches nodes with label person and actor
 
 /**
  * Supported caption style keywords.
