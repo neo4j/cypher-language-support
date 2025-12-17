@@ -415,6 +415,28 @@ export const lexerConsoleCmds = [
   CypherLexer.HELP,
 ];
 
+// Grass style DSL keywords
+export const lexerGrassKeywords = [
+  CypherLexer.APPLY,
+  CypherLexer.BOLD,
+  CypherLexer.ITALIC,
+  CypherLexer.UNDERLINE,
+  CypherLexer.SIZE,
+  CypherLexer.WIDTH,
+  CypherLexer.COLOR,
+  CypherLexer.CAPTIONS,
+  CypherLexer.CAPTIONSIZE,
+  CypherLexer.CAPTIONALIGN,
+  CypherLexer.TOP,
+  CypherLexer.BOTTOM,
+  CypherLexer.CENTER,
+];
+
+// Grass literals (not keywords, but special tokens)
+export const lexerGrassLiterals = [
+  CypherLexer.HEX_COLOR,
+];
+
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -434,6 +456,8 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
+  ...toTokentypeObject(lexerGrassKeywords, CypherTokenType.keyword),
+  ...toTokentypeObject(lexerGrassLiterals, CypherTokenType.stringLiteral),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {

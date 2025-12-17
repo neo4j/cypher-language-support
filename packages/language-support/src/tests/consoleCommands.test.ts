@@ -237,6 +237,8 @@ describe('sanity checks', () => {
   });
 
   test('completes basic console cmds on :', () => {
+    // Note: 'style reset' is no longer suggested as a compound completion
+    // because :style now accepts full style rules (MATCH ... APPLY ...) as an alternative to RESET
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
@@ -244,7 +246,6 @@ describe('sanity checks', () => {
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
-      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },

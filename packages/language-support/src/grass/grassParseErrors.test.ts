@@ -13,6 +13,76 @@ describe('Grass DSL Parser - Error Handling', () => {
     expect(result.rules).toHaveLength(0);
   });
 
+  it('requires semicolons between multiple rules', () => {
+    // Without semicolon - should fail
+    const withoutSemicolon = parseGrass(`
+      MATCH (n) APPLY {size: 10}
+      MATCH (n:Person) APPLY {color: '#ff0000'}
+    `);
+    expect(withoutSemicolon.errors.length).toBeGreaterThan(0);
+
+    // With semicolon - should pass
+    const withSemicolon = parseGrass(`
+      MATCH (n) APPLY {size: 10};
+      MATCH (n:Person) APPLY {color: '#ff0000'}
+    `);
+    expect(withSemicolon.errors).toHaveLength(0);
+    expect(withSemicolon.rules).toHaveLength(2);
+  });
+
+  it('allows trailing semicolon', () => {
+    const result = parseGrass(`MATCH (n) APPLY {size: 10};`);
+    expect(result.errors).toHaveLength(0);
+    expect(result.rules).toHaveLength(1);
+  });
+
+  describe('unsupported literal types', () => {
+    it('returns error for map literals in WHERE clause', () => {
+      const result = parseGrass(
+        `MATCH (n) WHERE n.data = {key: 'value'} APPLY {size: 10}`,
+      );
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(
+        result.errors.some((e) => e.message.includes('map literals')),
+      ).toBe(true);
+    });
+
+    it('returns error for INF literal', () => {
+      const result = parseGrass(
+        `MATCH (n) WHERE n.value = INF APPLY {size: 10}`,
+      );
+      expect(result.errors.length).toBeGreaterThan(0);
+      const infError = result.errors.find((e) => e.message.includes("'INF'"));
+      expect(infError).toBeDefined();
+      expect(infError?.message).toContain('Use a number instead');
+    });
+
+    it('returns error for INFINITY literal', () => {
+      const result = parseGrass(
+        `MATCH (n) WHERE n.value = INFINITY APPLY {size: 10}`,
+      );
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some((e) => e.message.includes("'INFINITY'"))).toBe(
+        true,
+      );
+    });
+
+    it('returns error for NaN literal', () => {
+      const result = parseGrass(
+        `MATCH (n) WHERE n.value = NaN APPLY {size: 10}`,
+      );
+      expect(result.errors.length).toBeGreaterThan(0);
+      expect(result.errors.some((e) => e.message.includes("'NAN'"))).toBe(true);
+    });
+
+    it('allows null literal (IS NULL pattern)', () => {
+      const result = parseGrass(
+        `MATCH (n) WHERE n.value IS NULL APPLY {size: 10}`,
+      );
+      expect(result.errors).toHaveLength(0);
+    });
+  });
+
   it('returns error for path patterns', () => {
     const result = parseGrass(`MATCH ()-[r:KNOWS]->() APPLY {width: 3}`);
 
@@ -631,11 +701,11 @@ APPLY {size: 10}`);
 
   describe('Performance and Limits', () => {
     it('handles many rules efficiently', () => {
-      // Generate 100 rules
+      // Generate 100 rules with semicolons between them
       const rules = Array.from(
         { length: 100 },
         (_, i) => `MATCH (n${i}:Label${i}) APPLY {size: ${i}}`,
-      ).join('\n');
+      ).join(';\n');
 
       const result = parseGrass(rules);
       expect(result.errors).toHaveLength(0);

@@ -15,18 +15,18 @@ import type {
   Style,
 } from './grass-definition';
 
-import GrassLexer from './generated-parser/GrassLexer.js';
-import GrassParser, {
+import CypherCmdLexer from '../generated-parser/CypherCmdLexer.js';
+import CypherCmdParser, {
   StyleSheetContext,
   StyleRuleContext,
-  NodePatternContext,
-  RelationshipPatternContext,
-  PathPatternContext,
-  MultiLabelPatternContext,
-  WhereClauseContext,
-  OrExpressionContext,
-  AndExpressionContext,
-  NotExpressionContext,
+  GrassNodePatternContext,
+  GrassRelationshipPatternContext,
+  GrassPathPatternContext,
+  GrassMultiLabelPatternContext,
+  GrassWhereClauseContext,
+  GrassOrExpressionContext,
+  GrassAndExpressionContext,
+  GrassNotExpressionContext,
   EqualComparisonContext,
   NotEqualComparisonContext,
   LessThanComparisonContext,
@@ -40,24 +40,28 @@ import GrassParser, {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
-  ValueExpressionContext,
-  PropertyAccessContext,
-  StyleMapContext,
-  StylePropertyContext,
-  CaptionExpressionContext,
-  CaptionTermContext,
+  GrassValueExpressionContext,
+  GrassPropertyAccessContext,
+  GrassStyleMapContext,
+  GrassStylePropertyContext,
+  GrassCaptionExpressionContext,
+  GrassCaptionTermContext,
   BoldCaptionContext,
   ItalicCaptionContext,
   UnderlineCaptionContext,
-  PlainCaptionContext,
-  ColorValueContext,
-  CaptionAlignValueContext,
-  GrassNumberLiteralContext,
+  GrassPlainCaptionContext,
+  GrassColorValueContext,
+  GrassCaptionAlignValueContext,
   GrassLiteralContext,
-  GrassStringLiteralContext,
-  GrassBooleanLiteralContext,
-} from './generated-parser/GrassParser.js';
-import GrassParserVisitor from './generated-parser/GrassParserVisitor.js';
+  // Reused from Cypher - literal subclasses
+  NummericLiteralContext,
+  StringsLiteralContext,
+  BooleanLiteralContext,
+  KeywordLiteralContext,
+  OtherLiteralContext,
+  StringLiteralContext,
+  NumberLiteralContext,
+} from '../generated-parser/CypherCmdParser.js';
 
 /**
  * Result of parsing a grass stylesheet
@@ -325,62 +329,84 @@ class GrassSyntaxErrorListener extends ErrorListener<Token> {
 }
 
 /**
- * Visitor to convert parse tree to AST
+ * Converter to transform parse tree to AST.
+ * Not extending CypherCmdParserVisitor to avoid naming conflicts with Cypher's visitor methods.
  */
-class GrassASTVisitor extends GrassParserVisitor<unknown> {
-  visitStyleSheet = (ctx: StyleSheetContext): GrassAST => {
+class GrassASTConverter {
+  errors: GrassSyntaxError[] = [];
+  private input: string;
+
+  constructor(input: string) {
+    this.input = input;
+  }
+
+  private addError(ctx: ParserRuleContext, message: string): void {
+    const start = ctx.start?.start ?? 0;
+    const stop = ctx.stop?.stop ?? start;
+    const line = ctx.start?.line ?? 1;
+    const column = ctx.start?.column ?? 0;
+
+    this.errors.push({
+      message,
+      line,
+      column,
+      offsets: { start, end: stop + 1 },
+    });
+  }
+
+  convertStyleSheet(ctx: StyleSheetContext): GrassAST {
     const rules: GrassRuleAST[] = [];
     for (const ruleCtx of ctx.styleRule_list()) {
-      const rule = this.visitStyleRule(ruleCtx);
+      const rule = this.convertStyleRule(ruleCtx);
       if (rule) {
         rules.push(rule);
       }
     }
     return { rules };
-  };
+  }
 
-  visitStyleRule = (ctx: StyleRuleContext): GrassRuleAST | null => {
-    const patternCtx = ctx.pattern();
-    const match = this.visitPattern(patternCtx);
+  convertStyleRule(ctx: StyleRuleContext): GrassRuleAST | null {
+    const patternCtx = ctx.grassPattern();
+    const match = this.convertPattern(patternCtx);
     if (!match) return null;
 
-    const whereCtx = ctx.whereClause();
-    const where = whereCtx ? this.visitWhereClause(whereCtx) : undefined;
+    const whereCtx = ctx.grassWhereClause();
+    const where = whereCtx ? this.convertWhereClause(whereCtx) : undefined;
 
-    const styleMapCtx = ctx.styleMap();
-    const apply = this.visitStyleMap(styleMapCtx);
+    const styleMapCtx = ctx.grassStyleMap();
+    const apply = this.convertStyleMap(styleMapCtx);
 
     return { match, where, apply };
-  };
+  }
 
-  visitPattern = (
-    ctx: ReturnType<StyleRuleContext['pattern']>,
-  ): GrassMatchAST | null => {
-    const nodePattern = ctx.nodePattern();
+  convertPattern(
+    ctx: ReturnType<StyleRuleContext['grassPattern']>,
+  ): GrassMatchAST | null {
+    const nodePattern = ctx.grassNodePattern();
     if (nodePattern) {
-      return this.visitNodePattern(nodePattern);
+      return this.convertNodePattern(nodePattern);
     }
 
-    const relPattern = ctx.relationshipPattern();
+    const relPattern = ctx.grassRelationshipPattern();
     if (relPattern) {
-      return this.visitRelationshipPattern(relPattern);
+      return this.convertRelationshipPattern(relPattern);
     }
 
-    const pathPattern = ctx.pathPattern();
+    const pathPattern = ctx.grassPathPattern();
     if (pathPattern) {
-      return this.visitPathPattern(pathPattern);
+      return this.convertPathPattern(pathPattern);
     }
 
-    const multiLabelPattern = ctx.multiLabelPattern();
+    const multiLabelPattern = ctx.grassMultiLabelPattern();
     if (multiLabelPattern) {
-      return this.visitMultiLabelPattern(multiLabelPattern);
+      return this.convertMultiLabelPattern(multiLabelPattern);
     }
 
     return null;
-  };
+  }
 
-  visitNodePattern = (ctx: NodePatternContext): GrassMatchAST => {
-    const variableCtx = ctx.variable();
+  convertNodePattern(ctx: GrassNodePatternContext): GrassMatchAST {
+    const variableCtx = ctx.grassVariable();
     const variable = variableCtx ? variableCtx.getText() : undefined;
     const labelCtx = ctx.grassLabelName();
     const label = labelCtx
@@ -388,12 +414,12 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       : undefined;
 
     return { type: 'node', variable, label };
-  };
+  }
 
-  visitRelationshipPattern = (
-    ctx: RelationshipPatternContext,
-  ): GrassMatchAST => {
-    const variableCtx = ctx.variable();
+  convertRelationshipPattern(
+    ctx: GrassRelationshipPatternContext,
+  ): GrassMatchAST {
+    const variableCtx = ctx.grassVariable();
     const variable = variableCtx ? variableCtx.getText() : undefined;
     const relTypeCtx = ctx.grassRelTypeName();
     const reltype = relTypeCtx
@@ -401,12 +427,12 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       : undefined;
 
     return { type: 'relationship', variable, reltype };
-  };
+  }
 
-  visitPathPattern = (ctx: PathPatternContext): GrassMatchAST => {
-    // PathPatternContext subclasses have variable() and grassRelTypeName() methods
+  convertPathPattern(ctx: GrassPathPatternContext): GrassMatchAST {
+    // GrassPathPatternContext subclasses have grassVariable() and grassRelTypeName() methods
     // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    const variableCtx = (ctx as any).variable?.() as
+    const variableCtx = (ctx as any).grassVariable?.() as
       | ParserRuleContext
       | undefined;
     const variable = variableCtx?.getText();
@@ -419,66 +445,67 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       : undefined;
 
     return { type: 'path', variable, reltype };
-  };
+  }
 
-  visitMultiLabelPattern = (ctx: MultiLabelPatternContext): GrassMatchAST => {
-    // Multiple label patterns are parsed but marked as errors
-    const variableCtx = ctx.variable();
+  convertMultiLabelPattern(ctx: GrassMultiLabelPatternContext): GrassMatchAST {
+    const variableCtx = ctx.grassVariable();
     const variable = variableCtx ? variableCtx.getText() : undefined;
     const labelContexts = ctx.grassLabelName_list();
     const labels = labelContexts.map((l) => this.getSymbolicName(l.getText()));
 
     return { type: 'multiLabel', variable, labels };
-  };
+  }
 
-  visitWhereClause = (ctx: WhereClauseContext): GrassWhereAST | undefined => {
-    const boolExpr = ctx.booleanExpression();
-    return this.visitBooleanExpression(boolExpr);
-  };
+  convertWhereClause(ctx: GrassWhereClauseContext): GrassWhereAST | undefined {
+    const boolExpr = ctx.grassBooleanExpression();
+    return this.convertBooleanExpression(boolExpr);
+  }
 
-  visitBooleanExpression = (
-    ctx: ReturnType<WhereClauseContext['booleanExpression']>,
-  ): GrassWhereAST | undefined => {
-    const orExpr = ctx.orExpression();
-    return this.visitOrExpression(orExpr);
-  };
+  convertBooleanExpression(
+    ctx: ReturnType<GrassWhereClauseContext['grassBooleanExpression']>,
+  ): GrassWhereAST | undefined {
+    const orExpr = ctx.grassOrExpression();
+    return this.convertOrExpression(orExpr);
+  }
 
-  visitOrExpression = (ctx: OrExpressionContext): GrassWhereAST | undefined => {
-    const andExprs = ctx.andExpression_list();
+  convertOrExpression(
+    ctx: GrassOrExpressionContext,
+  ): GrassWhereAST | undefined {
+    const andExprs = ctx.grassAndExpression_list();
     if (andExprs.length === 1) {
-      return this.visitAndExpression(andExprs[0]);
+      return this.convertAndExpression(andExprs[0]);
     }
 
     const operands = andExprs
-      .map((e) => this.visitAndExpression(e))
+      .map((e) => this.convertAndExpression(e))
       .filter((o): o is GrassWhereAST => o !== undefined);
 
     return { type: 'or', operands };
-  };
+  }
 
-  visitAndExpression = (
-    ctx: AndExpressionContext,
-  ): GrassWhereAST | undefined => {
-    const notExprs = ctx.notExpression_list();
+  convertAndExpression(
+    ctx: GrassAndExpressionContext,
+  ): GrassWhereAST | undefined {
+    const notExprs = ctx.grassNotExpression_list();
     if (notExprs.length === 1) {
-      return this.visitNotExpression(notExprs[0]);
+      return this.convertNotExpression(notExprs[0]);
     }
 
     const operands = notExprs
-      .map((e) => this.visitNotExpression(e))
+      .map((e) => this.convertNotExpression(e))
       .filter((o): o is GrassWhereAST => o !== undefined);
 
     return { type: 'and', operands };
-  };
+  }
 
-  visitNotExpression = (
-    ctx: NotExpressionContext,
-  ): GrassWhereAST | undefined => {
+  convertNotExpression(
+    ctx: GrassNotExpressionContext,
+  ): GrassWhereAST | undefined {
     // Check if this is a NOT expression
     if (ctx.NOT()) {
-      const inner = ctx.notExpression();
+      const inner = ctx.grassNotExpression();
       if (inner) {
-        const operand = this.visitNotExpression(inner);
+        const operand = this.convertNotExpression(inner);
         if (operand) {
           return { type: 'not', operand };
         }
@@ -486,288 +513,306 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
     }
 
     // Otherwise it's a comparison expression
-    const compExpr = ctx.comparisonExpression();
+    const compExpr = ctx.grassComparisonExpression();
     if (compExpr) {
-      return this.visitComparisonExpression(compExpr);
+      return this.convertComparisonExpression(compExpr);
     }
 
     return undefined;
-  };
+  }
 
-  visitComparisonExpression = (
-    ctx: ReturnType<NotExpressionContext['comparisonExpression']>,
-  ): GrassWhereAST | undefined => {
+  convertComparisonExpression(
+    ctx: ReturnType<GrassNotExpressionContext['grassComparisonExpression']>,
+  ): GrassWhereAST | undefined {
     if (!ctx) return undefined;
 
     if (ctx instanceof EqualComparisonContext) {
-      return this.visitEqualComparison(ctx);
+      return this.convertEqualComparison(ctx);
     } else if (ctx instanceof NotEqualComparisonContext) {
-      return this.visitNotEqualComparison(ctx);
+      return this.convertNotEqualComparison(ctx);
     } else if (ctx instanceof LessThanComparisonContext) {
-      return this.visitLessThanComparison(ctx);
+      return this.convertLessThanComparison(ctx);
     } else if (ctx instanceof GreaterThanComparisonContext) {
-      return this.visitGreaterThanComparison(ctx);
+      return this.convertGreaterThanComparison(ctx);
     } else if (ctx instanceof LessThanOrEqualComparisonContext) {
-      return this.visitLessThanOrEqualComparison(ctx);
+      return this.convertLessThanOrEqualComparison(ctx);
     } else if (ctx instanceof GreaterThanOrEqualComparisonContext) {
-      return this.visitGreaterThanOrEqualComparison(ctx);
+      return this.convertGreaterThanOrEqualComparison(ctx);
     } else if (ctx instanceof ContainsComparisonContext) {
-      return this.visitContainsComparison(ctx);
+      return this.convertContainsComparison(ctx);
     } else if (ctx instanceof StartsWithComparisonContext) {
-      return this.visitStartsWithComparison(ctx);
+      return this.convertStartsWithComparison(ctx);
     } else if (ctx instanceof EndsWithComparisonContext) {
-      return this.visitEndsWithComparison(ctx);
+      return this.convertEndsWithComparison(ctx);
     } else if (ctx instanceof IsNullCheckContext) {
-      return this.visitIsNullCheck(ctx);
+      return this.convertIsNullCheck(ctx);
     } else if (ctx instanceof IsNotNullCheckContext) {
-      return this.visitIsNotNullCheck(ctx);
+      return this.convertIsNotNullCheck(ctx);
     } else if (ctx instanceof LabelCheckContext) {
-      return this.visitLabelCheck(ctx);
+      return this.convertLabelCheck(ctx);
     } else if (ctx instanceof ParenthesizedBooleanContext) {
-      return this.visitParenthesizedBoolean(ctx);
+      return this.convertParenthesizedBoolean(ctx);
     } else if (
-      'propertyAccess' in ctx &&
-      typeof ctx.propertyAccess === 'function'
+      'grassPropertyAccess' in ctx &&
+      typeof ctx.grassPropertyAccess === 'function'
     ) {
       // PropertyExistenceCheckContext - duck-typed since the export isn't recognized by TS
-      return this.visitPropertyExistenceCheck(
-        ctx as ParserRuleContext & { propertyAccess(): PropertyAccessContext },
+      return this.convertPropertyExistenceCheck(
+        ctx as ParserRuleContext & {
+          grassPropertyAccess(): GrassPropertyAccessContext;
+        },
       );
     }
 
     return undefined;
-  };
+  }
 
   private makeComparison(
-    ctx: { valueExpression_list(): ValueExpressionContext[] },
+    ctx: { grassValueExpression_list(): GrassValueExpressionContext[] },
     operator: ComparisonOperator,
   ): GrassWhereAST {
-    const values = ctx.valueExpression_list();
-    const left = this.visitValueExpression(values[0]);
-    const right = this.visitValueExpression(values[1]);
+    const values = ctx.grassValueExpression_list();
+    const left = this.convertValueExpression(values[0]);
+    const right = this.convertValueExpression(values[1]);
     return { type: 'comparison', operator, left, right };
   }
 
-  visitEqualComparison = (ctx: EqualComparisonContext): GrassWhereAST => {
+  convertEqualComparison(ctx: EqualComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'equal');
-  };
+  }
 
-  visitNotEqualComparison = (ctx: NotEqualComparisonContext): GrassWhereAST => {
+  convertNotEqualComparison(ctx: NotEqualComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'notEqual');
-  };
+  }
 
-  visitLessThanComparison = (ctx: LessThanComparisonContext): GrassWhereAST => {
+  convertLessThanComparison(ctx: LessThanComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'lessThan');
-  };
+  }
 
-  visitGreaterThanComparison = (
+  convertGreaterThanComparison(
     ctx: GreaterThanComparisonContext,
-  ): GrassWhereAST => {
+  ): GrassWhereAST {
     return this.makeComparison(ctx, 'greaterThan');
-  };
+  }
 
-  visitLessThanOrEqualComparison = (
+  convertLessThanOrEqualComparison(
     ctx: LessThanOrEqualComparisonContext,
-  ): GrassWhereAST => {
+  ): GrassWhereAST {
     return this.makeComparison(ctx, 'lessThanOrEqual');
-  };
+  }
 
-  visitGreaterThanOrEqualComparison = (
+  convertGreaterThanOrEqualComparison(
     ctx: GreaterThanOrEqualComparisonContext,
-  ): GrassWhereAST => {
+  ): GrassWhereAST {
     return this.makeComparison(ctx, 'greaterThanOrEqual');
-  };
+  }
 
-  visitContainsComparison = (ctx: ContainsComparisonContext): GrassWhereAST => {
+  convertContainsComparison(ctx: ContainsComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'contains');
-  };
+  }
 
-  visitStartsWithComparison = (
-    ctx: StartsWithComparisonContext,
-  ): GrassWhereAST => {
+  convertStartsWithComparison(ctx: StartsWithComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'startsWith');
-  };
+  }
 
-  visitEndsWithComparison = (ctx: EndsWithComparisonContext): GrassWhereAST => {
+  convertEndsWithComparison(ctx: EndsWithComparisonContext): GrassWhereAST {
     return this.makeComparison(ctx, 'endsWith');
-  };
+  }
 
-  visitIsNullCheck = (ctx: IsNullCheckContext): GrassWhereAST => {
-    const value = this.visitValueExpression(ctx.valueExpression());
+  convertIsNullCheck(ctx: IsNullCheckContext): GrassWhereAST {
+    const value = this.convertValueExpression(ctx.grassValueExpression());
     return { type: 'isNull', value };
-  };
+  }
 
-  visitIsNotNullCheck = (ctx: IsNotNullCheckContext): GrassWhereAST => {
-    const value = this.visitValueExpression(ctx.valueExpression());
+  convertIsNotNullCheck(ctx: IsNotNullCheckContext): GrassWhereAST {
+    const value = this.convertValueExpression(ctx.grassValueExpression());
     return { type: 'isNotNull', value };
-  };
+  }
 
-  visitLabelCheck = (ctx: LabelCheckContext): GrassWhereAST => {
-    const variable = ctx.variable().getText();
+  convertLabelCheck(ctx: LabelCheckContext): GrassWhereAST {
+    const variable = ctx.grassVariable().getText();
     const label = this.getSymbolicName(ctx.grassLabelName().getText());
     return { type: 'labelCheck', variable, label };
-  };
+  }
 
-  visitPropertyExistenceCheck = (
-    ctx: ParserRuleContext & { propertyAccess(): PropertyAccessContext },
-  ): GrassWhereAST => {
-    const propAccess = this.visitPropertyAccess(ctx.propertyAccess());
+  convertPropertyExistenceCheck(
+    ctx: ParserRuleContext & {
+      grassPropertyAccess(): GrassPropertyAccessContext;
+    },
+  ): GrassWhereAST {
+    const propAccess = this.convertPropertyAccess(ctx.grassPropertyAccess());
     if (propAccess.type === 'property') {
       return { type: 'propertyExistence', property: propAccess.name };
     }
     return { type: 'propertyExistence', property: '' };
-  };
+  }
 
-  visitParenthesizedBoolean = (
+  convertParenthesizedBoolean(
     ctx: ParenthesizedBooleanContext,
-  ): GrassWhereAST | undefined => {
-    return this.visitBooleanExpression(ctx.booleanExpression());
-  };
+  ): GrassWhereAST | undefined {
+    return this.convertBooleanExpression(ctx.grassBooleanExpression());
+  }
 
-  visitValueExpression = (ctx: ValueExpressionContext): GrassValueAST => {
-    const propAccess = ctx.propertyAccess();
+  convertValueExpression(ctx: GrassValueExpressionContext): GrassValueAST {
+    const propAccess = ctx.grassPropertyAccess();
     if (propAccess) {
-      return this.visitPropertyAccess(propAccess);
+      return this.convertPropertyAccess(propAccess);
     }
 
     const literal = ctx.grassLiteral();
     if (literal) {
-      return this.visitGrassLiteral(literal);
+      return this.convertGrassLiteral(literal);
     }
 
     return { type: 'null' };
-  };
+  }
 
-  visitPropertyAccess = (ctx: PropertyAccessContext): GrassValueAST => {
-    const propName = ctx.propertyName().getText();
+  convertPropertyAccess(ctx: GrassPropertyAccessContext): GrassValueAST {
+    const propName = ctx.propertyKeyName().getText();
     return { type: 'property', name: this.getSymbolicName(propName) };
-  };
+  }
 
-  visitGrassLiteral = (ctx: GrassLiteralContext): GrassValueAST => {
-    const stringLit = ctx.grassStringLiteral();
-    if (stringLit) {
-      return this.visitGrassStringLiteral(stringLit);
+  convertGrassLiteral(ctx: GrassLiteralContext): GrassValueAST {
+    const literal = ctx.literal();
+
+    // Handle each literal subtype
+    if (literal instanceof NummericLiteralContext) {
+      const numLit = literal.numberLiteral();
+      return this.convertNumberLiteral(numLit);
     }
 
-    const numLit = ctx.grassNumberLiteral();
-    if (numLit) {
-      return this.visitGrassNumberLiteral(numLit);
+    if (literal instanceof StringsLiteralContext) {
+      const stringLit = literal.stringLiteral();
+      return this.convertStringLiteral(stringLit);
     }
 
-    const boolLit = ctx.grassBooleanLiteral();
-    if (boolLit) {
-      return this.visitGrassBooleanLiteral(boolLit);
+    if (literal instanceof BooleanLiteralContext) {
+      const value = literal.TRUE() !== null;
+      return { type: 'boolean', value };
+    }
+
+    if (literal instanceof KeywordLiteralContext) {
+      // NULL is supported, but INF/INFINITY/NAN are not
+      if (literal.NULL()) {
+        return { type: 'null' };
+      }
+      // Unsupported: INF, INFINITY, NAN
+      const text = literal.getText().toUpperCase();
+      this.addError(
+        literal,
+        `Grass does not support '${text}' as a literal value. Use a number instead.`,
+      );
+      return { type: 'null' };
+    }
+
+    if (literal instanceof OtherLiteralContext) {
+      // Map literals are not supported in Grass
+      this.addError(
+        literal,
+        'Grass does not support map literals in WHERE clauses. Use simple values (strings, numbers, booleans).',
+      );
+      return { type: 'null' };
     }
 
     return { type: 'null' };
-  };
+  }
 
-  visitGrassStringLiteral = (ctx: GrassStringLiteralContext): GrassValueAST => {
+  convertStringLiteral(ctx: StringLiteralContext): GrassValueAST {
     const text = ctx.getText();
     // Remove surrounding quotes and unescape
     const unquoted = text.slice(1, -1).replace(/\\(.)/g, '$1');
     return { type: 'string', value: unquoted };
-  };
+  }
 
-  visitGrassNumberLiteral = (ctx: GrassNumberLiteralContext): GrassValueAST => {
+  convertNumberLiteral(ctx: NumberLiteralContext): GrassValueAST {
     const text = ctx.getText();
     const value = text.includes('.') ? parseFloat(text) : parseInt(text, 10);
     return { type: 'number', value };
-  };
+  }
 
-  visitGrassBooleanLiteral = (
-    ctx: GrassBooleanLiteralContext,
-  ): GrassValueAST => {
-    const value = ctx.TRUE() !== null;
-    return { type: 'boolean', value };
-  };
-
-  visitStyleMap = (ctx: StyleMapContext | null): GrassStyleAST => {
+  convertStyleMap(ctx: GrassStyleMapContext | null): GrassStyleAST {
     const style: GrassStyleAST = {};
 
-    // Handle case where styleMap context is null (missing APPLY clause)
     if (!ctx) {
       return style;
     }
 
-    for (const propCtx of ctx.styleProperty_list()) {
+    for (const propCtx of ctx.grassStyleProperty_list()) {
       this.applyStyleProperty(propCtx, style);
     }
 
     return style;
-  };
+  }
 
-  applyStyleProperty = (
-    ctx: StylePropertyContext,
+  applyStyleProperty(
+    ctx: GrassStylePropertyContext,
     style: GrassStyleAST,
-  ): void => {
-    const colorProp = ctx.colorProperty();
+  ): void {
+    const colorProp = ctx.grassColorProperty();
     if (colorProp) {
-      style.color = this.visitColorValue(colorProp.colorValue());
+      style.color = this.convertColorValue(colorProp.grassColorValue());
       return;
     }
 
-    const sizeProp = ctx.sizeProperty();
+    const sizeProp = ctx.grassSizeProperty();
     if (sizeProp) {
-      style.size = this.parseNumber(sizeProp.grassNumberLiteral());
+      style.size = this.parseNumber(sizeProp.numberLiteral());
       return;
     }
 
-    const widthProp = ctx.widthProperty();
+    const widthProp = ctx.grassWidthProperty();
     if (widthProp) {
-      style.width = this.parseNumber(widthProp.grassNumberLiteral());
+      style.width = this.parseNumber(widthProp.numberLiteral());
       return;
     }
 
-    const captionsProp = ctx.captionsProperty();
+    const captionsProp = ctx.grassCaptionsProperty();
     if (captionsProp) {
-      style.captions = this.visitCaptionExpression(
-        captionsProp.captionExpression(),
+      style.captions = this.convertCaptionExpression(
+        captionsProp.grassCaptionExpression(),
       );
       return;
     }
 
-    const captionSizeProp = ctx.captionSizeProperty();
+    const captionSizeProp = ctx.grassCaptionSizeProperty();
     if (captionSizeProp) {
-      style.captionSize = this.parseNumber(
-        captionSizeProp.grassNumberLiteral(),
-      );
+      style.captionSize = this.parseNumber(captionSizeProp.numberLiteral());
       return;
     }
 
-    const captionAlignProp = ctx.captionAlignProperty();
+    const captionAlignProp = ctx.grassCaptionAlignProperty();
     if (captionAlignProp) {
-      style.captionAlign = this.visitCaptionAlignValue(
-        captionAlignProp.captionAlignValue(),
+      style.captionAlign = this.convertCaptionAlignValue(
+        captionAlignProp.grassCaptionAlignValue(),
       );
       return;
     }
-  };
+  }
 
-  visitColorValue = (ctx: ColorValueContext): string => {
+  convertColorValue(ctx: GrassColorValueContext): string {
     const hexColor = ctx.HEX_COLOR();
     if (hexColor) {
       return hexColor.getText();
     }
 
-    const stringLit = ctx.grassStringLiteral();
+    const stringLit = ctx.stringLiteral();
     if (stringLit) {
       const text = stringLit.getText();
       return text.slice(1, -1);
     }
 
     return '';
-  };
+  }
 
-  visitCaptionAlignValue = (
-    ctx: CaptionAlignValueContext,
-  ): 'top' | 'bottom' | 'center' => {
+  convertCaptionAlignValue(
+    ctx: GrassCaptionAlignValueContext,
+  ): 'top' | 'bottom' | 'center' {
     if (ctx.TOP()) return 'top';
     if (ctx.BOTTOM()) return 'bottom';
     if (ctx.CENTER()) return 'center';
 
     // String literal fallback
-    const stringLit = ctx.grassStringLiteral();
+    const stringLit = ctx.stringLiteral();
     if (stringLit) {
       const text = stringLit.getText().slice(1, -1).toLowerCase();
       if (text === 'top' || text === 'bottom' || text === 'center') {
@@ -776,26 +821,26 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
     }
 
     return 'center';
-  };
+  }
 
-  visitCaptionExpression = (
-    ctx: CaptionExpressionContext,
-  ): GrassCaptionAST[] => {
+  convertCaptionExpression(
+    ctx: GrassCaptionExpressionContext,
+  ): GrassCaptionAST[] {
     const captions: GrassCaptionAST[] = [];
 
-    for (const termCtx of ctx.captionTerm_list()) {
+    for (const termCtx of ctx.grassCaptionTerm_list()) {
       const caption = this.processCaptionTerm(termCtx, []);
       captions.push(...caption);
     }
 
     return captions;
-  };
+  }
 
   processCaptionTerm(
-    ctx: CaptionTermContext,
+    ctx: GrassCaptionTermContext,
     inheritedStyles: CaptionVariation[],
   ): GrassCaptionAST[] {
-    const styledCaption = ctx.styledCaption();
+    const styledCaption = ctx.grassStyledCaption();
     if (styledCaption) {
       if (styledCaption instanceof BoldCaptionContext) {
         return this.processBoldCaption(styledCaption, inheritedStyles);
@@ -806,7 +851,7 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       }
     }
 
-    const plainCaption = ctx.plainCaption();
+    const plainCaption = ctx.grassPlainCaption();
     if (plainCaption) {
       return this.processPlainCaption(plainCaption, inheritedStyles);
     }
@@ -820,7 +865,7 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   ): GrassCaptionAST[] {
     const newStyles: CaptionVariation[] = [...inheritedStyles, 'bold'];
     return this.processNestedCaptionExpression(
-      ctx.captionExpression(),
+      ctx.grassCaptionExpression(),
       newStyles,
     );
   }
@@ -831,7 +876,7 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   ): GrassCaptionAST[] {
     const newStyles: CaptionVariation[] = [...inheritedStyles, 'italic'];
     return this.processNestedCaptionExpression(
-      ctx.captionExpression(),
+      ctx.grassCaptionExpression(),
       newStyles,
     );
   }
@@ -842,18 +887,18 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   ): GrassCaptionAST[] {
     const newStyles: CaptionVariation[] = [...inheritedStyles, 'underline'];
     return this.processNestedCaptionExpression(
-      ctx.captionExpression(),
+      ctx.grassCaptionExpression(),
       newStyles,
     );
   }
 
   processNestedCaptionExpression(
-    ctx: CaptionExpressionContext,
+    ctx: GrassCaptionExpressionContext,
     styles: CaptionVariation[],
   ): GrassCaptionAST[] {
     const captions: GrassCaptionAST[] = [];
 
-    for (const termCtx of ctx.captionTerm_list()) {
+    for (const termCtx of ctx.grassCaptionTerm_list()) {
       const nested = this.processCaptionTerm(termCtx, styles);
       captions.push(...nested);
     }
@@ -862,42 +907,42 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   }
 
   processPlainCaption(
-    ctx: PlainCaptionContext,
+    ctx: GrassPlainCaptionContext,
     styles: CaptionVariation[],
   ): GrassCaptionAST[] {
-    const stringLit = ctx.grassStringLiteral();
+    const stringLit = ctx.stringLiteral();
     if (stringLit) {
       const text = stringLit.getText();
       const unquoted = text.slice(1, -1).replace(/\\(.)/g, '$1');
       return [{ value: unquoted, styles }];
     }
 
-    const propAccess = ctx.propertyAccess();
+    const propAccess = ctx.grassPropertyAccess();
     if (propAccess) {
-      const propName = propAccess.propertyName().getText();
+      const propName = propAccess.propertyKeyName().getText();
       return [{ value: { property: this.getSymbolicName(propName) }, styles }];
     }
 
     // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    if (ctx.typeFunction()) {
+    if (ctx.grassTypeFunction()) {
       return [{ value: { useType: true }, styles }];
     }
 
     return [];
   }
 
-  parseNumber = (ctx: GrassNumberLiteralContext): number => {
+  parseNumber(ctx: NumberLiteralContext): number {
     const text = ctx.getText();
     return text.includes('.') ? parseFloat(text) : parseInt(text, 10);
-  };
+  }
 
-  getSymbolicName = (text: string): string => {
+  getSymbolicName(text: string): string {
     // Handle escaped identifiers (backtick-quoted)
     if (text.startsWith('`') && text.endsWith('`')) {
       return text.slice(1, -1).replace(/``/g, '`');
     }
     return text;
-  };
+  }
 }
 
 /**
@@ -913,9 +958,9 @@ export function parseGrass(input: string): GrassParseResult {
   }
 
   const inputStream = CharStreams.fromString(input);
-  const lexer = new GrassLexer(inputStream);
+  const lexer = new CypherCmdLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const parser = new GrassParser(tokenStream);
+  const parser = new CypherCmdParser(tokenStream);
 
   const errorListener = new GrassSyntaxErrorListener(input);
   parser.removeErrorListeners();
@@ -923,11 +968,11 @@ export function parseGrass(input: string): GrassParseResult {
 
   const tree = parser.styleSheet();
 
-  const visitor = new GrassASTVisitor();
-  const ast = visitor.visitStyleSheet(tree);
+  const converter = new GrassASTConverter(input);
+  const ast = converter.convertStyleSheet(tree);
 
   // Check for invalid patterns (paths, multiple labels) and generate errors
-  const errors = [...errorListener.errors];
+  const errors = [...errorListener.errors, ...converter.errors];
   const validRules: GrassRuleAST[] = [];
 
   for (const rule of ast.rules) {
@@ -1050,7 +1095,7 @@ function checkForNullComparisons(
  * Convert StyleRule objects back to grass DSL string.
  */
 export function stringifyGrass(rules: StyleRule[]): string {
-  return rules.map(stringifyRule).join('\n\n');
+  return rules.map(stringifyRule).join(';\n\n');
 }
 
 function stringifyRule(rule: StyleRule): string {
