@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.27
+
+### Patch Changes
+
+- 20b31b6: Fix formatting of dynamic labels
+- 68d92a8: Updates dev artifacts to 2025.12
+
 ## 2.0.0-next.26
 
 ### Patch Changes

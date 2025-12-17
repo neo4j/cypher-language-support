@@ -48,7 +48,6 @@ import {
   ExtendedCaseExpressionContext,
   FilterClauseContext,
   ForeachClauseContext,
-  FulltextNodePatternContext,
   FunctionInvocationContext,
   IndexPostfixContext,
   InsertClauseContext,
@@ -69,6 +68,7 @@ import {
   MatchClauseContext,
   MergeActionContext,
   MergeClauseContext,
+  MultiLabelNodePatternContext,
   NamespaceContext,
   NodePatternContext,
   NormalizeFunctionContext,
@@ -718,8 +718,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
-    this._visit(ctx.fulltextNodePattern());
-    this._visit(ctx.fulltextRelPattern());
+    this._visit(ctx.multiLabelNodePattern());
+    this._visit(ctx.multiRelTypeRelPattern());
     this.breakLine();
     this.visit(ctx.ON());
     this.visit(ctx.EACH());
@@ -741,7 +741,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(optionsGrp);
   };
 
-  visitFulltextNodePattern = (ctx: FulltextNodePatternContext) => {
+  visitMultiLabelNodePattern = (ctx: MultiLabelNodePatternContext) => {
     this.visit(ctx.LPAREN());
     this.visit(ctx.variable());
     this.avoidSpaceBetween();
@@ -1449,7 +1449,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitPattern = (ctx: PatternContext) => {
     // Don't create an unnecessary group if we don't also have a path
-    if (!ctx.variable() && !ctx.selector()) {
+    if (!ctx.variable() && !ctx.pathPatternPrefix()) {
       this.visitChildren(ctx);
       return;
     }
@@ -1463,9 +1463,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       patternIndent = this.addIndentation();
     }
     const selectorAnonymousPatternGrp = this.startGroup();
-    if (ctx.selector()) {
+    if (ctx.pathPatternPrefix()) {
       const selectorGroup = this.startGroup();
-      this._visit(ctx.selector());
+      this._visit(ctx.pathPatternPrefix());
       this.endGroup(selectorGroup);
     }
     const anonymousPatternGrp = this.startGroup();
@@ -1796,10 +1796,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.EXISTS());
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
-    if (ctx.nextStatement()) {
+    if (ctx.queryWithLocalDefinitions()) {
       this.breakLine();
       const queryIndent = this.addIndentation();
-      this._visit(ctx.nextStatement());
+      this._visit(ctx.queryWithLocalDefinitions());
       this.removeIndentation(queryIndent);
       this.mustBreakBetween();
       this._visit(ctx.RCURLY());
@@ -1826,7 +1826,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
-    this._visit(ctx.nextStatement());
+    this._visit(ctx.queryWithLocalDefinitions());
     this.removeIndentation(queryIndent);
     this.breakLine();
     this._visit(ctx.RCURLY());
@@ -1837,9 +1837,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this._visit(ctx.LCURLY());
 
-    if (ctx.nextStatement()) {
+    if (ctx.queryWithLocalDefinitions()) {
       const queryIndent = this.addIndentation();
-      this._visit(ctx.nextStatement());
+      this._visit(ctx.queryWithLocalDefinitions());
       this.removeIndentation(queryIndent);
       this.breakLine();
       this.mustBreakBetween();
@@ -1955,7 +1955,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LCURLY());
     const queryIndent = this.addIndentation();
     this.breakLine();
-    this._visit(ctx.nextStatement());
+    this._visit(ctx.queryWithLocalDefinitions());
     this.removeIndentation(queryIndent);
     this.breakLine();
     this._visit(ctx.RCURLY());
