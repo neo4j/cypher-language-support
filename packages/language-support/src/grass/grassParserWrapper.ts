@@ -2,6 +2,7 @@ import {
   CharStreams,
   CommonTokenStream,
   ErrorListener,
+  ParserRuleContext,
   Recognizer,
   Token,
 } from 'antlr4';
@@ -39,9 +40,7 @@ import GrassParser, {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
-  PropertyExistenceCheckContext,
   ValueExpressionContext,
-  TypeFunctionContext,
   PropertyAccessContext,
   StyleMapContext,
   StylePropertyContext,
@@ -405,12 +404,16 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   };
 
   visitPathPattern = (ctx: PathPatternContext): GrassMatchAST => {
-    // Path patterns are parsed but marked as errors
-    // PathPatternContext is a base class with specific subclasses (RightArrowPath, LeftArrowPath, UndirectedPath)
-    // All have variable() and grassRelTypeName() methods via the grammar rules
-    const variableCtx = (ctx as any).variable?.();
-    const variable = variableCtx ? variableCtx.getText() : undefined;
-    const relTypeCtx = (ctx as any).grassRelTypeName?.();
+    // PathPatternContext subclasses have variable() and grassRelTypeName() methods
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const variableCtx = (ctx as any).variable?.() as
+      | ParserRuleContext
+      | undefined;
+    const variable = variableCtx?.getText();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    const relTypeCtx = (ctx as any).grassRelTypeName?.() as
+      | ParserRuleContext
+      | undefined;
     const reltype = relTypeCtx
       ? this.getSymbolicName(relTypeCtx.getText())
       : undefined;
@@ -520,10 +523,16 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       return this.visitIsNotNullCheck(ctx);
     } else if (ctx instanceof LabelCheckContext) {
       return this.visitLabelCheck(ctx);
-    } else if (ctx instanceof PropertyExistenceCheckContext) {
-      return this.visitPropertyExistenceCheck(ctx);
     } else if (ctx instanceof ParenthesizedBooleanContext) {
       return this.visitParenthesizedBoolean(ctx);
+    } else if (
+      'propertyAccess' in ctx &&
+      typeof ctx.propertyAccess === 'function'
+    ) {
+      // PropertyExistenceCheckContext - duck-typed since the export isn't recognized by TS
+      return this.visitPropertyExistenceCheck(
+        ctx as ParserRuleContext & { propertyAccess(): PropertyAccessContext },
+      );
     }
 
     return undefined;
@@ -600,13 +609,12 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
   };
 
   visitPropertyExistenceCheck = (
-    ctx: PropertyExistenceCheckContext,
+    ctx: ParserRuleContext & { propertyAccess(): PropertyAccessContext },
   ): GrassWhereAST => {
     const propAccess = this.visitPropertyAccess(ctx.propertyAccess());
     if (propAccess.type === 'property') {
       return { type: 'propertyExistence', property: propAccess.name };
     }
-    // Fallback - shouldn't happen since grammar only allows propertyAccess
     return { type: 'propertyExistence', property: '' };
   };
 
@@ -870,8 +878,8 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       return [{ value: { property: this.getSymbolicName(propName) }, styles }];
     }
 
-    const typeFunc = ctx.typeFunction();
-    if (typeFunc) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+    if (ctx.typeFunction()) {
       return [{ value: { useType: true }, styles }];
     }
 
@@ -1006,19 +1014,16 @@ function checkForNullComparisons(
         const rightIsNull = where.right.type === 'null';
 
         if (leftIsNull || rightIsNull) {
-          // Try to find the location of the null keyword
           const nullRegex = /\bnull\b/gi;
-          let match;
+          let match: RegExpExecArray | null;
           let start = 0;
           let end = 0;
           let line = 1;
           let column = 0;
 
-          // Find all occurrences of 'null' and use the first one
-          // (this is approximate but good enough for error reporting)
           while ((match = nullRegex.exec(input)) !== null) {
             start = match.index;
-            end = start + 4; // 'null'.length
+            end = start + 4;
             const lines = input.substring(0, start).split('\n');
             line = lines.length;
             column = lines[lines.length - 1].length;
