@@ -531,11 +531,6 @@ export class GrassASTConverter {
   }
 
   convertColorValue(ctx: GrassColorValueContext): string {
-    const hexColor = ctx.HEX_COLOR();
-    if (hexColor) {
-      return hexColor.getText();
-    }
-
     const stringLit = ctx.stringLiteral();
     if (stringLit) {
       const text = stringLit.getText();

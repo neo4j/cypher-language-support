@@ -148,7 +148,7 @@ grassStyleProperty: grassColorProperty
                   | grassCaptionAlignProperty;
 
 grassColorProperty: COLOR COLON grassColorValue;
-grassColorValue: HEX_COLOR | stringLiteral;
+grassColorValue: stringLiteral;
 
 grassSizeProperty: SIZE COLON numberLiteral;
 

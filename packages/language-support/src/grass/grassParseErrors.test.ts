@@ -582,15 +582,15 @@ describe('Grass DSL Parser - Edge Cases', () => {
     });
 
     it('handles hex colors in various formats', () => {
-      const result1 = parseGrass(`MATCH (n) APPLY {color: #fff}`);
+      const result1 = parseGrass(`MATCH (n) APPLY {color: '#fff'}`);
       expect(result1.errors).toHaveLength(0);
       expect(result1.rules[0].apply.color).toBe('#fff');
 
-      const result2 = parseGrass(`MATCH (n) APPLY {color: #ffffff}`);
+      const result2 = parseGrass(`MATCH (n) APPLY {color: '#ffffff'}`);
       expect(result2.errors).toHaveLength(0);
       expect(result2.rules[0].apply.color).toBe('#ffffff');
 
-      const result3 = parseGrass(`MATCH (n) APPLY {color: #FFFFFF}`);
+      const result3 = parseGrass(`MATCH (n) APPLY {color: '#FFFFFF'}`);
       expect(result3.errors).toHaveLength(0);
       expect(result3.rules[0].apply.color).toBe('#FFFFFF');
     });
