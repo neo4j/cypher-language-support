@@ -3,3 +3,4 @@ MATCH (n:User) WHERE n.active = false APPLY {color: '#808080'}
 
 
 
+

@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { readdirSync, readFileSync } from 'fs';
 import { join, basename } from 'path';
-import { parseGrass, stringifyGrass } from './grassParserWrapper';
+import { parseGrass, stringifyGrass } from './index';
 import { jsonSerializer } from './snapshotSerializer';
 
 // Use JSON serializer for clean snapshots without trailing commas
@@ -41,4 +41,3 @@ describe('Grass DSL Parser', () => {
     });
   });
 });
-

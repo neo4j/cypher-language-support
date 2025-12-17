@@ -1,4 +1,4 @@
-MATCH [:WORKS_AT] APPLY {captionAlign: center}
+MATCH [:WORKS_AT] APPLY {captionAlign: 'center'}
 
 
 

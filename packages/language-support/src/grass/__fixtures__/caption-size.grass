@@ -3,3 +3,4 @@ MATCH (n:Person) APPLY {captions: n.name, captionSize: 16}
 
 
 
+

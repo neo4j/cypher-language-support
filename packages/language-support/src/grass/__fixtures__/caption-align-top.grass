@@ -1,4 +1,4 @@
-MATCH [:KNOWS] APPLY {captionAlign: top}
+MATCH [:KNOWS] APPLY {captionAlign: 'top'}
 
 
 

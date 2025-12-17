@@ -524,10 +524,6 @@ export function completionCoreCompletion(
           // Grass DSL completions
           CypherParser.RULE_grassLabelName,
           CypherParser.RULE_grassRelTypeName,
-          // Note: Don't add grassStyleProperty/grassCaptionAlignValue to preferredRules
-          // as it prevents token completions from working correctly.
-          // Style properties and values are completed via token completions with
-          // correct names provided by hasIncorrectSymbolicName in lexerSymbols.ts
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -752,9 +748,6 @@ export function completionCoreCompletion(
       if (ruleNumber === CypherParser.RULE_grassRelTypeName) {
         return allReltypeCompletions(dbSchema);
       }
-
-      // Note: grassStyleProperty and grassCaptionAlignValue are completed via
-      // token completions with hasIncorrectSymbolicName providing correct names
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
         return [

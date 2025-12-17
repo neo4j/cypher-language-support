@@ -1,24 +1,7 @@
-import {
-  CharStreams,
-  CommonTokenStream,
-  ErrorListener,
-  ParserRuleContext,
-  Recognizer,
-  Token,
-} from 'antlr4';
+import type { ParserRuleContext } from 'antlr4';
 import type {
-  StyleRule,
-  Where,
-  Value,
-  Caption,
-  CaptionVariation,
-  Style,
-} from './grass-definition';
-
-import CypherCmdLexer from '../generated-parser/CypherCmdLexer.js';
-import CypherCmdParser, {
-  StyleSheetContext,
   StyleRuleContext,
+  StyleSheetContext,
   GrassNodePatternContext,
   GrassRelationshipPatternContext,
   GrassPathPatternContext,
@@ -27,6 +10,20 @@ import CypherCmdParser, {
   GrassOrExpressionContext,
   GrassAndExpressionContext,
   GrassNotExpressionContext,
+  GrassValueExpressionContext,
+  GrassPropertyAccessContext,
+  GrassStyleMapContext,
+  GrassStylePropertyContext,
+  GrassCaptionExpressionContext,
+  GrassCaptionTermContext,
+  GrassColorValueContext,
+  GrassCaptionAlignValueContext,
+  GrassLiteralContext,
+  NumberLiteralContext,
+  StringLiteralContext,
+} from '../generated-parser/CypherCmdParser';
+
+import {
   EqualComparisonContext,
   NotEqualComparisonContext,
   LessThanComparisonContext,
@@ -40,299 +37,40 @@ import CypherCmdParser, {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
-  GrassValueExpressionContext,
-  GrassPropertyAccessContext,
-  GrassStyleMapContext,
-  GrassStylePropertyContext,
-  GrassCaptionExpressionContext,
-  GrassCaptionTermContext,
-  BoldCaptionContext,
-  ItalicCaptionContext,
-  UnderlineCaptionContext,
-  GrassPlainCaptionContext,
-  GrassColorValueContext,
-  GrassCaptionAlignValueContext,
-  GrassLiteralContext,
-  // Reused from Cypher - literal subclasses
   NummericLiteralContext,
   StringsLiteralContext,
   BooleanLiteralContext,
   KeywordLiteralContext,
   OtherLiteralContext,
-  StringLiteralContext,
-  NumberLiteralContext,
-} from '../generated-parser/CypherCmdParser.js';
+  BoldCaptionContext,
+  ItalicCaptionContext,
+  UnderlineCaptionContext,
+  GrassPlainCaptionContext,
+} from '../generated-parser/CypherCmdParser';
 
-/**
- * Result of parsing a grass stylesheet
- */
-export interface GrassParseResult {
-  /** The original input text */
-  input: string;
-  /** Successfully parsed style rules */
-  rules: StyleRule[];
-  /** Any syntax errors encountered */
-  errors: GrassSyntaxError[];
-}
-
-/**
- * A syntax error in the grass DSL
- */
-export interface GrassSyntaxError {
-  message: string;
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
-}
-
-/**
- * Intermediate AST representation before conversion to StyleRule
- */
-export interface GrassAST {
-  rules: GrassRuleAST[];
-}
-
-export interface GrassRuleAST {
-  match: GrassMatchAST;
-  where?: GrassWhereAST;
-  apply: GrassStyleAST;
-}
-
-export interface GrassMatchAST {
-  type: 'node' | 'relationship' | 'path' | 'multiLabel';
-  variable?: string; // optional - not needed if no WHERE clause
-  label?: string; // for nodes
-  labels?: string[]; // for multiLabel patterns (error case)
-  reltype?: string; // for relationships and paths
-}
-
-export type GrassWhereAST =
-  | { type: 'and'; operands: GrassWhereAST[] }
-  | { type: 'or'; operands: GrassWhereAST[] }
-  | { type: 'not'; operand: GrassWhereAST }
-  | {
-      type: 'comparison';
-      operator: ComparisonOperator;
-      left: GrassValueAST;
-      right: GrassValueAST;
-    }
-  | { type: 'isNull'; value: GrassValueAST }
-  | { type: 'isNotNull'; value: GrassValueAST }
-  | { type: 'labelCheck'; variable: string; label: string }
-  | { type: 'propertyExistence'; property: string };
-
-export type ComparisonOperator =
-  | 'equal'
-  | 'notEqual'
-  | 'lessThan'
-  | 'greaterThan'
-  | 'lessThanOrEqual'
-  | 'greaterThanOrEqual'
-  | 'contains'
-  | 'startsWith'
-  | 'endsWith';
-
-export type GrassValueAST =
-  | { type: 'property'; name: string }
-  | { type: 'string'; value: string }
-  | { type: 'number'; value: number }
-  | { type: 'boolean'; value: boolean }
-  | { type: 'null' };
-
-export interface GrassStyleAST {
-  color?: string;
-  size?: number;
-  width?: number;
-  captions?: GrassCaptionAST[];
-  captionSize?: number;
-  captionAlign?: 'top' | 'bottom' | 'center';
-}
-
-export interface GrassCaptionAST {
-  value: string | { property: string } | { useType: true };
-  styles: CaptionVariation[];
-}
-
-/**
- * Convert an intermediate AST to the StyleRule format
- */
-export function astToStyleRule(ast: GrassRuleAST): StyleRule {
-  const match = convertMatch(ast.match);
-  // Pass match type to convertWhere so it knows whether to use label or reltype
-  const isRelationship =
-    ast.match.type === 'relationship' || ast.match.type === 'path';
-  const where = ast.where ? convertWhere(ast.where, isRelationship) : undefined;
-  const apply = convertStyle(ast.apply);
-
-  return {
-    match,
-    ...(where && { where }),
-    apply,
-  };
-}
-
-function convertMatch(match: GrassMatchAST): StyleRule['match'] {
-  if (match.type === 'node') {
-    return { label: match.label ?? null };
-  } else {
-    return { reltype: match.reltype ?? null };
-  }
-}
-
-function convertWhere(where: GrassWhereAST, isRelationship: boolean): Where {
-  switch (where.type) {
-    case 'and':
-      return {
-        and: where.operands.map((w) => convertWhere(w, isRelationship)),
-      };
-    case 'or':
-      return { or: where.operands.map((w) => convertWhere(w, isRelationship)) };
-    case 'not':
-      return { not: convertWhere(where.operand, isRelationship) };
-    case 'isNull':
-      return { isNull: convertValue(where.value) };
-    case 'isNotNull':
-      return { not: { isNull: convertValue(where.value) } };
-    case 'labelCheck':
-      // Use match context to determine if this is a label or reltype check
-      return isRelationship ? { reltype: where.label } : { label: where.label };
-    case 'propertyExistence':
-      // Property existence: `n.property` means "property exists"
-      // The semantics (IS NOT NULL) are handled by the rule execution engine
-      return { property: where.property };
-    case 'comparison': {
-      const left = convertValue(where.left);
-      const right = convertValue(where.right);
-      const tuple: [Value, Value] = [left, right];
-
-      switch (where.operator) {
-        case 'equal':
-          return { equal: tuple };
-        case 'notEqual':
-          return { not: { equal: tuple } };
-        case 'lessThan':
-          return { lessThan: tuple };
-        case 'greaterThan':
-          return { greaterThan: tuple };
-        case 'lessThanOrEqual':
-          return { lessThanOrEqual: tuple };
-        case 'greaterThanOrEqual':
-          return { greaterThanOrEqual: tuple };
-        case 'contains':
-          return { contains: tuple };
-        case 'startsWith':
-          return { startsWith: tuple };
-        case 'endsWith':
-          return { endsWith: tuple };
-      }
-    }
-  }
-}
-
-function convertValue(value: GrassValueAST): Value {
-  switch (value.type) {
-    case 'property':
-      return { property: value.name };
-    case 'string':
-      return value.value;
-    case 'number':
-      return value.value;
-    case 'boolean':
-      return value.value;
-    case 'null':
-      return null;
-  }
-}
-
-function convertStyle(style: GrassStyleAST): Style {
-  const result: Style = {};
-
-  if (style.color !== undefined) {
-    result.color = style.color;
-  }
-  if (style.size !== undefined) {
-    result.size = style.size;
-  }
-  if (style.width !== undefined) {
-    result.width = style.width;
-  }
-  if (style.captions !== undefined) {
-    result.captions = style.captions.map(convertCaption);
-  }
-  if (style.captionSize !== undefined) {
-    result.captionSize = style.captionSize;
-  }
-  if (style.captionAlign !== undefined) {
-    result.captionAlign = style.captionAlign;
-  }
-
-  return result;
-}
-
-function convertCaption(caption: GrassCaptionAST): Caption {
-  let value: Caption['value'];
-  if (typeof caption.value === 'string') {
-    value = caption.value;
-  } else if ('property' in caption.value) {
-    value = { property: caption.value.property };
-  } else {
-    // useType case
-    value = { useType: true };
-  }
-
-  return {
-    value,
-    styles: caption.styles.length > 0 ? caption.styles : undefined,
-  };
-}
-
-/**
- * Custom error listener to collect syntax errors
- */
-class GrassSyntaxErrorListener extends ErrorListener<Token> {
-  errors: GrassSyntaxError[] = [];
-  private input: string;
-
-  constructor(input: string) {
-    super();
-    this.input = input;
-  }
-
-  syntaxError(
-    _recognizer: Recognizer<Token>,
-    offendingSymbol: Token | null,
-    line: number,
-    column: number,
-    msg: string,
-  ): void {
-    // Calculate character offsets from line/column
-    const lines = this.input.split('\n');
-    let start = 0;
-    for (let i = 0; i < line - 1; i++) {
-      start += lines[i].length + 1; // +1 for newline
-    }
-    start += column;
-
-    const tokenLength = offendingSymbol?.text?.length ?? 1;
-    const end = start + tokenLength;
-
-    this.errors.push({
-      message: msg,
-      line,
-      column,
-      offsets: { start, end },
-    });
-  }
-}
+import type {
+  GrassAST,
+  GrassRuleAST,
+  GrassMatchAST,
+  GrassWhereAST,
+  GrassValueAST,
+  GrassStyleAST,
+  GrassCaptionAST,
+  GrassSyntaxError,
+  ComparisonOperator,
+  StyleRule,
+  Where,
+  Value,
+  Caption,
+  Style,
+  CaptionVariation,
+} from './grassTypes';
 
 /**
  * Converter to transform parse tree to AST.
  * Not extending CypherCmdParserVisitor to avoid naming conflicts with Cypher's visitor methods.
  */
-class GrassASTConverter {
+export class GrassASTConverter {
   errors: GrassSyntaxError[] = [];
   private input: string;
 
@@ -750,7 +488,10 @@ class GrassASTConverter {
   ): void {
     const colorProp = ctx.grassColorProperty();
     if (colorProp) {
-      style.color = this.convertColorValue(colorProp.grassColorValue());
+      const colorValue = colorProp.grassColorValue();
+      if (colorValue) {
+        style.color = this.convertColorValue(colorValue);
+      }
       return;
     }
 
@@ -807,11 +548,6 @@ class GrassASTConverter {
   convertCaptionAlignValue(
     ctx: GrassCaptionAlignValueContext,
   ): 'top' | 'bottom' | 'center' {
-    if (ctx.TOP()) return 'top';
-    if (ctx.BOTTOM()) return 'bottom';
-    if (ctx.CENTER()) return 'center';
-
-    // String literal fallback
     const stringLit = ctx.stringLiteral();
     if (stringLit) {
       const text = stringLit.getText().slice(1, -1).toLowerCase();
@@ -946,319 +682,134 @@ class GrassASTConverter {
 }
 
 /**
- * Parse a grass DSL string into StyleRule objects.
+ * Convert an intermediate AST to the StyleRule format
  */
-export function parseGrass(input: string): GrassParseResult {
-  if (input.trim().length === 0) {
-    return {
-      input,
-      rules: [],
-      errors: [],
-    };
-  }
-
-  const inputStream = CharStreams.fromString(input);
-  const lexer = new CypherCmdLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-  const parser = new CypherCmdParser(tokenStream);
-
-  const errorListener = new GrassSyntaxErrorListener(input);
-  parser.removeErrorListeners();
-  parser.addErrorListener(errorListener);
-
-  const tree = parser.styleSheet();
-
-  const converter = new GrassASTConverter(input);
-  const ast = converter.convertStyleSheet(tree);
-
-  // Check for invalid patterns (paths, multiple labels) and generate errors
-  const errors = [...errorListener.errors, ...converter.errors];
-  const validRules: GrassRuleAST[] = [];
-
-  for (const rule of ast.rules) {
-    if (rule.match.type === 'path') {
-      // Path patterns like ()-[r:TYPE]->()
-      const ruleText = `()-[${rule.match.variable || ''}`;
-      const startIndex = input.indexOf(ruleText);
-      const start = startIndex >= 0 ? startIndex : 0;
-      const end = start + (ruleText.length + 10); // approximate end
-
-      const lines = input.substring(0, start).split('\n');
-      const line = lines.length;
-      const column = lines[lines.length - 1].length;
-
-      errors.push({
-        message:
-          'Grass does not support paths. Use [r:TYPE] for relationships.',
-        line,
-        column,
-        offsets: { start, end },
-      });
-    } else if (rule.match.type === 'multiLabel') {
-      // Multiple labels like (n:Person:Actor)
-      const labels = rule.match.labels || [];
-      const labelStr = labels.join(':');
-      const searchStr = rule.match.variable
-        ? `(${rule.match.variable}:${labelStr}`
-        : `(:${labelStr}`;
-      const startIndex = input.indexOf(searchStr);
-      const start = startIndex >= 0 ? startIndex : 0;
-      const end = start + searchStr.length + 1;
-
-      const lines = input.substring(0, start).split('\n');
-      const line = lines.length;
-      const column = lines[lines.length - 1].length;
-
-      errors.push({
-        message: `Multiple labels in MATCH are not supported. Use WHERE ${
-          rule.match.variable || 'variable'
-        }:${labels[1]} for additional label conditions.`,
-        line,
-        column,
-        offsets: { start, end },
-      });
-    } else {
-      validRules.push(rule);
-    }
-  }
-
-  // Check for semantic errors in WHERE clauses (null comparisons)
-  for (const rule of validRules) {
-    if (rule.where) {
-      checkForNullComparisons(rule.where, input, errors);
-    }
-  }
-
-  const rules = validRules.map(astToStyleRule);
+export function astToStyleRule(ast: GrassRuleAST): StyleRule {
+  const match = convertMatch(ast.match);
+  // Pass match type to convertWhere so it knows whether to use label or reltype
+  const isRelationship =
+    ast.match.type === 'relationship' || ast.match.type === 'path';
+  const where = ast.where ? convertWhere(ast.where, isRelationship) : undefined;
+  const apply = convertStyle(ast.apply);
 
   return {
-    input,
-    rules,
-    errors,
+    match,
+    ...(where && { where }),
+    apply,
   };
 }
 
-function checkForNullComparisons(
-  where: GrassWhereAST,
-  input: string,
-  errors: GrassSyntaxError[],
-): void {
+function convertMatch(match: GrassMatchAST): StyleRule['match'] {
+  if (match.type === 'node') {
+    return { label: match.label ?? null };
+  } else {
+    return { reltype: match.reltype ?? null };
+  }
+}
+
+function convertWhere(where: GrassWhereAST, isRelationship: boolean): Where {
   switch (where.type) {
     case 'and':
+      return {
+        and: where.operands.map((w) => convertWhere(w, isRelationship)),
+      };
     case 'or':
-      for (const operand of where.operands) {
-        checkForNullComparisons(operand, input, errors);
-      }
-      break;
+      return { or: where.operands.map((w) => convertWhere(w, isRelationship)) };
     case 'not':
-      checkForNullComparisons(where.operand, input, errors);
-      break;
-    case 'comparison':
-      if (where.operator === 'equal' || where.operator === 'notEqual') {
-        const leftIsNull = where.left.type === 'null';
-        const rightIsNull = where.right.type === 'null';
+      return { not: convertWhere(where.operand, isRelationship) };
+    case 'isNull':
+      return { isNull: convertValue(where.value) };
+    case 'isNotNull':
+      return { not: { isNull: convertValue(where.value) } };
+    case 'labelCheck':
+      // Use match context to determine if this is a label or reltype check
+      return isRelationship ? { reltype: where.label } : { label: where.label };
+    case 'propertyExistence':
+      // Property existence: `n.property` means "property exists"
+      // The semantics (IS NOT NULL) are handled by the rule execution engine
+      return { property: where.property };
+    case 'comparison': {
+      const left = convertValue(where.left);
+      const right = convertValue(where.right);
+      const tuple: [Value, Value] = [left, right];
 
-        if (leftIsNull || rightIsNull) {
-          const nullRegex = /\bnull\b/gi;
-          let match: RegExpExecArray | null;
-          let start = 0;
-          let end = 0;
-          let line = 1;
-          let column = 0;
-
-          while ((match = nullRegex.exec(input)) !== null) {
-            start = match.index;
-            end = start + 4;
-            const lines = input.substring(0, start).split('\n');
-            line = lines.length;
-            column = lines[lines.length - 1].length;
-            break;
-          }
-
-          const operator = where.operator === 'equal' ? '=' : '<>';
-          const suggestion =
-            where.operator === 'equal' ? 'IS NULL' : 'IS NOT NULL';
-
-          errors.push({
-            message: `Comparing with null using '${operator}' is not recommended. Use '${suggestion}' instead. (In Cypher, null ${operator} null evaluates to null, not true/false)`,
-            line,
-            column,
-            offsets: { start, end },
-          });
-        }
+      switch (where.operator) {
+        case 'equal':
+          return { equal: tuple };
+        case 'notEqual':
+          return { not: { equal: tuple } };
+        case 'lessThan':
+          return { lessThan: tuple };
+        case 'greaterThan':
+          return { greaterThan: tuple };
+        case 'lessThanOrEqual':
+          return { lessThanOrEqual: tuple };
+        case 'greaterThanOrEqual':
+          return { greaterThanOrEqual: tuple };
+        case 'contains':
+          return { contains: tuple };
+        case 'startsWith':
+          return { startsWith: tuple };
+        case 'endsWith':
+          return { endsWith: tuple };
       }
-      break;
+    }
   }
 }
 
-/**
- * Convert StyleRule objects back to grass DSL string.
- */
-export function stringifyGrass(rules: StyleRule[]): string {
-  return rules.map(stringifyRule).join(';\n\n');
-}
-
-function stringifyRule(rule: StyleRule): string {
-  const parts: string[] = [];
-
-  // MATCH clause
-  parts.push(stringifyMatch(rule.match));
-
-  // WHERE clause (optional)
-  if (rule.where) {
-    parts.push(`WHERE ${stringifyWhere(rule.where)}`);
-  }
-
-  // APPLY clause
-  parts.push(`APPLY ${stringifyStyle(rule.apply)}`);
-
-  return parts.join(' ');
-}
-
-function stringifyMatch(match: StyleRule['match']): string {
-  if ('label' in match) {
-    const label = match.label ? `:${match.label}` : '';
-    return `MATCH (n${label})`;
-  } else if ('reltype' in match) {
-    const reltype = match.reltype ? `:${match.reltype}` : '';
-    return `MATCH [r${reltype}]`;
-  } else {
-    // property selector - shouldn't happen in match context, but handle gracefully
-    return `MATCH (n)`;
+function convertValue(value: GrassValueAST): Value {
+  switch (value.type) {
+    case 'property':
+      return { property: value.name };
+    case 'string':
+      return value.value;
+    case 'number':
+      return value.value;
+    case 'boolean':
+      return value.value;
+    case 'null':
+      return null;
   }
 }
 
-function stringifyWhere(where: Where): string {
-  if ('and' in where) {
-    return where.and.map((w) => `(${stringifyWhere(w)})`).join(' AND ');
-  }
-  if ('or' in where) {
-    return where.or.map((w) => `(${stringifyWhere(w)})`).join(' OR ');
-  }
-  if ('not' in where) {
-    return `NOT (${stringifyWhere(where.not)})`;
-  }
-  if ('equal' in where) {
-    return `${stringifyValue(where.equal[0])} = ${stringifyValue(
-      where.equal[1],
-    )}`;
-  }
-  if ('lessThan' in where) {
-    return `${stringifyValue(where.lessThan[0])} < ${stringifyValue(
-      where.lessThan[1],
-    )}`;
-  }
-  if ('greaterThan' in where) {
-    return `${stringifyValue(where.greaterThan[0])} > ${stringifyValue(
-      where.greaterThan[1],
-    )}`;
-  }
-  if ('lessThanOrEqual' in where) {
-    return `${stringifyValue(where.lessThanOrEqual[0])} <= ${stringifyValue(
-      where.lessThanOrEqual[1],
-    )}`;
-  }
-  if ('greaterThanOrEqual' in where) {
-    return `${stringifyValue(where.greaterThanOrEqual[0])} >= ${stringifyValue(
-      where.greaterThanOrEqual[1],
-    )}`;
-  }
-  if ('contains' in where) {
-    return `${stringifyValue(where.contains[0])} CONTAINS ${stringifyValue(
-      where.contains[1],
-    )}`;
-  }
-  if ('startsWith' in where) {
-    return `${stringifyValue(where.startsWith[0])} STARTS WITH ${stringifyValue(
-      where.startsWith[1],
-    )}`;
-  }
-  if ('endsWith' in where) {
-    return `${stringifyValue(where.endsWith[0])} ENDS WITH ${stringifyValue(
-      where.endsWith[1],
-    )}`;
-  }
-  if ('isNull' in where) {
-    return `${stringifyValue(where.isNull)} IS NULL`;
-  }
-  // Selector-based where (label/reltype/property check)
-  if ('label' in where) {
-    return where.label ? `n:${where.label}` : 'n';
-  }
-  if ('reltype' in where) {
-    return where.reltype ? `r:${where.reltype}` : 'r';
-  }
-  if ('property' in where) {
-    return `n.${where.property}`;
-  }
-  return '';
-}
-
-function stringifyValue(value: Value): string {
-  if (value === null) {
-    return 'null';
-  }
-  if (typeof value === 'string') {
-    return `'${value.replace(/'/g, "\\'")}'`;
-  }
-  if (typeof value === 'number') {
-    return String(value);
-  }
-  if (typeof value === 'boolean') {
-    return value ? 'true' : 'false';
-  }
-  // Property access: { property: string }
-  return `n.${value.property}`;
-}
-
-function stringifyStyle(style: Style): string {
-  const props: string[] = [];
+function convertStyle(style: GrassStyleAST): Style {
+  const result: Style = {};
 
   if (style.color !== undefined) {
-    props.push(`color: '${style.color}'`);
+    result.color = style.color;
   }
   if (style.size !== undefined) {
-    props.push(`size: ${style.size}`);
+    result.size = style.size;
   }
   if (style.width !== undefined) {
-    props.push(`width: ${style.width}`);
-  }
-  if (style.captionSize !== undefined) {
-    props.push(`captionSize: ${style.captionSize}`);
-  }
-  if (style.captionAlign !== undefined) {
-    props.push(`captionAlign: '${style.captionAlign}'`);
+    result.width = style.width;
   }
   if (style.captions !== undefined) {
-    props.push(`captions: ${stringifyCaptions(style.captions)}`);
+    result.captions = style.captions.map(convertCaption);
   }
-
-  return `{${props.join(', ')}}`;
-}
-
-function stringifyCaptions(captions: Caption[]): string {
-  return captions.map(stringifyCaption).join(' + ');
-}
-
-function stringifyCaption(caption: Caption): string {
-  let value: string;
-
-  if (typeof caption.value === 'string') {
-    value = `'${caption.value.replace(/'/g, "\\'")}'`;
-  } else if ('property' in caption.value) {
-    value = `n.${caption.value.property}`;
-  } else {
-    // useType
-    value = 'type(r)';
+  if (style.captionSize !== undefined) {
+    result.captionSize = style.captionSize;
   }
-
-  const styles = caption.styles ?? [];
-  let result = value;
-
-  // Apply styles from innermost to outermost
-  for (const style of styles.slice().reverse()) {
-    result = `${style}(${result})`;
+  if (style.captionAlign !== undefined) {
+    result.captionAlign = style.captionAlign;
   }
 
   return result;
+}
+
+function convertCaption(caption: GrassCaptionAST): Caption {
+  let value: Caption['value'];
+  if (typeof caption.value === 'string') {
+    value = caption.value;
+  } else if ('property' in caption.value) {
+    value = { property: caption.value.property };
+  } else {
+    // useType case
+    value = { useType: true };
+  }
+
+  return {
+    value,
+    styles: caption.styles.length > 0 ? caption.styles : undefined,
+  };
 }

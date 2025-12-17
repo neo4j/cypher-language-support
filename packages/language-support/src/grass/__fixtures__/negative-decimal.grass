@@ -3,3 +3,4 @@ MATCH (n:Account) WHERE n.balance < -100.50 APPLY {color: '#ff0000'}
 
 
 
+

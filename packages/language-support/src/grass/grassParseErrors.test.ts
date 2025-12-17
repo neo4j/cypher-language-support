@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseGrass } from './grassParserWrapper';
+import { parseGrass } from './index';
 
 describe('Grass DSL Parser - Error Handling', () => {
   it('returns errors for invalid syntax', () => {
@@ -634,7 +634,7 @@ describe('Grass DSL Parser - Edge Cases', () => {
 
     it('handles all style properties together', () => {
       const result = parseGrass(
-        `MATCH (n) APPLY {color: '#ff0000', size: 20, captions: n.name, captionSize: 14, captionAlign: center}`,
+        `MATCH (n) APPLY {color: '#ff0000', size: 20, captions: n.name, captionSize: 14, captionAlign: 'center'}`,
       );
       expect(result.errors).toHaveLength(0);
       expect(result.rules[0].apply).toMatchObject({

@@ -3,3 +3,4 @@ MATCH (n:Pokemon) WHERE n.evolution IS NULL APPLY {color: '#808080'}
 
 
 
+

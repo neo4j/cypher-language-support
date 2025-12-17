@@ -280,19 +280,16 @@ describe('Grass DSL Editor Integration', () => {
       expect(captionAlignCompletion).toBeDefined();
     });
 
-    test('suggests captionAlign values in lowercase', () => {
-      // After captionAlign: the parser expects TOP, BOTTOM, CENTER tokens
-      // which are mapped to lowercase via hasIncorrectSymbolicName
+    test('captionAlign expects a string value', () => {
+      // captionAlign now uses string literals like 'top', 'bottom', 'center'
+      // rather than keyword tokens, so no token-based completions are offered
       const completions = autocomplete(
-        ':style MATCH (n) APPLY {captionAlign: b',
+        ':style MATCH (n) APPLY {captionAlign: ',
         dbSchema,
       );
-      const bottomCompletion = completions.find((c) => c.label === 'bottom');
-      const topCompletion = completions.find((c) => c.label === 'top');
-      const centerCompletion = completions.find((c) => c.label === 'center');
-      expect(bottomCompletion).toBeDefined();
-      expect(topCompletion).toBeDefined();
-      expect(centerCompletion).toBeDefined();
+      // String literal positions don't offer keyword completions
+      // Users should type 'top', 'bottom', or 'center' as strings
+      expect(completions.length).toBe(0);
     });
   });
 });

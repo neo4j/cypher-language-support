@@ -160,7 +160,7 @@ grassCaptionSizeProperty: CAPTIONSIZE COLON numberLiteral;
 
 grassCaptionAlignProperty: CAPTIONALIGN COLON grassCaptionAlignValue;
 
-grassCaptionAlignValue: TOP | BOTTOM | CENTER | stringLiteral;
+grassCaptionAlignValue: stringLiteral;
 
 grassCaptionExpression: grassCaptionTerm (PLUS grassCaptionTerm)*;
 
@@ -187,5 +187,4 @@ unescapedSymbolicNameString:
     // Grass keywords
     | APPLY | BOLD | ITALIC | UNDERLINE
     | SIZE | WIDTH | COLOR | CAPTIONS | CAPTIONSIZE | CAPTIONALIGN
-    | TOP | BOTTOM | CENTER
     ;

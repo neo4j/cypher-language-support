@@ -427,9 +427,6 @@ export const lexerGrassKeywords = [
   CypherLexer.CAPTIONS,
   CypherLexer.CAPTIONSIZE,
   CypherLexer.CAPTIONALIGN,
-  CypherLexer.TOP,
-  CypherLexer.BOTTOM,
-  CypherLexer.CENTER,
 ];
 
 // Grass literals (not keywords, but special tokens)
@@ -474,10 +471,6 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.CAPTIONS]: 'captions',
   [CypherLexer.CAPTIONSIZE]: 'captionSize',
   [CypherLexer.CAPTIONALIGN]: 'captionAlign',
-  // Grass captionAlign values should be lowercase
-  [CypherLexer.TOP]: 'top',
-  [CypherLexer.BOTTOM]: 'bottom',
-  [CypherLexer.CENTER]: 'center',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;

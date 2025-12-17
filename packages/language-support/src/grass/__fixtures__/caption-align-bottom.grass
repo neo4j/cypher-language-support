@@ -1,4 +1,4 @@
-MATCH [:LOVES] APPLY {captionAlign: bottom}
+MATCH [:LOVES] APPLY {captionAlign: 'bottom'}
 
 
 
