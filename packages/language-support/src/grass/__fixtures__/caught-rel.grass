@@ -1,0 +1,1 @@
+MATCH [r:CAUGHT] APPLY {color: '#e91e63', width: 3, captionSize: 1.5, captions: 'Caught @ Lv' + bold(n.level)}

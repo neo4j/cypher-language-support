@@ -1,0 +1,2 @@
+MATCH (n:Person) APPLY {captions: n.name + ' - ' + n.age}
+

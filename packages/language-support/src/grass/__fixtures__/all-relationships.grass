@@ -1,0 +1,2 @@
+MATCH [] APPLY {width: 2}
+

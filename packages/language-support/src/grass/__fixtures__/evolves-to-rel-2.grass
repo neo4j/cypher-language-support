@@ -1,0 +1,1 @@
+MATCH [r:EVOLVES_TO] WHERE n.method = 'Level' APPLY {captions: '→ Lv' + bold(n.level)}

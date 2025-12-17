@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "reltype": "KNOWS"
+    },
+    "apply": {
+      "width": 3
+    }
+  }
+]

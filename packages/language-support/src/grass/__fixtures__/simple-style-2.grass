@@ -1,0 +1,1 @@
+MATCH (n:Type) APPLY {color: '#4ecdc4'}

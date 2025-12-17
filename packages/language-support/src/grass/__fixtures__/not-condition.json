@@ -1,0 +1,20 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "not": {
+        "equal": [
+          {
+            "property": "is_starter"
+          },
+          true
+        ]
+      }
+    },
+    "apply": {
+      "size": 25
+    }
+  }
+]

@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "apply": {
+      "color": "#ff0000"
+    }
+  }
+]

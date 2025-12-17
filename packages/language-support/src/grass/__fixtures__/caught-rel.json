@@ -1,0 +1,25 @@
+[
+  {
+    "match": {
+      "reltype": "CAUGHT"
+    },
+    "apply": {
+      "color": "#e91e63",
+      "width": 3,
+      "captions": [
+        {
+          "value": "Caught @ Lv"
+        },
+        {
+          "value": {
+            "property": "level"
+          },
+          "styles": [
+            "bold"
+          ]
+        }
+      ],
+      "captionSize": 1.5
+    }
+  }
+]

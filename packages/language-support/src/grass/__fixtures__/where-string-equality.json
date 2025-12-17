@@ -1,0 +1,18 @@
+[
+  {
+    "match": {
+      "label": "Trainer"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "reputation"
+        },
+        "Gym Leader"
+      ]
+    },
+    "apply": {
+      "color": "#9b59b6"
+    }
+  }
+]

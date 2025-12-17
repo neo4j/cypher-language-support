@@ -1,0 +1,40 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "greaterThanOrEqual": [
+        {
+          "property": "level"
+        },
+        85
+      ]
+    },
+    "apply": {
+      "color": "#c0392b",
+      "size": 42,
+      "captions": [
+        {
+          "value": "💪 "
+        },
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold"
+          ]
+        },
+        {
+          "value": " Lv"
+        },
+        {
+          "value": {
+            "property": "level"
+          }
+        }
+      ]
+    }
+  }
+]

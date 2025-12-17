@@ -1,0 +1,1 @@
+MATCH [r:BATTLED] WHERE n.won = false APPLY {color: '#e74c3c', width: 2, captionSize: 2, captions: italic('LOST BATTLE')}

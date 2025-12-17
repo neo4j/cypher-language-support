@@ -1,0 +1,18 @@
+[
+  {
+    "match": {
+      "label": "Type"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "name"
+        },
+        "Dragon"
+      ]
+    },
+    "apply": {
+      "color": "#9b59b6"
+    }
+  }
+]

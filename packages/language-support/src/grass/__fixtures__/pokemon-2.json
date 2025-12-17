@@ -1,0 +1,32 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "is_starter"
+        },
+        true
+      ]
+    },
+    "apply": {
+      "color": "#f39c12",
+      "size": 40,
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold"
+          ]
+        },
+        {
+          "value": " ⭐"
+        }
+      ]
+    }
+  }
+]

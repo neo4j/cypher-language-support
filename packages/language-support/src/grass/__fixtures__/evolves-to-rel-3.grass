@@ -1,0 +1,1 @@
+MATCH [r:EVOLVES_TO] WHERE NOT (n.method = 'Level') APPLY {color: '#8e44ad', captions: '→ ' + italic(n.method)}

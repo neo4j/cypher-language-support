@@ -1,0 +1,1 @@
+MATCH (n:Pokemon) WHERE n.name ENDS WITH 'saur' APPLY {color: '#2ecc71', captions: '🌿 ' + bold(italic(n.name))}

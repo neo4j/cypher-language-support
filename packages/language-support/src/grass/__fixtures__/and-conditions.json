@@ -1,0 +1,30 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "and": [
+        {
+          "lessThan": [
+            {
+              "property": "level"
+            },
+            10
+          ]
+        },
+        {
+          "equal": [
+            {
+              "property": "is_starter"
+            },
+            true
+          ]
+        }
+      ]
+    },
+    "apply": {
+      "size": 25
+    }
+  }
+]

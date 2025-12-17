@@ -1,0 +1,2 @@
+MATCH (n:Pokemon) WHERE NOT n.is_starter = true APPLY {size: 25}
+

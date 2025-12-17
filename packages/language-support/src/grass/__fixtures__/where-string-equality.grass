@@ -1,0 +1,2 @@
+MATCH (n:Trainer) WHERE n.reputation = 'Gym Leader' APPLY {color: '#9b59b6'}
+

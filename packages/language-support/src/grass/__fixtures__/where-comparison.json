@@ -1,0 +1,18 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "where": {
+      "greaterThan": [
+        {
+          "property": "age"
+        },
+        18
+      ]
+    },
+    "apply": {
+      "size": 30
+    }
+  }
+]
