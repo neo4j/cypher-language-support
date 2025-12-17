@@ -467,6 +467,17 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.SKIPROWS]: 'SKIP',
   [CypherLexer.ACCESSMODE]: 'access-mode',
   [CypherLexer.DOT_METRIC]: 'DOT',
+  // Grass style properties should be lowercase/camelCase
+  [CypherLexer.COLOR]: 'color',
+  [CypherLexer.SIZE]: 'size',
+  [CypherLexer.WIDTH]: 'width',
+  [CypherLexer.CAPTIONS]: 'captions',
+  [CypherLexer.CAPTIONSIZE]: 'captionSize',
+  [CypherLexer.CAPTIONALIGN]: 'captionAlign',
+  // Grass captionAlign values should be lowercase
+  [CypherLexer.TOP]: 'top',
+  [CypherLexer.BOTTOM]: 'bottom',
+  [CypherLexer.CENTER]: 'center',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;

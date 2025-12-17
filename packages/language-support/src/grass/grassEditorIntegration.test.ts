@@ -175,6 +175,38 @@ describe('Grass DSL Editor Integration', () => {
     });
   });
 
+  describe('Error Messages', () => {
+    test('error message mentions APPLY when missing', () => {
+      const result = parserWrapper.parse(':style MATCH (n:Person)');
+      const errors = result.statementsParsing.flatMap((s) => s.syntaxErrors);
+      expect(errors.length).toBeGreaterThan(0);
+      // Should mention what's expected
+      const errorMessages = errors.map((e) => e.message).join(' ');
+      expect(errorMessages.toLowerCase()).toMatch(/apply|expected/i);
+    });
+
+    test('error includes position information', () => {
+      const result = parserWrapper.parse(':style MATCH (n) APPLY {color}');
+      const errors = result.statementsParsing.flatMap((s) => s.syntaxErrors);
+      expect(errors.length).toBeGreaterThan(0);
+      // Errors should have position info for editor squiggles
+      expect(errors[0]).toHaveProperty('offsets');
+      expect(errors[0].offsets).toHaveProperty('start');
+      expect(errors[0].offsets).toHaveProperty('end');
+    });
+
+    test('lintCypherQuery returns diagnostics with positions', () => {
+      const { diagnostics } = lintCypherQuery(
+        ':style MATCH (n) APPLY {color}',
+        dbSchema,
+        true,
+      );
+      expect(diagnostics.length).toBeGreaterThan(0);
+      // Diagnostics should have range for editor integration
+      expect(diagnostics[0]).toHaveProperty('range');
+    });
+  });
+
   describe('Autocompletion', () => {
     test('suggests :style in console command completions', () => {
       const completions = autocomplete(':', dbSchema);
@@ -194,24 +226,17 @@ describe('Grass DSL Editor Integration', () => {
       expect(resetCompletion).toBeDefined();
     });
 
-    // TODO: These tests will pass once grassLabelName rule is added to preferredRules
-    // See EDITOR_INTEGRATION.md for implementation details
-    test.todo('suggests labels in grass node pattern', () => {
+    test('suggests labels in grass node pattern', () => {
       const completions = autocomplete(':style MATCH (n:', dbSchema);
       const personCompletion = completions.find((c) => c.label === 'Person');
       expect(personCompletion).toBeDefined();
     });
 
-    // TODO: These tests will pass once grassRelTypeName rule is added to preferredRules
-    // See EDITOR_INTEGRATION.md for implementation details
-    test.todo(
-      'suggests relationship types in grass relationship pattern',
-      () => {
-        const completions = autocomplete(':style MATCH [r:', dbSchema);
-        const knowsCompletion = completions.find((c) => c.label === 'KNOWS');
-        expect(knowsCompletion).toBeDefined();
-      },
-    );
+    test('suggests relationship types in grass relationship pattern', () => {
+      const completions = autocomplete(':style MATCH [r:', dbSchema);
+      const knowsCompletion = completions.find((c) => c.label === 'KNOWS');
+      expect(knowsCompletion).toBeDefined();
+    });
 
     test('suggests WHERE after pattern', () => {
       const completions = autocomplete(':style MATCH (n:Person) ', dbSchema);
@@ -243,6 +268,31 @@ describe('Grass DSL Editor Integration', () => {
       const orCompletion = completions.find((c) => c.label === 'OR');
       expect(andCompletion).toBeDefined();
       expect(orCompletion).toBeDefined();
+    });
+
+    test('suggests style properties inside APPLY block with correct casing', () => {
+      const completions = autocomplete(':style MATCH (n) APPLY {', dbSchema);
+      const colorCompletion = completions.find((c) => c.label === 'color');
+      const captionAlignCompletion = completions.find(
+        (c) => c.label === 'captionAlign',
+      );
+      expect(colorCompletion).toBeDefined();
+      expect(captionAlignCompletion).toBeDefined();
+    });
+
+    test('suggests captionAlign values in lowercase', () => {
+      // After captionAlign: the parser expects TOP, BOTTOM, CENTER tokens
+      // which are mapped to lowercase via hasIncorrectSymbolicName
+      const completions = autocomplete(
+        ':style MATCH (n) APPLY {captionAlign: b',
+        dbSchema,
+      );
+      const bottomCompletion = completions.find((c) => c.label === 'bottom');
+      const topCompletion = completions.find((c) => c.label === 'top');
+      const centerCompletion = completions.find((c) => c.label === 'center');
+      expect(bottomCompletion).toBeDefined();
+      expect(topCompletion).toBeDefined();
+      expect(centerCompletion).toBeDefined();
     });
   });
 });
