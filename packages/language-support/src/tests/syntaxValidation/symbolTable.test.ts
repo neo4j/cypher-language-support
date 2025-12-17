@@ -461,7 +461,7 @@ describe('Symbol table spec', () => {
     ]);
   });
 
-  test('Symbol table contains anonymous variables', () => {
+  test('Symbol table contains anonymous nodes with labels', () => {
     const query = 'MATCH (:Trainer)-[';
     expect(
       getSymbolTablesForQuery({
@@ -489,6 +489,63 @@ describe('Symbol table spec', () => {
         },
       ],
     ]);
+  });
+
+  test('Symbol table contains anonymous relationships with labels', () => {
+    const query = 'MATCH (:Trainer)-[:KNOWS]->(:';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 16,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 24,
+                value: 'KNOWS',
+              },
+            ],
+          },
+          references: [16],
+          types: ['Relationship'],
+          variable: '  UNNAMED1',
+        },
+        {
+          definitionPosition: 6,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 15,
+                value: 'Trainer',
+              },
+            ],
+          },
+          references: [6],
+          types: ['Node'],
+          variable: '  UNNAMED0',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table does not contain anonymous variables when the variable is missing a label', () => {
+    const query = 'MATCH ()-[';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([[]]);
   });
 
   test('Symbol table works with &-syntax', () => {
