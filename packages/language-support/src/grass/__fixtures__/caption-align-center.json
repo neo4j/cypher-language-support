@@ -1,0 +1,14 @@
+[
+  {
+    "match": {
+      "reltype": "WORKS_AT"
+    },
+    "apply": {
+      "captionAlign": "center"
+    }
+  }
+]
+
+
+
+

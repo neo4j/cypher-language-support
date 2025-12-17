@@ -1,0 +1,5 @@
+MATCH (n:Pokemon) WHERE n.level >= 100 APPLY {size: 50}
+
+
+
+

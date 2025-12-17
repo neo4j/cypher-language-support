@@ -1,0 +1,14 @@
+[
+  {
+    "match": {
+      "reltype": "LOVES"
+    },
+    "apply": {
+      "captionAlign": "bottom"
+    }
+  }
+]
+
+
+
+

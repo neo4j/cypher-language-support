@@ -1,0 +1,22 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "greaterThanOrEqual": [
+        {
+          "property": "level"
+        },
+        100
+      ]
+    },
+    "apply": {
+      "size": 50
+    }
+  }
+]
+
+
+
+

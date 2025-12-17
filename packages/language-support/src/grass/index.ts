@@ -16,7 +16,6 @@ export type {
 // Grass Parser
 export {
   parseGrass,
-  validateGrass,
   stringifyGrass,
   astToStyleRule,
 } from './grassParserWrapper';
@@ -33,4 +32,3 @@ export type {
   GrassCaptionAST,
   ComparisonOperator,
 } from './grassParserWrapper';
-

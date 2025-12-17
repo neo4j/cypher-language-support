@@ -1,0 +1,5 @@
+MATCH (n:User) WHERE n.active = true APPLY {color: '#00ff00'}
+
+
+
+

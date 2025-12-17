@@ -1,1 +1,1 @@
-MATCH [r:BATTLED] WHERE n.won = true APPLY {color: '#27ae60', width: 4, captionSize: 2, captions: bold('WON BATTLE')}
+MATCH [r:BATTLED] WHERE r.won = true APPLY {color: '#27ae60', width: 4, captionSize: 2, captions: bold('WON BATTLE')}

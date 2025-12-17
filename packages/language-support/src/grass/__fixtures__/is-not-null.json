@@ -1,0 +1,21 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "not": {
+        "isNull": {
+          "property": "evolution"
+        }
+      }
+    },
+    "apply": {
+      "color": "#00ff00"
+    }
+  }
+]
+
+
+
+

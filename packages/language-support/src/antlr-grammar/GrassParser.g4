@@ -83,6 +83,7 @@ comparisonExpression:
   | valueExpression IS NULL                  # isNullCheck
   | valueExpression IS NOT NULL              # isNotNullCheck
   | variable COLON grassLabelName            # labelCheck
+  | propertyAccess                           # propertyExistenceCheck
   | LPAREN booleanExpression RPAREN          # parenthesizedBoolean
   ;
 
@@ -152,9 +153,13 @@ styledCaption: BOLD LPAREN captionExpression RPAREN       # boldCaption
              | UNDERLINE LPAREN captionExpression RPAREN  # underlineCaption
              ;
 
-// Plain caption - string literal or property reference
+// Plain caption - string literal, property reference, or type function
 plainCaption: grassStringLiteral
-            | propertyAccess;
+            | propertyAccess
+            | typeFunction;
+
+// Type function for relationships: type(r)
+typeFunction: TYPE LPAREN variable RPAREN;
 
 // Override unescapedSymbolicNameString to add Grass keywords as valid identifiers
 // This allows using keywords like 'color', 'size' as property names when unescaped

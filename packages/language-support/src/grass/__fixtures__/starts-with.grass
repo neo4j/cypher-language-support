@@ -1,0 +1,5 @@
+MATCH (n:Pokemon) WHERE n.name STARTS WITH 'Pika' APPLY {color: '#ffd700'}
+
+
+
+

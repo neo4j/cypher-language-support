@@ -1,0 +1,22 @@
+[
+  {
+    "match": {
+      "label": "Temperature"
+    },
+    "where": {
+      "lessThan": [
+        {
+          "property": "celsius"
+        },
+        -10
+      ]
+    },
+    "apply": {
+      "color": "#1e90ff"
+    }
+  }
+]
+
+
+
+

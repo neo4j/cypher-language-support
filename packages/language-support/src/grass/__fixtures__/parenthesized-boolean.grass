@@ -1,0 +1,5 @@
+MATCH (n:Pokemon) WHERE (n.level > 50 OR n.is_legendary = true) AND n.health > 100 APPLY {size: 45}
+
+
+
+

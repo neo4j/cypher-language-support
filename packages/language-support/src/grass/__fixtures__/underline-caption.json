@@ -1,0 +1,23 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "apply": {
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "underline"
+          ]
+        }
+      ]
+    }
+  }
+]
+
+
+
+

@@ -38,6 +38,9 @@ TOP: T O P;
 BOTTOM: B O T T O M;
 CENTER: C E N T E R;
 
+// Type function keyword for relationships
+TYPE: T Y P E;
+
 // Hex color values for styling (e.g., #ff0000, #f00)
 HEX_COLOR: '#' HEX_DIGIT HEX_DIGIT HEX_DIGIT (HEX_DIGIT HEX_DIGIT HEX_DIGIT)?;
 

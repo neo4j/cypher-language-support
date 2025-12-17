@@ -1,0 +1,24 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "not": {
+        "equal": [
+          {
+            "property": "type"
+          },
+          "Fire"
+        ]
+      }
+    },
+    "apply": {
+      "color": "#3498db"
+    }
+  }
+]
+
+
+
+

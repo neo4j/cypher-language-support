@@ -1,0 +1,22 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "contains": [
+        {
+          "property": "name"
+        },
+        "char"
+      ]
+    },
+    "apply": {
+      "color": "#ff6347"
+    }
+  }
+]
+
+
+
+

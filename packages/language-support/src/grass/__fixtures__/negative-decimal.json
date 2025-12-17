@@ -1,0 +1,22 @@
+[
+  {
+    "match": {
+      "label": "Account"
+    },
+    "where": {
+      "lessThan": [
+        {
+          "property": "balance"
+        },
+        -100.5
+      ]
+    },
+    "apply": {
+      "color": "#ff0000"
+    }
+  }
+]
+
+
+
+

@@ -1,0 +1,34 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "or": [
+        {
+          "greaterThan": [
+            {
+              "property": "level"
+            },
+            50
+          ]
+        },
+        {
+          "equal": [
+            {
+              "property": "is_legendary"
+            },
+            true
+          ]
+        }
+      ]
+    },
+    "apply": {
+      "size": 40
+    }
+  }
+]
+
+
+
+

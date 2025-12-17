@@ -104,15 +104,14 @@ export type StyleRule = {
   priority?: number;
 };
 
-type Match = Exclude<Selector, { property: null }>;
-type Selector =
+type Match =
   | { label: string | null /* null symbolizing any, as in MATCH (n) */ }
-  | { reltype: string | null }
-  | { property: string };
+  | { reltype: string | null };
 
 // Subset of valid types for now
 export type CypherValue = string | number | boolean | null;
-export type Value = Selector | CypherValue;
+// Value in comparisons: properties or primitives (not label/reltype selectors)
+export type Value = { property: string } | CypherValue;
 
 export type Where =
   | { equal: [Value, Value] }
@@ -132,6 +131,8 @@ export type Where =
   // Use { not: { isNull: ... } } for IS NOT NULL
   // @see https://neo4j.com/docs/cypher-manual/current/values-and-types/working-with-null/
   | { isNull: Value }
+  // we let people a plain property, as a short hand for is not null
+  | { property: string }
 
   // Between can be implemented using "and" | "or".
   // between would be greaterThan AND lessThan
@@ -145,7 +146,7 @@ export type Where =
   // | {hasLabel: string | null}
   // | {hasReltype: string | null}
   // we can do simply
-  | Selector;
+  | Match;
 // so for example
 // {match: {label: "Person"}, where: {label: "Actor"}}
 // matches nodes with label person and actor

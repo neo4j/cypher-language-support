@@ -1,0 +1,14 @@
+[
+  {
+    "match": {
+      "reltype": "KNOWS"
+    },
+    "apply": {
+      "captionAlign": "top"
+    }
+  }
+]
+
+
+
+

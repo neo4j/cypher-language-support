@@ -1,0 +1,5 @@
+MATCH [:KNOWS] APPLY {captionAlign: top}
+
+
+
+

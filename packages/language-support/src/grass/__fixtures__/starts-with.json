@@ -1,0 +1,22 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "startsWith": [
+        {
+          "property": "name"
+        },
+        "Pika"
+      ]
+    },
+    "apply": {
+      "color": "#ffd700"
+    }
+  }
+]
+
+
+
+

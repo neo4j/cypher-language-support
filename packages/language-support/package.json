@@ -69,6 +69,7 @@
   },
   "devDependencies": {
     "@types/semver": "^7.7.0",
+    "@vitest/coverage-v8": "2.1.9",
     "vscode-languageserver-textdocument": "^1.0.8"
   }
 }

@@ -42,7 +42,9 @@ import GrassParser, {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
+  PropertyExistenceCheckContext,
   ValueExpressionContext,
+  TypeFunctionContext,
   PropertyAccessContext,
   StyleMapContext,
   StylePropertyContext,
@@ -119,7 +121,8 @@ export type GrassWhereAST =
     }
   | { type: 'isNull'; value: GrassValueAST }
   | { type: 'isNotNull'; value: GrassValueAST }
-  | { type: 'labelCheck'; variable: string; label: string };
+  | { type: 'labelCheck'; variable: string; label: string }
+  | { type: 'propertyExistence'; property: string };
 
 export type ComparisonOperator =
   | 'equal'
@@ -149,7 +152,7 @@ export interface GrassStyleAST {
 }
 
 export interface GrassCaptionAST {
-  value: string | { property: string };
+  value: string | { property: string } | { useType: true };
   styles: CaptionVariation[];
 }
 
@@ -158,7 +161,10 @@ export interface GrassCaptionAST {
  */
 export function astToStyleRule(ast: GrassRuleAST): StyleRule {
   const match = convertMatch(ast.match);
-  const where = ast.where ? convertWhere(ast.where) : undefined;
+  // Pass match type to convertWhere so it knows whether to use label or reltype
+  const isRelationship =
+    ast.match.type === 'relationship' || ast.match.type === 'path';
+  const where = ast.where ? convertWhere(ast.where, isRelationship) : undefined;
   const apply = convertStyle(ast.apply);
 
   return {
@@ -176,20 +182,27 @@ function convertMatch(match: GrassMatchAST): StyleRule['match'] {
   }
 }
 
-function convertWhere(where: GrassWhereAST): Where {
+function convertWhere(where: GrassWhereAST, isRelationship: boolean): Where {
   switch (where.type) {
     case 'and':
-      return { and: where.operands.map(convertWhere) };
+      return {
+        and: where.operands.map((w) => convertWhere(w, isRelationship)),
+      };
     case 'or':
-      return { or: where.operands.map(convertWhere) };
+      return { or: where.operands.map((w) => convertWhere(w, isRelationship)) };
     case 'not':
-      return { not: convertWhere(where.operand) };
+      return { not: convertWhere(where.operand, isRelationship) };
     case 'isNull':
       return { isNull: convertValue(where.value) };
     case 'isNotNull':
       return { not: { isNull: convertValue(where.value) } };
     case 'labelCheck':
-      return { label: where.label };
+      // Use match context to determine if this is a label or reltype check
+      return isRelationship ? { reltype: where.label } : { label: where.label };
+    case 'propertyExistence':
+      // Property existence: `n.property` means "property exists"
+      // The semantics (IS NOT NULL) are handled by the rule execution engine
+      return { property: where.property };
     case 'comparison': {
       const left = convertValue(where.left);
       const right = convertValue(where.right);
@@ -260,11 +273,18 @@ function convertStyle(style: GrassStyleAST): Style {
 }
 
 function convertCaption(caption: GrassCaptionAST): Caption {
+  let value: Caption['value'];
+  if (typeof caption.value === 'string') {
+    value = caption.value;
+  } else if ('property' in caption.value) {
+    value = { property: caption.value.property };
+  } else {
+    // useType case
+    value = { useType: true };
+  }
+
   return {
-    value:
-      typeof caption.value === 'string'
-        ? caption.value
-        : { property: caption.value.property },
+    value,
     styles: caption.styles.length > 0 ? caption.styles : undefined,
   };
 }
@@ -389,9 +409,11 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
 
   visitPathPattern = (ctx: PathPatternContext): GrassMatchAST => {
     // Path patterns are parsed but marked as errors
-    const variableCtx = ctx.variable();
+    // PathPatternContext is a base class with specific subclasses (RightArrowPath, LeftArrowPath, UndirectedPath)
+    // All have variable() and grassRelTypeName() methods via the grammar rules
+    const variableCtx = (ctx as any).variable?.();
     const variable = variableCtx ? variableCtx.getText() : undefined;
-    const relTypeCtx = ctx.grassRelTypeName();
+    const relTypeCtx = (ctx as any).grassRelTypeName?.();
     const reltype = relTypeCtx
       ? this.getSymbolicName(relTypeCtx.getText())
       : undefined;
@@ -501,6 +523,8 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       return this.visitIsNotNullCheck(ctx);
     } else if (ctx instanceof LabelCheckContext) {
       return this.visitLabelCheck(ctx);
+    } else if (ctx instanceof PropertyExistenceCheckContext) {
+      return this.visitPropertyExistenceCheck(ctx);
     } else if (ctx instanceof ParenthesizedBooleanContext) {
       return this.visitParenthesizedBoolean(ctx);
     }
@@ -578,6 +602,19 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
     return { type: 'labelCheck', variable, label };
   };
 
+  // Property existence check: `n.property` means "property exists"
+  // The actual IS NOT NULL semantics are handled by the rule execution engine
+  visitPropertyExistenceCheck = (
+    ctx: PropertyExistenceCheckContext,
+  ): GrassWhereAST => {
+    const propAccess = this.visitPropertyAccess(ctx.propertyAccess());
+    if (propAccess.type === 'property') {
+      return { type: 'propertyExistence', property: propAccess.name };
+    }
+    // Fallback - shouldn't happen since grammar only allows propertyAccess
+    return { type: 'propertyExistence', property: '' };
+  };
+
   visitParenthesizedBoolean = (
     ctx: ParenthesizedBooleanContext,
   ): GrassWhereAST | undefined => {
@@ -642,8 +679,13 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
     return { type: 'boolean', value };
   };
 
-  visitStyleMap = (ctx: StyleMapContext): GrassStyleAST => {
+  visitStyleMap = (ctx: StyleMapContext | null): GrassStyleAST => {
     const style: GrassStyleAST = {};
+
+    // Handle case where styleMap context is null (missing APPLY clause)
+    if (!ctx) {
+      return style;
+    }
 
     for (const propCtx of ctx.styleProperty_list()) {
       this.applyStyleProperty(propCtx, style);
@@ -833,6 +875,11 @@ class GrassASTVisitor extends GrassParserVisitor<unknown> {
       return [{ value: { property: this.getSymbolicName(propName) }, styles }];
     }
 
+    const typeFunc = ctx.typeFunction();
+    if (typeFunc) {
+      return [{ value: { useType: true }, styles }];
+    }
+
     return [];
   }
 
@@ -942,6 +989,13 @@ export function parseGrass(input: string): GrassParseResult {
     }
   }
 
+  // Check for semantic errors in WHERE clauses (null comparisons)
+  for (const rule of validRules) {
+    if (rule.where) {
+      checkForNullComparisons(rule.where, input, errors);
+    }
+  }
+
   const rules = validRules.map(astToStyleRule);
 
   return {
@@ -952,15 +1006,64 @@ export function parseGrass(input: string): GrassParseResult {
 }
 
 /**
- * Validate a grass DSL string without fully parsing it.
- * Useful for quick syntax checking.
- *
- * @param input - The grass DSL string to validate
- * @returns Array of syntax errors, empty if valid
+ * Recursively check for null comparisons in WHERE clauses
+ * Comparing with null using = or <> is semantically incorrect in Cypher
+ * (always evaluates to null/unknown, never true/false)
  */
-export function validateGrass(input: string): GrassSyntaxError[] {
-  const result = parseGrass(input);
-  return result.errors;
+function checkForNullComparisons(
+  where: GrassWhereAST,
+  input: string,
+  errors: GrassSyntaxError[],
+): void {
+  switch (where.type) {
+    case 'and':
+    case 'or':
+      for (const operand of where.operands) {
+        checkForNullComparisons(operand, input, errors);
+      }
+      break;
+    case 'not':
+      checkForNullComparisons(where.operand, input, errors);
+      break;
+    case 'comparison':
+      if (where.operator === 'equal' || where.operator === 'notEqual') {
+        const leftIsNull = where.left.type === 'null';
+        const rightIsNull = where.right.type === 'null';
+
+        if (leftIsNull || rightIsNull) {
+          // Try to find the location of the null keyword
+          const nullRegex = /\bnull\b/gi;
+          let match;
+          let start = 0;
+          let end = 0;
+          let line = 1;
+          let column = 0;
+
+          // Find all occurrences of 'null' and use the first one
+          // (this is approximate but good enough for error reporting)
+          while ((match = nullRegex.exec(input)) !== null) {
+            start = match.index;
+            end = start + 4; // 'null'.length
+            const lines = input.substring(0, start).split('\n');
+            line = lines.length;
+            column = lines[lines.length - 1].length;
+            break;
+          }
+
+          const operator = where.operator === 'equal' ? '=' : '<>';
+          const suggestion =
+            where.operator === 'equal' ? 'IS NULL' : 'IS NOT NULL';
+
+          errors.push({
+            message: `Comparing with null using '${operator}' is not recommended. Use '${suggestion}' instead. (In Cypher, null ${operator} null evaluates to null, not true/false)`,
+            line,
+            column,
+            offsets: { start, end },
+          });
+        }
+      }
+      break;
+  }
 }
 
 /**
@@ -1083,16 +1186,8 @@ function stringifyValue(value: Value): string {
   if (typeof value === 'boolean') {
     return value ? 'true' : 'false';
   }
-  if ('property' in value) {
-    return `n.${value.property}`;
-  }
-  if ('label' in value) {
-    return value.label ?? 'n';
-  }
-  if ('reltype' in value) {
-    return value.reltype ?? 'r';
-  }
-  return '';
+  // Property access: { property: string }
+  return `n.${value.property}`;
 }
 
 function stringifyStyle(style: Style): string {
