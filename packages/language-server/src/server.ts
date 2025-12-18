@@ -115,7 +115,7 @@ let settings: Neo4jSettings | undefined = undefined;
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
-export const symbolFetcher = new SymbolFetcher();
+const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
   symbolFetcher.queueSymbolJob(
