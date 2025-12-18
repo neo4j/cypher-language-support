@@ -94,6 +94,20 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private async executeStatement(statement: string) {
     const webview = this.view.webview;
     const result = await this.runQuery(statement);
+    if ('summary' in result) {
+      const containsUpdates = result.summary.counters.containsUpdates();
+      const isSupportedDatabase =
+        this.schemaPoller.connection?.currentDb !== 'system';
+      const couldbeLoadingDataWithApoc = result.summary.query.text
+        .toLowerCase()
+        .includes('apoc');
+      if (
+        (containsUpdates || couldbeLoadingDataWithApoc) &&
+        isSupportedDatabase
+      ) {
+        this.schemaPoller.metadata?.fetchDbSchema();
+      }
+    }
     const message: QueryResultsMessage = {
       type: 'executionUpdate',
       to: 'detailsView',

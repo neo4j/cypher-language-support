@@ -84,6 +84,7 @@ export abstract class MetadataPoller {
   public dbSchema: DbSchema = {};
   abstract stopBackgroundPolling(): void;
   abstract startBackgroundPolling(intervalSeconds?: number): void;
+  abstract fetchDbSchema(): void;
 }
 
 export class DisconnectedMetadataPoller extends MetadataPoller {
@@ -94,6 +95,7 @@ export class DisconnectedMetadataPoller extends MetadataPoller {
   }
   stopBackgroundPolling() {}
   startBackgroundPolling() {}
+  fetchDbSchema(): void {}
 }
 
 export class ConnectedMetadataPoller extends MetadataPoller {
@@ -244,7 +246,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     });
   }
 
-  private async fetchDbSchema(): Promise<void> {
+  public async fetchDbSchema(): Promise<void> {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
