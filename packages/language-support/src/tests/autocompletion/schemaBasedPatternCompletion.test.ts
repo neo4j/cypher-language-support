@@ -1,6 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { testCompletions } from './completionAssertionHelpers';
-import { _internalFeatureFlags } from '../../featureFlags';
 
 const dbSchema = {
   labels: [
@@ -44,14 +43,6 @@ const dbSchema = {
 };
 
 describe('completeRelationshipType', () => {
-  beforeEach(() => {
-    _internalFeatureFlags.debugSchemaBasedPatternCompletions = true;
-  });
-
-  afterEach(() => {
-    _internalFeatureFlags.debugSchemaBasedPatternCompletions = false;
-  });
-
   test('Completion dont crash on missing db connection', () => {
     const query = 'MATCH (t:Trainer)-[r:';
 
