@@ -48,19 +48,14 @@ class SymbolFetcher {
   });
   private linterVersion: string;
 
-  private cleanupWorkers = async () => {
-    await this.symbolTablePool.terminate();
-  };
-
-  public async updateLintWorker(
+  public setLintWorker(
     lintWorkerPath: string | undefined,
-    linterVersion: string,
+    linter: string | undefined,
   ) {
     lintWorkerPath = lintWorkerPath ? lintWorkerPath : this.defaultWorkerPath;
     if (lintWorkerPath !== this.workerPath) {
-      await this.cleanupWorkers();
       this.workerPath = lintWorkerPath;
-      this.linterVersion = linterVersion;
+      this.linterVersion = linter;
       this.symbolTablePool = workerpool.pool(this.workerPath, {
         maxWorkers: 1,
         workerTerminateTimeout: 0,
@@ -77,10 +72,10 @@ class SymbolFetcher {
 
   private async processJobQueue() {
     this.processing = true;
-    const proxyWorker =
-      (await this.symbolTablePool.proxy()) as unknown as LintWorker;
     while (this.nextJob) {
       try {
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
@@ -226,7 +221,7 @@ connection.onNotification(
     const linterVersion = linterSettings.linterVersion;
 
     void (async () => {
-      await symbolFetcher.updateLintWorker(lintWorkerPath, linterVersion);
+      symbolFetcher.setLintWorker(lintWorkerPath, linterVersion);
       await setLintWorker(lintWorkerPath, linterVersion);
       relintAllDocuments();
     })();
