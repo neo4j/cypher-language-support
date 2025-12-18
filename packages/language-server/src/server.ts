@@ -31,7 +31,7 @@ import {
 } from './types';
 import workerpool from 'workerpool';
 import { join } from 'path';
-import { LintWorker } from '@neo4j-cypher/lint-worker';
+import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 
 class SymbolFetcher {
   private processing = false;
@@ -41,10 +41,32 @@ class SymbolFetcher {
     schema: DbSchema;
   };
   private defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
-  private symbolTablePool = workerpool.pool(this.defaultWorkerPath, {
+  private workerPath = this.defaultWorkerPath;
+  private symbolTablePool = workerpool.pool(this.workerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
+  private linterVersion: string;
+
+  private cleanupWorkers = async () => {
+    await this.symbolTablePool.terminate();
+  };
+
+  public async updateLintWorker(
+    lintWorkerPath: string | undefined,
+    linterVersion: string,
+  ) {
+    lintWorkerPath = lintWorkerPath ? lintWorkerPath : this.defaultWorkerPath;
+    if (lintWorkerPath !== this.workerPath) {
+      await this.cleanupWorkers();
+      this.workerPath = lintWorkerPath;
+      this.linterVersion = linterVersion;
+      this.symbolTablePool = workerpool.pool(this.workerPath, {
+        maxWorkers: 1,
+        workerTerminateTimeout: 0,
+      });
+    }
+  }
 
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
     this.nextJob = { query, uri, schema };
@@ -63,8 +85,9 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
+        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
-        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+        const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
           //if this.nextJob has new doc, our result is no longer valid
@@ -97,7 +120,7 @@ let settings: Neo4jSettings | undefined = undefined;
 // Create a simple text document manager.
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
 const neo4jSchemaPoller = new Neo4jSchemaPoller();
-const symbolFetcher = new SymbolFetcher();
+export const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
   symbolFetcher.queueSymbolJob(
@@ -203,6 +226,7 @@ connection.onNotification(
     const linterVersion = linterSettings.linterVersion;
 
     void (async () => {
+      await symbolFetcher.updateLintWorker(lintWorkerPath, linterVersion);
       await setLintWorker(lintWorkerPath, linterVersion);
       relintAllDocuments();
     })();
