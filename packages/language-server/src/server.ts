@@ -30,8 +30,11 @@ import {
   Neo4jSettings,
 } from './types';
 import workerpool from 'workerpool';
+import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
-import { LintWorker } from '@neo4j-cypher/lint-worker';
+
+const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
+let workerPath = defaultWorkerPath;
 
 class SymbolFetcher {
   private processing = false;
@@ -40,11 +43,22 @@ class SymbolFetcher {
     uri: string;
     schema: DbSchema;
   };
-  private defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
-  private symbolTablePool = workerpool.pool(this.defaultWorkerPath, {
+  private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
+  private linterVersion: string | undefined;
+
+  public setLintWorker(
+    lintWorkerPath: string | undefined = defaultWorkerPath,
+    linterVersion: string | undefined,
+  ) {
+    this.linterVersion = linterVersion;
+    this.symbolTablePool = workerpool.pool(lintWorkerPath, {
+      maxWorkers: 1,
+      workerTerminateTimeout: 0,
+    });
+  }
 
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
     this.nextJob = { query, uri, schema };
@@ -55,16 +69,17 @@ class SymbolFetcher {
 
   private async processJobQueue() {
     this.processing = true;
-    const proxyWorker =
-      (await this.symbolTablePool.proxy()) as unknown as LintWorker;
     while (this.nextJob) {
       try {
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
+        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
-        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+        const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
           //if this.nextJob has new doc, our result is no longer valid
@@ -201,11 +216,14 @@ connection.onNotification(
   (linterSettings: LintWorkerSettings) => {
     const lintWorkerPath = linterSettings.lintWorkerPath;
     const linterVersion = linterSettings.linterVersion;
-
-    void (async () => {
-      await setLintWorker(lintWorkerPath, linterVersion);
-      relintAllDocuments();
-    })();
+    if (lintWorkerPath !== workerPath) {
+      workerPath = lintWorkerPath;
+      void (async () => {
+        symbolFetcher.setLintWorker(workerPath, linterVersion);
+        await setLintWorker(workerPath, linterVersion);
+        relintAllDocuments();
+      })();
+    }
   },
 );
 

@@ -22,25 +22,20 @@ let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
   workerTerminateTimeout: 0,
 });
-export let workerPath = defaultWorkerPath;
 let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
 
 /**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
 export async function setLintWorker(
-  lintWorkerPath: string | undefined,
+  lintWorkerPath: string | undefined = defaultWorkerPath,
   linter: string | undefined,
 ) {
-  lintWorkerPath = lintWorkerPath ? lintWorkerPath : defaultWorkerPath;
-  if (lintWorkerPath !== workerPath) {
-    await cleanupWorkers();
-    workerPath = lintWorkerPath;
-    linterVersion = linter;
-    pool = workerpool.pool(workerPath, {
-      minWorkers: 2,
-      workerTerminateTimeout: 0,
-    });
-  }
+  await cleanupWorkers();
+  linterVersion = linter;
+  pool = workerpool.pool(lintWorkerPath, {
+    minWorkers: 2,
+    workerTerminateTimeout: 0,
+  });
 }
 
 async function rawLintDocument(
