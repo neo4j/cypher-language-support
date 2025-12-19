@@ -20,14 +20,7 @@ import {
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
-import {
-  cleanupWorkers,
-  lintDocument,
-  linterVersion,
-  setLintPath,
-  setLintWorker,
-  workerPath,
-} from './linting';
+import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import {
@@ -38,6 +31,9 @@ import {
 } from './types';
 import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
+import { join } from 'path';
+
+let workerPath: string = join(__dirname, 'lintWorker.cjs');
 
 class SymbolFetcher {
   private processing = false;
@@ -50,9 +46,11 @@ class SymbolFetcher {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
+  private linterVersion: string;
 
-  public setLintWorker() {
-    this.symbolTablePool = workerpool.pool(workerPath, {
+  public setLintWorker(lintWorkerPath: string, linterVersion: string) {
+    this.linterVersion = linterVersion;
+    this.symbolTablePool = workerpool.pool(lintWorkerPath, {
       maxWorkers: 1,
       workerTerminateTimeout: 0,
     });
@@ -75,7 +73,7 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
-        const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
+        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
@@ -215,10 +213,10 @@ connection.onNotification(
     const lintWorkerPath = linterSettings.lintWorkerPath;
     const linterVersion = linterSettings.linterVersion;
     if (lintWorkerPath !== workerPath) {
+      workerPath = lintWorkerPath ?? join(__dirname, 'lintWorker.cjs');
       void (async () => {
-        setLintPath(lintWorkerPath, linterVersion);
-        symbolFetcher.setLintWorker();
-        await setLintWorker();
+        symbolFetcher.setLintWorker(workerPath, linterVersion);
+        await setLintWorker(workerPath, linterVersion);
         relintAllDocuments();
       })();
     }

@@ -22,22 +22,14 @@ let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
   workerTerminateTimeout: 0,
 });
-export let workerPath = defaultWorkerPath;
-export let linterVersion: string | undefined = undefined;
+let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
 
-export function setLintPath(
-  lintWorkerPath: string | undefined = defaultWorkerPath,
-  linter: string,
-) {
-  workerPath = lintWorkerPath;
-  linterVersion = linter;
-}
-
 /**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
-export async function setLintWorker() {
+export async function setLintWorker(lintWorkerPath: string, linter: string) {
   await cleanupWorkers();
-  pool = workerpool.pool(workerPath, {
+  linterVersion = linter;
+  pool = workerpool.pool(lintWorkerPath, {
     minWorkers: 2,
     workerTerminateTimeout: 0,
   });
