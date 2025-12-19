@@ -33,7 +33,8 @@ import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 
-let workerPath: string = join(__dirname, 'lintWorker.cjs');
+const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
+let workerPath = defaultWorkerPath;
 
 class SymbolFetcher {
   private processing = false;
@@ -42,13 +43,16 @@ class SymbolFetcher {
     uri: string;
     schema: DbSchema;
   };
-  private symbolTablePool = workerpool.pool(workerPath, {
+  private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
-  private linterVersion: string;
+  private linterVersion: string | undefined;
 
-  public setLintWorker(lintWorkerPath: string, linterVersion: string) {
+  public setLintWorker(
+    lintWorkerPath: string | undefined = defaultWorkerPath,
+    linterVersion: string | undefined,
+  ) {
     this.linterVersion = linterVersion;
     this.symbolTablePool = workerpool.pool(lintWorkerPath, {
       maxWorkers: 1,
@@ -213,7 +217,7 @@ connection.onNotification(
     const lintWorkerPath = linterSettings.lintWorkerPath;
     const linterVersion = linterSettings.linterVersion;
     if (lintWorkerPath !== workerPath) {
-      workerPath = lintWorkerPath ?? join(__dirname, 'lintWorker.cjs');
+      workerPath = lintWorkerPath;
       void (async () => {
         symbolFetcher.setLintWorker(workerPath, linterVersion);
         await setLintWorker(workerPath, linterVersion);

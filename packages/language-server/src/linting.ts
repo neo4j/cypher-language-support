@@ -26,7 +26,10 @@ let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
 
 /**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
-export async function setLintWorker(lintWorkerPath: string, linter: string) {
+export async function setLintWorker(
+  lintWorkerPath: string | undefined = defaultWorkerPath,
+  linter: string | undefined,
+) {
   await cleanupWorkers();
   linterVersion = linter;
   pool = workerpool.pool(lintWorkerPath, {
