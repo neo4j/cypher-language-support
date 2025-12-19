@@ -96,13 +96,17 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     const result = await this.runQuery(statement);
     if ('summary' in result) {
       const containsUpdates = result.summary.counters.containsUpdates();
+      const containsSystemUpdates =
+        result.summary.counters.containsSystemUpdates();
       const isSupportedDatabase =
         this.schemaPoller.connection?.currentDb !== 'system';
       const couldbeLoadingDataWithApoc = result.summary.query.text
         .toLowerCase()
         .includes('apoc');
       if (
-        (containsUpdates || couldbeLoadingDataWithApoc) &&
+        (containsUpdates ||
+          containsSystemUpdates ||
+          couldbeLoadingDataWithApoc) &&
         isSupportedDatabase
       ) {
         this.schemaPoller.metadata?.fetchDbSchema();
