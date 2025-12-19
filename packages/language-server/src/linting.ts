@@ -16,31 +16,31 @@ import {
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
 
-const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+export const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
   workerTerminateTimeout: 0,
 });
 export let workerPath = defaultWorkerPath;
-let linterVersion: string | undefined = undefined;
+export let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
 
-/**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
-export async function setLintWorker(
-  lintWorkerPath: string | undefined,
-  linter: string | undefined,
+export function setLintPath(
+  lintWorkerPath: string | undefined = defaultWorkerPath,
+  linter: string,
 ) {
-  lintWorkerPath = lintWorkerPath ? lintWorkerPath : defaultWorkerPath;
-  if (lintWorkerPath !== workerPath) {
-    await cleanupWorkers();
-    workerPath = lintWorkerPath;
-    linterVersion = linter;
-    pool = workerpool.pool(workerPath, {
-      minWorkers: 2,
-      workerTerminateTimeout: 0,
-    });
-  }
+  workerPath = lintWorkerPath;
+  linterVersion = linter;
+}
+
+/**Sets the lintworker to the one specified by the given path, reverting to default if the path is undefined */
+export async function setLintWorker() {
+  await cleanupWorkers();
+  pool = workerpool.pool(workerPath, {
+    minWorkers: 2,
+    workerTerminateTimeout: 0,
+  });
 }
 
 async function rawLintDocument(

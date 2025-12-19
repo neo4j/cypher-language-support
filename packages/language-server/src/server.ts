@@ -20,7 +20,14 @@ import {
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
-import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
+import {
+  cleanupWorkers,
+  lintDocument,
+  linterVersion,
+  setLintPath,
+  setLintWorker,
+  workerPath,
+} from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 import {
@@ -30,7 +37,6 @@ import {
   Neo4jSettings,
 } from './types';
 import workerpool from 'workerpool';
-import { join } from 'path';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 
 class SymbolFetcher {
@@ -40,27 +46,16 @@ class SymbolFetcher {
     uri: string;
     schema: DbSchema;
   };
-  private defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
-  private workerPath = this.defaultWorkerPath;
-  private symbolTablePool = workerpool.pool(this.workerPath, {
+  private symbolTablePool = workerpool.pool(workerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
   });
-  private linterVersion: string;
 
-  public setLintWorker(
-    lintWorkerPath: string | undefined,
-    linter: string | undefined,
-  ) {
-    lintWorkerPath = lintWorkerPath ? lintWorkerPath : this.defaultWorkerPath;
-    if (lintWorkerPath !== this.workerPath) {
-      this.workerPath = lintWorkerPath;
-      this.linterVersion = linter;
-      this.symbolTablePool = workerpool.pool(this.workerPath, {
-        maxWorkers: 1,
-        workerTerminateTimeout: 0,
-      });
-    }
+  public setLintWorker() {
+    this.symbolTablePool = workerpool.pool(workerPath, {
+      maxWorkers: 1,
+      workerTerminateTimeout: 0,
+    });
   }
 
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
@@ -80,7 +75,7 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
-        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
+        const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
 
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
@@ -219,12 +214,14 @@ connection.onNotification(
   (linterSettings: LintWorkerSettings) => {
     const lintWorkerPath = linterSettings.lintWorkerPath;
     const linterVersion = linterSettings.linterVersion;
-
-    void (async () => {
-      symbolFetcher.setLintWorker(lintWorkerPath, linterVersion);
-      await setLintWorker(lintWorkerPath, linterVersion);
-      relintAllDocuments();
-    })();
+    if (lintWorkerPath !== workerPath) {
+      void (async () => {
+        setLintPath(lintWorkerPath, linterVersion);
+        symbolFetcher.setLintWorker();
+        await setLintWorker();
+        relintAllDocuments();
+      })();
+    }
   },
 );
 
