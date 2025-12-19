@@ -16,7 +16,7 @@ import {
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
 
-export const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
+const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
