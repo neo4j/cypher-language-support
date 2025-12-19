@@ -1,6 +1,6 @@
 interface FeatureFlags {
   consoleCommands: boolean;
-  debugSchemaBasedPatternCompletions: boolean;
+  debugSymbolTable: boolean;
 }
 
 export const _internalFeatureFlags: FeatureFlags = {
@@ -12,8 +12,8 @@ export const _internalFeatureFlags: FeatureFlags = {
   it's own cache and preference on if console commands are enabled or not.
   */
   consoleCommands: false,
-  debugSchemaBasedPatternCompletions:
+  debugSymbolTable:
     typeof process === 'undefined'
       ? false
-      : process.env.debugSchemaBasedPatternCompletions == 'true',
+      : process.env.debugSymbolTable == 'true',
 };
