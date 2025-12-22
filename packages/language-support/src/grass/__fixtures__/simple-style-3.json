@@ -1,0 +1,15 @@
+[
+  {
+    "match": {
+      "reltype": "HAS_TYPE"
+    },
+    "apply": {
+      "color": "#95a5a6",
+      "captions": [
+        {
+          "value": "has type"
+        }
+      ]
+    }
+  }
+]

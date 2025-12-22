@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "label": "Type"
+    },
+    "apply": {
+      "color": "#4ecdc4"
+    }
+  }
+]

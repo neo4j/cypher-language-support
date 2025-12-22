@@ -389,6 +389,26 @@ export function lintCypherQuery(
 
         return { diagnostics, symbolTable };
       }
+
+      // Handle :style commands with grass semantic errors
+      if (cmd.type === 'style' && cmd.grassErrors) {
+        const grassDiagnostics: SyntaxDiagnostic[] = cmd.grassErrors.map(
+          (err) => ({
+            severity: DiagnosticSeverity.Error,
+            message: err.message,
+            range: {
+              start: Position.create(err.line - 1, err.column),
+              end: Position.create(err.line - 1, err.column + 1),
+            },
+            offsets: err.offsets,
+          }),
+        );
+        return {
+          diagnostics: [...current.syntaxErrors, ...grassDiagnostics],
+          symbolTable: [],
+        };
+      }
+
       // There could be console command errors
       return { diagnostics: current.syntaxErrors, symbolTable: [] };
     });

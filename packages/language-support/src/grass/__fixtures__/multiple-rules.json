@@ -1,0 +1,18 @@
+[
+  {
+    "match": {
+      "label": null
+    },
+    "apply": {
+      "size": 10
+    }
+  },
+  {
+    "match": {
+      "label": "Person"
+    },
+    "apply": {
+      "color": "#ff0000"
+    }
+  }
+]

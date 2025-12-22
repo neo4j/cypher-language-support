@@ -1,0 +1,1 @@
+MATCH (n:Pokemon) WHERE (n.level < 10) AND (NOT (n.is_starter = true)) APPLY {color: '#95a5a6', size: 25, captions: italic(n.name) + ' (Smol)'}

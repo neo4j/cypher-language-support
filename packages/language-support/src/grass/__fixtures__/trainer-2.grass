@@ -1,0 +1,1 @@
+MATCH (n:Trainer) WHERE n.level >= 85 APPLY {size: 30, captionSize: 2, captions: bold(n.name) + ' (Lv ' + n.level + ')'}

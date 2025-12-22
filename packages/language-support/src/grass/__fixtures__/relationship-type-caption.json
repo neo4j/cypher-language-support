@@ -1,0 +1,17 @@
+[
+  {
+    "match": {
+      "reltype": "KNOWS"
+    },
+    "apply": {
+      "color": "#3498db",
+      "captions": [
+        {
+          "value": {
+            "useType": true
+          }
+        }
+      ]
+    }
+  }
+]

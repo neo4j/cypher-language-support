@@ -1,0 +1,2 @@
+MATCH (n:Person) APPLY {color: '#ff0000'}
+

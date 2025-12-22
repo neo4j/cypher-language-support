@@ -1,0 +1,14 @@
+[
+  {
+    "match": {
+      "reltype": null
+    },
+    "where": {
+      "reltype": "KNOWS"
+    },
+    "apply": {
+      "color": "#e74c3c",
+      "width": 3
+    }
+  }
+]

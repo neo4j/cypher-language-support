@@ -1,0 +1,30 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "and": [
+        {
+          "equal": [
+            {
+              "property": "isAwesome"
+            },
+            true
+          ]
+        },
+        {
+          "greaterThan": [
+            {
+              "property": "weight"
+            },
+            300
+          ]
+        }
+      ]
+    },
+    "apply": {
+      "size": 50
+    }
+  }
+]

@@ -1,0 +1,46 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "and": [
+        {
+          "lessThan": [
+            {
+              "property": "level"
+            },
+            10
+          ]
+        },
+        {
+          "not": {
+            "equal": [
+              {
+                "property": "is_starter"
+              },
+              true
+            ]
+          }
+        }
+      ]
+    },
+    "apply": {
+      "color": "#95a5a6",
+      "size": 25,
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "italic"
+          ]
+        },
+        {
+          "value": " (Smol)"
+        }
+      ]
+    }
+  }
+]

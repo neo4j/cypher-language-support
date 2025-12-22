@@ -1,0 +1,19 @@
+[
+  {
+    "match": {
+      "reltype": "EVOLVES_TO"
+    },
+    "apply": {
+      "color": "#16a085",
+      "width": 2,
+      "captions": [
+        {
+          "value": "→",
+          "styles": [
+            "bold"
+          ]
+        }
+      ]
+    }
+  }
+]
