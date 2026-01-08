@@ -1,0 +1,1 @@
+MATCH (n:Pokemon) APPLY {color: '#ff6b6b', captions: bold('Pokemon') + n.name}

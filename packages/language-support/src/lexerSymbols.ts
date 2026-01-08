@@ -426,6 +426,20 @@ export const lexerConsoleCmds = [
   CypherLexer.HELP,
 ];
 
+// Grass style DSL keywords
+export const lexerGrassKeywords = [
+  CypherLexer.APPLY,
+  CypherLexer.BOLD,
+  CypherLexer.ITALIC,
+  CypherLexer.UNDERLINE,
+  CypherLexer.SIZE,
+  CypherLexer.WIDTH,
+  CypherLexer.COLOR,
+  CypherLexer.CAPTIONS,
+  CypherLexer.CAPTIONSIZE,
+  CypherLexer.CAPTIONALIGN,
+];
+
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {
   return arr.reduce<Record<number, CypherTokenType>>(
     (acc, curr) => ({ ...acc, [curr]: tokenType }),
@@ -446,6 +460,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerStringLiteral, CypherTokenType.stringLiteral),
   ...toTokentypeObject(identifier, CypherTokenType.variable),
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
+  ...toTokentypeObject(lexerGrassKeywords, CypherTokenType.keyword),
 };
 
 export const hasIncorrectSymbolicName: Record<number, string> = {
@@ -455,6 +470,13 @@ export const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.SKIPROWS]: 'SKIP',
   [CypherLexer.ACCESSMODE]: 'access-mode',
   [CypherLexer.DOT_METRIC]: 'DOT',
+  // Grass style properties should be lowercase/camelCase
+  [CypherLexer.COLOR]: 'color',
+  [CypherLexer.SIZE]: 'size',
+  [CypherLexer.WIDTH]: 'width',
+  [CypherLexer.CAPTIONS]: 'captions',
+  [CypherLexer.CAPTIONSIZE]: 'captionSize',
+  [CypherLexer.CAPTIONALIGN]: 'captionAlign',
 };
 
 const { literalNames, symbolicNames } = CypherLexer;

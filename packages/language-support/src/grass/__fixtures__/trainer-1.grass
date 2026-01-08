@@ -1,0 +1,1 @@
+MATCH (n:Trainer) WHERE n.reputation = 'Gym Leader' APPLY {color: '#9b59b6', size: 45, captionAlign: 'bottom', captions: bold(n.name) + ' 🏆' + italic(' Gym Leader')}

@@ -26,6 +26,11 @@ import {
   VariableContext,
 } from './generated-parser/CypherCmdParser';
 import {
+  convertStyleRuleContextsToRules,
+  type StyleRule,
+  type GrassSyntaxError,
+} from './grass';
+import {
   findParent,
   findStopNode,
   inNodeLabel,
@@ -547,6 +552,9 @@ type RuleTokens = {
 };
 
 export type ParsedCypherCmd = CypherCmd & RuleTokens;
+
+// Re-export grass types for consumers
+export type { StyleRule, GrassSyntaxError };
 export type ParsedCommandNoPosition =
   | { type: 'cypher'; statement: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
@@ -564,7 +572,12 @@ export type ParsedCommandNoPosition =
   | { type: 'welcome' }
   | { type: 'parse-error' }
   | { type: 'sysinfo' }
-  | { type: 'style'; operation?: 'reset' }
+  | {
+      type: 'style';
+      operation?: 'reset';
+      styleRules?: StyleRule[];
+      grassErrors?: GrassSyntaxError[];
+    }
   | { type: 'play' }
   | { type: 'access-mode'; operation?: string }
   | { type: 'help' };
@@ -713,11 +726,30 @@ function parseToCommand(
 
       const styleCmd = consoleCmd.styleCmd();
       if (styleCmd) {
+        const isReset = styleCmd.RESET() !== null;
+        const ruleContexts = styleCmd.styleRule_list();
+
+        // Extract StyleRules if there are any rules (not just :style or :style reset)
+        let styleRules: StyleRule[] | undefined;
+        let grassErrors: GrassSyntaxError[] | undefined;
+
+        if (ruleContexts.length > 0) {
+          const fullText = inputstream.getText(start.start, stop.stop);
+          const { rules, errors } = convertStyleRuleContextsToRules(
+            ruleContexts,
+            fullText,
+          );
+          styleRules = rules;
+          grassErrors = errors.length > 0 ? errors : undefined;
+        }
+
         return {
           type: 'style',
           start,
           stop,
-          operation: styleCmd.RESET() ? 'reset' : undefined,
+          operation: isReset ? 'reset' : undefined,
+          styleRules,
+          grassErrors,
         };
       }
 

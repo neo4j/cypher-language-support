@@ -1,0 +1,30 @@
+[
+  {
+    "match": {
+      "label": "Type"
+    },
+    "where": {
+      "or": [
+        {
+          "equal": [
+            {
+              "property": "name"
+            },
+            "Grass"
+          ]
+        },
+        {
+          "equal": [
+            {
+              "property": "name"
+            },
+            "Poison"
+          ]
+        }
+      ]
+    },
+    "apply": {
+      "color": "#27ae60"
+    }
+  }
+]

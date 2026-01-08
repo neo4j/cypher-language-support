@@ -1,0 +1,2 @@
+MATCH (n:Person) WHERE n.age > 18 APPLY {size: 30}
+

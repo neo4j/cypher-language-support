@@ -2,26 +2,28 @@ lexer grammar CypherCmdLexer;
 
 import CypherPreLexer;
 
+// Console command tokens
 PARAM: P A R A M S?;
-
 CLEAR: C L E A R;
-
 HISTORY: H I S T O R Y;
-
 CONNECT: C O N N E C T;
-
 DISCONNECT: D I S C O N N E C T;
-
 WELCOME: W E L C O M E;
-
 SYSINFO: S Y S I N F O;
-
 STYLE: S T Y L E;
-
 RESET: R E S E T;
-
 PLAY: P L A Y;
-
 ACCESSMODE: A C C E S S '-' M O D E;
-
 HELP: H E L P;
+
+// Grass style tokens
+APPLY: A P P L Y;
+BOLD: B O L D;
+ITALIC: I T A L I C;
+UNDERLINE: U N D E R L I N E;
+SIZE: S I Z E;
+WIDTH: W I D T H;
+COLOR: C O L O R;
+CAPTIONS: C A P T I O N S;
+CAPTIONSIZE: C A P T I O N S I Z E;
+CAPTIONALIGN: C A P T I O N A L I G N;

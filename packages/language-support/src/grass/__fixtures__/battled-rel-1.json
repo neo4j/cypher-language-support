@@ -1,0 +1,28 @@
+[
+  {
+    "match": {
+      "reltype": "BATTLED"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "won"
+        },
+        true
+      ]
+    },
+    "apply": {
+      "color": "#27ae60",
+      "width": 4,
+      "captions": [
+        {
+          "value": "WON BATTLE",
+          "styles": [
+            "bold"
+          ]
+        }
+      ],
+      "captionSize": 2
+    }
+  }
+]

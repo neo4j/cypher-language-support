@@ -1,0 +1,1 @@
+MATCH (n:Pokemon) WHERE (n.isAwesome = true) AND (n.weight > 300) APPLY {size: 50}

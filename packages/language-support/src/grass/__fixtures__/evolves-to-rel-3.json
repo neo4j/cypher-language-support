@@ -1,0 +1,33 @@
+[
+  {
+    "match": {
+      "reltype": "EVOLVES_TO"
+    },
+    "where": {
+      "not": {
+        "equal": [
+          {
+            "property": "method"
+          },
+          "Level"
+        ]
+      }
+    },
+    "apply": {
+      "color": "#8e44ad",
+      "captions": [
+        {
+          "value": "→ "
+        },
+        {
+          "value": {
+            "property": "method"
+          },
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    }
+  }
+]

@@ -1,0 +1,6 @@
+MATCH (n:Pokemon) WHERE n.type <> 'Fire' APPLY {color: '#3498db'}
+
+
+
+
+
