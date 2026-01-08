@@ -13,41 +13,28 @@ declare const vscode: vscode;
 
 /**
  * Validates a Connection object and a password from the webview form.ƒ
- * @param connection The Connection object to validate. Only scheme, host, user, and password are required.
+ * @param connection The Connection object to validate. Only scheme and host are required.
  * @param password The password to validate.
  * @returns True if the connection is valid, false otherwise.
  */
-export function validateConnection(
-  connection: Connection | null,
-  password: string,
-): boolean {
+export function validateConnection(connection: Connection | null): boolean {
   highlightInvalidFields();
-  return (
-    !connection ||
-    (!!connection.scheme &&
-      !!connection.host &&
-      !!connection.user &&
-      !!password)
-  );
+  return !connection || (!!connection.scheme && !!connection.host);
 }
 
 /**
  * Highlights any invalid fields in the webview form by toggling the invalid class.
- * Only scheme, host, user, and password are required.
+ * Only scheme and host are required.
  */
 export function highlightInvalidFields(): void {
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
-  const user = document.getElementById('user') as HTMLInputElement;
-  const password = document.getElementById('password') as HTMLInputElement;
 
   scheme.classList.toggle(
     'invalid',
     !scheme.value || !isValidScheme(scheme.value),
   );
   host.classList.toggle('invalid', !host.value);
-  user.classList.toggle('invalid', !user.value);
-  password.classList.toggle('invalid', !password.value);
 }
 
 /**
@@ -123,7 +110,7 @@ export function onSubmit(event: Event): boolean {
   const connection = getConnection();
   const password = getPassword();
 
-  if (!validateConnection(connection, password)) {
+  if (!validateConnection(connection)) {
     vscode.postMessage({
       command: 'onValidationError',
     });
