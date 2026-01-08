@@ -155,6 +155,64 @@ describe('Symbol table spec', () => {
     ]);
   });
 
+  test('Symbol table contains labels and rels from MATCH with WHERE using OR', () => {
+    const query =
+      'MATCH (n) WHERE n:Person AND n:Parsnip OR n:Parish AND n:Party  RETURN n';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                andOr: 'or',
+                children: [
+                  {
+                    andOr: 'and',
+                    children: [
+                      {
+                        validFrom: 24,
+                        value: 'Person',
+                      },
+                      {
+                        validFrom: 38,
+                        value: 'Parsnip',
+                      },
+                    ],
+                  },
+                  {
+                    andOr: 'and',
+                    children: [
+                      {
+                        validFrom: 50,
+                        value: 'Parish',
+                      },
+                      {
+                        validFrom: 62,
+                        value: 'Party',
+                      },
+                    ],
+                  },
+                ],
+              },
+            ],
+          },
+          references: [42, 29, 71, 7, 16, 55],
+          types: ['Node'],
+          variable: 'n',
+        },
+      ],
+    ]);
+  });
+
   test('Symbol table contains labels and rels from simple MATCH and WHERE', () => {
     const query = 'MATCH (n:Person) MATCH (n:Parish) WHERE n:Parsnip RETURN n';
     expect(
@@ -186,6 +244,51 @@ describe('Symbol table spec', () => {
             ],
           },
           references: [7, 24, 40, 57],
+          types: ['Node'],
+          variable: 'n',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table contains labels and rels from simple WHERE inside node/rel pattern', () => {
+    const query = 'MATCH (n WHERE n:Person)-[r WHERE r:KNOWS] RETURN n';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 26,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 41,
+                value: 'KNOWS',
+              },
+            ],
+          },
+          references: [26, 34],
+          types: ['Relationship'],
+          variable: 'r',
+        },
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 23,
+                value: 'Person',
+              },
+            ],
+          },
+          references: [7, 15],
           types: ['Node'],
           variable: 'n',
         },
@@ -353,6 +456,165 @@ describe('Symbol table spec', () => {
           references: [7],
           types: ['Node'],
           variable: 'n',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table contains anonymous nodes with labels', () => {
+    const query = 'MATCH (:Trainer)-[';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 6,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 15,
+                value: 'Trainer',
+              },
+            ],
+          },
+          references: [6],
+          types: ['Node'],
+          variable: '  UNNAMED0',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table contains anonymous relationships with labels', () => {
+    const query = 'MATCH (:Trainer)-[:KNOWS]->(:';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 16,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 24,
+                value: 'KNOWS',
+              },
+            ],
+          },
+          references: [16],
+          types: ['Relationship'],
+          variable: '  UNNAMED1',
+        },
+        {
+          definitionPosition: 6,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 15,
+                value: 'Trainer',
+              },
+            ],
+          },
+          references: [6],
+          types: ['Node'],
+          variable: '  UNNAMED0',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table does not contain anonymous variables when the variable is missing a label', () => {
+    const query = 'MATCH ()-[';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([[]]);
+  });
+
+  test('Symbol table works with &-syntax', () => {
+    const query = 'MATCH (:Trainer & Person)-[';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 6,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 15,
+                value: 'Trainer',
+              },
+              {
+                validFrom: 24,
+                value: 'Person',
+              },
+            ],
+          },
+          references: [6],
+          types: ['Node'],
+          variable: '  UNNAMED0',
+        },
+      ],
+    ]);
+  });
+
+  test('Symbol table works with |-syntax', () => {
+    const query = 'MATCH (t:Trainer & Person)-[]-(t:Parsnip)';
+    expect(
+      getSymbolTablesForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      [
+        {
+          definitionPosition: 7,
+          labels: {
+            andOr: 'and',
+            children: [
+              {
+                validFrom: 16,
+                value: 'Trainer',
+              },
+              {
+                validFrom: 25,
+                value: 'Person',
+              },
+              {
+                validFrom: 40,
+                value: 'Parsnip',
+              },
+            ],
+          },
+          references: [31, 7],
+          types: ['Node'],
+          variable: 't',
         },
       ],
     ]);
