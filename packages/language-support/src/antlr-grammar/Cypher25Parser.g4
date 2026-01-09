@@ -1003,6 +1003,7 @@ showCommand
       | showTransactions
       | showUserPrivileges
       | showUsers
+      | showAuthRules
    )
    ;
 
@@ -1868,6 +1869,10 @@ authRuleSetEnabled
 
 dropAuthRule
     : AUTH RULE commandNameExpression (IF EXISTS)?
+    ;
+
+showAuthRules
+    : authRuleKeywords (AS (COMMAND | COMMANDS))? showCommandYield?
     ;
 
 // Database commands
