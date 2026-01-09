@@ -96,8 +96,10 @@ export class ConnectionTreeDataProvider
       return [];
     }
 
-    return getConnectionDatabases().map(
-      (database: Pick<Database, 'name' | 'default' | 'home'>) => {
+    const dbs: ConnectionItem[] = [];
+
+    getConnectionDatabases().forEach(
+      (database: Pick<Database, 'name' | 'default' | 'home' | 'aliases'>) => {
         const name: string = database.home
           ? `${database.name} 🏠`
           : database.name;
@@ -112,16 +114,40 @@ export class ConnectionTreeDataProvider
           ? 'activeDatabase'
           : 'database';
 
-        return new ConnectionItem(
-          type,
-          name,
-          description,
-          TreeItemCollapsibleState.None,
-          database.name,
+        dbs.push(
+          new ConnectionItem(
+            type,
+            name,
+            description,
+            TreeItemCollapsibleState.None,
+            database.name,
+          ),
         );
+        const aliases = database.aliases ?? [];
+        aliases.forEach((alias) => {
+          const activeDatabase: boolean = alias === connection.database;
+          const type: ConnectionItemType = activeDatabase
+            ? 'activeDatabase'
+            : 'database';
+          const description: string =
+            (activeDatabase ? 'active ' : '') +
+            '(Alias for "' +
+            database.name +
+            '")';
+          dbs.push(
+            new ConnectionItem(
+              type,
+              alias,
+              description,
+              TreeItemCollapsibleState.None,
+              alias,
+            ),
+          );
+        });
       },
       [],
     );
+    return dbs;
   }
 
   private getConnectionName(connection: Connection): string {

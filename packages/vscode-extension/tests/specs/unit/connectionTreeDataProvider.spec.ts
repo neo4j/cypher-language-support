@@ -48,7 +48,7 @@ suite('Connection tree data provider spec', () => {
   ];
 
   const mockDatabases: Partial<Database>[] = [
-    { name: 'neo4j', home: true, default: true },
+    { name: 'neo4j', home: true, default: true, aliases: ['main'] },
     { name: 'schemas', home: false },
   ];
 
@@ -85,7 +85,7 @@ suite('Connection tree data provider spec', () => {
     assert.equal(actual.contextValue, 'activeConnection');
   });
 
-  test('An active Connection should have a list of child databases', () => {
+  test('An active Connection should have a list of child databases, including aliases', () => {
     const children = connectionTreeDataProvider.getChildren();
     const connection = children.find(
       (child) => child.key === 'test-connection',
@@ -93,7 +93,7 @@ suite('Connection tree data provider spec', () => {
 
     const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
-    assert.equal(databases.length, 2);
+    assert.equal(databases.length, 3);
   });
 
   test('An active Connection should show the default database as active if no database is specified', () => {
@@ -128,6 +128,22 @@ suite('Connection tree data provider spec', () => {
 
     assert.equal(actual.description, 'active');
     assert.equal(actual.contextValue, 'activeDatabase');
+  });
+
+  test('An alias should show the name of the db it is an alias for', () => {
+    const children = connectionTreeDataProvider.getChildren();
+    const connection = children.find(
+      (child) => child.key === 'test-connection-2',
+    );
+    const databases = connectionTreeDataProvider.getChildren({ ...connection });
+
+    const database = { ...databases.find((child) => child.key === 'main') };
+    const actual = {
+      ...database,
+      resourceUri: { ...database.resourceUri },
+    };
+
+    assert.equal(actual.description, '(Alias for "neo4j")');
   });
 
   test('An activating Connection should show as connecting', () => {

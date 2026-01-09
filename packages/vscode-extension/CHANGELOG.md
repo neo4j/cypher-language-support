@@ -1,5 +1,8 @@
 # neo4j-for-vscode
 
+## 1.14.1
+- Add aliases to connections pane
+
 ## 1.14.0
 - Adds schema (from db.schema.visualization) based completions for labels/reltypes
 - Speed up symbol table reliant completions
