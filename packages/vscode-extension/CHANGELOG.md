@@ -1,5 +1,8 @@
 # neo4j-for-vscode
 
+## 1.14.1
+- Add aliases to connections pane
+
 ## 1.14.0
 - Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions, prevents "run cypher" keybind from being active when cypher can't be run)
 - Speed up symbol table reliant completions
