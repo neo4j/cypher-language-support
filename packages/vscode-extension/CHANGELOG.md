@@ -1,12 +1,14 @@
 # neo4j-for-vscode
 
 ## 1.14.0
-- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, handle queries needing implicit transactions, prevents "run cypher" keybind from being active when cypher can't be run)
+- Adds schema (from db.schema.visualization) based completions for labels/reltypes
 - Speed up symbol table reliant completions
-- Adds first iteration of schema aware completions for paths, behind feature flag
-- Adds command to run single cypher query
-- Auto-focus on query results panel when running query
+- Improve schema short-term accuracy by refetching schema on execution of query modifying db
+- Add vector type support
+- Add command to run single cypher statement (ctrl+enter) and add new keybind for running all statements (ctrl+alt/cmd+enter)
 - Modify run button to run selected text on selection and otherwise run single statement at cursor
+- Auto-focus on query results panel when running query
+- Minor bugfixes (handling new linter naming scheme, formatter capitalizing preparser keywords in namespaces, linter terminating on slow queries, missing label warnings, queries needing implicit transactions, "run cypher" keybind being active when cypher can't be run, formatting of dynamic labels, duplication in connections pane when db uses clustering (ex. aura business critical), linter switching for aura, point printing alignment with cypher shell, empty fields being forbidden in the password/user fields when adding a connection)
 
 ## 1.13.0
 - Adjusts linting automatically depending on the neo4j version.
