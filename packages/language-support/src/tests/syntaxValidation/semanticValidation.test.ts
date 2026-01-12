@@ -785,7 +785,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 100,
           start: 26,
@@ -804,7 +804,7 @@ describe('Semantic validation spec', () => {
       },
       {
         message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: shadowed)',
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: shadowed)',
         offsets: {
           end: 54,
           start: 46,
@@ -948,7 +948,7 @@ describe('Semantic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: i)',
         offsets: {
           end: 47,
           start: 46,
@@ -985,7 +985,7 @@ describe('Semantic validation spec', () => {
       },
       {
         message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: i)',
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: i)',
         offsets: {
           end: 100,
           start: 99,
@@ -2116,7 +2116,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toEqual([
       {
         message:
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 62,
           start: 0,
@@ -2150,7 +2150,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toEqual([
       {
         message:
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 67,
           start: 22,

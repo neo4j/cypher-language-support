@@ -146,7 +146,7 @@ describe('Syntactic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 114,
           start: 60,
@@ -184,7 +184,7 @@ describe('Syntactic validation spec', () => {
       },
       {
         message:
-          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using importing WITH clause. (the shadowing variable is: n)',
+          'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: n)',
         offsets: {
           end: 97,
           start: 96,
@@ -1006,7 +1006,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([
       {
         message:
-          'CALL subquery without a variable scope clause is now deprecated. Use CALL () { ... }',
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 41,
           start: 0,
