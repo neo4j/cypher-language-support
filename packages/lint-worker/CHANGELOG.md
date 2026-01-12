@@ -1,5 +1,14 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.5
+
+### Patch Changes
+
+- 5df1435: Updates grammar and semantic analysis to 2026.01
+- Updated dependencies [5df1435]
+  - @neo4j-cypher/language-support@2.0.0-next.28
+  - @neo4j-cypher/query-tools@2.0.0-next.28
+
 ## 1.10.1-next.4
 
 ### Patch Changes
