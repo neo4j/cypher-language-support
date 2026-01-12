@@ -91,7 +91,7 @@ export function listProcedures(
     ${executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''}
     YIELD *`;
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       // Assign default values (e.g. isDeprecated) in case they are not present
       const objResult = record.toObject();
