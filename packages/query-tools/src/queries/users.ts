@@ -19,7 +19,7 @@ export function listUsers(): ExecuteQueryArgs<{
 }> {
   const query = `SHOW USERS`;
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       return record.toObject() as Neo4jUser;
     },

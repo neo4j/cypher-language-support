@@ -43,7 +43,7 @@ export function listDatabases(): ExecuteQueryArgs<{
 }> {
   const query = 'SHOW DATABASES YIELD *';
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       const obj = record.toObject();
       if (obj.defaultLanguage) {
@@ -52,8 +52,19 @@ export function listDatabases(): ExecuteQueryArgs<{
       return obj as Database;
     },
     collect(databases, summary) {
+      const instancesRecord: Record<string, Database> = databases.reduce<
+        Record<string, Database>
+      >((acc, db) => {
+        const instanceId: string = `${db.name}@${db.address}`;
+        acc[instanceId] = db;
+        return acc;
+      }, {});
+      const logicalDatabases: Record<string, Database> =
+        getLogicalDatabases(instancesRecord);
+      const dbs: Database[] = Object.values(logicalDatabases);
+
       return {
-        databases: databases.filter((x) => x?.writer === true),
+        databases: sortDatabases(dbs),
         summary,
       };
     },
@@ -63,4 +74,70 @@ export function listDatabases(): ExecuteQueryArgs<{
     query,
     queryConfig: { resultTransformer, routing: 'READ', database: 'system' },
   };
+}
+
+/**
+ * In clustered environments a single logical database can be backed by multiple physical database instances
+ * running on a different servers.
+ * This function returns a record of logical databases.
+ * A database instance is uniquely identified by its name and address.
+ * A logical database is uniquely identified by its name.
+ * @input instances - a record of database instances
+ * @output a record of logical databases
+ */
+export function getLogicalDatabases(
+  instances: Record<string, Database>,
+): Record<string, Database> {
+  // Two databases with the same name but different properties will be merged into one
+  // merging rules:
+  // - if writer (leader) is present, use it, otherwise use the first one
+
+  // Merge db2 into db1
+  const mergeDatabases = (db1: Database, db2: Database): Database => {
+    let mergedDatabase = { ...db1 };
+    if (db2.role === 'leader' || db2.writer === true) {
+      mergedDatabase = { ...db2 };
+    }
+
+    return mergedDatabase;
+  };
+
+  return Object.values(instances).reduce<Record<string, Database>>(
+    (databases, instance) => {
+      const key = instance.name;
+      const existingDatabase = databases[key];
+      const mergedDatabase = existingDatabase
+        ? mergeDatabases(existingDatabase, instance)
+        : instance;
+
+      return {
+        ...databases,
+        [key]: mergedDatabase,
+      };
+    },
+    {},
+  );
+}
+
+export function sortDatabases(databases: Database[]) {
+  function databaseComparator(a: Database, b: Database) {
+    // disable eslint to make code more readable
+    /* eslint-disable curly */
+    // home is greater than default
+    if (a.default && b.home) return 1;
+
+    // otherwiser default is greater than anything else
+    if (a.default) return -1;
+    if (b.default) return 1;
+
+    // system is less than anything else
+    if (a.name === 'system') return 1;
+    if (b.name === 'system') return -1;
+    /* eslint-enable curly */
+
+    // else sort alphabetically
+    return a.name.localeCompare(b.name);
+  }
+
+  return databases.sort(databaseComparator);
 }

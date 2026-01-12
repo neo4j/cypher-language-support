@@ -21,7 +21,7 @@ UNION ALL
 CALL db.propertyKeys() YIELD propertyKey
 RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       return record.toObject().result as string[];
     },

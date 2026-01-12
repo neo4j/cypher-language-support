@@ -14,7 +14,7 @@ export function listRoles(): ExecuteQueryArgs<{
 }> {
   const query = `SHOW ROLES`;
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       return record.toObject() as Neo4jRole;
     },

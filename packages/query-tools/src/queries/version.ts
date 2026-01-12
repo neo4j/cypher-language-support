@@ -9,7 +9,7 @@ export function getVersion(): ExecuteQueryArgs<{
 }> {
   const query = 'CALL dbms.components() YIELD name, versions';
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       const obj = record.toObject();
       const name = obj.name as string;
