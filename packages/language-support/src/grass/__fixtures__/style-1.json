@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "label": null
+    },
+    "apply": {
+      "color": "teal"
+    }
+  }
+]

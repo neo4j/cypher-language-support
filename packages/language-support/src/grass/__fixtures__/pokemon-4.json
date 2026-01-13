@@ -1,0 +1,33 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "lessThan": [
+        {
+          "property": "catch_rate"
+        },
+        50
+      ]
+    },
+    "apply": {
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold"
+          ]
+        },
+        {
+          "value": " (Rare)",
+          "styles": [
+            "italic"
+          ]
+        }
+      ]
+    }
+  }
+]

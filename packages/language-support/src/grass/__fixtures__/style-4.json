@@ -1,0 +1,23 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "apply": {
+      "color": "#ff6b6b",
+      "captions": [
+        {
+          "value": "Pokemon",
+          "styles": [
+            "bold"
+          ]
+        },
+        {
+          "value": {
+            "property": "name"
+          }
+        }
+      ]
+    }
+  }
+]

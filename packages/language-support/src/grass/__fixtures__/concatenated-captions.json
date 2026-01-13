@@ -1,0 +1,24 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "apply": {
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          }
+        },
+        {
+          "value": " - "
+        },
+        {
+          "value": {
+            "property": "age"
+          }
+        }
+      ]
+    }
+  }
+]

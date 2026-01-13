@@ -1,0 +1,2 @@
+MATCH (:Person) APPLY {color: '#ff0000'}
+

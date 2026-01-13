@@ -1,0 +1,13 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "where": {
+      "label": "Actor"
+    },
+    "apply": {
+      "color": "#ff0000"
+    }
+  }
+]

@@ -1,0 +1,1 @@
+MATCH (n:Gym) APPLY {color: '#8e44ad', size: 48, captionAlign: 'top', captions: '🏛️ ' + bold(underline(n.name))}

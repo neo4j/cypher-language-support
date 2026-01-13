@@ -1,0 +1,1 @@
+MATCH (n:Pokemon) WHERE n.level >= 85 APPLY {color: '#c0392b', size: 42, captions: '💪 ' + bold(n.name) + ' Lv' + n.level}

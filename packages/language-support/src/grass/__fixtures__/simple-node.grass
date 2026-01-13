@@ -1,0 +1,2 @@
+MATCH (n) APPLY {size: 10}
+

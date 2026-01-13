@@ -1,0 +1,26 @@
+[
+  {
+    "match": {
+      "label": "Gym"
+    },
+    "apply": {
+      "color": "#8e44ad",
+      "size": 48,
+      "captions": [
+        {
+          "value": "🏛️ "
+        },
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold",
+            "underline"
+          ]
+        }
+      ],
+      "captionAlign": "top"
+    }
+  }
+]

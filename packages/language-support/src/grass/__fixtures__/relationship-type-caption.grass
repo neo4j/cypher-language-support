@@ -1,0 +1,2 @@
+MATCH [r:KNOWS] APPLY {captions: type(r), color: '#3498db'}
+

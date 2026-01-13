@@ -1,0 +1,32 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "endsWith": [
+        {
+          "property": "name"
+        },
+        "saur"
+      ]
+    },
+    "apply": {
+      "color": "#2ecc71",
+      "captions": [
+        {
+          "value": "🌿 "
+        },
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold",
+            "italic"
+          ]
+        }
+      ]
+    }
+  }
+]

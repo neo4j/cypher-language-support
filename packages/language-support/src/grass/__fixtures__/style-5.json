@@ -1,0 +1,24 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "where": {
+      "label": "Legendary"
+    },
+    "apply": {
+      "color": "gold",
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold",
+            "underline"
+          ]
+        }
+      ]
+    }
+  }
+]

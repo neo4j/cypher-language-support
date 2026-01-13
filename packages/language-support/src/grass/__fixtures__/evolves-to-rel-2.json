@@ -1,0 +1,30 @@
+[
+  {
+    "match": {
+      "reltype": "EVOLVES_TO"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "method"
+        },
+        "Level"
+      ]
+    },
+    "apply": {
+      "captions": [
+        {
+          "value": "→ Lv"
+        },
+        {
+          "value": {
+            "property": "level"
+          },
+          "styles": [
+            "bold"
+          ]
+        }
+      ]
+    }
+  }
+]

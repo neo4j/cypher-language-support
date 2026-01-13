@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "reltype": null
+    },
+    "apply": {
+      "width": 2
+    }
+  }
+]

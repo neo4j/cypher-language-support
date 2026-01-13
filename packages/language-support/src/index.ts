@@ -25,6 +25,10 @@ export {
   clampUnsafePositions,
 } from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+
+// Grass DSL exports
+export { parseGrass, stringifyGrass } from './grass';
+export type { StyleRule, GrassParseResult, GrassSyntaxError } from './grass';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';
 export { allCypherVersions } from './types';

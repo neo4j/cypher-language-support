@@ -1,0 +1,2 @@
+MATCH (n:Person) WHERE n:Actor APPLY {color: '#ff0000'}
+

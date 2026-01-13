@@ -1,0 +1,20 @@
+[
+  {
+    "match": {
+      "label": "Pokemon"
+    },
+    "apply": {
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold",
+            "italic"
+          ]
+        }
+      ]
+    }
+  }
+]

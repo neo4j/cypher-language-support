@@ -1,0 +1,2 @@
+MATCH [:KNOWS] APPLY {width: 3}
+

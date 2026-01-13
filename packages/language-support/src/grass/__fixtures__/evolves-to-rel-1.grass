@@ -1,0 +1,1 @@
+MATCH [r:EVOLVES_TO] APPLY {color: '#16a085', width: 2, captions: bold('→')}

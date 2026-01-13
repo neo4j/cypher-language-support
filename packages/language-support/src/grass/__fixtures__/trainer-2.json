@@ -1,0 +1,40 @@
+[
+  {
+    "match": {
+      "label": "Trainer"
+    },
+    "where": {
+      "greaterThanOrEqual": [
+        {
+          "property": "level"
+        },
+        85
+      ]
+    },
+    "apply": {
+      "size": 30,
+      "captions": [
+        {
+          "value": {
+            "property": "name"
+          },
+          "styles": [
+            "bold"
+          ]
+        },
+        {
+          "value": " (Lv "
+        },
+        {
+          "value": {
+            "property": "level"
+          }
+        },
+        {
+          "value": ")"
+        }
+      ],
+      "captionSize": 2
+    }
+  }
+]

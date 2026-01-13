@@ -1,0 +1,10 @@
+[
+  {
+    "match": {
+      "label": null
+    },
+    "apply": {
+      "size": 10
+    }
+  }
+]

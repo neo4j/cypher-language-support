@@ -521,6 +521,9 @@ export function completionCoreCompletion(
           CypherParser.RULE_serverCompletionRule,
           CypherParser.RULE_readCompletionRule,
           CypherParser.RULE_writeCompletionRule,
+          // Grass DSL completions
+          CypherParser.RULE_grassLabelName,
+          CypherParser.RULE_grassRelTypeName,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -735,6 +738,15 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
         return [{ label: 'write', kind: CompletionItemKind.Event }];
+      }
+
+      // Grass DSL completions
+      if (ruleNumber === CypherParser.RULE_grassLabelName) {
+        return allLabelCompletions(dbSchema);
+      }
+
+      if (ruleNumber === CypherParser.RULE_grassRelTypeName) {
+        return allReltypeCompletions(dbSchema);
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {

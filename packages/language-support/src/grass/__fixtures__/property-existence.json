@@ -1,0 +1,13 @@
+[
+  {
+    "match": {
+      "label": "Person"
+    },
+    "where": {
+      "property": "middleName"
+    },
+    "apply": {
+      "color": "#cccccc"
+    }
+  }
+]

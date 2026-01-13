@@ -1,0 +1,1 @@
+MATCH (n:Type) WHERE (n.name = 'Grass') OR (n.name = 'Poison') APPLY {color: '#27ae60'}

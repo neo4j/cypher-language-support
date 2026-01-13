@@ -1,0 +1,2 @@
+MATCH [r] WHERE r:KNOWS APPLY {color: '#e74c3c', width: 3}
+

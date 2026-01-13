@@ -1,0 +1,6 @@
+MATCH (n:Pokemon) WHERE n.name CONTAINS 'char' APPLY {color: '#ff6347'}
+
+
+
+
+

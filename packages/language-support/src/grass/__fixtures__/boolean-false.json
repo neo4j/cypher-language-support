@@ -1,0 +1,23 @@
+[
+  {
+    "match": {
+      "label": "User"
+    },
+    "where": {
+      "equal": [
+        {
+          "property": "active"
+        },
+        false
+      ]
+    },
+    "apply": {
+      "color": "#808080"
+    }
+  }
+]
+
+
+
+
+

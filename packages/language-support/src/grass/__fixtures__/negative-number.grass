@@ -1,0 +1,6 @@
+MATCH (n:Temperature) WHERE n.celsius < -10 APPLY {color: '#1e90ff'}
+
+
+
+
+
