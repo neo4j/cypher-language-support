@@ -1,6 +1,6 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs } from '../types/sdkTypes';
+import { ExecuteQueryArgs, DbType } from '../types/sdkTypes';
 
 export type DatabaseStatus =
   | 'online'
@@ -26,12 +26,36 @@ export type Database = {
   default: boolean;
   home: boolean;
   aliases?: string[]; // introduced in neo4j 4.4
-  type?: 'system' | 'composite' | 'standard'; // introduced in neo4j 5
+  type?: 'system' | 'composite' | 'standard' | 'graph shard' | 'property shard'; // introduced in neo4j 5
   // "new keys", not sure which version introduced
   writer?: boolean;
   access?: string;
   constituents?: string[];
   defaultLanguage?: CypherVersion;
+};
+
+const findComposite = (databases: Database[], alias: string) => {
+  const compositeDatabases = databases.filter((db) => db.type === 'composite');
+  return compositeDatabases.find((db) => db.constituents?.includes(alias));
+};
+
+const isCompositeAlias = (databases: Database[], alias: string) =>
+  findComposite(databases, alias) !== undefined;
+
+const removeCompositeAliases = (databases: Database[]): Database[] => {
+  return databases.map(({ aliases, ...db }) => ({
+    ...db,
+    aliases: aliases?.filter((alias) => !isCompositeAlias(databases, alias)),
+  }));
+};
+
+const removeSPDShards = (databases: Database[]): Database[] => {
+  return databases.filter((db) => {
+    return !(
+      db.type !== undefined &&
+      (db.type === DbType.GRAPH_SHARD || db.type === DbType.PROPERTY_SHARD)
+    );
+  });
 };
 
 /**
@@ -61,10 +85,12 @@ export function listDatabases(): ExecuteQueryArgs<{
       }, {});
       const logicalDatabases: Record<string, Database> =
         getLogicalDatabases(instancesRecord);
-      const dbs: Database[] = Object.values(logicalDatabases);
+      const uiDatabases = removeSPDShards(
+        removeCompositeAliases(Object.values(logicalDatabases)),
+      );
 
       return {
-        databases: sortDatabases(dbs),
+        databases: sortDatabases(uiDatabases),
         summary,
       };
     },
