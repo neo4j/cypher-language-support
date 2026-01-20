@@ -1,6 +1,7 @@
 import {
   _internalFeatureFlags,
   clampUnsafePositions,
+  lintCypherQuery,
   parserWrapper,
   SymbolTable,
 } from '@neo4j-cypher/language-support';
@@ -56,15 +57,16 @@ async function rawLintDocument(
       void lastSemanticJob.cancel();
     }
 
-    const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+    // const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
-    const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
-    lastSemanticJob = proxyWorker.lintCypherQuery(
-      query,
-      fixedDbSchema,
-      _internalFeatureFlags,
-    );
-    const result = await lastSemanticJob;
+    // const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
+    // lastSemanticJob = proxyWorker.lintCypherQuery(
+    //   query,
+    //   fixedDbSchema,
+    //   _internalFeatureFlags,
+    // );
+    // const result = await lastSemanticJob;
+    const result = lintCypherQuery(query, dbSchema, false);
 
     //marks the entire text if any position is negative
     const positionSafeResult = clampUnsafePositions(

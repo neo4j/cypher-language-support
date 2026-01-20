@@ -50,6 +50,8 @@ export const reltypesToCompletions = (reltypes: string[] = []) =>
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
+//{Isak,Oskar,Necla,Greg}
+//MATCH (n:!Isak) = MATCH (n:OR(alla som inte är Isak, plus blanka))
 function intersectChildren(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
@@ -89,12 +91,179 @@ function uniteChildren(
     const { inLabels: incoming, outLabels: outgoing } = walkLabelTree(
       incomingLabels,
       outGoingLabels,
-      c,
+      c
     );
     inLabels = inLabels.union(incoming);
     outLabels = outLabels.union(outgoing);
   });
   return { inLabels, outLabels };
+}
+
+function notChild(
+  incomingLabels: Map<string, Set<string>>,
+  outGoingLabels: Map<string, Set<string>>,
+  children: LabelOrCondition[],
+): {inLabels: Set<string>; outLabels: Set<string> } {
+  //If we dont only have a single child, this approach does not work. 
+  // Rewriting should always move NOTs to just above the label leaves
+  //This is to bail, returning all labels, if something is wrong
+//!(Joel|Isak) = !Joel&!Isak
+//!Joel
+  if (children.length !== 1  || !isLabelLeaf(children[0])) { //n:!(Joel|Isak))-[:
+    let inLabels = new Set<string>();
+    incomingLabels.forEach(part => inLabels = inLabels.union(part)); //n:!Oskar-[IS_NAMED] Isak-[IS_NAMED] ALLCOMPLETIONS.difference(OskarCompletions)
+    let outLabels = new Set<string>();
+    outGoingLabels.forEach(part => outLabels = outLabels.union(part)); 
+    // This is equiv to saying !A = OR(B,C,D,E,...)
+    // But is this really true? !A implies any node matching A is not to be matched.
+    // So !A&!B&!C -> any label not A,B,C
+    //When we then get completions out of A, we can have overlap 
+    return {inLabels, outLabels}
+  }
+  const notLabel = children[0].value;
+  var inLabels = new Set<string>();
+  incomingLabels.forEach((part, key) => { if (key !== notLabel) inLabels = inLabels.union(part) });
+  var outLabels = new Set<string>();
+  outGoingLabels.forEach((part, key) => { if (key !== notLabel) outLabels = outLabels.union(part) });
+  
+  // Don't want to "remove labels going in/out of 'not-ed condition', since we can have overlap like 'x goes out of y, but also out of z' -> !y should still give x, since !y could be z "
+  // More proper way - get all labels, but dont pick up those from not-ed label... how to do this with NOT(some big condition)?
+  // Can we simplify by things like NOT(OR(A,B)) = AND(NOT(A), NOT(B)) = AND ( OR(B,C,D,...), OR(A,C,D,...)) = AND(OR(C,D,...)) -> skip labels out from A and out from B.. NOT(A & B) -> NOT(A) | NOT(B)
+  //For more complicated like AND(OR(B,C,D), OR(A,C,D), Q) = AND(OR(C,D), Q)
+  // let allIncomingLabels = new Set<string>();
+  //   incomingLabels.forEach(part => allIncomingLabels = allIncomingLabels.union(part));
+  // const { inLabels: childIncoming, outLabels: childOutgoing } = walkLabelTree(incomingLabels, outGoingLabels, children[0]);
+  // let allOutGoingLabels = new Set<string>();
+  //   outGoingLabels.forEach(part => allOutGoingLabels = allOutGoingLabels.union(part));
+  // const inLabels = allIncomingLabels.difference(childIncoming);
+  // const outLabels = allOutGoingLabels.difference(childOutgoing);
+  return {inLabels, outLabels}
+}
+
+function copyLabelTree(
+  labelTree: LabelOrCondition
+) {
+  if (isLabelLeaf(labelTree)) {
+    return {...labelTree};
+  } else {
+    return {condition: labelTree.condition, children: labelTree.children.map(copyLabelTree)}
+  }
+}
+
+/**
+ * Use laws of boolean algebra to rewrite label tree to remove duplicate conditions
+ * and move not-nodes to the bottom with De Morgan's laws
+ * Could be expanded to use absorption law
+ * @param labelTree 
+ * @returns a simplified copy of the input tree
+ */
+export function rewriteLabelTree(
+  labelTree: LabelOrCondition
+) {
+  let newLabelTree: LabelOrCondition = copyLabelTree(labelTree);
+  if (isLabelLeaf(newLabelTree)) {
+    return newLabelTree;
+  } else {
+    //Handling negation
+    if (newLabelTree.condition === 'not' && !isLabelLeaf(newLabelTree.children[0])) {
+      const c = newLabelTree.children[0]
+      const newCondition = c.condition === 'not' ? "doubleNegation" : c.condition === 'and' ? 'or' : 'and';
+      if (newCondition === "doubleNegation"){
+        // If double negation, completely remove both negations and restart to check for leaves
+        newLabelTree = newLabelTree.children[0].children[0]
+        return rewriteLabelTree(newLabelTree);
+      } else {
+        // If single negation, use De Morgan's law to move down NOTs like NOT(AND(A,B,...)) = OR(NOT(A),NOT(B),...)
+        const newChildren: LabelOrCondition[] = newLabelTree.children[0].children.map(c =>  {
+          return {condition: 'not', children: [c]}
+        })
+        newLabelTree = { condition: newCondition, children: newChildren};
+      }
+    }
+
+    for (let i=0; i< newLabelTree.children.length; i++) {
+      newLabelTree.children[i] = rewriteLabelTree(newLabelTree.children[i])
+    }
+
+    // Simplify repeated conditions like AND(AND(A,B))
+    const newChildren: LabelOrCondition[] = []
+    for (const c of newLabelTree.children) {
+      if (isLabelLeaf(c) || c.condition !== newLabelTree.condition) {
+        newChildren.push(c);
+      } else {
+        c.children.forEach(innerChild => newChildren.push(innerChild));
+      }
+    }
+    newLabelTree.children = newChildren;
+
+    for (let i=0; i < newLabelTree.children.length; i++) {
+      for (let j=i+1; j < newLabelTree.children.length; j++) {
+        if(newLabelTree.children[i] == undefined || newLabelTree.children[j] == undefined) {
+          continue;
+        }
+        const firstDef = getFirstDefinition(newLabelTree.children[i], newLabelTree.children[j]);
+        if (firstDef === newLabelTree.children[i]) {
+          newLabelTree.children[j] = undefined;
+        } else if (firstDef === newLabelTree.children[j]) {
+          newLabelTree.children[i] = undefined;
+        }
+      }
+    }
+    newLabelTree.children = newLabelTree.children.filter(x => x !== undefined)
+  }
+  return newLabelTree;
+}
+
+//Should unit test these if we end up doing things this way
+//Can improve this by sorting children
+/** 
+ * @param labelTree1 
+ * @param labelTree2 
+ * @returns first definition of the condition if the two conditions are equal
+ * otherwise returns undefined
+ */
+function getFirstDefinition(labelTree1: LabelOrCondition, labelTree2: LabelOrCondition): LabelOrCondition | undefined {
+  if(isLabelLeaf(labelTree1) && isLabelLeaf(labelTree2) && labelTree1.value == labelTree2.value) {
+    if (labelTree1.validFrom <= labelTree2.validFrom) {
+      return labelTree1;
+    } else {
+      return labelTree2;
+    }
+  }
+  if (isLabelLeaf(labelTree1) || isLabelLeaf(labelTree2) || labelTree1.condition !== labelTree2.condition) {
+    return undefined;
+  }
+
+  let firstCondition: LabelOrCondition = undefined;
+  
+  for (const c1 of labelTree1.children) {
+    firstCondition = undefined;
+    for (const c2 of labelTree2.children) {
+      const firstDef = getFirstDefinition(c1, c2);
+      //So firstdefinition is only set on a match
+      
+      //We can trust the last call of this overwriting firstCondition to be the same as the first,
+      //since a clause defining a condition will in its entirety (including all subconditions) be either before or after another clause
+      //Ex. MATCH (n:A&B)-[]-(n:B&A) <- there is no weird construct that somehow reads the second node pattern AND something from the first node pattern to create a duplicate
+      //condition. The second node-pattern clause is after in its entirety.
+
+      //above sounds messy, but atm im struggling to find a clean way to describe it
+      if (firstDef === c1) {
+        firstCondition = labelTree1;
+        break;
+      } else if (firstDef === c2) {
+        firstCondition = labelTree2;
+        break;
+      }
+    }
+    //If we failed to find a single match
+    if (!firstCondition) {
+      return undefined
+    }
+  }
+  return firstCondition;
+
+
 }
 
 function walkLabelTree(
@@ -109,14 +278,16 @@ function walkLabelTree(
       inLabels: incoming ?? new Set(),
       outLabels: outgoing ?? new Set(),
     };
-  } else if (labelTree.andOr == 'and') {
+  } else if (labelTree.condition == 'and') {
     return intersectChildren(
       incomingLabels,
       outGoingLabels,
       labelTree.children,
     );
-  } else {
+  } else if (labelTree.condition == 'or') {
     return uniteChildren(incomingLabels, outGoingLabels, labelTree.children);
+  } else {
+    return notChild(incomingLabels, outGoingLabels, labelTree.children);
   }
 }
 
@@ -233,10 +404,13 @@ export function completeNodeLabel(
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
         getNodesFromRelsSet(dbSchema);
+
+      const rewrittenLabelTree = rewriteLabelTree(foundVariable.labels);
+
       const { inLabels, outLabels } = walkLabelTree(
         nodesToRelsSet,
         nodesFromRelsSet,
-        foundVariable.labels,
+        rewrittenLabelTree
       );
       const allNodes =
         direction === 'outgoing'
@@ -309,10 +483,12 @@ export function completeRelationshipType(
       // limitation: not checking relationship type repetition
       const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
         getRelsFromNodesSets(dbSchema);
+
+      const rewrittenLabelTree = rewriteLabelTree(foundVariable.labels);
       const { inLabels, outLabels } = walkLabelTree(
         relsToNodesSet,
         relsFromNodesSet,
-        foundVariable.labels,
+        rewrittenLabelTree
       );
       const allRels =
         direction === 'outgoing'

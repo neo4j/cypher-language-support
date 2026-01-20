@@ -67,7 +67,9 @@ export type LabelOrCondition = LabelLeaf | ConditionNode;
 //This is how the naming works in GQL as well
 export type LabelLeaf = {
   value: string;
-  validFrom: number;
+  validFrom: number; 
+  //Since we currently cut off the query at the cursor, all found labels will be pre-cursor and thus valid, but
+  //if we in the future move to parse the whole query, this number gives us the point where we define each label 
 };
 export const isLabelLeaf = (
   labelOrCondition: LabelOrCondition,
@@ -75,8 +77,10 @@ export const isLabelLeaf = (
   return 'value' in labelOrCondition;
 };
 
+export type Condition = 'and' | 'or' | 'not'
+
 export type ConditionNode = {
-  andOr: 'and' | 'or';
+  condition: Condition;
   children: LabelOrCondition[];
 };
 

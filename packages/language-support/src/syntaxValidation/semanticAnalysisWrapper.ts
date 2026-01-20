@@ -5,6 +5,7 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
 import {
+  Condition,
   CypherVersion,
   LabelOrCondition,
   Neo4jFunction,
@@ -79,7 +80,7 @@ function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
     for (const c of labels.children) {
       children.push(labelTreeFromJava(c));
     }
-    return { andOr: labels.andOr, children };
+    return { condition: labels.condition.toString() as Condition, children };
   } else {
     return { value: labels.value, validFrom: labels.validFrom };
   }
