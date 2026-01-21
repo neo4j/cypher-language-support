@@ -1,6 +1,12 @@
 import type { QueryConfig, ResultSummary } from 'neo4j-driver';
 
-export type DbType = 'system' | 'standard' | 'composite';
+export const DbType = {
+  SYSTEM: 'system',
+  STANDARD: 'standard',
+  COMPOSITE: 'composite',
+  GRAPH_SHARD: 'graph shard',
+  PROPERTY_SHARD: 'property shard',
+};
 
 export type QueryType =
   // Query automatically run by the app.

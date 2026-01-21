@@ -65,7 +65,7 @@ export function listGraphSchema(
   graphSchema: { from: string; to: string; relType: string }[];
 }> {
   const query = `CALL db.schema.visualization() YIELD *`;
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       const objResult = record.toObject();
       validateGraphSchema(objResult);
