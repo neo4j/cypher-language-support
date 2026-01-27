@@ -205,6 +205,26 @@ describe('Grass DSL Editor Integration', () => {
       // Diagnostics should have range for editor integration
       expect(diagnostics[0]).toHaveProperty('range');
     });
+
+    test('handles incomplete style properties without crashing', () => {
+      // These should not throw - the AST converter should handle null values gracefully
+      const incompleteInputs = [
+        ':style MATCH (n) APPLY {captionAlign:}',
+        ':style MATCH (n) APPLY {size:}',
+        ':style MATCH (n) APPLY {color:}',
+        ':style MATCH (n) APPLY {captions:}',
+        ':style MATCH (n) APPLY {width:}',
+        ':style MATCH (n) APPLY {captionSize:}',
+      ];
+
+      for (const input of incompleteInputs) {
+        // Should not throw
+        expect(() => parserWrapper.parse(input)).not.toThrow();
+        const result = parserWrapper.parse(input);
+        const errors = result.statementsParsing.flatMap((s) => s.syntaxErrors);
+        expect(errors.length).toBeGreaterThan(0);
+      }
+    });
   });
 
   describe('Autocompletion', () => {

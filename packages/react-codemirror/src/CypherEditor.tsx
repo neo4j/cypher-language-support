@@ -1,3 +1,4 @@
+import { acceptCompletion } from '@codemirror/autocomplete';
 import { insertNewline } from '@codemirror/commands';
 import {
   Annotation,
@@ -235,6 +236,12 @@ const executeKeybinding = (
         key: 'Enter',
         preventDefault: true,
         run: (view: EditorView) => {
+          // Try to accept completion first - this handles the case where
+          // the completion menu is open (more reliable than completionStatus)
+          if (acceptCompletion(view)) {
+            return true;
+          }
+
           const doc = view.state.doc.toString();
           if (doc.includes('\n')) {
             // Returning false means the event will mark the event

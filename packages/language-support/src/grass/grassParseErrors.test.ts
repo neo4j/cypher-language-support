@@ -161,6 +161,34 @@ describe('Grass DSL Parser - Error Handling', () => {
     expect(result.errors[0].message).toContain('no viable alternative');
   });
 
+  describe('incomplete style properties', () => {
+    it('handles incomplete captionAlign property without crashing', () => {
+      // This should not throw - just return errors
+      const result = parseGrass(`MATCH (n) APPLY {captionAlign:}`);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('handles incomplete size property without crashing', () => {
+      const result = parseGrass(`MATCH (n) APPLY {size:}`);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('handles incomplete color property without crashing', () => {
+      const result = parseGrass(`MATCH (n) APPLY {color:}`);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('handles incomplete captions property without crashing', () => {
+      const result = parseGrass(`MATCH (n) APPLY {captions:}`);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('handles multiple incomplete properties without crashing', () => {
+      const result = parseGrass(`MATCH (n) APPLY {size:, color:}`);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+  });
+
   it('returns semantic error for null comparison with =', () => {
     const result = parseGrass(
       `MATCH (n:Person) WHERE n.middleName = null APPLY {color: '#cccccc'}`,

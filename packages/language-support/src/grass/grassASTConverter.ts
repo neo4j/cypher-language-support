@@ -497,35 +497,46 @@ export class GrassASTConverter {
 
     const sizeProp = ctx.grassSizeProperty();
     if (sizeProp) {
-      style.size = this.parseNumber(sizeProp.numberLiteral());
+      const numLit = sizeProp.numberLiteral();
+      if (numLit) {
+        style.size = this.parseNumber(numLit);
+      }
       return;
     }
 
     const widthProp = ctx.grassWidthProperty();
     if (widthProp) {
-      style.width = this.parseNumber(widthProp.numberLiteral());
+      const numLit = widthProp.numberLiteral();
+      if (numLit) {
+        style.width = this.parseNumber(numLit);
+      }
       return;
     }
 
     const captionsProp = ctx.grassCaptionsProperty();
     if (captionsProp) {
-      style.captions = this.convertCaptionExpression(
-        captionsProp.grassCaptionExpression(),
-      );
+      const captionExpr = captionsProp.grassCaptionExpression();
+      if (captionExpr) {
+        style.captions = this.convertCaptionExpression(captionExpr);
+      }
       return;
     }
 
     const captionSizeProp = ctx.grassCaptionSizeProperty();
     if (captionSizeProp) {
-      style.captionSize = this.parseNumber(captionSizeProp.numberLiteral());
+      const numLit = captionSizeProp.numberLiteral();
+      if (numLit) {
+        style.captionSize = this.parseNumber(numLit);
+      }
       return;
     }
 
     const captionAlignProp = ctx.grassCaptionAlignProperty();
     if (captionAlignProp) {
-      style.captionAlign = this.convertCaptionAlignValue(
-        captionAlignProp.grassCaptionAlignValue(),
-      );
+      const alignValue = captionAlignProp.grassCaptionAlignValue();
+      if (alignValue) {
+        style.captionAlign = this.convertCaptionAlignValue(alignValue);
+      }
       return;
     }
   }
