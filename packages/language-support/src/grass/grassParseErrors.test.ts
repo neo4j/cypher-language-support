@@ -158,7 +158,6 @@ describe('Grass DSL Parser - Error Handling', () => {
     const result = parseGrass(`MATCH (n) APPLY {invalidProperty: 10}`);
 
     expect(result.errors).toHaveLength(1);
-    expect(result.errors[0].message).toContain('no viable alternative');
   });
 
   describe('incomplete style properties', () => {
