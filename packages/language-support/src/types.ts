@@ -1,4 +1,11 @@
-import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
+import {
+  CompletionItem as VSCodeCompletionItem,
+  Diagnostic,
+} from 'vscode-languageserver-types';
+
+export type SyntaxDiagnostic = Diagnostic & {
+  offsets: { start: number; end: number };
+};
 
 export type ReturnDescription = {
   name: string;

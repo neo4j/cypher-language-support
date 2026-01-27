@@ -1,5 +1,4 @@
 import {
-  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
@@ -18,12 +17,13 @@ import {
   ParsedStatement,
   parserWrapper,
 } from '../parserWrapper';
-import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
+import {
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolTable,
+  SyntaxDiagnostic,
+} from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
-
-export type SyntaxDiagnostic = Diagnostic & {
-  offsets: { start: number; end: number };
-};
 
 function detectNonDeclaredLabel(
   labelOrRelType: LabelOrRelType,
@@ -390,21 +390,9 @@ export function lintCypherQuery(
         return { diagnostics, symbolTable };
       }
 
-      // Handle :style commands with grass semantic errors
       if (cmd.type === 'style' && cmd.grassErrors) {
-        const grassDiagnostics: SyntaxDiagnostic[] = cmd.grassErrors.map(
-          (err) => ({
-            severity: DiagnosticSeverity.Error,
-            message: err.message,
-            range: {
-              start: Position.create(err.line - 1, err.column),
-              end: Position.create(err.line - 1, err.column + 1),
-            },
-            offsets: err.offsets,
-          }),
-        );
         return {
-          diagnostics: [...current.syntaxErrors, ...grassDiagnostics],
+          diagnostics: [...current.syntaxErrors, ...cmd.grassErrors],
           symbolTable: [],
         };
       }

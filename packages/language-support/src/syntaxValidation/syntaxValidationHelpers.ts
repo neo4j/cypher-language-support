@@ -13,7 +13,7 @@ import CypherParser, {
 } from '../generated-parser/CypherCmdParser';
 import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
-import { SyntaxDiagnostic } from './syntaxValidation';
+import { SyntaxDiagnostic } from '../types';
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];

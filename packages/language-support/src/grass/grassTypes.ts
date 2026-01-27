@@ -10,6 +10,17 @@ import type {
 // Re-export for convenience
 export type { StyleRule, Where, Value, Caption, CaptionVariation, Style };
 
+export interface GrassSyntaxError {
+  // 1 | 2 | 3 | 4 to be compatible with DiagnosticSeverity
+  severity: 1 | 2 | 3 | 4;
+  message: string;
+  range: {
+    start: { line: number; character: number };
+    end: { line: number; character: number };
+  };
+  offsets: { start: number; end: number };
+}
+
 /**
  * Result of parsing a grass stylesheet
  */
@@ -20,19 +31,6 @@ export interface GrassParseResult {
   rules: StyleRule[];
   /** Any syntax errors encountered */
   errors: GrassSyntaxError[];
-}
-
-/**
- * A syntax error in the grass DSL
- */
-export interface GrassSyntaxError {
-  message: string;
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
 }
 
 /**

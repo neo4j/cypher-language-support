@@ -1,4 +1,5 @@
 import type { ParserRuleContext } from 'antlr4';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import type {
   StyleRuleContext,
   StyleSheetContext,
@@ -81,13 +82,20 @@ export class GrassASTConverter {
   private addError(ctx: ParserRuleContext, message: string): void {
     const start = ctx.start?.start ?? 0;
     const stop = ctx.stop?.stop ?? start;
-    const line = ctx.start?.line ?? 1;
-    const column = ctx.start?.column ?? 0;
+    // Use 0-based line numbers for LSP compatibility
+    const startLine = (ctx.start?.line ?? 1) - 1;
+    const startColumn = ctx.start?.column ?? 0;
+    const endLine = (ctx.stop?.line ?? ctx.start?.line ?? 1) - 1;
+    const endColumn =
+      (ctx.stop?.column ?? startColumn) + (ctx.stop?.text?.length ?? 1);
 
     this.errors.push({
+      severity: DiagnosticSeverity.Error,
       message,
-      line,
-      column,
+      range: {
+        start: Position.create(startLine, startColumn),
+        end: Position.create(endLine, endColumn),
+      },
       offsets: { start, end: stop + 1 },
     });
   }

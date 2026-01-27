@@ -18,15 +18,12 @@ export function stringifyGrass(rules: StyleRule[]): string {
 function stringifyRule(rule: StyleRule): string {
   const parts: string[] = [];
 
-  // MATCH clause
   parts.push(stringifyMatch(rule.match));
 
-  // WHERE clause (optional)
   if (rule.where) {
     parts.push(`WHERE ${stringifyWhere(rule.where)}`);
   }
 
-  // APPLY clause
   parts.push(`APPLY ${stringifyStyle(rule.apply)}`);
 
   return parts.join(' ');

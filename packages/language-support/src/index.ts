@@ -24,7 +24,7 @@ export {
   lintCypherQuery,
   clampUnsafePositions,
 } from './syntaxValidation/syntaxValidation';
-export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+export type { SyntaxDiagnostic } from './types';
 
 // Grass DSL exports
 export { parseGrass, stringifyGrass } from './grass';

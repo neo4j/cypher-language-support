@@ -1,8 +1,36 @@
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import type {
   GrassRuleAST,
   GrassWhereAST,
   GrassSyntaxError,
 } from './grassTypes';
+
+function createError(
+  message: string,
+  input: string,
+  start: number,
+  end: number,
+): GrassSyntaxError {
+  const beforeStart = input.substring(0, start);
+  const linesBeforeStart = beforeStart.split('\n');
+  const startLine = linesBeforeStart.length - 1;
+  const startColumn = linesBeforeStart[linesBeforeStart.length - 1].length;
+
+  const beforeEnd = input.substring(0, end);
+  const linesBeforeEnd = beforeEnd.split('\n');
+  const endLine = linesBeforeEnd.length - 1;
+  const endColumn = linesBeforeEnd[linesBeforeEnd.length - 1].length;
+
+  return {
+    severity: DiagnosticSeverity.Error,
+    message,
+    range: {
+      start: Position.create(startLine, startColumn),
+      end: Position.create(endLine, endColumn),
+    },
+    offsets: { start, end },
+  };
+}
 
 /**
  * Validate grass rules for semantic errors that aren't caught by the grammar.
@@ -26,17 +54,14 @@ export function validateGrassSemantics(
       const start = startIndex >= 0 ? startIndex : 0;
       const end = start + (ruleText.length + 10); // approximate end
 
-      const lines = input.substring(0, start).split('\n');
-      const line = lines.length;
-      const column = lines[lines.length - 1].length;
-
-      errors.push({
-        message:
+      errors.push(
+        createError(
           'Grass does not support paths. Use [r:TYPE] for relationships.',
-        line,
-        column,
-        offsets: { start, end },
-      });
+          input,
+          start,
+          end,
+        ),
+      );
     } else if (rule.match.type === 'multiLabel') {
       // Multiple labels like (n:Person:Actor)
       const labels = rule.match.labels || [];
@@ -48,18 +73,16 @@ export function validateGrassSemantics(
       const start = startIndex >= 0 ? startIndex : 0;
       const end = start + searchStr.length + 1;
 
-      const lines = input.substring(0, start).split('\n');
-      const line = lines.length;
-      const column = lines[lines.length - 1].length;
-
-      errors.push({
-        message: `Multiple labels in MATCH are not supported. Use WHERE ${
-          rule.match.variable || 'variable'
-        }:${labels[1]} for additional label conditions.`,
-        line,
-        column,
-        offsets: { start, end },
-      });
+      errors.push(
+        createError(
+          `Multiple labels in MATCH are not supported. Use WHERE ${
+            rule.match.variable || 'variable'
+          }:${labels[1]} for additional label conditions.`,
+          input,
+          start,
+          end,
+        ),
+      );
     } else {
       validRules.push(rule);
     }
@@ -97,31 +120,25 @@ function checkForNullComparisons(
 
         if (leftIsNull || rightIsNull) {
           const nullRegex = /\bnull\b/gi;
-          let match: RegExpExecArray | null;
-          let start = 0;
-          let end = 0;
-          let line = 1;
-          let column = 0;
+          const match = nullRegex.exec(input);
 
-          while ((match = nullRegex.exec(input)) !== null) {
-            start = match.index;
-            end = start + 4;
-            const lines = input.substring(0, start).split('\n');
-            line = lines.length;
-            column = lines[lines.length - 1].length;
-            break;
+          if (match) {
+            const start = match.index;
+            const end = start + 4; // 'null' is 4 characters
+
+            const operator = where.operator === 'equal' ? '=' : '<>';
+            const suggestion =
+              where.operator === 'equal' ? 'IS NULL' : 'IS NOT NULL';
+
+            errors.push(
+              createError(
+                `Comparing with null using '${operator}' is not recommended. Use '${suggestion}' instead. (In Cypher, null ${operator} null evaluates to null, not true/false)`,
+                input,
+                start,
+                end,
+              ),
+            );
           }
-
-          const operator = where.operator === 'equal' ? '=' : '<>';
-          const suggestion =
-            where.operator === 'equal' ? 'IS NULL' : 'IS NOT NULL';
-
-          errors.push({
-            message: `Comparing with null using '${operator}' is not recommended. Use '${suggestion}' instead. (In Cypher, null ${operator} null evaluates to null, not true/false)`,
-            line,
-            column,
-            offsets: { start, end },
-          });
         }
       }
       break;
@@ -129,8 +146,8 @@ function checkForNullComparisons(
 }
 
 /**
- * Convert GrassSyntaxError offsets for use with :style command prefix.
- * Adjusts line, column, and offsets to account for the `:style ` prefix.
+ * Adjust SyntaxDiagnostic positions for use with :style command prefix.
+ * Adjusts range and offsets to account for the `:style ` prefix.
  */
 export function adjustErrorOffsetsForStyleCommand(
   errors: GrassSyntaxError[],
@@ -138,15 +155,33 @@ export function adjustErrorOffsetsForStyleCommand(
   styleCommandLine: number,
   styleCommandColumn: number,
 ): GrassSyntaxError[] {
-  return errors.map((error) => ({
-    ...error,
-    line:
-      error.line === 1 ? styleCommandLine : styleCommandLine + error.line - 1,
-    column: error.line === 1 ? styleCommandColumn + error.column : error.column,
-    offsets: {
-      start: error.offsets.start + styleCommandOffset,
-      end: error.offsets.end + styleCommandOffset,
-    },
-  }));
-}
+  return errors.map((error) => {
+    const isFirstLine = error.range.start.line === 0;
+    const newStartLine = isFirstLine
+      ? styleCommandLine
+      : styleCommandLine + error.range.start.line;
+    const newStartColumn = isFirstLine
+      ? styleCommandColumn + error.range.start.character
+      : error.range.start.character;
 
+    const isEndOnFirstLine = error.range.end.line === 0;
+    const newEndLine = isEndOnFirstLine
+      ? styleCommandLine
+      : styleCommandLine + error.range.end.line;
+    const newEndColumn = isEndOnFirstLine
+      ? styleCommandColumn + error.range.end.character
+      : error.range.end.character;
+
+    return {
+      ...error,
+      range: {
+        start: Position.create(newStartLine, newStartColumn),
+        end: Position.create(newEndLine, newEndColumn),
+      },
+      offsets: {
+        start: error.offsets.start + styleCommandOffset,
+        end: error.offsets.end + styleCommandOffset,
+      },
+    };
+  });
+}

@@ -14,7 +14,7 @@ import {
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
-import { SyntaxDiagnostic } from './syntaxValidation';
+import { SyntaxDiagnostic } from '../types';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];

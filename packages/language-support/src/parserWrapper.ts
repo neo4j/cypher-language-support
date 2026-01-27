@@ -39,7 +39,7 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import { SyntaxDiagnostic } from './types';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import {
   CypherVersion,

@@ -1,17 +1,3 @@
-/**
- * Grass DSL - Styling language for Neo4j graph visualizations
- *
- * This module provides parsing and stringification for the Grass DSL,
- * which uses Cypher-like syntax to style nodes and relationships.
- *
- * Example:
- * ```grass
- * MATCH (n:Person) WHERE n.age > 18 APPLY {color: '#ff0000', size: 30}
- * MATCH [r:KNOWS] APPLY {width: 2, color: 'blue'}
- * ```
- */
-
-// Re-export types
 export type {
   StyleRule,
   Where,
@@ -31,19 +17,15 @@ export type {
   ComparisonOperator,
 } from './grassTypes';
 
-// Re-export stringification
 export { stringifyGrass } from './grassStringify';
 
-// Re-export AST converter for advanced use cases
 export { GrassASTConverter, astToStyleRule } from './grassASTConverter';
 
-// Re-export semantic validation
 export {
   validateGrassSemantics,
   adjustErrorOffsetsForStyleCommand,
 } from './grassSemantics';
 
-// Import for internal use
 import {
   CharStreams,
   CommonTokenStream,
@@ -51,6 +33,7 @@ import {
   Token,
   Recognizer,
 } from 'antlr4';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import CypherCmdLexer from '../generated-parser/CypherCmdLexer';
 import CypherCmdParser from '../generated-parser/CypherCmdParser';
 import { GrassASTConverter, astToStyleRule } from './grassASTConverter';
@@ -91,10 +74,18 @@ class GrassSyntaxErrorListener extends ErrorListener<Token> {
     const tokenLength = offendingSymbol?.text?.length ?? 1;
     const end = start + tokenLength;
 
+    // Use 0-based line numbers for LSP compatibility
+    const startLine = line - 1;
+    const endLine = startLine;
+    const endColumn = column + tokenLength;
+
     this.errors.push({
+      severity: DiagnosticSeverity.Error,
       message: msg,
-      line,
-      column,
+      range: {
+        start: Position.create(startLine, column),
+        end: Position.create(endLine, endColumn),
+      },
       offsets: { start, end },
     });
   }

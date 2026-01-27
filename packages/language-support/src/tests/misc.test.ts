@@ -1,8 +1,6 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import {
-  clampUnsafePositions,
-  SyntaxDiagnostic,
-} from '../syntaxValidation/syntaxValidation';
+import { clampUnsafePositions } from '../syntaxValidation/syntaxValidation';
+import { SyntaxDiagnostic } from '../types';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 describe('Clean positions', () => {
