@@ -21,7 +21,7 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
  * @param root - the original label tree
  * @returns a an equivalent CNF tree
  */
-export function convertToCNF(root: ConditionNode): LabelOrCondition {
+export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   // const negatedRoot: ConditionNode = {condition: 'not', children: [root]};
   // const dnf = convertToDNF(negatedRoot);
 

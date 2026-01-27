@@ -8,6 +8,7 @@ import {
 } from '../../labelTreeRewriting';
 
 const exampleQueries = {
+  singleLabel: 'MATCH (n:Move)-[:]',
   twoDifferentLabels: 'MATCH (n:Person)-[]->(n:Driver)',
   repeatedLabel: 'MATCH (n:Person|Driver)-[]->(n:Person|Driver)', //<-- AND(OR(Person,Driver), OR(Person,Driver))
   mixOfDifferentAndRepeated: 'MATCH (n:Person|Driver)-[]->(n:Person|Friend)',
@@ -21,12 +22,36 @@ const exampleQueries = {
     'MATCH (n:(Monkey&((Monkey&Litterate)|(Monkey&College_Educated))))',
   duplicationRiskOfOr:
     'MATCH (n:(((Monkey&Litterate)|(Monkey&College_Educated))))',
+  orWithNot: 'MATCH (n:(!A|B|C))',
+  orWithMultipleNots: 'MATCH (n:(!A|B|!C))',
+  mixOfAndsOrsNots: 'MATCH (n:(!A|B|C)&(B&D)|E)',
   oddMessy: 'MATCH (n:(Monkey|((Monkey&Litterate)|(Monkey&College_Educated))))',
   // = Monkey|(Monkey&Litterate)|Monkey&College_Educated =
   // (Monkey&Litterate)|(Monkey&College_Educated)
 };
 
 describe('rewrite tree', () => {
+  //singleLabel
+
+  test('CNF calculation should work on single label', () => {
+    const parsing = lintCypherQuery(exampleQueries.singleLabel, {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    if (isLabelLeaf(firstSymbolLabels)) {
+      expect(true).toEqual(false);
+    } else {
+      const cnfTree = convertToCNF(firstSymbolLabels);
+      expect(cnfTree).toEqual({
+        children: [
+          {
+            validFrom: 13,
+            value: 'Move',
+          },
+        ],
+        condition: 'and',
+      });
+    }
+  });
+
   test('Pushing nots and removing duplicates should not affect tree without duplicates/nots', () => {
     const parsing = lintCypherQuery(
       exampleQueries.twoDifferentLabels,
@@ -340,7 +365,6 @@ describe('rewrite tree', () => {
     } else {
       const cnfTree = convertToCNF(firstSymbolLabels);
       expect(cnfTree).not.toEqual(deduplicatedTree);
-      //TODO: Fix OR(single element) here
       expect(cnfTree).toEqual({
         children: [
           {
@@ -356,6 +380,109 @@ describe('rewrite tree', () => {
               {
                 validFrom: 54,
                 value: 'College_Educated',
+              },
+            ],
+            condition: 'or',
+          },
+        ],
+        condition: 'and',
+      });
+    }
+  });
+
+  test('CNF calculation simplifies OR with a NOT inside', () => {
+    const parsing = lintCypherQuery(exampleQueries.orWithNot, {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
+    const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
+    if (isLabelLeaf(firstSymbolLabels)) {
+      expect(true).toEqual(false);
+    } else {
+      const cnfTree = convertToCNF(firstSymbolLabels);
+      expect(cnfTree).not.toEqual(deduplicatedTree);
+      expect(cnfTree).toEqual({
+        children: [
+          {
+            children: [
+              {
+                validFrom: 12,
+                value: 'A',
+              },
+            ],
+            condition: 'not',
+          },
+        ],
+        condition: 'and',
+      });
+    }
+  });
+
+  test('CNF removes Tautology: OR with multiple NOTs inside', () => {
+    const parsing = lintCypherQuery(
+      exampleQueries.orWithMultipleNots,
+      {},
+      false,
+    );
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
+    const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
+    if (isLabelLeaf(firstSymbolLabels)) {
+      expect(true).toEqual(false);
+    } else {
+      const cnfTree = convertToCNF(firstSymbolLabels);
+      expect(cnfTree).not.toEqual(deduplicatedTree);
+      expect(cnfTree).toEqual({
+        children: [],
+        condition: 'and',
+      });
+    }
+  });
+
+  // MATCH (n:(!A|B|C)&(B&D)|E) <- AND(OR(E, AND(!A, B, D)) =
+  // AND(AND(OR(E, !A), OR(E,B), OR(E,D))) = AND(!A, OR(E,B), OR(E,D))
+  test('CNF handles Ands/Ors/Nots all at once', () => {
+    const parsing = lintCypherQuery(exampleQueries.mixOfAndsOrsNots, {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
+    const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
+    if (isLabelLeaf(firstSymbolLabels)) {
+      expect(true).toEqual(false);
+    } else {
+      const cnfTree = convertToCNF(firstSymbolLabels);
+      expect(cnfTree).not.toEqual(deduplicatedTree);
+      expect(cnfTree).toEqual({
+        children: [
+          {
+            children: [
+              {
+                validFrom: 12,
+                value: 'A',
+              },
+            ],
+            condition: 'not',
+          },
+          {
+            children: [
+              {
+                validFrom: 25,
+                value: 'E',
+              },
+              {
+                validFrom: 20,
+                value: 'B',
+              },
+            ],
+            condition: 'or',
+          },
+          {
+            children: [
+              {
+                validFrom: 25,
+                value: 'E',
+              },
+              {
+                validFrom: 22,
+                value: 'D',
               },
             ],
             condition: 'or',
