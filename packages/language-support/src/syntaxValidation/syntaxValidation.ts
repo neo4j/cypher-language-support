@@ -390,13 +390,6 @@ export function lintCypherQuery(
         return { diagnostics, symbolTable };
       }
 
-      if (cmd.type === 'style' && cmd.grassErrors) {
-        return {
-          diagnostics: [...current.syntaxErrors, ...cmd.grassErrors],
-          symbolTable: [],
-        };
-      }
-
       // There could be console command errors
       return { diagnostics: current.syntaxErrors, symbolTable: [] };
     });

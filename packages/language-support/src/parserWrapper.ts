@@ -227,6 +227,19 @@ export function createParsingResult(
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
+      // Merge grass semantic errors into syntax errors
+      if (
+        collectedCommand.type === 'style' &&
+        'grassErrors' in collectedCommand
+      ) {
+        const grassErrors = (
+          collectedCommand as { grassErrors?: GrassSyntaxError[] }
+        ).grassErrors;
+        if (grassErrors) {
+          syntaxErrors.push(...grassErrors);
+        }
+      }
+
       return {
         command: collectedCommand,
         parser: parser,
@@ -576,7 +589,6 @@ export type ParsedCommandNoPosition =
       type: 'style';
       operation?: 'reset';
       styleRules?: StyleRule[];
-      grassErrors?: GrassSyntaxError[];
     }
   | { type: 'play' }
   | { type: 'access-mode'; operation?: string }
@@ -749,7 +761,7 @@ function parseToCommand(
           stop,
           operation: isReset ? 'reset' : undefined,
           styleRules,
-          grassErrors,
+          ...(grassErrors && { grassErrors }),
         };
       }
 
