@@ -43,21 +43,18 @@ export async function activate(context: ExtensionContext) {
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
   const config = workspace.getConfiguration('neo4j.features');
-  const schemaBasedPatternCompletions = config.get(
-    'schemaBasedPatternCompletions',
-    false,
-  );
+  const debugSymbolTable = config.get('debugSymbolTable', false);
 
   const serverOptions: ServerOptions = {
     run: {
       module: runServer,
       transport: TransportKind.ipc,
-      options: { env: { schemaBasedPatternCompletions } },
+      options: { env: { debugSymbolTable } },
     },
     debug: {
       module: debugServer,
       transport: TransportKind.ipc,
-      options: { env: { schemaBasedPatternCompletions } },
+      options: { env: { debugSymbolTable } },
     },
   };
 

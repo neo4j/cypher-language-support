@@ -1,4 +1,3 @@
-import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
 import {
   cypherDataToString,
   CypherDataType,
@@ -10,7 +9,6 @@ import {
 } from '@neo4j-cypher/query-tools';
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
-import { DiagnosticSeverity } from 'vscode-languageclient';
 import { CONSTANTS } from '../constants';
 import { getSchemaPoller } from '../contextService';
 import {
@@ -23,30 +21,11 @@ import {
   ParameterItem,
   parametersTreeDataProvider,
 } from '../treeviews/parametersTreeDataProvider';
+import { validateParamInput } from '../helpers';
 
 async function isConnected(): Promise<boolean> {
   const schemaPoller = getSchemaPoller();
   return schemaPoller.connection?.healthcheck();
-}
-
-export function validateParamInput(
-  paramValue: string,
-  dbSchema: DbSchema,
-): string | undefined {
-  const diagnostics = lintCypherQuery(
-    `RETURN ${paramValue}`,
-    dbSchema,
-    true,
-  ).diagnostics;
-  const errors = diagnostics.filter(
-    (d) => d.severity === DiagnosticSeverity.Error,
-  );
-  if (errors.length > 0) {
-    return (
-      'Value cannot be evaluated: ' + errors.map((e) => e.message).join('. ')
-    );
-  }
-  return undefined;
 }
 
 export async function addParameter(defaultParamName?: string): Promise<void> {

@@ -4,3 +4,14 @@ packages:
 catalog:
   neo4j-driver: 6.0.1
 
+minimumReleaseAge: 4320
+minimumReleaseAgeExclude:
+  # all neo4j-ndl and @neo4j-nvl have a minumum release age so we can exclude them here
+  - '@neo4j-ndl/base'
+  - '@neo4j-ndl/react'
+  - '@neo4j-ndl/react-charts'
+  - '@neo4j-ndl/react-graph'
+  - '@neo4j-nvl/base'
+  - '@neo4j-nvl/interaction-handlers'
+  - '@neo4j-nvl/layout-workers'
+  - '@neo4j-nvl/react'

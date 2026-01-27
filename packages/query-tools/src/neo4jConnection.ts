@@ -21,7 +21,9 @@ function resolveInitialDatabase(
   database?: string,
 ): string | undefined {
   if (database) {
-    return databases.find((d) => d.name === database)?.name;
+    return databases.find(
+      (d) => d.name === database || d?.aliases?.includes(database),
+    )?.name;
   }
 
   const home = databases.find((d) => d.home);

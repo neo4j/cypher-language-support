@@ -107,6 +107,10 @@ ACTIVE
    : A C T I V E
    ;
 
+ACYCLIC
+   : A C Y C L I C
+   ;
+
 ADD
    : A D D
    ;
@@ -283,6 +287,10 @@ COPY
    : C O P Y
    ;
 
+CONDITION
+    : C O N D I T I O N
+    ;
+
 CONTINUE
    : C O N T I N U E
    ;
@@ -345,6 +353,10 @@ DEALLOCATE
 
 DEFAULT
    : D E F A U L T
+   ;
+
+DEFINE
+   : D E F I N E
    ;
 
 DEFINED
@@ -450,6 +462,10 @@ ELEMENTS
 ELSE
    : E L S E
    ;
+
+ENABLED
+    : E N A B L E D
+    ;
 
 ENCRYPTED
    : E N C R Y P T E D
@@ -1100,6 +1116,14 @@ ROWS
    : R O W S
    ;
 
+RULE
+    : R U L E
+    ;
+
+RULES
+    : R U L E S
+    ;
+
 RPAREN
    : ')'
    ;
@@ -1264,6 +1288,10 @@ TOPOLOGY
    : T O P O L O G Y
    ;
 
+TRAIL
+    : T R A I L
+    ;
+
 TRAILING
    : T R A I L I N G
    ;
@@ -1363,6 +1391,10 @@ VERTEX
 WAIT
    : W A I T
    ;
+
+WALK
+    : W A L K
+    ;
 
 WHEN
    : W H E N

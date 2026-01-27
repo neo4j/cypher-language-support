@@ -3,13 +3,8 @@ name: Pre Release VSCode extension
 on:
   workflow_dispatch:
   schedule:
-    # Every weekday at 9:00 UTC
+    # Every weekday at 2:00 UTC
     - cron: '0 2 * * 1-5'
-  push:
-    branches:
-      - main
-    paths:
-      - 'packages/vscode-extension/**'
 
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
