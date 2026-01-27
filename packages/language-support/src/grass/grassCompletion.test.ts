@@ -194,24 +194,17 @@ describe('Grass DSL Editor Integration', () => {
       expect(resetCompletion).toBeDefined();
     });
 
-    // TODO: These tests will pass once grassLabelName rule is added to preferredRules
-    // See EDITOR_INTEGRATION.md for implementation details
-    test.todo('suggests labels in grass node pattern', () => {
+    test('suggests labels in grass node pattern', () => {
       const completions = autocomplete(':style MATCH (n:', dbSchema);
       const personCompletion = completions.find((c) => c.label === 'Person');
       expect(personCompletion).toBeDefined();
     });
 
-    // TODO: These tests will pass once grassRelTypeName rule is added to preferredRules
-    // See EDITOR_INTEGRATION.md for implementation details
-    test.todo(
-      'suggests relationship types in grass relationship pattern',
-      () => {
-        const completions = autocomplete(':style MATCH [r:', dbSchema);
-        const knowsCompletion = completions.find((c) => c.label === 'KNOWS');
-        expect(knowsCompletion).toBeDefined();
-      },
-    );
+    test('suggests relationship types in grass relationship pattern', () => {
+      const completions = autocomplete(':style MATCH [r:', dbSchema);
+      const knowsCompletion = completions.find((c) => c.label === 'KNOWS');
+      expect(knowsCompletion).toBeDefined();
+    });
 
     test('suggests WHERE after pattern', () => {
       const completions = autocomplete(':style MATCH (n:Person) ', dbSchema);

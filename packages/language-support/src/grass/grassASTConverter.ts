@@ -37,7 +37,7 @@ import {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
-  NummericLiteralContext,
+  NumericLiteralContext,
   StringsLiteralContext,
   BooleanLiteralContext,
   KeywordLiteralContext,
@@ -414,7 +414,7 @@ export class GrassASTConverter {
     const literal = ctx.literal();
 
     // Handle each literal subtype
-    if (literal instanceof NummericLiteralContext) {
+    if (literal instanceof NumericLiteralContext) {
       const numLit = literal.numberLiteral();
       return this.convertNumberLiteral(numLit);
     }

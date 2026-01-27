@@ -154,9 +154,11 @@ describe('Grass DSL Parser - Error Handling', () => {
     expect(result.errors[0].message).toBeDefined();
   });
 
-  it.todo('returns error for invalid property in APPLY', () => {
-    // Should validate unknown style properties
-    // Example: MATCH (n) APPLY {invalidProperty: 10}
+  it('returns error for invalid property in APPLY', () => {
+    const result = parseGrass(`MATCH (n) APPLY {invalidProperty: 10}`);
+
+    expect(result.errors).toHaveLength(1);
+    expect(result.errors[0].message).toContain('no viable alternative');
   });
 
   it('returns semantic error for null comparison with =', () => {
@@ -377,12 +379,6 @@ describe('Grass DSL Parser - Edge Cases', () => {
       expect(result.rules[0].where).toEqual({
         lessThan: [{ property: 'value' }, 0.0000001],
       });
-    });
-
-    it.todo('handles scientific notation', () => {
-      // Scientific notation may not be supported by the grammar yet
-      // Example: WHERE n.value > 1e10
-      // Example: WHERE n.value < 1.5e-5
     });
 
     it('handles zero values', () => {

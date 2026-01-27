@@ -1,6 +1,14 @@
 import type { StyleRule, Where, Value, Caption, Style } from './grassTypes';
 
 /**
+ * Escape a string for use in single-quoted Grass DSL output.
+ * Backslashes must be escaped first, then single quotes.
+ */
+function escapeSingleQuotedString(input: string): string {
+  return input.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+/**
  * Convert StyleRule objects back to grass DSL string.
  */
 export function stringifyGrass(rules: StyleRule[]): string {
@@ -108,7 +116,7 @@ function stringifyValue(value: Value): string {
     return 'null';
   }
   if (typeof value === 'string') {
-    return `'${value.replace(/'/g, "\\'")}'`;
+    return `'${escapeSingleQuotedString(value)}'`;
   }
   if (typeof value === 'number') {
     return String(value);
@@ -124,7 +132,7 @@ function stringifyStyle(style: Style): string {
   const props: string[] = [];
 
   if (style.color !== undefined) {
-    props.push(`color: '${style.color}'`);
+    props.push(`color: '${escapeSingleQuotedString(style.color)}'`);
   }
   if (style.size !== undefined) {
     props.push(`size: ${style.size}`);
@@ -136,7 +144,9 @@ function stringifyStyle(style: Style): string {
     props.push(`captionSize: ${style.captionSize}`);
   }
   if (style.captionAlign !== undefined) {
-    props.push(`captionAlign: '${style.captionAlign}'`);
+    props.push(
+      `captionAlign: '${escapeSingleQuotedString(style.captionAlign)}'`,
+    );
   }
   if (style.captions !== undefined) {
     props.push(`captions: ${stringifyCaptions(style.captions)}`);
@@ -153,7 +163,7 @@ function stringifyCaption(caption: Caption): string {
   let value: string;
 
   if (typeof caption.value === 'string') {
-    value = `'${caption.value.replace(/'/g, "\\'")}'`;
+    value = `'${escapeSingleQuotedString(caption.value)}'`;
   } else if ('property' in caption.value) {
     value = `n.${caption.value.property}`;
   } else {
