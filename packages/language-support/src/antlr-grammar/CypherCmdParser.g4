@@ -68,11 +68,6 @@ readCompletionRule: READ;
 
 writeCompletionRule: WRITE;
 
-// =============================================================================
-// Grass Style Rules (entry point: styleSheet for standalone parsing)
-// All rules prefixed with "grass" to avoid conflicts with Cypher rules
-// =============================================================================
-
 styleSheet: (styleRule (SEMICOLON styleRule)* SEMICOLON?)? EOF;
 
 styleRule: MATCH grassPattern (WHERE grassWhereClause)? APPLY grassStyleMap;
