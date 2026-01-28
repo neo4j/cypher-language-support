@@ -32,11 +32,7 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
     const newChildren: LabelOrCondition[] = [];
     newRoot.children.forEach((x) => {
       const newChild: LabelOrCondition | undefined = depthFirstConvertAnds(x);
-      if (newChild && !isLabelLeaf(newChild) && newChild.condition == 'and') {
-        newChild.children.forEach((c) => newChildren.push(c));
-      } else {
-        newChildren.push(newChild);
-      }
+      addChild(newChildren, newChild, 'and');
     });
     const cnfRoot: ConditionNode = { condition: 'and', children: newChildren };
     const cleanedCnfTree: LabelOrCondition =
@@ -64,16 +60,8 @@ function depthFirstConvertAnds(
     const convertedChild: LabelOrCondition | undefined =
       depthFirstConvertAnds(x);
     //To get Ex. AND(AND(X,Y),Z) = AND(X,Y,Z)
-    if (
-      convertedChild &&
-      !isLabelLeaf(convertedChild) &&
-      convertedChild.condition === condition
-    ) {
-      convertedChild.children.forEach((c: LabelOrCondition) =>
-        newChildren.push(c),
-      );
-    } else {
-      newChildren.push(convertedChild);
+    if (convertedChild) {
+      addChild(newChildren, convertedChild, condition);
     }
   });
   node = { condition: node.condition, children: newChildren };
@@ -95,128 +83,26 @@ function depthFirstConvertAnds(
   }
 }
 
-//AND(x, !b, OR(x,y,z), OR(a,b,c))
-//AND(OR(AND(X,Y),AND(Z,W)))
-//AND(X,Y,Z,W) = AND(AND(X,Y), Z,W)
-// OR(X,AND(Y,Z), AND()) = AND(OR(X,Y), OR(X,Z))
-
 /**
- * Pushes in the OR-node into AND-children, assuming OR-children like OR(OR(x),...) have been simplified to OR(x,...)
- * Also assumes the tree is in in Negative Normal Form (NNF)
- * See ex. https://personal.cis.strath.ac.uk/robert.atkey/cs208/converting-to-cnf.html
- * @param orCondition, an OR-node
- * @returns an
+ * Helper method to add a condition while avoiding duplicate conditions and nested conditions of the same type.
+ * Modifies the input array
+ * @param arrayToModify
+ * @param newChild
+ * @param topCondition
  */
-function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
-  const rewrittenOrNode: LabelOrCondition = copyLabelTree(orCondition);
-  //Bail and fail if not calling with "and"-node
-
-  if (isLabelLeaf(rewrittenOrNode) || rewrittenOrNode.condition !== 'or') {
-    return undefined;
+function addChild(
+  arrayToModify: LabelOrCondition[],
+  newChild: LabelOrCondition,
+  topCondition: Condition,
+) {
+  if (!isLabelLeaf(newChild) && newChild.condition === topCondition) {
+    newChild.children.forEach((gc) => {
+      if (!childAlreadyExists(arrayToModify, gc)) arrayToModify.push(gc);
+    });
+  } else {
+    if (!childAlreadyExists(arrayToModify, newChild))
+      arrayToModify.push(newChild);
   }
-  let rewrittenChildren: LabelOrCondition[] = rewrittenOrNode.children;
-  let hasInnerAnds: boolean = true;
-  while (hasInnerAnds) {
-    const innerAnds: ConditionNode[] = [];
-    const innerLiterals: LabelOrCondition[] = [];
-    for (const c of rewrittenChildren) {
-      if (isLabelLeaf(c) || c.condition == 'not') {
-        innerLiterals.push(c);
-      } else if (c.condition === 'and') {
-        innerAnds.push(c);
-      }
-    }
-    if (innerAnds.length === 0) {
-      hasInnerAnds = false;
-    } else if (innerLiterals.length > 0) {
-      //Rewrite using Associative Law like OR(x,y, AND(A,B), AND(U,R,S)) = OR(OR(x,y,z, AND(A,B)),AND(R,S,T))
-      //Then rewrite inner OR with the single AND using the distributive law so we get
-      //OR(AND(OR(x,y,z,A), OR(x,y,z,B)), AND(R,S,T)), so we're left with just multiple ANDs of { literals/ORs of literals }
-      const firstAnd: ConditionNode = innerAnds[0];
-      const newInnerChildren: LabelOrCondition[] = [];
-      for (const c of firstAnd.children) {
-        const newGrandChildren: LabelOrCondition[] = [...innerLiterals];
-        if (!isLabelLeaf(c) && c.condition == 'or') {
-          c.children.forEach((gc) => {
-            if (!childAlreadyExists(newGrandChildren, gc))
-              newGrandChildren.push(gc);
-          });
-        } else {
-          if (!childAlreadyExists(newGrandChildren, c))
-            newGrandChildren.push(c);
-        }
-        if (newGrandChildren.length > 1) {
-          newInnerChildren.push({
-            condition: 'or',
-            children: newGrandChildren,
-          });
-        } else if (newGrandChildren.length === 1) {
-          newInnerChildren.push(newGrandChildren[0]);
-        }
-      }
-
-      const pushedOr: ConditionNode = {
-        condition: 'and',
-        children: newInnerChildren,
-      };
-      rewrittenChildren = [pushedOr].concat(
-        innerAnds.slice(1, innerAnds.length),
-      );
-    } else if (innerAnds.length > 1) {
-      //AND(x, OR(a,b)) => OR(AND(x,a), AND(x,b))
-      //OR(x, AND(x,b)) => AND(OR(x,x), OR(x,b))
-      // Rewrite using Associative Law Ex. OR(AND(A,B,C), AND(D,E,F), AND(R,S,T), ...) = OR(OR(AND(A,B,C), AND(D,E,F)), AND(R,S,T),...)
-      // Then rewrite inner OR with 2 ANDs using the distributive law so we get
-      // OR(AND(OR(A, AND(D,E,F), OR(B, AND(D,E,F)), OR(C, AND(D,E,F))), AND(R,S,T),...))
-      // And rewrite each new inner OR with the distributive law ->
-      // OR(AND(AND(OR(A,D),OR(A,E),OR(A,F),...),AND(OR(B,D),...),...)), AND(R,S,T)) - not forgetting to simplify double AND to
-      // OR(AND(OR(A,D),OR(A,E),...),AND(R,S,T)) <- and we have reduced the inner AND-count by one. Rinse and repeat
-      const firstAnd = innerAnds[0];
-      const secondAnd = innerAnds[1];
-      const totalMergedChildren: LabelOrCondition[] = [];
-      for (const c of firstAnd.children) {
-        //each of the first AND-children A,B,C gives us a new OR like OR(A, AND(D,E,F)), OR(B, AND(...))...
-        //each of these can be deconstructed using the distributive law to an AND-node so we get
-        //AND(AND(OR(...), OR(...)...,AND(OR(...)...),...)) = AND(OR(...), OR(...), OR(...), ...)
-        for (const c2 of secondAnd.children) {
-          const newChildren: LabelOrCondition[] = [];
-          //Really OR-check should not be needed, since we go depth-first and children should thus have ANDs pushed up
-          if (!isLabelLeaf(c) && c.condition == 'or') {
-            c.children.forEach((gc) => {
-              if (!childAlreadyExists(newChildren, gc)) newChildren.push(gc);
-            });
-          } else {
-            if (!childAlreadyExists(newChildren, c)) newChildren.push(c);
-          }
-          if (!isLabelLeaf(c2) && c2.condition == 'or') {
-            c2.children.forEach((gc) => {
-              if (!childAlreadyExists(newChildren, gc)) newChildren.push(gc);
-            });
-          } else {
-            if (!childAlreadyExists(newChildren, c2)) newChildren.push(c2);
-          }
-          if (newChildren.length > 1) {
-            totalMergedChildren.push({
-              condition: 'or',
-              children: newChildren,
-            });
-          } else if (newChildren.length === 1) {
-            totalMergedChildren.push(newChildren[0]);
-          }
-        }
-      }
-      const pushedOr: ConditionNode = {
-        condition: 'and',
-        children: totalMergedChildren,
-      };
-      rewrittenChildren = [pushedOr].concat(innerAnds.slice(2, -1));
-    } else {
-      //Finally after merging ANDs one by one we will arrive at OR(AND(...)) = AND(...) (where the final AND can get some pretty massive amount of children)
-      return innerAnds[0];
-    }
-  }
-  //Only reach this if we had no inner ands
-  return rewrittenOrNode;
 }
 
 /**
@@ -257,6 +143,104 @@ function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition) {
     );
   }
   return false;
+}
+
+/**
+ * Pushes in the OR-node into AND-children, assuming OR-children like OR(OR(x),...) have been simplified to OR(x,...)
+ * Also assumes the tree is in in Negative Normal Form (NNF)
+ * See ex. https://personal.cis.strath.ac.uk/robert.atkey/cs208/converting-to-cnf.html
+ * @param orCondition, an OR-node
+ * @returns an
+ */
+function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
+  const rewrittenOrNode: LabelOrCondition = copyLabelTree(orCondition);
+  //Bail and fail if not calling with "and"-node
+
+  if (isLabelLeaf(rewrittenOrNode) || rewrittenOrNode.condition !== 'or') {
+    return undefined;
+  }
+  let rewrittenChildren: LabelOrCondition[] = rewrittenOrNode.children;
+  let hasInnerAnds: boolean = true;
+  while (hasInnerAnds) {
+    const innerAnds: ConditionNode[] = [];
+    const innerLiterals: LabelOrCondition[] = [];
+    for (const c of rewrittenChildren) {
+      if (isLabelLeaf(c) || c.condition == 'not') {
+        innerLiterals.push(c);
+      } else if (c.condition === 'and') {
+        innerAnds.push(c);
+      }
+    }
+    if (innerAnds.length === 0) {
+      hasInnerAnds = false;
+    } else if (innerLiterals.length > 0) {
+      //Rewrite using Associative Law like OR(x,y, AND(A,B), AND(U,R,S)) = OR(OR(x,y,z, AND(A,B)),AND(R,S,T))
+      //Then rewrite inner OR with the single AND using the distributive law so we get
+      //OR(AND(OR(x,y,z,A), OR(x,y,z,B)), AND(R,S,T)), so we're left with just multiple ANDs of { literals/ORs of literals }
+      const firstAnd: ConditionNode = innerAnds[0];
+      const newInnerChildren: LabelOrCondition[] = [];
+      for (const c of firstAnd.children) {
+        const newGrandChildren: LabelOrCondition[] = [...innerLiterals];
+        addChild(newGrandChildren, c, 'or');
+        if (newGrandChildren.length > 1) {
+          newInnerChildren.push({
+            condition: 'or',
+            children: newGrandChildren,
+          });
+        } else if (newGrandChildren.length === 1) {
+          newInnerChildren.push(newGrandChildren[0]);
+        }
+      }
+
+      const pushedOr: ConditionNode = {
+        condition: 'and',
+        children: newInnerChildren,
+      };
+      rewrittenChildren = [pushedOr].concat(
+        innerAnds.slice(1, innerAnds.length),
+      );
+    } else if (innerAnds.length > 1) {
+      //AND(x, OR(a,b)) => OR(AND(x,a), AND(x,b))
+      //OR(x, AND(x,b)) => AND(OR(x,x), OR(x,b))
+      // Rewrite using Associative Law Ex. OR(AND(A,B,C), AND(D,E,F), AND(R,S,T), ...) = OR(OR(AND(A,B,C), AND(D,E,F)), AND(R,S,T),...)
+      // Then rewrite inner OR with 2 ANDs using the distributive law so we get
+      // OR(AND(OR(A, AND(D,E,F), OR(B, AND(D,E,F)), OR(C, AND(D,E,F))), AND(R,S,T),...))
+      // And rewrite each new inner OR with the distributive law ->
+      // OR(AND(AND(OR(A,D),OR(A,E),OR(A,F),...),AND(OR(B,D),...),...)), AND(R,S,T)) - not forgetting to simplify double AND to
+      // OR(AND(OR(A,D),OR(A,E),...),AND(R,S,T)) <- and we have reduced the inner AND-count by one. Rinse and repeat
+      const firstAnd = innerAnds[0];
+      const secondAnd = innerAnds[1];
+      const totalMergedChildren: LabelOrCondition[] = [];
+      for (const c of firstAnd.children) {
+        //each of the first AND-children A,B,C gives us a new OR like OR(A, AND(D,E,F)), OR(B, AND(...))...
+        //each of these can be deconstructed using the distributive law to an AND-node so we get
+        //AND(AND(OR(...), OR(...)...,AND(OR(...)...),...)) = AND(OR(...), OR(...), OR(...), ...)
+        for (const c2 of secondAnd.children) {
+          const newChildren: LabelOrCondition[] = [];
+          addChild(newChildren, c, 'or');
+          addChild(newChildren, c2, 'or');
+          if (newChildren.length > 1) {
+            totalMergedChildren.push({
+              condition: 'or',
+              children: newChildren,
+            });
+          } else if (newChildren.length === 1) {
+            totalMergedChildren.push(newChildren[0]);
+          }
+        }
+      }
+      const pushedOr: ConditionNode = {
+        condition: 'and',
+        children: totalMergedChildren,
+      };
+      rewrittenChildren = [pushedOr].concat(innerAnds.slice(2, -1));
+    } else {
+      //Finally after merging ANDs one by one we will arrive at OR(AND(...)) = AND(...) (where the final AND can get some pretty massive amount of children)
+      return innerAnds[0];
+    }
+  }
+  //Only reach this if we had no inner ands
+  return rewrittenOrNode;
 }
 
 /**
@@ -596,14 +580,7 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
   const pushedChildren: LabelOrCondition[] = [];
   newLabelTree.children.forEach((c) => {
     const newChild = pushInNots(c);
-    if (
-      !isLabelLeaf(newChild) &&
-      newLabelTree.condition === newChild.condition
-    ) {
-      newChild.children.forEach((c) => pushedChildren.push(c));
-    } else {
-      pushedChildren.push(newChild);
-    }
+    addChild(pushedChildren, newChild, newLabelTree.condition);
   });
   return { ...newLabelTree, children: pushedChildren };
 }

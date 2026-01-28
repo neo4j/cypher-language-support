@@ -326,7 +326,7 @@ describe('rewrite tree', () => {
       expect(cnfTree).toEqual({
         children: [
           {
-            validFrom: 25,
+            validFrom: 16,
             value: 'Monkey',
           },
           {
@@ -563,24 +563,6 @@ describe('rewrite tree', () => {
           ],
           condition: 'not',
         },
-        {
-          children: [
-            {
-              validFrom: 41,
-              value: 'Person',
-            },
-          ],
-          condition: 'not',
-        },
-        {
-          children: [
-            {
-              validFrom: 48,
-              value: 'Driver',
-            },
-          ],
-          condition: 'not',
-        },
       ],
       condition: 'and',
     });
@@ -596,7 +578,7 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 41,
+              validFrom: 17,
               value: 'Person',
             },
           ],
@@ -605,7 +587,7 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 48,
+              validFrom: 24,
               value: 'Driver',
             },
           ],
