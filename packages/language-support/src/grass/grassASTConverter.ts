@@ -38,6 +38,7 @@ import {
   IsNotNullCheckContext,
   ParenthesizedBooleanContext,
   LabelCheckContext,
+  PropertyExistenceCheckContext,
   NumericLiteralContext,
   StringsLiteralContext,
   BooleanLiteralContext,
@@ -298,16 +299,8 @@ export class GrassASTConverter {
       return this.convertLabelCheck(ctx);
     } else if (ctx instanceof ParenthesizedBooleanContext) {
       return this.convertParenthesizedBoolean(ctx);
-    } else if (
-      'grassPropertyAccess' in ctx &&
-      typeof ctx.grassPropertyAccess === 'function'
-    ) {
-      // PropertyExistenceCheckContext - duck-typed since the export isn't recognized by TS
-      return this.convertPropertyExistenceCheck(
-        ctx as ParserRuleContext & {
-          grassPropertyAccess(): GrassPropertyAccessContext;
-        },
-      );
+    } else if (ctx instanceof PropertyExistenceCheckContext) {
+      return this.convertPropertyExistenceCheck(ctx);
     }
 
     return undefined;
@@ -382,9 +375,7 @@ export class GrassASTConverter {
   }
 
   convertPropertyExistenceCheck(
-    ctx: ParserRuleContext & {
-      grassPropertyAccess(): GrassPropertyAccessContext;
-    },
+    ctx: PropertyExistenceCheckContext,
   ): GrassWhereAST {
     const propAccess = this.convertPropertyAccess(ctx.grassPropertyAccess());
     if (propAccess.type === 'property') {
