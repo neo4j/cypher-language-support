@@ -606,7 +606,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles simple NOT for labels', () => {
+  test('Handles simple NOT in a WHERE clause', () => {
     const query = 'MATCH (x) WHERE NOT x:Trainer MATCH (x)-[:';
     testCompletions({
       query,
@@ -619,8 +619,33 @@ RETURN [(p)-[:`;
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Handles simple NOT in a WHERE clause in conjunction with AND', () => {
+    const query =
+      'MATCH (x) WHERE NOT x:Trainer AND NOT x:Pokemon AND NOT x:Gym MATCH (x)-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
