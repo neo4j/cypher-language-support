@@ -22,10 +22,6 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
  * @returns a an equivalent CNF tree
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
-  // const negatedRoot: ConditionNode = {condition: 'not', children: [root]};
-  // const dnf = convertToDNF(negatedRoot);
-
-  //Root must be and-node
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
     return undefined;
   } else {
@@ -159,12 +155,13 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
         }
       }
 
-      //AND(OR(AND, AND), OR(AND, AND)) OR(x,x)
       const pushedOr: ConditionNode = {
         condition: 'and',
         children: newInnerChildren,
       };
-      rewrittenChildren = [pushedOr].concat(innerAnds.slice(1, -1));
+      rewrittenChildren = [pushedOr].concat(
+        innerAnds.slice(1, innerAnds.length),
+      );
     } else if (innerAnds.length > 1) {
       //AND(x, OR(a,b)) => OR(AND(x,a), AND(x,b))
       //OR(x, AND(x,b)) => AND(OR(x,x), OR(x,b))
@@ -224,6 +221,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
 
 /**
  * Helper method to check if we are adding a duplicate child-condition/label to an existing list of children
+ * Exported for unit testing
  * @param existingChildren
  * @param newChild
  * @returns
@@ -324,13 +322,11 @@ export function simplifyAndRemoveTautologies(
           break;
         }
 
-        const firstDef = getFirstDefinition(
+        const isDuplicate = checkEquality(
           newRoot.children[i],
           newRoot.children[j],
         );
-        if (firstDef === newRoot.children[i]) {
-          newRoot.children[j] = undefined;
-        } else if (firstDef === newRoot.children[j]) {
+        if (isDuplicate) {
           newRoot.children[i] = undefined;
         }
       }
@@ -504,14 +500,13 @@ export function removeDuplicates(
       ) {
         continue;
       }
-      const firstDef = getFirstDefinition(
+      const foundDuplicate: boolean = checkEquality(
         newLabelTree.children[i],
         newLabelTree.children[j],
       );
-      if (firstDef === newLabelTree.children[i]) {
-        newLabelTree.children[j] = undefined;
-      } else if (firstDef === newLabelTree.children[j]) {
+      if (foundDuplicate) {
         newLabelTree.children[i] = undefined;
+        break;
       }
     }
   }
@@ -519,28 +514,22 @@ export function removeDuplicates(
   return newLabelTree;
 }
 
-//Should unit test these if we end up doing things this way
-//Can improve this by sorting children
+//Can speed this check by sorting the children
 /**
  * @param labelTree1
  * @param labelTree2
- * @returns first definition of the condition if the two conditions are equal
- * otherwise returns undefined
+ * @returns true if both trees describe the same labels, ignoring order
  */
-function getFirstDefinition(
+function checkEquality(
   labelTree1: LabelOrCondition,
   labelTree2: LabelOrCondition,
-): LabelOrCondition | undefined {
+): boolean {
   if (
     isLabelLeaf(labelTree1) &&
     isLabelLeaf(labelTree2) &&
     labelTree1.value == labelTree2.value
   ) {
-    if (labelTree1.validFrom <= labelTree2.validFrom) {
-      return labelTree1;
-    } else {
-      return labelTree2;
-    }
+    return true;
   }
   if (
     isLabelLeaf(labelTree1) ||
@@ -550,36 +539,31 @@ function getFirstDefinition(
     return undefined;
   }
 
-  let firstCondition: LabelOrCondition = undefined;
-
+  let treesAreEqual = false;
   for (const c1 of labelTree1.children) {
-    firstCondition = undefined;
+    treesAreEqual = false;
     for (const c2 of labelTree2.children) {
-      const firstDef = getFirstDefinition(c1, c2);
-      //So firstdefinition is only set on a match
-
-      //We can trust the last call of this overwriting firstCondition to be the same as the first,
-      //since a clause defining a condition will in its entirety (including all subconditions) be either before or after another clause
-      //Ex. MATCH (n:A&B)-[]-(n:B&A) <- there is no weird construct that somehow reads the second node pattern AND something from the first node pattern to create a duplicate
-      //condition. The second node-pattern clause is after in its entirety.
-
-      //above sounds messy, but atm im struggling to find a clean way to describe it
-      if (firstDef === c1) {
-        firstCondition = labelTree1;
-        break;
-      } else if (firstDef === c2) {
-        firstCondition = labelTree2;
+      const equalChildren = checkEquality(c1, c2);
+      if (equalChildren) {
+        treesAreEqual = true;
         break;
       }
     }
     //If we failed to find a single match
-    if (!firstCondition) {
-      return undefined;
+    if (!treesAreEqual) {
+      return false;
     }
   }
-  return firstCondition;
+  return true;
 }
 
+/**
+ * Converts a label tree with arbitrary NOTs to one without NOTs on AND/OR/NOT conditions
+ * This is achieved by removing double negations and "pushing in" NOTs to OR/ANDs using De Morgan's laws see
+ * https://en.wikipedia.org/wiki/De_Morgan%27s_laws
+ * @param labelTree
+ * @returns a transformed copy of the tree with only NOTs above label leaves
+ */
 export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
   let newLabelTree: LabelOrCondition = copyLabelTree(labelTree);
   if (isLabelLeaf(newLabelTree)) {

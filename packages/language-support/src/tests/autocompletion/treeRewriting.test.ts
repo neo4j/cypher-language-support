@@ -10,7 +10,7 @@ import {
 const exampleQueries = {
   singleLabel: 'MATCH (n:Move)-[:]',
   twoDifferentLabels: 'MATCH (n:Person)-[]->(n:Driver)',
-  repeatedLabel: 'MATCH (n:Person|Driver)-[]->(n:Person|Driver)', //<-- AND(OR(Person,Driver), OR(Person,Driver))
+  repeatedLabel: 'MATCH (n:Person|Driver)-[]->(n:Person|Driver)',
   mixOfDifferentAndRepeated: 'MATCH (n:Person|Driver)-[]->(n:Person|Friend)',
   simpleNot: 'MATCH (n:!Person)-[]->(n:!Person)',
   deeperNot: 'MATCH (n:!(Person|Driver))-[]-(n:!(Person|Driver))',
@@ -25,14 +25,11 @@ const exampleQueries = {
   orWithNot: 'MATCH (n:(!A|B|C))',
   orWithMultipleNots: 'MATCH (n:(!A|B|!C))',
   mixOfAndsOrsNots: 'MATCH (n:(!A|B|C)&(B&D)|E)',
-  oddMessy: 'MATCH (n:(Monkey|((Monkey&Litterate)|(Monkey&College_Educated))))',
-  // = Monkey|(Monkey&Litterate)|Monkey&College_Educated =
-  // (Monkey&Litterate)|(Monkey&College_Educated)
+  orWithinOr:
+    'MATCH (n:(Person|((Monkey&Litterate)|(Monkey&College_Educated))))',
 };
 
 describe('rewrite tree', () => {
-  //singleLabel
-
   test('CNF calculation should work on single label', () => {
     const parsing = lintCypherQuery(exampleQueries.singleLabel, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -144,7 +141,8 @@ describe('rewrite tree', () => {
 
   test('CNF calculation should push ORs into inner AND', () => {
     //AND(OR(Person, AND(Monkey, Litterate))) =
-    //AND(AND(OR(Person, Monkey), OR(Person, Litterate))) = AND(OR(Person,Monkey), OR(Person,Litterate))
+    //AND(AND(OR(Person, Monkey), OR(Person, Litterate))) =
+    //AND(OR(Person,Monkey), OR(Person,Litterate))
     const parsing = lintCypherQuery(exampleQueries.innerAnd, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
@@ -262,7 +260,6 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should work with even greater depth', () => {
-    //AND(OR(Person, AND(Monkey, OR(Litterate, College_Educated)))) =
     const parsing = lintCypherQuery(exampleQueries.deepCNFCase, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
@@ -315,7 +312,7 @@ describe('rewrite tree', () => {
     //AND(Monkey, AND(OR(Monkey, AND(Monkey,College_educated), OR(Litterate, AND(Monkey, College_Educated)))) =
     //AND(Monkey, AND(AND(OR(Monkey, Monkey), OR(Monkey, College_educated), OR(Litterate, Monkey), OR(Litterate, College_Educated)))) =
     //AND(Monkey, OR(Monkey, College_educated), OR(Monkey, Litterate), OR(Litterate, College_Educated))) =
-    //AND(Monkey, OR(Litterate, College_Educated)) //Can remove OR(Monkey,_) because we already AND(Monkey,...) meaning any OR(Monkey,...) will bring nothing to the condition
+    //AND(Monkey, OR(Litterate, College_Educated))
 
     const parsing = lintCypherQuery(exampleQueries.messyNonCNF, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -329,7 +326,7 @@ describe('rewrite tree', () => {
       expect(cnfTree).toEqual({
         children: [
           {
-            validFrom: 16,
+            validFrom: 25,
             value: 'Monkey',
           },
           {
@@ -438,9 +435,10 @@ describe('rewrite tree', () => {
     }
   });
 
-  // MATCH (n:(!A|B|C)&(B&D)|E) <- AND(OR(E, AND(!A, B, D)) =
-  // AND(AND(OR(E, !A), OR(E,B), OR(E,D))) = AND(!A, OR(E,B), OR(E,D))
   test('CNF handles Ands/Ors/Nots all at once', () => {
+    // MATCH (n:(!A|B|C)&(B&D)|E) <- AND(OR(E, AND(!A, B, D)) =
+    // AND(AND(OR(E, !A), OR(E,B), OR(E,D))) =
+    // AND(!A, OR(E,B), OR(E,D))
     const parsing = lintCypherQuery(exampleQueries.mixOfAndsOrsNots, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
@@ -483,6 +481,54 @@ describe('rewrite tree', () => {
               {
                 validFrom: 22,
                 value: 'D',
+              },
+            ],
+            condition: 'or',
+          },
+        ],
+        condition: 'and',
+      });
+    }
+  });
+
+  test('CNF handles nested ors', () => {
+    const parsing = lintCypherQuery(exampleQueries.orWithinOr, {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
+    const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
+    if (isLabelLeaf(firstSymbolLabels)) {
+      expect(true).toEqual(false);
+    } else {
+      const cnfTree = convertToCNF(firstSymbolLabels);
+      expect(cnfTree).not.toEqual(deduplicatedTree);
+      expect(cnfTree).toEqual({
+        children: [
+          {
+            children: [
+              {
+                validFrom: 16,
+                value: 'Person',
+              },
+              {
+                validFrom: 25,
+                value: 'Monkey',
+              },
+            ],
+            condition: 'or',
+          },
+          {
+            children: [
+              {
+                validFrom: 16,
+                value: 'Person',
+              },
+              {
+                validFrom: 35,
+                value: 'Litterate',
+              },
+              {
+                validFrom: 61,
+                value: 'College_Educated',
               },
             ],
             condition: 'or',
@@ -550,7 +596,7 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 17,
+              validFrom: 41,
               value: 'Person',
             },
           ],
@@ -559,7 +605,7 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 24,
+              validFrom: 48,
               value: 'Driver',
             },
           ],
@@ -610,11 +656,11 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 15,
+              validFrom: 37,
               value: 'Person',
             },
             {
-              validFrom: 22,
+              validFrom: 44,
               value: 'Driver',
             },
           ],

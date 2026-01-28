@@ -57,140 +57,73 @@ export const reltypesToCompletions = (reltypes: string[] = []) =>
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
-function intersectChildren(
-  incomingLabels: Map<string, Set<string>>,
-  outGoingLabels: Map<string, Set<string>>,
-  children: LabelOrCondition[],
-  allIncomingLabels: Set<string>,
-  allOutGoingLabels: Set<string>,
-  notEdLabels: LabelLeaf[],
-): { inLabels: Set<string>; outLabels: Set<string> } {
-  let inLabels: Set<string> = undefined;
-  let outLabels: Set<string> = undefined;
-  children.forEach((c) => {
-    const { inLabels: incoming, outLabels: outgoing } = walkCNFTree(
-      incomingLabels,
-      outGoingLabels,
-      c,
-      allIncomingLabels,
-      allOutGoingLabels,
-      notEdLabels,
-    );
-    if (!inLabels) {
-      inLabels = incoming;
-      outLabels = outgoing;
-    } else {
-      inLabels = inLabels.intersection(incoming);
-      outLabels = outLabels.intersection(outgoing);
-    }
-  });
-  if (!inLabels) {
-    inLabels = allIncomingLabels;
-    outLabels = allOutGoingLabels;
-  }
-  return { inLabels, outLabels };
-}
-
-function uniteChildren(
-  incomingLabels: Map<string, Set<string>>,
-  outGoingLabels: Map<string, Set<string>>,
-  children: LabelOrCondition[],
-  allIncomingLabels: Set<string>,
-  allOutGoingLabels: Set<string>,
-): { inLabels: Set<string>; outLabels: Set<string> } {
-  let inLabels: Set<string> = new Set();
-  let outLabels: Set<string> = new Set();
-  children.forEach((c) => {
-    const { inLabels: incoming, outLabels: outgoing } = walkCNFTree(
-      incomingLabels,
-      outGoingLabels,
-      c,
-      allIncomingLabels,
-      allOutGoingLabels,
-    );
-    inLabels = inLabels.union(incoming);
-    outLabels = outLabels.union(outgoing);
-  });
-  return { inLabels, outLabels };
-}
-
-//Rename to "walkCNFTree" and use that we know tree structure
 function walkCNFTree(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
-  allIncomingLabels: Set<string>,
-  allOutGoingLabels: Set<string>,
-  notEdLabels?: LabelLeaf[],
 ): { inLabels: Set<string>; outLabels: Set<string> } {
-  if (isLabelLeaf(labelTree)) {
-    if (notEdLabels && notEdLabels.find((c) => c.value === labelTree.value)) {
-      return {
-        inLabels: allIncomingLabels,
-        outLabels: allOutGoingLabels,
-      };
-    }
-    const incoming = incomingLabels.get(labelTree.value);
-    const outgoing = outGoingLabels.get(labelTree.value);
-    return {
-      inLabels: incoming ?? new Set(),
-      outLabels: outgoing ?? new Set(),
-    };
-  } else if (labelTree.condition == 'and') {
-    const notEdLabels: LabelLeaf[] = labelTree.children
-      .filter(
-        (c) =>
-          !isLabelLeaf(c) &&
-          c.condition === 'not' &&
-          c.children.length === 1 &&
-          isLabelLeaf(c.children[0]),
-      )
-      .map((c: ConditionNode) => c.children[0] as LabelLeaf);
-    let allAllowedIncomingLabels = new Set<string>();
-    incomingLabels.forEach((part, key) => {
-      if (!notEdLabels.some((c) => c.value === key)) {
-        allAllowedIncomingLabels = allAllowedIncomingLabels.union(part);
-      }
-    });
-    let allAllowedOutgoingLabels = new Set<string>();
-    outGoingLabels.forEach((part, key) => {
-      if (!notEdLabels.some((c) => c.value === key)) {
-        allAllowedOutgoingLabels = allAllowedOutgoingLabels.union(part);
-      }
-    });
-    const { inLabels, outLabels } = intersectChildren(
-      incomingLabels,
-      outGoingLabels,
-      labelTree.children.filter((c) => isLabelLeaf(c) || c.condition !== 'not'),
-      allIncomingLabels,
-      allOutGoingLabels,
-      notEdLabels,
-    );
-    return {
-      inLabels: inLabels.intersection(allAllowedIncomingLabels),
-      outLabels: outLabels.intersection(allAllowedOutgoingLabels),
-    };
-  } else if (labelTree.condition == 'or') {
-    if (notEdLabels) {
-      const filteredChildren = labelTree.children.filter(
-        (c) => isLabelLeaf(c) && !notEdLabels.find((x) => x.value === c.value),
-      );
-      return uniteChildren(
-        incomingLabels,
-        outGoingLabels,
-        filteredChildren,
-        allIncomingLabels,
-        allOutGoingLabels,
-      );
-    }
-    return uniteChildren(
-      incomingLabels,
-      outGoingLabels,
-      labelTree.children,
-      allIncomingLabels,
-      allOutGoingLabels,
-    );
+  //Bail if tree is not CNF
+  if (isLabelLeaf(labelTree) || labelTree.condition !== 'and') {
+    let inLabels = new Set<string>();
+    let outLabels = new Set<string>();
+    incomingLabels.values().forEach((x) => (inLabels = inLabels.union(x)));
+    outGoingLabels.values().forEach((x) => (outLabels = outLabels.union(x)));
+
+    return { inLabels, outLabels };
   }
+  const notEdLabels: LabelLeaf[] = [];
+  const literalLabels: LabelLeaf[] = [];
+  const orNodes: ConditionNode[] = [];
+
+  labelTree.children.forEach((c) => {
+    if (isLabelLeaf(c)) {
+      literalLabels.push(c);
+    } else if (
+      c.condition === 'not' &&
+      c.children.length === 1 &&
+      isLabelLeaf(c.children[0])
+    ) {
+      notEdLabels.push(c.children[0]);
+    } else if (c.condition === 'or') {
+      orNodes.push(c);
+    }
+  });
+
+  let inLabels = new Set<string>();
+  incomingLabels.forEach((part, key) => {
+    if (!notEdLabels.some((c) => c.value === key)) {
+      inLabels = inLabels.union(part);
+    }
+  });
+  let outLabels = new Set<string>();
+  outGoingLabels.forEach((part, key) => {
+    if (!notEdLabels.some((c) => c.value === key)) {
+      outLabels = outLabels.union(part);
+    }
+  });
+
+  for (const label of literalLabels) {
+    const incoming = incomingLabels.get(label.value) ?? new Set();
+    const outgoing = outGoingLabels.get(label.value) ?? new Set();
+    inLabels = inLabels.intersection(incoming);
+    outLabels = outLabels.intersection(outgoing);
+  }
+
+  for (const node of orNodes) {
+    let incoming = new Set();
+    let outGoing = new Set();
+    for (const c of node.children) {
+      if (isLabelLeaf(c)) {
+        const newIncoming = incomingLabels.get(c.value) ?? new Set();
+        const newOutgoing = outGoingLabels.get(c.value) ?? new Set();
+        incoming = incoming.union(newIncoming);
+        outGoing = outGoing.union(newOutgoing);
+      }
+    }
+    inLabels = inLabels.intersection(incoming);
+    outLabels = outLabels.intersection(outGoing);
+  }
+  return { inLabels, outLabels };
 }
 
 function getRelsFromNodesSets(dbSchema: DbSchema): {
@@ -290,8 +223,9 @@ export function completeNodeLabel(
       const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
       if (
         foundVariable === undefined ||
-        ('children' in foundVariable.labels &&
-          foundVariable.labels.children.length == 0)
+        isLabelLeaf(foundVariable.labels) ||
+        foundVariable.labels.condition !== 'and' ||
+        foundVariable.labels.children.length === 0
       ) {
         return allLabelCompletions(dbSchema);
       }
@@ -302,7 +236,6 @@ export function completeNodeLabel(
         ? 'incoming'
         : 'bidirectional';
 
-      // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
         getNodesFromRelsSet(dbSchema);
@@ -319,8 +252,6 @@ export function completeNodeLabel(
         nodesToRelsSet,
         nodesFromRelsSet,
         cnfTree,
-        allIncomingLabels,
-        allOutGoingLabels,
       );
       const allNodes =
         direction === 'outgoing'
@@ -407,8 +338,6 @@ export function completeRelationshipType(
         relsToNodesSet,
         relsFromNodesSet,
         cnfTree,
-        allIncomingLabels,
-        allOutGoingLabels,
       );
       const allRels =
         direction === 'outgoing'
