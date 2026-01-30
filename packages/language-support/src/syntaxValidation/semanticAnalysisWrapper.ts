@@ -5,8 +5,8 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
 import {
-  Condition,
   CypherVersion,
+  isCondition,
   LabelOrCondition,
   Neo4jFunction,
   Neo4jProcedure,
@@ -68,10 +68,33 @@ function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
         definitionPosition,
         types: Array.from(types),
         references: Array.from(references),
-        labels: labelTreeFromJava(labels),
+        labels: verifyLabelTree(labels)
+          ? labelTreeFromJava(labels)
+          : { condition: 'and', children: [] },
       };
     },
   );
+}
+
+function verifyLabelTree(labels: LabelOrCondition): boolean {
+  if (
+    'condition' in labels &&
+    isCondition(labels.condition) &&
+    'children' in labels &&
+    labels.children.every(verifyLabelTree)
+  ) {
+    return true;
+  } else if (
+    'value' in labels &&
+    typeof labels.value === 'string' &&
+    'validFrom' in labels &&
+    typeof labels.validFrom === 'number' &&
+    labels.validFrom >= 0
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }
 
 function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
@@ -80,7 +103,7 @@ function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
     for (const c of labels.children) {
       children.push(labelTreeFromJava(c));
     }
-    return { condition: labels.condition.toString() as Condition, children };
+    return { condition: labels.condition, children };
   } else {
     return { value: labels.value, validFrom: labels.validFrom };
   }

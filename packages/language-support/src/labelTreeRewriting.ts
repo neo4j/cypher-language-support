@@ -23,11 +23,11 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
-    return undefined;
+    throw 'Misshapen label tree: Root is not an AND-node';
   } else {
     const newRoot = removeDuplicates(pushInNots(root));
     if (isLabelLeaf(newRoot) || !(root.condition === 'and')) {
-      return undefined;
+      throw 'Misshapen label tree: Root of tree after removing duplicates and moving to NNF is not an AND-node';
     }
     const newChildren: LabelOrCondition[] = [];
     newRoot.children.forEach((x) => {
@@ -43,7 +43,8 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
 
 //TODO: Look into converting this using Tseytin Transformation for efficiency
 /**
- * Converts a tree of AND/ORs so all AND's are pushed to the top
+ * Converts a tree of AND/ORs so all AND's are pushed to the top.
+ * Expects the input tree to be on Negative Normal Form
  * @param existingNode
  * @returns a converted tree containing no AND-children
  */
@@ -79,7 +80,7 @@ function depthFirstConvertAnds(
   }
   //We should call pushInNots first, so if we get not above a condition, we have a bug, bail and fail
   else {
-    return undefined;
+    throw 'Misshapen label tree: Conversion expects an AND/OR tree on NNF';
   }
 }
 
@@ -157,7 +158,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
   //Bail and fail if not calling with "and"-node
 
   if (isLabelLeaf(rewrittenOrNode) || rewrittenOrNode.condition !== 'or') {
-    return undefined;
+    throw 'Misshapen label tree: Calling for reshape of OR-node but passing different node';
   }
   let rewrittenChildren: LabelOrCondition[] = rewrittenOrNode.children;
   let hasInnerAnds: boolean = true;
@@ -522,7 +523,7 @@ function checkEquality(
     isLabelLeaf(labelTree2) ||
     labelTree1.condition !== labelTree2.condition
   ) {
-    return undefined;
+    return false;
   }
 
   let treesAreEqual = false;

@@ -63,13 +63,17 @@ export type SymbolTable = {
 
 export type LabelOrCondition = LabelLeaf | ConditionNode;
 
+export const isCondition = (condition: string): condition is Condition => {
+  return (CONDITIONS as readonly string[]).includes(condition);
+};
+
 //We've decided to use the name "Label" for relationship types too, since these are the labels of relationships
 //This is how the naming works in GQL as well
 export type LabelLeaf = {
   value: string;
-  validFrom: number; 
+  validFrom: number;
   //Since we currently cut off the query at the cursor, all found labels will be pre-cursor and thus valid, but
-  //if we in the future move to parse the whole query, this number gives us the point where we define each label 
+  //if we in the future move to parse the whole query, this number gives us the point where we define each label
 };
 export const isLabelLeaf = (
   labelOrCondition: LabelOrCondition,
@@ -77,7 +81,8 @@ export const isLabelLeaf = (
   return 'value' in labelOrCondition;
 };
 
-export type Condition = 'and' | 'or' | 'not'
+const CONDITIONS = ['and', 'or', 'not'] as const;
+export type Condition = (typeof CONDITIONS)[number];
 
 export type ConditionNode = {
   condition: Condition;

@@ -239,7 +239,12 @@ export function completeNodeLabel(
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
         getNodesFromRelsSet(dbSchema);
-      const cnfTree = convertToCNF(foundVariable.labels);
+      let cnfTree: LabelOrCondition;
+      try {
+        cnfTree = convertToCNF(foundVariable.labels);
+      } catch (e) {
+        return allLabelCompletions(dbSchema);
+      }
       let allIncomingLabels = new Set<string>();
       nodesToRelsSet.forEach((part) => {
         allIncomingLabels = allIncomingLabels.union(part);
