@@ -43,9 +43,9 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
 
 //TODO: Look into converting this using Tseytin Transformation for efficiency
 /**
- *
+ * Converts a tree of AND/ORs so all AND's are pushed to the top
  * @param existingNode
- * @returns
+ * @returns a converted tree containing no AND-children
  */
 function depthFirstConvertAnds(
   existingNode: LabelOrCondition,
@@ -149,8 +149,8 @@ function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition) {
  * Pushes in the OR-node into AND-children, assuming OR-children like OR(OR(x),...) have been simplified to OR(x,...)
  * Also assumes the tree is in in Negative Normal Form (NNF)
  * See ex. https://personal.cis.strath.ac.uk/robert.atkey/cs208/converting-to-cnf.html
- * @param orCondition, an OR-node
- * @returns an
+ * @param orCondition, an OR-node, which could contain AND-nodes
+ * @returns the original OR-node if it contains no AND-nodes, and otherwise an AND-node, which can not contain other AND-nodes.
  */
 function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
   const rewrittenOrNode: LabelOrCondition = copyLabelTree(orCondition);
@@ -165,7 +165,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
     const innerAnds: ConditionNode[] = [];
     const innerLiterals: LabelOrCondition[] = [];
     for (const c of rewrittenChildren) {
-      if (isLabelLeaf(c) || c.condition == 'not') {
+      if (isLabelLeaf(c) || c.condition === 'not') {
         innerLiterals.push(c);
       } else if (c.condition === 'and') {
         innerAnds.push(c);
@@ -233,7 +233,9 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
         condition: 'and',
         children: totalMergedChildren,
       };
-      rewrittenChildren = [pushedOr].concat(innerAnds.slice(2, -1));
+      rewrittenChildren = [pushedOr].concat(
+        innerAnds.slice(2, innerAnds.length),
+      );
     } else {
       //Finally after merging ANDs one by one we will arrive at OR(AND(...)) = AND(...) (where the final AND can get some pretty massive amount of children)
       return innerAnds[0];
@@ -424,7 +426,7 @@ function findStricterCondition(
  * @returns
  */
 function isTautology(node: LabelOrCondition): boolean {
-  if (!node || isLabelLeaf(node) || node.condition == 'not') {
+  if (!node || isLabelLeaf(node) || node.condition === 'not') {
     return false;
   }
   //getting here node must be an OR-condition
@@ -479,8 +481,8 @@ export function removeDuplicates(
   for (let i = 0; i < newLabelTree.children.length; i++) {
     for (let j = i + 1; j < newLabelTree.children.length; j++) {
       if (
-        newLabelTree.children[i] == undefined ||
-        newLabelTree.children[j] == undefined
+        newLabelTree.children[i] === undefined ||
+        newLabelTree.children[j] === undefined
       ) {
         continue;
       }
@@ -511,7 +513,7 @@ function checkEquality(
   if (
     isLabelLeaf(labelTree1) &&
     isLabelLeaf(labelTree2) &&
-    labelTree1.value == labelTree2.value
+    labelTree1.value === labelTree2.value
   ) {
     return true;
   }

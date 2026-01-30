@@ -27,26 +27,24 @@ const exampleQueries = {
   mixOfAndsOrsNots: 'MATCH (n:(!A|B|C)&(B&D)|E)',
   orWithinOr:
     'MATCH (n:(Person|((Monkey&Litterate)|(Monkey&College_Educated))))',
+  threeInnerAnds: 'MATCH (n:((A&B)|(C&D)|(E&F)))',
 };
 
 describe('rewrite tree', () => {
   test('CNF calculation should work on single label', () => {
     const parsing = lintCypherQuery(exampleQueries.singleLabel, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            validFrom: 13,
-            value: 'Move',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    expect(isLabelLeaf(firstSymbolLabels)).toEqual(false);
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          validFrom: 13,
+          value: 'Move',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('Pushing nots and removing duplicates should not affect tree without duplicates/nots', () => {
@@ -80,24 +78,20 @@ describe('rewrite tree', () => {
       false,
     );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            validFrom: 15,
-            value: 'Person',
-          },
-          {
-            validFrom: 30,
-            value: 'Driver',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          validFrom: 15,
+          value: 'Person',
+        },
+        {
+          validFrom: 30,
+          value: 'Driver',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation should deduplicate nodes', () => {
@@ -105,12 +99,8 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).toEqual(deduplicatedTree);
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual(deduplicatedTree);
   });
 
   test('CNF calculation should not break on NOTs', () => {
@@ -118,12 +108,8 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).toEqual(deduplicatedTree);
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual(deduplicatedTree);
   });
 
   test('CNF calculation should not break on NOT(OR(X,Y))', () => {
@@ -131,12 +117,8 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).toEqual(deduplicatedTree);
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual(deduplicatedTree);
   });
 
   test('CNF calculation should push ORs into inner AND', () => {
@@ -147,43 +129,39 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 24,
-                value: 'Monkey',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 34,
-                value: 'Litterate',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 24,
+              value: 'Monkey',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 34,
+              value: 'Litterate',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation should push ORs into inner AND also with double AND', () => {
@@ -194,69 +172,65 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 17,
-                value: 'Person',
-              },
-              {
-                validFrom: 33,
-                value: 'Monkey',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 17,
-                value: 'Person',
-              },
-              {
-                validFrom: 43,
-                value: 'Litterate',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 24,
-                value: 'Friend',
-              },
-              {
-                validFrom: 33,
-                value: 'Monkey',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 24,
-                value: 'Friend',
-              },
-              {
-                validFrom: 43,
-                value: 'Litterate',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 17,
+              value: 'Person',
+            },
+            {
+              validFrom: 33,
+              value: 'Monkey',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 17,
+              value: 'Person',
+            },
+            {
+              validFrom: 43,
+              value: 'Litterate',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 24,
+              value: 'Friend',
+            },
+            {
+              validFrom: 33,
+              value: 'Monkey',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 24,
+              value: 'Friend',
+            },
+            {
+              validFrom: 43,
+              value: 'Litterate',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation should work with even greater depth', () => {
@@ -264,47 +238,43 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 24,
-                value: 'Monkey',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 35,
-                value: 'Litterate',
-              },
-              {
-                validFrom: 52,
-                value: 'College_Educated',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 24,
+              value: 'Monkey',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 35,
+              value: 'Litterate',
+            },
+            {
+              validFrom: 52,
+              value: 'College_Educated',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation simplifies needlessly messy label definition', () => {
@@ -318,34 +288,30 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            validFrom: 16,
-            value: 'Monkey',
-          },
-          {
-            children: [
-              {
-                validFrom: 35,
-                value: 'Litterate',
-              },
-              {
-                validFrom: 61,
-                value: 'College_Educated',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          validFrom: 16,
+          value: 'Monkey',
+        },
+        {
+          children: [
+            {
+              validFrom: 35,
+              value: 'Litterate',
+            },
+            {
+              validFrom: 61,
+              value: 'College_Educated',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation simplifies away AND(OR(Monkey,Monkey), ...) to AND(Monkey, ...)', () => {
@@ -357,34 +323,30 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            validFrom: 18,
-            value: 'Monkey',
-          },
-          {
-            children: [
-              {
-                validFrom: 28,
-                value: 'Litterate',
-              },
-              {
-                validFrom: 54,
-                value: 'College_Educated',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          validFrom: 18,
+          value: 'Monkey',
+        },
+        {
+          children: [
+            {
+              validFrom: 28,
+              value: 'Litterate',
+            },
+            {
+              validFrom: 54,
+              value: 'College_Educated',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF calculation simplifies OR with a NOT inside', () => {
@@ -392,26 +354,22 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 12,
-                value: 'A',
-              },
-            ],
-            condition: 'not',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+          ],
+          condition: 'not',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF removes Tautology: OR with multiple NOTs inside', () => {
@@ -423,16 +381,12 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [],
+      condition: 'and',
+    });
   });
 
   test('CNF handles Ands/Ors/Nots all at once', () => {
@@ -443,52 +397,48 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 12,
-                value: 'A',
-              },
-            ],
-            condition: 'not',
-          },
-          {
-            children: [
-              {
-                validFrom: 25,
-                value: 'E',
-              },
-              {
-                validFrom: 20,
-                value: 'B',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 25,
-                value: 'E',
-              },
-              {
-                validFrom: 22,
-                value: 'D',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+          ],
+          condition: 'not',
+        },
+        {
+          children: [
+            {
+              validFrom: 25,
+              value: 'E',
+            },
+            {
+              validFrom: 20,
+              value: 'B',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 25,
+              value: 'E',
+            },
+            {
+              validFrom: 22,
+              value: 'D',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('CNF handles nested ors', () => {
@@ -496,47 +446,192 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    if (isLabelLeaf(firstSymbolLabels)) {
-      expect(true).toEqual(false);
-    } else {
-      const cnfTree = convertToCNF(firstSymbolLabels);
-      expect(cnfTree).not.toEqual(deduplicatedTree);
-      expect(cnfTree).toEqual({
-        children: [
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 25,
-                value: 'Monkey',
-              },
-            ],
-            condition: 'or',
-          },
-          {
-            children: [
-              {
-                validFrom: 16,
-                value: 'Person',
-              },
-              {
-                validFrom: 35,
-                value: 'Litterate',
-              },
-              {
-                validFrom: 61,
-                value: 'College_Educated',
-              },
-            ],
-            condition: 'or',
-          },
-        ],
-        condition: 'and',
-      });
-    }
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).not.toEqual(deduplicatedTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 25,
+              value: 'Monkey',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 16,
+              value: 'Person',
+            },
+            {
+              validFrom: 35,
+              value: 'Litterate',
+            },
+            {
+              validFrom: 61,
+              value: 'College_Educated',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
+  });
+
+  test('CNF calculation should work with three inner ANDs (regression test for slice bug)', () => {
+    // OR(AND(A,B), AND(C,D), AND(E,F)) should distribute to:
+    // AND(OR(A,C,E), OR(A,C,F), OR(A,D,E), OR(A,D,F), OR(B,C,E), OR(B,C,F), OR(B,D,E), OR(B,D,F))
+    const parsing = lintCypherQuery(exampleQueries.threeInnerAnds, {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const cnfTree = convertToCNF(firstSymbolLabels);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+            {
+              validFrom: 18,
+              value: 'C',
+            },
+            {
+              validFrom: 24,
+              value: 'E',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+            {
+              validFrom: 18,
+              value: 'C',
+            },
+            {
+              validFrom: 26,
+              value: 'F',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+            {
+              validFrom: 20,
+              value: 'D',
+            },
+            {
+              validFrom: 24,
+              value: 'E',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 12,
+              value: 'A',
+            },
+            {
+              validFrom: 20,
+              value: 'D',
+            },
+            {
+              validFrom: 26,
+              value: 'F',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 14,
+              value: 'B',
+            },
+            {
+              validFrom: 18,
+              value: 'C',
+            },
+            {
+              validFrom: 24,
+              value: 'E',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 14,
+              value: 'B',
+            },
+            {
+              validFrom: 18,
+              value: 'C',
+            },
+            {
+              validFrom: 26,
+              value: 'F',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 14,
+              value: 'B',
+            },
+            {
+              validFrom: 20,
+              value: 'D',
+            },
+            {
+              validFrom: 24,
+              value: 'E',
+            },
+          ],
+          condition: 'or',
+        },
+        {
+          children: [
+            {
+              validFrom: 14,
+              value: 'B',
+            },
+            {
+              validFrom: 20,
+              value: 'D',
+            },
+            {
+              validFrom: 26,
+              value: 'F',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
+      condition: 'and',
+    });
   });
 
   test('Pushing not to labels should work', () => {

@@ -71,7 +71,7 @@ function walkCNFTree(
 
     return { inLabels, outLabels };
   }
-  const notEdLabels: LabelLeaf[] = [];
+  const notLabels: LabelLeaf[] = [];
   const literalLabels: LabelLeaf[] = [];
   const orNodes: ConditionNode[] = [];
 
@@ -83,7 +83,7 @@ function walkCNFTree(
       c.children.length === 1 &&
       isLabelLeaf(c.children[0])
     ) {
-      notEdLabels.push(c.children[0]);
+      notLabels.push(c.children[0]);
     } else if (c.condition === 'or') {
       orNodes.push(c);
     }
@@ -91,13 +91,13 @@ function walkCNFTree(
 
   let inLabels = new Set<string>();
   incomingLabels.forEach((part, key) => {
-    if (!notEdLabels.some((c) => c.value === key)) {
+    if (!notLabels.some((c) => c.value === key)) {
       inLabels = inLabels.union(part);
     }
   });
   let outLabels = new Set<string>();
   outGoingLabels.forEach((part, key) => {
-    if (!notEdLabels.some((c) => c.value === key)) {
+    if (!notLabels.some((c) => c.value === key)) {
       outLabels = outLabels.union(part);
     }
   });
