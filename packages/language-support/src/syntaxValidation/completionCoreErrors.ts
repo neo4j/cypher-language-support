@@ -1,6 +1,6 @@
 import { Token } from 'antlr4';
 import { distance } from 'fastest-levenshtein';
-import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import { CodeCompletionCore, ParserRuleContext } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
 import {
@@ -9,6 +9,7 @@ import {
   lexerSymbols,
   tokenNames,
 } from '../lexerSymbols';
+import { findLastClause } from '../helpers.js';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -63,7 +64,9 @@ export function completionCoreErrormessage(
 
   const errorText = currentToken.text;
 
-  const candidates = codeCompletion.collectCandidates(caretIndex);
+  const lastClause = findLastClause(parser._ctx);
+
+  const candidates = codeCompletion.collectCandidates(caretIndex, undefined, lastClause as ParserRuleContext);
 
   const ruleCandidates = Array.from(candidates.rules.keys());
 

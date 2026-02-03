@@ -9,8 +9,10 @@ import antlrDefaultExport, {
 import { DbSchema } from './dbSchema';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
+  ClauseContext,
   NodePatternContext,
   RelationshipPatternContext,
+  StatementOrCommandContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
@@ -207,6 +209,36 @@ export function resolveCypherVersion(
     parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
 
   return cypherVersion;
+}
+
+/**
+ * Takes a rule context and searches its tree right to left 
+ * returning the last clause
+ * If no such clause is found, returns undefined
+ */
+export function findLastClause(ctx: ParserRuleContext) {
+  let current: ParserRuleContext = ctx;
+  //ctx can vary from rule inside latest clause statement containing it
+  //Here we go up to the outer statement
+  while(!(current instanceof StatementOrCommandContext) && current.parentCtx) {
+    current = current.parentCtx;
+  }
+  
+  let lastCurrent: ParserRuleContext = undefined;
+  while(lastCurrent !== current && current.children) {
+    lastCurrent = current;
+    if (current instanceof ClauseContext) {
+      return current;
+    }
+    for (let i = current.children.length-1; i >= 0; i--) {
+      const candidate = current.children[i];
+      if (candidate instanceof ParserRuleContext) {
+        current = candidate;
+        break;
+      }
+    }
+  }
+  return undefined;
 }
 
 export const rulesDefiningVariables = [
