@@ -23,11 +23,13 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
-    throw 'Misshapen label tree: Root is not an AND-node';
+    throw new Error('Misshapen label tree: Root is not an AND-node');
   } else {
     const newRoot = removeDuplicates(pushInNots(root));
     if (isLabelLeaf(newRoot) || !(root.condition === 'and')) {
-      throw 'Misshapen label tree: Root of tree after removing duplicates and moving to NNF is not an AND-node';
+      throw new Error(
+        'Misshapen label tree: Root of tree after removing duplicates and moving to NNF is not an AND-node',
+      );
     }
     const newChildren: LabelOrCondition[] = [];
     newRoot.children.forEach((x) => {
@@ -80,7 +82,9 @@ function depthFirstConvertAnds(
   }
   //We should call pushInNots first, so if we get not above a condition, we have a bug, bail and fail
   else {
-    throw 'Misshapen label tree: Conversion expects an AND/OR tree on NNF';
+    throw new Error(
+      'Misshapen label tree: Conversion expects an AND/OR tree on NNF',
+    );
   }
 }
 
@@ -158,7 +162,9 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
   //Bail and fail if not calling with "and"-node
 
   if (isLabelLeaf(rewrittenOrNode) || rewrittenOrNode.condition !== 'or') {
-    throw 'Misshapen label tree: Calling for reshape of OR-node but passing different node';
+    throw new Error(
+      'Misshapen label tree: Calling for reshape of OR-node but passing different node',
+    );
   }
   let rewrittenChildren: LabelOrCondition[] = rewrittenOrNode.children;
   let hasInnerAnds: boolean = true;
