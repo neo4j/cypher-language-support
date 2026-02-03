@@ -4,7 +4,13 @@ import {
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { ParsedStatement } from '../parserWrapper';
-import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types';
+import {
+  ConditionNode,
+  isLabelLeaf,
+  LabelLeaf,
+  LabelOrCondition,
+  SymbolsInfo,
+} from '../types';
 import { findParent } from '../helpers';
 import {
   NodePatternContext,
@@ -13,6 +19,7 @@ import {
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import { backtickIfNeeded } from './autocompletionHelpers';
+import { convertToCNF } from '../labelTreeRewriting';
 
 export const labelsToCompletions = (labelNames: string[] = []) =>
   labelNames.map((labelName) => {
@@ -50,74 +57,73 @@ export const reltypesToCompletions = (reltypes: string[] = []) =>
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
-function intersectChildren(
-  incomingLabels: Map<string, Set<string>>,
-  outGoingLabels: Map<string, Set<string>>,
-  children: LabelOrCondition[],
-): { inLabels: Set<string>; outLabels: Set<string> } {
-  let inLabels: Set<string> = undefined;
-  let outLabels: Set<string> = undefined;
-  children.forEach((c) => {
-    const { inLabels: incoming, outLabels: outgoing } = walkLabelTree(
-      incomingLabels,
-      outGoingLabels,
-      c,
-    );
-    if (!inLabels) {
-      inLabels = incoming;
-      outLabels = outgoing;
-    } else {
-      inLabels = inLabels.intersection(incoming);
-      outLabels = outLabels.intersection(outgoing);
-    }
-  });
-  if (!inLabels) {
-    inLabels = new Set();
-    outLabels = new Set();
-  }
-  return { inLabels, outLabels };
-}
-
-function uniteChildren(
-  incomingLabels: Map<string, Set<string>>,
-  outGoingLabels: Map<string, Set<string>>,
-  children: LabelOrCondition[],
-): { inLabels: Set<string>; outLabels: Set<string> } {
-  let inLabels: Set<string> = new Set();
-  let outLabels: Set<string> = new Set();
-  children.forEach((c) => {
-    const { inLabels: incoming, outLabels: outgoing } = walkLabelTree(
-      incomingLabels,
-      outGoingLabels,
-      c,
-    );
-    inLabels = inLabels.union(incoming);
-    outLabels = outLabels.union(outgoing);
-  });
-  return { inLabels, outLabels };
-}
-
-function walkLabelTree(
+function walkCNFTree(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
 ): { inLabels: Set<string>; outLabels: Set<string> } {
-  if (isLabelLeaf(labelTree)) {
-    const incoming = incomingLabels.get(labelTree.value);
-    const outgoing = outGoingLabels.get(labelTree.value);
-    return {
-      inLabels: incoming ?? new Set(),
-      outLabels: outgoing ?? new Set(),
-    };
-  } else if (labelTree.andOr == 'and') {
-    return intersectChildren(
-      incomingLabels,
-      outGoingLabels,
-      labelTree.children,
-    );
-  } else {
-    return uniteChildren(incomingLabels, outGoingLabels, labelTree.children);
+  //Bail if tree is not CNF
+  if (isLabelLeaf(labelTree) || labelTree.condition !== 'and') {
+    let inLabels = new Set<string>();
+    let outLabels = new Set<string>();
+    incomingLabels.values().forEach((x) => (inLabels = inLabels.union(x)));
+    outGoingLabels.values().forEach((x) => (outLabels = outLabels.union(x)));
+
+    return { inLabels, outLabels };
   }
+  const notLabels: LabelLeaf[] = [];
+  const literalLabels: LabelLeaf[] = [];
+  const orNodes: ConditionNode[] = [];
+
+  labelTree.children.forEach((c) => {
+    if (isLabelLeaf(c)) {
+      literalLabels.push(c);
+    } else if (
+      c.condition === 'not' &&
+      c.children.length === 1 &&
+      isLabelLeaf(c.children[0])
+    ) {
+      notLabels.push(c.children[0]);
+    } else if (c.condition === 'or') {
+      orNodes.push(c);
+    }
+  });
+
+  let inLabels = new Set<string>();
+  incomingLabels.forEach((part, key) => {
+    if (!notLabels.some((c) => c.value === key)) {
+      inLabels = inLabels.union(part);
+    }
+  });
+  let outLabels = new Set<string>();
+  outGoingLabels.forEach((part, key) => {
+    if (!notLabels.some((c) => c.value === key)) {
+      outLabels = outLabels.union(part);
+    }
+  });
+
+  for (const label of literalLabels) {
+    const incoming = incomingLabels.get(label.value) ?? new Set();
+    const outgoing = outGoingLabels.get(label.value) ?? new Set();
+    inLabels = inLabels.intersection(incoming);
+    outLabels = outLabels.intersection(outgoing);
+  }
+
+  for (const node of orNodes) {
+    let incoming = new Set();
+    let outGoing = new Set();
+    for (const c of node.children) {
+      if (isLabelLeaf(c)) {
+        const newIncoming = incomingLabels.get(c.value) ?? new Set();
+        const newOutgoing = outGoingLabels.get(c.value) ?? new Set();
+        incoming = incoming.union(newIncoming);
+        outGoing = outGoing.union(newOutgoing);
+      }
+    }
+    inLabels = inLabels.intersection(incoming);
+    outLabels = outLabels.intersection(outGoing);
+  }
+  return { inLabels, outLabels };
 }
 
 function getRelsFromNodesSets(dbSchema: DbSchema): {
@@ -217,8 +223,9 @@ export function completeNodeLabel(
       const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
       if (
         foundVariable === undefined ||
-        ('children' in foundVariable.labels &&
-          foundVariable.labels.children.length == 0)
+        isLabelLeaf(foundVariable.labels) ||
+        foundVariable.labels.condition !== 'and' ||
+        foundVariable.labels.children.length === 0
       ) {
         return allLabelCompletions(dbSchema);
       }
@@ -229,14 +236,27 @@ export function completeNodeLabel(
         ? 'incoming'
         : 'bidirectional';
 
-      // limitation: not direction-aware (ignores <- vs ->)
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
         getNodesFromRelsSet(dbSchema);
-      const { inLabels, outLabels } = walkLabelTree(
+      let cnfTree: LabelOrCondition;
+      try {
+        cnfTree = convertToCNF(foundVariable.labels);
+      } catch (e) {
+        return allLabelCompletions(dbSchema);
+      }
+      let allIncomingLabels = new Set<string>();
+      nodesToRelsSet.forEach((part) => {
+        allIncomingLabels = allIncomingLabels.union(part);
+      });
+      let allOutGoingLabels = new Set<string>();
+      nodesFromRelsSet.forEach((part) => {
+        allOutGoingLabels = allOutGoingLabels.union(part);
+      });
+      const { inLabels, outLabels } = walkCNFTree(
         nodesToRelsSet,
         nodesFromRelsSet,
-        foundVariable.labels,
+        cnfTree,
       );
       const allNodes =
         direction === 'outgoing'
@@ -309,10 +329,20 @@ export function completeRelationshipType(
       // limitation: not checking relationship type repetition
       const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
         getRelsFromNodesSets(dbSchema);
-      const { inLabels, outLabels } = walkLabelTree(
+
+      const cnfTree = convertToCNF(foundVariable.labels);
+      let allIncomingLabels = new Set<string>();
+      relsToNodesSet.forEach((part) => {
+        allIncomingLabels = allIncomingLabels.union(part);
+      });
+      let allOutGoingLabels = new Set<string>();
+      relsFromNodesSet.forEach((part) => {
+        allOutGoingLabels = allOutGoingLabels.union(part);
+      });
+      const { inLabels, outLabels } = walkCNFTree(
         relsToNodesSet,
         relsFromNodesSet,
-        foundVariable.labels,
+        cnfTree,
       );
       const allRels =
         direction === 'outgoing'
