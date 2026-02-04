@@ -166,7 +166,6 @@ export class CodeCompletionCore {
         this.precedenceStack = [];
 
         this.tokenStartIndex = context ? context.start.tokenIndex : 0;
-        
         const tokenStream = this.parser._input;
 
         this.tokens = [];
