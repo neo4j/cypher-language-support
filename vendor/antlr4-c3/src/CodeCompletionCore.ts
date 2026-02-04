@@ -158,18 +158,15 @@ export class CodeCompletionCore {
      * @param context An option parser rule context to limit the search space.
      * @returns The collection of completion candidates.
      */
-    public collectCandidates(caretTokenIndex: number, context?: ParserRuleContext, lastClause?: ParserRuleContext): CandidatesCollection {
+    public collectCandidates(caretTokenIndex: number, context?: ParserRuleContext): CandidatesCollection {
         this.shortcutMap.clear();
         this.candidates.rules.clear();
         this.candidates.tokens.clear();
         this.statesProcessed = 0;
         this.precedenceStack = [];
 
-        if (lastClause !== undefined) {
-            this.tokenStartIndex = lastClause.start.tokenIndex;
-        } else {
-            this.tokenStartIndex = context ? context.start.tokenIndex : 0;
-        }
+        this.tokenStartIndex = context ? context.start.tokenIndex : 0;
+        
         const tokenStream = this.parser._input;
 
         this.tokens = [];

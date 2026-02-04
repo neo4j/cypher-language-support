@@ -546,7 +546,7 @@ export function completionCoreCompletion(
 
   const lastClause = findLastClause(parsingResult.ctx);
   
-  const candidates = codeCompletion.collectCandidates(caretIndex, undefined, lastClause as ParserRuleContext);
+  const candidates = codeCompletion.collectCandidates(caretIndex, lastClause as ParserRuleContext);
 
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {

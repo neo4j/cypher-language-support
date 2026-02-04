@@ -66,7 +66,7 @@ export function completionCoreErrormessage(
 
   const lastClause = findLastClause(parser._ctx);
 
-  const candidates = codeCompletion.collectCandidates(caretIndex, undefined, lastClause as ParserRuleContext);
+  const candidates = codeCompletion.collectCandidates(caretIndex, lastClause as ParserRuleContext);
 
   const ruleCandidates = Array.from(candidates.rules.keys());
 
