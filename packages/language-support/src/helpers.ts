@@ -244,7 +244,7 @@ export function checkNumClauses(ctx: ParserRuleContext): ParserRuleContext {
   while(lastCurrent !== current && current.children) {
     lastCurrent = current;
     if (current instanceof SingleQueryContext) {
-      let foundClauseCount: boolean = false;
+      const foundClauseCount: boolean = false;
       let lastCandidate = 1;
       while (!foundClauseCount && lastCandidate <= current.children.length){
         const lastChild = current.children.at(-1*lastCandidate);
