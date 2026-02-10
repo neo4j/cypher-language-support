@@ -97,7 +97,7 @@ function uniteChildren(
   return { inLabels, outLabels };
 }
 
-function walkLabelTree(
+export function walkLabelTree(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
@@ -120,7 +120,7 @@ function walkLabelTree(
   }
 }
 
-function getRelsFromNodesSets(dbSchema: DbSchema): {
+export function getRelsFromNodesSets(dbSchema: DbSchema): {
   toNodes: Map<string, Set<string>>;
   fromNodes: Map<string, Set<string>>;
 } {
@@ -145,7 +145,7 @@ function getRelsFromNodesSets(dbSchema: DbSchema): {
   return undefined;
 }
 
-function getNodesFromRelsSet(dbSchema: DbSchema): {
+export function getNodesFromRelsSet(dbSchema: DbSchema): {
   toRels: Map<string, Set<string>>;
   fromRels: Map<string, Set<string>>;
 } {
@@ -165,7 +165,7 @@ function getNodesFromRelsSet(dbSchema: DbSchema): {
   return undefined;
 }
 
-function findLastVariable(
+export function findLastVariable(
   lastValidElement: NodePatternContext | RelationshipPatternContext,
   symbolsInfo: SymbolsInfo,
 ) {

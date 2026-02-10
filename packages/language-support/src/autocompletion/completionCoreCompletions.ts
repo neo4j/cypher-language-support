@@ -8,6 +8,9 @@ import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   CallClauseContext,
   Expression2Context,
+  NodePatternContext,
+  PatternElementContext,
+  RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import {
   findParent,
@@ -39,14 +42,20 @@ import {
   Neo4jProcedure,
   SymbolTable,
   SymbolsInfo,
+  isLabelLeaf,
 } from '../types';
 import {
   completeRelationshipType,
   allLabelCompletions,
   allReltypeCompletions,
   completeNodeLabel,
+  findLastVariable,
+  getRelsFromNodesSets,
+  walkLabelTree,
+  getNodesFromRelsSet,
 } from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
+import { ParserRuleContext } from 'antlr4';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
@@ -454,6 +463,78 @@ function calculateNamespacePrefix(
   return namespacePrefix;
 }
 
+function getPathCompletions(
+  lastNode: ParserRuleContext,
+  symbolsInfo: SymbolsInfo,
+  dbSchema: DbSchema,
+): CompletionItem[] {
+  const completions: CompletionItem[] = [];
+  const lastValidElement = lastNode.children.toReversed().find((child) => {
+    if (child instanceof NodePatternContext) {
+      if (child.exception === null) {
+        return true;
+      }
+    }
+  });
+  if (lastValidElement instanceof NodePatternContext && dbSchema.graphSchema) {
+    const lastVariable = findLastVariable(lastValidElement, symbolsInfo);
+    if (!isLabelLeaf(lastVariable.labels) && lastVariable.labels.children.length === 0) {
+      return [];
+    }
+    const graphSchema = dbSchema.graphSchema;
+    const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
+      getRelsFromNodesSets(dbSchema);
+    const { inLabels, outLabels } = walkLabelTree(
+      relsToNodesSet,
+      relsFromNodesSet,
+      lastVariable.labels,
+    );
+    for (const path of graphSchema) {
+      //Not quite the proper check, but lets give it a try
+      //since middle will possibly define new rel variable, we could check only relType viable after this
+      if (!isLabelLeaf(lastVariable.labels)) {
+        //  (
+        //
+        const { from, relType, to } = path;
+        //This is true for any (label)-[relType]-(label) where relType is matching as coming out of the node
+        //We however know the specific path starts with a (or mutliple...) specific labels too, so that needs to match
+        if (
+          inLabels.has(path.relType) &&
+          //Fix for simple check of direction. AS can be seen, it only works if lastVariable only has one node
+          lastVariable.labels.children.length == 1 &&
+          isLabelLeaf(lastVariable.labels.children[0]) &&
+          lastVariable.labels.children[0].value == from
+        ) {
+          completions.push({
+            label: '-[' + relType + ']->(' + to + ')',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '-[${1: }:' + relType + ']->(${2: }:' + to + ')${3:}',
+            detail: 'path template',
+            //filterText: '',
+          });
+        }
+        if (
+          outLabels.has(path.relType) &&
+          lastVariable.labels.children.length == 1 &&
+          isLabelLeaf(lastVariable.labels.children[0]) &&
+          lastVariable.labels.children[0].value == to
+        ) {
+          completions.push({
+            label: '<-[' + relType + ']-(' + from + ')',
+            kind: CompletionItemKind.Snippet,
+            insertTextFormat: InsertTextFormat.Snippet,
+            insertText: '<-[${1: }:' + relType + ']-(${2: }:' + from + ')${3:}',
+            detail: 'path template',
+            //filterText: '',
+          });
+        }
+      }
+    }
+  }
+  return completions;
+}
+
 export function completionCoreCompletion(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
@@ -738,35 +819,15 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
-        return [
-          {
-            label: '-[]->()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '-[${1: }]->(${2: })',
-            detail: 'path template',
-            // vscode does not call the completion provider for every single character
-            // after the second character is typed (i.e) `MATCH ()-[` the completion is no longer valid
-            // it'd insert `MATCH ()-[[]->()` which is not valid. Hence we filter it out by using the filterText
-            filterText: '',
-          },
-          {
-            label: '-[]-()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '-[${1: }]-(${2: })',
-            detail: 'path template',
-            filterText: '',
-          },
-          {
-            label: '<-[]-()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '<-[${1: }]-(${2: })',
-            detail: 'path template',
-            filterText: '',
-          },
-        ];
+        const lastCtx = parsingResult.stopNode.parentCtx.parentCtx;
+        if(lastCtx) {
+          const availablePaths = getPathCompletions(
+            parsingResult.stopNode.parentCtx.parentCtx,
+            symbolsInfo,
+            dbSchema,
+          );
+          return availablePaths;
+        }
       }
 
       return [];
@@ -781,9 +842,98 @@ export function completionCoreCompletion(
     );
   }
 
+  const lastNode : RelationshipPatternContext | NodePatternContext = parsingResult.stopNode?.parentCtx?.parentCtx?.children.findLast(x => (x instanceof RelationshipPatternContext || x instanceof NodePatternContext) && x.exception === null ) as RelationshipPatternContext | NodePatternContext;
+  
+  const callContext = findParent(
+    parsingResult.stopNode.parentCtx,
+    (x) => x instanceof PatternElementContext,
+  );
+
+  
+
+  let newCompletions: CompletionItem[] = []
+  //const lastVariable = findLastVariable(lastNode, symbolsInfo, )
+  if(dbSchema?.graphSchema &&  Array.from(candidates.tokens.entries()).some(([tokenNumber, followUpList]) => tokenNumber === CypherParser.ARROW_LINE) && lastNode instanceof RelationshipPatternContext && callContext instanceof PatternElementContext) {
+    
+    const lastValidElement = callContext.children.toReversed().find((child) => {
+      if (child instanceof RelationshipPatternContext) {
+        if (child.exception === null) {
+          return true;
+        }
+      }
+    });
+    const lastDefinedNode = callContext.children.toReversed().find((child) => {
+      if (child instanceof NodePatternContext) {
+        if (child.exception === null) {
+          return true;
+        }
+      }
+    });
+    if (lastValidElement instanceof RelationshipPatternContext && lastDefinedNode instanceof NodePatternContext) {
+  
+      //Sometimes this will have bailed.. make sure we dont make completions for this case
+      //Actually probably nicer to do walkLabelTree like above
+      
+      //For schema like (Trainer)-[BATTLES]->(Trainer) we can complete (Trainer)-[BATTLES] with both -(Trainer) and ->(Trainer)
+      //if we assume direction and complete only direction then we can only have one
+      //-[BATTLES] -> complete ->(Trainer)
+      //<-[BATTLES] -> complete -(Trainer)
+
+      const assumedDirection = lastValidElement.leftArrow() ? 'outgoing' : 'incoming';
+      
+      const validCompletions = dbSchema.graphSchema.map(path => 
+        {
+          //path.relType === lastValidElement?.labelExpression()?.labelExpression4().getText()
+          //Could we get single label  `A&B` (n:`A&B`) where we parse "(n:A&B)" to be this one label when really its 2? -> labelExpression4.getText = `A&B` ?
+          if (
+            path.relType === lastValidElement?.labelExpression()?.labelExpression4().getText() && 
+            (!lastDefinedNode?.labelExpression()?.labelExpression4().getText() ||
+            path.from === lastDefinedNode?.labelExpression()?.labelExpression4().getText()) && 
+            assumedDirection === "incoming") {
+            return {
+              label: '->(' + path.to + ')',
+              kind: CompletionItemKind.Snippet,
+              insertTextFormat: InsertTextFormat.Snippet,
+              insertText: '->(${1: }:' + path.to + ')${2:}',
+              detail: 'path template',
+              //filterText: '',
+            }
+          } else if (
+            path.relType === lastValidElement?.labelExpression()?.labelExpression4().getText() && 
+            (!lastDefinedNode?.labelExpression()?.labelExpression4().getText() ||
+            path.to === lastDefinedNode?.labelExpression()?.labelExpression4().getText())) {
+            return {
+              label: '-(' + path.from + ')',
+              kind: CompletionItemKind.Snippet,
+              insertTextFormat: InsertTextFormat.Snippet,
+              insertText: '-(${1: }:' + path.from + ')${2:}',
+              detail: 'path template',
+              //filterText: '',
+            }
+          }
+        }
+      ).filter(x => x !== undefined)
+      newCompletions = validCompletions;
+      // nodeCompletions.map(x => {
+      //   const returnVal =  
+      //   {
+      //     label: '-(' + x.label + ')',
+      //     kind: CompletionItemKind.Snippet,
+      //     insertTextFormat: InsertTextFormat.Snippet,
+      //     insertText: '-(${1: }:' + x.label + ')${2: }',
+      //     detail: 'path template',
+      //     filterText: '',
+      //   }
+      //   return returnVal;
+      // })
+    }
+    
+  }
+
   return [
     ...ruleCompletions,
     ...getTokenCompletions(candidates, ignoredTokens),
+    ...newCompletions,
   ];
 }
 
