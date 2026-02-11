@@ -5,6 +5,7 @@
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { DbSchema, Registry } from '../dbSchema';
 import {
+  Condition,
   CypherVersion,
   isCondition,
   LabelOrCondition,
@@ -97,13 +98,17 @@ function verifyLabelTree(labels: LabelOrCondition): boolean {
   }
 }
 
-function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
-  if ('children' in labels) {
+function labelTreeFromJava(
+  labels: LabelOrCondition | { andOr: string; children: LabelOrCondition[] },
+): LabelOrCondition {
+  if ('children' in labels && ('condition' in labels || 'andOr' in labels)) {
     const children = [];
     for (const c of labels.children) {
       children.push(labelTreeFromJava(c));
     }
-    return { condition: labels.condition, children };
+    const condition =
+      'condition' in labels ? labels.condition : (labels.andOr as Condition);
+    return { condition, children };
   } else {
     return { value: labels.value, validFrom: labels.validFrom };
   }
