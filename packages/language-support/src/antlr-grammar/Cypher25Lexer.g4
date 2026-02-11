@@ -287,10 +287,6 @@ COPY
    : C O P Y
    ;
 
-CONDITION
-    : C O N D I T I O N
-    ;
-
 CONTINUE
    : C O N T I N U E
    ;
@@ -462,10 +458,6 @@ ELEMENTS
 ELSE
    : E L S E
    ;
-
-ENABLED
-    : E N A B L E D
-    ;
 
 ENCRYPTED
    : E N C R Y P T E D
@@ -1115,14 +1107,6 @@ ROW
 ROWS
    : R O W S
    ;
-
-RULE
-    : R U L E
-    ;
-
-RULES
-    : R U L E S
-    ;
 
 RPAREN
    : ')'

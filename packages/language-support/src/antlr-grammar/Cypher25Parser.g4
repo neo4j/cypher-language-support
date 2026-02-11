@@ -174,7 +174,7 @@ whereClause
    ;
 
 searchClause
-   : SEARCH variable IN LPAREN indexSpecificationClause forClause whereClause? limit RPAREN scoreClause?
+   : SEARCH variable IN LPAREN indexSpecificationClause forClause limit RPAREN scoreClause?
    ;
 
 indexSpecificationClause
@@ -641,7 +641,7 @@ expression1
    ;
 
 literal
-   : numberLiteral # NumericLiteral
+   : numberLiteral # NummericLiteral
    | stringLiteral # StringsLiteral
    | map           # OtherLiteral
    | TRUE          # BooleanLiteral
@@ -956,7 +956,6 @@ createCommand
       | createIndex
       | createRole
       | createUser
-      | createAuthRule
    )
    ;
 
@@ -980,7 +979,6 @@ dropCommand
       | dropRole
       | dropServer
       | dropUser
-      | dropAuthRule
    )
    ;
 
@@ -1003,7 +1001,6 @@ showCommand
       | showTransactions
       | showUserPrivileges
       | showUsers
-      | showAuthRules
    )
    ;
 
@@ -1393,18 +1390,10 @@ roleNames
    : symbolicNameOrStringParameterList
    ;
 
-authRuleNames
-   : symbolicNameOrStringParameterList
-   ;
-
 roleToken
    : ROLES
    | ROLE
    ;
-
-authRuleKeywords
-    : AUTH (RULE | RULES)
-    ;
 
 // Server commands
 
@@ -1459,17 +1448,12 @@ showRoles
    ;
 
 grantRole
-   : roleNames TO usersOrAuthRule
+   : roleNames TO userNames
    ;
 
 revokeRole
-   : roleNames FROM usersOrAuthRule
+   : roleNames FROM userNames
    ;
-
-usersOrAuthRule
-    : authRuleKeywords authRuleNames
-    | (USER | USERS)? userNames
-    ;
 
 // User commands
 
@@ -1710,7 +1694,7 @@ dbmsPrivilege
    : (
       ALTER (ALIAS | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER | AUTH RULE) MANAGEMENT
+      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (ROLE | USER)
       | IMPERSONATE userQualifier?
@@ -1848,32 +1832,6 @@ graphScope
    : HOME GRAPH
    | (GRAPH | GRAPHS) (TIMES | symbolicAliasNameList)
    ;
-
-// Attribute based role assignment
-
-createAuthRule
-    : AUTH RULE commandNameExpression (IF NOT EXISTS)? (authRuleSetClause)+
-    ;
-
-authRuleSetClause
-    : SET (authRuleSetCondition | authRuleSetEnabled)
-    ;
-
-authRuleSetCondition
-    : CONDITION expression
-    ;
-
-authRuleSetEnabled
-    : ENABLED (TRUE | FALSE) // do we not have a booleanLiteral??
-    ;
-
-dropAuthRule
-    : AUTH RULE commandNameExpression (IF EXISTS)?
-    ;
-
-showAuthRules
-    : authRuleKeywords (AS (COMMAND | COMMANDS))? showCommandYield?
-    ;
 
 // Database commands
 
@@ -2190,7 +2148,6 @@ unescapedSymbolicNameString_
    | CONTAINS
    | CONTINUE
    | COPY
-   | CONDITION
    | COSINE
    | COUNT
    | CREATE
@@ -2227,7 +2184,6 @@ unescapedSymbolicNameString_
    | ELEMENT
    | ELEMENTS
    | ELSE
-   | ENABLED
    | ENABLE
    | ENCRYPTED
    | END
@@ -2372,8 +2328,6 @@ unescapedSymbolicNameString_
    | ROLES
    | ROW
    | ROWS
-   | RULE
-   | RULES
    | SCAN
    | SCORE
    | SEARCH
