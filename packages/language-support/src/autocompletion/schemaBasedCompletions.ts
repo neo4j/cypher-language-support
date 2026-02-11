@@ -83,7 +83,7 @@ function walkLabelTree(
 ): Set<string> {
   if (isLabelLeaf(labelTree)) {
     return connectedLabels.get(labelTree.value);
-  } else if (labelTree.andOr == 'and') {
+  } else if (labelTree.condition == 'and') {
     return intersectChildren(connectedLabels, labelTree.children);
   } else {
     return uniteChildren(connectedLabels, labelTree.children);
