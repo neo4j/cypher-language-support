@@ -101,6 +101,7 @@ function verifyLabelTree(labels: LabelOrCondition): boolean {
 function labelTreeFromJava(
   labels: LabelOrCondition | { andOr: string; children: LabelOrCondition[] },
 ): LabelOrCondition {
+  //2025.10 -> 2026.01 linters will give "andOr" instead of "condition"
   if ('children' in labels && ('condition' in labels || 'andOr' in labels)) {
     const children = [];
     for (const c of labels.children) {
