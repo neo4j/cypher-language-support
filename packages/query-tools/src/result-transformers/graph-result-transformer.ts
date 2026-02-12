@@ -44,14 +44,13 @@ export type GraphResult = DeduplicatedNodesAndRels & {
  *
  * @returns ResultTransformer producing {@link GraphResult}
  */
-export const graphResultTransformer =
-  resultTransformers.mappedResultTransformer({
-    map(record) {
-      return record;
-    },
-    collect(records, summary): GraphResult {
-      const { nodes, relationships, limitHit } =
-        extractUniqueNodesAndRels(records);
-      return { nodes, relationships, limitHit, records, summary };
-    },
-  });
+export const graphResultTransformer = resultTransformers.mapped({
+  map(record) {
+    return record;
+  },
+  collect(records, summary): GraphResult {
+    const { nodes, relationships, limitHit } =
+      extractUniqueNodesAndRels(records);
+    return { nodes, relationships, limitHit, records, summary };
+  },
+});

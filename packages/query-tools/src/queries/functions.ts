@@ -77,7 +77,7 @@ export function listFunctions(
     ${executableByMe ? 'EXECUTABLE BY CURRENT USER' : ''}
     YIELD *`;
 
-  const resultTransformer = resultTransformers.mappedResultTransformer({
+  const resultTransformer = resultTransformers.mapped({
     map(record) {
       const objResult = record.toObject();
       validateFunction(objResult);

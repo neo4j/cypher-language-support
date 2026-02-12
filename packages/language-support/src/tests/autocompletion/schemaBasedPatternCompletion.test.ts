@@ -31,6 +31,7 @@ const dbSchema = {
     { from: 'Gym', relType: 'IS_IN', to: 'Region' },
     { from: 'Trainer', relType: 'CHALLENGES', to: 'Gym' },
     { from: 'Pokemon', relType: 'CHALLENGES', to: 'Gym' },
+    { from: 'Pokemon', relType: 'CHALLENGES', to: 'Pokemon' },
     { from: 'Pokemon', relType: 'KNOWS', to: 'Move' },
     { from: 'Pokemon', relType: 'WEAK_TO', to: 'Type' },
     { from: 'Type', relType: 'STRONG_AGAINST', to: 'Type' },
@@ -605,34 +606,247 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not handle NOT', () => {
+  test('Handles simple NOT in a WHERE clause', () => {
     const query = 'MATCH (x) WHERE NOT x:Trainer MATCH (x)-[:';
     testCompletions({
       query,
       dbSchema,
       computeSymbolsInfo: true,
       expected: [
-        // For now, test bail working
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-        /* These should be included
-        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'BATTLES', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Handles simple NOT in a WHERE clause in conjunction with AND', () => {
+    const query =
+      'MATCH (x) WHERE NOT x:Trainer AND NOT x:Pokemon AND NOT x:Gym MATCH (x)-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-         */
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
-        /* These should be excluded
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles NOT in conjunction with |', () => {
+    const query = 'MATCH (x:!(Trainer|Pokemon))-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles NOT in conjunction with &', () => {
+    const query = 'MATCH (x:!(Trainer|Pokemon)&Gym)-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-         */
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles NOT of rel types', () => {
+    const query = 'MATCH (x)-[:!(IS_IN)]->(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [{ label: 'Region', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Handles double negation', () => {
+    // !(Trainer|!Pokemon) == !Trainer&!!Pokemon = !Trainer&Pokemon = Pokemon
+    //NOT(OR(Trainer, NOT(Pokemon))) = NOT(NOT(Pokemon)) = Pokemon
+    const query = 'MATCH (x:!(Trainer|!Pokemon))<-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Does not remove label with multiple origins when NOTing one origin', () => {
+    const query = 'MATCH ()<-[:!TRAINS]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        //Trainer here would be removed if we naively did "all in-labels - in-labels from TRAIN"
+        //Trainer should not be removed, since it except for going into TRAINS also goes into CATCHES
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Handles NOT of rel types in conjunction with |', () => {
+    const query = 'MATCH (x)-[:!(CHALLENGES|IS_IN)]->(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Works as expected for NOT(OR(all reltypes))', () => {
+    const query =
+      'MATCH ()<-[:!(CATCHES|TRAINS|BATTLES|IS_IN|CHALLENGES|KNOWS|WEAK_TO|STRONG_AGAINST|UNRELATED_RELTYPE)]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Works as expected for big !(...|...)-case in rel type', () => {
+    const query =
+      'MATCH ()<-[:!(CATCHES|TRAINS|BATTLES|CHALLENGES|KNOWS|WEAK_TO|UNRELATED_RELTYPE)]-(:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'Gym', kind: CompletionItemKind.TypeParameter },
+        { label: 'Type', kind: CompletionItemKind.TypeParameter },
+        { label: 'Trainer', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'Pokemon', kind: CompletionItemKind.TypeParameter },
+        { label: 'Move', kind: CompletionItemKind.TypeParameter },
+        { label: 'Region', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Works as expected for NOT(OR(all labels))', () => {
+    const query =
+      'MATCH (n:!(Gym|Trainer|Pokemon|Type|Move|Region|UnrelatedLabel))<-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
+    });
+  });
+
+  test('Works as expected for big !(...|...)-case in node label', () => {
+    const query = 'MATCH (n:!(Pokemon|Region|Type))<-[:';
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
       ],
     });
   });

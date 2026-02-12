@@ -17,7 +17,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [7, 17],
@@ -43,7 +43,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 17,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [17],
@@ -53,7 +53,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [7],
@@ -79,7 +79,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 17,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [17],
@@ -89,7 +89,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [7],
@@ -101,7 +101,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 27,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [27, 37],
@@ -126,14 +126,14 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
                 value: 'Person',
               },
               {
-                andOr: 'or',
+                condition: 'or',
                 children: [
                   {
                     validFrom: 32,
@@ -170,13 +170,13 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
-                andOr: 'or',
+                condition: 'or',
                 children: [
                   {
-                    andOr: 'and',
+                    condition: 'and',
                     children: [
                       {
                         validFrom: 24,
@@ -189,7 +189,7 @@ describe('Symbol table spec', () => {
                     ],
                   },
                   {
-                    andOr: 'and',
+                    condition: 'and',
                     children: [
                       {
                         validFrom: 50,
@@ -227,7 +227,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -265,7 +265,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 26,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 41,
@@ -280,7 +280,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 23,
@@ -311,7 +311,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 18,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 25,
@@ -326,7 +326,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -345,7 +345,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 29,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 37,
@@ -375,7 +375,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 16,
@@ -390,7 +390,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 19,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [],
           },
           references: [19],
@@ -415,7 +415,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 30,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 36,
@@ -430,7 +430,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 18,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 25,
@@ -445,7 +445,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -475,7 +475,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 6,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -505,7 +505,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 16,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 24,
@@ -520,7 +520,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 6,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -562,7 +562,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 6,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 15,
@@ -596,7 +596,7 @@ describe('Symbol table spec', () => {
         {
           definitionPosition: 7,
           labels: {
-            andOr: 'and',
+            condition: 'and',
             children: [
               {
                 validFrom: 16,
