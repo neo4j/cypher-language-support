@@ -57,7 +57,7 @@ export const reltypesToCompletions = (reltypes: string[] = []) =>
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
-function walkCNFTree(
+export function walkCNFTree(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,

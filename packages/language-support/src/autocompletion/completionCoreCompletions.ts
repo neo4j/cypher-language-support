@@ -42,6 +42,7 @@ import {
   SymbolTable,
   SymbolsInfo,
   isLabelLeaf,
+  LabelOrCondition,
 } from '../types';
 import {
   completeRelationshipType,
@@ -50,10 +51,11 @@ import {
   completeNodeLabel,
   findLastVariable,
   getRelsFromNodesSets,
-  walkLabelTree,
   getNodesFromRelsSet,
+  walkCNFTree,
 } from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
+import { convertToCNF } from '../labelTreeRewriting';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
@@ -470,14 +472,26 @@ function getShortPathCompletions(
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
 
   if (lastVariable && dbSchema.graphSchema) {
+    if (
+      !isLabelLeaf(lastVariable.labels) &&
+      lastVariable.labels.children.length === 0
+    ) {
+      return [];
+    }
     const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
       getNodesFromRelsSet(dbSchema);
     const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
 
-    const { inLabels, outLabels } = walkLabelTree(
+    let cnfTree: LabelOrCondition;
+    try {
+      cnfTree = convertToCNF(lastVariable.labels);
+    } catch (e) {
+      return [];
+    }
+    const { inLabels, outLabels } = walkCNFTree(
       nodesToRelsSet,
       nodesFromRelsSet,
-      lastVariable.labels,
+      cnfTree,
     );
 
     if (assumedDirection === 'outgoing') {
@@ -522,16 +536,22 @@ function getPathCompletions(
     }
     const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
       getRelsFromNodesSets(dbSchema);
-    const { inLabels: inRelTypes, outLabels: outRelTypes } = walkLabelTree(
+    let cnfTree: LabelOrCondition;
+    try {
+      cnfTree = convertToCNF(lastVariable.labels);
+    } catch (e) {
+      return [];
+    }
+    const { inLabels: inRelTypes, outLabels: outRelTypes } = walkCNFTree(
       relsToNodesSet,
       relsFromNodesSet,
-      lastVariable.labels,
+      cnfTree,
     );
     const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
       getNodesFromRelsSet(dbSchema);
     for (const inRelType of inRelTypes) {
-      const { inLabels } = walkLabelTree(nodesToRelsSet, nodesFromRelsSet, {
-        andOr: 'and',
+      const { inLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
+        condition: 'and',
         children: [{ value: inRelType, validFrom: 0 }],
       });
       for (const inLabel of inLabels) {
@@ -547,8 +567,8 @@ function getPathCompletions(
     }
 
     for (const outRelType of outRelTypes) {
-      const { outLabels } = walkLabelTree(nodesToRelsSet, nodesFromRelsSet, {
-        andOr: 'and',
+      const { outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
+        condition: 'and',
         children: [{ value: outRelType, validFrom: 0 }],
       });
       for (const outLabel of outLabels) {
