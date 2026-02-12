@@ -50,8 +50,107 @@ describe('Path segment completions', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [{ 
-        label: '->(Pokemon)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "->(${1: }:Pokemon)${2:}", insertTextFormat: 2}],
+      expected: [
+        {
+          label: '->(:Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Pokemon)${2:}',
+          insertTextFormat: 2,
+        },
+      ],
+    });
+  });
+
+  test('Should not provide node segment completion on started line', () => {
+    const query = 'MATCH (t:Trainer)-[r:CATCHES]-';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [
+        {
+          label: '->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Pokemon)${2:}',
+          insertTextFormat: 2,
+        },
+      ],
+    });
+  });
+
+  test('Should not provide node segment completion on rightArrow', () => {
+    const query = 'MATCH (t:Trainer)-[r:CATCHES]->';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [
+        {
+          label: '->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Pokemon)${2:}',
+          insertTextFormat: 2,
+        },
+      ],
+    });
+  });
+
+  test('Should provide node segment completion after pattern without rel', () => {
+    const query = 'MATCH (t1:Trainer)--(t2:Trainer)';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        {
+          label: '-[:CATCHES]->(:Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[:TRAINS]->(:Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[:BATTLES]->(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '<-[:BATTLES]-(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[:IS_IN]->(:Region)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[:CHALLENGES]->(:Gym)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
+          detail: 'path template',
+        },
+      ],
     });
   });
 
@@ -63,11 +162,23 @@ describe('Path segment completions', () => {
       dbSchema,
       computeSymbolsInfo: true,
       expected: [
-        { label: '-(Trainer)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "-(${1: }:Trainer)${2:}", insertTextFormat: 2}
+        {
+          label: '-(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '-(${1: }:Trainer)${2:}',
+          insertTextFormat: 2,
+        },
       ],
       excluded: [
-        { label: '->(Trainer)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "->(${1: }:Trainer)${2:}", insertTextFormat: 2}
-      ]
+        {
+          label: '->(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Trainer)${2:}',
+          insertTextFormat: 2,
+        },
+      ],
     });
   });
 
@@ -79,11 +190,23 @@ describe('Path segment completions', () => {
       dbSchema,
       computeSymbolsInfo: true,
       expected: [
-        { label: '->(Trainer)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "->(${1: }:Trainer)${2:}", insertTextFormat: 2}
+        {
+          label: '->(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Trainer)${2:}',
+          insertTextFormat: 2,
+        },
       ],
       excluded: [
-        { label: '-(Trainer)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "-(${1: }:Trainer)${2:}", insertTextFormat: 2}
-      ]
+        {
+          label: '-(:Trainer)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '-(${1: }:Trainer)${2:}',
+          insertTextFormat: 2,
+        },
+      ],
     });
   });
 
@@ -96,46 +219,220 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       expected: [
         {
-          label: "-[CATCHES]->(Pokemon)",
+          label: '-[:CATCHES]->(:Pokemon)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[TRAINS]->(Pokemon)",
+          label: '-[:TRAINS]->(:Pokemon)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[BATTLES]->(Trainer)",
+          label: '-[:BATTLES]->(:Trainer)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:BATTLES]->(${2: }:Trainer)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
+          detail: 'path template',
         },
         {
-          label: "<-[BATTLES]-(Trainer)",
+          label: '<-[:BATTLES]-(:Trainer)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}",
-          detail: "path template",
+          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[IS_IN]->(Region)",
+          label: '-[:IS_IN]->(:Region)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:IS_IN]->(${2: }:Region)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[CHALLENGES]->(Gym)",
+          label: '-[:CHALLENGES]->(:Gym)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('does not suggest snippets for node when path is started ', () => {
+    testCompletions({
+      query: 'MATCH (t:Trainer)<',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)-',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)-[',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)-[]',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)<-',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+  });
+
+  test('does not suggest snippets for rel when path is started ', () => {
+    testCompletions({
+      query: 'MATCH (t:Trainer)-[action:CATCHES]-',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)-[action:CATCHES]->',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)<-[action:CATCHES]-',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)<-[action:CATCHES]->',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+    testCompletions({
+      query: 'MATCH (t:Trainer)-[action:CATCHES]-[',
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [{ kind: CompletionItemKind.Snippet }],
+    });
+  });
+
+  test('Should not complete full segments for node after typing line', () => {
+    const query = 'MATCH (t:Trainer)-';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [
+        {
+          label: '-[CATCHES]->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[TRAINS]->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[BATTLES]->(Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '<-[BATTLES]-(Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[IS_IN]->(Region)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[CHALLENGES]->(Gym)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
+          detail: 'path template',
+        },
+      ],
+    });
+  });
+
+  test('Should not complete full segments for node after starting left arrow', () => {
+    const query = 'MATCH (t:Trainer)<';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      excluded: [
+        {
+          label: '-[CATCHES]->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[TRAINS]->(Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[BATTLES]->(Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '<-[BATTLES]-(Trainer)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[IS_IN]->(Region)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
+          detail: 'path template',
+        },
+        {
+          label: '-[CHALLENGES]->(Gym)',
+          kind: CompletionItemKind.Snippet,
+          insertTextFormat: 2,
+          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
+          detail: 'path template',
         },
       ],
     });
@@ -150,39 +447,39 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       expected: [
         {
-          label: "<-[CATCHES]-(Trainer)",
+          label: '<-[:CATCHES]-(:Trainer)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "<-[${1: }:CATCHES]-(${2: }:Trainer)${3:}",
-          detail: "path template",
+          insertText: '<-[${1: }:CATCHES]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
         },
         {
-          label: "<-[TRAINS]-(Trainer)",
+          label: '<-[:TRAINS]-(:Trainer)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "<-[${1: }:TRAINS]-(${2: }:Trainer)${3:}",
-          detail: "path template",
+          insertText: '<-[${1: }:TRAINS]-(${2: }:Trainer)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[CHALLENGES]->(Gym)",
+          label: '-[:CHALLENGES]->(:Gym)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[KNOWS]->(Move)",
+          label: '-[:KNOWS]->(:Move)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:KNOWS]->(${2: }:Move)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:KNOWS]->(${2: }:Move)${3:}',
+          detail: 'path template',
         },
         {
-          label: "-[WEAK_TO]->(Type)",
+          label: '-[:WEAK_TO]->(:Type)',
           kind: CompletionItemKind.Snippet,
           insertTextFormat: 2,
-          insertText: "-[${1: }:WEAK_TO]->(${2: }:Type)${3:}",
-          detail: "path template",
+          insertText: '-[${1: }:WEAK_TO]->(${2: }:Type)${3:}',
+          detail: 'path template',
         },
       ],
     });
@@ -195,8 +492,7 @@ describe('Path segment completions', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-      ],
+      expected: [],
     });
   });
 
@@ -207,12 +503,10 @@ describe('Path segment completions', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [
-      ],
+      excluded: [{ kind: CompletionItemKind.Snippet }],
     });
   });
 
-  //TODO: Decide if this is how we want to do it
   test('Should provide node path segment completion even if label of previous node is not defined', () => {
     const query = 'MATCH (t)-[:CATCHES]';
 
@@ -221,10 +515,14 @@ describe('Path segment completions', () => {
       dbSchema,
       computeSymbolsInfo: true,
       expected: [
-        { label: '->(Pokemon)', kind: CompletionItemKind.Snippet, detail: "path template", insertText: "->(${1: }:Pokemon)${2:}", insertTextFormat: 2},
+        {
+          label: '->(:Pokemon)',
+          kind: CompletionItemKind.Snippet,
+          detail: 'path template',
+          insertText: '->(${1: }:Pokemon)${2:}',
+          insertTextFormat: 2,
+        },
       ],
     });
   });
-  
-
 });

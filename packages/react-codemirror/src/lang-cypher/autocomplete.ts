@@ -62,7 +62,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
   (config) => (context) => {
     const documentText = context.state.doc.toString();
     const offset = context.pos;
-    const triggerCharacters = ['.', ':', '{', '$', ')'];
+    const triggerCharacters = ['.', ':', '{', '$', ')', ']'];
     const lastCharacter = documentText.at(offset - 1);
     const yieldTriggered = shouldAutoCompleteYield(documentText, offset);
     const lastWord = context.matchBefore(/\w*/);
