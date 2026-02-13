@@ -353,7 +353,14 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
     [
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_commandNameExpression,
-      CypherParser.RULE_symbolicNameOrStringParameter,
+      CypherParser.RULE_indexSpecificationClause,
+      CypherParser.RULE_createConstraint,
+      CypherParser.RULE_dropConstraint,
+      CypherParser.RULE_createIndex_,
+      CypherParser.RULE_createFulltextIndex,
+      CypherParser.RULE_createVectorIndex,
+      CypherParser.RULE_createLookupIndex,
+      CypherParser.RULE_dropIndex,
       CypherParser.RULE_symbolicNameOrStringParameterList,
       CypherParser.RULE_symbolicAliasNameOrParameter,
       CypherParser.RULE_passwordExpression,
@@ -948,5 +955,5 @@ function completeSymbolicName({
     ];
   }
 
-  return [];
+  return parameterSuggestions;
 }

@@ -86,6 +86,7 @@ export const lexerNumberLiterals = [
 export const lexerStringLiteral = [
   CypherLexer.STRING_LITERAL1,
   CypherLexer.STRING_LITERAL2,
+  CypherLexer.OBFUSCATION,
 ];
 
 export const lexerGarbage = [

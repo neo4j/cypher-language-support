@@ -178,7 +178,7 @@ searchClause
    ;
 
 indexSpecificationClause
-   : VECTOR INDEX symbolicNameOrStringParameter
+   : VECTOR INDEX commandNameExpression
    ;
 
 forClause
@@ -206,12 +206,11 @@ setClause
    ;
 
 setItem
-   : propertyExpression EQ expression        # SetProp
-   | dynamicPropertyExpression EQ expression # SetDynamicProp
-   | variable EQ expression                  # SetProps
-   | variable PLUSEQUAL expression           # AddProp
-   | variable nodeLabels                     # SetLabels
-   | variable nodeLabelsIs                   # SetLabelsIs
+   : variable EQ expression         # SetProps
+   | variable PLUSEQUAL expression  # AddProp
+   | variable nodeLabels            # SetLabels
+   | variable nodeLabelsIs          # SetLabelsIs
+   | expression2 EQ expression      # SetProp
    ;
 
 removeClause
@@ -219,10 +218,9 @@ removeClause
    ;
 
 removeItem
-   : propertyExpression         # RemoveProp
-   | dynamicPropertyExpression  # RemoveDynamicProp
-   | variable nodeLabels        # RemoveLabels
-   | variable nodeLabelsIs      # RemoveLabelsIs
+   : variable nodeLabels    # RemoveLabels
+   | variable nodeLabelsIs  # RemoveLabelsIs
+   | expression2            # RemoveProp
    ;
 
 deleteClause
@@ -604,14 +602,6 @@ dynamicProperty
    : LBRACKET expression RBRACKET
    ;
 
-propertyExpression
-   : expression1 property+
-   ;
-
-dynamicPropertyExpression
-   : expression1 dynamicProperty
-   ;
-
 expression1
    : literal
    | parameter["ANY"]
@@ -638,6 +628,7 @@ expression1
    | parenthesizedExpression
    | functionInvocation
    | variable
+   | obfuscatedLiteral
    ;
 
 literal
@@ -844,6 +835,10 @@ variable
    : symbolicVariableNameString
    ;
 
+obfuscatedLiteral
+   : OBFUSCATION
+   ;
+
 // Returns non-list of propertyKeyNames
 nonEmptyNameList
    : symbolicNameString (COMMA symbolicNameString)*
@@ -968,6 +963,7 @@ alterCommand
       | alterDatabase
       | alterUser
       | alterServer
+      | alterAuthRule
    )
    ;
 
@@ -1159,7 +1155,7 @@ commandRelPattern
    ;
 
 createConstraint
-   : CONSTRAINT symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) constraintType commandOptions?
+   : CONSTRAINT commandNameExpression? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) constraintType commandOptions?
    ;
 
 constraintType
@@ -1170,7 +1166,7 @@ constraintType
    ;
 
 dropConstraint
-   : CONSTRAINT symbolicNameOrStringParameter (IF EXISTS)?
+   : CONSTRAINT commandNameExpression (IF EXISTS)?
    ;
 
 createIndex
@@ -1184,15 +1180,15 @@ createIndex
    ;
 
 createIndex_
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) ON propertyList commandOptions?
+   : commandNameExpression? (IF NOT EXISTS)? FOR (commandNodePattern | commandRelPattern) ON propertyList commandOptions?
    ;
 
 createFulltextIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
+   : commandNameExpression? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON EACH LBRACKET enclosedPropertyList RBRACKET commandOptions?
    ;
 
 createVectorIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON propertyList withProperties? commandOptions?
+   : commandNameExpression? (IF NOT EXISTS)? FOR (multiLabelNodePattern | multiRelTypeRelPattern) ON propertyList withProperties? commandOptions?
    ;
 
 multiLabelNodePattern
@@ -1204,7 +1200,7 @@ multiRelTypeRelPattern
    ;
 
 createLookupIndex
-   : symbolicNameOrStringParameter? (IF NOT EXISTS)? FOR (lookupIndexNodePattern | lookupIndexRelPattern) symbolicNameString LPAREN variable RPAREN commandOptions?
+   : commandNameExpression? (IF NOT EXISTS)? FOR (lookupIndexNodePattern | lookupIndexRelPattern) symbolicNameString LPAREN variable RPAREN commandOptions?
    ;
 
 lookupIndexNodePattern
@@ -1216,7 +1212,7 @@ lookupIndexRelPattern
    ;
 
 dropIndex
-   : INDEX symbolicNameOrStringParameter (IF EXISTS)?
+   : INDEX commandNameExpression (IF EXISTS)?
    ;
 
 propertyList
@@ -1364,7 +1360,7 @@ constraintSpecification
 // Admin commands
 
 renameCommand
-   : RENAME (renameRole | renameServer | renameUser)
+   : RENAME (renameRole | renameServer | renameUser | renameAuthRule)
    ;
 
 grantCommand
@@ -1455,7 +1451,7 @@ renameRole
    ;
 
 showRoles
-   : (ALL | POPULATED)? roleToken (WITH (USER | USERS))? showCommandYield?
+   : (ALL | POPULATED)? roleToken (WITH (USER | USERS | authRuleKeywords))? showCommandYield?
    ;
 
 grantRole
@@ -1643,6 +1639,7 @@ createPropertyPrivilegeToken
 
 actionForDBMS
    : ALIAS
+   | AUTH RULE
    | COMPOSITE? DATABASE
    | ROLE
    | USER
@@ -1665,7 +1662,7 @@ loadPrivilege
 showPrivilege
    : SHOW (
       (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER) ON DBMS
+      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER) ON DBMS
    )
    ;
 
@@ -1708,11 +1705,11 @@ databasePrivilege
 
 dbmsPrivilege
    : (
-      ALTER (ALIAS | COMPOSITE? DATABASE | USER)
+      ALTER (ALIAS | AUTH RULE | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
       | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER | AUTH RULE) MANAGEMENT
       | dbmsPrivilegeExecute
-      | RENAME (ROLE | USER)
+      | RENAME (AUTH RULE | ROLE | USER)
       | IMPERSONATE userQualifier?
    )
    ON DBMS
@@ -1864,7 +1861,15 @@ authRuleSetCondition
     ;
 
 authRuleSetEnabled
-    : ENABLED (TRUE | FALSE) // do we not have a booleanLiteral??
+    : ENABLED (TRUE | FALSE)
+    ;
+
+renameAuthRule
+    : AUTH RULE commandNameExpression (IF EXISTS)? TO commandNameExpression
+    ;
+
+alterAuthRule
+    : AUTH RULE commandNameExpression (IF EXISTS)? (authRuleSetClause)+
     ;
 
 dropAuthRule
@@ -2046,13 +2051,6 @@ showAliases
 
 // Various strings, symbolic names, lists and maps
 
-// Should return an Either[String, Parameter]
-symbolicNameOrStringParameter
-   : symbolicNameString
-   | parameter["STRING"]
-   ;
-
-// Should return an Expression
 commandNameExpression
    : symbolicNameString
    | parameter["STRING"]

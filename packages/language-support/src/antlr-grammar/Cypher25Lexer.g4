@@ -884,6 +884,10 @@ NULL
    : N U L L
    ;
 
+OBFUSCATION
+   : '******'
+   ;
+
 OF
    : O F
    ;

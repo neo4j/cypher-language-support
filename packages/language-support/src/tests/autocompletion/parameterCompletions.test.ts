@@ -295,12 +295,40 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     });
   });
 
+  test('Suggest started parameter in SEARCH', () => {
+    const query = `CYPHER 25 MATCH (m:Movie {title: 'Godfather, The'})
+   MATCH (movie:Movie)
+   SEARCH movie IN (
+      VECTOR INDEX $string`;
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'stringParam',
+        },
+      ],
+      excluded: [
+        { label: '$mapParam', kind: CompletionItemKind.Variable },
+        { label: '$intParam', kind: CompletionItemKind.Variable },
+      ],
+    });
+  });
+
   test('Suggests started parameter in DDL commands', () => {
     const queries = [
       'CREATE INDEX $string',
       'CREATE USER $string',
       'CREATE USER user SET HOME DATABASE $string',
       'SHOW DATABASE $string',
+      'CREATE CONSTRAINT $string',
+      'DROP CONSTRAINT $string',
+      'CREATE FULLTEXT INDEX $string',
+      'CREATE VECTOR INDEX $string',
+      'CREATE LOOKUP INDEX $string',
+      'DROP INDEX $string',
     ];
 
     queries.forEach((query) =>
