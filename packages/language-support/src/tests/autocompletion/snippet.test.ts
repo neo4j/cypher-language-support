@@ -30,6 +30,11 @@ describe('snippet completions', () => {
         'MATCH (p:Person)-[:FRIEND_OF]->(f) RETURN p.name, [x IN collect(f.name) WHERE x STARTS WITH "A"]',
       assertEmpty: true,
     });
+
+    testCompletions({
+      query: 'CREATE FULLTEXT INDEX bla FOR ()-[n:KNOWS]',
+      assertEmpty: true,
+    });
   });
 
   test('typing snippet trigger character should not open completions automatically in expression...', () => {
@@ -40,6 +45,11 @@ describe('snippet completions', () => {
 
     testCompletions({
       query: 'RETURN abs(1)',
+      assertEmpty: true,
+    });
+
+    testCompletions({
+      query: 'RETURN ["A", "B"]',
       assertEmpty: true,
     });
   });

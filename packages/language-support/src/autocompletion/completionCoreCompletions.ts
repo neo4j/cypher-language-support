@@ -509,6 +509,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
     CypherParser.RULE_leftArrow,
+    CypherParser.RULE_arrowLine,
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
     CypherParser.RULE_procedureResultItem,
@@ -765,10 +766,29 @@ export function completionCoreCompletion(
         return [{ label: 'write', kind: CompletionItemKind.Event }];
       }
 
+      if (ruleNumber === CypherParser.RULE_arrowLine) {
+        const possiblePatternElementParent =
+          parsingResult.stopNode?.parentCtx?.parentCtx;
+        const lastNode: RelationshipPatternContext | NodePatternContext =
+          possiblePatternElementParent?.children.findLast(
+            (x) =>
+              (x instanceof RelationshipPatternContext ||
+                x instanceof NodePatternContext) &&
+              x.exception === null,
+          ) as RelationshipPatternContext | NodePatternContext;
+
+        const shortPathCompletions: CompletionItem[] =
+          lastNode instanceof RelationshipPatternContext
+            ? getShortPathCompletions(lastNode, symbolsInfo, dbSchema)
+            : [];
+        return shortPathCompletions;
+      }
+
       if (ruleNumber === CypherParser.RULE_leftArrow) {
-        const lastCtx = parsingResult?.stopNode?.parentCtx?.parentCtx;
-        if (lastCtx) {
-          const lastNodePattern = lastCtx.children
+        const possiblePatternElementParent =
+          parsingResult?.stopNode?.parentCtx?.parentCtx;
+        if (possiblePatternElementParent) {
+          const lastNodePattern = possiblePatternElementParent.children
             .toReversed()
             .find((child) => {
               if (child instanceof NodePatternContext) {
@@ -789,19 +809,6 @@ export function completionCoreCompletion(
     },
   );
 
-  const lastNode: RelationshipPatternContext | NodePatternContext =
-    parsingResult.stopNode?.parentCtx?.parentCtx?.children.findLast(
-      (x) =>
-        (x instanceof RelationshipPatternContext ||
-          x instanceof NodePatternContext) &&
-        x.exception === null,
-    ) as RelationshipPatternContext | NodePatternContext;
-
-  const extraSnippetCompletions: CompletionItem[] =
-    lastNode instanceof RelationshipPatternContext
-      ? getShortPathCompletions(lastNode, symbolsInfo, dbSchema)
-      : [];
-
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
   if (
@@ -809,15 +816,14 @@ export function completionCoreCompletion(
       CypherLexer.RBRACKET === previousToken?.type) &&
     !manualTrigger
   ) {
-    return ruleCompletions
-      .concat(extraSnippetCompletions)
-      .filter((completion) => completion.kind === CompletionItemKind.Snippet);
+    return ruleCompletions.filter(
+      (completion) => completion.kind === CompletionItemKind.Snippet,
+    );
   }
 
   return [
     ...ruleCompletions,
     ...getTokenCompletions(candidates, ignoredTokens),
-    ...extraSnippetCompletions,
   ];
 }
 

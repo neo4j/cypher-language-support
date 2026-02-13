@@ -29,52 +29,53 @@ export function getShortPathCompletions(
 ): CompletionItem[] {
   const snippetCompletions: CompletionItem[] = [];
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
+  if (
+    !lastVariable ||
+    !dbSchema.graphSchema ||
+    isLabelLeaf(lastVariable.labels) ||
+    lastVariable.labels.children.length === 0
+  ) {
+    return [];
+  }
 
-  if (lastVariable && dbSchema.graphSchema) {
-    if (
-      !isLabelLeaf(lastVariable.labels) &&
-      lastVariable.labels.children.length === 0
-    ) {
-      return [];
+  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+    getNodesFromRelsSet(dbSchema);
+  const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
+
+  let cnfTree: LabelOrCondition;
+  try {
+    cnfTree = convertToCNF(lastVariable.labels);
+  } catch (e) {
+    return [];
+  }
+  const { inLabels, outLabels } = walkCNFTree(
+    nodesToRelsSet,
+    nodesFromRelsSet,
+    cnfTree,
+  );
+
+  if (assumedDirection === 'outgoing') {
+    for (const outLabel of outLabels) {
+      snippetCompletions.push({
+        label: '-(:' + outLabel + ')',
+        kind: CompletionItemKind.Snippet,
+        insertTextFormat: InsertTextFormat.Snippet,
+        insertText: '-(${1: }:' + outLabel + ')${2:}',
+        detail: 'path template',
+      });
     }
-    const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
-      getNodesFromRelsSet(dbSchema);
-    const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
-
-    let cnfTree: LabelOrCondition;
-    try {
-      cnfTree = convertToCNF(lastVariable.labels);
-    } catch (e) {
-      return [];
-    }
-    const { inLabels, outLabels } = walkCNFTree(
-      nodesToRelsSet,
-      nodesFromRelsSet,
-      cnfTree,
-    );
-
-    if (assumedDirection === 'outgoing') {
-      for (const outLabel of outLabels) {
-        snippetCompletions.push({
-          label: '-(:' + outLabel + ')',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText: '-(${1: }:' + outLabel + ')${2:}',
-          detail: 'path template',
-        });
-      }
-    } else {
-      for (const inLabel of inLabels) {
-        snippetCompletions.push({
-          label: '->(:' + inLabel + ')',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText: '->(${1: }:' + inLabel + ')${2:}',
-          detail: 'path template',
-        });
-      }
+  } else {
+    for (const inLabel of inLabels) {
+      snippetCompletions.push({
+        label: '->(:' + inLabel + ')',
+        kind: CompletionItemKind.Snippet,
+        insertTextFormat: InsertTextFormat.Snippet,
+        insertText: '->(${1: }:' + inLabel + ')${2:}',
+        detail: 'path template',
+      });
     }
   }
+
   return snippetCompletions;
 }
 
@@ -86,62 +87,63 @@ export function getPathCompletions(
   const snippetCompletions: CompletionItem[] = [];
 
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
-  if (lastVariable && dbSchema.graphSchema) {
-    if (
-      !isLabelLeaf(lastVariable.labels) &&
-      lastVariable.labels.children.length === 0
-    ) {
-      return [];
-    }
-    const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
-      getRelsFromNodesSets(dbSchema);
-    let cnfTree: LabelOrCondition;
-    try {
-      cnfTree = convertToCNF(lastVariable.labels);
-    } catch (e) {
-      return [];
-    }
-    const { inLabels: inRelTypes, outLabels: outRelTypes } = walkCNFTree(
-      relsToNodesSet,
-      relsFromNodesSet,
-      cnfTree,
-    );
-    const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
-      getNodesFromRelsSet(dbSchema);
-    for (const inRelType of inRelTypes) {
-      const { inLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
-        condition: 'and',
-        children: [{ value: inRelType, validFrom: 0 }],
+  if (
+    !lastVariable ||
+    !dbSchema.graphSchema ||
+    isLabelLeaf(lastVariable.labels) ||
+    lastVariable.labels.children.length === 0
+  ) {
+    return [];
+  }
+  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
+    getRelsFromNodesSets(dbSchema);
+  let cnfTree: LabelOrCondition;
+  try {
+    cnfTree = convertToCNF(lastVariable.labels);
+  } catch (e) {
+    return [];
+  }
+  const { inLabels: inRelTypes, outLabels: outRelTypes } = walkCNFTree(
+    relsToNodesSet,
+    relsFromNodesSet,
+    cnfTree,
+  );
+  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+    getNodesFromRelsSet(dbSchema);
+  for (const inRelType of inRelTypes) {
+    const { inLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
+      condition: 'and',
+      children: [{ value: inRelType, validFrom: 0 }],
+    });
+    for (const inLabel of inLabels) {
+      snippetCompletions.push({
+        label: '-[:' + inRelType + ']->(:' + inLabel + ')',
+        kind: CompletionItemKind.Snippet,
+        insertTextFormat: InsertTextFormat.Snippet,
+        insertText:
+          '-[${1: }:' + inRelType + ']->(${2: }:' + inLabel + ')${3:}',
+        detail: 'path template',
       });
-      for (const inLabel of inLabels) {
-        snippetCompletions.push({
-          label: '-[:' + inRelType + ']->(:' + inLabel + ')',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText:
-            '-[${1: }:' + inRelType + ']->(${2: }:' + inLabel + ')${3:}',
-          detail: 'path template',
-        });
-      }
-    }
-
-    for (const outRelType of outRelTypes) {
-      const { outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
-        condition: 'and',
-        children: [{ value: outRelType, validFrom: 0 }],
-      });
-      for (const outLabel of outLabels) {
-        snippetCompletions.push({
-          label: '<-[:' + outRelType + ']-(:' + outLabel + ')',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: InsertTextFormat.Snippet,
-          insertText:
-            '<-[${1: }:' + outRelType + ']-(${2: }:' + outLabel + ')${3:}',
-          detail: 'path template',
-        });
-      }
     }
   }
+
+  for (const outRelType of outRelTypes) {
+    const { outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
+      condition: 'and',
+      children: [{ value: outRelType, validFrom: 0 }],
+    });
+    for (const outLabel of outLabels) {
+      snippetCompletions.push({
+        label: '<-[:' + outRelType + ']-(:' + outLabel + ')',
+        kind: CompletionItemKind.Snippet,
+        insertTextFormat: InsertTextFormat.Snippet,
+        insertText:
+          '<-[${1: }:' + outRelType + ']-(${2: }:' + outLabel + ')${3:}',
+        detail: 'path template',
+      });
+    }
+  }
+
   return snippetCompletions;
 }
 
