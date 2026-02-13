@@ -71,11 +71,7 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       excluded: [
         {
-          label: '->(Pokemon)',
           kind: CompletionItemKind.Snippet,
-          detail: 'path template',
-          insertText: '->(${1: }:Pokemon)${2:}',
-          insertTextFormat: 2,
         },
       ],
     });
@@ -90,11 +86,7 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       excluded: [
         {
-          label: '->(Pokemon)',
           kind: CompletionItemKind.Snippet,
-          detail: 'path template',
-          insertText: '->(${1: }:Pokemon)${2:}',
-          insertTextFormat: 2,
         },
       ],
     });
@@ -339,46 +331,7 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       excluded: [
         {
-          label: '-[CATCHES]->(Pokemon)',
           kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[TRAINS]->(Pokemon)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[BATTLES]->(Trainer)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '<-[BATTLES]-(Trainer)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[IS_IN]->(Region)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[CHALLENGES]->(Gym)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
-          detail: 'path template',
         },
       ],
     });
@@ -393,46 +346,7 @@ describe('Path segment completions', () => {
       computeSymbolsInfo: true,
       excluded: [
         {
-          label: '-[CATCHES]->(Pokemon)',
           kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:CATCHES]->(${2: }:Pokemon)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[TRAINS]->(Pokemon)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:TRAINS]->(${2: }:Pokemon)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[BATTLES]->(Trainer)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:BATTLES]->(${2: }:Trainer)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '<-[BATTLES]-(Trainer)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '<-[${1: }:BATTLES]-(${2: }:Trainer)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[IS_IN]->(Region)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:IS_IN]->(${2: }:Region)${3:}',
-          detail: 'path template',
-        },
-        {
-          label: '-[CHALLENGES]->(Gym)',
-          kind: CompletionItemKind.Snippet,
-          insertTextFormat: 2,
-          insertText: '-[${1: }:CHALLENGES]->(${2: }:Gym)${3:}',
-          detail: 'path template',
         },
       ],
     });
@@ -492,7 +406,11 @@ describe('Path segment completions', () => {
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [],
+      excluded: [
+        {
+          kind: CompletionItemKind.Snippet,
+        },
+      ],
     });
   });
 
