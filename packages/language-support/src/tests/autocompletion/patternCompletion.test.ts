@@ -640,4 +640,61 @@ describe('Auto-completion works correctly inside nodes and relationship patterns
       expected: [{ label: 'WHERE', kind: CompletionItemKind.Keyword }],
     });
   });
+
+  test('Correctly completes label inside "CREATE INDEX" command', () => {
+    const query = 'CREATE FULLTEXT INDEX IF NOT EXISTS FOR (c:C';
+
+    testCompletions({
+      query,
+      dbSchema: {
+        labels: ['Cat', 'Person', 'Dog'],
+        relationshipTypes: ['KNOWS', 'HAS', 'COSTS'],
+      },
+      expected: [{ label: 'Cat', kind: CompletionItemKind.TypeParameter }],
+      excluded: [{ label: 'COSTS', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Correctly completes reltype inside "CREATE INDEX" command', () => {
+    const query = 'CREATE FULLTEXT INDEX IF NOT EXISTS FOR ()-[c:C';
+
+    testCompletions({
+      query,
+      dbSchema: {
+        labels: ['Cat', 'Person', 'Dog'],
+        relationshipTypes: ['KNOWS', 'HAS', 'COSTS'],
+      },
+      expected: [{ label: 'COSTS', kind: CompletionItemKind.TypeParameter }],
+      excluded: [{ label: 'Cat', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+
+  test('Correctly completes label inside "CREATE CONSTRAINT" command', () => {
+    const query = `CREATE CONSTRAINT sequels
+  FOR (x:C`;
+
+    testCompletions({
+      query,
+      dbSchema: {
+        labels: ['Cat', 'Person', 'Dog'],
+        relationshipTypes: ['KNOWS', 'HAS', 'COSTS'],
+      },
+      expected: [{ label: 'Cat', kind: CompletionItemKind.TypeParameter }],
+      excluded: [{ label: 'COSTS', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
+  test('Correctly completes reltype inside "CREATE CONSTRAINT" command', () => {
+    const query = `CREATE CONSTRAINT sequels
+  FOR ()-[x:C`;
+
+    testCompletions({
+      query,
+      dbSchema: {
+        labels: ['Cat', 'Person', 'Dog'],
+        relationshipTypes: ['KNOWS', 'HAS', 'COSTS'],
+      },
+      expected: [{ label: 'COSTS', kind: CompletionItemKind.TypeParameter }],
+      excluded: [{ label: 'Cat', kind: CompletionItemKind.TypeParameter }],
+    });
+  });
 });

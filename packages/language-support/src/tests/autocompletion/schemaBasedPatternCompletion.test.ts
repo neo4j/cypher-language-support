@@ -43,7 +43,7 @@ const dbSchema = {
   ],
 };
 
-describe('completeRelationshipType', () => {
+describe('Schema based completions', () => {
   test('Completion dont crash on missing db connection', () => {
     const query = 'MATCH (t:Trainer)-[r:';
 

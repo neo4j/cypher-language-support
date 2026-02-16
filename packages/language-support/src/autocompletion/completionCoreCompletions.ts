@@ -1,13 +1,14 @@
 import {
   CompletionItemKind,
   CompletionItemTag,
-  InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
   CallClauseContext,
   Expression2Context,
+  NodePatternContext,
+  RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import {
   findParent,
@@ -43,8 +44,10 @@ import {
 import {
   completeRelationshipType,
   allLabelCompletions,
-  allReltypeCompletions,
   completeNodeLabel,
+  getPathCompletions,
+  getShortPathCompletions,
+  allReltypeCompletions,
 } from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
 
@@ -505,11 +508,14 @@ export function completionCoreCompletion(
     CypherParser.RULE_propertyKeyName,
     CypherParser.RULE_variable,
     CypherParser.RULE_leftArrow,
+    CypherParser.RULE_arrowLine,
     // this rule is used for usernames and roles.
     CypherParser.RULE_commandNameExpression,
     CypherParser.RULE_procedureResultItem,
     CypherParser.RULE_cypherVersion,
     CypherParser.RULE_cypher,
+    CypherParser.RULE_labelType,
+    CypherParser.RULE_relType,
 
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
@@ -689,6 +695,29 @@ export function completionCoreCompletion(
           parsingResult,
         });
       }
+      if (
+        ruleNumber === CypherParser.RULE_symbolicNameString &&
+        candidateRule.ruleList.at(-1) ===
+          CypherParser.RULE_multiLabelNodePattern
+      ) {
+        return completeNodeLabel(dbSchema, parsingResult, symbolsInfo);
+      }
+
+      if (
+        ruleNumber === CypherParser.RULE_symbolicNameString &&
+        candidateRule.ruleList.at(-1) ===
+          CypherParser.RULE_multiRelTypeRelPattern
+      ) {
+        return completeRelationshipType(dbSchema, parsingResult, symbolsInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_labelType) {
+        return completeNodeLabel(dbSchema, parsingResult, symbolsInfo);
+      }
+
+      if (ruleNumber === CypherParser.RULE_relType) {
+        return completeRelationshipType(dbSchema, parsingResult, symbolsInfo);
+      }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
         const topExprIndex = candidateRule.ruleList.indexOf(
@@ -736,36 +765,43 @@ export function completionCoreCompletion(
         return [{ label: 'write', kind: CompletionItemKind.Event }];
       }
 
+      if (ruleNumber === CypherParser.RULE_arrowLine) {
+        const possiblePatternElementParent =
+          parsingResult.stopNode?.parentCtx?.parentCtx;
+        const lastNode: RelationshipPatternContext | NodePatternContext =
+          possiblePatternElementParent?.children.findLast(
+            (x) =>
+              (x instanceof RelationshipPatternContext ||
+                x instanceof NodePatternContext) &&
+              x.exception === null,
+          ) as RelationshipPatternContext | NodePatternContext;
+
+        const shortPathCompletions: CompletionItem[] =
+          lastNode instanceof RelationshipPatternContext
+            ? getShortPathCompletions(lastNode, symbolsInfo, dbSchema)
+            : [];
+        return shortPathCompletions;
+      }
+
       if (ruleNumber === CypherParser.RULE_leftArrow) {
-        return [
-          {
-            label: '-[]->()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '-[${1: }]->(${2: })',
-            detail: 'path template',
-            // vscode does not call the completion provider for every single character
-            // after the second character is typed (i.e) `MATCH ()-[` the completion is no longer valid
-            // it'd insert `MATCH ()-[[]->()` which is not valid. Hence we filter it out by using the filterText
-            filterText: '',
-          },
-          {
-            label: '-[]-()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '-[${1: }]-(${2: })',
-            detail: 'path template',
-            filterText: '',
-          },
-          {
-            label: '<-[]-()',
-            kind: CompletionItemKind.Snippet,
-            insertTextFormat: InsertTextFormat.Snippet,
-            insertText: '<-[${1: }]-(${2: })',
-            detail: 'path template',
-            filterText: '',
-          },
-        ];
+        const possiblePatternElementParent =
+          parsingResult?.stopNode?.parentCtx?.parentCtx;
+        if (possiblePatternElementParent) {
+          const lastNodePattern = possiblePatternElementParent.children
+            .toReversed()
+            .find((child) => {
+              if (child instanceof NodePatternContext) {
+                if (child.exception === null) {
+                  return true;
+                }
+              }
+            });
+          const availablePaths =
+            lastNodePattern instanceof NodePatternContext
+              ? getPathCompletions(lastNodePattern, symbolsInfo, dbSchema)
+              : [];
+          return availablePaths;
+        }
       }
 
       return [];
@@ -774,7 +810,11 @@ export function completionCoreCompletion(
 
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
-  if (CypherLexer.RPAREN === previousToken?.type && !manualTrigger) {
+  if (
+    (CypherLexer.RPAREN === previousToken?.type ||
+      CypherLexer.RBRACKET === previousToken?.type) &&
+    !manualTrigger
+  ) {
     return ruleCompletions.filter(
       (completion) => completion.kind === CompletionItemKind.Snippet,
     );
