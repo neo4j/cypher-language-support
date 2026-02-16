@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.29
+
+### Patch Changes
+
+- bfdc70e: Updates grammar and semantic analysis to 2026.02
+
 ## 2.0.0-next.28
 
 ### Patch Changes

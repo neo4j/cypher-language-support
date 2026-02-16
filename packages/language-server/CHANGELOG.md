@@ -1,5 +1,14 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- Updated dependencies [bfdc70e]
+  - @neo4j-cypher/language-support@2.0.0-next.29
+  - @neo4j-cypher/lint-worker@1.10.1-next.6
+  - @neo4j-cypher/query-tools@2.0.0-next.29
+
 ## 2.0.0-next.29
 
 ### Patch Changes
