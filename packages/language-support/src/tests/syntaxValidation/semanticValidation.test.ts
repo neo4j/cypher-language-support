@@ -78,6 +78,73 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Should not give semantic errors on SEARCH syntax in CYPHER 25', () => {
+    const query = `CYPHER 25 
+   MATCH (m:Movie {title: 'Godfather, The'})
+   MATCH (movie:Movie)
+   SEARCH movie IN (
+      VECTOR INDEX moviePlots
+      FOR m.embedding
+      LIMIT 5
+   ) SCORE AS score
+   RETURN movie.title AS title, movie.plot AS plot, score`;
+    const diagnostics = getDiagnosticsForQuery({ query: query });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Should give semantic errors on SEARCH syntax in CYPHER 5', () => {
+    const query = `CYPHER 5 
+   MATCH (m:Movie {title: 'Godfather, The'})
+   MATCH (movie:Movie)
+   SEARCH movie IN (
+      VECTOR INDEX moviePlots
+      FOR m.embedding
+      LIMIT 5
+   ) SCORE AS score
+   RETURN movie.title AS title, movie.plot AS plot, score`;
+    const diagnostics = getDiagnosticsForQuery({ query: query });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 77,
+          start: 58,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 2,
+          },
+          start: {
+            character: 3,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input 'SEARCH': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
+        offsets: {
+          end: 87,
+          start: 81,
+        },
+        range: {
+          end: {
+            character: 9,
+            line: 3,
+          },
+          start: {
+            character: 3,
+            line: 3,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Semantic analysis defaults to cypher 5 when no default version is given, and no version is given in query', () => {
     const query1 = 'CYPHER  5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });

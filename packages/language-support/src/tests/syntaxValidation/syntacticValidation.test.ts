@@ -202,8 +202,7 @@ describe('Syntactic validation spec', () => {
         severity: 2,
       },
       {
-        message:
-          "Invalid input 'n': expected an expression, 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or '}'",
+        message: "Invalid input 'n': expected an expression",
         offsets: {
           end: 114,
           start: 113,

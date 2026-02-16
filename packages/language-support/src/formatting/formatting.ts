@@ -33,7 +33,6 @@ import {
   DeleteClauseContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
-  DynamicPropertyExpressionContext,
   ElseBranchContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -94,7 +93,6 @@ import {
   ReturnItemContext,
   ReturnItemsContext,
   SetClauseContext,
-  SetDynamicPropContext,
   SetPropContext,
   SetPropsContext,
   ShowCommandYieldContext,
@@ -674,7 +672,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitCreateConstraint = (ctx: CreateConstraintContext) => {
     this.visit(ctx.CONSTRAINT());
-    this._visit(ctx.symbolicNameOrStringParameter());
+    this._visit(ctx.commandNameExpression());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
@@ -701,7 +699,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCreateIndex_ = (ctx: CreateIndex_Context) => {
-    this._visit(ctx.symbolicNameOrStringParameter());
+    this._visit(ctx.commandNameExpression());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
@@ -714,7 +712,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCreateFulltextIndex = (ctx: CreateFulltextIndexContext) => {
-    this._visit(ctx.symbolicNameOrStringParameter());
+    this._visit(ctx.commandNameExpression());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
     this.visit(ctx.FOR());
@@ -2136,16 +2134,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitSetProp = (ctx: SetPropContext) => {
-    this._visit(ctx.propertyExpression());
-    this.avoidBreakBetween();
-    this._visit(ctx.EQ());
-    const exprIndent = this.addIndentation();
-    this._visit(ctx.expression());
-    this.removeIndentation(exprIndent);
-  };
-
-  visitSetDynamicProp = (ctx: SetDynamicPropContext) => {
-    this._visit(ctx.dynamicPropertyExpression());
+    this._visit(ctx.expression2());
     this.avoidBreakBetween();
     this._visit(ctx.EQ());
     const exprIndent = this.addIndentation();
@@ -2169,13 +2158,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const exprIndent = this.addIndentation();
     this._visit(ctx.expression());
     this.removeIndentation(exprIndent);
-  };
-
-  visitDynamicPropertyExpression = (ctx: DynamicPropertyExpressionContext) => {
-    this._visit(ctx.expression1());
-    this.avoidSpaceBetween();
-    this.avoidBreakBetween();
-    this._visit(ctx.dynamicProperty());
   };
 
   visitDynamicProperty = (ctx: DynamicPropertyContext) => {

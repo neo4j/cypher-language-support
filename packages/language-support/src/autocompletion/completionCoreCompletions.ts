@@ -353,7 +353,6 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
     [
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_commandNameExpression,
-      CypherParser.RULE_symbolicNameOrStringParameter,
       CypherParser.RULE_symbolicNameOrStringParameterList,
       CypherParser.RULE_symbolicAliasNameOrParameter,
       CypherParser.RULE_passwordExpression,
@@ -887,7 +886,7 @@ function completeSymbolicName({
     dbSchema,
     previousToken,
     tokens,
-    inferExpectedParameterTypeFromContext(candidateRule),
+    ExpectedParameterType.String,
   );
 
   const rulesCreatingNewUserOrRole = [
@@ -948,5 +947,5 @@ function completeSymbolicName({
     ];
   }
 
-  return [];
+  return parameterSuggestions;
 }
