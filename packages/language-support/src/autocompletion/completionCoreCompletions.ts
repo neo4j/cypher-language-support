@@ -11,6 +11,7 @@ import CypherParser, {
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import {
+  findLastClause,
   findParent,
   findPreviousNonSpace,
   resolveCypherVersion,
@@ -25,7 +26,7 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
-import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import type { CandidateRule, ParserRuleContext } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import {
   CandidatesCollection,
   CodeCompletionCore,
@@ -548,7 +549,9 @@ export function completionCoreCompletion(
       .map(([token]) => Number(token)),
   );
 
-  const candidates = codeCompletion.collectCandidates(caretIndex);
+  const lastClause = findLastClause(parsingResult.ctx);
+  
+  const candidates = codeCompletion.collectCandidates(caretIndex, lastClause as ParserRuleContext);
 
   const ruleCompletions = Array.from(candidates.rules.entries()).flatMap(
     (candidate): CompletionItem[] => {

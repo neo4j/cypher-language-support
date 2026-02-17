@@ -5,6 +5,7 @@ import {
 } from './completionAssertionHelpers';
 
 describe('Misc auto-completion', () => {
+
   test('Correctly completes cypher version number, when cypher25 is enabled', () => {
     const query = 'CYPHER ';
 
