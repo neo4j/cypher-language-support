@@ -388,7 +388,7 @@ export function completeNodeLabel(
       try {
         const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
         if (isAnyNode(treeWithRewrittenAnys)) {
-          allLabelCompletions(dbSchema);
+          return allLabelCompletions(dbSchema);
         } else if (isNotAnyNode(treeWithRewrittenAnys)) {
           return [];
         }

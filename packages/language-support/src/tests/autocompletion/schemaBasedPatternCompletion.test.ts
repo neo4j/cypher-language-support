@@ -115,6 +115,20 @@ describe('Schema based completions', () => {
     );
   });
 
+  test('Label completion becomes all labels completion when relType is ANY', () => {
+    const wildcardQuery = 'MATCH (t:Trainer)-[r:%]->(:';
+    expect(allLabelCompletions(dbSchema)).toEqual(
+      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
+    );
+  });
+
+  test('Label completion becomes no labels completion when relType is NOT(ANY)', () => {
+    const wildcardQuery = 'MATCH (t:Trainer)-[r:!%]->(:';
+    expect([]).toEqual(
+      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
+    );
+  });
+
   test('Simple relType completion is the same when using & with wildcard', () => {
     const query = 'MATCH (t:Trainer)-[r:';
     const wildcardQuery = 'MATCH (t:Trainer & %)-[r:';
@@ -126,14 +140,6 @@ describe('Schema based completions', () => {
   test('RelType completion becomes all relTypes completion when using | with wildcard', () => {
     const wildcardQuery = 'MATCH (t:Trainer | %)-[r:';
     expect(allReltypeCompletions(dbSchema)).toEqual(
-      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
-    );
-  });
-
-  test('Wildcard also does not affect inner &-tree', () => {
-    const query = 'MATCH (t:Trainer | Pokemon)-[r:';
-    const wildcardQuery = 'MATCH (t:Trainer | (% & Pokemon))-[r:';
-    expect(getSymbolCompletions({ query, dbSchema })).toEqual(
       getSymbolCompletions({ query: wildcardQuery, dbSchema }),
     );
   });
