@@ -88,3 +88,20 @@ export function testCompletions({
 
   expect(unexpectedCompletions).toEqual([]);
 }
+
+export function getSymbolCompletions({
+  query,
+  dbSchema,
+}: {
+  query: string;
+  dbSchema: DbSchema;
+}) {
+  const result = lintCypherQuery(query, dbSchema);
+  parserWrapper.setSymbolsInfo({
+    query: query,
+    symbolTables: result.symbolTables,
+  });
+
+  const completions = autocomplete(query, dbSchema, query.length, false);
+  return completions;
+}

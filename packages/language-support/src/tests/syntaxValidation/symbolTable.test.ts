@@ -129,18 +129,15 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Person',
               },
               {
                 condition: 'or',
                 children: [
                   {
-                    validFrom: 32,
                     value: 'Parsnip',
                   },
                   {
-                    validFrom: 44,
                     value: 'Parish',
                   },
                 ],
@@ -179,11 +176,9 @@ describe('Symbol table spec', () => {
                     condition: 'and',
                     children: [
                       {
-                        validFrom: 24,
                         value: 'Person',
                       },
                       {
-                        validFrom: 38,
                         value: 'Parsnip',
                       },
                     ],
@@ -192,11 +187,9 @@ describe('Symbol table spec', () => {
                     condition: 'and',
                     children: [
                       {
-                        validFrom: 50,
                         value: 'Parish',
                       },
                       {
-                        validFrom: 62,
                         value: 'Party',
                       },
                     ],
@@ -230,15 +223,12 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Person',
               },
               {
-                validFrom: 32,
                 value: 'Parish',
               },
               {
-                validFrom: 49,
                 value: 'Parsnip',
               },
             ],
@@ -268,7 +258,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 41,
                 value: 'KNOWS',
               },
             ],
@@ -283,7 +272,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 23,
                 value: 'Person',
               },
             ],
@@ -314,7 +302,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 25,
                 value: 'KNOWS',
               },
             ],
@@ -329,11 +316,9 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Person',
               },
               {
-                validFrom: 53,
                 value: 'Driver',
               },
             ],
@@ -348,7 +333,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 37,
                 value: 'Person',
               },
             ],
@@ -378,7 +362,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 16,
                 value: 'Trainer',
               },
             ],
@@ -418,7 +401,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 36,
                 value: 'MET',
               },
             ],
@@ -433,7 +415,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 25,
                 value: 'KNOWS',
               },
             ],
@@ -448,7 +429,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Person',
               },
             ],
@@ -478,7 +458,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Trainer',
               },
             ],
@@ -508,7 +487,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 24,
                 value: 'KNOWS',
               },
             ],
@@ -523,7 +501,6 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Trainer',
               },
             ],
@@ -565,11 +542,9 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 15,
                 value: 'Trainer',
               },
               {
-                validFrom: 24,
                 value: 'Person',
               },
             ],
@@ -599,15 +574,12 @@ describe('Symbol table spec', () => {
             condition: 'and',
             children: [
               {
-                validFrom: 16,
                 value: 'Trainer',
               },
               {
-                validFrom: 25,
                 value: 'Person',
               },
               {
-                validFrom: 40,
                 value: 'Parsnip',
               },
             ],

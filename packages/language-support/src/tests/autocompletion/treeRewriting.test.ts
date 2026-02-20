@@ -4,6 +4,7 @@ import {
   childAlreadyExists,
   convertToCNF,
   pushInNots,
+  removeInnerAnys,
   removeDuplicates,
 } from '../../labelTreeRewriting';
 
@@ -39,7 +40,6 @@ describe('rewrite tree', () => {
     expect(cnfTree).toEqual({
       children: [
         {
-          validFrom: 13,
           value: 'Move',
         },
       ],
@@ -59,11 +59,9 @@ describe('rewrite tree', () => {
     expect(deduplicatedTree).toEqual({
       children: [
         {
-          validFrom: 15,
           value: 'Person',
         },
         {
-          validFrom: 30,
           value: 'Driver',
         },
       ],
@@ -82,11 +80,9 @@ describe('rewrite tree', () => {
     expect(cnfTree).toEqual({
       children: [
         {
-          validFrom: 15,
           value: 'Person',
         },
         {
-          validFrom: 30,
           value: 'Driver',
         },
       ],
@@ -136,11 +132,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 24,
               value: 'Monkey',
             },
           ],
@@ -149,11 +143,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 34,
               value: 'Litterate',
             },
           ],
@@ -179,11 +171,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 17,
               value: 'Person',
             },
             {
-              validFrom: 33,
               value: 'Monkey',
             },
           ],
@@ -192,11 +182,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 17,
               value: 'Person',
             },
             {
-              validFrom: 43,
               value: 'Litterate',
             },
           ],
@@ -205,11 +193,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 24,
               value: 'Friend',
             },
             {
-              validFrom: 33,
               value: 'Monkey',
             },
           ],
@@ -218,11 +204,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 24,
               value: 'Friend',
             },
             {
-              validFrom: 43,
               value: 'Litterate',
             },
           ],
@@ -245,11 +229,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 24,
               value: 'Monkey',
             },
           ],
@@ -258,15 +240,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 35,
               value: 'Litterate',
             },
             {
-              validFrom: 52,
               value: 'College_Educated',
             },
           ],
@@ -293,17 +272,14 @@ describe('rewrite tree', () => {
     expect(cnfTree).toEqual({
       children: [
         {
-          validFrom: 16,
           value: 'Monkey',
         },
         {
           children: [
             {
-              validFrom: 35,
               value: 'Litterate',
             },
             {
-              validFrom: 61,
               value: 'College_Educated',
             },
           ],
@@ -328,17 +304,14 @@ describe('rewrite tree', () => {
     expect(cnfTree).toEqual({
       children: [
         {
-          validFrom: 18,
           value: 'Monkey',
         },
         {
           children: [
             {
-              validFrom: 28,
               value: 'Litterate',
             },
             {
-              validFrom: 54,
               value: 'College_Educated',
             },
           ],
@@ -361,7 +334,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
           ],
@@ -404,7 +376,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
           ],
@@ -413,11 +384,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 25,
               value: 'E',
             },
             {
-              validFrom: 20,
               value: 'B',
             },
           ],
@@ -426,11 +395,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 25,
               value: 'E',
             },
             {
-              validFrom: 22,
               value: 'D',
             },
           ],
@@ -453,11 +420,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 25,
               value: 'Monkey',
             },
           ],
@@ -466,15 +431,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 16,
               value: 'Person',
             },
             {
-              validFrom: 35,
               value: 'Litterate',
             },
             {
-              validFrom: 61,
               value: 'College_Educated',
             },
           ],
@@ -496,15 +458,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
             {
-              validFrom: 18,
               value: 'C',
             },
             {
-              validFrom: 24,
               value: 'E',
             },
           ],
@@ -513,15 +472,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
             {
-              validFrom: 18,
               value: 'C',
             },
             {
-              validFrom: 26,
               value: 'F',
             },
           ],
@@ -530,15 +486,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
             {
-              validFrom: 20,
               value: 'D',
             },
             {
-              validFrom: 24,
               value: 'E',
             },
           ],
@@ -547,15 +500,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 12,
               value: 'A',
             },
             {
-              validFrom: 20,
               value: 'D',
             },
             {
-              validFrom: 26,
               value: 'F',
             },
           ],
@@ -564,15 +514,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 14,
               value: 'B',
             },
             {
-              validFrom: 18,
               value: 'C',
             },
             {
-              validFrom: 24,
               value: 'E',
             },
           ],
@@ -581,15 +528,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 14,
               value: 'B',
             },
             {
-              validFrom: 18,
               value: 'C',
             },
             {
-              validFrom: 26,
               value: 'F',
             },
           ],
@@ -598,15 +542,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 14,
               value: 'B',
             },
             {
-              validFrom: 20,
               value: 'D',
             },
             {
-              validFrom: 24,
               value: 'E',
             },
           ],
@@ -615,15 +556,12 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 14,
               value: 'B',
             },
             {
-              validFrom: 20,
               value: 'D',
             },
             {
-              validFrom: 26,
               value: 'F',
             },
           ],
@@ -643,7 +581,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 17,
               value: 'Person',
             },
           ],
@@ -652,7 +589,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 24,
               value: 'Driver',
             },
           ],
@@ -673,7 +609,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 17,
               value: 'Person',
             },
           ],
@@ -682,7 +617,6 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 24,
               value: 'Driver',
             },
           ],
@@ -701,11 +635,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 15,
               value: 'Person',
             },
             {
-              validFrom: 22,
               value: 'Driver',
             },
           ],
@@ -714,11 +646,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 37,
               value: 'Person',
             },
             {
-              validFrom: 44,
               value: 'Driver',
             },
           ],
@@ -733,11 +663,9 @@ describe('rewrite tree', () => {
         {
           children: [
             {
-              validFrom: 37,
               value: 'Person',
             },
             {
-              validFrom: 44,
               value: 'Driver',
             },
           ],
@@ -750,118 +678,236 @@ describe('rewrite tree', () => {
 
   test('Should be able to detect if a duplicate condition already exists', () => {
     const existingConditions: LabelOrCondition[] = [
-      { condition: 'or', children: [{ validFrom: 10, value: 'A' }] },
+      { condition: 'or', children: [{ value: 'A' }] },
     ];
     expect(
       childAlreadyExists(existingConditions, {
         condition: 'or',
-        children: [{ validFrom: 10, value: 'A' }],
+        children: [{ value: 'A' }],
       }),
     ).toEqual(true);
   });
 
   test('Should be able to detect if a duplicate condition already exists among all children', () => {
     const existingConditions: LabelOrCondition[] = [
-      { condition: 'or', children: [{ validFrom: 200, value: 'A' }] },
-      { condition: 'or', children: [{ validFrom: 14, value: 'B' }] },
-      { condition: 'and', children: [{ validFrom: 10, value: 'A' }] },
+      { condition: 'or', children: [{ value: 'A' }] },
+      { condition: 'or', children: [{ value: 'B' }] },
+      { condition: 'and', children: [{ value: 'A' }] },
     ];
     expect(
       childAlreadyExists(existingConditions, {
         condition: 'and',
-        children: [{ validFrom: 10, value: 'A' }],
+        children: [{ value: 'A' }],
       }),
     ).toEqual(true);
   });
 
   test('Should require all children of a condition to be equal to an existing condition, no false positives', () => {
     const existingConditions: LabelOrCondition[] = [
-      { condition: 'or', children: [{ validFrom: 200, value: 'A' }] },
-      { condition: 'or', children: [{ validFrom: 14, value: 'B' }] },
+      { condition: 'or', children: [{ value: 'A' }] },
+      { condition: 'or', children: [{ value: 'B' }] },
       {
         condition: 'and',
-        children: [
-          { validFrom: 10, value: 'A' },
-          { validFrom: 100, value: 'C' },
-        ],
+        children: [{ value: 'A' }, { value: 'C' }],
       },
     ];
     expect(
       childAlreadyExists(existingConditions, {
         condition: 'and',
-        children: [
-          { validFrom: 10, value: 'A' },
-          { validFrom: 100, value: 'B' },
-        ],
+        children: [{ value: 'A' }, { value: 'B' }],
       }),
     ).toEqual(false);
   });
 
   test('Should require all children of a condition to be equal to an existing condition, no false negatives', () => {
     const existingConditions: LabelOrCondition[] = [
-      { condition: 'or', children: [{ validFrom: 200, value: 'A' }] },
-      { condition: 'or', children: [{ validFrom: 14, value: 'B' }] },
+      { condition: 'or', children: [{ value: 'A' }] },
+      { condition: 'or', children: [{ value: 'B' }] },
       {
         condition: 'and',
-        children: [
-          { validFrom: 10, value: 'A' },
-          { validFrom: 100, value: 'C' },
-        ],
+        children: [{ value: 'A' }, { value: 'C' }],
       },
     ];
     expect(
       childAlreadyExists(existingConditions, {
         condition: 'and',
-        children: [
-          { validFrom: 10, value: 'A' },
-          { validFrom: 100, value: 'C' },
-        ],
+        children: [{ value: 'A' }, { value: 'C' }],
       }),
     ).toEqual(true);
   });
 
   test('Should be able to detect if a duplicate label already exists', () => {
-    const existingConditions: LabelOrCondition[] = [
-      { validFrom: 10, value: 'A' },
-    ];
-    expect(
-      childAlreadyExists(existingConditions, { validFrom: 10, value: 'A' }),
-    ).toEqual(true);
+    const existingConditions: LabelOrCondition[] = [{ value: 'A' }];
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
+      true,
+    );
   });
 
   test('Should be able to detect if a duplicate label already exists among all children', () => {
     const existingConditions: LabelOrCondition[] = [
-      { validFrom: 10, value: 'B' },
-      { validFrom: 15, value: 'C' },
-      { validFrom: 23, value: 'A' },
-      { validFrom: 10, value: 'D' },
+      { value: 'B' },
+      { value: 'C' },
+      { value: 'A' },
+      { value: 'D' },
     ];
-    expect(
-      childAlreadyExists(existingConditions, { validFrom: 10, value: 'A' }),
-    ).toEqual(true);
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
+      true,
+    );
   });
 
   test('Should ignore position', () => {
     const existingConditions: LabelOrCondition[] = [
-      { validFrom: 10, value: 'B' },
-      { validFrom: 15, value: 'C' },
-      { validFrom: 23, value: 'A' },
-      { validFrom: 10, value: 'D' },
+      { value: 'B' },
+      { value: 'C' },
+      { value: 'A' },
+      { value: 'D' },
     ];
-    expect(
-      childAlreadyExists(existingConditions, { validFrom: 999, value: 'A' }),
-    ).toEqual(true);
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
+      true,
+    );
   });
 
   test('Should respect label', () => {
     const existingConditions: LabelOrCondition[] = [
-      { validFrom: 10, value: 'B' },
-      { validFrom: 15, value: 'C' },
-      { validFrom: 23, value: 'A' },
-      { validFrom: 10, value: 'D' },
+      { value: 'B' },
+      { value: 'C' },
+      { value: 'A' },
+      { value: 'D' },
     ];
-    expect(
-      childAlreadyExists(existingConditions, { validFrom: 10, value: 'AB' }),
-    ).toEqual(false);
+    expect(childAlreadyExists(existingConditions, { value: 'AB' })).toEqual(
+      false,
+    );
+  });
+
+  test('AND with only ANY label should become ANY', () => {
+    const parsing = lintCypherQuery('MATCH (n:%)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'any',
+      children: [],
+    });
+  });
+
+  test('Longer AND with only ANY labels should become ANY', () => {
+    const parsing = lintCypherQuery('MATCH (n:% & % & %)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'any',
+      children: [],
+    });
+  });
+
+  test('Should remove ANYs from AND with other labels', () => {
+    const parsing = lintCypherQuery('MATCH (n:A & % & % & %)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'and',
+      children: [{ value: 'A' }],
+    });
+  });
+
+  test('OR with ANY should become ANY', () => {
+    const parsing = lintCypherQuery('MATCH (n:A | %)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'any',
+      children: [],
+    });
+  });
+
+  test('OR with ANYs should become single ANY', () => {
+    const parsing = lintCypherQuery('MATCH (n:% | A | % | %)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'any',
+      children: [],
+    });
+  });
+
+  test('Should handle ANY inside nested ORs', () => {
+    const parsing = lintCypherQuery('MATCH (n:A | (% | y))', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'any',
+      children: [],
+    });
+  });
+
+  test('Should handle ANY inside nested ANDs', () => {
+    const parsing = lintCypherQuery('MATCH (n:A & (% & B))', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'and',
+      children: [{ value: 'A' }, { value: 'B' }],
+    });
+  });
+
+  test('Should remove inner ANYs inside deeper AND', () => {
+    const parsing = lintCypherQuery('MATCH (n:A | % & B))', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'and',
+      children: [
+        {
+          condition: 'or',
+          children: [
+            { value: 'A' },
+            { condition: 'and', children: [{ value: 'B' }] },
+          ],
+        },
+      ],
+    });
+  });
+
+  test('CNF on ANYs inside deeper AND should remove single-label AND', () => {
+    const parsing = lintCypherQuery('MATCH (n:A | % & B))', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToCNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'and',
+      children: [
+        { condition: 'or', children: [{ value: 'A' }, { value: 'B' }] },
+      ],
+    });
+  });
+
+  test('Should handle single NOT(ANY)', () => {
+    const parsing = lintCypherQuery('MATCH (n:!%)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'not',
+      children: [{ condition: 'any', children: [] }],
+    });
+  });
+
+  test('Should handle AND(NOT(ANY), ...)', () => {
+    const parsing = lintCypherQuery('MATCH (n:!% & A & B)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'not',
+      children: [{ condition: 'any', children: [] }],
+    });
+  });
+
+  test('Should handle OR(NOT(ANY), ...)', () => {
+    const parsing = lintCypherQuery('MATCH (n:!% | A | B)', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'and',
+      children: [
+        { condition: 'or', children: [{ value: 'A' }, { value: 'B' }] },
+      ],
+    });
+  });
+
+  test('Should handle NOT(ANY) in joint AND/OR)', () => {
+    const parsing = lintCypherQuery('MATCH (n: A & (!% | B | C))', {}, false);
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(removeInnerAnys(firstSymbolLabels)).toEqual({
+      condition: 'and',
+      children: [
+        { value: 'A' },
+        { condition: 'or', children: [{ value: 'B' }, { value: 'C' }] },
+      ],
+    });
   });
 });

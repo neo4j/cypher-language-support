@@ -20,7 +20,12 @@ import {
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import { backtickIfNeeded } from './autocompletionHelpers';
-import { convertToCNF } from '../labelTreeRewriting';
+import {
+  convertToCNF,
+  isAnyNode,
+  isNotAnyNode,
+  removeInnerAnys,
+} from '../labelTreeRewriting';
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
@@ -44,7 +49,14 @@ export function getShortPathCompletions(
 
   let cnfTree: LabelOrCondition;
   try {
-    cnfTree = convertToCNF(lastVariable.labels);
+    const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
+    if (
+      isAnyNode(treeWithRewrittenAnys) ||
+      isNotAnyNode(treeWithRewrittenAnys)
+    ) {
+      return [];
+    }
+    cnfTree = convertToCNF(treeWithRewrittenAnys);
   } catch (e) {
     return [];
   }
@@ -99,7 +111,14 @@ export function getPathCompletions(
     getRelsFromNodesSets(dbSchema);
   let cnfTree: LabelOrCondition;
   try {
-    cnfTree = convertToCNF(lastVariable.labels);
+    const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
+    if (
+      isAnyNode(treeWithRewrittenAnys) ||
+      isNotAnyNode(treeWithRewrittenAnys)
+    ) {
+      return [];
+    }
+    cnfTree = convertToCNF(treeWithRewrittenAnys);
   } catch (e) {
     return [];
   }
@@ -113,7 +132,7 @@ export function getPathCompletions(
   for (const inRelType of inRelTypes) {
     const { inLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
       condition: 'and',
-      children: [{ value: inRelType, validFrom: 0 }],
+      children: [{ value: inRelType }],
     });
     for (const inLabel of inLabels) {
       snippetCompletions.push({
@@ -130,7 +149,7 @@ export function getPathCompletions(
   for (const outRelType of outRelTypes) {
     const { outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
       condition: 'and',
-      children: [{ value: outRelType, validFrom: 0 }],
+      children: [{ value: outRelType }],
     });
     for (const outLabel of outLabels) {
       snippetCompletions.push({
@@ -367,7 +386,13 @@ export function completeNodeLabel(
         getNodesFromRelsSet(dbSchema);
       let cnfTree: LabelOrCondition;
       try {
-        cnfTree = convertToCNF(foundVariable.labels);
+        const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
+        if (isAnyNode(treeWithRewrittenAnys)) {
+          return allLabelCompletions(dbSchema);
+        } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+          return [];
+        }
+        cnfTree = convertToCNF(treeWithRewrittenAnys);
       } catch (e) {
         return allLabelCompletions(dbSchema);
       }
@@ -456,7 +481,18 @@ export function completeRelationshipType(
       const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
         getRelsFromNodesSets(dbSchema);
 
-      const cnfTree = convertToCNF(foundVariable.labels);
+      let cnfTree: LabelOrCondition;
+      try {
+        const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
+        if (isAnyNode(treeWithRewrittenAnys)) {
+          return allReltypeCompletions(dbSchema);
+        } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+          return [];
+        }
+        cnfTree = convertToCNF(treeWithRewrittenAnys);
+      } catch (e) {
+        return [];
+      }
       let allIncomingLabels = new Set<string>();
       relsToNodesSet.forEach((part) => {
         allIncomingLabels = allIncomingLabels.union(part);

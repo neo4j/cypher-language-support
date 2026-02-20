@@ -84,13 +84,7 @@ function verifyLabelTree(labels: LabelOrCondition): boolean {
     labels.children.every(verifyLabelTree)
   ) {
     return true;
-  } else if (
-    'value' in labels &&
-    typeof labels.value === 'string' &&
-    'validFrom' in labels &&
-    typeof labels.validFrom === 'number' &&
-    labels.validFrom >= 0
-  ) {
+  } else if ('value' in labels && typeof labels.value === 'string') {
     return true;
   } else {
     return false;
@@ -105,7 +99,7 @@ function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
     }
     return { condition: labels.condition, children };
   } else {
-    return { value: labels.value, validFrom: labels.validFrom };
+    return { value: labels.value };
   }
 }
 

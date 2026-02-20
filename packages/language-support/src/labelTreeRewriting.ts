@@ -593,3 +593,64 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
   });
   return { ...newLabelTree, children: pushedChildren };
 }
+
+export const isAnyNode = (n: LabelOrCondition) =>
+  !isLabelLeaf(n) && n.condition === 'any';
+export const isNotAnyNode = (n: LabelOrCondition) =>
+  !isLabelLeaf(n) && n.condition === 'not' && isAnyNode(n.children[0]);
+
+/**
+ * Converts a label tree with ANYs to one without ANYs by simplifying like
+ * AND(ANY, ...) = AND(redudant, ...) = AND(...)
+ *
+ * OR(ANY, ...) = OR(ANY) = ANY
+ *
+ * AND(NOT(ANY), ...) = NOT(ANY)
+ *
+ * OR(NOT(ANY), ...) = OR(...)
+ * Doing this bottom up we ensure we either get ANY/NOT(ANY) or the existing root without any ANYs inside
+ * @param labelTree
+ * @returns a transformed copy of the tree such that the new root is either an ANY/NOT(ANY) node itself or has no inner ANYs
+ */
+export function removeInnerAnys(labelTree: LabelOrCondition): LabelOrCondition {
+  const newLabelTree: LabelOrCondition = copyLabelTree(labelTree);
+  if (isLabelLeaf(newLabelTree) || newLabelTree.condition === 'any') {
+    return newLabelTree;
+  }
+
+  newLabelTree.children = newLabelTree.children.map((c) => removeInnerAnys(c));
+  if (newLabelTree.condition === 'and') {
+    // ANY redundant in AND
+    newLabelTree.children = newLabelTree.children.filter((x) => !isAnyNode(x));
+    // NOT(ANY) dominates AND
+    if (newLabelTree.children.some((c) => isNotAnyNode(c))) {
+      return {
+        condition: 'not',
+        children: [{ condition: 'any', children: [] }],
+      };
+      // if we only had ANY-children, this AND-node really was only an ANY-node
+    } else if (newLabelTree.children.length === 0) {
+      return { condition: 'any', children: [] };
+    } else {
+      return newLabelTree;
+    }
+  } else if (newLabelTree.condition === 'or') {
+    // NOT(ANY) reundant in OR
+    newLabelTree.children = newLabelTree.children.filter(
+      (c) => !isNotAnyNode(c),
+    );
+    // ANY dominates OR
+    if (newLabelTree.children.some((c) => isAnyNode(c))) {
+      return { condition: 'any', children: [] };
+      // if we only had NOT(ANY)-children, this OR-node really was only a NOT(ANY)-node
+    } else if (newLabelTree.children.length === 0) {
+      return {
+        condition: 'not',
+        children: [{ condition: 'any', children: [] }],
+      };
+    } else {
+      return newLabelTree;
+    }
+  }
+  return newLabelTree;
+}

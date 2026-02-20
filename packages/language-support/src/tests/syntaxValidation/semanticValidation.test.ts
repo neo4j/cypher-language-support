@@ -1369,8 +1369,9 @@ Attempted to access graph other`,
           }
           RETURN y
       }`;
+    const result = getDiagnosticsForQuery({ query });
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    expect(result).toEqual([
       {
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
@@ -1490,7 +1491,8 @@ Attempted to access graph other`,
   test('Accumulates errors in Graph Pattern Matching', () => {
     const query = `MATCH (p = (a)--(b))+ (p = (c)--(d))+ RETURN p`;
 
-    expect(getDiagnosticsForQuery({ query })).toEqual([
+    const result = getDiagnosticsForQuery({ query });
+    expect(result).toEqual([
       {
         message:
           'Assigning a path in a quantified path pattern is not yet supported.',
