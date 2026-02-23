@@ -250,10 +250,18 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
-      this.graphSchema.refetch(),
       ...Object.values(this.procedures).map((version) => version?.refetch()),
       ...Object.values(this.functions).map((version) => version?.refetch()),
     ]);
+    if (
+      this.dbSchema.labels &&
+      this.dbSchema.relationshipTypes &&
+      this.dbSchema.labels.length + this.dbSchema.relationshipTypes.length < 200
+    ) {
+      await this.graphSchema.refetch();
+    } else {
+      this.dbSchema.graphSchema = undefined;
+    }
     this.events.emit('schemaFetched');
   }
 

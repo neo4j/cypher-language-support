@@ -167,7 +167,7 @@ export class Neo4jConnection {
           const result = tx.run(query, {});
           return await queryConfig.resultTransformer(result);
         },
-        { metadata: { ...METADATA_BASE, type: queryType } },
+        { timeout: 500, metadata: { ...METADATA_BASE, type: queryType } },
       );
     } finally {
       await session.close();
