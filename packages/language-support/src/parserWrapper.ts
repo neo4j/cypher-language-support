@@ -565,7 +565,7 @@ export type ParsedCommandNoPosition =
   | { type: 'parse-error' }
   | { type: 'sysinfo' }
   | { type: 'style'; operation?: 'reset' }
-  | { type: 'play' }
+  | { type: 'play'; guide?: string }
   | { type: 'access-mode'; operation?: string }
   | { type: 'help' };
 
@@ -723,7 +723,12 @@ function parseToCommand(
 
       const playCmd = consoleCmd.playCmd();
       if (playCmd) {
-        return { type: 'play', start, stop };
+        return {
+          type: 'play',
+          guide: playCmd.symbolicNameString()?.getText(),
+          start,
+          stop,
+        };
       }
 
       const accessModeCmd = consoleCmd.accessModeCmd();

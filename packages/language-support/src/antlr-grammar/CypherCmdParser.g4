@@ -50,7 +50,7 @@ styleCmd: STYLE RESET?;
 
 welcomeCmd: WELCOME;
 
-playCmd: PLAY;
+playCmd: PLAY symbolicNameString;
 
 accessModeArgs: (readCompletionRule | writeCompletionRule);
 
