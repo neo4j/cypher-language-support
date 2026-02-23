@@ -254,8 +254,8 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       ...Object.values(this.functions).map((version) => version?.refetch()),
     ]);
     if (
-      this.dbSchema.labels?.length &&
-      this.dbSchema.relationshipTypes?.length &&
+      this.dbSchema.labels &&
+      this.dbSchema.relationshipTypes &&
       this.dbSchema.labels?.length + this.dbSchema.relationshipTypes?.length <
         200
     ) {
