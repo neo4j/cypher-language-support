@@ -258,10 +258,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       this.dbSchema.relationshipTypes &&
       this.dbSchema.labels.length + this.dbSchema.relationshipTypes.length < 200
     ) {
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject('fetching timed out'), 500);
-      });
-      await Promise.race([this.graphSchema.refetch(), timeoutPromise]);
+      await this.graphSchema.refetch();
     } else {
       this.dbSchema.graphSchema = undefined;
     }
