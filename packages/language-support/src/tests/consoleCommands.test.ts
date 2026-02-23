@@ -54,7 +54,6 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
-    expectParsedCommands(':play', [{ type: 'play' }]);
     expectParsedCommands(':help', [{ type: 'help' }]);
   });
 
@@ -396,6 +395,7 @@ describe(':play', () => {
   });
 
   test('gives errors on incorrect usage of :play', () => {
+    expectErrorMessage(':play ', 'Expected an identifier');
     expectErrorMessage(':play 123', 'Expected an identifier');
     expectErrorMessage(':play foo bar', "Expected ';'");
   });
