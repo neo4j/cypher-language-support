@@ -93,9 +93,6 @@ jobs:
       - name: clean up zips
         run: rm -f grammar.zip && rm -f semantic-analysis-js.zip
 
-      - name: Build project
-        uses: ./.github/actions/setup-and-build
-      
       - name: Create New Branch Name
         run: |
           BRANCH_NAME="update-artifacts-$(date +%Y%m%d-%H%M%S)"
