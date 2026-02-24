@@ -54,7 +54,6 @@ describe('sanity checks', () => {
     expectParsedCommands(':disconnect', [{ type: 'disconnect' }]);
     expectParsedCommands(':sysinfo', [{ type: 'sysinfo' }]);
     expectParsedCommands(':style', [{ type: 'style' }]);
-    expectParsedCommands(':play', [{ type: 'play' }]);
     expectParsedCommands(':help', [{ type: 'help' }]);
   });
 
@@ -357,6 +356,82 @@ describe(':use', () => {
         length: 3,
         position: { line: 0, startCharacter: 5, startOffset: 5 },
         token: 'foo',
+        tokenType: 'symbolicName',
+      },
+    ]);
+  });
+});
+
+describe(':play', () => {
+  let consoleCommands: boolean;
+  const dbSchema = {
+    databaseNames: ['foo'],
+    aliasNames: ['bar'],
+    labels: ['fan'],
+    relationshipTypes: ['follows'],
+    userNames: ['fred'],
+    roleNames: ['fixer'],
+    parameters: { fixing: 'foobar' },
+    propertyKeys: ['firstName'],
+  };
+
+  beforeAll(() => {
+    consoleCommands = _internalFeatureFlags.consoleCommands;
+    _internalFeatureFlags.consoleCommands = true;
+  });
+  afterAll(() => {
+    _internalFeatureFlags.consoleCommands = consoleCommands;
+  });
+  test('parses with arg', () => {
+    expectParsedCommands(':play intro', [{ type: 'play', guide: 'intro' }]);
+  });
+
+  test('gives no completion on `:play `', () => {
+    expect(autocomplete(':play ', dbSchema)).toEqual([]);
+  });
+
+  test('gives no completion on `:play f`', () => {
+    expect(autocomplete(':play f', dbSchema)).toEqual([]);
+  });
+
+  test('gives errors on incorrect usage of :play', () => {
+    expectErrorMessage(':play ', 'Expected an identifier');
+    expectErrorMessage(':play 123', 'Expected an identifier');
+    expectErrorMessage(':play foo bar', "Expected ';'");
+  });
+
+  test('highlights properly', () => {
+    expect(applySyntaxColouring(':play')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'play',
+        tokenType: 'consoleCommand',
+      },
+    ]);
+    expect(applySyntaxColouring(':play intro')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'play',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 5,
+        position: { line: 0, startCharacter: 6, startOffset: 6 },
+        token: 'intro',
         tokenType: 'symbolicName',
       },
     ]);
