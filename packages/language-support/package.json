@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/language-support",
-  "version": "2.0.0-next.29",
+  "version": "2.0.0-next.30",
   "description": "Cypher language support",
   "keywords": [
     "autocompletion",

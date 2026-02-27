@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- 25fad16: Fix linting of :play command
+
 ## 2.0.0-next.29
 
 ### Patch Changes
