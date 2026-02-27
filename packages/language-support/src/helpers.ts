@@ -33,9 +33,7 @@ export type EnrichedParseTree = ParseTree & {
 };
 
 /**
- * In antlr4ng, ParserRuleContext does not have an `exception` property (unlike
- * the old antlr4 runtime where it was explicitly set by the error strategy).
- * This helper detects contexts that are incomplete or erroneous by checking for:
+ * Detects contexts that are incomplete or erroneous by checking for:
  * 1. ErrorNode children (tokens consumed during error recovery)
  * 2. Empty/synthesized contexts (created by error recovery with no real content)
  * 3. Contexts where the stop position is before the start (degenerate range)
@@ -179,9 +177,8 @@ export function splitIntoStatements(
       current.type === CypherLexer.EOF
     ) {
       // For chunks ending with SEMICOLON (not EOF), add a synthetic EOF token
-      // so the parser doesn't try to fetch more tokens from the exhausted lexer.
-      // Without this, the parser would fetch an EOF positioned at the end of the
-      // entire input, causing getTextFromRange to span beyond the chunk boundary.
+      // so the parser doesn't fetch an EOF positioned at the end of the entire
+      // input, which would cause getTextFromRange to span beyond the chunk.
       if (current.type === CypherLexer.SEMICOLON) {
         const eof = CommonToken.fromType(Token.EOF, '<EOF>');
         eof.start = current.stop + 1;

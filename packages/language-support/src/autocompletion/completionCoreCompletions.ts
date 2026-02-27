@@ -28,9 +28,6 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
-// NOTE: The vendored antlr4-c3 had custom types: CandidateRule (now ICandidateRule)
-// and FollowingTokens (with .indexes and .optional fields). The upstream antlr4-c3
-// uses ICandidateRule and TokenList (plain number[]) without the custom `optional` flag.
 import type { ICandidateRule } from 'antlr4-c3';
 import { CandidatesCollection, CodeCompletionCore } from 'antlr4-c3';
 import { _internalFeatureFlags } from '../featureFlags';
@@ -274,13 +271,6 @@ function getTokenCompletions(
           ' ' +
           (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
 
-        // NOTE: The previously vendored antlr4-c3 had a custom `optional` flag
-        // on FollowingTokens (added by ncordon) that, when true, would return
-        // BOTH the single token and the compound token. The upstream antlr4-c3
-        // library uses a plain number[] for follow-up tokens without an
-        // `optional` flag, so only the compound completion is returned now.
-        // This may result in fewer completion items for some cases (e.g.,
-        // console commands).
         return [{ label: followUp, kind }];
       }
     } else {

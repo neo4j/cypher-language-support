@@ -404,7 +404,7 @@ class VariableCollector implements ParseTreeListener {
         this.tokens[nextTokenIndex + 1]?.type === CypherParser.EOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
-        (ctx.parent)?.ruleIndex as unknown as number,
+        ctx.parent?.ruleIndex as unknown as number,
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {
@@ -582,8 +582,8 @@ function parseToCommand(
     const start = stmts.start;
     let stop = stmts.stop;
 
-    // In antlr4ng, the grammar rule ends with EOF, so stmts.stop is always
-    // the EOF token. Step back past it to the actual last meaningful token.
+    // The grammar rule ends with EOF, so stmts.stop is always the EOF token.
+    // Step back past it to the actual last meaningful token.
     if (stop && stop.type === CypherLexer.EOF && stop.tokenIndex > 0) {
       stop = tokens[stop.tokenIndex - 1];
     }

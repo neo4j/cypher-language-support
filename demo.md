@@ -123,20 +123,33 @@ Exit status 1
 
 The old `antlr4` runtime's error strategy was more "fail-fast" — it would set `ctx.exception` when a rule couldn't parse, leaving a clean signal for downstream code to split input into "parsed" vs "unparseable" portions.
 
-`antlr4ng` is more resilient: it inserts/deletes tokens and keeps parsing through errors. This is generally better for autocompletion and validation, but it breaks the formatter's assumption that it can detect where parsing gave up.
+`antlr4ng` is more resilient: it inserts/deletes tokens and keeps parsing through errors. This is generally better for autocompletion and validation, but it changes how code that relied on `ctx.exception` needs to work.
 
 ### Impact on the formatter (5 failures)
 
-The formatter relied on `tree.exception` to detect when parsing failed:
+The formatter has a two-tier approach to syntax errors:
 
-1. If parsing stopped partway, everything after the failure was treated as an "unparseable tail" and left as-is
-2. The formatted portion + unparseable tail would be returned
+1. **Unparseable tail** — everything after the point where the parser "gave up" is appended verbatim (the `unParseable` string). The visitor doesn't try to format this portion.
+2. **Error nodes within the parsed portion** — `ErrorNode` tokens are handled by `visitErrorNode`, which captures the gap between the last valid token and the error token as a `SYNTAX_ERROR` chunk, preserving original text.
+3. **Safety net** — after formatting, the non-whitespace character count of the result is compared to the original. If they differ, it's either a syntax error problem (user-facing message) or an internal bug (`INTERNAL_FORMAT_ERROR_MESSAGE`).
 
-Now, antlr4ng recovers through the entire input. The parser consumes everything, so the "unparseable tail" is never detected. When the formatter visits error-recovered tree nodes with unexpected structure, it produces output where non-whitespace characters differ from the input, hitting the safety check that throws `INTERNAL_FORMAT_ERROR_MESSAGE`.
+The old code detected the "unparseable tail" via `tree.exception`. We replaced this with a `FirstErrorListener` that captures the first offending token, combined with a check that the parser stopped consuming before end-of-input (`treeStopIndex < lastNonEofIndex`). However, antlr4ng's aggressive recovery means the parser usually *does* consume to the end of input, even when there were errors. So `treeStopIndex` reaches `lastNonEofIndex`, the unparseable tail is never set, and the formatter visits the full error-recovered tree. When it encounters unexpected node shapes, the non-whitespace count check fails and throws `INTERNAL_FORMAT_ERROR_MESSAGE`.
+
+### Options considered for the formatter
+
+**Option A: Drop the stop-index guard** — If the error listener caught any error, treat everything from that token onward as unparseable. Simplest change (remove one condition), but experimentally this regresses from 5 failures to 16 — all the tests where the formatter successfully formats *around* mid-query errors would break, because the entire tail gets dumped as raw text.
+
+**Option B: Per-clause try/catch in the visitor** — Wrap each clause-level visit in try/catch. On failure, fall back to the clause's original text (from token positions) and continue formatting the rest. Most granular — only broken clauses lose formatting. But this is a significant refactor of the visitor, risks masking real bugs, and needs care around synthesized token positions.
+
+**Option C: Hybrid retry fallback** — Keep the current code as-is for the happy path. When the safety-net check fails and `unParseable` is not set, re-attempt using the error listener's first offending token as the split point. If that also fails, return the original query unchanged. Zero regression risk (currently-passing tests never hit the retry path), ~15 lines of change, and turns the confusing `INTERNAL_FORMAT_ERROR_MESSAGE` into a graceful fallback.
+
+**Recommendation**: Option C for this PR (minimal, no regressions), with Option B as a follow-up if finer-grained error formatting is desired.
 
 ### Impact on console command completion (1 failure)
 
-The vendored `antlr4-c3` had a custom `optional` flag (added by ncordon) on `FollowingTokens` that returned BOTH single and compound token completions. The upstream `antlr4-c3` uses a plain `number[]` without this flag, so only compound completions are returned — causing 2 extra entries (`history`, `clear`) to appear in results.
+The vendored `antlr4-c3` had a custom `optional` flag on `FollowingTokens` (added in the vendored fork) that returned BOTH single and compound token completions. The upstream `antlr4-c3` uses a plain `number[]` (the `TokenList` type) without this flag, so only compound completions are returned — causing 2 extra entries (`history`, `clear`) to appear in results.
+
+The vendored code also used custom types `CandidateRule` (now `ICandidateRule` in upstream) and `FollowingTokens` (with `.indexes` and `.optional` fields). The upstream library uses `ICandidateRule` and `TokenList` (plain `number[]`). The code in `completionCoreCompletions.ts` has been updated to use the upstream types.
 
 ```bash
 pnpm --filter @neo4j-cypher/language-support test 2>&1 | grep "FAIL\|×"
@@ -162,7 +175,7 @@ pnpm --filter @neo4j-cypher/language-support test 2>&1 | grep "FAIL\|×"
 
 ### 1. `hasParseError()` helper replaces `exception` checks
 
-The old code checked `'exception' in ctx` to detect parse errors. Since antlr4ng never sets this property, a new heuristic helper checks for ErrorNode children, empty contexts, degenerate ranges, and missing closing tokens:
+The old code checked `'exception' in ctx` to detect parse errors. Since antlr4ng's `ParserRuleContext` does not have an `exception` property (the old antlr4 runtime set this explicitly via the error strategy), a new heuristic helper checks for ErrorNode children, empty contexts, degenerate ranges, and missing closing tokens:
 
 ```bash
 sed -n '43,64p' packages/language-support/src/helpers.ts
@@ -236,7 +249,9 @@ class FirstErrorListener implements ANTLRErrorListener {
 
 ### 3. Multi-statement splitting with synthetic EOF tokens
 
-When splitting multi-statement input at semicolons, each chunk needs a synthetic EOF token. Without it, the parser fetches EOF from the exhausted lexer, getting position info that spans beyond the chunk boundary:
+When splitting multi-statement input at semicolons, each chunk needs a synthetic EOF token. Without it, the parser fetches EOF from the exhausted lexer, getting position info that spans beyond the chunk boundary.
+
+Note: The `fetchedEOF` property is set via a cast (`as unknown as Record<string, unknown>`) because it's not in antlr4ng's public TypeScript types. At runtime it's a regular writable own property on `CommonTokenStream` instances (verified in antlr4ng@3.0.16). This is an implementation detail that could break in future antlr4ng versions.
 
 ```bash
 grep -n 'synthetic EOF\|CommonToken.fromType\|fetchedEOF' packages/language-support/src/helpers.ts

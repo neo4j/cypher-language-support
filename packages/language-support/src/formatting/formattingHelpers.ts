@@ -175,10 +175,9 @@ export function getParseTreeAndTokens(query: string) {
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
 
-  // In antlr4ng, ParserRuleContext does not have an `exception` property.
-  // Instead, we detect non-recoverable parse failures by checking if the parser
-  // stopped consuming tokens before the end of input. If the tree's stop token
-  // doesn't cover the last non-EOF token, the remaining tokens are unparseable.
+  // Detect non-recoverable parse failures by checking if the parser stopped
+  // consuming tokens before the end of input. If the tree's stop token doesn't
+  // cover the last non-EOF token, the remaining tokens are unparseable.
   tokens.fill();
   const allTokens = tokens.getTokens();
   const lastNonEofIndex = allTokens.length >= 2 ? allTokens.length - 2 : 0;
