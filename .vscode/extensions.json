@@ -1,7 +1,6 @@
 {
   "recommendations": [
     "vitest.explorer",
-    "esbenp.prettier-vscode",
     "oxc.oxc-vscode",
     "bradlc.vscode-tailwindcss"
   ]

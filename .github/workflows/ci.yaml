@@ -38,10 +38,8 @@ jobs:
       - name: Check there are no linting errors
         run: pnpm lint
 
-      - name: List files that have not been formatted properly
-        run: |
-          pnpm format
-          (git diff-index --name-status HEAD | grep ".*\.ts" && exit 1) || echo "\n\nAll Typescript files are correctly formatted"
+      - name: Check formatting
+        run: pnpm format:check
 
   unit-test:
     name: Unit tests
@@ -77,7 +75,7 @@ jobs:
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
           browser: firefox
-  
+
   chromium-react-codemirror-e2e-test:
     name: Chromium React Codemirror E2E tests
     needs: build
@@ -89,7 +87,6 @@ jobs:
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
           browser: chromium
-  
 
   vscode-webview-test:
     name: VSCode Webview tests

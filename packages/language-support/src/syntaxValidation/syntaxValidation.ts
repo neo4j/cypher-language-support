@@ -105,7 +105,7 @@ function generateSyntaxDiagnostic(
   const endColumn =
     linesOffset == 0
       ? startColumn + rawText.length
-      : nameChunks.at(-1)?.length ?? 0;
+      : (nameChunks.at(-1)?.length ?? 0);
 
   const error: SyntaxDiagnostic = {
     severity,

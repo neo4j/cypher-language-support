@@ -1,9 +1,21 @@
 {
   "name": "@neo4j-cypher/lint-worker",
+  "version": "1.10.1-next.6",
   "description": "Cypher Lint Worker",
-  "author": "Neo4j Inc.",
+  "keywords": [
+    "cypher",
+    "lint worker",
+    "neo4j"
+  ],
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
   "license": "Apache-2.0",
-  "sideEffects": false,
+  "author": "Neo4j Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
   "files": [
     "./dist/cjs/lintWorker.cjs",
     "./dist/esm/lintWorker.mjs",
@@ -13,31 +25,15 @@
     "LICENSE.md",
     "CHANGELOG.md"
   ],
-  "keywords": [
-    "neo4j",
-    "cypher",
-    "lint worker"
-  ],
-  "version": "1.10.1-next.6",
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/neo4j/cypher-language-support.git"
-  },
-  "bugs": {
-    "url": "https://github.com/neo4j/cypher-language-support/issues"
-  },
-  "engineStrict": true,
-  "engines": {
-    "node": ">=24.11.1"
-  },
-  "dependencies": {
-    "@neo4j-cypher/language-support": "workspace:*",
-    "@neo4j-cypher/query-tools": "workspace:*",
-    "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
-    "vscode-languageserver": "^8.1.0",
-    "vscode-languageserver-types": "^3.17.3",
-    "workerpool": "^9.3.3",
-    "axios": "^1.9.0"
+  "sideEffects": false,
+  "types": "./dist/types/src/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/esm/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
+      "import": "./dist/esm/index.mjs",
+      "default": "./dist/esm/index.mjs"
+    }
   },
   "scripts": {
     "build": "pnpm build-types && pnpm build-lintworker-esm && pnpm build-lintworker-commonjs && pnpm build-commonjs && pnpm build-esm",
@@ -49,17 +45,21 @@
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "test": "vitest run"
   },
+  "dependencies": {
+    "@neo4j-cypher/language-support": "workspace:*",
+    "@neo4j-cypher/query-tools": "workspace:*",
+    "axios": "^1.9.0",
+    "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
+    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver-types": "^3.17.3",
+    "workerpool": "^9.3.3"
+  },
   "devDependencies": {
     "@types/lodash.debounce": "^4.0.9",
     "@types/semver": "^7.7.0"
   },
-  "types": "./dist/types/src/index.d.ts",
-  "exports": {
-    ".": {
-      "types": "./dist/esm/index.d.ts",
-      "require": "./dist/cjs/index.cjs",
-      "import": "./dist/esm/index.mjs",
-      "default": "./dist/esm/index.mjs"
-    }
-  }
+  "engines": {
+    "node": ">=24.11.1"
+  },
+  "engineStrict": true
 }

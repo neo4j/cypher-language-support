@@ -1,9 +1,16 @@
 {
   "name": "@neo4j-cypher/query-tools",
-  "description": "",
-  "author": "Neo4j Inc.",
-  "license": "Apache-2.0",
   "version": "2.0.0-next.29",
+  "description": "",
+  "bugs": {
+    "url": "https://github.com/neo4j/cypher-language-support/issues"
+  },
+  "license": "Apache-2.0",
+  "author": "Neo4j Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/neo4j/cypher-language-support.git"
+  },
   "main": "./dist/cjs/src/index.js",
   "module": "./dist/esm/src/index.js",
   "types": "./dist/types/src/index.d.ts",
@@ -15,25 +22,6 @@
       "default": "./dist/cjs/src/index.js"
     }
   },
-  "repository": {
-    "type": "git",
-    "url": "git://github.com/neo4j/cypher-language-support.git"
-  },
-  "bugs": {
-    "url": "https://github.com/neo4j/cypher-language-support/issues"
-  },
-  "engineStrict": true,
-  "engines": {
-    "node": ">=24.11.1"
-  },
-  "dependencies": {
-    "@neo4j-cypher/language-support": "workspace:*",
-    "ajv": "^8.12.0",
-    "neo4j-driver": "catalog:"
-  },
-  "devDependencies": {
-    "@testcontainers/neo4j": "^11.5.1"
-  },
   "scripts": {
     "build": "concurrently 'npm:build-esm' 'npm:build-commonjs' 'npm:build-types'",
     "build-esm": "tsc --module esnext --outDir dist/esm",
@@ -43,5 +31,17 @@
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
     "test": "vitest run extract-unique-nodes-and-relationships",
     "test:polling": "vitest run pollingIntegrationTests"
-  }
+  },
+  "dependencies": {
+    "@neo4j-cypher/language-support": "workspace:*",
+    "ajv": "^8.12.0",
+    "neo4j-driver": "catalog:"
+  },
+  "devDependencies": {
+    "@testcontainers/neo4j": "^11.5.1"
+  },
+  "engines": {
+    "node": ">=24.11.1"
+  },
+  "engineStrict": true
 }

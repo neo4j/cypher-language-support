@@ -12,9 +12,7 @@ import {
 
 type DatabaseInformationItemType = 'label' | 'relationship';
 
-export class DatabaseInformationTreeDataProvider
-  implements TreeDataProvider<DatabaseInformationItem>
-{
+export class DatabaseInformationTreeDataProvider implements TreeDataProvider<DatabaseInformationItem> {
   private _onDidChangeTreeData: EventEmitter<
     DatabaseInformationItem | undefined | void
   > = new EventEmitter<DatabaseInformationItem | undefined | void>();

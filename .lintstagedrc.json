@@ -1,5 +1,5 @@
 {
-  "*.ts": ["prettier --write", "oxlint --fix --type-aware --max-warnings 0"],
+  "*.ts": ["oxfmt", "oxlint --fix --type-aware --max-warnings 0"],
   "*.js": ["oxlint --fix --type-aware --max-warnings 0"],
-  "*.json": ["prettier --write"]
+  "*.json": ["oxfmt"]
 }

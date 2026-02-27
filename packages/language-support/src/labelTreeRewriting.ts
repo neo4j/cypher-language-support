@@ -571,8 +571,8 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
       c.condition === 'not'
         ? 'doubleNegation'
         : c.condition === 'and'
-        ? 'or'
-        : 'and';
+          ? 'or'
+          : 'and';
     if (newCondition === 'doubleNegation') {
       // If double negation, completely remove both negations and restart to check for leaves
       newLabelTree = newLabelTree.children[0].children[0];

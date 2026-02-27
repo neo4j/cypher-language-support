@@ -204,14 +204,10 @@ export class ConnectionPanel {
                     : 'Add New Connection'
                 }</h1>
                 <form class="form" action="" novalidate method="post">
-                  <input type="hidden" id="key" value="${
-                    this._connection?.key ?? getNonce(16)
-                  }" />
+                  <input type="hidden" id="key" value="${this._connection?.key ?? getNonce(16)}" />
                   <div class="form--input-wrapper">
                     <label for="name">Display name</label>
-                    <input type="text" id="name" value="${
-                      this._connection?.name ?? ''
-                    }" />
+                    <input type="text" id="name" value="${this._connection?.name ?? ''}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
@@ -267,9 +263,7 @@ export class ConnectionPanel {
                   </div>
                   <div class="form--input-wrapper">
                     <label for="password">Password *</label>
-                    <input type="password" id="password" required value="${
-                      this._password ?? ''
-                    }"/>
+                    <input type="password" id="password" required value="${this._password ?? ''}"/>
                   </div>
                   <div class="form--actions">
                     <input id="save-connection" type="submit" value="Save & Connect" />

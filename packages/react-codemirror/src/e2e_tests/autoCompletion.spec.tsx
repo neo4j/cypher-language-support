@@ -33,7 +33,10 @@ RETURN n;`}
   await textField.press('Control+ ');
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
-  await page.locator('.cm-tooltip-autocomplete').getByText('WHERE', {exact: true}).click();
+  await page
+    .locator('.cm-tooltip-autocomplete')
+    .getByText('WHERE', { exact: true })
+    .click();
 
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
@@ -544,13 +547,16 @@ test('completions depend on the Cypher version', async ({ page, mount }) => {
   ).toBeVisible();
 });
 
-test('does not complete properties for non node / relationship variables', async ({ page, mount }) => {
+test('does not complete properties for non node / relationship variables', async ({
+  page,
+  mount,
+}) => {
   await mount(
     <CypherEditor
-    schema={{
-        propertyKeys: ["nodeProperty"]
+      schema={{
+        propertyKeys: ['nodeProperty'],
       }}
-    />
+    />,
   );
 
   const textField = page.getByRole('textbox');
@@ -562,10 +568,10 @@ test('does not complete properties for non node / relationship variables', async
 
   await textField.fill('WITH 1 AS x RETURN x.');
   // This could be flaky if the semantic analysis takes too long
-  await page.waitForTimeout(500)
+  await page.waitForTimeout(500);
   await textField.press('Escape');
   await textField.press('Control+ ');
   await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('nodeProperty')
+    page.locator('.cm-tooltip-autocomplete').getByText('nodeProperty'),
   ).not.toBeVisible();
 });

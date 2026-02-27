@@ -143,9 +143,8 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
   await disconnectAllDatabaseConnections();
   await saveConnection(connection);
 
-  const result = await updateDatabaseConnectionAndNotifyLanguageClient(
-    connection,
-  );
+  const result =
+    await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 
   return { result, connection };
 }
@@ -416,8 +415,8 @@ async function connectToDatabaseAndNotifyLanguageClient(
   const state: State = result.success
     ? 'active'
     : result.retriable
-    ? 'error'
-    : 'inactive';
+      ? 'error'
+      : 'inactive';
 
   if (result.success) {
     await sendNotificationToLanguageClient('connectionUpdated', settings);

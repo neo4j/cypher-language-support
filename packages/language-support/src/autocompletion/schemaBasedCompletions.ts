@@ -378,8 +378,8 @@ export function completeNodeLabel(
       const direction = lastValidElement.leftArrow()
         ? 'outgoing'
         : lastValidElement.rightArrow()
-        ? 'incoming'
-        : 'bidirectional';
+          ? 'incoming'
+          : 'bidirectional';
 
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
@@ -413,8 +413,8 @@ export function completeNodeLabel(
         direction === 'outgoing'
           ? outLabels
           : direction === 'incoming'
-          ? inLabels
-          : inLabels.union(outLabels);
+            ? inLabels
+            : inLabels.union(outLabels);
       return labelsToCompletions(Array.from(allNodes));
     }
   }
@@ -458,8 +458,8 @@ export function completeRelationshipType(
       direction = thisCtx.leftArrow()
         ? 'outgoing'
         : thisCtx.rightArrow()
-        ? 'incoming'
-        : 'bidirectional';
+          ? 'incoming'
+          : 'bidirectional';
     }
 
     // limitation: bailing out on quantifiers
@@ -510,8 +510,8 @@ export function completeRelationshipType(
         direction === 'outgoing'
           ? outLabels
           : direction === 'incoming'
-          ? inLabels
-          : inLabels.union(outLabels);
+            ? inLabels
+            : inLabels.union(outLabels);
       return reltypesToCompletions(Array.from(allRels));
     }
   }

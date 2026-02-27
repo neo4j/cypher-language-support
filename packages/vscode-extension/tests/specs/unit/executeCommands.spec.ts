@@ -428,7 +428,10 @@ suite('Execute commands spec', () => {
     test('Switching a database should show a success message', async () => {
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
-        { type: 'database', key: 'movies' },
+        {
+          type: 'database',
+          key: 'movies',
+        },
       );
 
       sandbox.assert.calledWith(
@@ -440,7 +443,10 @@ suite('Execute commands spec', () => {
     test('Switching to a bad database should show a failure message', async () => {
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
-        { type: 'database', key: 'bad-database' },
+        {
+          type: 'database',
+          key: 'bad-database',
+        },
       );
 
       sandbox.assert.calledWith(
@@ -452,7 +458,10 @@ suite('Execute commands spec', () => {
     test('Switching to a non-database should do nothing', async () => {
       await commands.executeCommand(
         CONSTANTS.COMMANDS.SWITCH_DATABASE_COMMAND,
-        { type: 'activeDatabase', key: 'neo4j' },
+        {
+          type: 'activeDatabase',
+          key: 'neo4j',
+        },
       );
 
       sandbox.assert.notCalled(showInformationMessageStub);

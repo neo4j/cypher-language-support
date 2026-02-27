@@ -20,9 +20,7 @@ export class ParameterItem extends TreeItem {
   }
 }
 
-export class ParameterTreeDataProvider
-  implements TreeDataProvider<ParameterItem>
-{
+export class ParameterTreeDataProvider implements TreeDataProvider<ParameterItem> {
   private _onDidChangeTreeData: EventEmitter<ParameterItem | undefined | void> =
     new EventEmitter<ParameterItem | undefined | void>();
   readonly onDidChangeTreeData: Event<ParameterItem | undefined | void> =

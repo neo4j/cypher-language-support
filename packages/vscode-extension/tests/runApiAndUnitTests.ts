@@ -18,7 +18,7 @@ async function main() {
   ]);
 
   try {
-    /* This is equivalent to running from a command line: 
+    /* This is equivalent to running from a command line:
 
        code \
         --extensionDevelopmentPath=<EXTENSION-ROOT-PATH> \

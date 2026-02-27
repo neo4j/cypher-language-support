@@ -4,7 +4,7 @@ interface FeatureFlags {
 }
 
 export const _internalFeatureFlags: FeatureFlags = {
-  /* 
+  /*
   Because the parserWrapper is done as a single-ton global variable, the setting for 
   console commands was also easiest to do as a global variable as it avoid messing with the cache
 

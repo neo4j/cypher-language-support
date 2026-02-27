@@ -247,7 +247,10 @@ export class Neo4jSchemaPoller {
     const driver = neo4j.driver(
       url,
       neo4j.auth.basic(credentials.username, credentials.password),
-      { userAgent: config.appName, ...config.driverConfig },
+      {
+        userAgent: config.appName,
+        ...config.driverConfig,
+      },
     );
 
     await driver.verifyConnectivity({ database: database });
@@ -323,9 +326,7 @@ export class Neo4jSchemaPoller {
     retriable: boolean,
   ): ConnectionError {
     const friendlyMessage = retriable
-      ? `${connectionError.friendlyMessage}. Retrying in ${
-          RETRY_INTERVAL_MS / 1000
-        } seconds`
+      ? `${connectionError.friendlyMessage}. Retrying in ${RETRY_INTERVAL_MS / 1000} seconds`
       : connectionError.friendlyMessage;
 
     return {

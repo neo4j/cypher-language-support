@@ -1,10 +1,10 @@
 {
   "name": "neo4j-cypher-language-support",
-  "description": "Neo4j's Cypher Language Support",
-  "license": "Apache",
   "version": "1.0.0",
-  "categories": [],
   "private": true,
+  "description": "Neo4j's Cypher Language Support",
+  "categories": [],
+  "license": "Apache",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/neo4j/cypher-language-support.git"
@@ -24,13 +24,9 @@
     "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
     "lint": "oxlint --type-aware --max-warnings 0",
     "lint-fix": "pnpm lint --fix",
-    "format": "prettier --config .prettierrc.json '**/*.ts' --write",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "benchmark": "pnpm --recursive benchmark --concurrency=1"
-  },
-  "engineStrict": true,
-  "engines": {
-    "node": ">=24.11.1",
-    "vscode": "^1.22.0"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
@@ -40,10 +36,9 @@
     "esbuild": "^0.27.1",
     "husky": "^8.0.0",
     "lint-staged": "^16.1.2",
+    "oxfmt": "^0.35.0",
     "oxlint": "^1.50.0",
     "oxlint-tsgolint": "^0.14.2",
-    "prettier": "^2.8.1",
-    "prettier-plugin-organize-imports": "^3.2.1",
     "rimraf": "^6.0.1",
     "semver": "^7.6.1",
     "ts-node": "10.9.1",
@@ -51,5 +46,10 @@
     "typescript": "5.8.3",
     "vitest": "^2.1.9"
   },
+  "engines": {
+    "node": ">=24.11.1",
+    "vscode": "^1.22.0"
+  },
+  "engineStrict": true,
   "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"
 }

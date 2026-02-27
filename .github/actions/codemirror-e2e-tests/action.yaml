@@ -18,7 +18,7 @@ runs:
           echo "Invalid browser (should be one of firefox or chromium): ${{ inputs.browser }}"
           exit 1
         fi
-    
+
     - name: Install Playwright Browsers
       shell: bash
       run: pnpm exec playwright install --only-shell --with-deps ${{ inputs.browser }}

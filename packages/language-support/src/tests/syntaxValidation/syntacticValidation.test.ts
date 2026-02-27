@@ -928,40 +928,37 @@ describe('Syntactic validation spec', () => {
     ]);
   });
 
-  test.fails(
-    'Syntax validation errors on multiline unfinished property keys',
-    () => {
-      const query = `RETURN {\`something
+  test.fails('Syntax validation errors on multiline unfinished property keys', () => {
+    const query = `RETURN {\`something
     foo
     
     bar: "hello"}`;
 
-      expect(
-        getDiagnosticsForQuery({
-          query,
-        }),
-      ).toEqual([
-        {
-          message: "Invalid input '`': expected an identifier or '}'",
-          offsets: {
-            end: 49,
-            start: 8,
-          },
-          range: {
-            end: {
-              character: 17,
-              line: 3,
-            },
-            start: {
-              character: 8,
-              line: 0,
-            },
-          },
-          severity: 1,
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([
+      {
+        message: "Invalid input '`': expected an identifier or '}'",
+        offsets: {
+          end: 49,
+          start: 8,
         },
-      ]);
-    },
-  );
+        range: {
+          end: {
+            character: 17,
+            line: 3,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 
   test('Syntax validation errors on unfinished multiline comment', () => {
     const query = `/* something

@@ -69,9 +69,7 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
       <div className="vizWrapper-content">
         {!isTableOnly && (
           <div
-            className={`vizWrapper-controls ${
-              selectedView === 'table' ? 'block' : ''
-            }`}
+            className={`vizWrapper-controls ${selectedView === 'table' ? 'block' : ''}`}
           >
             <SegmentedControl
               onChange={(e) => {
