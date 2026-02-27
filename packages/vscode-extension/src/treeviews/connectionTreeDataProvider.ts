@@ -22,9 +22,7 @@ export type ConnectionItemType =
   | 'database'
   | 'activeDatabase';
 
-export class ConnectionTreeDataProvider
-  implements TreeDataProvider<ConnectionItem>
-{
+export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
   private _onDidChangeTreeData: EventEmitter<
     ConnectionItem | undefined | void
   > = new EventEmitter<ConnectionItem | undefined | void>();

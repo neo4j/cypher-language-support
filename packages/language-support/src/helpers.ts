@@ -16,7 +16,7 @@ import CypherParser, {
 import { ParsedStatement, ParsingResult } from './parserWrapper';
 import { CypherVersion } from './types';
 
-/* In antlr we have 
+/* In antlr we have
 
         ParseTree
            / \

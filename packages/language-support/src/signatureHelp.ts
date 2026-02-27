@@ -86,14 +86,17 @@ function toSignatureHelp(
 
 class SignatureHelper extends CypherCmdParserListener {
   result: ParsedMethod;
-  constructor(private tokens: Token[], private caretToken: Token) {
+  constructor(
+    private tokens: Token[],
+    private caretToken: Token,
+  ) {
     super();
   }
 
   enterExpression = (ctx: ExpressionContext) => {
     // If the caret is at (
     if (this.caretToken.type === CypherParser.LPAREN) {
-      /* We need to compute the next token that is not 
+      /* We need to compute the next token that is not
          a space following the expression
       
         Example: in the case 'RETURN apoc.do.when     (' the 

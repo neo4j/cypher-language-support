@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../CypherEditor';
 
-
 test('does not automatically open completion panel for expressions after snippet trigger char', async ({
   page,
   mount,

@@ -182,9 +182,9 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
   );
 });
 
-test('Syntax highlighting works as expected with multiple separate linting messages', async ( {
+test('Syntax highlighting works as expected with multiple separate linting messages', async ({
   page,
-  mount
+  mount,
 }) => {
   const editorPage = new CypherEditorPage(page);
   const query = `MATCH (n)--(m) CALL (n) {RETURN id(n) AS b} RETURN apoc.create.uuid(), a`;
@@ -194,10 +194,16 @@ test('Syntax highlighting works as expected with multiple separate linting messa
     editorPage.page.locator('.cm-deprecated-element').last(),
   ).toBeVisible({ timeout: 10000 });
   await editorPage.checkWarningMessage('id', 'Function id is deprecated.');
-  await editorPage.checkWarningMessage('id', `The query used a deprecated function. ('id' has been replaced by 'elementId or consider using an application-generated id')`);
-  await editorPage.checkWarningMessage('apoc.create.uuid', 'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function');
+  await editorPage.checkWarningMessage(
+    'id',
+    `The query used a deprecated function. ('id' has been replaced by 'elementId or consider using an application-generated id')`,
+  );
+  await editorPage.checkWarningMessage(
+    'apoc.create.uuid',
+    'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
+  );
   await editorPage.checkErrorMessage('a', 'Variable `a` not defined');
-})
+});
 
 test('Strikethroughs are shown for deprecated functions', async ({
   page,
@@ -235,11 +241,7 @@ test('Syntax validation depends on the Cypher version', async ({
   page,
   mount,
 }) => {
-  await mount(
-    <CypherEditor
-      schema={testData.mockSchema}
-    />,
-  );
+  await mount(<CypherEditor schema={testData.mockSchema} />);
 
   const editorPage = new CypherEditorPage(page);
   const textField = page.getByRole('textbox');
