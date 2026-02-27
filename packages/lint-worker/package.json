@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/lint-worker",
-  "version": "1.10.1-next.6",
+  "version": "1.10.1-next.7",
   "description": "Cypher Lint Worker",
   "keywords": [
     "cypher",
