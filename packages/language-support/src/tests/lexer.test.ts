@@ -1,6 +1,6 @@
-import { CharStreams, CommonTokenStream } from 'antlr4';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import { CharStream, CommonTokenStream } from 'antlr4ng';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
 import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
 
 describe('Lexer tokens', () => {
@@ -41,13 +41,13 @@ describe('Lexer tokens', () => {
 
     keywordTokens.forEach((token) => {
       const tokenName = tokenNames[token];
-      const inputStream = CharStreams.fromString(tokenName);
+      const inputStream = CharStream.fromString(tokenName);
       const lexer = new CypherLexer(inputStream);
 
       const tokenStream = new CommonTokenStream(lexer);
       tokenStream.fill();
 
-      const tokens = tokenStream.tokens;
+      const tokens = tokenStream.getTokens();
 
       expect(tokens.length).toBe(2);
       // If the test fails, it is useful to see the token that was parsed

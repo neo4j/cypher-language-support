@@ -4,7 +4,7 @@ interface SimpleTree {
 }
 
 import {
-  antlrUtils,
+  Trees,
   CypherParser,
   parse,
   ParserRuleContext,
@@ -14,15 +14,11 @@ export function getDebugTree(cypher: string): SimpleTree {
   const statements = parse(cypher);
 
   function walk(node: ParserRuleContext): SimpleTree {
-    const name = antlrUtils.tree.Trees.getNodeText(
-      node,
-      CypherParser.ruleNames,
-      CypherParser,
-    );
+    const name = Trees.getNodeText(node, CypherParser.ruleNames);
 
     return {
       name: name,
-      children: antlrUtils.tree.Trees.getChildren(node).map(walk),
+      children: Trees.getChildren(node).map(walk),
     };
   }
 

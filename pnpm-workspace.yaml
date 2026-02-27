@@ -1,6 +1,5 @@
 packages:
   - packages/*
-  - vendor/*
 catalog:
   neo4j-driver: 6.0.1
 

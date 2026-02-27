@@ -1,9 +1,19 @@
-import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
-import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
-import CypherCmdParser, {
+import {
+  type ATNSimulator,
+  CharStream,
+  CommonTokenStream,
+  type RecognitionException,
+  Recognizer,
+  TerminalNode,
+  Token,
+} from 'antlr4ng';
+import type { ANTLRErrorListener } from 'antlr4ng';
+import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
+import {
+  CypherCmdParser,
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import { lexerKeywords } from '../lexerSymbols';
 import { findParent } from '../helpers';
 
@@ -121,19 +131,65 @@ function isSymbolicName(node: TerminalNode): boolean {
   );
 }
 
+class FirstErrorListener implements ANTLRErrorListener {
+  firstOffendingToken: Token | null = null;
+
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  syntaxError<S extends Token, T extends ATNSimulator>(
+    recognizer: Recognizer<T>,
+    offendingSymbol: S | null,
+    line: number,
+    charPositionInLine: number,
+    msg: string,
+    e: RecognitionException | null,
+  ): void {
+    /* eslint-enable @typescript-eslint/no-unused-vars */
+    if (this.firstOffendingToken === null && offendingSymbol !== null) {
+      this.firstOffendingToken = offendingSymbol;
+    }
+  }
+
+  reportAmbiguity(): void {
+    // Not needed for error detection
+  }
+
+  reportAttemptingFullContext(): void {
+    // Not needed for error detection
+  }
+
+  reportContextSensitivity(): void {
+    // Not needed for error detection
+  }
+}
+
 export function getParseTreeAndTokens(query: string) {
-  const inputStream = CharStreams.fromString(query);
+  const inputStream = CharStream.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
+  const errorListener = new FirstErrorListener();
+  parser.addErrorListener(errorListener);
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
-  if (tree.exception) {
-    const idx = tree.exception.offendingToken.tokenIndex;
-    const errorTokens = tokens.tokens.slice(idx);
+
+  // In antlr4ng, ParserRuleContext does not have an `exception` property.
+  // Instead, we detect non-recoverable parse failures by checking if the parser
+  // stopped consuming tokens before the end of input. If the tree's stop token
+  // doesn't cover the last non-EOF token, the remaining tokens are unparseable.
+  tokens.fill();
+  const allTokens = tokens.getTokens();
+  const lastNonEofIndex = allTokens.length >= 2 ? allTokens.length - 2 : 0;
+  const treeStopIndex = tree.stop?.tokenIndex ?? -1;
+
+  if (
+    errorListener.firstOffendingToken !== null &&
+    treeStopIndex < lastNonEofIndex
+  ) {
+    const idx = errorListener.firstOffendingToken.tokenIndex;
+    const errorTokens = allTokens.slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
       .map((t) => t.text)
       .join('');
@@ -143,7 +199,7 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    firstUnParseableToken = tree.exception.offendingToken;
+    firstUnParseableToken = errorListener.firstOffendingToken;
   }
   return { tree, tokens, unParseable, firstUnParseableToken };
 }

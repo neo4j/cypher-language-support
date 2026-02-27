@@ -1,4 +1,4 @@
-import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
+import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
 
 import {
   AccessModeArgsContext,
@@ -29,14 +29,14 @@ import {
   SymbolicNameStringContext,
   UseCompletionRuleContext,
   VariableContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParserListener from '../generated-parser/CypherCmdParserListener';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import { CypherCmdParserListener } from '../generated-parser/CypherCmdParserListener.js';
 import { CypherTokenType } from '../lexerSymbols';
 import { parserWrapper } from '../parserWrapper';
 import {
@@ -94,7 +94,7 @@ export function mapCypherToSemanticTokenIndex(
   return undefined;
 }
 
-class SyntaxHighlighter extends CypherParserListener {
+class SyntaxHighlighter extends CypherCmdParserListener {
   colouredTokens: Map<string, ParsedCypherToken> = new Map();
 
   constructor(colouredTokens: Map<string, ParsedCypherToken>) {
@@ -169,7 +169,7 @@ class SyntaxHighlighter extends CypherParserListener {
   ) {
     const namespace = ctx.namespace();
 
-    namespace.symbolicNameString_list().forEach((namespaceName) => {
+    namespace.symbolicNameString().forEach((namespaceName) => {
       this.addToken(namespaceName.start, tokenType, namespaceName.getText());
     });
 

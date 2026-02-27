@@ -1,21 +1,23 @@
 import {
-  CommonToken,
-  ErrorListener as ANTLRErrorListener,
+  type ATNSimulator,
   ParserRuleContext,
+  type RecognitionException,
   Recognizer,
   Token,
-} from 'antlr4';
+} from 'antlr4ng';
+import type { ANTLRErrorListener } from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import {
+  CypherCmdParser as CypherParser,
   ConsoleCommandContext,
   PreparserOptionContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
-export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
+export class SyntaxErrorsListener implements ANTLRErrorListener {
   errors: SyntaxDiagnostic[];
   unfinishedToken: boolean;
   tokens: Token[];
@@ -28,12 +30,16 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
-  public syntaxError<T extends Token>(
-    recognizer: Recognizer<T>,
-    offendingSymbol: T,
+  /* eslint-disable @typescript-eslint/no-unused-vars */
+  public syntaxError(
+    recognizer: Recognizer<ATNSimulator>,
+    offendingSymbol: Token | null,
     line: number,
     charPositionInLine: number,
+    msg: string,
+    e: RecognitionException | null,
   ): void {
+    /* eslint-enable @typescript-eslint/no-unused-vars */
     // If we've found an unfinished comment, string or escaped identifier, we
     // throw an error from the start of those until the end of the file, so we
     // need to assume any other errors we find are false positives.
@@ -41,7 +47,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
       const parser = recognizer as CypherParser;
-      const ctx: ParserRuleContext = parser._ctx;
+      const ctx: ParserRuleContext = parser.context;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);

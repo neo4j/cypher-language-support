@@ -2,17 +2,20 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
+import { Token } from 'antlr4ng';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import {
+  CypherCmdParser as CypherParser,
   CallClauseContext,
   Expression2Context,
   NodePatternContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import {
   findParent,
   findPreviousNonSpace,
+  hasParseError,
   resolveCypherVersion,
   rulesDefiningVariables,
 } from '../helpers';
@@ -25,12 +28,11 @@ import {
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
-import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
-import {
-  CandidatesCollection,
-  CodeCompletionCore,
-  Token,
-} from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+// NOTE: The vendored antlr4-c3 had custom types: CandidateRule (now ICandidateRule)
+// and FollowingTokens (with .indexes and .optional fields). The upstream antlr4-c3
+// uses ICandidateRule and TokenList (plain number[]) without the custom `optional` flag.
+import type { ICandidateRule } from 'antlr4-c3';
+import { CandidatesCollection, CodeCompletionCore } from 'antlr4-c3';
 import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
@@ -84,7 +86,7 @@ const procedureReturnCompletions = (
 };
 
 const functionNameCompletions = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
   cypherVersion: CypherVersion,
@@ -97,7 +99,7 @@ const functionNameCompletions = (
   );
 
 const procedureNameCompletions = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   dbSchema: DbSchema,
   cypherVersion: CypherVersion,
@@ -147,7 +149,7 @@ function getMethodCompletionItem(
 }
 
 const namespacedCompletion = (
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
   signatures: Record<string, Neo4jFunction> | Record<string, Neo4jProcedure>,
   type: 'procedure' | 'function',
@@ -251,14 +253,13 @@ function getTokenCompletions(
         ? tokenNames[tokenNumber].toLowerCase()
         : tokenNames[tokenNumber];
 
-      const followUpIndexes = followUpList.indexes;
-      const firstIgnoredToken = followUpIndexes.findIndex((t) =>
+      const firstIgnoredToken = followUpList.findIndex((t) =>
         ignoredTokens.has(t),
       );
 
-      const followUpTokens = followUpIndexes.slice(
+      const followUpTokens = followUpList.slice(
         0,
-        firstIgnoredToken >= 0 ? firstIgnoredToken : followUpIndexes.length,
+        firstIgnoredToken >= 0 ? firstIgnoredToken : followUpList.length,
       );
 
       const followUpString = followUpTokens.map((i) => tokenNames[i]).join(' ');
@@ -273,13 +274,13 @@ function getTokenCompletions(
           ' ' +
           (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
 
-        if (followUpList.optional) {
-          return [
-            { label: firstToken, kind },
-            { label: followUp, kind },
-          ];
-        }
-
+        // NOTE: The previously vendored antlr4-c3 had a custom `optional` flag
+        // on FollowingTokens (added by ncordon) that, when true, would return
+        // BOTH the single token and the compound token. The upstream antlr4-c3
+        // library uses a plain number[] for follow-up tokens without an
+        // `optional` flag, so only the compound completion is returned now.
+        // This may result in fewer completion items for some cases (e.g.,
+        // console commands).
         return [{ label: followUp, kind }];
       }
     } else {
@@ -349,7 +350,7 @@ enum ExpectedParameterType {
   Any = 'ANY',
 }
 
-const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
+const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
   const parentRule = context.ruleList.at(-1);
 
   if (
@@ -424,7 +425,7 @@ function couldBeNodeOrRel(
 }
 
 function calculateNamespacePrefix(
-  candidateRule: CandidateRule,
+  candidateRule: ICandidateRule,
   tokens: Token[],
 ): string | null {
   const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
@@ -488,7 +489,7 @@ export function completionCoreCompletion(
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
   // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
-  // The need for this caret movement is outlined in the documentation of vendor/antlr4-c3 in the section about caret position
+  // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
   // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1];
@@ -569,13 +570,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
-          parsingResult.stopNode.parentCtx,
+          parsingResult.stopNode.parent,
           (x) => x instanceof CallClauseContext,
         );
         if (callContext instanceof CallClauseContext) {
           const procedureNameCtx = callContext.procedureName();
           const existingYieldItems = new Set(
-            callContext.procedureResultItem_list().map((a) => a.getText()),
+            callContext.procedureResultItem().map((a) => a.getText()),
           );
           const name = getMethodName(procedureNameCtx);
           return procedureReturnCompletions(
@@ -638,7 +639,7 @@ export function completionCoreCompletion(
           grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
-          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
+          const expr2 = parsingResult.stopNode?.parent?.parent?.parent;
           if (expr2 instanceof Expression2Context) {
             const variable = expr2.expression1().variable();
             const variablePosition = variable?.start?.start;
@@ -767,13 +768,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_arrowLine) {
         const possiblePatternElementParent =
-          parsingResult.stopNode?.parentCtx?.parentCtx;
+          parsingResult.stopNode?.parent?.parent;
         const lastNode: RelationshipPatternContext | NodePatternContext =
           possiblePatternElementParent?.children.findLast(
             (x) =>
               (x instanceof RelationshipPatternContext ||
                 x instanceof NodePatternContext) &&
-              x.exception === null,
+              !hasParseError(x),
           ) as RelationshipPatternContext | NodePatternContext;
 
         const shortPathCompletions: CompletionItem[] =
@@ -785,13 +786,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
         const possiblePatternElementParent =
-          parsingResult?.stopNode?.parentCtx?.parentCtx;
+          parsingResult?.stopNode?.parent?.parent;
         if (possiblePatternElementParent) {
           const lastNodePattern = possiblePatternElementParent.children
             .toReversed()
             .find((child) => {
               if (child instanceof NodePatternContext) {
-                if (child.exception === null) {
+                if (!hasParseError(child)) {
                   return true;
                 }
               }
@@ -831,7 +832,7 @@ type CompletionHelperArgs = {
   dbSchema: DbSchema;
   previousToken?: Token;
   tokens: Token[];
-  candidateRule: CandidateRule;
+  candidateRule: ICandidateRule;
 };
 function completeAliasName({
   candidateRule,

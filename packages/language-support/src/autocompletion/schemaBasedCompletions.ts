@@ -12,13 +12,13 @@ import {
   LabelOrCondition,
   SymbolsInfo,
 } from '../types';
-import { findParent } from '../helpers';
+import { findParent, hasParseError } from '../helpers';
 import {
   NodePatternContext,
   PatternElementContext,
   QuantifierContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import {
   convertToCNF,
@@ -346,14 +346,14 @@ export function completeNodeLabel(
   }
 
   const callContext = findParent(
-    parsingResult.stopNode.parentCtx,
+    parsingResult.stopNode.parent,
     (x) => x instanceof PatternElementContext,
   );
 
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
       if (child instanceof RelationshipPatternContext) {
-        if (child.exception === null) {
+        if (!hasParseError(child)) {
           return true;
         }
       }
@@ -434,7 +434,7 @@ export function completeRelationshipType(
   // limitation: not checking PathPatternNonEmptyContext
   // limitation: not handling parenthesized paths
   const patternContext = findParent(
-    parsingResult.stopNode.parentCtx,
+    parsingResult.stopNode.parent,
     (x) => x instanceof PatternElementContext,
   );
 
@@ -443,7 +443,7 @@ export function completeRelationshipType(
       .toReversed()
       .find((child) => {
         if (child instanceof NodePatternContext) {
-          if (child.exception === null) {
+          if (!hasParseError(child)) {
             return true;
           }
         }

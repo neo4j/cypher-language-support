@@ -1,37 +1,67 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore There is a default export but not in the types
-import antlrDefaultExport, {
+import {
+  CommonToken,
   CommonTokenStream,
+  ErrorNode,
   ParserRuleContext,
   ParseTree,
   Token,
-} from 'antlr4';
+} from 'antlr4ng';
 import { DbSchema } from './dbSchema';
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
+import {
+  CypherCmdParser as CypherParser,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
+} from './generated-parser/CypherCmdParser.js';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
 import { CypherVersion } from './types';
 
-/* In antlr we have 
+/* In antlr we have
 
         ParseTree
            / \
           /   \
-TerminalNode   RuleContext
-                \
-                ParserRuleContext                 
+ TerminalNode   ParserRuleContext
 
-Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
+ParserRuleContext has parent, but ParseTree doesn't
 This type fixes that because it's what we need to traverse the tree most
 of the time
 */
 export type EnrichedParseTree = ParseTree & {
-  parentCtx: ParserRuleContext | undefined;
+  parent: ParseTree | null;
 };
+
+/**
+ * In antlr4ng, ParserRuleContext does not have an `exception` property (unlike
+ * the old antlr4 runtime where it was explicitly set by the error strategy).
+ * This helper detects contexts that are incomplete or erroneous by checking for:
+ * 1. ErrorNode children (tokens consumed during error recovery)
+ * 2. Empty/synthesized contexts (created by error recovery with no real content)
+ * 3. Contexts where the stop position is before the start (degenerate range)
+ */
+export function hasParseError(ctx: ParserRuleContext): boolean {
+  // Check for ErrorNode children
+  if (ctx.children.some((child) => child instanceof ErrorNode)) {
+    return true;
+  }
+  // Check for empty/synthesized context (no children or degenerate range)
+  if (ctx.children.length === 0) {
+    return true;
+  }
+  if (ctx.start && ctx.stop && ctx.start.start > ctx.stop.stop) {
+    return true;
+  }
+  // Check for incomplete node/relationship patterns by verifying required
+  // closing tokens are present
+  if (ctx instanceof NodePatternContext) {
+    return ctx.RPAREN() === null;
+  }
+  if (ctx instanceof RelationshipPatternContext) {
+    return ctx.RBRACKET() === null;
+  }
+  return false;
+}
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
@@ -64,7 +94,7 @@ export function findParent(
   let current: EnrichedParseTree | undefined = leaf;
 
   while (current && !condition(current)) {
-    current = current.parentCtx;
+    current = current.parent as EnrichedParseTree | undefined;
   }
 
   return current;
@@ -74,23 +104,9 @@ export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
 
-type AntlrDefaultExport = {
-  tree: {
-    Trees: {
-      getNodeText(
-        node: ParserRuleContext,
-        s: string[],
-        c: typeof CypherParser,
-      ): string;
-      getChildren(node: ParserRuleContext): ParserRuleContext[];
-    };
-  };
-};
-export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
-
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
-    stopNode,
+    stopNode as EnrichedParseTree,
     (p) =>
       p instanceof NodePatternContext ||
       p instanceof RelationshipPatternContext,
@@ -101,7 +117,7 @@ export function inNodeLabel(stopNode: ParserRuleContext) {
 
 export function inRelationshipType(stopNode: ParserRuleContext) {
   const relPattern = findParent(
-    stopNode,
+    stopNode as EnrichedParseTree,
     (p) =>
       p instanceof NodePatternContext ||
       p instanceof RelationshipPatternContext,
@@ -145,7 +161,7 @@ export function splitIntoStatements(
   lexer: CypherLexer,
 ): CommonTokenStream[] {
   tokenStream.fill();
-  const tokens = tokenStream.tokens;
+  const tokens = tokenStream.getTokens();
 
   let i = 0;
   const result: CommonTokenStream[] = [];
@@ -153,7 +169,7 @@ export function splitIntoStatements(
   let offset = 0;
 
   while (i < tokens.length) {
-    const current = tokens[i].clone();
+    const current = CommonToken.fromToken(tokens[i]);
     current.tokenIndex -= offset;
 
     chunk.push(current);
@@ -162,10 +178,27 @@ export function splitIntoStatements(
       current.type === CypherLexer.SEMICOLON ||
       current.type === CypherLexer.EOF
     ) {
+      // For chunks ending with SEMICOLON (not EOF), add a synthetic EOF token
+      // so the parser doesn't try to fetch more tokens from the exhausted lexer.
+      // Without this, the parser would fetch an EOF positioned at the end of the
+      // entire input, causing getTextFromRange to span beyond the chunk boundary.
+      if (current.type === CypherLexer.SEMICOLON) {
+        const eof = CommonToken.fromType(Token.EOF, '<EOF>');
+        eof.start = current.stop + 1;
+        eof.stop = current.stop;
+        eof.line = current.line;
+        eof.column = current.column + (current.text?.length ?? 1);
+        eof.tokenIndex = current.tokenIndex + 1;
+        eof.inputStream = current.inputStream;
+        chunk.push(eof);
+      }
+
       // This does not relex since we are not calling fill on the token stream
-      const tokenStream = new CommonTokenStream(lexer);
-      tokenStream.tokens = chunk;
-      result.push(tokenStream);
+      const chunkStream = new CommonTokenStream(lexer);
+      const streamInternal = chunkStream as unknown as Record<string, unknown>;
+      streamInternal.tokens = chunk;
+      streamInternal.fetchedEOF = true;
+      result.push(chunkStream);
       offset = i + 1;
       chunk = [];
     }
