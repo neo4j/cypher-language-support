@@ -14,5 +14,6 @@ export default defineConfig({
     // types use `any` internally, causing cascading type issues in unions.
     '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/no-duplicate-type-constituents': 'off',
+    '@typescript-eslint/no-misused-spread': 'off',
   },
 });
