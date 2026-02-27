@@ -56,9 +56,7 @@ export async function testSignatureHelp({
         expectedSignature.documentation,
         `Documentation for the signature does not match. Actual: ${documentationToString(
           foundSignature.documentation,
-        )}, expected: ${documentationToString(
-          expectedSignature.documentation,
-        )}`,
+        )}, expected: ${documentationToString(expectedSignature.documentation)}`,
       );
 
       expectedSignature.parameters.forEach((expectedParameter) => {
@@ -73,9 +71,7 @@ export async function testSignatureHelp({
             expectedParameter.label,
           )} does not match. Actual: ${documentationToString(
             foundParameter?.documentation,
-          )}, expected: ${documentationToString(
-            expectedParameter.documentation,
-          )}`,
+          )}, expected: ${documentationToString(expectedParameter.documentation)}`,
         );
       });
     });

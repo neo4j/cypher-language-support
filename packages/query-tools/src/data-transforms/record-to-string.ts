@@ -34,9 +34,7 @@ export function propertyToString(
   localeFormattedDates = false,
 ): string {
   if (Array.isArray(property)) {
-    return `[${property
-      .map((p) => propertyToString(p, quoteStrings))
-      .join(', ')}]`;
+    return `[${property.map((p) => propertyToString(p, quoteStrings)).join(', ')}]`;
   }
 
   if (property === null) {

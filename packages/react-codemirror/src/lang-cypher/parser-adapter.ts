@@ -21,7 +21,10 @@ Prism.manual = true;
 export class ParserAdapter extends Parser {
   cypherTokenTypeToNode: Record<CodemirrorParseTokenType, NodeType>;
 
-  constructor(facet: Facet<unknown>, private config: CypherConfig) {
+  constructor(
+    facet: Facet<unknown>,
+    private config: CypherConfig,
+  ) {
     super();
     this.cypherTokenTypeToNode = cypherTokenTypeToNode(facet);
   }

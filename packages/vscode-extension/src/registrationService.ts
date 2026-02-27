@@ -76,12 +76,16 @@ export function registerDisposables(): Disposable[] {
     window.registerWebviewViewProvider(
       'neo4jQueryDetails',
       queryDetailsProvider,
-      { webviewOptions: { retainContextWhenHidden: true } },
+      {
+        webviewOptions: { retainContextWhenHidden: true },
+      },
     ),
     window.registerWebviewViewProvider(
       'neo4jQueryVisualization',
       queryVisualizationProvider,
-      { webviewOptions: { retainContextWhenHidden: true } },
+      {
+        webviewOptions: { retainContextWhenHidden: true },
+      },
     ),
     window.registerTreeDataProvider(
       'neo4jConnections',

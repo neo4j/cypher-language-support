@@ -156,7 +156,9 @@ describe('extractNodesAndRels', () => {
 
     const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(
       [boltRecord],
-      { nodeLimit: 1 },
+      {
+        nodeLimit: 1,
+      },
     );
     expect(limitHit).toBe(true);
     expect(nodes.length).toBe(1);

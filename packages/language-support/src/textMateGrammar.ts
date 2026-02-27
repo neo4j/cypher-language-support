@@ -153,7 +153,7 @@ export const textMateGrammar = {
       ],
     },
     callables: {
-      /* 
+      /*
       The function name is too flexible in Cypher, refer to comment on procedure names
       We don't want to recognize as functions:
       

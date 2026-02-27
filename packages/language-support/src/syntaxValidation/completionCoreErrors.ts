@@ -169,8 +169,6 @@ export function completionCoreErrormessage(
   if (options.length <= 2) {
     return `Expected ${options.join(' or ')}`;
   } else {
-    return `Expected any of ${options.slice(0, -1).join(', ')} or ${options.at(
-      -1,
-    )}`;
+    return `Expected any of ${options.slice(0, -1).join(', ')} or ${options.at(-1)}`;
   }
 }

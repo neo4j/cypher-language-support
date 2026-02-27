@@ -171,7 +171,7 @@ const namespacedCompletion = (
 
     return uniq(topLevelPrefixes)
       .map(
-        (label) => ({ label, kind, detail: `(namespace)` } as CompletionItem),
+        (label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem,
       )
       .concat(
         fullNames.map((label) => {

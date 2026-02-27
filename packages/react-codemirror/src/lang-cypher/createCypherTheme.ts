@@ -160,24 +160,16 @@ export const createCypherTheme = ({
         border: 'none',
         verticalAlign: 'middle',
         '&[name=next]::before': {
-          content: `url("data:image/svg+xml;base64,${window.btoa(
-            downArrowSvg,
-          )}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(downArrowSvg)}")`,
         },
         '&[name=prev]::before': {
-          content: `url("data:image/svg+xml;base64,${window.btoa(
-            upArrowSvg,
-          )}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(upArrowSvg)}")`,
         },
         '&[name=replace]::before': {
-          content: `url("data:image/svg+xml;base64,${window.btoa(
-            replaceSvg,
-          )}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(replaceSvg)}")`,
         },
         '&[name=replaceAll]::before': {
-          content: `url("data:image/svg+xml;base64,${window.btoa(
-            replaceAllSvg,
-          )}")`,
+          content: `url("data:image/svg+xml;base64,${window.btoa(replaceAllSvg)}")`,
         },
         width: '20px',
         height: '20px',
@@ -209,19 +201,13 @@ export const createCypherTheme = ({
           borderRadius: '4px',
 
           '&[name=case]::before': {
-            content: `url("data:image/svg+xml;base64,${window.btoa(
-              caseSensitiveSvg,
-            )}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(caseSensitiveSvg)}")`,
           },
           '&[name=re]::before': {
-            content: `url("data:image/svg+xml;base64,${window.btoa(
-              regexSvg,
-            )}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(regexSvg)}")`,
           },
           '&[name=word]::before': {
-            content: `url("data:image/svg+xml;base64,${window.btoa(
-              byWordSvg,
-            )}")`,
+            content: `url("data:image/svg+xml;base64,${window.btoa(byWordSvg)}")`,
           },
           '&:hover': {
             backgroundColor: settings.searchPanel.buttonHoverBackground,
