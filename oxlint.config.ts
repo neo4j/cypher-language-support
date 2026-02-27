@@ -1,11 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  ignorePatterns: [
-    'semanticAnalysis.js',
-    'vendor/**',
-    'packages/vscode-extension/tests/fixtures/textmate/simple-match.js',
-  ],
+  ignorePatterns: ['semanticAnalysis.js', 'vendor/**'],
   plugins: ['typescript'],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],
