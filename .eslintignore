@@ -1,9 +1,0 @@
-out/
-dist/
-esm/
-packages/language-support/src/generated-parser/*
-semanticAnalysis.js
-vendor/*
-node_modules/*
-packages/vscode-extension/tests/fixtures/textmate/simple-match.js
-packages/react-codemirror/playwright/index.tsx

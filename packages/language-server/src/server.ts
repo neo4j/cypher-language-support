@@ -97,7 +97,7 @@ class SymbolFetcher {
               }),
           );
         }
-      } catch (e) {
+      } catch {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed');
       }
@@ -245,6 +245,7 @@ connection.onNotification(
   }) => {
     neo4jSchemaPoller.events.once(
       'schemaFetched',
+      // oxlint-disable-next-line typescript-eslint/no-meaningless-void-operator
       void symbolFetcher.queueSymbolJob(
         params.query,
         params.uri,

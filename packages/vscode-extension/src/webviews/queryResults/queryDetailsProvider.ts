@@ -73,7 +73,9 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   }
 
   async executeStatements(statements: string[]) {
-    this.view ?? (await this.viewReadyPromise);
+    if (!this.view) {
+      await this.viewReadyPromise;
+    }
     const webview = this.view.webview;
 
     const message: QueryResultsMessage = {

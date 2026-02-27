@@ -151,7 +151,7 @@ export function wrappedSemanticAnalysis(
       ),
       symbolTable: copySymbolTable(symbolTable),
     };
-  } catch (e) {
+  } catch {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
     return { errors: [], notifications: [], symbolTable: [] };
   }

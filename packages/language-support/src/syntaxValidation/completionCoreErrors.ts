@@ -125,7 +125,7 @@ export function completionCoreErrormessage(
 
   const keywordCandidates = tokenCandidates
     .filter((v) => keywordNames.has(v))
-    .sort();
+    .sort((a, b) => a.localeCompare(b));
   const nonKeywordCandidates = tokenCandidates.filter(
     (v) => !keywordNames.has(v),
   );

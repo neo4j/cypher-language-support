@@ -190,7 +190,7 @@ const format = (view: EditorView): void => {
       },
       selection: { anchor: newCursorPos },
     });
-  } catch (error) {
+  } catch {
     // Formatting failed, likely because of a syntax error
   }
 };

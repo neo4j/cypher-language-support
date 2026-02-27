@@ -2,7 +2,6 @@
   "recommendations": [
     "vitest.explorer",
     "oxc.oxc-vscode",
-    "dbaeumer.vscode-eslint",
     "bradlc.vscode-tailwindcss"
   ]
 }

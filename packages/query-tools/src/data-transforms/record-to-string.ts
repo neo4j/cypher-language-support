@@ -70,6 +70,7 @@ export function propertyToString(
 
   if (typeof property === 'string') {
     if (quoteStrings) {
+      // oxlint-disable-next-line typescript-eslint/restrict-template-expressions
       return `"${property}"`;
     }
     return property;

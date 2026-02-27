@@ -1,0 +1,21 @@
+import { defineConfig } from 'oxlint';
+
+export default defineConfig({
+  ignorePatterns: [
+    'semanticAnalysis.js',
+    'vendor/**',
+    '**/fixtures/textmate/**',
+  ],
+  plugins: ['typescript'],
+  rules: {
+    'no-console': ['error', { allow: ['warn', 'error'] }],
+    // False positive: Playwright's `mount` fixture is destructured from the
+    // test context object, not from a class, so it is not an unbound method.
+    '@typescript-eslint/unbound-method': 'off',
+    // These rules produce systematic false positives because neo4j-driver
+    // types use `any` internally, causing cascading type issues in unions.
+    '@typescript-eslint/no-redundant-type-constituents': 'off',
+    '@typescript-eslint/no-duplicate-type-constituents': 'off',
+    '@typescript-eslint/no-misused-spread': 'off',
+  },
+});

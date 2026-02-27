@@ -19,7 +19,5 @@ export class InMemoryMemento implements Memento {
     return Object.keys(this._storage);
   }
 
-  setKeysForSync(keys: string[]): void {
-    keys;
-  }
+  setKeysForSync(_keys: string[]): void {}
 }

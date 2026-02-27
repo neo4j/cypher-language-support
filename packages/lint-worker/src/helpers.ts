@@ -93,7 +93,7 @@ export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
     }
 
     return taggedVersions;
-  } catch (error) {
+  } catch {
     return [];
   }
 }

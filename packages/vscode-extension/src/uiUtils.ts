@@ -73,11 +73,13 @@ export function displayMessageForSwitchDatabaseResult(
   database: string,
   result: ConnnectionResult,
 ): void {
-  result.success
-    ? void window.showInformationMessage(
-        `${CONSTANTS.MESSAGES.SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE} '${database}'.`,
-      )
-    : void window.showErrorMessage(
-        `${CONSTANTS.MESSAGES.ERROR_SWITCHING_DATABASE_MESSAGE} '${database}'. ${result.error?.message}. ${result.error?.friendlyMessage}.`,
-      );
+  if (result.success) {
+    void window.showInformationMessage(
+      `${CONSTANTS.MESSAGES.SUCCESSFULLY_SWITCHED_DATABASE_MESSAGE} '${database}'.`,
+    );
+  } else {
+    void window.showErrorMessage(
+      `${CONSTANTS.MESSAGES.ERROR_SWITCHING_DATABASE_MESSAGE} '${database}'. ${result.error?.message}. ${result.error?.friendlyMessage}.`,
+    );
+  }
 }

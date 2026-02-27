@@ -18,7 +18,7 @@ export async function getFilesInExtensionStorage(): Promise<string[]> {
     return entries
       .filter(([, fileType]) => fileType === vscode.FileType.File)
       .map(([name]) => name);
-  } catch (err) {
+  } catch {
     void vscode.window.showErrorMessage(
       CONSTANTS.MESSAGES.GLOBALSTORAGE_READ_FAILED,
     );
@@ -104,7 +104,7 @@ export async function downloadLintWorker(
     });
     await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
     return { success: true, fileName: fileName };
-  } catch (error) {
+  } catch {
     void vscode.window.showErrorMessage(
       CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED,
     );

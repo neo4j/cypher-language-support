@@ -263,7 +263,6 @@ test('Signature help only shows the description past the last argument', async (
       autofocus={true}
     />,
   );
-  1;
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
