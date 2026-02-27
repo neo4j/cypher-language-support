@@ -2,7 +2,16 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { testCompletions } from './completionAssertionHelpers';
 
 export const dbSchema = {
-  labels: ['Pokemon', 'Trainer', 'Gym', 'Region', 'Type', 'Move', 'UnrelatedLabel', 'Unconnected'],
+  labels: [
+    'Pokemon',
+    'Trainer',
+    'Gym',
+    'Region',
+    'Type',
+    'Move',
+    'UnrelatedLabel',
+    'Unconnected',
+  ],
   relationshipTypes: [
     'CATCHES',
     'TRAINS',

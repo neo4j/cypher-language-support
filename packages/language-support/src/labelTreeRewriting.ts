@@ -1,4 +1,9 @@
-import { Condition, ConditionNode, isLabelLeaf, LabelOrCondition } from './types';
+import {
+  Condition,
+  ConditionNode,
+  isLabelLeaf,
+  LabelOrCondition,
+} from './types';
 
 function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(labelTree)) {
@@ -32,7 +37,8 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
       addChild(newChildren, newChild, 'and');
     });
     const cnfRoot: ConditionNode = { condition: 'and', children: newChildren };
-    const cleanedCnfTree: LabelOrCondition = simplifyAndRemoveTautologies(cnfRoot);
+    const cleanedCnfTree: LabelOrCondition =
+      simplifyAndRemoveTautologies(cnfRoot);
     return cleanedCnfTree;
   }
 }
@@ -44,7 +50,9 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
  * @param existingNode
  * @returns a converted tree containing no AND-children
  */
-function depthFirstConvertAnds(existingNode: LabelOrCondition): LabelOrCondition | undefined {
+function depthFirstConvertAnds(
+  existingNode: LabelOrCondition,
+): LabelOrCondition | undefined {
   let node: LabelOrCondition = copyLabelTree(existingNode);
   if (isLabelLeaf(node)) {
     return node;
@@ -52,7 +60,8 @@ function depthFirstConvertAnds(existingNode: LabelOrCondition): LabelOrCondition
   const newChildren: LabelOrCondition[] = [];
   const condition: Condition = node.condition;
   node.children.forEach((x: LabelOrCondition) => {
-    const convertedChild: LabelOrCondition | undefined = depthFirstConvertAnds(x);
+    const convertedChild: LabelOrCondition | undefined =
+      depthFirstConvertAnds(x);
     //To get Ex. AND(AND(X,Y),Z) = AND(X,Y,Z)
     if (convertedChild) {
       addChild(newChildren, convertedChild, condition);
@@ -73,7 +82,9 @@ function depthFirstConvertAnds(existingNode: LabelOrCondition): LabelOrCondition
   }
   //We should call pushInNots first, so if we get not above a condition, we have a bug, bail and fail
   else {
-    throw new Error('Misshapen label tree: Conversion expects an AND/OR tree on NNF');
+    throw new Error(
+      'Misshapen label tree: Conversion expects an AND/OR tree on NNF',
+    );
   }
 }
 
@@ -94,7 +105,8 @@ function addChild(
       if (!childAlreadyExists(arrayToModify, gc)) arrayToModify.push(gc);
     });
   } else {
-    if (!childAlreadyExists(arrayToModify, newChild)) arrayToModify.push(newChild);
+    if (!childAlreadyExists(arrayToModify, newChild))
+      arrayToModify.push(newChild);
   }
 }
 
@@ -110,9 +122,15 @@ export function childAlreadyExists(
   newChild: LabelOrCondition,
 ): boolean {
   if (isLabelLeaf(newChild)) {
-    return existingChildren.find((c) => isLabelLeaf(c) && c.value === newChild.value) !== undefined;
+    return (
+      existingChildren.find(
+        (c) => isLabelLeaf(c) && c.value === newChild.value,
+      ) !== undefined
+    );
   } else {
-    return existingChildren.find((c) => equalConditions(c, newChild)) !== undefined;
+    return (
+      existingChildren.find((c) => equalConditions(c, newChild)) !== undefined
+    );
   }
 }
 
@@ -121,8 +139,13 @@ function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition) {
     return isLabelLeaf(c2) && c1.value === c2.value;
   } else if (isLabelLeaf(c2)) {
     return false;
-  } else if (c1.condition === c2.condition && c1.children.length === c2.children.length) {
-    return c1.children.every((gc1) => c2.children.some((gc2) => equalConditions(gc1, gc2)));
+  } else if (
+    c1.condition === c2.condition &&
+    c1.children.length === c2.children.length
+  ) {
+    return c1.children.every((gc1) =>
+      c2.children.some((gc2) => equalConditions(gc1, gc2)),
+    );
   }
   return false;
 }
@@ -180,7 +203,9 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
         condition: 'and',
         children: newInnerChildren,
       };
-      rewrittenChildren = [pushedOr].concat(innerAnds.slice(1, innerAnds.length));
+      rewrittenChildren = [pushedOr].concat(
+        innerAnds.slice(1, innerAnds.length),
+      );
     } else if (innerAnds.length > 1) {
       //AND(x, OR(a,b)) => OR(AND(x,a), AND(x,b))
       //OR(x, AND(x,b)) => AND(OR(x,x), OR(x,b))
@@ -215,7 +240,9 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
         condition: 'and',
         children: totalMergedChildren,
       };
-      rewrittenChildren = [pushedOr].concat(innerAnds.slice(2, innerAnds.length));
+      rewrittenChildren = [pushedOr].concat(
+        innerAnds.slice(2, innerAnds.length),
+      );
     } else {
       //Finally after merging ANDs one by one we will arrive at OR(AND(...)) = AND(...) (where the final AND can get some pretty massive amount of children)
       return innerAnds[0];
@@ -239,7 +266,9 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
  * @param root
  * @returns
  */
-export function simplifyAndRemoveTautologies(root: LabelOrCondition): LabelOrCondition {
+export function simplifyAndRemoveTautologies(
+  root: LabelOrCondition,
+): LabelOrCondition {
   const newRoot: LabelOrCondition = copyLabelTree(root);
   if (isLabelLeaf(newRoot) || newRoot.condition !== 'and') {
     return newRoot;
@@ -273,7 +302,10 @@ export function simplifyAndRemoveTautologies(root: LabelOrCondition): LabelOrCon
           break;
         }
 
-        const stricterCondition = findStricterCondition(newRoot.children[i], newRoot.children[j]);
+        const stricterCondition = findStricterCondition(
+          newRoot.children[i],
+          newRoot.children[j],
+        );
         if (stricterCondition === newRoot.children[i]) {
           newRoot.children[j] = undefined;
           continue;
@@ -283,7 +315,10 @@ export function simplifyAndRemoveTautologies(root: LabelOrCondition): LabelOrCon
           break;
         }
 
-        const isDuplicate = checkEquality(newRoot.children[i], newRoot.children[j]);
+        const isDuplicate = checkEquality(
+          newRoot.children[i],
+          newRoot.children[j],
+        );
         if (isDuplicate) {
           newRoot.children[i] = undefined;
         }
@@ -440,7 +475,9 @@ function isTautology(node: LabelOrCondition): boolean {
   return false;
 }
 
-export function removeDuplicates(labelTree: LabelOrCondition): LabelOrCondition {
+export function removeDuplicates(
+  labelTree: LabelOrCondition,
+): LabelOrCondition {
   const newLabelTree: LabelOrCondition = copyLabelTree(labelTree);
   if (isLabelLeaf(newLabelTree)) {
     return newLabelTree;
@@ -450,7 +487,10 @@ export function removeDuplicates(labelTree: LabelOrCondition): LabelOrCondition 
   }
   for (let i = 0; i < newLabelTree.children.length; i++) {
     for (let j = i + 1; j < newLabelTree.children.length; j++) {
-      if (newLabelTree.children[i] === undefined || newLabelTree.children[j] === undefined) {
+      if (
+        newLabelTree.children[i] === undefined ||
+        newLabelTree.children[j] === undefined
+      ) {
         continue;
       }
       const foundDuplicate: boolean = checkEquality(
@@ -473,8 +513,15 @@ export function removeDuplicates(labelTree: LabelOrCondition): LabelOrCondition 
  * @param labelTree2
  * @returns true if both trees describe the same labels, ignoring order
  */
-function checkEquality(labelTree1: LabelOrCondition, labelTree2: LabelOrCondition): boolean {
-  if (isLabelLeaf(labelTree1) && isLabelLeaf(labelTree2) && labelTree1.value === labelTree2.value) {
+function checkEquality(
+  labelTree1: LabelOrCondition,
+  labelTree2: LabelOrCondition,
+): boolean {
+  if (
+    isLabelLeaf(labelTree1) &&
+    isLabelLeaf(labelTree2) &&
+    labelTree1.value === labelTree2.value
+  ) {
     return true;
   }
   if (
@@ -515,19 +562,27 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(newLabelTree)) {
     return newLabelTree;
   }
-  if (newLabelTree.condition === 'not' && !isLabelLeaf(newLabelTree.children[0])) {
+  if (
+    newLabelTree.condition === 'not' &&
+    !isLabelLeaf(newLabelTree.children[0])
+  ) {
     const c = newLabelTree.children[0];
     const newCondition =
-      c.condition === 'not' ? 'doubleNegation' : c.condition === 'and' ? 'or' : 'and';
+      c.condition === 'not'
+        ? 'doubleNegation'
+        : c.condition === 'and'
+          ? 'or'
+          : 'and';
     if (newCondition === 'doubleNegation') {
       // If double negation, completely remove both negations and restart to check for leaves
       newLabelTree = newLabelTree.children[0].children[0];
       return pushInNots(newLabelTree);
     } else {
       // If single negation, use De Morgan's law to move down NOTs like NOT(AND(A,B,...)) = OR(NOT(A),NOT(B),...)
-      const newChildren: LabelOrCondition[] = newLabelTree.children[0].children.map((c) => {
-        return { condition: 'not', children: [c] };
-      });
+      const newChildren: LabelOrCondition[] =
+        newLabelTree.children[0].children.map((c) => {
+          return { condition: 'not', children: [c] };
+        });
       newLabelTree = { condition: newCondition, children: newChildren };
     }
   }
@@ -539,7 +594,8 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
   return { ...newLabelTree, children: pushedChildren };
 }
 
-export const isAnyNode = (n: LabelOrCondition) => !isLabelLeaf(n) && n.condition === 'any';
+export const isAnyNode = (n: LabelOrCondition) =>
+  !isLabelLeaf(n) && n.condition === 'any';
 export const isNotAnyNode = (n: LabelOrCondition) =>
   !isLabelLeaf(n) && n.condition === 'not' && isAnyNode(n.children[0]);
 
@@ -580,7 +636,9 @@ export function removeInnerAnys(labelTree: LabelOrCondition): LabelOrCondition {
     }
   } else if (newLabelTree.condition === 'or') {
     // NOT(ANY) reundant in OR
-    newLabelTree.children = newLabelTree.children.filter((c) => !isNotAnyNode(c));
+    newLabelTree.children = newLabelTree.children.filter(
+      (c) => !isNotAnyNode(c),
+    );
     // ANY dominates OR
     if (newLabelTree.children.some((c) => isAnyNode(c))) {
       return { condition: 'any', children: [] };

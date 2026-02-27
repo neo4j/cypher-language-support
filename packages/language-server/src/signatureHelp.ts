@@ -1,5 +1,9 @@
 import { signatureHelp } from '@neo4j-cypher/language-support';
-import { SignatureHelp, SignatureHelpParams, TextDocuments } from 'vscode-languageserver/node';
+import {
+  SignatureHelp,
+  SignatureHelpParams,
+  TextDocuments,
+} from 'vscode-languageserver/node';
 
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
@@ -10,7 +14,10 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
-export function doSignatureHelp(documents: TextDocuments<TextDocument>, neo4j: Neo4jSchemaPoller) {
+export function doSignatureHelp(
+  documents: TextDocuments<TextDocument>,
+  neo4j: Neo4jSchemaPoller,
+) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     const endOfTriggerHelp = params.context?.triggerCharacter === ')';
@@ -19,6 +26,10 @@ export function doSignatureHelp(documents: TextDocuments<TextDocument>, neo4j: N
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return signatureHelp(textDocument.getText(), neo4j.metadata?.dbSchema ?? {}, offset);
+    return signatureHelp(
+      textDocument.getText(),
+      neo4j.metadata?.dbSchema ?? {},
+      offset,
+    );
   };
 }

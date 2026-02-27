@@ -37,17 +37,21 @@ suite('Parameter service spec', () => {
         recordLimitHit: false,
       });
 
-    runCypherQueryStub.withArgs({ query: 'RETURN "pikachu" AS param', parameters: {} }).resolves({
-      records: [new Record(['param'], ['pikachu'])],
-      summary: undefined,
-      recordLimitHit: false,
-    });
+    runCypherQueryStub
+      .withArgs({ query: 'RETURN "pikachu" AS param', parameters: {} })
+      .resolves({
+        records: [new Record(['param'], ['pikachu'])],
+        summary: undefined,
+        recordLimitHit: false,
+      });
 
-    runCypherQueryStub.withArgs({ query: 'RETURN 1234 AS param', parameters: {} }).resolves({
-      records: [new Record(['param'], [Integer.fromInt(1234)])],
-      summary: undefined,
-      recordLimitHit: false,
-    });
+    runCypherQueryStub
+      .withArgs({ query: 'RETURN 1234 AS param', parameters: {} })
+      .resolves({
+        records: [new Record(['param'], [Integer.fromInt(1234)])],
+        summary: undefined,
+        recordLimitHit: false,
+      });
 
     runCypherQueryStub
       .withArgs({
@@ -199,11 +203,15 @@ suite('Parameter service spec', () => {
 
       await parameters.deleteParameter('a');
 
-      const paramsAfterFirstDelete = new Set(Object.keys(parameters.getParameters()));
+      const paramsAfterFirstDelete = new Set(
+        Object.keys(parameters.getParameters()),
+      );
       assert.deepStrictEqual(paramsAfterFirstDelete, new Set(['b']));
 
       await parameters.deleteParameter('a');
-      const paramsAfterSecondDelete = new Set(Object.keys(parameters.getParameters()));
+      const paramsAfterSecondDelete = new Set(
+        Object.keys(parameters.getParameters()),
+      );
       assert.deepStrictEqual(paramsAfterSecondDelete, new Set(['b']));
     });
 

@@ -211,7 +211,10 @@ describe('Can complete role names', () => {
   });
 
   test('Correctly completes parameters and existing role names in GRANT ROLE MANAGEMENT', () => {
-    const cases = ['GRANT ROLE MANAGEMENT ON DBMS TO ', 'GRANT ROLE MANAGEMENT ON DBMS TO role, '];
+    const cases = [
+      'GRANT ROLE MANAGEMENT ON DBMS TO ',
+      'GRANT ROLE MANAGEMENT ON DBMS TO role, ',
+    ];
 
     cases.forEach((query) =>
       testCompletions({

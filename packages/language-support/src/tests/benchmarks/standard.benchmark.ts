@@ -6,7 +6,12 @@ import { signatureHelp } from '../../signatureHelp';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
-import { createMovieDb, largePokemonquery, simpleQuery, tictactoe } from './benchmarkQueries';
+import {
+  createMovieDb,
+  largePokemonquery,
+  simpleQuery,
+  tictactoe,
+} from './benchmarkQueries';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';
@@ -52,7 +57,8 @@ function benchmarkQuery(queryName: string, queryContent: string) {
 
     bench('signature help', () => {
       const subQuery = queryContent + periodicIterate;
-      const fullQuery = queryContent + periodicIterate + periodicIterateFirstArg;
+      const fullQuery =
+        queryContent + periodicIterate + periodicIterateFirstArg;
       parserWrapper.clearCache();
       signatureHelp(queryContent, testData.mockSchema, fullQuery.length);
       signatureHelp(queryContent, testData.mockSchema, subQuery.length);

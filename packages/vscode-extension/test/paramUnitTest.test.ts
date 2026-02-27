@@ -40,6 +40,9 @@ describe('Parameter validation spec', () => {
   });
 
   it('Parameter validation succeeds on warnings', () => {
-    assert.strictEqual(validateParamInput('deprecatedFunction()', dbSchema), undefined);
+    assert.strictEqual(
+      validateParamInput('deprecatedFunction()', dbSchema),
+      undefined,
+    );
   });
 });

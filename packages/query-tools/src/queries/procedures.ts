@@ -62,7 +62,9 @@ export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
   additionalProperties: true,
 };
 
-const validateProcedure = new Ajv({ useDefaults: true }).compile(procedureSchema);
+const validateProcedure = new Ajv({ useDefaults: true }).compile(
+  procedureSchema,
+);
 
 function cleanTypes(result: Neo4jProcedure): Neo4jProcedure {
   return {

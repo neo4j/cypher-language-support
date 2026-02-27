@@ -1,4 +1,9 @@
-import { Integer, Record, ResultSummary, resultTransformers } from 'neo4j-driver';
+import {
+  Integer,
+  Record,
+  ResultSummary,
+  resultTransformers,
+} from 'neo4j-driver';
 
 import {
   DeduplicatedNodesAndRels,
@@ -44,7 +49,8 @@ export const graphResultTransformer = resultTransformers.mapped({
     return record;
   },
   collect(records, summary): GraphResult {
-    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(records);
+    const { nodes, relationships, limitHit } =
+      extractUniqueNodesAndRels(records);
     return { nodes, relationships, limitHit, records, summary };
   },
 });

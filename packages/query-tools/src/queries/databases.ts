@@ -76,16 +76,18 @@ export function listDatabases(): ExecuteQueryArgs<{
       return obj as Database;
     },
     collect(databases, summary) {
-      const instancesRecord: Record<string, Database> = databases.reduce<Record<string, Database>>(
-        (acc, db) => {
-          const instanceId: string = `${db.name}@${db.address}`;
-          acc[instanceId] = db;
-          return acc;
-        },
-        {},
+      const instancesRecord: Record<string, Database> = databases.reduce<
+        Record<string, Database>
+      >((acc, db) => {
+        const instanceId: string = `${db.name}@${db.address}`;
+        acc[instanceId] = db;
+        return acc;
+      }, {});
+      const logicalDatabases: Record<string, Database> =
+        getLogicalDatabases(instancesRecord);
+      const uiDatabases = removeSPDShards(
+        removeCompositeAliases(Object.values(logicalDatabases)),
       );
-      const logicalDatabases: Record<string, Database> = getLogicalDatabases(instancesRecord);
-      const uiDatabases = removeSPDShards(removeCompositeAliases(Object.values(logicalDatabases)));
 
       return {
         databases: sortDatabases(uiDatabases),
@@ -109,7 +111,9 @@ export function listDatabases(): ExecuteQueryArgs<{
  * @input instances - a record of database instances
  * @output a record of logical databases
  */
-export function getLogicalDatabases(instances: Record<string, Database>): Record<string, Database> {
+export function getLogicalDatabases(
+  instances: Record<string, Database>,
+): Record<string, Database> {
   // Two databases with the same name but different properties will be merged into one
   // merging rules:
   // - if writer (leader) is present, use it, otherwise use the first one
@@ -124,16 +128,21 @@ export function getLogicalDatabases(instances: Record<string, Database>): Record
     return mergedDatabase;
   };
 
-  return Object.values(instances).reduce<Record<string, Database>>((databases, instance) => {
-    const key = instance.name;
-    const existingDatabase = databases[key];
-    const mergedDatabase = existingDatabase ? mergeDatabases(existingDatabase, instance) : instance;
+  return Object.values(instances).reduce<Record<string, Database>>(
+    (databases, instance) => {
+      const key = instance.name;
+      const existingDatabase = databases[key];
+      const mergedDatabase = existingDatabase
+        ? mergeDatabases(existingDatabase, instance)
+        : instance;
 
-    return {
-      ...databases,
-      [key]: mergedDatabase,
-    };
-  }, {});
+      return {
+        ...databases,
+        [key]: mergedDatabase,
+      };
+    },
+    {},
+  );
 }
 
 export function sortDatabases(databases: Database[]) {

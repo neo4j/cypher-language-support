@@ -18,7 +18,10 @@ function assertUnchangedTokens(testFixurePath: string) {
   const fileName = basename(testFixurePath);
 
   return vscode.commands
-    .executeCommand('_workbench.captureSyntaxTokens', vscode.Uri.file(testFixurePath))
+    .executeCommand(
+      '_workbench.captureSyntaxTokens',
+      vscode.Uri.file(testFixurePath),
+    )
     .then((rawData: { c: string; t: string }[]) => {
       const data: SyntaxToken[] = rawData.map((row) => {
         return {
@@ -27,11 +30,17 @@ function assertUnchangedTokens(testFixurePath: string) {
         };
       });
 
-      const resultsFolderPath = join(dirname(dirname(testFixurePath)), 'textmate-results');
+      const resultsFolderPath = join(
+        dirname(dirname(testFixurePath)),
+        'textmate-results',
+      );
       if (!fs.existsSync(resultsFolderPath)) {
         fs.mkdirSync(resultsFolderPath);
       }
-      const resultPath = join(resultsFolderPath, fileName.replace('.', '-') + '.json');
+      const resultPath = join(
+        resultsFolderPath,
+        fileName.replace('.', '-') + '.json',
+      );
       if (fs.existsSync(resultPath)) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const previousData = JSON.parse(fs.readFileSync(resultPath).toString());
@@ -61,7 +70,9 @@ suite('Textmate highlighting', () => {
     fixturesFiles.forEach((fixturesFile) => {
       // define a test for each fixture
       test(fixturesFile, async () => {
-        await assertUnchangedTokens(join(extensionColorizeFixturePath, fixturesFile));
+        await assertUnchangedTokens(
+          join(extensionColorizeFixturePath, fixturesFile),
+        );
       });
     });
   }

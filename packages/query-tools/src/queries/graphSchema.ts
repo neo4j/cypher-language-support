@@ -55,9 +55,13 @@ const graphSchemaSchema: JSONSchemaType<GraphSchema> = {
 };
 
 //exported for testing
-export const validateGraphSchema = new Ajv({ useDefaults: true }).compile(graphSchemaSchema);
+export const validateGraphSchema = new Ajv({ useDefaults: true }).compile(
+  graphSchemaSchema,
+);
 
-export function listGraphSchema(database: string | undefined): ExecuteQueryArgs<{
+export function listGraphSchema(
+  database: string | undefined,
+): ExecuteQueryArgs<{
   graphSchema: { from: string; to: string; relType: string }[];
 }> {
   const query = `CALL db.schema.visualization() YIELD *`;

@@ -27,7 +27,13 @@ export function autocomplete(
   if (caret) {
     const statement = caret.statement;
     const caretToken = caret.token;
-    return completionCoreCompletion(statement, dbSchema, caretToken, symbolsInfo, manual);
+    return completionCoreCompletion(
+      statement,
+      dbSchema,
+      caretToken,
+      symbolsInfo,
+      manual,
+    );
   }
 
   return [];

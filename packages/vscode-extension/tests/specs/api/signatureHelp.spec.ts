@@ -1,4 +1,7 @@
-import { testData, toSignatureInformation } from '@neo4j-cypher/language-support';
+import {
+  testData,
+  toSignatureInformation,
+} from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {
@@ -16,7 +19,11 @@ type InclusionTestArgs = {
   expected: vscode.SignatureHelp;
 };
 
-export async function testSignatureHelp({ textFile, position, expected }: InclusionTestArgs) {
+export async function testSignatureHelp({
+  textFile,
+  position,
+  expected,
+}: InclusionTestArgs) {
   let docUri: vscode.Uri;
   if (typeof textFile === 'string') {
     docUri = getDocumentUri(textFile);
@@ -26,11 +33,12 @@ export async function testSignatureHelp({ textFile, position, expected }: Inclus
   }
 
   await eventually(async () => {
-    const signatureHelp: vscode.SignatureHelp = await vscode.commands.executeCommand(
-      'vscode.executeSignatureHelpProvider',
-      docUri,
-      position,
-    );
+    const signatureHelp: vscode.SignatureHelp =
+      await vscode.commands.executeCommand(
+        'vscode.executeSignatureHelpProvider',
+        docUri,
+        position,
+      );
 
     assert.equal(
       signatureHelp.activeParameter,

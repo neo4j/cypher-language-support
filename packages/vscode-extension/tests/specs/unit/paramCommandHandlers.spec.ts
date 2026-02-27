@@ -78,17 +78,21 @@ suite('Parameters command handlers spec', () => {
         recordLimitHit: false,
       });
 
-    runCypherQueryStub.withArgs({ query: 'RETURN "pikachu" AS param', parameters: {} }).resolves({
-      records: [new Record(['param'], ['pikachu'])],
-      summary: undefined,
-      recordLimitHit: false,
-    });
+    runCypherQueryStub
+      .withArgs({ query: 'RETURN "pikachu" AS param', parameters: {} })
+      .resolves({
+        records: [new Record(['param'], ['pikachu'])],
+        summary: undefined,
+        recordLimitHit: false,
+      });
 
-    runCypherQueryStub.withArgs({ query: 'RETURN 1234 AS param', parameters: {} }).resolves({
-      records: [new Record(['param'], [Integer.fromInt(1234)])],
-      summary: undefined,
-      recordLimitHit: false,
-    });
+    runCypherQueryStub
+      .withArgs({ query: 'RETURN 1234 AS param', parameters: {} })
+      .resolves({
+        records: [new Record(['param'], [Integer.fromInt(1234)])],
+        summary: undefined,
+        recordLimitHit: false,
+      });
 
     sandbox.stub(mockSchemaPoller, 'connection').value({
       databases: [{ name: 'neo4j', type: 'standard' }],
@@ -99,7 +103,10 @@ suite('Parameters command handlers spec', () => {
 
     showErrorMessageStub = sandbox.stub(window, 'showErrorMessage');
     sendNotificationSpy = sandbox.spy(mockLanguageClient, 'sendNotification');
-    refreshParameterTreeSpy = sandbox.spy(parametersTreeDataProvider, 'refresh');
+    refreshParameterTreeSpy = sandbox.spy(
+      parametersTreeDataProvider,
+      'refresh',
+    );
   });
 
   afterEach(() => {
@@ -154,7 +161,12 @@ suite('Parameters command handlers spec', () => {
   });
 
   test('Adding parameters should fail if the value of the parameter is empty', async () => {
-    sandbox.stub(window, 'showInputBox').onFirstCall().resolves('a').onSecondCall().resolves('');
+    sandbox
+      .stub(window, 'showInputBox')
+      .onFirstCall()
+      .resolves('a')
+      .onSecondCall()
+      .resolves('');
 
     await addParameter();
     sandbox.assert.calledOnceWithExactly(
@@ -190,15 +202,19 @@ suite('Parameters command handlers spec', () => {
       .resolves('"charmander"');
 
     await addParameter();
-    sandbox.assert.calledOnceWithExactly(sendNotificationSpy, 'updateParameters', {
-      a: {
-        key: 'a',
-        serializedValue: 'charmander',
-        stringValue: '"charmander"',
-        type: 'String',
-        evaluatedStatement: '"charmander"',
+    sandbox.assert.calledOnceWithExactly(
+      sendNotificationSpy,
+      'updateParameters',
+      {
+        a: {
+          key: 'a',
+          serializedValue: 'charmander',
+          stringValue: '"charmander"',
+          type: 'String',
+          evaluatedStatement: '"charmander"',
+        },
       },
-    });
+    );
   });
 
   test('Editing parameters should fail if not connected to the database', async () => {
@@ -224,7 +240,9 @@ suite('Parameters command handlers spec', () => {
 
     await addParameter();
 
-    const param = parametersTreeDataProvider.getChildren().find((param) => param.id === 'a');
+    const param = parametersTreeDataProvider
+      .getChildren()
+      .find((param) => param.id === 'a');
     await editParameter(param);
     sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
@@ -244,7 +262,9 @@ suite('Parameters command handlers spec', () => {
 
     await addParameter();
 
-    const param = parametersTreeDataProvider.getChildren().find((param) => param.id === 'a');
+    const param = parametersTreeDataProvider
+      .getChildren()
+      .find((param) => param.id === 'a');
     await editParameter(param);
     sandbox.assert.calledOnceWithExactly(
       showErrorMessageStub,
@@ -255,7 +275,9 @@ suite('Parameters command handlers spec', () => {
   test('Editing parameters should refresh the VSCode parameters panel', async () => {
     await setParameters({ spiesCleanUp: true });
 
-    const param = parametersTreeDataProvider.getChildren().find((param) => param.id === 'a');
+    const param = parametersTreeDataProvider
+      .getChildren()
+      .find((param) => param.id === 'a');
     await editParameter(param);
 
     const parameters = getParametersTreeItems();
@@ -277,40 +299,50 @@ suite('Parameters command handlers spec', () => {
   test('Editing parameters should notify the language server', async () => {
     await setParameters({ spiesCleanUp: true });
 
-    const param = parametersTreeDataProvider.getChildren().find((param) => param.id === 'a');
+    const param = parametersTreeDataProvider
+      .getChildren()
+      .find((param) => param.id === 'a');
     await editParameter(param);
 
-    sandbox.assert.calledOnceWithExactly(sendNotificationSpy, 'updateParameters', {
-      a: {
-        key: 'a',
-        serializedValue: { low: 1234, high: 0, 'transport-class': 'Integer' },
-        stringValue: '1234',
-        type: 'Integer',
-        evaluatedStatement: '1234',
+    sandbox.assert.calledOnceWithExactly(
+      sendNotificationSpy,
+      'updateParameters',
+      {
+        a: {
+          key: 'a',
+          serializedValue: { low: 1234, high: 0, 'transport-class': 'Integer' },
+          stringValue: '1234',
+          type: 'Integer',
+          evaluatedStatement: '1234',
+        },
+        b: {
+          key: 'b',
+          serializedValue: 'pikachu',
+          stringValue: '"pikachu"',
+          type: 'String',
+          evaluatedStatement: '"pikachu"',
+        },
       },
-      b: {
-        key: 'b',
-        serializedValue: 'pikachu',
-        stringValue: '"pikachu"',
-        type: 'String',
-        evaluatedStatement: '"pikachu"',
-      },
-    });
+    );
   });
 
   test('Removing a single parameter should notify the language server', async () => {
     await setParameters({ spiesCleanUp: true });
     await removeParameterByKey('a');
 
-    sandbox.assert.calledOnceWithExactly(sendNotificationSpy, 'updateParameters', {
-      b: {
-        key: 'b',
-        serializedValue: 'pikachu',
-        stringValue: '"pikachu"',
-        type: 'String',
-        evaluatedStatement: '"pikachu"',
+    sandbox.assert.calledOnceWithExactly(
+      sendNotificationSpy,
+      'updateParameters',
+      {
+        b: {
+          key: 'b',
+          serializedValue: 'pikachu',
+          stringValue: '"pikachu"',
+          type: 'String',
+          evaluatedStatement: '"pikachu"',
+        },
       },
-    });
+    );
   });
 
   test('Removing a single parameter should refresh the VSCode parameters panel', async () => {
@@ -331,7 +363,11 @@ suite('Parameters command handlers spec', () => {
   test('Clearing all parameters should notify the language server', async () => {
     await setParameters({ spiesCleanUp: true });
     await clearAllParameters();
-    sandbox.assert.calledOnceWithExactly(sendNotificationSpy, 'updateParameters', {});
+    sandbox.assert.calledOnceWithExactly(
+      sendNotificationSpy,
+      'updateParameters',
+      {},
+    );
   });
 
   test('Clearing all parameters should refresh the VSCode parameters panel', async () => {

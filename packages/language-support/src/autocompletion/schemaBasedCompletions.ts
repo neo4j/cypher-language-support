@@ -1,7 +1,17 @@
-import { CompletionItem, CompletionItemKind, InsertTextFormat } from 'vscode-languageserver-types';
+import {
+  CompletionItem,
+  CompletionItemKind,
+  InsertTextFormat,
+} from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { ParsedStatement } from '../parserWrapper';
-import { ConditionNode, isLabelLeaf, LabelLeaf, LabelOrCondition, SymbolsInfo } from '../types';
+import {
+  ConditionNode,
+  isLabelLeaf,
+  LabelLeaf,
+  LabelOrCondition,
+  SymbolsInfo,
+} from '../types';
 import { findParent } from '../helpers';
 import {
   NodePatternContext,
@@ -10,7 +20,12 @@ import {
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
 import { backtickIfNeeded } from './autocompletionHelpers';
-import { convertToCNF, isAnyNode, isNotAnyNode, removeInnerAnys } from '../labelTreeRewriting';
+import {
+  convertToCNF,
+  isAnyNode,
+  isNotAnyNode,
+  removeInnerAnys,
+} from '../labelTreeRewriting';
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
@@ -28,20 +43,28 @@ export function getShortPathCompletions(
     return [];
   }
 
-  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } = getNodesFromRelsSet(dbSchema);
+  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+    getNodesFromRelsSet(dbSchema);
   const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
 
   let cnfTree: LabelOrCondition;
   try {
     const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
-    if (isAnyNode(treeWithRewrittenAnys) || isNotAnyNode(treeWithRewrittenAnys)) {
+    if (
+      isAnyNode(treeWithRewrittenAnys) ||
+      isNotAnyNode(treeWithRewrittenAnys)
+    ) {
       return [];
     }
     cnfTree = convertToCNF(treeWithRewrittenAnys);
   } catch (e) {
     return [];
   }
-  const { inLabels, outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, cnfTree);
+  const { inLabels, outLabels } = walkCNFTree(
+    nodesToRelsSet,
+    nodesFromRelsSet,
+    cnfTree,
+  );
 
   if (assumedDirection === 'outgoing') {
     for (const outLabel of outLabels) {
@@ -84,11 +107,15 @@ export function getPathCompletions(
   ) {
     return [];
   }
-  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } = getRelsFromNodesSets(dbSchema);
+  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
+    getRelsFromNodesSets(dbSchema);
   let cnfTree: LabelOrCondition;
   try {
     const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
-    if (isAnyNode(treeWithRewrittenAnys) || isNotAnyNode(treeWithRewrittenAnys)) {
+    if (
+      isAnyNode(treeWithRewrittenAnys) ||
+      isNotAnyNode(treeWithRewrittenAnys)
+    ) {
       return [];
     }
     cnfTree = convertToCNF(treeWithRewrittenAnys);
@@ -100,7 +127,8 @@ export function getPathCompletions(
     relsFromNodesSet,
     cnfTree,
   );
-  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } = getNodesFromRelsSet(dbSchema);
+  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+    getNodesFromRelsSet(dbSchema);
   for (const inRelType of inRelTypes) {
     const { inLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, {
       condition: 'and',
@@ -111,7 +139,8 @@ export function getPathCompletions(
         label: '-[:' + inRelType + ']->(:' + inLabel + ')',
         kind: CompletionItemKind.Snippet,
         insertTextFormat: InsertTextFormat.Snippet,
-        insertText: '-[${1: }:' + inRelType + ']->(${2: }:' + inLabel + ')${3:}',
+        insertText:
+          '-[${1: }:' + inRelType + ']->(${2: }:' + inLabel + ')${3:}',
         detail: 'path template',
       });
     }
@@ -127,7 +156,8 @@ export function getPathCompletions(
         label: '<-[:' + outRelType + ']-(:' + outLabel + ')',
         kind: CompletionItemKind.Snippet,
         insertTextFormat: InsertTextFormat.Snippet,
-        insertText: '<-[${1: }:' + outRelType + ']-(${2: }:' + outLabel + ')${3:}',
+        insertText:
+          '<-[${1: }:' + outRelType + ']-(${2: }:' + outLabel + ')${3:}',
         detail: 'path template',
       });
     }
@@ -139,7 +169,9 @@ export function getPathCompletions(
 export const labelsToCompletions = (labelNames: string[] = []) =>
   labelNames.map((labelName) => {
     const backtickedName = backtickIfNeeded(labelName, 'label');
-    const maybeInsertText = backtickedName ? { insertText: backtickedName } : {};
+    const maybeInsertText = backtickedName
+      ? { insertText: backtickedName }
+      : {};
 
     const result: CompletionItem = {
       label: labelName,
@@ -149,12 +181,15 @@ export const labelsToCompletions = (labelNames: string[] = []) =>
     return result;
   });
 
-export const allLabelCompletions = (dbSchema: DbSchema) => labelsToCompletions(dbSchema.labels);
+export const allLabelCompletions = (dbSchema: DbSchema) =>
+  labelsToCompletions(dbSchema.labels);
 
 const reltypesToCompletions = (reltypes: string[] = []) =>
   reltypes.map((relType) => {
     const backtickedName = backtickIfNeeded(relType, 'relType');
-    const maybeInsertText = backtickedName ? { insertText: backtickedName } : {};
+    const maybeInsertText = backtickedName
+      ? { insertText: backtickedName }
+      : {};
 
     const result: CompletionItem = {
       label: relType,
@@ -188,7 +223,11 @@ function walkCNFTree(
   labelTree.children.forEach((c) => {
     if (isLabelLeaf(c)) {
       literalLabels.push(c);
-    } else if (c.condition === 'not' && c.children.length === 1 && isLabelLeaf(c.children[0])) {
+    } else if (
+      c.condition === 'not' &&
+      c.children.length === 1 &&
+      isLabelLeaf(c.children[0])
+    ) {
       notLabels.push(c.children[0]);
     } else if (c.condition === 'or') {
       orNodes.push(c);
@@ -343,7 +382,8 @@ export function completeNodeLabel(
           : 'bidirectional';
 
       // limitation: not checking node label repetition
-      const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } = getNodesFromRelsSet(dbSchema);
+      const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+        getNodesFromRelsSet(dbSchema);
       let cnfTree: LabelOrCondition;
       try {
         const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
@@ -364,7 +404,11 @@ export function completeNodeLabel(
       nodesFromRelsSet.forEach((part) => {
         allOutGoingLabels = allOutGoingLabels.union(part);
       });
-      const { inLabels, outLabels } = walkCNFTree(nodesToRelsSet, nodesFromRelsSet, cnfTree);
+      const { inLabels, outLabels } = walkCNFTree(
+        nodesToRelsSet,
+        nodesFromRelsSet,
+        cnfTree,
+      );
       const allNodes =
         direction === 'outgoing'
           ? outLabels
@@ -395,13 +439,15 @@ export function completeRelationshipType(
   );
 
   if (patternContext instanceof PatternElementContext) {
-    const lastValidElement = patternContext.children.toReversed().find((child) => {
-      if (child instanceof NodePatternContext) {
-        if (child.exception === null) {
-          return true;
+    const lastValidElement = patternContext.children
+      .toReversed()
+      .find((child) => {
+        if (child instanceof NodePatternContext) {
+          if (child.exception === null) {
+            return true;
+          }
         }
-      }
-    });
+      });
 
     const thisCtx = findParent(
       parsingResult.stopNode,
@@ -425,7 +471,8 @@ export function completeRelationshipType(
       const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
       if (
         foundVariable === undefined ||
-        ('children' in foundVariable.labels && foundVariable.labels.children.length == 0)
+        ('children' in foundVariable.labels &&
+          foundVariable.labels.children.length == 0)
       ) {
         return allReltypeCompletions(dbSchema);
       }
@@ -454,7 +501,11 @@ export function completeRelationshipType(
       relsFromNodesSet.forEach((part) => {
         allOutGoingLabels = allOutGoingLabels.union(part);
       });
-      const { inLabels, outLabels } = walkCNFTree(relsToNodesSet, relsFromNodesSet, cnfTree);
+      const { inLabels, outLabels } = walkCNFTree(
+        relsToNodesSet,
+        relsFromNodesSet,
+        cnfTree,
+      );
       const allRels =
         direction === 'outgoing'
           ? outLabels

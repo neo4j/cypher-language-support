@@ -32,12 +32,17 @@ export async function dynamicallyAdjustLinter(): Promise<void> {
 
     if (serverVersion) {
       //since not every release has a linter release
-      const { linterVersion, notResolved, notSupported } = serverVersionToLinter(serverVersion);
+      const { linterVersion, notResolved, notSupported } =
+        serverVersionToLinter(serverVersion);
 
       if (notResolved) {
-        void vscode.window.showWarningMessage(CONSTANTS.MESSAGES.LINTER_SERVER_NOT_RESOLVED);
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_RESOLVED,
+        );
       } else if (notSupported) {
-        void vscode.window.showWarningMessage(CONSTANTS.MESSAGES.LINTER_SERVER_NOT_SUPPORTED);
+        void vscode.window.showWarningMessage(
+          CONSTANTS.MESSAGES.LINTER_SERVER_NOT_SUPPORTED,
+        );
       }
 
       const npmReleases = await getTaggedRegistryVersions();
@@ -72,17 +77,22 @@ export async function switchToLinter(
       await switchToLocalLinter(linterVersion);
     } else {
       const storageUri = await getStorageUri();
-      const { expectedFileName, isExpectedLinterDownloaded } = await expectedLinterExists(
-        linterVersion,
-        npmReleases,
-        storageUri,
-      );
+      const { expectedFileName, isExpectedLinterDownloaded } =
+        await expectedLinterExists(linterVersion, npmReleases, storageUri);
       if (isExpectedLinterDownloaded) {
         await switchWorkerOnLanguageServer(expectedFileName, storageUri);
       } else {
-        const downloadResult = await downloadLintWorker(linterVersion, storageUri, npmReleases);
+        const downloadResult = await downloadLintWorker(
+          linterVersion,
+          storageUri,
+          npmReleases,
+        );
         if (downloadResult.success) {
-          await deleteOutdatedLinters(linterVersion, downloadResult.fileName, storageUri);
+          await deleteOutdatedLinters(
+            linterVersion,
+            downloadResult.fileName,
+            storageUri,
+          );
           await switchWorkerOnLanguageServer(expectedFileName, storageUri);
         } else {
           await switchToLocalLinter(linterVersion);
@@ -95,12 +105,16 @@ export async function switchToLinter(
   }
 }
 
-export async function switchToLocalLinter(linterVersion: string): Promise<void> {
+export async function switchToLocalLinter(
+  linterVersion: string,
+): Promise<void> {
   const fileNames = await getFilesInExtensionStorage();
   const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
     fileNames
       .map((name) => [linterFileToServerVersion(name), name])
-      .filter((v): v is [string, string] => v !== undefined && v[0] !== undefined),
+      .filter(
+        (v): v is [string, string] => v !== undefined && v[0] !== undefined,
+      ),
   );
   const matchingFile = downloadedLinterVersions[linterVersion];
   if (matchingFile) {

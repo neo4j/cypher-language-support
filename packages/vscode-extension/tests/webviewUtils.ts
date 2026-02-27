@@ -2,7 +2,10 @@ import { integer } from 'vscode-languageclient';
 import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
-export async function waitUntilNotification(browser: WebdriverIO.Browser, notification: string) {
+export async function waitUntilNotification(
+  browser: WebdriverIO.Browser,
+  notification: string,
+) {
   await browser.waitUntil(
     async function () {
       const wb = await browser.getWorkbench();
@@ -15,7 +18,9 @@ export async function waitUntilNotification(browser: WebdriverIO.Browser, notifi
         }),
       );
 
-      const found = notificationsAndMsgs.find((value) => value.msg === notification);
+      const found = notificationsAndMsgs.find(
+        (value) => value.msg === notification,
+      );
       if (found) {
         await found.notification.dismiss();
         return true;
@@ -111,7 +116,9 @@ export async function createNewConnection(containerName: string) {
   await waitUntilNotification(browser, 'Connected to Neo4j.');
 }
 
-export async function getConnectionSection(workbench: Workbench): Promise<ViewSection | undefined> {
+export async function getConnectionSection(
+  workbench: Workbench,
+): Promise<ViewSection | undefined> {
   const activityBar = workbench.getActivityBar();
   const neo4jTile = await activityBar.getViewControl('Neo4j');
   const connectionPannel = await neo4jTile.openView();
@@ -159,7 +166,11 @@ export async function clickOnContextMenuItem(
   }
 }
 
-export async function selectValue(webview: WebView, elem: string, value: string) {
+export async function selectValue(
+  webview: WebView,
+  elem: string,
+  value: string,
+) {
   await webview.open();
   const element = await $(elem);
   await element.selectByVisibleText(value);
@@ -210,7 +221,9 @@ export async function executeFile(
   await workbench.executeCommand('Neo4j: Run Cypher statements');
 }
 
-export async function ensureNotificationsAreDismissed(browser: WebdriverIO.Browser): Promise<void> {
+export async function ensureNotificationsAreDismissed(
+  browser: WebdriverIO.Browser,
+): Promise<void> {
   const wb = await browser.getWorkbench();
   return await browser.waitUntil(async () => {
     const notifications = await wb.getNotifications();

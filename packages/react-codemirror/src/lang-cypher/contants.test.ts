@@ -1,5 +1,8 @@
 import { tags } from '@lezer/highlight';
-import { applySyntaxColouring, CypherTokenType } from '@neo4j-cypher/language-support';
+import {
+  applySyntaxColouring,
+  CypherTokenType,
+} from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
 import { tokenTypeToStyleTag } from './constants';
 

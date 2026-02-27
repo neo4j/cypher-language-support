@@ -12,5 +12,8 @@ export const _internalFeatureFlags: FeatureFlags = {
   it's own cache and preference on if console commands are enabled or not.
   */
   consoleCommands: false,
-  debugSymbolTable: typeof process === 'undefined' ? false : process.env.debugSymbolTable == 'true',
+  debugSymbolTable:
+    typeof process === 'undefined'
+      ? false
+      : process.env.debugSymbolTable == 'true',
 };

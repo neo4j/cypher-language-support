@@ -61,17 +61,19 @@ function copySettingSeverity(
 }
 
 function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
-  return symbolTable.map(({ variable, definitionPosition, types, references, labels }) => {
-    return {
-      variable,
-      definitionPosition,
-      types: Array.from(types),
-      references: Array.from(references),
-      labels: verifyLabelTree(labels)
-        ? labelTreeFromJava(labels)
-        : { condition: 'and', children: [] },
-    };
-  });
+  return symbolTable.map(
+    ({ variable, definitionPosition, types, references, labels }) => {
+      return {
+        variable,
+        definitionPosition,
+        types: Array.from(types),
+        references: Array.from(references),
+        labels: verifyLabelTree(labels)
+          ? labelTreeFromJava(labels)
+          : { condition: 'and', children: [] },
+      };
+    },
+  );
 }
 
 function verifyLabelTree(labels: LabelOrCondition): boolean {
@@ -101,7 +103,10 @@ function labelTreeFromJava(labels: LabelOrCondition): LabelOrCondition {
   }
 }
 
-function updateResolverForVersion(dbSchema: DbSchema, cypherVersion: CypherVersion) {
+function updateResolverForVersion(
+  dbSchema: DbSchema,
+  cypherVersion: CypherVersion,
+) {
   const previousResolver = previousResolvers?.[cypherVersion];
   const currentResolver = {
     procedures: dbSchema?.procedures?.[cypherVersion],
@@ -109,7 +114,9 @@ function updateResolverForVersion(dbSchema: DbSchema, cypherVersion: CypherVersi
   };
   if (JSON.stringify(previousResolver) !== JSON.stringify(currentResolver)) {
     previousResolvers[cypherVersion] = currentResolver;
-    const procedures = Object.values(dbSchema?.procedures?.[cypherVersion] ?? {});
+    const procedures = Object.values(
+      dbSchema?.procedures?.[cypherVersion] ?? {},
+    );
     const functions = Object.values(dbSchema?.functions?.[cypherVersion] ?? {});
     updateSignatureResolver(
       {
@@ -132,12 +139,16 @@ export function wrappedSemanticAnalysis(
     updateResolverForVersion(dbSchema, cypherVersion);
     const semanticErrorsResult = analyzeQuery(query, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
-    const notifications: SemanticAnalysisElement[] = semanticErrorsResult.notifications;
+    const notifications: SemanticAnalysisElement[] =
+      semanticErrorsResult.notifications;
     const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
       errors: copySettingSeverity(errors, DiagnosticSeverity.Error),
-      notifications: copySettingSeverity(notifications, DiagnosticSeverity.Warning),
+      notifications: copySettingSeverity(
+        notifications,
+        DiagnosticSeverity.Warning,
+      ),
       symbolTable: copySymbolTable(symbolTable),
     };
   } catch (e) {

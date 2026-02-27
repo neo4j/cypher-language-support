@@ -60,7 +60,8 @@ describe('Auto completion of back to back keywords', () => {
   });
 
   test('Correctly completes UNION and UNION ALL', () => {
-    const query = 'MATCH (a:Person)-[:KNOWS]->(b:Person) RETURN b.name AS name ';
+    const query =
+      'MATCH (a:Person)-[:KNOWS]->(b:Person) RETURN b.name AS name ';
 
     testCompletions({
       query,
@@ -87,7 +88,9 @@ describe('Auto completion of back to back keywords', () => {
     testCompletions({
       query,
       expected: [{ label: 'WITH HEADERS', kind: CompletionItemKind.Keyword }],
-      excluded: [{ label: 'WITH HEADERS FROM', kind: CompletionItemKind.Keyword }],
+      excluded: [
+        { label: 'WITH HEADERS FROM', kind: CompletionItemKind.Keyword },
+      ],
     });
   });
 

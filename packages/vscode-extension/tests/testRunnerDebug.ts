@@ -16,7 +16,9 @@ export async function run(): Promise<void> {
     }),
   ]);
   ((process.env.NEO4J_5_PORT = neo4j5Instance.getMappedPort(7687).toString()),
-    (process.env.NEO4J_2025_PORT = neo4j2025Instance.getMappedPort(7687).toString()),
+    (process.env.NEO4J_2025_PORT = neo4j2025Instance
+      .getMappedPort(7687)
+      .toString()),
     (process.env.DEBUG_VSCODE_TESTS = 'true'));
   return testRunner();
 }

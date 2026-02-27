@@ -17,7 +17,10 @@ import {
   getParameterByKey,
   setParameter,
 } from '../parameterService';
-import { ParameterItem, parametersTreeDataProvider } from '../treeviews/parametersTreeDataProvider';
+import {
+  ParameterItem,
+  parametersTreeDataProvider,
+} from '../treeviews/parametersTreeDataProvider';
 import { validateParamInput } from '../helpers';
 
 async function isConnected(): Promise<boolean> {
@@ -29,7 +32,9 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
   const connected = await isConnected();
 
   if (!connected) {
-    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS);
+    void window.showErrorMessage(
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_SET_PARAMS,
+    );
     return;
   }
 
@@ -85,7 +90,9 @@ export async function addParameter(defaultParamName?: string): Promise<void> {
 export async function editParameter(paramItem: ParameterItem): Promise<void> {
   const connected = await isConnected();
   if (!connected) {
-    void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EDIT_PARAMS);
+    void window.showErrorMessage(
+      CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EDIT_PARAMS,
+    );
     return;
   }
 
@@ -138,14 +145,19 @@ function getCurrentDatabase(): Database | undefined {
   return databases?.find((db) => db.name === connection.currentDb);
 }
 
-export async function evaluateParam(paramName: string, paramValue: string): Promise<void> {
+export async function evaluateParam(
+  paramName: string,
+  paramValue: string,
+): Promise<void> {
   const schemaPoller = getSchemaPoller();
 
   try {
     const db = getCurrentDatabase();
 
     if (db.type === 'system') {
-      void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION_SYSTEM_DB);
+      void window.showErrorMessage(
+        CONSTANTS.MESSAGES.ERROR_PARAM_EVALUATION_SYSTEM_DB,
+      );
       return;
     }
     const result = await schemaPoller.connection.runCypherQuery({
@@ -161,7 +173,10 @@ export async function evaluateParam(paramName: string, paramValue: string): Prom
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const paramAsCypherType = resultEntries[0] as CypherDataType;
     const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
-    const stringValue = cypherDataToString(paramAsCypherType).replaceAll('\n', '');
+    const stringValue = cypherDataToString(paramAsCypherType).replaceAll(
+      '\n',
+      '',
+    );
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
     await setParameter({
@@ -176,7 +191,9 @@ export async function evaluateParam(paramName: string, paramValue: string): Prom
     if (e instanceof Neo4jError) {
       //If we can get past linting-check with invalid query but still have failing query
       //when executing, we catch here as a backup
-      void window.showErrorMessage('Failed to evaluate parameter: ' + e.message);
+      void window.showErrorMessage(
+        'Failed to evaluate parameter: ' + e.message,
+      );
     } else {
       // only catch neo4j errors
       throw e;

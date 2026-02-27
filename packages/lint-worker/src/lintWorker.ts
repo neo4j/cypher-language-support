@@ -1,4 +1,7 @@
-import type { SymbolTable, SyntaxDiagnostic } from '@neo4j-cypher/language-support';
+import type {
+  SymbolTable,
+  SyntaxDiagnostic,
+} from '@neo4j-cypher/language-support';
 import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,

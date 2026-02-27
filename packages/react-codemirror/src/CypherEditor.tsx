@@ -1,5 +1,10 @@
 import { insertNewline } from '@codemirror/commands';
-import { Annotation, Compartment, EditorState, Extension } from '@codemirror/state';
+import {
+  Annotation,
+  Compartment,
+  EditorState,
+  Extension,
+} from '@codemirror/state';
 import {
   EditorView,
   KeyBinding,
@@ -12,7 +17,10 @@ import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
-import { replaceHistory, replMode as historyNavigation } from './historyNavigation';
+import {
+  replaceHistory,
+  replMode as historyNavigation,
+} from './historyNavigation';
 import { cypher, CypherConfig } from './lang-cypher/langCypher';
 import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
@@ -255,19 +263,23 @@ const readOnlyCompartment = new Compartment();
 const placeholderCompartment = new Compartment();
 const domEventHandlerCompartment = new Compartment();
 
-const formatLineNumber = (prompt?: string) => (a: number, state: EditorState) => {
-  if (state.doc.lines === 1 && prompt !== undefined) {
-    return prompt;
-  }
+const formatLineNumber =
+  (prompt?: string) => (a: number, state: EditorState) => {
+    if (state.doc.lines === 1 && prompt !== undefined) {
+      return prompt;
+    }
 
-  return a.toString();
-};
+    return a.toString();
+  };
 
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
 
-export class CypherEditor extends Component<CypherEditorProps, CypherEditorState> {
+export class CypherEditor extends Component<
+  CypherEditorProps,
+  CypherEditorState
+> {
   /**
    * The codemirror editor container.
    */
@@ -382,12 +394,17 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
       },
     };
 
-    const themeExtension = getThemeExtension(theme, overrideThemeBackgroundColor);
+    const themeExtension = getThemeExtension(
+      theme,
+      overrideThemeBackgroundColor,
+    );
 
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
-            const wasUserEdit = !upt.transactions.some((tr) => tr.annotation(ExternalEdit));
+            const wasUserEdit = !upt.transactions.some((tr) =>
+              tr.annotation(ExternalEdit),
+            );
 
             if (upt.docChanged && wasUserEdit) {
               const doc = upt.state.doc;
@@ -402,7 +419,9 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
       extensions: [
         keyBindingCompartment.of(
           keymap.of([
-            ...executeKeybinding(onExecute, newLineOnEnter, () => this.debouncedOnChange?.flush()),
+            ...executeKeybinding(onExecute, newLineOnEnter, () =>
+              this.debouncedOnChange?.flush(),
+            ),
             ...extraKeybindings,
           ]),
         ),
@@ -478,12 +497,16 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     // Handle theme change
     const didChangeTheme =
       prevProps.theme !== this.props.theme ||
-      prevProps.overrideThemeBackgroundColor !== this.props.overrideThemeBackgroundColor;
+      prevProps.overrideThemeBackgroundColor !==
+        this.props.overrideThemeBackgroundColor;
 
     if (didChangeTheme) {
       this.editorView.current.dispatch({
         effects: themeCompartment.reconfigure(
-          getThemeExtension(this.props.theme, this.props.overrideThemeBackgroundColor),
+          getThemeExtension(
+            this.props.theme,
+            this.props.overrideThemeBackgroundColor,
+          ),
         ),
       });
     }
@@ -503,7 +526,9 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
 
     if (prevProps.readonly !== this.props.readonly) {
       this.editorView.current.dispatch({
-        effects: readOnlyCompartment.reconfigure(EditorState.readOnly.of(this.props.readonly)),
+        effects: readOnlyCompartment.reconfigure(
+          EditorState.readOnly.of(this.props.readonly),
+        ),
       });
     }
 
@@ -522,8 +547,10 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
       this.editorView.current.dispatch({
         effects: keyBindingCompartment.reconfigure(
           keymap.of([
-            ...executeKeybinding(this.props.onExecute, this.props.newLineOnEnter, () =>
-              this.debouncedOnChange?.flush(),
+            ...executeKeybinding(
+              this.props.onExecute,
+              this.props.newLineOnEnter,
+              () => this.debouncedOnChange?.flush(),
             ),
             ...this.props.extraKeybindings,
           ]),
@@ -571,7 +598,8 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
   render(): React.ReactNode {
     const { className, theme } = this.props;
 
-    const themeClass = typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
+    const themeClass =
+      typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
 
     return (
       <div

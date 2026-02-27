@@ -103,7 +103,8 @@ describe('CALL syntax colouring', () => {
   });
 
   test('Correctly colours procedure CALL with yield', () => {
-    const query = 'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
+    const query =
+      'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
     expect(applySyntaxColouring(query)).toEqual([
       {
@@ -692,7 +693,8 @@ describe('LOAD CSV colouring', () => {
           startCharacter: 6,
           startOffset: 40,
         },
-        token: "'https://neo4j.com/docs/cypher-cheat-sheet/5/csv/artists-with-headers.csv'",
+        token:
+          "'https://neo4j.com/docs/cypher-cheat-sheet/5/csv/artists-with-headers.csv'",
         tokenType: 'stringLiteral',
       },
       {

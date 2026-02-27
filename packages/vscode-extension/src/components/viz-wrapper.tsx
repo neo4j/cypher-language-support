@@ -1,4 +1,9 @@
-import { GraphVisualization, NeoNode, NeoRel, SegmentedControl } from '@neo4j-ndl/react';
+import {
+  GraphVisualization,
+  NeoNode,
+  NeoRel,
+  SegmentedControl,
+} from '@neo4j-ndl/react';
 import React from 'react';
 import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
 
@@ -42,20 +47,30 @@ function renderTable(rows: ResultRows) {
           ))}
         </tr>
       </thead>
-      <tbody>{rows.map((row, i) => renderRow(Object.keys(row), row, i + 1))}</tbody>
+      <tbody>
+        {rows.map((row, i) => renderRow(Object.keys(row), row, i + 1))}
+      </tbody>
     </table>
   );
 }
 
-export const VizWrapper: React.FC<VizWrapperProps> = ({ rows, nodes, relationships }) => {
+export const VizWrapper: React.FC<VizWrapperProps> = ({
+  rows,
+  nodes,
+  relationships,
+}) => {
   const isTableOnly = nodes.length === 0 && relationships.length === 0;
-  const [selectedView, setSelectedView] = React.useState(isTableOnly ? 'table' : 'graph');
+  const [selectedView, setSelectedView] = React.useState(
+    isTableOnly ? 'table' : 'graph',
+  );
 
   return (
     <div className="vizWrapper">
       <div className="vizWrapper-content">
         {!isTableOnly && (
-          <div className={`vizWrapper-controls ${selectedView === 'table' ? 'block' : ''}`}>
+          <div
+            className={`vizWrapper-controls ${selectedView === 'table' ? 'block' : ''}`}
+          >
             <SegmentedControl
               onChange={(e) => {
                 setSelectedView(e);

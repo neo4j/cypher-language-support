@@ -46,7 +46,12 @@ export function testCompletions({
     });
   }
 
-  const actualCompletionList = autocomplete(query, dbSchema, offset, manualTrigger);
+  const actualCompletionList = autocomplete(
+    query,
+    dbSchema,
+    offset,
+    manualTrigger,
+  );
 
   if (assertEmpty) {
     expect(actualCompletionList).toEqual([]);
@@ -70,10 +75,12 @@ export function testCompletions({
     actualCompletionList.find((value) => {
       // if label is left out -> only check kind and vice versa
       const matchingKind =
-        notExpectedItem.kind === undefined || notExpectedItem.kind === value.kind;
+        notExpectedItem.kind === undefined ||
+        notExpectedItem.kind === value.kind;
 
       const matchingLabel =
-        notExpectedItem.label === undefined || notExpectedItem.label === value.label;
+        notExpectedItem.label === undefined ||
+        notExpectedItem.label === value.label;
 
       return matchingKind && matchingLabel;
     }),
@@ -82,7 +89,13 @@ export function testCompletions({
   expect(unexpectedCompletions).toEqual([]);
 }
 
-export function getSymbolCompletions({ query, dbSchema }: { query: string; dbSchema: DbSchema }) {
+export function getSymbolCompletions({
+  query,
+  dbSchema,
+}: {
+  query: string;
+  dbSchema: DbSchema;
+}) {
   const result = lintCypherQuery(query, dbSchema);
   parserWrapper.setSymbolsInfo({
     query: query,

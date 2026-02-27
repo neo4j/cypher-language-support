@@ -1,5 +1,9 @@
 import { autocompletion } from '@codemirror/autocomplete';
-import { defineLanguageFacet, Language, LanguageSupport } from '@codemirror/language';
+import {
+  defineLanguageFacet,
+  Language,
+  LanguageSupport,
+} from '@codemirror/language';
 import { type DbSchema } from '@neo4j-cypher/language-support';
 import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';

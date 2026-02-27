@@ -1,5 +1,8 @@
 import { IconButton } from '@neo4j-ndl/react';
-import { ChevronDownIconOutline, ChevronRightIconOutline } from '@neo4j-ndl/react/icons';
+import {
+  ChevronDownIconOutline,
+  ChevronRightIconOutline,
+} from '@neo4j-ndl/react/icons';
 import React from 'react';
 
 type CollapsibleProps = {
@@ -9,7 +12,12 @@ type CollapsibleProps = {
   children: React.ReactNode;
 };
 
-export const Collapsible: React.FC<CollapsibleProps> = ({ title, active, onToggle, children }) => {
+export const Collapsible: React.FC<CollapsibleProps> = ({
+  title,
+  active,
+  onToggle,
+  children,
+}) => {
   const [expanded, setExpanded] = React.useState(false);
 
   return (

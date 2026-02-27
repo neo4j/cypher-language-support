@@ -3,13 +3,22 @@ interface SimpleTree {
   children?: SimpleTree[];
 }
 
-import { antlrUtils, CypherParser, parse, ParserRuleContext } from '@neo4j-cypher/language-support';
+import {
+  antlrUtils,
+  CypherParser,
+  parse,
+  ParserRuleContext,
+} from '@neo4j-cypher/language-support';
 
 export function getDebugTree(cypher: string): SimpleTree {
   const statements = parse(cypher);
 
   function walk(node: ParserRuleContext): SimpleTree {
-    const name = antlrUtils.tree.Trees.getNodeText(node, CypherParser.ruleNames, CypherParser);
+    const name = antlrUtils.tree.Trees.getNodeText(
+      node,
+      CypherParser.ruleNames,
+      CypherParser,
+    );
 
     return {
       name: name,

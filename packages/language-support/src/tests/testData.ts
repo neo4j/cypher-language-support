@@ -21,14 +21,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A numeric value from which the absolute number will be returned.',
+            description:
+              'A numeric value from which the absolute number will be returned.',
             name: 'input',
             type: 'INTEGER | FLOAT',
           },
         ],
         returnDescription: 'INTEGER | FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -49,7 +57,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -65,7 +80,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -79,7 +95,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -95,7 +118,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -108,7 +132,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -287,7 +318,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the value to be returned, or -1 to return the last item.',
+            description:
+              'The index of the value to be returned, or -1 to return the last item.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -316,7 +348,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
+            default:
+              'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
             description: 'The percentiles from which the values are obtained.',
             name: 'percentiles',
             type: 'LIST<FLOAT>',
@@ -334,7 +367,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the product of all non-null `INTEGER` and `FLOAT` values in the collection.',
-        signature: 'apoc.agg.product(value :: INTEGER | FLOAT) :: INTEGER | FLOAT',
+        signature:
+          'apoc.agg.product(value :: INTEGER | FLOAT) :: INTEGER | FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -369,14 +403,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=0, type=INTEGER}',
-            description: 'The index from which to start returning values in the specified range.',
+            description:
+              'The index from which to start returning values in the specified range.',
             name: 'from',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-            description: 'The non-inclusive index of the final value in the range.',
+            description:
+              'The non-inclusive index of the final value in the range.',
             name: 'to',
             type: 'INTEGER',
           },
@@ -405,7 +441,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
+            default:
+              'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
             description: 'The percentiles from which the values are obtained.',
             name: 'percentiles',
             type: 'LIST<FLOAT>',
@@ -421,13 +458,15 @@ const mockSchema: DbSchema = {
       'apoc.any.isDeleted': {
         name: 'apoc.any.isDeleted',
         category: '',
-        description: 'Returns true if the given `NODE` or `RELATIONSHIP` no longer exists.',
+        description:
+          'Returns true if the given `NODE` or `RELATIONSHIP` no longer exists.',
         signature: 'apoc.any.isDeleted(object :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship to check the non-existence of.',
+            description:
+              'The node or relationship to check the non-existence of.',
             name: 'object',
             type: 'ANY',
           },
@@ -444,7 +483,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns all properties of the given object.\nThe object can be a virtual `NODE`, a real `NODE`, a virtual `RELATIONSHIP`, a real `RELATIONSHIP`, or a `MAP`.',
-        signature: 'apoc.any.properties(object :: ANY, keys = null :: LIST<STRING>) :: MAP',
+        signature:
+          'apoc.any.properties(object :: ANY, keys = null :: LIST<STRING>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -501,7 +541,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.bitwise.op',
         category: '',
         description: 'Returns the result of the bitwise operation',
-        signature: 'apoc.bitwise.op(a :: INTEGER, operator :: STRING, b :: INTEGER) :: INTEGER',
+        signature:
+          'apoc.bitwise.op(a :: INTEGER, operator :: STRING, b :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -533,7 +574,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.avg': {
         name: 'apoc.coll.avg',
         category: '',
-        description: 'Returns the average of the numbers in the `LIST<INTEGER | FLOAT>`.',
+        description:
+          'Returns the average of the numbers in the `LIST<INTEGER | FLOAT>`.',
         signature: 'apoc.coll.avg(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
@@ -590,8 +632,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.contains': {
         name: 'apoc.coll.contains',
         category: '',
-        description: 'Returns whether or not the given value exists in the given collection.',
-        signature: 'apoc.coll.contains(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
+        description:
+          'Returns whether or not the given value exists in the given collection.',
+        signature:
+          'apoc.coll.contains(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -619,7 +663,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not all of the given values exist in the given collection.',
-        signature: 'apoc.coll.containsAll(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsAll(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -630,7 +675,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of values in the given list to check for the existence of.',
+            description:
+              'The list of values in the given list to check for the existence of.',
             name: 'coll2',
             type: 'LIST<ANY>',
           },
@@ -647,7 +693,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not all of the given values in the second `LIST<ANY>` exist in an already sorted collection (using a binary search).',
-        signature: 'apoc.coll.containsAllSorted(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsAllSorted(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -658,7 +705,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of values to check for existence of in the given list.',
+            description:
+              'The list of values to check for existence of in the given list.',
             name: 'coll2',
             type: 'LIST<ANY>',
           },
@@ -673,7 +721,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.containsDuplicates': {
         name: 'apoc.coll.containsDuplicates',
         category: '',
-        description: 'Returns true if a collection contains duplicate elements.',
+        description:
+          'Returns true if a collection contains duplicate elements.',
         signature: 'apoc.coll.containsDuplicates(coll :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -696,7 +745,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not the given value exists in an already sorted collection (using a binary search).',
-        signature: 'apoc.coll.containsSorted(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsSorted(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -722,7 +772,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.different': {
         name: 'apoc.coll.different',
         category: '',
-        description: 'Returns true if all the values in the given `LIST<ANY>` are unique.',
+        description:
+          'Returns true if all the values in the given `LIST<ANY>` are unique.',
         signature: 'apoc.coll.different(coll :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -744,7 +795,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.disjunction',
         category: '',
         description: 'Returns the disjunct set from two `LIST<ANY>` values.',
-        signature: 'apoc.coll.disjunction(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.disjunction(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -772,13 +824,16 @@ const mockSchema: DbSchema = {
       'apoc.coll.dropDuplicateNeighbors': {
         name: 'apoc.coll.dropDuplicateNeighbors',
         category: '',
-        description: 'Removes duplicate consecutive objects in the `LIST<ANY>`.',
-        signature: 'apoc.coll.dropDuplicateNeighbors(list :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Removes duplicate consecutive objects in the `LIST<ANY>`.',
+        signature:
+          'apoc.coll.dropDuplicateNeighbors(list :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to remove duplicate consecutive values from.',
+            description:
+              'The list to remove duplicate consecutive values from.',
             name: 'list',
             type: 'LIST<ANY>',
           },
@@ -793,7 +848,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.duplicates': {
         name: 'apoc.coll.duplicates',
         category: '',
-        description: 'Returns a `LIST<ANY>` of duplicate items in the collection.',
+        description:
+          'Returns a `LIST<ANY>` of duplicate items in the collection.',
         signature: 'apoc.coll.duplicates(coll :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
@@ -816,12 +872,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<ANY>` of duplicate items in the collection and their count, keyed by `item` and `count`.',
-        signature: 'apoc.coll.duplicatesWithCount(coll :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.duplicatesWithCount(coll :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to collect duplicate values and their count from.',
+            description:
+              'The list to collect duplicate values and their count from.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
@@ -837,7 +895,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.fill',
         category: '',
         description: 'Returns a `LIST<ANY>` with the given count of items.',
-        signature: 'apoc.coll.fill(item :: STRING, count :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.fill(item :: STRING, count :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -848,7 +907,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of times the given item should appear in the returned list.',
+            description:
+              'The number of times the given item should appear in the returned list.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -939,7 +999,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the index for the first occurrence of the specified value in the `LIST<ANY>`.',
-        signature: 'apoc.coll.indexOf(coll :: LIST<ANY>, value :: ANY) :: INTEGER',
+        signature:
+          'apoc.coll.indexOf(coll :: LIST<ANY>, value :: ANY) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -950,7 +1011,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value to find the first occurrence of in the given list.',
+            description:
+              'The value to find the first occurrence of in the given list.',
             name: 'value',
             type: 'ANY',
           },
@@ -965,7 +1027,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.insert': {
         name: 'apoc.coll.insert',
         category: '',
-        description: 'Inserts a value into the specified index in the `LIST<ANY>`.',
+        description:
+          'Inserts a value into the specified index in the `LIST<ANY>`.',
         signature:
           'apoc.coll.insert(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
@@ -1013,7 +1076,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The position in the list to start inserting the given values.',
+            description:
+              'The position in the list to start inserting the given values.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -1034,8 +1098,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.intersection': {
         name: 'apoc.coll.intersection',
         category: '',
-        description: 'Returns the distinct intersection of two `LIST<ANY>` values.',
-        signature: 'apoc.coll.intersection(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Returns the distinct intersection of two `LIST<ANY>` values.',
+        signature:
+          'apoc.coll.intersection(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1065,18 +1131,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns true if the two collections contain the same elements with the same cardinality in any order.',
-        signature: 'apoc.coll.isEqualCollection(coll :: LIST<ANY>, values :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.isEqualCollection(coll :: LIST<ANY>, values :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list2` and check for equality.',
+            description:
+              'The list of values to compare against `list2` and check for equality.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list1` and check for equality.',
+            description:
+              'The list of values to compare against `list1` and check for equality.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -1091,7 +1160,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.max': {
         name: 'apoc.coll.max',
         category: '',
-        description: 'Returns the maximum of all values in the given `LIST<ANY>`.',
+        description:
+          'Returns the maximum of all values in the given `LIST<ANY>`.',
         signature: 'apoc.coll.max(values :: LIST<ANY>) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
@@ -1112,7 +1182,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.min': {
         name: 'apoc.coll.min',
         category: '',
-        description: 'Returns the minimum of all values in the given `LIST<ANY>`.',
+        description:
+          'Returns the minimum of all values in the given `LIST<ANY>`.',
         signature: 'apoc.coll.min(values :: LIST<ANY>) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
@@ -1134,12 +1205,14 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.occurrences',
         category: '',
         description: 'Returns the count of the given item in the collection.',
-        signature: 'apoc.coll.occurrences(coll :: LIST<ANY>, item :: ANY) :: INTEGER',
+        signature:
+          'apoc.coll.occurrences(coll :: LIST<ANY>, item :: ANY) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to collect the count of the given value from.',
+            description:
+              'The list to collect the count of the given value from.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
@@ -1161,7 +1234,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.pairWithOffset',
         category: '',
         description: 'Returns a `LIST<ANY>` of pairs defined by the offset.',
-        signature: 'apoc.coll.pairWithOffset(coll :: LIST<ANY>, offset :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.pairWithOffset(coll :: LIST<ANY>, offset :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1172,7 +1246,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The offset to make each pair with from the given list.',
+            description:
+              'The offset to make each pair with from the given list.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -1233,7 +1308,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Partitions the original `LIST<ANY>` into a new `LIST<ANY>` of the given batch size.\nThe final `LIST<ANY>` may be smaller than the given batch size.',
-        signature: 'apoc.coll.partition(coll :: LIST<ANY>, batchSize :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.partition(coll :: LIST<ANY>, batchSize :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1302,7 +1378,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether elements from the original list can be selected more than once.',
+            description:
+              'Whether elements from the original list can be selected more than once.',
             name: 'allowRepick',
             type: 'BOOLEAN',
           },
@@ -1331,7 +1408,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The starting index in the list to begin removing values from.',
+            description:
+              'The starting index in the list to begin removing values from.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -1355,7 +1433,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the first `LIST<ANY>` with all elements also present in the second `LIST<ANY>` removed.',
-        signature: 'apoc.coll.removeAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.removeAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1382,7 +1461,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.runningTotal',
         category: '',
         description: 'Returns an accumulative `LIST<INTEGER | FLOAT>`.',
-        signature: 'apoc.coll.runningTotal(list :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.runningTotal(list :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1403,7 +1483,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.set',
         category: '',
         description: 'Sets the element at the given index to the new value.',
-        signature: 'apoc.coll.set(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
+        signature:
+          'apoc.coll.set(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1479,7 +1560,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Sorts the given `LIST<MAP<STRING, ANY>>` into descending order, based on the `MAP` property indicated by `prop`.',
-        signature: 'apoc.coll.sortMaps(list :: LIST<MAP>, prop :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortMaps(list :: LIST<MAP>, prop :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1490,7 +1572,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key to be used to sort the list of maps by.',
+            description:
+              'The property key to be used to sort the list of maps by.',
             name: 'prop',
             type: 'STRING',
           },
@@ -1520,7 +1603,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-            description: 'The property keys to be used to sort the list of maps by.',
+            description:
+              'The property keys to be used to sort the list of maps by.',
             name: 'orderFields',
             type: 'LIST<STRING>',
           },
@@ -1551,7 +1635,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Sorts the given `LIST<NODE>` by the property of the nodes into descending order.',
-        signature: 'apoc.coll.sortNodes(coll :: LIST<NODE>, prop :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortNodes(coll :: LIST<NODE>, prop :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1562,7 +1647,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key on the node to be used to sort the list by.',
+            description:
+              'The property key on the node to be used to sort the list by.',
             name: 'prop',
             type: 'STRING',
           },
@@ -1578,7 +1664,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.sortText',
         category: '',
         description: 'Sorts the given `LIST<STRING>` into ascending order.',
-        signature: 'apoc.coll.sortText(coll :: LIST<STRING>, conf = {} :: MAP) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortText(coll :: LIST<STRING>, conf = {} :: MAP) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1639,7 +1726,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the first `LIST<ANY>` as a set with all the elements of the second `LIST<ANY>` removed.',
-        signature: 'apoc.coll.subtract(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.subtract(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1665,7 +1753,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.sum': {
         name: 'apoc.coll.sum',
         category: '',
-        description: 'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
+        description:
+          'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
         signature: 'apoc.coll.sum(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
@@ -1686,8 +1775,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.sumLongs': {
         name: 'apoc.coll.sumLongs',
         category: '',
-        description: 'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
-        signature: 'apoc.coll.sumLongs(coll :: LIST<INTEGER | FLOAT>) :: INTEGER',
+        description:
+          'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
+        signature:
+          'apoc.coll.sumLongs(coll :: LIST<INTEGER | FLOAT>) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1729,8 +1820,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.union': {
         name: 'apoc.coll.union',
         category: '',
-        description: 'Returns the distinct union of the two given `LIST<ANY>` values.',
-        signature: 'apoc.coll.union(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Returns the distinct union of the two given `LIST<ANY>` values.',
+        signature:
+          'apoc.coll.union(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1760,18 +1853,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the full union of the two given `LIST<ANY>` values (duplicates included).',
-        signature: 'apoc.coll.unionAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.unionAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list2` and form a union from.',
+            description:
+              'The list of values to compare against `list2` and form a union from.',
             name: 'list1',
             type: 'LIST<ANY>',
           },
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list1` and form a union from.',
+            description:
+              'The list of values to compare against `list1` and form a union from.',
             name: 'list2',
             type: 'LIST<ANY>',
           },
@@ -1788,7 +1884,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the two given `LIST<ANY>` values zipped together as a `LIST<LIST<ANY>>`.',
-        signature: 'apoc.coll.zip(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.zip(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -1814,7 +1911,8 @@ const mockSchema: DbSchema = {
       'apoc.convert.fromJsonList': {
         name: 'apoc.convert.fromJsonList',
         category: '',
-        description: 'Converts the given JSON list into a Cypher `LIST<STRING>`.',
+        description:
+          'Converts the given JSON list into a Cypher `LIST<STRING>`.',
         signature:
           'apoc.convert.fromJsonList(list :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: LIST<ANY>',
         isBuiltIn: false,
@@ -1828,7 +1926,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -1865,7 +1964,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the map.',
+            description:
+              'A JSON path expression used to extract a certain part from the map.',
             name: 'path',
             type: 'STRING',
           },
@@ -2105,7 +2205,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.convert.toRelationshipList',
         category: '',
         description: 'Converts the given value into a `LIST<RELATIONSHIP>`.',
-        signature: 'apoc.convert.toRelationshipList(relList :: ANY) :: LIST<ANY>',
+        signature:
+          'apoc.convert.toRelationshipList(relList :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2125,7 +2226,8 @@ const mockSchema: DbSchema = {
       'apoc.convert.toSet': {
         name: 'apoc.convert.toSet',
         category: '',
-        description: 'Converts the given value into a set represented in Cypher as a `LIST<ANY>`.',
+        description:
+          'Converts the given value into a set represented in Cypher as a `LIST<ANY>`.',
         signature: 'apoc.convert.toSet(list :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
@@ -2161,7 +2263,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to ignore the case of the keys when sorting.',
+            description:
+              'Whether or not to ignore the case of the keys when sorting.',
             name: 'ignoreCase',
             type: 'BOOLEAN',
           },
@@ -2206,7 +2309,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Takes the given base64 encoded UUID and returns it as a hexadecimal `STRING`.',
-        signature: 'apoc.create.uuidBase64ToHex(base64Uuid :: STRING) :: STRING',
+        signature:
+          'apoc.create.uuidBase64ToHex(base64Uuid :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2249,7 +2353,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.create.vNode',
         category: '',
         description: 'Returns a virtual `NODE`.',
-        signature: 'apoc.create.vNode(labels :: LIST<STRING>, props = {} :: MAP) :: NODE',
+        signature:
+          'apoc.create.vNode(labels :: LIST<STRING>, props = {} :: MAP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2283,7 +2388,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The start node to assign to the virtual relationship.',
+            description:
+              'The start node to assign to the virtual relationship.',
             name: 'from',
             type: 'NODE',
           },
@@ -2295,7 +2401,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The map of properties to assign to the virtual relationship.',
+            description:
+              'The map of properties to assign to the virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
@@ -2359,7 +2466,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The parameters needed for input to the given Cypher query.',
+            description:
+              'The parameters needed for input to the given Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -2376,7 +2484,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Runs the given statement with the given parameters and returns the first element of the first column.',
-        signature: 'apoc.cypher.runFirstColumnSingle(statement :: STRING, params :: MAP) :: ANY',
+        signature:
+          'apoc.cypher.runFirstColumnSingle(statement :: STRING, params :: MAP) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2387,7 +2496,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The parameters needed for input to the given Cypher query.',
+            description:
+              'The parameters needed for input to the given Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -2534,7 +2644,8 @@ const mockSchema: DbSchema = {
       'apoc.date.currentTimestamp': {
         name: 'apoc.date.currentTimestamp',
         category: '',
-        description: 'Returns the current Unix epoch timestamp in milliseconds.',
+        description:
+          'Returns the current Unix epoch timestamp in milliseconds.',
         signature: 'apoc.date.currentTimestamp() :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [],
@@ -2555,7 +2666,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The timestamp in ms since epoch to return a field from.',
+            description:
+              'The timestamp in ms since epoch to return a field from.',
             name: 'time',
             type: 'INTEGER',
           },
@@ -2598,7 +2710,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given temporal is formatted as.',
             name: 'pattern',
             type: 'STRING',
@@ -2635,7 +2748,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format to convert the given temporal value to.',
             name: 'format',
             type: 'STRING',
@@ -2701,7 +2815,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given datetime is in.',
             name: 'format',
             type: 'STRING',
@@ -2724,7 +2839,8 @@ const mockSchema: DbSchema = {
       'apoc.date.systemTimezone': {
         name: 'apoc.date.systemTimezone',
         category: '',
-        description: 'Returns the display name of the system time zone (e.g. Europe/London).',
+        description:
+          'Returns the display name of the system time zone (e.g. Europe/London).',
         signature: 'apoc.date.systemTimezone() :: STRING',
         isBuiltIn: false,
         argumentDescription: [],
@@ -2740,7 +2856,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `STRING` representation of a specified time value in the ISO8601 format.',
-        signature: 'apoc.date.toISO8601(time :: INTEGER, unit = ms :: STRING) :: STRING',
+        signature:
+          'apoc.date.toISO8601(time :: INTEGER, unit = ms :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2775,13 +2892,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The timestamp or datetime string to extract the years from.',
+            description:
+              'The timestamp or datetime string to extract the years from.',
             name: 'value',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given datetime string is in.',
             name: 'format',
             type: 'STRING',
@@ -2799,7 +2918,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `MAP` detailing the differences between the two given `NODE` values.',
-        signature: 'apoc.diff.nodes(leftNode :: NODE, rightNode :: NODE) :: MAP',
+        signature:
+          'apoc.diff.nodes(leftNode :: NODE, rightNode :: NODE) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2857,7 +2977,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Calculates a MD5 checksum over the full graph.\nThis function uses in-memory data structures.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.hashing.fingerprintGraph(propertyExcludes = [] :: LIST<STRING>) :: STRING',
+        signature:
+          'apoc.hashing.fingerprintGraph(propertyExcludes = [] :: LIST<STRING>) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2880,7 +3001,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Calculates a MD5 checksum over a `NODE` or `RELATIONSHIP` (identical entities share the same checksum).\nUnlike `apoc.hashing.fingerprint()`, this function supports a number of config parameters.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.hashing.fingerprinting(object :: ANY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.hashing.fingerprinting(object :: ANY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -2945,7 +3067,8 @@ const mockSchema: DbSchema = {
       'apoc.label.exists': {
         name: 'apoc.label.exists',
         category: '',
-        description: 'Returns true or false depending on whether or not the given label exists.',
+        description:
+          'Returns true or false depending on whether or not the given label exists.',
         signature: 'apoc.label.exists(node :: ANY, label :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -2972,8 +3095,10 @@ const mockSchema: DbSchema = {
       'apoc.map.clean': {
         name: 'apoc.map.clean',
         category: '',
-        description: 'Filters the keys and values contained in the given `LIST<ANY>` values.',
-        signature: 'apoc.map.clean(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
+        description:
+          'Filters the keys and values contained in the given `LIST<ANY>` values.',
+        signature:
+          'apoc.map.clean(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3007,7 +3132,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Flattens nested items in the given `MAP`.\nThis function is the reverse of the `apoc.map.unflatten` function.',
-        signature: 'apoc.map.flatten(map :: MAP, delimiter = . :: STRING) :: MAP',
+        signature:
+          'apoc.map.flatten(map :: MAP, delimiter = . :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3019,7 +3145,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=., type=STRING}',
-            description: 'The delimiter used to separate the levels of the flattened map.',
+            description:
+              'The delimiter used to separate the levels of the flattened map.',
             name: 'delimiter',
             type: 'STRING',
           },
@@ -3034,8 +3161,10 @@ const mockSchema: DbSchema = {
       'apoc.map.fromLists': {
         name: 'apoc.map.fromLists',
         category: '',
-        description: 'Creates a `MAP` from the keys and values in the given `LIST<ANY>` values.',
-        signature: 'apoc.map.fromLists(keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
+        description:
+          'Creates a `MAP` from the keys and values in the given `LIST<ANY>` values.',
+        signature:
+          'apoc.map.fromLists(keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3046,7 +3175,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of values associated with the keys to create a map from.',
+            description:
+              'A list of values associated with the keys to create a map from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -3061,7 +3191,8 @@ const mockSchema: DbSchema = {
       'apoc.map.fromNodes': {
         name: 'apoc.map.fromNodes',
         category: '',
-        description: 'Returns a `MAP` of the given prop to the node of the given label.',
+        description:
+          'Returns a `MAP` of the given prop to the node of the given label.',
         signature: 'apoc.map.fromNodes(label :: STRING, prop :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
@@ -3088,7 +3219,8 @@ const mockSchema: DbSchema = {
       'apoc.map.fromPairs': {
         name: 'apoc.map.fromPairs',
         category: '',
-        description: 'Creates a `MAP` from the given `LIST<LIST<ANY>>` of key-value pairs.',
+        description:
+          'Creates a `MAP` from the given `LIST<LIST<ANY>>` of key-value pairs.',
         signature: 'apoc.map.fromPairs(pairs :: LIST<LIST<ANY>>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
@@ -3116,7 +3248,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of keys and values listed pairwise to create a map from.',
+            description:
+              'A list of keys and values listed pairwise to create a map from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -3177,7 +3310,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Creates a `MAP` of the `LIST<ANY>` keyed by the given property, with single values.',
-        signature: 'apoc.map.groupBy(values :: LIST<ANY>, key :: STRING) :: MAP',
+        signature:
+          'apoc.map.groupBy(values :: LIST<ANY>, key :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3205,7 +3339,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Creates a `MAP` of the `LIST<ANY>` values keyed by the given property, with the `LIST<ANY>` values.',
-        signature: 'apoc.map.groupByMulti(values :: LIST<ANY>, key :: STRING) :: MAP',
+        signature:
+          'apoc.map.groupByMulti(values :: LIST<ANY>, key :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3324,8 +3459,10 @@ const mockSchema: DbSchema = {
       'apoc.map.removeKey': {
         name: 'apoc.map.removeKey',
         category: '',
-        description: 'Removes the given key from the `MAP` (recursively if recursive is true).',
-        signature: 'apoc.map.removeKey(map :: MAP, key :: STRING, config = {} :: MAP) :: MAP',
+        description:
+          'Removes the given key from the `MAP` (recursively if recursive is true).',
+        signature:
+          'apoc.map.removeKey(map :: MAP, key :: STRING, config = {} :: MAP) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3358,7 +3495,8 @@ const mockSchema: DbSchema = {
       'apoc.map.removeKeys': {
         name: 'apoc.map.removeKeys',
         category: '',
-        description: 'Removes the given keys from the `MAP` (recursively if recursive is true).',
+        description:
+          'Removes the given keys from the `MAP` (recursively if recursive is true).',
         signature:
           'apoc.map.removeKeys(map :: MAP, keys :: LIST<STRING>, config = {} :: MAP) :: MAP',
         isBuiltIn: false,
@@ -3394,7 +3532,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.map.setEntry',
         category: '',
         description: 'Adds or updates the given entry in the `MAP`.',
-        signature: 'apoc.map.setEntry(map :: MAP, key :: STRING, value :: ANY) :: MAP',
+        signature:
+          'apoc.map.setEntry(map :: MAP, key :: STRING, value :: ANY) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3427,7 +3566,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.map.setKey',
         category: '',
         description: 'Adds or updates the given entry in the `MAP`.',
-        signature: 'apoc.map.setKey(map :: MAP, key :: STRING, value :: ANY) :: MAP',
+        signature:
+          'apoc.map.setKey(map :: MAP, key :: STRING, value :: ANY) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3479,7 +3619,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of values associated to the keys to add or update the map with.',
+            description:
+              'A list of values associated to the keys to add or update the map with.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -3496,7 +3637,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Adds or updates the given key/value pairs (e.g. [key1,value1],[key2,value2]) in a `MAP`.',
-        signature: 'apoc.map.setPairs(map :: MAP, pairs :: LIST<LIST<ANY>>) :: MAP',
+        signature:
+          'apoc.map.setPairs(map :: MAP, pairs :: LIST<LIST<ANY>>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3535,7 +3677,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of items listed pairwise to add or update the map with.',
+            description:
+              'A list of items listed pairwise to add or update the map with.',
             name: 'pairs',
             type: 'LIST<ANY>',
           },
@@ -3565,7 +3708,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to take the case into account when sorting.',
+            description:
+              'Whether or not to take the case into account when sorting.',
             name: 'ignoreCase',
             type: 'BOOLEAN',
           },
@@ -3626,7 +3770,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Unflattens items in the given `MAP` to nested items.\nThis function is the reverse of the `apoc.map.flatten` function.',
-        signature: 'apoc.map.unflatten(map :: MAP, delimiter = . :: STRING) :: MAP',
+        signature:
+          'apoc.map.unflatten(map :: MAP, delimiter = . :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -3638,7 +3783,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=., type=STRING}',
-            description: 'The delimiter used to separate the levels of the flattened map.',
+            description:
+              'The delimiter used to separate the levels of the flattened map.',
             name: 'delimiter',
             type: 'STRING',
           },
@@ -3711,7 +3857,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not to return missing values as null values.',
+            description:
+              'Whether or not to return missing values as null values.',
             name: 'addNullsForMissing',
             type: 'BOOLEAN',
           },
@@ -3803,7 +3950,8 @@ const mockSchema: DbSchema = {
       'apoc.math.maxDouble': {
         name: 'apoc.math.maxDouble',
         category: '',
-        description: 'Returns the largest positive finite value of type double.',
+        description:
+          'Returns the largest positive finite value of type double.',
         signature: 'apoc.math.maxDouble() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -3859,7 +4007,8 @@ const mockSchema: DbSchema = {
       'apoc.math.minDouble': {
         name: 'apoc.math.minDouble',
         category: '',
-        description: 'Returns the smallest positive non-zero value of type double.',
+        description:
+          'Returns the smallest positive non-zero value of type double.',
         signature: 'apoc.math.minDouble() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -4008,7 +4157,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.meta.cypher.isType',
         category: '',
         description: 'Returns true if the given value matches the given type.',
-        signature: 'apoc.meta.cypher.isType(value :: ANY, type :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.meta.cypher.isType(value :: ANY, type :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4055,13 +4205,15 @@ const mockSchema: DbSchema = {
       'apoc.meta.cypher.types': {
         name: 'apoc.meta.cypher.types',
         category: '',
-        description: 'Returns a `MAP` containing the type names of the given values.',
+        description:
+          'Returns a `MAP` containing the type names of the given values.',
         signature: 'apoc.meta.cypher.types(props :: ANY) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A relationship, node or map to get the property types from.',
+            description:
+              'A relationship, node or map to get the property types from.',
             name: 'props',
             type: 'ANY',
           },
@@ -4109,12 +4261,14 @@ const mockSchema: DbSchema = {
         name: 'apoc.node.degree',
         category: '',
         description: 'Returns the total degrees of the given `NODE`.',
-        signature: 'apoc.node.degree(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to count the total number of relationships on.',
+            description:
+              'The node to count the total number of relationships on.',
             name: 'node',
             type: 'NODE',
           },
@@ -4139,12 +4293,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the total number of incoming `RELATIONSHIP` values connected to the given `NODE`.',
-        signature: 'apoc.node.degree.in(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree.in(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node for which to count the total number of incoming relationships.',
+            description:
+              'The node for which to count the total number of incoming relationships.',
             name: 'node',
             type: 'NODE',
           },
@@ -4168,12 +4324,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the total number of outgoing `RELATIONSHIP` values from the given `NODE`.',
-        signature: 'apoc.node.degree.out(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree.out(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node for which to count the total number of outgoing relationships.',
+            description:
+              'The node for which to count the total number of outgoing relationships.',
             name: 'node',
             type: 'NODE',
           },
@@ -4239,12 +4397,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether the given `NODE` has a connecting `RELATIONSHIP` (or whether the given `NODE` has a connecting `RELATIONSHIP` of the given type and direction).',
-        signature: 'apoc.node.relationship.exists(node :: NODE, relTypes =  :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.node.relationship.exists(node :: NODE, relTypes =  :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check for the specified relationship types.',
+            description:
+              'The node to check for the specified relationship types.',
             name: 'node',
             type: 'NODE',
           },
@@ -4269,12 +4429,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<STRING>` of distinct `RELATIONSHIP` types for the given `NODE`.',
-        signature: 'apoc.node.relationship.types(node :: NODE, relTypes =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.node.relationship.types(node :: NODE, relTypes =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to return the connected relationship types from.',
+            description:
+              'The node to return the connected relationship types from.',
             name: 'node',
             type: 'NODE',
           },
@@ -4299,12 +4461,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether the given `NODE` has connecting `RELATIONSHIP` values (or whether the given `NODE` has connecting `RELATIONSHIP` values of the given type and direction).',
-        signature: 'apoc.node.relationships.exist(node :: NODE, relTypes =  :: STRING) :: MAP',
+        signature:
+          'apoc.node.relationships.exist(node :: NODE, relTypes =  :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check for the specified relationship types.',
+            description:
+              'The node to check for the specified relationship types.',
             name: 'node',
             type: 'NODE',
           },
@@ -4335,13 +4499,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check if it is directly connected to the second node.',
+            description:
+              'The node to check if it is directly connected to the second node.',
             name: 'startNode',
             type: 'NODE',
           },
           {
             isDeprecated: false,
-            description: 'The node to check if it is directly connected to the first node.',
+            description:
+              'The node to check if it is directly connected to the first node.',
             name: 'endNode',
             type: 'NODE',
           },
@@ -4387,7 +4553,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<STRING>` of distinct `RELATIONSHIP` types from the given `LIST<NODE>` values.',
-        signature: 'apoc.nodes.relationship.types(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.nodes.relationship.types(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4417,7 +4584,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether or not the given `NODE` values have the given `RELATIONSHIP` values.',
-        signature: 'apoc.nodes.relationships.exist(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.nodes.relationships.exist(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4451,7 +4619,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A number to be converted to a Roman number represented as a string.',
+            description:
+              'A number to be converted to a Roman number represented as a string.',
             name: 'number',
             type: 'ANY',
           },
@@ -4468,18 +4637,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the result of adding the two given large numbers (using Java BigDecimal).',
-        signature: 'apoc.number.exact.add(stringA :: STRING, stringB :: STRING) :: STRING',
+        signature:
+          'apoc.number.exact.add(stringA :: STRING, stringB :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be added to the second number.',
+            description:
+              'A string representation of a number to be added to the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be added to the first number.',
+            description:
+              'A string representation of a number to be added to the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -4502,13 +4674,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be divided by the second number.',
+            description:
+              'A string representation of a number to be divided by the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to divide the first number by.',
+            description:
+              'A string representation of a number to divide the first number by.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -4546,13 +4720,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to multiply by the second number.',
+            description:
+              'A string representation of a number to multiply by the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to multiply by the first number.',
+            description:
+              'A string representation of a number to multiply by the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -4584,7 +4760,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the result of subtracting a given large number from another given large number (using Java BigDecimal).',
-        signature: 'apoc.number.exact.sub(stringA :: STRING, stringB :: STRING) :: STRING',
+        signature:
+          'apoc.number.exact.sub(stringA :: STRING, stringB :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4596,7 +4773,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to subtract from the first number.',
+            description:
+              'A string representation of a number to subtract from the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -4611,7 +4789,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toExact': {
         name: 'apoc.number.exact.toExact',
         category: '',
-        description: 'Returns the exact value of the given number (using Java BigDecimal).',
+        description:
+          'Returns the exact value of the given number (using Java BigDecimal).',
         signature: 'apoc.number.exact.toExact(number :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
@@ -4632,7 +4811,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toFloat': {
         name: 'apoc.number.exact.toFloat',
         category: '',
-        description: 'Returns the `FLOAT` of the given large number (using Java BigDecimal).',
+        description:
+          'Returns the `FLOAT` of the given large number (using Java BigDecimal).',
         signature:
           'apoc.number.exact.toFloat(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: FLOAT',
         isBuiltIn: false,
@@ -4669,7 +4849,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toInteger': {
         name: 'apoc.number.exact.toInteger',
         category: '',
-        description: 'Returns the `INTEGER` of the given large number (using Java BigDecimal).',
+        description:
+          'Returns the `INTEGER` of the given large number (using Java BigDecimal).',
         signature:
           'apoc.number.exact.toInteger(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: INTEGER',
         isBuiltIn: false,
@@ -4818,7 +4999,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.number.romanToArabic',
         category: '',
         description: 'Converts the given Roman numbers to Arabic numbers.',
-        signature: 'apoc.number.romanToArabic(romanNumber :: STRING) :: INTEGER | FLOAT',
+        signature:
+          'apoc.number.romanToArabic(romanNumber :: STRING) :: INTEGER | FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4865,8 +5047,10 @@ const mockSchema: DbSchema = {
       'apoc.path.create': {
         name: 'apoc.path.create',
         category: '',
-        description: 'Returns a `PATH` from the given start `NODE` and `LIST<RELATIONSHIP>`.',
-        signature: 'apoc.path.create(startNode :: NODE, rels = [] :: LIST<RELATIONSHIP>) :: PATH',
+        description:
+          'Returns a `PATH` from the given start `NODE` and `LIST<RELATIONSHIP>`.',
+        signature:
+          'apoc.path.create(startNode :: NODE, rels = [] :: LIST<RELATIONSHIP>) :: PATH',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -4893,13 +5077,15 @@ const mockSchema: DbSchema = {
       'apoc.path.elements': {
         name: 'apoc.path.elements',
         category: '',
-        description: 'Converts the given `PATH` into a `LIST<NODE | RELATIONSHIP>`.',
+        description:
+          'Converts the given `PATH` into a `LIST<NODE | RELATIONSHIP>`.',
         signature: 'apoc.path.elements(path :: PATH) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The path to be converted into a list of nodes and relationships.',
+            description:
+              'The path to be converted into a list of nodes and relationships.',
             name: 'path',
             type: 'PATH',
           },
@@ -4951,7 +5137,8 @@ const mockSchema: DbSchema = {
       'apoc.rel.endNode': {
         name: 'apoc.rel.endNode',
         category: '',
-        description: 'Returns the end `NODE` for the given virtual `RELATIONSHIP`.',
+        description:
+          'Returns the end `NODE` for the given virtual `RELATIONSHIP`.',
         signature: 'apoc.rel.endNode(rel :: RELATIONSHIP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
@@ -4993,7 +5180,8 @@ const mockSchema: DbSchema = {
       'apoc.rel.startNode': {
         name: 'apoc.rel.startNode',
         category: '',
-        description: 'Returns the start `NODE` for the given virtual `RELATIONSHIP`.',
+        description:
+          'Returns the start `NODE` for the given virtual `RELATIONSHIP`.',
         signature: 'apoc.rel.startNode(rel :: RELATIONSHIP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
@@ -5152,7 +5340,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.scoring.existence',
         category: '',
         description: 'Returns the given score if true, 0 if false.',
-        signature: 'apoc.scoring.existence(score :: INTEGER, exists :: BOOLEAN) :: FLOAT',
+        signature:
+          'apoc.scoring.existence(score :: INTEGER, exists :: BOOLEAN) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5178,7 +5367,8 @@ const mockSchema: DbSchema = {
       'apoc.scoring.pareto': {
         name: 'apoc.scoring.pareto',
         category: '',
-        description: 'Applies a Pareto scoring function over the given `INTEGER` values.',
+        description:
+          'Applies a Pareto scoring function over the given `INTEGER` values.',
         signature:
           'apoc.scoring.pareto(minimumThreshold :: INTEGER, eightyPercentValue :: INTEGER, maximumValue :: INTEGER, score :: INTEGER) :: FLOAT',
         isBuiltIn: false,
@@ -5218,8 +5408,10 @@ const mockSchema: DbSchema = {
       'apoc.temporal.format': {
         name: 'apoc.temporal.format',
         category: '',
-        description: 'Formats the given temporal value into the given time format.',
-        signature: 'apoc.temporal.format(temporal :: ANY, format = yyyy-MM-dd :: STRING) :: STRING',
+        description:
+          'Formats the given temporal value into the given time format.',
+        signature:
+          'apoc.temporal.format(temporal :: ANY, format = yyyy-MM-dd :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5247,7 +5439,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.temporal.formatDuration',
         category: '',
         description: 'Formats the given duration into the given time format.',
-        signature: 'apoc.temporal.formatDuration(input :: ANY, format :: STRING) :: STRING',
+        signature:
+          'apoc.temporal.formatDuration(input :: ANY, format :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5287,7 +5480,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format of the given date string.',
             name: 'format',
             type: 'STRING',
@@ -5395,7 +5589,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.byteCount',
         category: '',
         description: 'Returns the size of the given `STRING` in bytes.',
-        signature: 'apoc.text.byteCount(text :: STRING, charset = UTF-8 :: STRING) :: INTEGER',
+        signature:
+          'apoc.text.byteCount(text :: STRING, charset = UTF-8 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5423,7 +5618,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.bytes',
         category: '',
         description: 'Returns the given `STRING` as bytes.',
-        signature: 'apoc.text.bytes(text :: STRING, charset = UTF-8 :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.text.bytes(text :: STRING, charset = UTF-8 :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5492,7 +5688,8 @@ const mockSchema: DbSchema = {
       'apoc.text.capitalizeAll': {
         name: 'apoc.text.capitalizeAll',
         category: '',
-        description: 'Capitalizes the first letter of every word in the given `STRING`.',
+        description:
+          'Capitalizes the first letter of every word in the given `STRING`.',
         signature: 'apoc.text.capitalizeAll(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
@@ -5513,8 +5710,10 @@ const mockSchema: DbSchema = {
       'apoc.text.charAt': {
         name: 'apoc.text.charAt',
         category: '',
-        description: 'Returns the `INTEGER` value of the character at the given index.',
-        signature: 'apoc.text.charAt(text :: STRING, index :: INTEGER) :: INTEGER',
+        description:
+          'Returns the `INTEGER` value of the character at the given index.',
+        signature:
+          'apoc.text.charAt(text :: STRING, index :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5526,7 +5725,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the character in the given string to convert.',
+            description:
+              'The index of the character in the given string to convert.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -5587,7 +5787,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares two given `STRING` values stripped of everything except alpha numeric characters converted to lower case.',
-        signature: 'apoc.text.compareCleaned(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.text.compareCleaned(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5615,13 +5816,15 @@ const mockSchema: DbSchema = {
       'apoc.text.decapitalize': {
         name: 'apoc.text.decapitalize',
         category: '',
-        description: 'Turns the first letter of the given `STRING` from upper case to lower case.',
+        description:
+          'Turns the first letter of the given `STRING` from upper case to lower case.',
         signature: 'apoc.text.decapitalize(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string in which to decapitalize the first letter.',
+            description:
+              'The string in which to decapitalize the first letter.',
             name: 'text',
             type: 'STRING',
           },
@@ -5636,7 +5839,8 @@ const mockSchema: DbSchema = {
       'apoc.text.decapitalizeAll': {
         name: 'apoc.text.decapitalizeAll',
         category: '',
-        description: 'Turns the first letter of every word in the given `STRING` to lower case.',
+        description:
+          'Turns the first letter of every word in the given `STRING` to lower case.',
         signature: 'apoc.text.decapitalizeAll(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
@@ -5659,7 +5863,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares the two given `STRING` values using the Levenshtein distance algorithm.',
-        signature: 'apoc.text.distance(text1 :: STRING, text2 :: STRING) :: INTEGER',
+        signature:
+          'apoc.text.distance(text1 :: STRING, text2 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5692,7 +5897,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string to be encoded using the double metaphone phonetic encoding.',
+            description:
+              'The string to be encoded using the double metaphone phonetic encoding.',
             name: 'value',
             type: 'STRING',
           },
@@ -5720,7 +5926,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Arguments referenced by the format specifiers in the format string.',
+            description:
+              'Arguments referenced by the format specifiers in the format string.',
             name: 'params',
             type: 'LIST<ANY>',
           },
@@ -5743,8 +5950,10 @@ const mockSchema: DbSchema = {
       'apoc.text.fuzzyMatch': {
         name: 'apoc.text.fuzzyMatch',
         category: '',
-        description: 'Performs a fuzzy match search of the two given `STRING` values.',
-        signature: 'apoc.text.fuzzyMatch(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
+        description:
+          'Performs a fuzzy match search of the two given `STRING` values.',
+        signature:
+          'apoc.text.fuzzyMatch(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5770,8 +5979,10 @@ const mockSchema: DbSchema = {
       'apoc.text.hammingDistance': {
         name: 'apoc.text.hammingDistance',
         category: '',
-        description: 'Compares the two given `STRING` values using the Hamming distance algorithm.',
-        signature: 'apoc.text.hammingDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
+        description:
+          'Compares the two given `STRING` values using the Hamming distance algorithm.',
+        signature:
+          'apoc.text.hammingDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5797,8 +6008,10 @@ const mockSchema: DbSchema = {
       'apoc.text.hexCharAt': {
         name: 'apoc.text.hexCharAt',
         category: '',
-        description: 'Returns the hexadecimal value of the given `STRING` at the given index.',
-        signature: 'apoc.text.hexCharAt(text :: STRING, index :: INTEGER) :: STRING',
+        description:
+          'Returns the hexadecimal value of the given `STRING` at the given index.',
+        signature:
+          'apoc.text.hexCharAt(text :: STRING, index :: INTEGER) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5810,7 +6023,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the character in the given string to convert.',
+            description:
+              'The index of the character in the given string to convert.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -5831,7 +6045,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The value to convert into a hexidecimal value represented as a string.',
+            description:
+              'The value to convert into a hexidecimal value represented as a string.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -5934,7 +6149,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares the two given `STRING` values using the Jaro-Winkler distance algorithm.',
-        signature: 'apoc.text.jaroWinklerDistance(text1 :: STRING, text2 :: STRING) :: FLOAT',
+        signature:
+          'apoc.text.jaroWinklerDistance(text1 :: STRING, text2 :: STRING) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -5960,13 +6176,16 @@ const mockSchema: DbSchema = {
       'apoc.text.join': {
         name: 'apoc.text.join',
         category: '',
-        description: 'Joins the given `STRING` values using the given delimiter.',
-        signature: 'apoc.text.join(texts :: LIST<STRING>, delimiter :: STRING) :: STRING',
+        description:
+          'Joins the given `STRING` values using the given delimiter.',
+        signature:
+          'apoc.text.join(texts :: LIST<STRING>, delimiter :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of strings to be concatenated using the given delimiter.',
+            description:
+              'The list of strings to be concatenated using the given delimiter.',
             name: 'texts',
             type: 'LIST<STRING>',
           },
@@ -5987,8 +6206,10 @@ const mockSchema: DbSchema = {
       'apoc.text.levenshteinDistance': {
         name: 'apoc.text.levenshteinDistance',
         category: '',
-        description: 'Compares the given `STRING` values using the Levenshtein distance algorithm.',
-        signature: 'apoc.text.levenshteinDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
+        description:
+          'Compares the given `STRING` values using the Levenshtein distance algorithm.',
+        signature:
+          'apoc.text.levenshteinDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6016,7 +6237,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the similarity (a value within 0 and 1) between the two given `STRING` values based on the Levenshtein distance algorithm.',
-        signature: 'apoc.text.levenshteinSimilarity(text1 :: STRING, text2 :: STRING) :: FLOAT',
+        signature:
+          'apoc.text.levenshteinSimilarity(text1 :: STRING, text2 :: STRING) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6055,7 +6277,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of delimiters to pad the given string with.',
+            description:
+              'The number of delimiters to pad the given string with.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -6084,7 +6307,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string to encode using US_ENGLISH phonetic soundex.',
+            description:
+              'The string to encode using US_ENGLISH phonetic soundex.',
             name: 'text',
             type: 'STRING',
           },
@@ -6101,7 +6325,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Generates a random `STRING` to the given length using a length parameter and an optional `STRING` of valid characters.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.text.random(length :: INTEGER, valid = A-Za-z0-9 :: STRING) :: STRING',
+        signature:
+          'apoc.text.random(length :: INTEGER, valid = A-Za-z0-9 :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6128,8 +6353,10 @@ const mockSchema: DbSchema = {
       'apoc.text.regexGroups': {
         name: 'apoc.text.regexGroups',
         category: '',
-        description: 'Returns all groups matching the given regular expression in the given text.',
-        signature: 'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
+        description:
+          'Returns all groups matching the given regular expression in the given text.',
+        signature:
+          'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6157,7 +6384,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns all groups with their group name matching the given regular expression in the given text.',
-        signature: 'apoc.text.regexGroupsByName(text :: STRING, regex :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.text.regexGroupsByName(text :: STRING, regex :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6197,7 +6425,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The regular expression pattern to replace in the original string.',
+            description:
+              'The regular expression pattern to replace in the original string.',
             name: 'regex',
             type: 'STRING',
           },
@@ -6218,8 +6447,10 @@ const mockSchema: DbSchema = {
       'apoc.text.repeat': {
         name: 'apoc.text.repeat',
         category: '',
-        description: 'Returns the result of the given item multiplied by the given count.',
-        signature: 'apoc.text.repeat(item :: STRING, count :: INTEGER) :: STRING',
+        description:
+          'Returns the result of the given item multiplied by the given count.',
+        signature:
+          'apoc.text.repeat(item :: STRING, count :: INTEGER) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6259,7 +6490,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The regular expression pattern to replace in the original string.',
+            description:
+              'The regular expression pattern to replace in the original string.',
             name: 'regex',
             type: 'STRING',
           },
@@ -6293,7 +6525,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of delimiters to pad the given string with.',
+            description:
+              'The number of delimiters to pad the given string with.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -6315,8 +6548,10 @@ const mockSchema: DbSchema = {
       'apoc.text.slug': {
         name: 'apoc.text.slug',
         category: '',
-        description: 'Replaces the whitespace in the given `STRING` with the given delimiter.',
-        signature: 'apoc.text.slug(text :: STRING, delimiter = - :: STRING) :: STRING',
+        description:
+          'Replaces the whitespace in the given `STRING` with the given delimiter.',
+        signature:
+          'apoc.text.slug(text :: STRING, delimiter = - :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6400,7 +6635,8 @@ const mockSchema: DbSchema = {
       'apoc.text.split': {
         name: 'apoc.text.split',
         category: '',
-        description: 'Splits the given `STRING` using a given regular expression as a separator.',
+        description:
+          'Splits the given `STRING` using a given regular expression as a separator.',
         signature:
           'apoc.text.split(text :: STRING, regex :: STRING, limit = 0 :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
@@ -6458,7 +6694,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.toCypher',
         category: '',
         description: 'Converts the given value to a Cypher property `STRING`.',
-        signature: 'apoc.text.toCypher(value :: ANY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.text.toCypher(value :: ANY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6470,7 +6707,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{ keepValues :: LIST<ANY> , skipValues :: LIST<ANY> }',
+            description:
+              '{ keepValues :: LIST<ANY> , skipValues :: LIST<ANY> }',
             name: 'config',
             type: 'MAP',
           },
@@ -6570,7 +6808,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.util.compress',
         category: '',
         description: 'Zips the given `STRING`.',
-        signature: 'apoc.util.compress(data :: STRING, config = {} :: MAP) :: BYTEARRAY',
+        signature:
+          'apoc.util.compress(data :: STRING, config = {} :: MAP) :: BYTEARRAY',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6599,7 +6838,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.util.decompress',
         category: '',
         description: 'Unzips the given byte array.',
-        signature: 'apoc.util.decompress(data :: BYTEARRAY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.util.decompress(data :: BYTEARRAY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -6634,7 +6874,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate an md5 checksum from.',
+            description:
+              'The list of values to concatenate and generate an md5 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -6656,7 +6897,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha1 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha1 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -6678,7 +6920,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha256 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha256 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -6700,7 +6943,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha384 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha384 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -6722,7 +6966,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha512 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha512 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -6751,7 +6996,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The error message thrown if the predicate evaluates to `true`.',
+            description:
+              'The error message thrown if the predicate evaluates to `true`.',
             name: 'message',
             type: 'STRING',
           },
@@ -6844,7 +7090,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6865,7 +7118,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6873,7 +7133,8 @@ const mockSchema: DbSchema = {
       atan2: {
         name: 'atan2',
         category: 'Trigonometric',
-        description: 'Returns the arctangent2 of a set of coordinates in radians.',
+        description:
+          'Returns the arctangent2 of a set of coordinates in radians.',
         signature: 'atan2(y :: FLOAT, x :: FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
@@ -6892,7 +7153,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6900,8 +7168,10 @@ const mockSchema: DbSchema = {
       avg: {
         name: 'avg',
         category: 'Aggregating',
-        description: 'Returns the average of a set of `INTEGER`, `FLOAT` or `DURATION` values.',
-        signature: 'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
+        description:
+          'Returns the average of a set of `INTEGER`, `FLOAT` or `DURATION` values.',
+        signature:
+          'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -6913,7 +7183,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT | DURATION',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6923,7 +7200,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with leading and trailing `trimCharacterString` characters removed.',
-        signature: 'btrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'btrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -6935,14 +7213,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start and end of the given string.',
+            description:
+              'A character to be removed from the start and end of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6964,7 +7250,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6978,14 +7271,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose length in characters is to be calculated.',
+            description:
+              'A string value whose length in characters is to be calculated.',
             name: 'input',
             type: 'STRING',
           },
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -6999,14 +7300,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose length in characters is to be calculated.',
+            description:
+              'A string value whose length in characters is to be calculated.',
             name: 'input',
             type: 'STRING',
           },
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7014,20 +7323,29 @@ const mockSchema: DbSchema = {
       coalesce: {
         name: 'coalesce',
         category: 'Scalar',
-        description: 'Returns the first non-null value in a list of expressions.',
+        description:
+          'Returns the first non-null value in a list of expressions.',
         signature: 'coalesce(input :: ANY) :: ANY',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'If this is the first non-`NULL` value, it will be returned.',
+            description:
+              'If this is the first non-`NULL` value, it will be returned.',
             name: 'input',
             type: 'ANY',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7035,7 +7353,8 @@ const mockSchema: DbSchema = {
       collect: {
         name: 'collect',
         category: 'Aggregating',
-        description: 'Returns a list containing the values returned by an expression.',
+        description:
+          'Returns a list containing the values returned by an expression.',
         signature: 'collect(input :: ANY) :: LIST<ANY>',
         isBuiltIn: true,
         argumentDescription: [
@@ -7048,7 +7367,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<ANY>',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7069,7 +7395,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7090,7 +7423,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7111,7 +7451,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7125,7 +7472,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('date', 'year', 'month', 'day', 'week', 'dayOfWeek', 'quarter', 'dayOfQuarter', 'ordinalDay') as components.",
             name: 'input',
@@ -7134,7 +7482,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7142,13 +7497,16 @@ const mockSchema: DbSchema = {
       'date.realtime': {
         name: 'date.realtime',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the realtime clock.',
-        signature: 'date.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the realtime clock.',
+        signature:
+          'date.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7156,7 +7514,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7164,13 +7529,16 @@ const mockSchema: DbSchema = {
       'date.statement': {
         name: 'date.statement',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the statement clock.',
-        signature: 'date.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the statement clock.',
+        signature:
+          'date.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7178,7 +7546,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7186,13 +7561,16 @@ const mockSchema: DbSchema = {
       'date.transaction': {
         name: 'date.transaction',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the transaction clock.',
-        signature: 'date.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the transaction clock.',
+        signature:
+          'date.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7200,7 +7578,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7223,7 +7608,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -7240,7 +7626,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7249,12 +7642,14 @@ const mockSchema: DbSchema = {
         name: 'datetime',
         category: 'Temporal',
         description: 'Creates a `ZONED DATETIME` instant.',
-        signature: 'datetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
+        signature:
+          'datetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone', 'epochSeconds', 'epochMillis') as components.",
             name: 'input',
@@ -7263,7 +7658,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7279,7 +7681,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The number of seconds from the UNIX epoch in the UTC time zone.',
+            description:
+              'The number of seconds from the UNIX epoch in the UTC time zone.',
             name: 'seconds',
             type: 'INTEGER | FLOAT',
           },
@@ -7293,7 +7696,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7303,19 +7713,28 @@ const mockSchema: DbSchema = {
         category: 'Temporal',
         description:
           'Creates a `ZONED DATETIME` given the milliseconds since the start of the epoch.',
-        signature: 'datetime.fromepochmillis(milliseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
+        signature:
+          'datetime.fromepochmillis(milliseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The number of milliseconds from the UNIX epoch in the UTC time zone.',
+            description:
+              'The number of milliseconds from the UNIX epoch in the UTC time zone.',
             name: 'milliseconds',
             type: 'INTEGER | FLOAT',
           },
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7323,14 +7742,16 @@ const mockSchema: DbSchema = {
       'datetime.realtime': {
         name: 'datetime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the realtime clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the realtime clock.',
         signature:
           'datetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7338,7 +7759,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7346,14 +7774,16 @@ const mockSchema: DbSchema = {
       'datetime.statement': {
         name: 'datetime.statement',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the statement clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the statement clock.',
         signature:
           'datetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7361,7 +7791,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7369,14 +7806,16 @@ const mockSchema: DbSchema = {
       'datetime.transaction': {
         name: 'datetime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the transaction clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the transaction clock.',
         signature:
           'datetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -7384,7 +7823,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7407,7 +7853,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -7424,7 +7871,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7445,7 +7899,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7466,7 +7927,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7488,7 +7956,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7518,7 +7993,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7548,7 +8030,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7578,7 +8067,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7608,7 +8104,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7622,7 +8125,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7643,7 +8153,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7664,7 +8181,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'NODE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7672,7 +8196,8 @@ const mockSchema: DbSchema = {
       exists: {
         name: 'exists',
         category: 'Predicate',
-        description: 'Returns true if a match for the pattern exists in the graph.',
+        description:
+          'Returns true if a match for the pattern exists in the graph.',
         signature: 'exists(input :: ANY) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
@@ -7685,7 +8210,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7700,14 +8232,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value to which the base of the natural logarithm, e, will be raised.',
+            description:
+              'A value to which the base of the natural logarithm, e, will be raised.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7715,13 +8255,21 @@ const mockSchema: DbSchema = {
       file: {
         name: 'file',
         category: 'Scalar',
-        description: 'Returns the absolute path of the file that LOAD CSV is using.',
+        description:
+          'Returns the absolute path of the file that LOAD CSV is using.',
         signature: 'file() :: STRING',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7743,7 +8291,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -7856,7 +8411,8 @@ const mockSchema: DbSchema = {
       'gds.alpha.linkprediction.resourceAllocation': {
         name: 'gds.alpha.linkprediction.resourceAllocation',
         category: '',
-        description: 'Given two nodes, calculate Resource Allocation similarity',
+        description:
+          'Given two nodes, calculate Resource Allocation similarity',
         signature:
           'gds.alpha.linkprediction.resourceAllocation(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
         isBuiltIn: false,
@@ -7891,7 +8447,8 @@ const mockSchema: DbSchema = {
       'gds.alpha.linkprediction.sameCommunity': {
         name: 'gds.alpha.linkprediction.sameCommunity',
         category: '',
-        description: 'Given two nodes, indicates if they have the same community',
+        description:
+          'Given two nodes, indicates if they have the same community',
         signature:
           'gds.alpha.linkprediction.sameCommunity(node1 :: NODE, node2 :: NODE, communityProperty = community :: STRING) :: FLOAT',
         isBuiltIn: false,
@@ -8011,7 +8568,8 @@ const mockSchema: DbSchema = {
       'gds.graph.project': {
         name: 'gds.graph.project',
         category: '',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         signature:
           'gds.graph.project(graphName :: STRING, sourceNode :: ANY, targetNode = null :: ANY, dataConfig = null :: ANY, configuration = null :: ANY, alphaMigrationConfig = null :: ANY) :: MAP',
         isBuiltIn: false,
@@ -8294,7 +8852,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'RETURN gds.util.asNodes(nodeIds) - Return the node objects for the given node ids or an empty list if none exists.',
-        signature: 'gds.util.asNodes(nodeIds :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
+        signature:
+          'gds.util.asNodes(nodeIds :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -8314,7 +8873,8 @@ const mockSchema: DbSchema = {
       'gds.util.infinity': {
         name: 'gds.util.infinity',
         category: '',
-        description: 'RETURN gds.util.infinity() - Return infinity as a Cypher value.',
+        description:
+          'RETURN gds.util.infinity() - Return infinity as a Cypher value.',
         signature: 'gds.util.infinity() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -8372,7 +8932,8 @@ const mockSchema: DbSchema = {
       'gds.util.nodeProperty': {
         name: 'gds.util.nodeProperty',
         category: '',
-        description: 'Returns a node property value from a named in-memory graph.',
+        description:
+          'Returns a node property value from a named in-memory graph.',
         signature:
           'gds.util.nodeProperty(graphName :: STRING, nodeId :: ANY, propertyKey :: STRING, nodeLabel = * :: STRING) :: ANY',
         isBuiltIn: false,
@@ -8442,7 +9003,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'GRAPH',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8464,7 +9032,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'GRAPH',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8478,7 +9053,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8500,7 +9082,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'MAP',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8521,7 +9110,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8535,14 +9131,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list from which the first element will be returned.',
+            description:
+              'A list from which the first element will be returned.',
             name: 'list',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8563,7 +9167,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: true,
         deprecatedBy: null,
@@ -8571,7 +9182,8 @@ const mockSchema: DbSchema = {
       isEmpty: {
         name: 'isEmpty',
         category: 'Predicate',
-        description: 'Checks whether a `STRING`, `MAP` or `LIST<ANY>` is empty.',
+        description:
+          'Checks whether a `STRING`, `MAP` or `LIST<ANY>` is empty.',
         signature: 'isEmpty(input :: STRING | MAP | LIST<ANY>) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
@@ -8584,7 +9196,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8605,7 +9224,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8628,7 +9254,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8650,7 +9283,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8671,7 +9311,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8686,20 +9333,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose rightmost characters will be trimmed.',
+            description:
+              'A string value whose rightmost characters will be trimmed.',
             name: 'original',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The length of the leftmost characters to be returned.',
+            description:
+              'The length of the leftmost characters to be returned.',
             name: 'length',
             type: 'INTEGER',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8720,7 +9376,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8728,13 +9391,21 @@ const mockSchema: DbSchema = {
       linenumber: {
         name: 'linenumber',
         category: 'Scalar',
-        description: 'Returns the line number that LOAD CSV is currently using.',
+        description:
+          'Returns the line number that LOAD CSV is currently using.',
         signature: 'linenumber() :: INTEGER',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8743,12 +9414,14 @@ const mockSchema: DbSchema = {
         name: 'localdatetime',
         category: 'Temporal',
         description: 'Creates a `LOCAL DATETIME` instant.',
-        signature: 'localdatetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
+        signature:
+          'localdatetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond') as components.",
             name: 'input',
@@ -8757,7 +9430,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8765,14 +9445,16 @@ const mockSchema: DbSchema = {
       'localdatetime.realtime': {
         name: 'localdatetime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the realtime clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the realtime clock.',
         signature:
           'localdatetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8780,7 +9462,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8788,14 +9477,16 @@ const mockSchema: DbSchema = {
       'localdatetime.statement': {
         name: 'localdatetime.statement',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the statement clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the statement clock.',
         signature:
           'localdatetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8803,7 +9494,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8811,14 +9509,16 @@ const mockSchema: DbSchema = {
       'localdatetime.transaction': {
         name: 'localdatetime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the transaction clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the transaction clock.',
         signature:
           'localdatetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8826,7 +9526,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8849,7 +9556,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -8866,7 +9574,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8875,12 +9590,14 @@ const mockSchema: DbSchema = {
         name: 'localtime',
         category: 'Temporal',
         description: 'Creates a `LOCAL TIME` instant.',
-        signature: 'localtime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        signature:
+          'localtime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour, 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond' as components.",
             name: 'input',
@@ -8889,7 +9606,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8897,13 +9621,16 @@ const mockSchema: DbSchema = {
       'localtime.realtime': {
         name: 'localtime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the realtime clock.',
-        signature: 'localtime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        description:
+          'Returns the current `LOCAL TIME` instant using the realtime clock.',
+        signature:
+          'localtime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8911,7 +9638,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8919,13 +9653,16 @@ const mockSchema: DbSchema = {
       'localtime.statement': {
         name: 'localtime.statement',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the statement clock.',
-        signature: 'localtime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        description:
+          'Returns the current `LOCAL TIME` instant using the statement clock.',
+        signature:
+          'localtime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8933,7 +9670,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8941,14 +9685,16 @@ const mockSchema: DbSchema = {
       'localtime.transaction': {
         name: 'localtime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the transaction clock.',
+        description:
+          'Returns the current `LOCAL TIME` instant using the transaction clock.',
         signature:
           'localtime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -8956,7 +9702,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -8979,7 +9732,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `LOCAL TIME`, or `DATE`.',
             name: 'input',
@@ -8996,7 +9750,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9010,14 +9771,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value for which the natural logarithm will be returned.',
+            description:
+              'A value for which the natural logarithm will be returned.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9031,14 +9800,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value for which the common logarithm (base 10) will be returned.',
+            description:
+              'A value for which the common logarithm (base 10) will be returned.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9059,7 +9836,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9069,25 +9853,35 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with leading `trimCharacterString` characters removed.',
-        signature: 'ltrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'ltrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value from which the leading trim character will be removed.',
+            description:
+              'A value from which the leading trim character will be removed.',
             name: 'input',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start of the given string.',
+            description:
+              'A character to be removed from the start of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9108,7 +9902,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9129,7 +9930,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9137,7 +9945,8 @@ const mockSchema: DbSchema = {
       nodes: {
         name: 'nodes',
         category: 'List',
-        description: 'Returns a `LIST<NODE>` containing all the `NODE` values in a `PATH`.',
+        description:
+          'Returns a `LIST<NODE>` containing all the `NODE` values in a `PATH`.',
         signature: 'nodes(input :: PATH) :: LIST<NODE>',
         isBuiltIn: true,
         argumentDescription: [
@@ -9150,7 +9959,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<NODE>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9158,14 +9974,16 @@ const mockSchema: DbSchema = {
       none: {
         name: 'none',
         category: 'Predicate',
-        description: 'Returns true if the predicate holds for no element in the given `LIST<ANY>`.',
+        description:
+          'Returns true if the predicate holds for no element in the given `LIST<ANY>`.',
         signature:
           'none(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -9178,7 +9996,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9200,14 +10025,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
+            description:
+              'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
             name: 'normalForm',
             type: '[NFC, NFD, NFKC, NFKD]',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9222,20 +10055,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A first value to be returned if the second value is not equivalent.',
+            description:
+              'A first value to be returned if the second value is not equivalent.',
             name: 'v1',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'A second value against which the first value is compared.',
+            description:
+              'A second value against which the first value is compared.',
             name: 'v2',
             type: 'ANY',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9243,8 +10085,10 @@ const mockSchema: DbSchema = {
       percentileCont: {
         name: 'percentileCont',
         category: 'Aggregating',
-        description: 'Returns the percentile of a value over a group using linear interpolation.',
-        signature: 'percentileCont(input :: FLOAT, percentile :: FLOAT) :: FLOAT',
+        description:
+          'Returns the percentile of a value over a group using linear interpolation.',
+        signature:
+          'percentileCont(input :: FLOAT, percentile :: FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9262,7 +10106,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9291,7 +10142,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9305,7 +10163,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9328,7 +10193,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'POINT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9356,7 +10228,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9391,7 +10270,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9413,7 +10299,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'MAP',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9434,7 +10327,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9442,13 +10342,21 @@ const mockSchema: DbSchema = {
       rand: {
         name: 'rand',
         category: 'Numeric',
-        description: 'Returns a random `FLOAT` in the range from 0 (inclusive) to 1 (exclusive).',
+        description:
+          'Returns a random `FLOAT` in the range from 0 (inclusive) to 1 (exclusive).',
         signature: 'rand() :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9462,7 +10370,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9472,7 +10387,8 @@ const mockSchema: DbSchema = {
         category: 'List',
         description:
           'Returns a `LIST<INTEGER>` comprising all `INTEGER` values within a specified range created with step length.',
-        signature: 'range(start :: INTEGER, end :: INTEGER, step :: INTEGER) :: LIST<INTEGER>',
+        signature:
+          'range(start :: INTEGER, end :: INTEGER, step :: INTEGER) :: LIST<INTEGER>',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9496,7 +10412,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<INTEGER>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9512,20 +10435,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that holds the result as the list is iterated.',
+            description:
+              'A variable that holds the result as the list is iterated.',
             name: 'accumulator',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the reducing expression.',
+            description:
+              'A variable that can be used within the reducing expression.',
             name: 'variable',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9540,14 +10472,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The path from which all relationships will be returned.',
+            description:
+              'The path from which all relationships will be returned.',
             name: 'input',
             type: 'PATH',
           },
         ],
         returnDescription: 'LIST<RELATIONSHIP>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9557,7 +10497,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns a `STRING` in which all occurrences of a specified search `STRING` in the given `STRING` have been replaced by another (specified) replacement `STRING`.',
-        signature: 'replace(original :: STRING, search :: STRING, replace :: STRING) :: STRING',
+        signature:
+          'replace(original :: STRING, search :: STRING, replace :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9581,7 +10522,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9603,7 +10551,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING | LIST<ANY>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9618,20 +10573,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose leftmost characters will be trimmed.',
+            description:
+              'A string value whose leftmost characters will be trimmed.',
             name: 'original',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The length of the rightmost characters to be returned.',
+            description:
+              'The length of the rightmost characters to be returned.',
             name: 'length',
             type: 'INTEGER',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9641,7 +10605,8 @@ const mockSchema: DbSchema = {
         category: 'Numeric',
         description:
           'Returns the value of a number rounded to the specified precision with the specified rounding mode.',
-        signature: 'round(value :: FLOAT, precision :: INTEGER | FLOAT, mode :: STRING) :: FLOAT',
+        signature:
+          'round(value :: FLOAT, precision :: INTEGER | FLOAT, mode :: STRING) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9666,7 +10631,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9676,7 +10648,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with trailing `trimCharacterString` characters removed.',
-        signature: 'rtrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'rtrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9688,14 +10661,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start and end of the given string.',
+            description:
+              'A character to be removed from the start and end of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9717,7 +10698,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9738,7 +10726,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9754,7 +10749,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -9767,7 +10763,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9789,7 +10792,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9818,7 +10828,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9839,7 +10856,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9860,7 +10884,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'NODE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9882,7 +10913,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9897,14 +10935,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The value to calculate the population standard deviation of.',
+            description:
+              'The value to calculate the population standard deviation of.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9914,7 +10960,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns a substring of a given `length` from the given `STRING`, beginning with a 0-based index start.',
-        signature: 'substring(original :: STRING, start :: INTEGER, length :: INTEGER) :: STRING',
+        signature:
+          'substring(original :: STRING, start :: INTEGER, length :: INTEGER) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9938,7 +10985,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9946,8 +11000,10 @@ const mockSchema: DbSchema = {
       sum: {
         name: 'sum',
         category: 'Aggregating',
-        description: 'Returns the sum of a set of `INTEGER`, `FLOAT` or `DURATION` values',
-        signature: 'sum(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
+        description:
+          'Returns the sum of a set of `INTEGER`, `FLOAT` or `DURATION` values',
+        signature:
+          'sum(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -9959,7 +11015,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT | DURATION',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -9973,14 +11036,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list from which all but the first element will be returned.',
+            description:
+              'A list from which all but the first element will be returned.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<ANY>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10001,7 +11072,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10010,12 +11088,14 @@ const mockSchema: DbSchema = {
         name: 'time',
         category: 'Temporal',
         description: 'Creates a `ZONED TIME` instant.',
-        signature: 'time(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        signature:
+          'time(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone') as components.",
             name: 'input',
@@ -10024,7 +11104,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10032,13 +11119,16 @@ const mockSchema: DbSchema = {
       'time.realtime': {
         name: 'time.realtime',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the realtime clock.',
-        signature: 'time.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the realtime clock.',
+        signature:
+          'time.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -10046,7 +11136,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10054,13 +11151,16 @@ const mockSchema: DbSchema = {
       'time.statement': {
         name: 'time.statement',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the statement clock.',
-        signature: 'time.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the statement clock.',
+        signature:
+          'time.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -10068,7 +11168,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10076,13 +11183,16 @@ const mockSchema: DbSchema = {
       'time.transaction': {
         name: 'time.transaction',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the transaction clock.',
-        signature: 'time.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the transaction clock.',
+        signature:
+          'time.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -10090,7 +11200,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10113,7 +11230,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `ZONED TIME`, or `LOCAL TIME`.',
             name: 'input',
@@ -10130,7 +11248,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10145,7 +11270,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10167,7 +11299,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10182,14 +11321,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of booleans.',
+            description:
+              'A list of values to be converted into a list of booleans.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<BOOLEAN>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10211,7 +11358,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10219,7 +11373,8 @@ const mockSchema: DbSchema = {
       toFloat: {
         name: 'toFloat',
         category: 'Scalar',
-        description: 'Converts a `STRING`, `INTEGER` or `FLOAT` value to a `FLOAT` value.',
+        description:
+          'Converts a `STRING`, `INTEGER` or `FLOAT` value to a `FLOAT` value.',
         signature: 'toFloat(input :: STRING | INTEGER | FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
@@ -10232,7 +11387,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10247,14 +11409,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of floats.',
+            description:
+              'A list of values to be converted into a list of floats.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<FLOAT>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10276,7 +11446,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10286,7 +11463,8 @@ const mockSchema: DbSchema = {
         category: 'Scalar',
         description:
           'Converts a `BOOLEAN`, `STRING`, `INTEGER` or `FLOAT` value to an `INTEGER` value. For `BOOLEAN` values, true is defined to be 1 and false is defined to be 0.',
-        signature: 'toInteger(input :: BOOLEAN | STRING | INTEGER | FLOAT) :: INTEGER',
+        signature:
+          'toInteger(input :: BOOLEAN | STRING | INTEGER | FLOAT) :: INTEGER',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -10298,7 +11476,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10313,14 +11498,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of integers.',
+            description:
+              'A list of values to be converted into a list of integers.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<INTEGER>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10342,7 +11535,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10363,7 +11563,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10385,7 +11592,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10400,14 +11614,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of strings.',
+            description:
+              'A list of values to be converted into a list of strings.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10429,7 +11651,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10450,7 +11679,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10466,7 +11702,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The parts of the string to trim; LEADING, TRAILING, BOTH',
+            description:
+              'The parts of the string to trim; LEADING, TRAILING, BOTH',
             name: 'trimSpecification',
             type: '[LEADING, TRAILING, BOTH]',
           },
@@ -10487,7 +11724,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10495,7 +11739,8 @@ const mockSchema: DbSchema = {
       type: {
         name: 'type',
         category: 'Scalar',
-        description: 'Returns a `STRING` representation of the `RELATIONSHIP` type.',
+        description:
+          'Returns a `STRING` representation of the `RELATIONSHIP` type.',
         signature: 'type(input :: RELATIONSHIP) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
@@ -10508,7 +11753,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10529,7 +11781,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10551,7 +11810,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10580,7 +11846,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10609,7 +11882,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10625,14 +11905,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A numeric value from which the absolute number will be returned.',
+            description:
+              'A numeric value from which the absolute number will be returned.',
             name: 'input',
             type: 'INTEGER | FLOAT',
           },
         ],
         returnDescription: 'INTEGER | FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10653,7 +11941,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10669,7 +11964,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -10683,7 +11979,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10699,7 +12002,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -10712,7 +12016,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -10891,7 +12202,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the value to be returned, or -1 to return the last item.',
+            description:
+              'The index of the value to be returned, or -1 to return the last item.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -10920,7 +12232,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
+            default:
+              'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
             description: 'The percentiles from which the values are obtained.',
             name: 'percentiles',
             type: 'LIST<FLOAT>',
@@ -10938,7 +12251,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the product of all non-null `INTEGER` and `FLOAT` values in the collection.',
-        signature: 'apoc.agg.product(value :: INTEGER | FLOAT) :: INTEGER | FLOAT',
+        signature:
+          'apoc.agg.product(value :: INTEGER | FLOAT) :: INTEGER | FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -10973,14 +12287,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=0, type=INTEGER}',
-            description: 'The index from which to start returning values in the specified range.',
+            description:
+              'The index from which to start returning values in the specified range.',
             name: 'from',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-            description: 'The non-inclusive index of the final value in the range.',
+            description:
+              'The non-inclusive index of the final value in the range.',
             name: 'to',
             type: 'INTEGER',
           },
@@ -11009,7 +12325,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
+            default:
+              'DefaultParameterValue{value=[0.5, 0.75, 0.9, 0.95, 0.99], type=LIST<FLOAT>}',
             description: 'The percentiles from which the values are obtained.',
             name: 'percentiles',
             type: 'LIST<FLOAT>',
@@ -11025,13 +12342,15 @@ const mockSchema: DbSchema = {
       'apoc.any.isDeleted': {
         name: 'apoc.any.isDeleted',
         category: '',
-        description: 'Returns true if the given `NODE` or `RELATIONSHIP` no longer exists.',
+        description:
+          'Returns true if the given `NODE` or `RELATIONSHIP` no longer exists.',
         signature: 'apoc.any.isDeleted(object :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship to check the non-existence of.',
+            description:
+              'The node or relationship to check the non-existence of.',
             name: 'object',
             type: 'ANY',
           },
@@ -11048,7 +12367,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns all properties of the given object.\nThe object can be a virtual `NODE`, a real `NODE`, a virtual `RELATIONSHIP`, a real `RELATIONSHIP`, or a `MAP`.',
-        signature: 'apoc.any.properties(object :: ANY, keys = null :: LIST<STRING>) :: MAP',
+        signature:
+          'apoc.any.properties(object :: ANY, keys = null :: LIST<STRING>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11105,7 +12425,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.bitwise.op',
         category: '',
         description: 'Returns the result of the bitwise operation',
-        signature: 'apoc.bitwise.op(a :: INTEGER, operator :: STRING, b :: INTEGER) :: INTEGER',
+        signature:
+          'apoc.bitwise.op(a :: INTEGER, operator :: STRING, b :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11137,7 +12458,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.avg': {
         name: 'apoc.coll.avg',
         category: '',
-        description: 'Returns the average of the numbers in the `LIST<INTEGER | FLOAT>`.',
+        description:
+          'Returns the average of the numbers in the `LIST<INTEGER | FLOAT>`.',
         signature: 'apoc.coll.avg(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
@@ -11194,8 +12516,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.contains': {
         name: 'apoc.coll.contains',
         category: '',
-        description: 'Returns whether or not the given value exists in the given collection.',
-        signature: 'apoc.coll.contains(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
+        description:
+          'Returns whether or not the given value exists in the given collection.',
+        signature:
+          'apoc.coll.contains(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11223,7 +12547,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not all of the given values exist in the given collection.',
-        signature: 'apoc.coll.containsAll(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsAll(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11234,7 +12559,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of values in the given list to check for the existence of.',
+            description:
+              'The list of values in the given list to check for the existence of.',
             name: 'coll2',
             type: 'LIST<ANY>',
           },
@@ -11251,7 +12577,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not all of the given values in the second `LIST<ANY>` exist in an already sorted collection (using a binary search).',
-        signature: 'apoc.coll.containsAllSorted(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsAllSorted(coll1 :: LIST<ANY>, coll2 :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11262,7 +12589,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of values to check for existence of in the given list.',
+            description:
+              'The list of values to check for existence of in the given list.',
             name: 'coll2',
             type: 'LIST<ANY>',
           },
@@ -11277,7 +12605,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.containsDuplicates': {
         name: 'apoc.coll.containsDuplicates',
         category: '',
-        description: 'Returns true if a collection contains duplicate elements.',
+        description:
+          'Returns true if a collection contains duplicate elements.',
         signature: 'apoc.coll.containsDuplicates(coll :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -11300,7 +12629,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns whether or not the given value exists in an already sorted collection (using a binary search).',
-        signature: 'apoc.coll.containsSorted(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
+        signature:
+          'apoc.coll.containsSorted(coll :: LIST<ANY>, value :: ANY) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11326,7 +12656,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.different': {
         name: 'apoc.coll.different',
         category: '',
-        description: 'Returns true if all the values in the given `LIST<ANY>` are unique.',
+        description:
+          'Returns true if all the values in the given `LIST<ANY>` are unique.',
         signature: 'apoc.coll.different(coll :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -11348,7 +12679,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.disjunction',
         category: '',
         description: 'Returns the disjunct set from two `LIST<ANY>` values.',
-        signature: 'apoc.coll.disjunction(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.disjunction(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11376,13 +12708,16 @@ const mockSchema: DbSchema = {
       'apoc.coll.dropDuplicateNeighbors': {
         name: 'apoc.coll.dropDuplicateNeighbors',
         category: '',
-        description: 'Removes duplicate consecutive objects in the `LIST<ANY>`.',
-        signature: 'apoc.coll.dropDuplicateNeighbors(list :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Removes duplicate consecutive objects in the `LIST<ANY>`.',
+        signature:
+          'apoc.coll.dropDuplicateNeighbors(list :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to remove duplicate consecutive values from.',
+            description:
+              'The list to remove duplicate consecutive values from.',
             name: 'list',
             type: 'LIST<ANY>',
           },
@@ -11397,7 +12732,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.duplicates': {
         name: 'apoc.coll.duplicates',
         category: '',
-        description: 'Returns a `LIST<ANY>` of duplicate items in the collection.',
+        description:
+          'Returns a `LIST<ANY>` of duplicate items in the collection.',
         signature: 'apoc.coll.duplicates(coll :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
@@ -11420,12 +12756,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<ANY>` of duplicate items in the collection and their count, keyed by `item` and `count`.',
-        signature: 'apoc.coll.duplicatesWithCount(coll :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.duplicatesWithCount(coll :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to collect duplicate values and their count from.',
+            description:
+              'The list to collect duplicate values and their count from.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
@@ -11441,7 +12779,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.fill',
         category: '',
         description: 'Returns a `LIST<ANY>` with the given count of items.',
-        signature: 'apoc.coll.fill(item :: STRING, count :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.fill(item :: STRING, count :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11452,7 +12791,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of times the given item should appear in the returned list.',
+            description:
+              'The number of times the given item should appear in the returned list.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -11543,7 +12883,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the index for the first occurrence of the specified value in the `LIST<ANY>`.',
-        signature: 'apoc.coll.indexOf(coll :: LIST<ANY>, value :: ANY) :: INTEGER',
+        signature:
+          'apoc.coll.indexOf(coll :: LIST<ANY>, value :: ANY) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11554,7 +12895,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value to find the first occurrence of in the given list.',
+            description:
+              'The value to find the first occurrence of in the given list.',
             name: 'value',
             type: 'ANY',
           },
@@ -11569,7 +12911,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.insert': {
         name: 'apoc.coll.insert',
         category: '',
-        description: 'Inserts a value into the specified index in the `LIST<ANY>`.',
+        description:
+          'Inserts a value into the specified index in the `LIST<ANY>`.',
         signature:
           'apoc.coll.insert(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
@@ -11617,7 +12960,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The position in the list to start inserting the given values.',
+            description:
+              'The position in the list to start inserting the given values.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -11638,8 +12982,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.intersection': {
         name: 'apoc.coll.intersection',
         category: '',
-        description: 'Returns the distinct intersection of two `LIST<ANY>` values.',
-        signature: 'apoc.coll.intersection(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Returns the distinct intersection of two `LIST<ANY>` values.',
+        signature:
+          'apoc.coll.intersection(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11669,18 +13015,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns true if the two collections contain the same elements with the same cardinality in any order.',
-        signature: 'apoc.coll.isEqualCollection(coll :: LIST<ANY>, values :: LIST<ANY>) :: BOOLEAN',
+        signature:
+          'apoc.coll.isEqualCollection(coll :: LIST<ANY>, values :: LIST<ANY>) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list2` and check for equality.',
+            description:
+              'The list of values to compare against `list2` and check for equality.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list1` and check for equality.',
+            description:
+              'The list of values to compare against `list1` and check for equality.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -11695,7 +13044,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.max': {
         name: 'apoc.coll.max',
         category: '',
-        description: 'Returns the maximum of all values in the given `LIST<ANY>`.',
+        description:
+          'Returns the maximum of all values in the given `LIST<ANY>`.',
         signature: 'apoc.coll.max(values :: LIST<ANY>) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
@@ -11716,7 +13066,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.min': {
         name: 'apoc.coll.min',
         category: '',
-        description: 'Returns the minimum of all values in the given `LIST<ANY>`.',
+        description:
+          'Returns the minimum of all values in the given `LIST<ANY>`.',
         signature: 'apoc.coll.min(values :: LIST<ANY>) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
@@ -11738,12 +13089,14 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.occurrences',
         category: '',
         description: 'Returns the count of the given item in the collection.',
-        signature: 'apoc.coll.occurrences(coll :: LIST<ANY>, item :: ANY) :: INTEGER',
+        signature:
+          'apoc.coll.occurrences(coll :: LIST<ANY>, item :: ANY) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list to collect the count of the given value from.',
+            description:
+              'The list to collect the count of the given value from.',
             name: 'coll',
             type: 'LIST<ANY>',
           },
@@ -11765,7 +13118,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.pairWithOffset',
         category: '',
         description: 'Returns a `LIST<ANY>` of pairs defined by the offset.',
-        signature: 'apoc.coll.pairWithOffset(coll :: LIST<ANY>, offset :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.pairWithOffset(coll :: LIST<ANY>, offset :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11776,7 +13130,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The offset to make each pair with from the given list.',
+            description:
+              'The offset to make each pair with from the given list.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -11837,7 +13192,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Partitions the original `LIST<ANY>` into a new `LIST<ANY>` of the given batch size.\nThe final `LIST<ANY>` may be smaller than the given batch size.',
-        signature: 'apoc.coll.partition(coll :: LIST<ANY>, batchSize :: INTEGER) :: LIST<ANY>',
+        signature:
+          'apoc.coll.partition(coll :: LIST<ANY>, batchSize :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11906,7 +13262,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether elements from the original list can be selected more than once.',
+            description:
+              'Whether elements from the original list can be selected more than once.',
             name: 'allowRepick',
             type: 'BOOLEAN',
           },
@@ -11935,7 +13292,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The starting index in the list to begin removing values from.',
+            description:
+              'The starting index in the list to begin removing values from.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -11959,7 +13317,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the first `LIST<ANY>` with all elements also present in the second `LIST<ANY>` removed.',
-        signature: 'apoc.coll.removeAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.removeAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -11986,7 +13345,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.runningTotal',
         category: '',
         description: 'Returns an accumulative `LIST<INTEGER | FLOAT>`.',
-        signature: 'apoc.coll.runningTotal(list :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.runningTotal(list :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12007,7 +13367,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.set',
         category: '',
         description: 'Sets the element at the given index to the new value.',
-        signature: 'apoc.coll.set(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
+        signature:
+          'apoc.coll.set(coll :: LIST<ANY>, index :: INTEGER, value :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12083,7 +13444,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Sorts the given `LIST<MAP<STRING, ANY>>` into descending order, based on the `MAP` property indicated by `prop`.',
-        signature: 'apoc.coll.sortMaps(list :: LIST<MAP>, prop :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortMaps(list :: LIST<MAP>, prop :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12094,7 +13456,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key to be used to sort the list of maps by.',
+            description:
+              'The property key to be used to sort the list of maps by.',
             name: 'prop',
             type: 'STRING',
           },
@@ -12124,7 +13487,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-            description: 'The property keys to be used to sort the list of maps by.',
+            description:
+              'The property keys to be used to sort the list of maps by.',
             name: 'orderFields',
             type: 'LIST<STRING>',
           },
@@ -12155,7 +13519,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Sorts the given `LIST<NODE>` by the property of the nodes into descending order.',
-        signature: 'apoc.coll.sortNodes(coll :: LIST<NODE>, prop :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortNodes(coll :: LIST<NODE>, prop :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12166,7 +13531,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key on the node to be used to sort the list by.',
+            description:
+              'The property key on the node to be used to sort the list by.',
             name: 'prop',
             type: 'STRING',
           },
@@ -12182,7 +13548,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.coll.sortText',
         category: '',
         description: 'Sorts the given `LIST<STRING>` into ascending order.',
-        signature: 'apoc.coll.sortText(coll :: LIST<STRING>, conf = {} :: MAP) :: LIST<ANY>',
+        signature:
+          'apoc.coll.sortText(coll :: LIST<STRING>, conf = {} :: MAP) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12243,7 +13610,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the first `LIST<ANY>` as a set with all the elements of the second `LIST<ANY>` removed.',
-        signature: 'apoc.coll.subtract(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.subtract(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12269,7 +13637,8 @@ const mockSchema: DbSchema = {
       'apoc.coll.sum': {
         name: 'apoc.coll.sum',
         category: '',
-        description: 'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
+        description:
+          'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
         signature: 'apoc.coll.sum(coll :: LIST<INTEGER | FLOAT>) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
@@ -12290,8 +13659,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.sumLongs': {
         name: 'apoc.coll.sumLongs',
         category: '',
-        description: 'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
-        signature: 'apoc.coll.sumLongs(coll :: LIST<INTEGER | FLOAT>) :: INTEGER',
+        description:
+          'Returns the sum of all the `INTEGER | FLOAT` in the `LIST<INTEGER | FLOAT>`.',
+        signature:
+          'apoc.coll.sumLongs(coll :: LIST<INTEGER | FLOAT>) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12333,8 +13704,10 @@ const mockSchema: DbSchema = {
       'apoc.coll.union': {
         name: 'apoc.coll.union',
         category: '',
-        description: 'Returns the distinct union of the two given `LIST<ANY>` values.',
-        signature: 'apoc.coll.union(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        description:
+          'Returns the distinct union of the two given `LIST<ANY>` values.',
+        signature:
+          'apoc.coll.union(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12364,18 +13737,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the full union of the two given `LIST<ANY>` values (duplicates included).',
-        signature: 'apoc.coll.unionAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.unionAll(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list2` and form a union from.',
+            description:
+              'The list of values to compare against `list2` and form a union from.',
             name: 'list1',
             type: 'LIST<ANY>',
           },
           {
             isDeprecated: false,
-            description: 'The list of values to compare against `list1` and form a union from.',
+            description:
+              'The list of values to compare against `list1` and form a union from.',
             name: 'list2',
             type: 'LIST<ANY>',
           },
@@ -12392,7 +13768,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the two given `LIST<ANY>` values zipped together as a `LIST<LIST<ANY>>`.',
-        signature: 'apoc.coll.zip(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
+        signature:
+          'apoc.coll.zip(list1 :: LIST<ANY>, list2 :: LIST<ANY>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12418,7 +13795,8 @@ const mockSchema: DbSchema = {
       'apoc.convert.fromJsonList': {
         name: 'apoc.convert.fromJsonList',
         category: '',
-        description: 'Converts the given JSON list into a Cypher `LIST<STRING>`.',
+        description:
+          'Converts the given JSON list into a Cypher `LIST<STRING>`.',
         signature:
           'apoc.convert.fromJsonList(list :: STRING, path =  :: STRING, pathOptions = null :: LIST<STRING>) :: LIST<ANY>',
         isBuiltIn: false,
@@ -12432,7 +13810,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -12469,7 +13848,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the map.',
+            description:
+              'A JSON path expression used to extract a certain part from the map.',
             name: 'path',
             type: 'STRING',
           },
@@ -12709,7 +14089,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.convert.toRelationshipList',
         category: '',
         description: 'Converts the given value into a `LIST<RELATIONSHIP>`.',
-        signature: 'apoc.convert.toRelationshipList(relList :: ANY) :: LIST<ANY>',
+        signature:
+          'apoc.convert.toRelationshipList(relList :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12729,7 +14110,8 @@ const mockSchema: DbSchema = {
       'apoc.convert.toSet': {
         name: 'apoc.convert.toSet',
         category: '',
-        description: 'Converts the given value into a set represented in Cypher as a `LIST<ANY>`.',
+        description:
+          'Converts the given value into a set represented in Cypher as a `LIST<ANY>`.',
         signature: 'apoc.convert.toSet(list :: ANY) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
@@ -12765,7 +14147,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to ignore the case of the keys when sorting.',
+            description:
+              'Whether or not to ignore the case of the keys when sorting.',
             name: 'ignoreCase',
             type: 'BOOLEAN',
           },
@@ -12796,7 +14179,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Takes the given base64 encoded UUID and returns it as a hexadecimal `STRING`.',
-        signature: 'apoc.create.uuidBase64ToHex(base64Uuid :: STRING) :: STRING',
+        signature:
+          'apoc.create.uuidBase64ToHex(base64Uuid :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12839,7 +14223,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.create.vNode',
         category: '',
         description: 'Returns a virtual `NODE`.',
-        signature: 'apoc.create.vNode(labels :: LIST<STRING>, props = {} :: MAP) :: NODE',
+        signature:
+          'apoc.create.vNode(labels :: LIST<STRING>, props = {} :: MAP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12873,7 +14258,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The start node to assign to the virtual relationship.',
+            description:
+              'The start node to assign to the virtual relationship.',
             name: 'from',
             type: 'NODE',
           },
@@ -12885,7 +14271,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The map of properties to assign to the virtual relationship.',
+            description:
+              'The map of properties to assign to the virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
@@ -12949,7 +14336,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The parameters needed for input to the given Cypher query.',
+            description:
+              'The parameters needed for input to the given Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -12966,7 +14354,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Runs the given statement with the given parameters and returns the first element of the first column.',
-        signature: 'apoc.cypher.runFirstColumnSingle(statement :: STRING, params :: MAP) :: ANY',
+        signature:
+          'apoc.cypher.runFirstColumnSingle(statement :: STRING, params :: MAP) :: ANY',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -12977,7 +14366,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The parameters needed for input to the given Cypher query.',
+            description:
+              'The parameters needed for input to the given Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -13124,7 +14514,8 @@ const mockSchema: DbSchema = {
       'apoc.date.currentTimestamp': {
         name: 'apoc.date.currentTimestamp',
         category: '',
-        description: 'Returns the current Unix epoch timestamp in milliseconds.',
+        description:
+          'Returns the current Unix epoch timestamp in milliseconds.',
         signature: 'apoc.date.currentTimestamp() :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [],
@@ -13145,7 +14536,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The timestamp in ms since epoch to return a field from.',
+            description:
+              'The timestamp in ms since epoch to return a field from.',
             name: 'time',
             type: 'INTEGER',
           },
@@ -13188,7 +14580,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given temporal is formatted as.',
             name: 'pattern',
             type: 'STRING',
@@ -13225,7 +14618,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format to convert the given temporal value to.',
             name: 'format',
             type: 'STRING',
@@ -13291,7 +14685,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given datetime is in.',
             name: 'format',
             type: 'STRING',
@@ -13314,7 +14709,8 @@ const mockSchema: DbSchema = {
       'apoc.date.systemTimezone': {
         name: 'apoc.date.systemTimezone',
         category: '',
-        description: 'Returns the display name of the system time zone (e.g. Europe/London).',
+        description:
+          'Returns the display name of the system time zone (e.g. Europe/London).',
         signature: 'apoc.date.systemTimezone() :: STRING',
         isBuiltIn: false,
         argumentDescription: [],
@@ -13330,7 +14726,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `STRING` representation of a specified time value in the ISO8601 format.',
-        signature: 'apoc.date.toISO8601(time :: INTEGER, unit = ms :: STRING) :: STRING',
+        signature:
+          'apoc.date.toISO8601(time :: INTEGER, unit = ms :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13365,13 +14762,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The timestamp or datetime string to extract the years from.',
+            description:
+              'The timestamp or datetime string to extract the years from.',
             name: 'value',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format the given datetime string is in.',
             name: 'format',
             type: 'STRING',
@@ -13389,7 +14788,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `MAP` detailing the differences between the two given `NODE` values.',
-        signature: 'apoc.diff.nodes(leftNode :: NODE, rightNode :: NODE) :: MAP',
+        signature:
+          'apoc.diff.nodes(leftNode :: NODE, rightNode :: NODE) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13447,7 +14847,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Calculates a MD5 checksum over the full graph.\nThis function uses in-memory data structures.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.hashing.fingerprintGraph(propertyExcludes = [] :: LIST<STRING>) :: STRING',
+        signature:
+          'apoc.hashing.fingerprintGraph(propertyExcludes = [] :: LIST<STRING>) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13470,7 +14871,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Calculates a MD5 checksum over a `NODE` or `RELATIONSHIP` (identical entities share the same checksum).\nUnlike `apoc.hashing.fingerprint()`, this function supports a number of config parameters.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.hashing.fingerprinting(object :: ANY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.hashing.fingerprinting(object :: ANY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13535,7 +14937,8 @@ const mockSchema: DbSchema = {
       'apoc.label.exists': {
         name: 'apoc.label.exists',
         category: '',
-        description: 'Returns true or false depending on whether or not the given label exists.',
+        description:
+          'Returns true or false depending on whether or not the given label exists.',
         signature: 'apoc.label.exists(node :: ANY, label :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
@@ -13562,8 +14965,10 @@ const mockSchema: DbSchema = {
       'apoc.map.clean': {
         name: 'apoc.map.clean',
         category: '',
-        description: 'Filters the keys and values contained in the given `LIST<ANY>` values.',
-        signature: 'apoc.map.clean(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
+        description:
+          'Filters the keys and values contained in the given `LIST<ANY>` values.',
+        signature:
+          'apoc.map.clean(map :: MAP, keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13597,7 +15002,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Flattens nested items in the given `MAP`.\nThis function is the reverse of the `apoc.map.unflatten` function.',
-        signature: 'apoc.map.flatten(map :: MAP, delimiter = . :: STRING) :: MAP',
+        signature:
+          'apoc.map.flatten(map :: MAP, delimiter = . :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13609,7 +15015,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=., type=STRING}',
-            description: 'The delimiter used to separate the levels of the flattened map.',
+            description:
+              'The delimiter used to separate the levels of the flattened map.',
             name: 'delimiter',
             type: 'STRING',
           },
@@ -13624,8 +15031,10 @@ const mockSchema: DbSchema = {
       'apoc.map.fromLists': {
         name: 'apoc.map.fromLists',
         category: '',
-        description: 'Creates a `MAP` from the keys and values in the given `LIST<ANY>` values.',
-        signature: 'apoc.map.fromLists(keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
+        description:
+          'Creates a `MAP` from the keys and values in the given `LIST<ANY>` values.',
+        signature:
+          'apoc.map.fromLists(keys :: LIST<STRING>, values :: LIST<ANY>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13636,7 +15045,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of values associated with the keys to create a map from.',
+            description:
+              'A list of values associated with the keys to create a map from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -13651,7 +15061,8 @@ const mockSchema: DbSchema = {
       'apoc.map.fromNodes': {
         name: 'apoc.map.fromNodes',
         category: '',
-        description: 'Returns a `MAP` of the given prop to the node of the given label.',
+        description:
+          'Returns a `MAP` of the given prop to the node of the given label.',
         signature: 'apoc.map.fromNodes(label :: STRING, prop :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
@@ -13678,7 +15089,8 @@ const mockSchema: DbSchema = {
       'apoc.map.fromPairs': {
         name: 'apoc.map.fromPairs',
         category: '',
-        description: 'Creates a `MAP` from the given `LIST<LIST<ANY>>` of key-value pairs.',
+        description:
+          'Creates a `MAP` from the given `LIST<LIST<ANY>>` of key-value pairs.',
         signature: 'apoc.map.fromPairs(pairs :: LIST<LIST<ANY>>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
@@ -13706,7 +15118,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of keys and values listed pairwise to create a map from.',
+            description:
+              'A list of keys and values listed pairwise to create a map from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -13767,7 +15180,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Creates a `MAP` of the `LIST<ANY>` keyed by the given property, with single values.',
-        signature: 'apoc.map.groupBy(values :: LIST<ANY>, key :: STRING) :: MAP',
+        signature:
+          'apoc.map.groupBy(values :: LIST<ANY>, key :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13795,7 +15209,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Creates a `MAP` of the `LIST<ANY>` values keyed by the given property, with the `LIST<ANY>` values.',
-        signature: 'apoc.map.groupByMulti(values :: LIST<ANY>, key :: STRING) :: MAP',
+        signature:
+          'apoc.map.groupByMulti(values :: LIST<ANY>, key :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13914,8 +15329,10 @@ const mockSchema: DbSchema = {
       'apoc.map.removeKey': {
         name: 'apoc.map.removeKey',
         category: '',
-        description: 'Removes the given key from the `MAP` (recursively if recursive is true).',
-        signature: 'apoc.map.removeKey(map :: MAP, key :: STRING, config = {} :: MAP) :: MAP',
+        description:
+          'Removes the given key from the `MAP` (recursively if recursive is true).',
+        signature:
+          'apoc.map.removeKey(map :: MAP, key :: STRING, config = {} :: MAP) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -13948,7 +15365,8 @@ const mockSchema: DbSchema = {
       'apoc.map.removeKeys': {
         name: 'apoc.map.removeKeys',
         category: '',
-        description: 'Removes the given keys from the `MAP` (recursively if recursive is true).',
+        description:
+          'Removes the given keys from the `MAP` (recursively if recursive is true).',
         signature:
           'apoc.map.removeKeys(map :: MAP, keys :: LIST<STRING>, config = {} :: MAP) :: MAP',
         isBuiltIn: false,
@@ -13984,7 +15402,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.map.setKey',
         category: '',
         description: 'Adds or updates the given entry in the `MAP`.',
-        signature: 'apoc.map.setKey(map :: MAP, key :: STRING, value :: ANY) :: MAP',
+        signature:
+          'apoc.map.setKey(map :: MAP, key :: STRING, value :: ANY) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -14036,7 +15455,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of values associated to the keys to add or update the map with.',
+            description:
+              'A list of values associated to the keys to add or update the map with.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -14053,7 +15473,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Adds or updates the given key/value pairs (e.g. [key1,value1],[key2,value2]) in a `MAP`.',
-        signature: 'apoc.map.setPairs(map :: MAP, pairs :: LIST<LIST<ANY>>) :: MAP',
+        signature:
+          'apoc.map.setPairs(map :: MAP, pairs :: LIST<LIST<ANY>>) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -14092,7 +15513,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of items listed pairwise to add or update the map with.',
+            description:
+              'A list of items listed pairwise to add or update the map with.',
             name: 'pairs',
             type: 'LIST<ANY>',
           },
@@ -14122,7 +15544,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to take the case into account when sorting.',
+            description:
+              'Whether or not to take the case into account when sorting.',
             name: 'ignoreCase',
             type: 'BOOLEAN',
           },
@@ -14183,7 +15606,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Unflattens items in the given `MAP` to nested items.\nThis function is the reverse of the `apoc.map.flatten` function.',
-        signature: 'apoc.map.unflatten(map :: MAP, delimiter = . :: STRING) :: MAP',
+        signature:
+          'apoc.map.unflatten(map :: MAP, delimiter = . :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -14195,7 +15619,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=., type=STRING}',
-            description: 'The delimiter used to separate the levels of the flattened map.',
+            description:
+              'The delimiter used to separate the levels of the flattened map.',
             name: 'delimiter',
             type: 'STRING',
           },
@@ -14268,7 +15693,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not to return missing values as null values.',
+            description:
+              'Whether or not to return missing values as null values.',
             name: 'addNullsForMissing',
             type: 'BOOLEAN',
           },
@@ -14360,7 +15786,8 @@ const mockSchema: DbSchema = {
       'apoc.math.maxDouble': {
         name: 'apoc.math.maxDouble',
         category: '',
-        description: 'Returns the largest positive finite value of type double.',
+        description:
+          'Returns the largest positive finite value of type double.',
         signature: 'apoc.math.maxDouble() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -14416,7 +15843,8 @@ const mockSchema: DbSchema = {
       'apoc.math.minDouble': {
         name: 'apoc.math.minDouble',
         category: '',
-        description: 'Returns the smallest positive non-zero value of type double.',
+        description:
+          'Returns the smallest positive non-zero value of type double.',
         signature: 'apoc.math.minDouble() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -14565,7 +15993,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.meta.cypher.isType',
         category: '',
         description: 'Returns true if the given value matches the given type.',
-        signature: 'apoc.meta.cypher.isType(value :: ANY, type :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.meta.cypher.isType(value :: ANY, type :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -14612,13 +16041,15 @@ const mockSchema: DbSchema = {
       'apoc.meta.cypher.types': {
         name: 'apoc.meta.cypher.types',
         category: '',
-        description: 'Returns a `MAP` containing the type names of the given values.',
+        description:
+          'Returns a `MAP` containing the type names of the given values.',
         signature: 'apoc.meta.cypher.types(props :: ANY) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A relationship, node or map to get the property types from.',
+            description:
+              'A relationship, node or map to get the property types from.',
             name: 'props',
             type: 'ANY',
           },
@@ -14666,12 +16097,14 @@ const mockSchema: DbSchema = {
         name: 'apoc.node.degree',
         category: '',
         description: 'Returns the total degrees of the given `NODE`.',
-        signature: 'apoc.node.degree(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to count the total number of relationships on.',
+            description:
+              'The node to count the total number of relationships on.',
             name: 'node',
             type: 'NODE',
           },
@@ -14696,12 +16129,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the total number of incoming `RELATIONSHIP` values connected to the given `NODE`.',
-        signature: 'apoc.node.degree.in(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree.in(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node for which to count the total number of incoming relationships.',
+            description:
+              'The node for which to count the total number of incoming relationships.',
             name: 'node',
             type: 'NODE',
           },
@@ -14725,12 +16160,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the total number of outgoing `RELATIONSHIP` values from the given `NODE`.',
-        signature: 'apoc.node.degree.out(node :: NODE, relTypes =  :: STRING) :: INTEGER',
+        signature:
+          'apoc.node.degree.out(node :: NODE, relTypes =  :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node for which to count the total number of outgoing relationships.',
+            description:
+              'The node for which to count the total number of outgoing relationships.',
             name: 'node',
             type: 'NODE',
           },
@@ -14796,12 +16233,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether the given `NODE` has a connecting `RELATIONSHIP` (or whether the given `NODE` has a connecting `RELATIONSHIP` of the given type and direction).',
-        signature: 'apoc.node.relationship.exists(node :: NODE, relTypes =  :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.node.relationship.exists(node :: NODE, relTypes =  :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check for the specified relationship types.',
+            description:
+              'The node to check for the specified relationship types.',
             name: 'node',
             type: 'NODE',
           },
@@ -14826,12 +16265,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<STRING>` of distinct `RELATIONSHIP` types for the given `NODE`.',
-        signature: 'apoc.node.relationship.types(node :: NODE, relTypes =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.node.relationship.types(node :: NODE, relTypes =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to return the connected relationship types from.',
+            description:
+              'The node to return the connected relationship types from.',
             name: 'node',
             type: 'NODE',
           },
@@ -14856,12 +16297,14 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether the given `NODE` has connecting `RELATIONSHIP` values (or whether the given `NODE` has connecting `RELATIONSHIP` values of the given type and direction).',
-        signature: 'apoc.node.relationships.exist(node :: NODE, relTypes =  :: STRING) :: MAP',
+        signature:
+          'apoc.node.relationships.exist(node :: NODE, relTypes =  :: STRING) :: MAP',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check for the specified relationship types.',
+            description:
+              'The node to check for the specified relationship types.',
             name: 'node',
             type: 'NODE',
           },
@@ -14892,13 +16335,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to check if it is directly connected to the second node.',
+            description:
+              'The node to check if it is directly connected to the second node.',
             name: 'startNode',
             type: 'NODE',
           },
           {
             isDeprecated: false,
-            description: 'The node to check if it is directly connected to the first node.',
+            description:
+              'The node to check if it is directly connected to the first node.',
             name: 'endNode',
             type: 'NODE',
           },
@@ -14944,7 +16389,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `LIST<STRING>` of distinct `RELATIONSHIP` types from the given `LIST<NODE>` values.',
-        signature: 'apoc.nodes.relationship.types(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.nodes.relationship.types(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -14974,7 +16420,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns a `BOOLEAN` based on whether or not the given `NODE` values have the given `RELATIONSHIP` values.',
-        signature: 'apoc.nodes.relationships.exist(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.nodes.relationships.exist(nodes :: ANY, types =  :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15008,7 +16455,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A number to be converted to a Roman number represented as a string.',
+            description:
+              'A number to be converted to a Roman number represented as a string.',
             name: 'number',
             type: 'ANY',
           },
@@ -15025,18 +16473,21 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the result of adding the two given large numbers (using Java BigDecimal).',
-        signature: 'apoc.number.exact.add(stringA :: STRING, stringB :: STRING) :: STRING',
+        signature:
+          'apoc.number.exact.add(stringA :: STRING, stringB :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be added to the second number.',
+            description:
+              'A string representation of a number to be added to the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be added to the first number.',
+            description:
+              'A string representation of a number to be added to the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -15059,13 +16510,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to be divided by the second number.',
+            description:
+              'A string representation of a number to be divided by the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to divide the first number by.',
+            description:
+              'A string representation of a number to divide the first number by.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -15103,13 +16556,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string representation of a number to multiply by the second number.',
+            description:
+              'A string representation of a number to multiply by the second number.',
             name: 'stringA',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to multiply by the first number.',
+            description:
+              'A string representation of a number to multiply by the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -15141,7 +16596,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the result of subtracting a given large number from another given large number (using Java BigDecimal).',
-        signature: 'apoc.number.exact.sub(stringA :: STRING, stringB :: STRING) :: STRING',
+        signature:
+          'apoc.number.exact.sub(stringA :: STRING, stringB :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15153,7 +16609,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A string representation of a number to subtract from the first number.',
+            description:
+              'A string representation of a number to subtract from the first number.',
             name: 'stringB',
             type: 'STRING',
           },
@@ -15168,7 +16625,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toExact': {
         name: 'apoc.number.exact.toExact',
         category: '',
-        description: 'Returns the exact value of the given number (using Java BigDecimal).',
+        description:
+          'Returns the exact value of the given number (using Java BigDecimal).',
         signature: 'apoc.number.exact.toExact(number :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
@@ -15189,7 +16647,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toFloat': {
         name: 'apoc.number.exact.toFloat',
         category: '',
-        description: 'Returns the `FLOAT` of the given large number (using Java BigDecimal).',
+        description:
+          'Returns the `FLOAT` of the given large number (using Java BigDecimal).',
         signature:
           'apoc.number.exact.toFloat(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: FLOAT',
         isBuiltIn: false,
@@ -15226,7 +16685,8 @@ const mockSchema: DbSchema = {
       'apoc.number.exact.toInteger': {
         name: 'apoc.number.exact.toInteger',
         category: '',
-        description: 'Returns the `INTEGER` of the given large number (using Java BigDecimal).',
+        description:
+          'Returns the `INTEGER` of the given large number (using Java BigDecimal).',
         signature:
           'apoc.number.exact.toInteger(string :: STRING, precision = 0 :: INTEGER, roundingMode = HALF_UP :: STRING) :: INTEGER',
         isBuiltIn: false,
@@ -15375,7 +16835,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.number.romanToArabic',
         category: '',
         description: 'Converts the given Roman numbers to Arabic numbers.',
-        signature: 'apoc.number.romanToArabic(romanNumber :: STRING) :: INTEGER | FLOAT',
+        signature:
+          'apoc.number.romanToArabic(romanNumber :: STRING) :: INTEGER | FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15422,8 +16883,10 @@ const mockSchema: DbSchema = {
       'apoc.path.create': {
         name: 'apoc.path.create',
         category: '',
-        description: 'Returns a `PATH` from the given start `NODE` and `LIST<RELATIONSHIP>`.',
-        signature: 'apoc.path.create(startNode :: NODE, rels = [] :: LIST<RELATIONSHIP>) :: PATH',
+        description:
+          'Returns a `PATH` from the given start `NODE` and `LIST<RELATIONSHIP>`.',
+        signature:
+          'apoc.path.create(startNode :: NODE, rels = [] :: LIST<RELATIONSHIP>) :: PATH',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15450,13 +16913,15 @@ const mockSchema: DbSchema = {
       'apoc.path.elements': {
         name: 'apoc.path.elements',
         category: '',
-        description: 'Converts the given `PATH` into a `LIST<NODE | RELATIONSHIP>`.',
+        description:
+          'Converts the given `PATH` into a `LIST<NODE | RELATIONSHIP>`.',
         signature: 'apoc.path.elements(path :: PATH) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The path to be converted into a list of nodes and relationships.',
+            description:
+              'The path to be converted into a list of nodes and relationships.',
             name: 'path',
             type: 'PATH',
           },
@@ -15508,7 +16973,8 @@ const mockSchema: DbSchema = {
       'apoc.rel.endNode': {
         name: 'apoc.rel.endNode',
         category: '',
-        description: 'Returns the end `NODE` for the given virtual `RELATIONSHIP`.',
+        description:
+          'Returns the end `NODE` for the given virtual `RELATIONSHIP`.',
         signature: 'apoc.rel.endNode(rel :: RELATIONSHIP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
@@ -15550,7 +17016,8 @@ const mockSchema: DbSchema = {
       'apoc.rel.startNode': {
         name: 'apoc.rel.startNode',
         category: '',
-        description: 'Returns the start `NODE` for the given virtual `RELATIONSHIP`.',
+        description:
+          'Returns the start `NODE` for the given virtual `RELATIONSHIP`.',
         signature: 'apoc.rel.startNode(rel :: RELATIONSHIP) :: NODE',
         isBuiltIn: false,
         argumentDescription: [
@@ -15709,7 +17176,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.scoring.existence',
         category: '',
         description: 'Returns the given score if true, 0 if false.',
-        signature: 'apoc.scoring.existence(score :: INTEGER, exists :: BOOLEAN) :: FLOAT',
+        signature:
+          'apoc.scoring.existence(score :: INTEGER, exists :: BOOLEAN) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15735,7 +17203,8 @@ const mockSchema: DbSchema = {
       'apoc.scoring.pareto': {
         name: 'apoc.scoring.pareto',
         category: '',
-        description: 'Applies a Pareto scoring function over the given `INTEGER` values.',
+        description:
+          'Applies a Pareto scoring function over the given `INTEGER` values.',
         signature:
           'apoc.scoring.pareto(minimumThreshold :: INTEGER, eightyPercentValue :: INTEGER, maximumValue :: INTEGER, score :: INTEGER) :: FLOAT',
         isBuiltIn: false,
@@ -15775,8 +17244,10 @@ const mockSchema: DbSchema = {
       'apoc.temporal.format': {
         name: 'apoc.temporal.format',
         category: '',
-        description: 'Formats the given temporal value into the given time format.',
-        signature: 'apoc.temporal.format(temporal :: ANY, format = yyyy-MM-dd :: STRING) :: STRING',
+        description:
+          'Formats the given temporal value into the given time format.',
+        signature:
+          'apoc.temporal.format(temporal :: ANY, format = yyyy-MM-dd :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15804,7 +17275,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.temporal.formatDuration',
         category: '',
         description: 'Formats the given duration into the given time format.',
-        signature: 'apoc.temporal.formatDuration(input :: ANY, format :: STRING) :: STRING',
+        signature:
+          'apoc.temporal.formatDuration(input :: ANY, format :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15844,7 +17316,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
+            default:
+              'DefaultParameterValue{value=yyyy-MM-dd HH:mm:ss, type=STRING}',
             description: 'The format of the given date string.',
             name: 'format',
             type: 'STRING',
@@ -15952,7 +17425,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.byteCount',
         category: '',
         description: 'Returns the size of the given `STRING` in bytes.',
-        signature: 'apoc.text.byteCount(text :: STRING, charset = UTF-8 :: STRING) :: INTEGER',
+        signature:
+          'apoc.text.byteCount(text :: STRING, charset = UTF-8 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -15980,7 +17454,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.bytes',
         category: '',
         description: 'Returns the given `STRING` as bytes.',
-        signature: 'apoc.text.bytes(text :: STRING, charset = UTF-8 :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.text.bytes(text :: STRING, charset = UTF-8 :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16049,7 +17524,8 @@ const mockSchema: DbSchema = {
       'apoc.text.capitalizeAll': {
         name: 'apoc.text.capitalizeAll',
         category: '',
-        description: 'Capitalizes the first letter of every word in the given `STRING`.',
+        description:
+          'Capitalizes the first letter of every word in the given `STRING`.',
         signature: 'apoc.text.capitalizeAll(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
@@ -16070,8 +17546,10 @@ const mockSchema: DbSchema = {
       'apoc.text.charAt': {
         name: 'apoc.text.charAt',
         category: '',
-        description: 'Returns the `INTEGER` value of the character at the given index.',
-        signature: 'apoc.text.charAt(text :: STRING, index :: INTEGER) :: INTEGER',
+        description:
+          'Returns the `INTEGER` value of the character at the given index.',
+        signature:
+          'apoc.text.charAt(text :: STRING, index :: INTEGER) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16083,7 +17561,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the character in the given string to convert.',
+            description:
+              'The index of the character in the given string to convert.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -16144,7 +17623,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares two given `STRING` values stripped of everything except alpha numeric characters converted to lower case.',
-        signature: 'apoc.text.compareCleaned(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
+        signature:
+          'apoc.text.compareCleaned(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16172,13 +17652,15 @@ const mockSchema: DbSchema = {
       'apoc.text.decapitalize': {
         name: 'apoc.text.decapitalize',
         category: '',
-        description: 'Turns the first letter of the given `STRING` from upper case to lower case.',
+        description:
+          'Turns the first letter of the given `STRING` from upper case to lower case.',
         signature: 'apoc.text.decapitalize(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string in which to decapitalize the first letter.',
+            description:
+              'The string in which to decapitalize the first letter.',
             name: 'text',
             type: 'STRING',
           },
@@ -16193,7 +17675,8 @@ const mockSchema: DbSchema = {
       'apoc.text.decapitalizeAll': {
         name: 'apoc.text.decapitalizeAll',
         category: '',
-        description: 'Turns the first letter of every word in the given `STRING` to lower case.',
+        description:
+          'Turns the first letter of every word in the given `STRING` to lower case.',
         signature: 'apoc.text.decapitalizeAll(text :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
@@ -16216,7 +17699,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares the two given `STRING` values using the Levenshtein distance algorithm.',
-        signature: 'apoc.text.distance(text1 :: STRING, text2 :: STRING) :: INTEGER',
+        signature:
+          'apoc.text.distance(text1 :: STRING, text2 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16249,7 +17733,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string to be encoded using the double metaphone phonetic encoding.',
+            description:
+              'The string to be encoded using the double metaphone phonetic encoding.',
             name: 'value',
             type: 'STRING',
           },
@@ -16277,7 +17762,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Arguments referenced by the format specifiers in the format string.',
+            description:
+              'Arguments referenced by the format specifiers in the format string.',
             name: 'params',
             type: 'LIST<ANY>',
           },
@@ -16300,8 +17786,10 @@ const mockSchema: DbSchema = {
       'apoc.text.fuzzyMatch': {
         name: 'apoc.text.fuzzyMatch',
         category: '',
-        description: 'Performs a fuzzy match search of the two given `STRING` values.',
-        signature: 'apoc.text.fuzzyMatch(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
+        description:
+          'Performs a fuzzy match search of the two given `STRING` values.',
+        signature:
+          'apoc.text.fuzzyMatch(text1 :: STRING, text2 :: STRING) :: BOOLEAN',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16327,8 +17815,10 @@ const mockSchema: DbSchema = {
       'apoc.text.hammingDistance': {
         name: 'apoc.text.hammingDistance',
         category: '',
-        description: 'Compares the two given `STRING` values using the Hamming distance algorithm.',
-        signature: 'apoc.text.hammingDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
+        description:
+          'Compares the two given `STRING` values using the Hamming distance algorithm.',
+        signature:
+          'apoc.text.hammingDistance(text1 :: STRING, text2 :: STRING) :: INTEGER',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16354,8 +17844,10 @@ const mockSchema: DbSchema = {
       'apoc.text.hexCharAt': {
         name: 'apoc.text.hexCharAt',
         category: '',
-        description: 'Returns the hexadecimal value of the given `STRING` at the given index.',
-        signature: 'apoc.text.hexCharAt(text :: STRING, index :: INTEGER) :: STRING',
+        description:
+          'Returns the hexadecimal value of the given `STRING` at the given index.',
+        signature:
+          'apoc.text.hexCharAt(text :: STRING, index :: INTEGER) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16367,7 +17859,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The index of the character in the given string to convert.',
+            description:
+              'The index of the character in the given string to convert.',
             name: 'index',
             type: 'INTEGER',
           },
@@ -16388,7 +17881,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The value to convert into a hexidecimal value represented as a string.',
+            description:
+              'The value to convert into a hexidecimal value represented as a string.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -16491,7 +17985,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Compares the two given `STRING` values using the Jaro-Winkler distance algorithm.',
-        signature: 'apoc.text.jaroWinklerDistance(text1 :: STRING, text2 :: STRING) :: FLOAT',
+        signature:
+          'apoc.text.jaroWinklerDistance(text1 :: STRING, text2 :: STRING) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16517,13 +18012,16 @@ const mockSchema: DbSchema = {
       'apoc.text.join': {
         name: 'apoc.text.join',
         category: '',
-        description: 'Joins the given `STRING` values using the given delimiter.',
-        signature: 'apoc.text.join(texts :: LIST<STRING>, delimiter :: STRING) :: STRING',
+        description:
+          'Joins the given `STRING` values using the given delimiter.',
+        signature:
+          'apoc.text.join(texts :: LIST<STRING>, delimiter :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of strings to be concatenated using the given delimiter.',
+            description:
+              'The list of strings to be concatenated using the given delimiter.',
             name: 'texts',
             type: 'LIST<STRING>',
           },
@@ -16546,7 +18044,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns the similarity (a value within 0 and 1) between the two given `STRING` values based on the Levenshtein distance algorithm.',
-        signature: 'apoc.text.levenshteinSimilarity(text1 :: STRING, text2 :: STRING) :: FLOAT',
+        signature:
+          'apoc.text.levenshteinSimilarity(text1 :: STRING, text2 :: STRING) :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16585,7 +18084,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of delimiters to pad the given string with.',
+            description:
+              'The number of delimiters to pad the given string with.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -16614,7 +18114,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The string to encode using US_ENGLISH phonetic soundex.',
+            description:
+              'The string to encode using US_ENGLISH phonetic soundex.',
             name: 'text',
             type: 'STRING',
           },
@@ -16631,7 +18132,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Generates a random `STRING` to the given length using a length parameter and an optional `STRING` of valid characters.\nUnsuitable for cryptographic use-cases.',
-        signature: 'apoc.text.random(length :: INTEGER, valid = A-Za-z0-9 :: STRING) :: STRING',
+        signature:
+          'apoc.text.random(length :: INTEGER, valid = A-Za-z0-9 :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16658,8 +18160,10 @@ const mockSchema: DbSchema = {
       'apoc.text.regexGroups': {
         name: 'apoc.text.regexGroups',
         category: '',
-        description: 'Returns all groups matching the given regular expression in the given text.',
-        signature: 'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
+        description:
+          'Returns all groups matching the given regular expression in the given text.',
+        signature:
+          'apoc.text.regexGroups(text :: STRING, regex :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16687,7 +18191,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'Returns all groups with their group name matching the given regular expression in the given text.',
-        signature: 'apoc.text.regexGroupsByName(text :: STRING, regex :: STRING) :: LIST<ANY>',
+        signature:
+          'apoc.text.regexGroupsByName(text :: STRING, regex :: STRING) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16713,8 +18218,10 @@ const mockSchema: DbSchema = {
       'apoc.text.repeat': {
         name: 'apoc.text.repeat',
         category: '',
-        description: 'Returns the result of the given item multiplied by the given count.',
-        signature: 'apoc.text.repeat(item :: STRING, count :: INTEGER) :: STRING',
+        description:
+          'Returns the result of the given item multiplied by the given count.',
+        signature:
+          'apoc.text.repeat(item :: STRING, count :: INTEGER) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16754,7 +18261,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The regular expression pattern to replace in the original string.',
+            description:
+              'The regular expression pattern to replace in the original string.',
             name: 'regex',
             type: 'STRING',
           },
@@ -16788,7 +18296,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of delimiters to pad the given string with.',
+            description:
+              'The number of delimiters to pad the given string with.',
             name: 'count',
             type: 'INTEGER',
           },
@@ -16810,8 +18319,10 @@ const mockSchema: DbSchema = {
       'apoc.text.slug': {
         name: 'apoc.text.slug',
         category: '',
-        description: 'Replaces the whitespace in the given `STRING` with the given delimiter.',
-        signature: 'apoc.text.slug(text :: STRING, delimiter = - :: STRING) :: STRING',
+        description:
+          'Replaces the whitespace in the given `STRING` with the given delimiter.',
+        signature:
+          'apoc.text.slug(text :: STRING, delimiter = - :: STRING) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16895,7 +18406,8 @@ const mockSchema: DbSchema = {
       'apoc.text.split': {
         name: 'apoc.text.split',
         category: '',
-        description: 'Splits the given `STRING` using a given regular expression as a separator.',
+        description:
+          'Splits the given `STRING` using a given regular expression as a separator.',
         signature:
           'apoc.text.split(text :: STRING, regex :: STRING, limit = 0 :: INTEGER) :: LIST<ANY>',
         isBuiltIn: false,
@@ -16953,7 +18465,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.text.toCypher',
         category: '',
         description: 'Converts the given value to a Cypher property `STRING`.',
-        signature: 'apoc.text.toCypher(value :: ANY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.text.toCypher(value :: ANY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -16965,7 +18478,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{ keepValues :: LIST<ANY> , skipValues :: LIST<ANY> }',
+            description:
+              '{ keepValues :: LIST<ANY> , skipValues :: LIST<ANY> }',
             name: 'config',
             type: 'MAP',
           },
@@ -17065,7 +18579,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.util.compress',
         category: '',
         description: 'Zips the given `STRING`.',
-        signature: 'apoc.util.compress(data :: STRING, config = {} :: MAP) :: BYTEARRAY',
+        signature:
+          'apoc.util.compress(data :: STRING, config = {} :: MAP) :: BYTEARRAY',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -17094,7 +18609,8 @@ const mockSchema: DbSchema = {
         name: 'apoc.util.decompress',
         category: '',
         description: 'Unzips the given byte array.',
-        signature: 'apoc.util.decompress(data :: BYTEARRAY, config = {} :: MAP) :: STRING',
+        signature:
+          'apoc.util.decompress(data :: BYTEARRAY, config = {} :: MAP) :: STRING',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -17129,7 +18645,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate an md5 checksum from.',
+            description:
+              'The list of values to concatenate and generate an md5 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -17151,7 +18668,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha1 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha1 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -17173,7 +18691,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha256 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha256 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -17195,7 +18714,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha384 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha384 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -17217,7 +18737,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of values to concatenate and generate a sha512 checksum from.',
+            description:
+              'The list of values to concatenate and generate a sha512 checksum from.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -17246,7 +18767,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The error message thrown if the predicate evaluates to `true`.',
+            description:
+              'The error message thrown if the predicate evaluates to `true`.',
             name: 'message',
             type: 'STRING',
           },
@@ -17339,7 +18861,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17360,7 +18889,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17368,7 +18904,8 @@ const mockSchema: DbSchema = {
       atan2: {
         name: 'atan2',
         category: 'Trigonometric',
-        description: 'Returns the arctangent2 of a set of coordinates in radians.',
+        description:
+          'Returns the arctangent2 of a set of coordinates in radians.',
         signature: 'atan2(y :: FLOAT, x :: FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
@@ -17387,7 +18924,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17395,8 +18939,10 @@ const mockSchema: DbSchema = {
       avg: {
         name: 'avg',
         category: 'Aggregating',
-        description: 'Returns the average of a set of `INTEGER`, `FLOAT` or `DURATION` values.',
-        signature: 'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
+        description:
+          'Returns the average of a set of `INTEGER`, `FLOAT` or `DURATION` values.',
+        signature:
+          'avg(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -17408,7 +18954,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT | DURATION',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17418,7 +18971,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with leading and trailing `trimCharacterString` characters removed.',
-        signature: 'btrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'btrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -17430,14 +18984,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start and end of the given string.',
+            description:
+              'A character to be removed from the start and end of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17459,7 +19021,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17473,14 +19042,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose length in characters is to be calculated.',
+            description:
+              'A string value whose length in characters is to be calculated.',
             name: 'input',
             type: 'STRING',
           },
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17494,14 +19071,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose length in characters is to be calculated.',
+            description:
+              'A string value whose length in characters is to be calculated.',
             name: 'input',
             type: 'STRING',
           },
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17509,20 +19094,29 @@ const mockSchema: DbSchema = {
       coalesce: {
         name: 'coalesce',
         category: 'Scalar',
-        description: 'Returns the first non-null value in a list of expressions.',
+        description:
+          'Returns the first non-null value in a list of expressions.',
         signature: 'coalesce(input :: ANY) :: ANY',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'If this is the first non-`NULL` value, it will be returned.',
+            description:
+              'If this is the first non-`NULL` value, it will be returned.',
             name: 'input',
             type: 'ANY',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17530,7 +19124,8 @@ const mockSchema: DbSchema = {
       collect: {
         name: 'collect',
         category: 'Aggregating',
-        description: 'Returns a list containing the values returned by an expression.',
+        description:
+          'Returns a list containing the values returned by an expression.',
         signature: 'collect(input :: ANY) :: LIST<ANY>',
         isBuiltIn: true,
         argumentDescription: [
@@ -17543,7 +19138,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<ANY>',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17564,7 +19166,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17585,7 +19194,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17606,7 +19222,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17620,7 +19243,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('date', 'year', 'month', 'day', 'week', 'dayOfWeek', 'quarter', 'dayOfQuarter', 'ordinalDay') as components.",
             name: 'input',
@@ -17629,7 +19253,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17637,13 +19268,16 @@ const mockSchema: DbSchema = {
       'date.realtime': {
         name: 'date.realtime',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the realtime clock.',
-        signature: 'date.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the realtime clock.',
+        signature:
+          'date.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17651,7 +19285,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17659,13 +19300,16 @@ const mockSchema: DbSchema = {
       'date.statement': {
         name: 'date.statement',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the statement clock.',
-        signature: 'date.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the statement clock.',
+        signature:
+          'date.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17673,7 +19317,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17681,13 +19332,16 @@ const mockSchema: DbSchema = {
       'date.transaction': {
         name: 'date.transaction',
         category: 'Temporal',
-        description: 'Returns the current `DATE` instant using the transaction clock.',
-        signature: 'date.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
+        description:
+          'Returns the current `DATE` instant using the transaction clock.',
+        signature:
+          'date.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: DATE',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17695,7 +19349,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17718,7 +19379,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -17735,7 +19397,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DATE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17744,12 +19413,14 @@ const mockSchema: DbSchema = {
         name: 'datetime',
         category: 'Temporal',
         description: 'Creates a `ZONED DATETIME` instant.',
-        signature: 'datetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
+        signature:
+          'datetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone', 'epochSeconds', 'epochMillis') as components.",
             name: 'input',
@@ -17758,7 +19429,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17774,7 +19452,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The number of seconds from the UNIX epoch in the UTC time zone.',
+            description:
+              'The number of seconds from the UNIX epoch in the UTC time zone.',
             name: 'seconds',
             type: 'INTEGER | FLOAT',
           },
@@ -17788,7 +19467,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17798,19 +19484,28 @@ const mockSchema: DbSchema = {
         category: 'Temporal',
         description:
           'Creates a `ZONED DATETIME` given the milliseconds since the start of the epoch.',
-        signature: 'datetime.fromepochmillis(milliseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
+        signature:
+          'datetime.fromepochmillis(milliseconds :: INTEGER | FLOAT) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The number of milliseconds from the UNIX epoch in the UTC time zone.',
+            description:
+              'The number of milliseconds from the UNIX epoch in the UTC time zone.',
             name: 'milliseconds',
             type: 'INTEGER | FLOAT',
           },
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17818,14 +19513,16 @@ const mockSchema: DbSchema = {
       'datetime.realtime': {
         name: 'datetime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the realtime clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the realtime clock.',
         signature:
           'datetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17833,7 +19530,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17841,14 +19545,16 @@ const mockSchema: DbSchema = {
       'datetime.statement': {
         name: 'datetime.statement',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the statement clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the statement clock.',
         signature:
           'datetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17856,7 +19562,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17864,14 +19577,16 @@ const mockSchema: DbSchema = {
       'datetime.transaction': {
         name: 'datetime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `ZONED DATETIME` instant using the transaction clock.',
+        description:
+          'Returns the current `ZONED DATETIME` instant using the transaction clock.',
         signature:
           'datetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -17879,7 +19594,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17902,7 +19624,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -17919,7 +19642,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17940,7 +19670,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17961,7 +19698,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -17983,7 +19727,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18013,7 +19764,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18043,7 +19801,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18073,7 +19838,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18103,7 +19875,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'DURATION',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18117,7 +19896,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18138,7 +19924,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18159,7 +19952,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'NODE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18167,7 +19967,8 @@ const mockSchema: DbSchema = {
       exists: {
         name: 'exists',
         category: 'Predicate',
-        description: 'Returns true if a match for the pattern exists in the graph.',
+        description:
+          'Returns true if a match for the pattern exists in the graph.',
         signature: 'exists(input :: ANY) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
@@ -18180,7 +19981,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18195,14 +20003,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value to which the base of the natural logarithm, e, will be raised.',
+            description:
+              'A value to which the base of the natural logarithm, e, will be raised.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18210,13 +20026,21 @@ const mockSchema: DbSchema = {
       file: {
         name: 'file',
         category: 'Scalar',
-        description: 'Returns the absolute path of the file that LOAD CSV is using.',
+        description:
+          'Returns the absolute path of the file that LOAD CSV is using.',
         signature: 'file() :: STRING',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18238,7 +20062,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18351,7 +20182,8 @@ const mockSchema: DbSchema = {
       'gds.alpha.linkprediction.resourceAllocation': {
         name: 'gds.alpha.linkprediction.resourceAllocation',
         category: '',
-        description: 'Given two nodes, calculate Resource Allocation similarity',
+        description:
+          'Given two nodes, calculate Resource Allocation similarity',
         signature:
           'gds.alpha.linkprediction.resourceAllocation(node1 :: NODE, node2 :: NODE, config = {} :: MAP) :: FLOAT',
         isBuiltIn: false,
@@ -18386,7 +20218,8 @@ const mockSchema: DbSchema = {
       'gds.alpha.linkprediction.sameCommunity': {
         name: 'gds.alpha.linkprediction.sameCommunity',
         category: '',
-        description: 'Given two nodes, indicates if they have the same community',
+        description:
+          'Given two nodes, indicates if they have the same community',
         signature:
           'gds.alpha.linkprediction.sameCommunity(node1 :: NODE, node2 :: NODE, communityProperty = community :: STRING) :: FLOAT',
         isBuiltIn: false,
@@ -18506,7 +20339,8 @@ const mockSchema: DbSchema = {
       'gds.graph.project': {
         name: 'gds.graph.project',
         category: '',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         signature:
           'gds.graph.project(graphName :: STRING, sourceNode :: ANY, targetNode = null :: ANY, dataConfig = null :: ANY, configuration = null :: ANY, alphaMigrationConfig = null :: ANY) :: MAP',
         isBuiltIn: false,
@@ -18789,7 +20623,8 @@ const mockSchema: DbSchema = {
         category: '',
         description:
           'RETURN gds.util.asNodes(nodeIds) - Return the node objects for the given node ids or an empty list if none exists.',
-        signature: 'gds.util.asNodes(nodeIds :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
+        signature:
+          'gds.util.asNodes(nodeIds :: LIST<INTEGER | FLOAT>) :: LIST<ANY>',
         isBuiltIn: false,
         argumentDescription: [
           {
@@ -18809,7 +20644,8 @@ const mockSchema: DbSchema = {
       'gds.util.infinity': {
         name: 'gds.util.infinity',
         category: '',
-        description: 'RETURN gds.util.infinity() - Return infinity as a Cypher value.',
+        description:
+          'RETURN gds.util.infinity() - Return infinity as a Cypher value.',
         signature: 'gds.util.infinity() :: FLOAT',
         isBuiltIn: false,
         argumentDescription: [],
@@ -18867,7 +20703,8 @@ const mockSchema: DbSchema = {
       'gds.util.nodeProperty': {
         name: 'gds.util.nodeProperty',
         category: '',
-        description: 'Returns a node property value from a named in-memory graph.',
+        description:
+          'Returns a node property value from a named in-memory graph.',
         signature:
           'gds.util.nodeProperty(graphName :: STRING, nodeId :: ANY, propertyKey :: STRING, nodeLabel = * :: STRING) :: ANY',
         isBuiltIn: false,
@@ -18937,7 +20774,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'GRAPH',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18959,7 +20803,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'GRAPH',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18973,7 +20824,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -18995,7 +20853,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'MAP',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19016,7 +20881,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19030,14 +20902,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list from which the first element will be returned.',
+            description:
+              'A list from which the first element will be returned.',
             name: 'list',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19058,7 +20938,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: true,
         deprecatedBy: null,
@@ -19066,7 +20953,8 @@ const mockSchema: DbSchema = {
       isEmpty: {
         name: 'isEmpty',
         category: 'Predicate',
-        description: 'Checks whether a `STRING`, `MAP` or `LIST<ANY>` is empty.',
+        description:
+          'Checks whether a `STRING`, `MAP` or `LIST<ANY>` is empty.',
         signature: 'isEmpty(input :: STRING | MAP | LIST<ANY>) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
@@ -19079,7 +20967,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19100,7 +20995,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19123,7 +21025,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19145,7 +21054,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19166,7 +21082,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19181,20 +21104,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose rightmost characters will be trimmed.',
+            description:
+              'A string value whose rightmost characters will be trimmed.',
             name: 'original',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The length of the leftmost characters to be returned.',
+            description:
+              'The length of the leftmost characters to be returned.',
             name: 'length',
             type: 'INTEGER',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19215,7 +21147,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19223,13 +21162,21 @@ const mockSchema: DbSchema = {
       linenumber: {
         name: 'linenumber',
         category: 'Scalar',
-        description: 'Returns the line number that LOAD CSV is currently using.',
+        description:
+          'Returns the line number that LOAD CSV is currently using.',
         signature: 'linenumber() :: INTEGER',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19238,12 +21185,14 @@ const mockSchema: DbSchema = {
         name: 'localdatetime',
         category: 'Temporal',
         description: 'Creates a `LOCAL DATETIME` instant.',
-        signature: 'localdatetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
+        signature:
+          'localdatetime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('year', 'month', 'day', 'hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond') as components.",
             name: 'input',
@@ -19252,7 +21201,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19260,14 +21216,16 @@ const mockSchema: DbSchema = {
       'localdatetime.realtime': {
         name: 'localdatetime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the realtime clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the realtime clock.',
         signature:
           'localdatetime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19275,7 +21233,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19283,14 +21248,16 @@ const mockSchema: DbSchema = {
       'localdatetime.statement': {
         name: 'localdatetime.statement',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the statement clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the statement clock.',
         signature:
           'localdatetime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19298,7 +21265,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19306,14 +21280,16 @@ const mockSchema: DbSchema = {
       'localdatetime.transaction': {
         name: 'localdatetime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL DATETIME` instant using the transaction clock.',
+        description:
+          'Returns the current `LOCAL DATETIME` instant using the transaction clock.',
         signature:
           'localdatetime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL DATETIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19321,7 +21297,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19344,7 +21327,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, or `DATE`.',
             name: 'input',
@@ -19361,7 +21345,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL DATETIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19370,12 +21361,14 @@ const mockSchema: DbSchema = {
         name: 'localtime',
         category: 'Temporal',
         description: 'Creates a `LOCAL TIME` instant.',
-        signature: 'localtime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        signature:
+          'localtime(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour, 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond' as components.",
             name: 'input',
@@ -19384,7 +21377,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19392,13 +21392,16 @@ const mockSchema: DbSchema = {
       'localtime.realtime': {
         name: 'localtime.realtime',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the realtime clock.',
-        signature: 'localtime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        description:
+          'Returns the current `LOCAL TIME` instant using the realtime clock.',
+        signature:
+          'localtime.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19406,7 +21409,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19414,13 +21424,16 @@ const mockSchema: DbSchema = {
       'localtime.statement': {
         name: 'localtime.statement',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the statement clock.',
-        signature: 'localtime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
+        description:
+          'Returns the current `LOCAL TIME` instant using the statement clock.',
+        signature:
+          'localtime.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19428,7 +21441,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19436,14 +21456,16 @@ const mockSchema: DbSchema = {
       'localtime.transaction': {
         name: 'localtime.transaction',
         category: 'Temporal',
-        description: 'Returns the current `LOCAL TIME` instant using the transaction clock.',
+        description:
+          'Returns the current `LOCAL TIME` instant using the transaction clock.',
         signature:
           'localtime.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: LOCAL TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -19451,7 +21473,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19474,7 +21503,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `LOCAL TIME`, or `DATE`.',
             name: 'input',
@@ -19491,7 +21521,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LOCAL TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19505,14 +21542,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value for which the natural logarithm will be returned.',
+            description:
+              'A value for which the natural logarithm will be returned.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19526,14 +21571,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value for which the common logarithm (base 10) will be returned.',
+            description:
+              'A value for which the common logarithm (base 10) will be returned.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19554,7 +21607,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19564,25 +21624,35 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with leading `trimCharacterString` characters removed.',
-        signature: 'ltrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'ltrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A value from which the leading trim character will be removed.',
+            description:
+              'A value from which the leading trim character will be removed.',
             name: 'input',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start of the given string.',
+            description:
+              'A character to be removed from the start of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19603,7 +21673,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19624,7 +21701,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ANY',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19632,7 +21716,8 @@ const mockSchema: DbSchema = {
       nodes: {
         name: 'nodes',
         category: 'List',
-        description: 'Returns a `LIST<NODE>` containing all the `NODE` values in a `PATH`.',
+        description:
+          'Returns a `LIST<NODE>` containing all the `NODE` values in a `PATH`.',
         signature: 'nodes(input :: PATH) :: LIST<NODE>',
         isBuiltIn: true,
         argumentDescription: [
@@ -19645,7 +21730,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<NODE>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19653,14 +21745,16 @@ const mockSchema: DbSchema = {
       none: {
         name: 'none',
         category: 'Predicate',
-        description: 'Returns true if the predicate holds for no element in the given `LIST<ANY>`.',
+        description:
+          'Returns true if the predicate holds for no element in the given `LIST<ANY>`.',
         signature:
           'none(variable :: VARIABLE IN list :: LIST<ANY> WHERE predicate :: ANY) :: BOOLEAN',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -19673,7 +21767,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19695,14 +21796,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
+            description:
+              'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
             name: 'normalForm',
             type: '[NFC, NFD, NFKC, NFKD]',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19717,20 +21826,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A first value to be returned if the second value is not equivalent.',
+            description:
+              'A first value to be returned if the second value is not equivalent.',
             name: 'v1',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'A second value against which the first value is compared.',
+            description:
+              'A second value against which the first value is compared.',
             name: 'v2',
             type: 'ANY',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19738,8 +21856,10 @@ const mockSchema: DbSchema = {
       percentileCont: {
         name: 'percentileCont',
         category: 'Aggregating',
-        description: 'Returns the percentile of a value over a group using linear interpolation.',
-        signature: 'percentileCont(input :: FLOAT, percentile :: FLOAT) :: FLOAT',
+        description:
+          'Returns the percentile of a value over a group using linear interpolation.',
+        signature:
+          'percentileCont(input :: FLOAT, percentile :: FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -19757,7 +21877,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19786,7 +21913,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19800,7 +21934,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19823,7 +21964,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'POINT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19851,7 +21999,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19886,7 +22041,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19908,7 +22070,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'MAP',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19929,7 +22098,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19937,13 +22113,21 @@ const mockSchema: DbSchema = {
       rand: {
         name: 'rand',
         category: 'Numeric',
-        description: 'Returns a random `FLOAT` in the range from 0 (inclusive) to 1 (exclusive).',
+        description:
+          'Returns a random `FLOAT` in the range from 0 (inclusive) to 1 (exclusive).',
         signature: 'rand() :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19957,7 +22141,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -19967,7 +22158,8 @@ const mockSchema: DbSchema = {
         category: 'List',
         description:
           'Returns a `LIST<INTEGER>` comprising all `INTEGER` values within a specified range created with step length.',
-        signature: 'range(start :: INTEGER, end :: INTEGER, step :: INTEGER) :: LIST<INTEGER>',
+        signature:
+          'range(start :: INTEGER, end :: INTEGER, step :: INTEGER) :: LIST<INTEGER>',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -19991,7 +22183,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<INTEGER>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20007,20 +22206,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that holds the result as the list is iterated.',
+            description:
+              'A variable that holds the result as the list is iterated.',
             name: 'accumulator',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the reducing expression.',
+            description:
+              'A variable that can be used within the reducing expression.',
             name: 'variable',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'ANY',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20035,14 +22243,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The path from which all relationships will be returned.',
+            description:
+              'The path from which all relationships will be returned.',
             name: 'input',
             type: 'PATH',
           },
         ],
         returnDescription: 'LIST<RELATIONSHIP>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20052,7 +22268,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns a `STRING` in which all occurrences of a specified search `STRING` in the given `STRING` have been replaced by another (specified) replacement `STRING`.',
-        signature: 'replace(original :: STRING, search :: STRING, replace :: STRING) :: STRING',
+        signature:
+          'replace(original :: STRING, search :: STRING, replace :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20076,7 +22293,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20098,7 +22322,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING | LIST<ANY>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20113,20 +22344,29 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A string value whose leftmost characters will be trimmed.',
+            description:
+              'A string value whose leftmost characters will be trimmed.',
             name: 'original',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The length of the rightmost characters to be returned.',
+            description:
+              'The length of the rightmost characters to be returned.',
             name: 'length',
             type: 'INTEGER',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20136,7 +22376,8 @@ const mockSchema: DbSchema = {
         category: 'Numeric',
         description:
           'Returns the value of a number rounded to the specified precision with the specified rounding mode.',
-        signature: 'round(value :: FLOAT, precision :: INTEGER | FLOAT, mode :: STRING) :: FLOAT',
+        signature:
+          'round(value :: FLOAT, precision :: INTEGER | FLOAT, mode :: STRING) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20161,7 +22402,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20171,7 +22419,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns the given `STRING` with trailing `trimCharacterString` characters removed.',
-        signature: 'rtrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
+        signature:
+          'rtrim(input :: STRING, trimCharacterString :: STRING) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20183,14 +22432,22 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A character to be removed from the start and end of the given string.',
+            description:
+              'A character to be removed from the start and end of the given string.',
             name: 'trimCharacterString',
             type: 'STRING',
           },
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20212,7 +22469,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20233,7 +22497,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20249,7 +22520,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A variable that can be used within the `WHERE` clause.',
+            description:
+              'A variable that can be used within the `WHERE` clause.',
             name: 'variable',
             type: 'ANY',
           },
@@ -20262,7 +22534,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20284,7 +22563,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20313,7 +22599,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20334,7 +22627,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20355,7 +22655,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'NODE',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20377,7 +22684,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20392,14 +22706,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The value to calculate the population standard deviation of.',
+            description:
+              'The value to calculate the population standard deviation of.',
             name: 'input',
             type: 'FLOAT',
           },
         ],
         returnDescription: 'FLOAT',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20409,7 +22731,8 @@ const mockSchema: DbSchema = {
         category: 'String',
         description:
           'Returns a substring of a given `length` from the given `STRING`, beginning with a 0-based index start.',
-        signature: 'substring(original :: STRING, start :: INTEGER, length :: INTEGER) :: STRING',
+        signature:
+          'substring(original :: STRING, start :: INTEGER, length :: INTEGER) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20433,7 +22756,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20441,8 +22771,10 @@ const mockSchema: DbSchema = {
       sum: {
         name: 'sum',
         category: 'Aggregating',
-        description: 'Returns the sum of a set of `INTEGER`, `FLOAT` or `DURATION` values',
-        signature: 'sum(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
+        description:
+          'Returns the sum of a set of `INTEGER`, `FLOAT` or `DURATION` values',
+        signature:
+          'sum(input :: INTEGER | FLOAT | DURATION) :: INTEGER | FLOAT | DURATION',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20454,7 +22786,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER | FLOAT | DURATION',
         aggregating: true,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20468,14 +22807,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list from which all but the first element will be returned.',
+            description:
+              'A list from which all but the first element will be returned.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<ANY>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20496,7 +22843,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20505,12 +22859,14 @@ const mockSchema: DbSchema = {
         name: 'time',
         category: 'Temporal',
         description: 'Creates a `ZONED TIME` instant.',
-        signature: 'time(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        signature:
+          'time(input = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               "Either a string representation of a temporal value, a map containing the single key 'timezone', or a map containing temporal values ('hour', 'minute', 'second', 'millisecond', 'microsecond', 'nanosecond', 'timezone') as components.",
             name: 'input',
@@ -20519,7 +22875,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20527,13 +22890,16 @@ const mockSchema: DbSchema = {
       'time.realtime': {
         name: 'time.realtime',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the realtime clock.',
-        signature: 'time.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the realtime clock.',
+        signature:
+          'time.realtime(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -20541,7 +22907,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20549,13 +22922,16 @@ const mockSchema: DbSchema = {
       'time.statement': {
         name: 'time.statement',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the statement clock.',
-        signature: 'time.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the statement clock.',
+        signature:
+          'time.statement(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -20563,7 +22939,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20571,13 +22954,16 @@ const mockSchema: DbSchema = {
       'time.transaction': {
         name: 'time.transaction',
         category: 'Temporal',
-        description: 'Returns the current `ZONED TIME` instant using the transaction clock.',
-        signature: 'time.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
+        description:
+          'Returns the current `ZONED TIME` instant using the transaction clock.',
+        signature:
+          'time.transaction(timezone = DEFAULT_TEMPORAL_ARGUMENT :: ANY) :: ZONED TIME',
         isBuiltIn: true,
         argumentDescription: [
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description: 'A string value representing a time zone.',
             name: 'timezone',
             type: 'ANY',
@@ -20585,7 +22971,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20608,7 +23001,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
+            default:
+              'DefaultParameterValue{value=DEFAULT_TEMPORAL_ARGUMENT, type=ANY}',
             description:
               'The date to be truncated using either `ZONED DATETIME`, `LOCAL DATETIME`, `ZONED TIME`, or `LOCAL TIME`.',
             name: 'input',
@@ -20625,7 +23019,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'ZONED TIME',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20640,7 +23041,14 @@ const mockSchema: DbSchema = {
         argumentDescription: [],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20662,7 +23070,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20677,14 +23092,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of booleans.',
+            description:
+              'A list of values to be converted into a list of booleans.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<BOOLEAN>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20706,7 +23129,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'BOOLEAN',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20714,7 +23144,8 @@ const mockSchema: DbSchema = {
       toFloat: {
         name: 'toFloat',
         category: 'Scalar',
-        description: 'Converts a `STRING`, `INTEGER` or `FLOAT` value to a `FLOAT` value.',
+        description:
+          'Converts a `STRING`, `INTEGER` or `FLOAT` value to a `FLOAT` value.',
         signature: 'toFloat(input :: STRING | INTEGER | FLOAT) :: FLOAT',
         isBuiltIn: true,
         argumentDescription: [
@@ -20727,7 +23158,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20742,14 +23180,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of floats.',
+            description:
+              'A list of values to be converted into a list of floats.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<FLOAT>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20771,7 +23217,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20781,7 +23234,8 @@ const mockSchema: DbSchema = {
         category: 'Scalar',
         description:
           'Converts a `BOOLEAN`, `STRING`, `INTEGER` or `FLOAT` value to an `INTEGER` value. For `BOOLEAN` values, true is defined to be 1 and false is defined to be 0.',
-        signature: 'toInteger(input :: BOOLEAN | STRING | INTEGER | FLOAT) :: INTEGER',
+        signature:
+          'toInteger(input :: BOOLEAN | STRING | INTEGER | FLOAT) :: INTEGER',
         isBuiltIn: true,
         argumentDescription: [
           {
@@ -20793,7 +23247,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20808,14 +23269,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of integers.',
+            description:
+              'A list of values to be converted into a list of integers.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<INTEGER>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20837,7 +23306,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'INTEGER',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20858,7 +23334,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20880,7 +23363,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20895,14 +23385,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of values to be converted into a list of strings.',
+            description:
+              'A list of values to be converted into a list of strings.',
             name: 'input',
             type: 'LIST<ANY>',
           },
         ],
         returnDescription: 'LIST<STRING>',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20924,7 +23422,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20945,7 +23450,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20961,7 +23473,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The parts of the string to trim; LEADING, TRAILING, BOTH',
+            description:
+              'The parts of the string to trim; LEADING, TRAILING, BOTH',
             name: 'trimSpecification',
             type: '[LEADING, TRAILING, BOTH]',
           },
@@ -20982,7 +23495,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -20990,7 +23510,8 @@ const mockSchema: DbSchema = {
       type: {
         name: 'type',
         category: 'Scalar',
-        description: 'Returns a `STRING` representation of the `RELATIONSHIP` type.',
+        description:
+          'Returns a `STRING` representation of the `RELATIONSHIP` type.',
         signature: 'type(input :: RELATIONSHIP) :: STRING',
         isBuiltIn: true,
         argumentDescription: [
@@ -21003,7 +23524,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -21024,7 +23552,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -21046,7 +23581,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'STRING',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -21075,7 +23617,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -21104,7 +23653,14 @@ const mockSchema: DbSchema = {
         ],
         returnDescription: 'FLOAT',
         aggregating: false,
-        rolesExecution: ['PUBLIC', 'admin', 'architect', 'editor', 'publisher', 'reader'],
+        rolesExecution: [
+          'PUBLIC',
+          'admin',
+          'architect',
+          'editor',
+          'publisher',
+          'reader',
+        ],
         rolesBoostedExecution: [],
         isDeprecated: false,
         deprecatedBy: null,
@@ -21272,7 +23828,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The max depth (in terms of nodes) the algorithm will explore.',
+            description:
+              'The max depth (in terms of nodes) the algorithm will explore.',
             name: 'maxNodes',
             type: 'INTEGER',
           },
@@ -21296,7 +23853,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.algo.cover': {
         name: 'apoc.algo.cover',
-        description: 'Returns all `RELATIONSHIP` values connecting the given set of `NODE` values.',
+        description:
+          'Returns all `RELATIONSHIP` values connecting the given set of `NODE` values.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature: 'apoc.algo.cover(nodes :: ANY) :: (rel :: RELATIONSHIP)',
@@ -21416,7 +23974,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the property whose value will be added to.',
+            description:
+              'The name of the property whose value will be added to.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -21551,13 +24110,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship that has a property containing a list.',
+            description:
+              'The node or relationship that has a property containing a list.',
             name: 'container',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'The name of the property into which the value will be inserted.',
+            description:
+              'The name of the property into which the value will be inserted.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -21627,13 +24188,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship that has a property containing a list.',
+            description:
+              'The node or relationship that has a property containing a list.',
             name: 'container',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'The name of the property from which the value will be removed.',
+            description:
+              'The name of the property from which the value will be removed.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -21704,7 +24267,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the property from which the value will be subtracted.',
+            description:
+              'The name of the property from which the value will be subtracted.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -21767,7 +24331,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship with the property to be updated.',
+            description:
+              'The node or relationship with the property to be updated.',
             name: 'container',
             type: 'ANY',
           },
@@ -21845,14 +24410,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A Cypher query to evaluate if all conditionals evaluate to false.',
+            description:
+              'A Cypher query to evaluate if all conditionals evaluate to false.',
             name: 'elseQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'A map of parameters to be used in the executed Cypher query.',
+            description:
+              'A map of parameters to be used in the executed Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -21876,7 +24443,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.coll.elements': {
         name: 'apoc.coll.elements',
-        description: 'Deconstructs a `LIST<ANY>` into identifiers indicating their specific type.',
+        description:
+          'Deconstructs a `LIST<ANY>` into identifiers indicating their specific type.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -21891,7 +24459,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-            description: 'The maximum size of elements to deconstruct from the given list.',
+            description:
+              'The maximum size of elements to deconstruct from the given list.',
             name: 'limit',
             type: 'INTEGER',
           },
@@ -21966,121 +24535,141 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a string value.',
+            description:
+              'The value of the first item, if it is a string value.',
             name: '_1s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a string value.',
+            description:
+              'The value of the second item, if it is a string value.',
             name: '_2s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a string value.',
+            description:
+              'The value of the third item, if it is a string value.',
             name: '_3s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a string value.',
+            description:
+              'The value of the fourth item, if it is a string value.',
             name: '_4s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a string value.',
+            description:
+              'The value of the fifth item, if it is a string value.',
             name: '_5s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a string value.',
+            description:
+              'The value of the sixth item, if it is a string value.',
             name: '_6s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a string value.',
+            description:
+              'The value of the seventh item, if it is a string value.',
             name: '_7s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a string value.',
+            description:
+              'The value of the eighth item, if it is a string value.',
             name: '_8s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a string value.',
+            description:
+              'The value of the ninth item, if it is a string value.',
             name: '_9s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a string value.',
+            description:
+              'The value of the tenth item, if it is a string value.',
             name: '_10s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is an integer value.',
+            description:
+              'The value of the first item, if it is an integer value.',
             name: '_1i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is an integer value.',
+            description:
+              'The value of the second item, if it is an integer value.',
             name: '_2i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is an integer value.',
+            description:
+              'The value of the third item, if it is an integer value.',
             name: '_3i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is an integer value.',
+            description:
+              'The value of the fourth item, if it is an integer value.',
             name: '_4i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is an integer value.',
+            description:
+              'The value of the fifth item, if it is an integer value.',
             name: '_5i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is an integer value.',
+            description:
+              'The value of the sixth item, if it is an integer value.',
             name: '_6i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is an integer value.',
+            description:
+              'The value of the seventh item, if it is an integer value.',
             name: '_7i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is an integer value.',
+            description:
+              'The value of the eighth item, if it is an integer value.',
             name: '_8i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is an integer value.',
+            description:
+              'The value of the ninth item, if it is an integer value.',
             name: '_9i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is an integer value.',
+            description:
+              'The value of the tenth item, if it is an integer value.',
             name: '_10i',
             type: 'INTEGER',
           },
@@ -22092,7 +24681,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a float value.',
+            description:
+              'The value of the second item, if it is a float value.',
             name: '_2f',
             type: 'FLOAT',
           },
@@ -22104,7 +24694,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a float value.',
+            description:
+              'The value of the fourth item, if it is a float value.',
             name: '_4f',
             type: 'FLOAT',
           },
@@ -22122,13 +24713,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a float value.',
+            description:
+              'The value of the seventh item, if it is a float value.',
             name: '_7f',
             type: 'FLOAT',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a float value.',
+            description:
+              'The value of the eighth item, if it is a float value.',
             name: '_8f',
             type: 'FLOAT',
           },
@@ -22146,61 +24739,71 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a boolean value.',
+            description:
+              'The value of the first item, if it is a boolean value.',
             name: '_1b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a boolean value.',
+            description:
+              'The value of the second item, if it is a boolean value.',
             name: '_2b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a boolean value.',
+            description:
+              'The value of the third item, if it is a boolean value.',
             name: '_3b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a boolean value.',
+            description:
+              'The value of the fourth item, if it is a boolean value.',
             name: '_4b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a boolean value.',
+            description:
+              'The value of the fifth item, if it is a boolean value.',
             name: '_5b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a boolean value.',
+            description:
+              'The value of the sixth item, if it is a boolean value.',
             name: '_6b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a boolean value.',
+            description:
+              'The value of the seventh item, if it is a boolean value.',
             name: '_7b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a boolean value.',
+            description:
+              'The value of the eighth item, if it is a boolean value.',
             name: '_8b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a boolean value.',
+            description:
+              'The value of the ninth item, if it is a boolean value.',
             name: '_9b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a boolean value.',
+            description:
+              'The value of the tenth item, if it is a boolean value.',
             name: '_10b',
             type: 'BOOLEAN',
           },
@@ -22242,7 +24845,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a list value.',
+            description:
+              'The value of the seventh item, if it is a list value.',
             name: '_7l',
             type: 'LIST<ANY>',
           },
@@ -22362,7 +24966,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a node value.',
+            description:
+              'The value of the seventh item, if it is a node value.',
             name: '_7n',
             type: 'NODE',
           },
@@ -22386,61 +24991,71 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a relationship value.',
+            description:
+              'The value of the first item, if it is a relationship value.',
             name: '_1r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a relationship value.',
+            description:
+              'The value of the second item, if it is a relationship value.',
             name: '_2r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a relationship value.',
+            description:
+              'The value of the third item, if it is a relationship value.',
             name: '_3r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a relationship value.',
+            description:
+              'The value of the fourth item, if it is a relationship value.',
             name: '_4r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a relationship value.',
+            description:
+              'The value of the fifth item, if it is a relationship value.',
             name: '_5r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a relationship value.',
+            description:
+              'The value of the sixth item, if it is a relationship value.',
             name: '_6r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a relationship value.',
+            description:
+              'The value of the seventh item, if it is a relationship value.',
             name: '_7r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a relationship value.',
+            description:
+              'The value of the eighth item, if it is a relationship value.',
             name: '_8r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a relationship value.',
+            description:
+              'The value of the ninth item, if it is a relationship value.',
             name: '_9r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a relationship value.',
+            description:
+              'The value of the tenth item, if it is a relationship value.',
             name: '_10r',
             type: 'RELATIONSHIP',
           },
@@ -22482,7 +25097,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a path value.',
+            description:
+              'The value of the seventh item, if it is a path value.',
             name: '_7p',
             type: 'PATH',
           },
@@ -22536,7 +25152,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The offset to make each pair with from the given list.',
+            description:
+              'The offset to make each pair with from the given list.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -22603,7 +25220,8 @@ const mockSchema: DbSchema = {
           'Splits a collection by the given value.\nThe value itself will not be part of the resulting `LIST<ANY>` values.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.coll.split(coll :: LIST<ANY>, value :: ANY) :: (value :: LIST<ANY>)',
+        signature:
+          'apoc.coll.split(coll :: LIST<ANY>, value :: ANY) :: (value :: LIST<ANY>)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22680,7 +25298,8 @@ const mockSchema: DbSchema = {
           'Serializes the given JSON object and sets it as a property on the given `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.convert.setJsonProperty(node :: NODE, key :: STRING, value :: ANY)',
+        signature:
+          'apoc.convert.setJsonProperty(node :: NODE, key :: STRING, value :: ANY)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22729,14 +25348,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to convert relationship types to lower case.',
+            description:
+              'Whether or not to convert relationship types to lower case.',
             name: 'lowerCaseRels',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
+            description:
+              '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
             name: 'config',
             type: 'MAP',
           },
@@ -22763,7 +25384,8 @@ const mockSchema: DbSchema = {
         description: 'Adds the given labels to the given `NODE` values.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.addLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
+        signature:
+          'apoc.create.addLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22797,10 +25419,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.clonePathToVirtual': {
         name: 'apoc.create.clonePathToVirtual',
-        description: 'Takes the given `PATH` and returns a virtual representation of it.',
+        description:
+          'Takes the given `PATH` and returns a virtual representation of it.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.clonePathToVirtual(path :: PATH) :: (path :: PATH)',
+        signature:
+          'apoc.create.clonePathToVirtual(path :: PATH) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22828,10 +25452,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.clonePathsToVirtual': {
         name: 'apoc.create.clonePathsToVirtual',
-        description: 'Takes the given `LIST<PATH>` and returns a virtual representation of them.',
+        description:
+          'Takes the given `LIST<PATH>` and returns a virtual representation of them.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.clonePathsToVirtual(paths :: LIST<PATH>) :: (path :: PATH)',
+        signature:
+          'apoc.create.clonePathsToVirtual(paths :: LIST<PATH>) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22862,7 +25488,8 @@ const mockSchema: DbSchema = {
         description: 'Creates a `NODE` with the given dynamic labels.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.node(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.create.node(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -22934,7 +25561,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.relationship': {
         name: 'apoc.create.relationship',
-        description: 'Creates a `RELATIONSHIP` with the given dynamic relationship type.',
+        description:
+          'Creates a `RELATIONSHIP` with the given dynamic relationship type.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -22942,7 +25570,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node from which the outgoing relationship will start.',
+            description:
+              'The node from which the outgoing relationship will start.',
             name: 'from',
             type: 'NODE',
           },
@@ -22960,7 +25589,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The node to which the incoming relationship will be connected.',
+            description:
+              'The node to which the incoming relationship will be connected.',
             name: 'to',
             type: 'NODE',
           },
@@ -23022,7 +25652,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.removeProperties': {
         name: 'apoc.create.removeProperties',
-        description: 'Removes the given properties from the given `NODE` values.',
+        description:
+          'Removes the given properties from the given `NODE` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -23060,7 +25691,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.removeRelProperties': {
         name: 'apoc.create.removeRelProperties',
-        description: 'Removes the given properties from the given `RELATIONSHIP` values.',
+        description:
+          'Removes the given properties from the given `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -23102,7 +25734,8 @@ const mockSchema: DbSchema = {
           'Sets the given labels to the given `NODE` values. Non-matching labels are removed from the nodes.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.setLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
+        signature:
+          'apoc.create.setLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23156,7 +25789,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The values to assign to the properties on the given nodes.',
+            description:
+              'The values to assign to the properties on the given nodes.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -23238,13 +25872,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The keys of the properties to set on the given relationships.',
+            description:
+              'The keys of the properties to set on the given relationships.',
             name: 'keys',
             type: 'LIST<STRING>',
           },
           {
             isDeprecated: false,
-            description: 'The values of the properties to set on the given relationships.',
+            description:
+              'The values of the properties to set on the given relationships.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -23315,7 +25951,8 @@ const mockSchema: DbSchema = {
         description: 'Returns a stream of UUIDs.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.uuids(count :: INTEGER) :: (row :: INTEGER, uuid :: STRING)',
+        signature:
+          'apoc.create.uuids(count :: INTEGER) :: (row :: INTEGER, uuid :: STRING)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23353,7 +25990,8 @@ const mockSchema: DbSchema = {
         description: 'Returns a virtual `NODE`.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.vNode(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.create.vNode(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23433,7 +26071,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to connect the outgoing virtual relationship from.',
+            description:
+              'The node to connect the outgoing virtual relationship from.',
             name: 'from',
             type: 'NODE',
           },
@@ -23445,13 +26084,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual relationship.',
+            description:
+              'The properties to assign to the new virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'The node to which the incoming virtual relationship will be connected.',
+            description:
+              'The node to which the incoming virtual relationship will be connected.',
             name: 'to',
             type: 'NODE',
           },
@@ -23489,7 +26130,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual start node.',
+            description:
+              'The properties to assign to the new virtual start node.',
             name: 'n',
             type: 'MAP',
           },
@@ -23501,7 +26143,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual relationship.',
+            description:
+              'The properties to assign to the new virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
@@ -23553,7 +26196,8 @@ const mockSchema: DbSchema = {
           'Runs a dynamically constructed statement with the given parameters. This procedure allows for both read and write statements.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.cypher.doIt(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.doIt(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23591,7 +26235,8 @@ const mockSchema: DbSchema = {
           'Runs a dynamically constructed read-only statement with the given parameters.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.cypher.run(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.run(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23634,7 +26279,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The Cypher statements to run, semicolon separated (;).',
+            description:
+              'The Cypher statements to run, semicolon separated (;).',
             name: 'statement',
             type: 'STRING',
           },
@@ -23686,7 +26332,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The Cypher statements to run, semicolon separated (;).',
+            description:
+              'The Cypher statements to run, semicolon separated (;).',
             name: 'statement',
             type: 'STRING',
           },
@@ -23729,10 +26376,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.cypher.runSchema': {
         name: 'apoc.cypher.runSchema',
-        description: 'Runs the given query schema statement with the given parameters.',
+        description:
+          'Runs the given query schema statement with the given parameters.',
         mode: 'SCHEMA',
         worksOnSystem: false,
-        signature: 'apoc.cypher.runSchema(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.runSchema(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23814,7 +26463,8 @@ const mockSchema: DbSchema = {
         description: 'Alias for `apoc.cypher.doIt`.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.cypher.runWrite(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.runWrite(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -23865,14 +26515,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A Cypher query to evaluate if all conditionals evaluate to false.',
+            description:
+              'A Cypher query to evaluate if all conditionals evaluate to false.',
             name: 'elseQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'A map of parameters to be used in the executed Cypher query.',
+            description:
+              'A map of parameters to be used in the executed Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -23905,19 +26557,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The predicate that determines whether to execute the `ifQuery`.',
+            description:
+              'The predicate that determines whether to execute the `ifQuery`.',
             name: 'condition',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is true.',
+            description:
+              'The Cypher statement to run if the condition is true.',
             name: 'ifQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is false.',
+            description:
+              'The Cypher statement to run if the condition is false.',
             name: 'elseQuery',
             type: 'STRING',
           },
@@ -24255,7 +26910,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.arrow.query': {
         name: 'apoc.export.arrow.query',
-        description: 'Exports the results from the given Cypher query as an arrow file.',
+        description:
+          'Exports the results from the given Cypher query as an arrow file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -24263,7 +26919,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -24369,7 +27026,8 @@ const mockSchema: DbSchema = {
         description: 'Exports the full database as an arrow byte array.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.export.arrow.stream.all(config = {} :: MAP) :: (value :: BYTEARRAY)',
+        signature:
+          'apoc.export.arrow.stream.all(config = {} :: MAP) :: (value :: BYTEARRAY)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -24484,7 +27142,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -24581,7 +27240,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.csv.data': {
         name: 'apoc.export.csv.data',
-        description: 'Exports the given `NODE` and `RELATIONSHIP` values to the provided CSV file.',
+        description:
+          'Exports the given `NODE` and `RELATIONSHIP` values to the provided CSV file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -24601,7 +27261,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -24712,7 +27373,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -24824,7 +27486,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -24931,7 +27594,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25069,7 +27733,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25200,7 +27865,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25332,7 +27998,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25448,7 +28115,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.cypher.schema': {
         name: 'apoc.export.cypher.schema',
-        description: 'Exports all schema indexes and constraints to Cypher statements.',
+        description:
+          'Exports all schema indexes and constraints to Cypher statements.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -25457,7 +28125,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25581,7 +28250,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25699,7 +28369,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25810,7 +28481,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -25922,7 +28594,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -26027,7 +28700,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -26146,7 +28820,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -26258,7 +28933,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -26356,7 +29032,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.json.query': {
         name: 'apoc.export.json.query',
-        description: 'Exports the results from the Cypher statement to the provided JSON file.',
+        description:
+          'Exports the results from the Cypher statement to the provided JSON file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -26370,7 +29047,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -26472,7 +29150,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the given data.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.graph.from(data :: ANY, name :: STRING, props :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.from(data :: ANY, name :: STRING, props :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -26568,7 +29247,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the data returned by the given database.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.graph.fromDB(name :: STRING, props :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.fromDB(name :: STRING, props :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -26657,7 +29337,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the data returned by the given JSON file.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.graph.fromDocument(json :: ANY, config = {} :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.fromDocument(json :: ANY, config = {} :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -26747,7 +29428,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of paths to extract nodes and relationships from.',
+            description:
+              'A list of paths to extract nodes and relationships from.',
             name: 'paths',
             type: 'LIST<PATH>',
           },
@@ -26783,10 +29465,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.graph.validateDocument': {
         name: 'apoc.graph.validateDocument',
-        description: 'Validates the JSON file and returns the result of the validation.',
+        description:
+          'Validates the JSON file and returns the result of the validation.',
         mode: 'READ',
         worksOnSystem: false,
-        signature: 'apoc.graph.validateDocument(json :: ANY, config = {} :: MAP) :: (row :: MAP)',
+        signature:
+          'apoc.graph.validateDocument(json :: ANY, config = {} :: MAP) :: (row :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -26929,13 +29613,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -27019,7 +29705,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinaryFile',
             type: 'ANY',
           },
@@ -27034,13 +29721,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -27124,7 +29813,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinaryFile',
             type: 'ANY',
           },
@@ -27140,13 +29830,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -27225,11 +29917,13 @@ const mockSchema: DbSchema = {
         description: 'Imports a graph from the provided XML file.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.import.xml(urlOrBinary :: ANY, config = {} :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.import.xml(urlOrBinary :: ANY, config = {} :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinary',
             type: 'ANY',
           },
@@ -27261,10 +29955,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.load.arrow': {
         name: 'apoc.load.arrow',
-        description: 'Imports `NODE` and `RELATIONSHIP` values from the provided arrow file.',
+        description:
+          'Imports `NODE` and `RELATIONSHIP` values from the provided arrow file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.load.arrow(file :: STRING, config = {} :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.load.arrow(file :: STRING, config = {} :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -27299,7 +29995,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.load.arrow.stream': {
         name: 'apoc.load.arrow.stream',
-        description: 'Imports `NODE` and `RELATIONSHIP` values from the provided arrow byte array.',
+        description:
+          'Imports `NODE` and `RELATIONSHIP` values from the provided arrow byte array.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -27347,14 +30044,16 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrKeyOrBinary',
             type: 'ANY',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -27402,7 +30101,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -27443,7 +30143,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrKeyOrBinary',
             type: 'ANY',
           },
@@ -27455,14 +30156,16 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The payload to send when connecting to the given URL.',
+            description:
+              'The payload to send when connecting to the given URL.',
             name: 'payload',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -27494,7 +30197,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.load.xml': {
         name: 'apoc.load.xml',
-        description: 'Loads a single nested `MAP` from an XML URL (e.g. web-API).',
+        description:
+          'Loads a single nested `MAP` from an XML URL (e.g. web-API).',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -27502,14 +30206,16 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinary',
             type: 'ANY',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=/, type=STRING}',
-            description: 'An xPath expression to select nodes from the given XML document.',
+            description:
+              'An xPath expression to select nodes from the given XML document.',
             name: 'path',
             type: 'STRING',
           },
@@ -27524,7 +30230,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not to parse the given XML in simple mode.',
+            description:
+              'Whether or not to parse the given XML in simple mode.',
             name: 'simple',
             type: 'BOOLEAN',
           },
@@ -27548,10 +30255,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.lock.all': {
         name: 'apoc.lock.all',
-        description: 'Acquires a write lock on the given `NODE` and `RELATIONSHIP` values.',
+        description:
+          'Acquires a write lock on the given `NODE` and `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.lock.all(nodes :: LIST<NODE>, rels :: LIST<RELATIONSHIP>)',
+        signature:
+          'apoc.lock.all(nodes :: LIST<NODE>, rels :: LIST<RELATIONSHIP>)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -27561,7 +30270,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of relationships to acquire a write lock on.',
+            description:
+              'The list of relationships to acquire a write lock on.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -27650,14 +30360,16 @@ const mockSchema: DbSchema = {
       },
       'apoc.lock.rels': {
         name: 'apoc.lock.rels',
-        description: 'Acquires a write lock on the given `RELATIONSHIP` values.',
+        description:
+          'Acquires a write lock on the given `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature: 'apoc.lock.rels(rels :: LIST<RELATIONSHIP>)',
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of relationships to acquire a write lock on.',
+            description:
+              'The list of relationships to acquire a write lock on.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -27789,7 +30501,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.merge.node': {
         name: 'apoc.merge.node',
-        description: 'Merges the given `NODE` values with the given dynamic labels.',
+        description:
+          'Merges the given `NODE` values with the given dynamic labels.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -27797,7 +30510,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -27841,7 +30555,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.merge.node.eager': {
         name: 'apoc.merge.node.eager',
-        description: 'Merges the given `NODE` values with the given dynamic labels eagerly.',
+        description:
+          'Merges the given `NODE` values with the given dynamic labels eagerly.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -27849,7 +30564,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -27902,7 +30618,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -27961,7 +30678,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -28032,13 +30750,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -28051,7 +30771,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -28096,13 +30817,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -28115,7 +30838,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -28160,13 +30884,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -28179,7 +30905,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -28230,13 +30957,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -28249,7 +30978,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -28395,7 +31125,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.data.of': {
         name: 'apoc.meta.data.of',
-        description: 'Examines the given sub-graph and returns a table of metadata.',
+        description:
+          'Examines the given sub-graph and returns a table of metadata.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -28687,7 +31418,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not this property exists on all nodes of the given type.',
+            description:
+              'Whether or not this property exists on all nodes of the given type.',
             name: 'mandatory',
             type: 'BOOLEAN',
           },
@@ -28764,7 +31496,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not this property exists on all nodes of the given type.',
+            description:
+              'Whether or not this property exists on all nodes of the given type.',
             name: 'mandatory',
             type: 'BOOLEAN',
           },
@@ -28792,7 +31525,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.schema': {
         name: 'apoc.meta.schema',
-        description: 'Examines the given sub-graph and returns metadata as a `MAP`.',
+        description:
+          'Examines the given sub-graph and returns metadata as a `MAP`.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature: 'apoc.meta.schema(config = {} :: MAP) :: (value :: MAP)',
@@ -28825,7 +31559,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.stats': {
         name: 'apoc.meta.stats',
-        description: 'Returns the metadata stored in the transactional database statistics.',
+        description:
+          'Returns the metadata stored in the transactional database statistics.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -28870,7 +31605,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A map of relationship types per start or end node label.',
+            description:
+              'A map of relationship types per start or end node label.',
             name: 'relTypes',
             type: 'MAP',
           },
@@ -28882,7 +31618,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A map containing all the given return fields from this procedure.',
+            description:
+              'A map containing all the given return fields from this procedure.',
             name: 'stats',
             type: 'MAP',
           },
@@ -29017,7 +31754,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The total count of neighboring nodes at the given hop distance.',
+            description:
+              'The total count of neighboring nodes at the given hop distance.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -29065,7 +31803,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of neighboring nodes at a distinct hop distance.',
+            description:
+              'A list of neighboring nodes at a distinct hop distance.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
@@ -29113,7 +31852,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of neighbor counts for each distinct hop distance.',
+            description:
+              'A list of neighbor counts for each distinct hop distance.',
             name: 'value',
             type: 'LIST<ANY>',
           },
@@ -29209,7 +31949,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The total count of neighboring nodes within the given hop distance.',
+            description:
+              'The total count of neighboring nodes within the given hop distance.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -29262,7 +32003,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A node connected to the other end of the relationship.',
+            description:
+              'A node connected to the other end of the relationship.',
             name: 'to',
             type: 'NODE',
           },
@@ -29282,7 +32024,8 @@ const mockSchema: DbSchema = {
           'Detects all `PATH` cycles in the given `LIST<NODE>`.\nThis procedure can be limited on `RELATIONSHIP` values as well.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.nodes.cycles(nodes :: LIST<NODE>, config = {} :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.nodes.cycles(nodes :: LIST<NODE>, config = {} :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29293,7 +32036,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{\n    maxDepth :: INTEGER,\n    relTypes = [] :: LIST<STRING>\n}\n',
+            description:
+              '{\n    maxDepth :: INTEGER,\n    relTypes = [] :: LIST<STRING>\n}\n',
             name: 'config',
             type: 'MAP',
           },
@@ -29320,7 +32064,8 @@ const mockSchema: DbSchema = {
         description: 'Deletes all `NODE` values with the given ids.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.nodes.delete(nodes :: ANY, batchSize :: INTEGER) :: (value :: INTEGER)',
+        signature:
+          'apoc.nodes.delete(nodes :: ANY, batchSize :: INTEGER) :: (value :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29331,7 +32076,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of node values to delete in a single batch.',
+            description:
+              'The number of node values to delete in a single batch.',
             name: 'batchSize',
             type: 'INTEGER',
           },
@@ -29409,7 +32155,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[{*=count}, {*=count}], type=LIST<MAP>}',
+            default:
+              'DefaultParameterValue{value=[{*=count}, {*=count}], type=LIST<MAP>}',
             description:
               'The first map specifies the node properties to aggregate with their corresponding aggregation functions, while the second map specifies the relationship properties for aggregation.',
             name: 'aggregations',
@@ -29427,13 +32174,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of grouped nodes represented as virtual nodes.',
+            description:
+              'A list of grouped nodes represented as virtual nodes.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
           {
             isDeprecated: false,
-            description: 'A list of grouped relationships represented as virtual relationships.',
+            description:
+              'A list of grouped relationships represented as virtual relationships.',
             name: 'relationships',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -29465,7 +32214,8 @@ const mockSchema: DbSchema = {
           'Creates a linked list of the given `NODE` values connected by the given `RELATIONSHIP` type.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.nodes.link(nodes :: LIST<NODE>, type :: STRING, config = {} :: MAP)',
+        signature:
+          'apoc.nodes.link(nodes :: LIST<NODE>, type :: STRING, config = {} :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29547,25 +32297,29 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'An allow list of types allowed on the returned relationships.',
+            description:
+              'An allow list of types allowed on the returned relationships.',
             name: 'relFilter',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'An allow list of labels allowed on the returned nodes.',
+            description:
+              'An allow list of labels allowed on the returned nodes.',
             name: 'labelFilter',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The minimum number of hops allowed in the returned paths.',
+            description:
+              'The minimum number of hops allowed in the returned paths.',
             name: 'minDepth',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The maximum number of hops allowed in the returned paths.',
+            description:
+              'The maximum number of hops allowed in the returned paths.',
             name: 'maxDepth',
             type: 'INTEGER',
           },
@@ -29593,7 +32347,8 @@ const mockSchema: DbSchema = {
           'Returns `PATH` values expanded from the start `NODE` with the given `RELATIONSHIP` types from min-depth to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.expandConfig(startNode :: ANY, config :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.path.expandConfig(startNode :: ANY, config :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29633,7 +32388,8 @@ const mockSchema: DbSchema = {
           'Returns spanning tree `PATH` values expanded from the start `NODE` following the given `RELATIONSHIP` types to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.spanningTree(startNode :: ANY, config :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.path.spanningTree(startNode :: ANY, config :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29720,7 +32476,8 @@ const mockSchema: DbSchema = {
           'Returns the `NODE` values in the sub-graph reachable from the start `NODE` following the given `RELATIONSHIP` types to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.subgraphNodes(startNode :: ANY, config :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.path.subgraphNodes(startNode :: ANY, config :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -29772,14 +32529,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to convert relationship types to lower case.',
+            description:
+              'Whether or not to convert relationship types to lower case.',
             name: 'lowerCaseRels',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
+            description:
+              '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
             name: 'config',
             type: 'MAP',
           },
@@ -29859,7 +32618,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.commit': {
         name: 'apoc.periodic.commit',
-        description: 'Runs the given statement in separate batched transactions.',
+        description:
+          'Runs the given statement in separate batched transactions.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -29946,7 +32706,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.countdown': {
         name: 'apoc.periodic.countdown',
-        description: 'Runs a repeatedly called background statement until it returns 0.',
+        description:
+          'Runs a repeatedly called background statement until it returns 0.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -29967,7 +32728,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The delay in seconds to wait between each job execution.',
+            description:
+              'The delay in seconds to wait between each job execution.',
             name: 'delay',
             type: 'INTEGER',
           },
@@ -30209,7 +32971,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The delay in seconds to wait between each job execution.',
+            description:
+              'The delay in seconds to wait between each job execution.',
             name: 'rate',
             type: 'INTEGER',
           },
@@ -30264,7 +33027,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.submit': {
         name: 'apoc.periodic.submit',
-        description: 'Creates a background job which runs the given Cypher statement once.',
+        description:
+          'Creates a background job which runs the given Cypher statement once.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -30400,7 +33164,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of additional property keys to be copied to the new node.',
+            description:
+              'A list of additional property keys to be copied to the new node.',
             name: 'copiedKeys',
             type: 'LIST<STRING>',
           },
@@ -30439,14 +33204,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not the connected relationships should also be cloned.',
+            description:
+              'Whether or not the connected relationships should also be cloned.',
             name: 'withRelationships',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-            description: 'Whether or not to skip the node properties when cloning.',
+            description:
+              'Whether or not to skip the node properties when cloning.',
             name: 'skipProperties',
             type: 'LIST<STRING>',
           },
@@ -30626,7 +33393,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -30766,7 +33534,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.refactor.from': {
         name: 'apoc.refactor.from',
-        description: 'Redirects the given `RELATIONSHIP` to the given start `NODE`.',
+        description:
+          'Redirects the given `RELATIONSHIP` to the given start `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -30910,7 +33679,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The relationships to be merged onto the first relationship.',
+            description:
+              'The relationships to be merged onto the first relationship.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -31498,7 +34268,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -31520,7 +34291,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.refactor.to': {
         name: 'apoc.refactor.to',
-        description: 'Redirects the given `RELATIONSHIP` to the given end `NODE`.',
+        description:
+          'Redirects the given `RELATIONSHIP` to the given end `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -31548,7 +34320,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -31579,7 +34352,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A map that pairs labels with lists of properties to create indexes from.',
+            description:
+              'A map that pairs labels with lists of properties to create indexes from.',
             name: 'indexes',
             type: 'MAP',
           },
@@ -31593,7 +34367,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to drop all other existing indexes and constraints.',
+            description:
+              'Whether or not to drop all other existing indexes and constraints.',
             name: 'dropExisting',
             type: 'BOOLEAN',
           },
@@ -31607,13 +34382,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key associated with the constraint or index.',
+            description:
+              'The property key associated with the constraint or index.',
             name: 'key',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'keys',
             type: 'LIST<STRING>',
           },
@@ -31673,7 +34450,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'properties',
             type: 'LIST<STRING>',
           },
@@ -31697,13 +34475,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The percentage of the constraint or index population. ',
+            description:
+              'The percentage of the constraint or index population. ',
             name: 'populationProgress',
             type: 'FLOAT',
           },
           {
             isDeprecated: false,
-            description: 'The number of entries in the given constraint or index.',
+            description:
+              'The number of entries in the given constraint or index.',
             name: 'size',
             type: 'INTEGER',
           },
@@ -31732,7 +34512,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.schema.properties.distinct': {
         name: 'apoc.schema.properties.distinct',
-        description: 'Returns all distinct `NODE` property values for the given key.',
+        description:
+          'Returns all distinct `NODE` property values for the given key.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -31770,7 +34551,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.schema.properties.distinctCount': {
         name: 'apoc.schema.properties.distinctCount',
-        description: 'Returns all distinct property values and counts for the given key.',
+        description:
+          'Returns all distinct property values and counts for the given key.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -31786,7 +34568,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the property to count distinct values of.',
+            description:
+              'The name of the property to count distinct values of.',
             name: 'key',
             type: 'STRING',
           },
@@ -31859,7 +34642,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'properties',
             type: 'LIST<STRING>',
           },
@@ -31871,7 +34655,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The relationship type associated with the constraint or index.',
+            description:
+              'The relationship type associated with the constraint or index.',
             name: 'relationshipType',
             type: 'ANY',
           },
@@ -32558,7 +35343,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The soundex character difference between the two given strings.',
+            description:
+              'The soundex character difference between the two given strings.',
             name: 'delta',
             type: 'INTEGER',
           },
@@ -32595,7 +35381,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32622,7 +35409,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32690,7 +35478,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32752,7 +35541,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32813,7 +35603,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32840,7 +35631,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32874,7 +35666,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.trigger.list': {
         name: 'apoc.trigger.list',
-        description: 'Lists all currently installed triggers for the session database.',
+        description:
+          'Lists all currently installed triggers for the session database.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -32895,7 +35688,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -32957,7 +35751,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33019,7 +35814,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33074,7 +35870,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33136,7 +35933,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33198,7 +35996,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33266,7 +36065,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33334,7 +36134,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -33407,7 +36208,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The error message to throw if the given predicate evaluates to true.',
+            description:
+              'The error message to throw if the given predicate evaluates to true.',
             name: 'message',
             type: 'STRING',
           },
@@ -33430,7 +36232,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.warmup.run': {
         name: 'apoc.warmup.run',
-        description: 'Loads all `NODE` and `RELATIONSHIP` values in the database into memory.',
+        description:
+          'Loads all `NODE` and `RELATIONSHIP` values in the database into memory.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -33673,20 +36476,23 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The predicate deciding if to run the `ifQuery`or not.',
+            description:
+              'The predicate deciding if to run the `ifQuery`or not.',
             name: 'condition',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is true.',
+            description:
+              'The Cypher statement to run if the condition is true.',
             name: 'ifQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The Cypher statement to run if the condition is false.',
+            description:
+              'The Cypher statement to run if the condition is false.',
             name: 'elseQuery',
             type: 'STRING',
           },
@@ -33767,7 +36573,8 @@ const mockSchema: DbSchema = {
       },
       'cdc.query': {
         name: 'cdc.query',
-        description: 'Query changes happened from the provided change identifier.',
+        description:
+          'Query changes happened from the provided change identifier.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -33812,7 +36619,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Metadata from the transaction that caused this change event.',
+            description:
+              'Metadata from the transaction that caused this change event.',
             name: 'metadata',
             type: 'MAP',
           },
@@ -33838,7 +36646,8 @@ const mockSchema: DbSchema = {
           'Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300)).',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
+        signature:
+          'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -33942,7 +36751,8 @@ const mockSchema: DbSchema = {
       },
       'db.cdc.query': {
         name: 'db.cdc.query',
-        description: 'Query changes happened from the provided change identifier.',
+        description:
+          'Query changes happened from the provided change identifier.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -33987,7 +36797,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Metadata from the transaction that caused this change event.',
+            description:
+              'Metadata from the transaction that caused this change event.',
             name: 'metadata',
             type: 'MAP',
           },
@@ -34048,7 +36859,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'Information about the number of cleared query caches.',
+            description:
+              'Information about the number of cleared query caches.',
             name: 'value',
             type: 'STRING',
           },
@@ -34068,7 +36880,8 @@ const mockSchema: DbSchema = {
           "Set a vector property on a given node in a more space efficient representation than Cypher's SET.",
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: ANY)',
+        signature:
+          'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: ANY)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -34110,7 +36923,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The relationship on which the new property will be stored.',
+            description:
+              'The relationship on which the new property will be stored.',
             name: 'relationship',
             type: 'RELATIONSHIP',
           },
@@ -34296,7 +37110,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The stopwords used by the analyzer to tokenize strings.',
+            description:
+              'The stopwords used by the analyzer to tokenize strings.',
             name: 'stopwords',
             type: 'LIST<STRING>',
           },
@@ -34334,7 +37149,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
+            description:
+              '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
             name: 'options',
             type: 'MAP',
           },
@@ -34342,7 +37158,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A node which contains a property similar to the query string.',
+            description:
+              'A node which contains a property similar to the query string.',
             name: 'node',
             type: 'NODE',
           },
@@ -34387,7 +37204,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
+            description:
+              '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
             name: 'options',
             type: 'MAP',
           },
@@ -34395,7 +37213,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A relationship which contains a property similar to the query string.',
+            description:
+              'A relationship which contains a property similar to the query string.',
             name: 'relationship',
             type: 'RELATIONSHIP',
           },
@@ -34497,7 +37316,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A node which contains a vector property similar to the query object.',
+            description:
+              'A node which contains a vector property similar to the query object.',
             name: 'node',
             type: 'NODE',
           },
@@ -34576,7 +37396,8 @@ const mockSchema: DbSchema = {
         description: 'Provides information regarding the database.',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
+        signature:
+          'db.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -34644,7 +37465,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The locking mode this lock is using, either "SHARED" or "EXCLUSIVE".',
+            description:
+              'The locking mode this lock is using, either "SHARED" or "EXCLUSIVE".',
             name: 'mode',
             type: 'STRING',
           },
@@ -34688,7 +37510,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'Whether or not the connection call to the database has been successful.',
+            description:
+              'Whether or not the connection call to the database has been successful.',
             name: 'success',
             type: 'BOOLEAN',
           },
@@ -34821,7 +37644,8 @@ const mockSchema: DbSchema = {
       },
       'db.schema.nodeTypeProperties': {
         name: 'db.schema.nodeTypeProperties',
-        description: 'Show the derived property schema of the nodes in tabular form.',
+        description:
+          'Show the derived property schema of the nodes in tabular form.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -34848,7 +37672,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'All types of a property belonging to a node category.',
+            description:
+              'All types of a property belonging to a node category.',
             name: 'propertyTypes',
             type: 'LIST<STRING>',
           },
@@ -34871,7 +37696,8 @@ const mockSchema: DbSchema = {
       },
       'db.schema.relTypeProperties': {
         name: 'db.schema.relTypeProperties',
-        description: 'Show the derived property schema of the relationships in tabular form.',
+        description:
+          'Show the derived property schema of the relationships in tabular form.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -34892,7 +37718,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'All types of a property belonging to a relationship category.',
+            description:
+              'All types of a property belonging to a relationship category.',
             name: 'propertyTypes',
             type: 'LIST<STRING>',
           },
@@ -34925,7 +37752,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of virtual nodes representing each label in the database.',
+            description:
+              'A list of virtual nodes representing each label in the database.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
@@ -34948,7 +37776,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.clear': {
         name: 'db.stats.clear',
-        description: "Clear collected data of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Clear collected data of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -34956,7 +37785,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to clear. The only available section is: 'QUERIES'.",
+            description:
+              "The section to clear. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -34992,7 +37822,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.collect': {
         name: 'db.stats.collect',
-        description: "Start data collection of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Start data collection of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -35000,7 +37831,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to collect. The only available section is: 'QUERIES'.",
+            description:
+              "The section to collect. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -35136,10 +37968,12 @@ const mockSchema: DbSchema = {
       },
       'db.stats.status': {
         name: 'db.stats.status',
-        description: 'Retrieve the status of all available collector daemons, for this database.',
+        description:
+          'Retrieve the status of all available collector daemons, for this database.',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.stats.status() :: (section :: STRING, status :: STRING, data :: MAP)',
+        signature:
+          'db.stats.status() :: (section :: STRING, status :: STRING, data :: MAP)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -35150,7 +37984,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The status of the QueryCollector: "idle" or "collecting".',
+            description:
+              'The status of the QueryCollector: "idle" or "collecting".',
             name: 'status',
             type: 'STRING',
           },
@@ -35172,7 +38007,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.stop': {
         name: 'db.stats.stop',
-        description: "Stop data collection of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Stop data collection of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -35180,7 +38016,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to stop. The only available section is: 'QUERIES'.",
+            description:
+              "The section to stop. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -35362,7 +38199,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateDatabaseFromServer': {
         name: 'dbms.cluster.deallocateDatabaseFromServer',
-        description: 'Deallocate a specific user database from a specific server.',
+        description:
+          'Deallocate a specific user database from a specific server.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -35437,7 +38275,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateDatabaseFromServers': {
         name: 'dbms.cluster.deallocateDatabaseFromServers',
-        description: 'Deallocate a specific user database from a list of servers.',
+        description:
+          'Deallocate a specific user database from a list of servers.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -35512,7 +38351,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateNumberOfDatabases': {
         name: 'dbms.cluster.deallocateNumberOfDatabases',
-        description: 'Deallocate a number of user databases from a specific server.',
+        description:
+          'Deallocate a number of user databases from a specific server.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -35638,7 +38478,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Installed modifier protocols, for example, compression.',
+            description:
+              'Installed modifier protocols, for example, compression.',
             name: 'modifierProtocols',
             type: 'STRING',
           },
@@ -35670,7 +38511,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not to enable/disable the secondary replication process.',
+            description:
+              'Whether or not to enable/disable the secondary replication process.',
             name: 'pause',
             type: 'BOOLEAN',
           },
@@ -35678,7 +38520,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The current state of the secondary replication process.',
+            description:
+              'The current state of the secondary replication process.',
             name: 'state',
             type: 'STRING',
           },
@@ -35836,7 +38679,8 @@ const mockSchema: DbSchema = {
           'Recreates a database while keeping all RBAC settings. The procedure initiates a process, which when complete, will have synchronized and started all database instances within the cluster.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.cluster.recreateDatabase(database :: STRING, options = {} :: MAP)',
+        signature:
+          'dbms.cluster.recreateDatabase(database :: STRING, options = {} :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -35894,7 +38738,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Servers grouped by whether they are readers, writers, or routers.',
+            description:
+              'Servers grouped by whether they are readers, writers, or routers.',
             name: 'servers',
             type: 'LIST<MAP>',
           },
@@ -35910,7 +38755,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.secondaryReplicationDisable': {
         name: 'dbms.cluster.secondaryReplicationDisable',
-        description: 'The toggle can pause or resume the secondary replication process.',
+        description:
+          'The toggle can pause or resume the secondary replication process.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -35925,7 +38771,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not to enable/disable the secondary replication process.',
+            description:
+              'Whether or not to enable/disable the secondary replication process.',
             name: 'pause',
             type: 'BOOLEAN',
           },
@@ -35933,7 +38780,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The current state of the secondary replication process.',
+            description:
+              'The current state of the secondary replication process.',
             name: 'state',
             type: 'STRING',
           },
@@ -35949,10 +38797,12 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.setAutomaticallyEnableFreeServers': {
         name: 'dbms.cluster.setAutomaticallyEnableFreeServers',
-        description: 'With this method you can set whether free servers are automatically enabled.',
+        description:
+          'With this method you can set whether free servers are automatically enabled.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.cluster.setAutomaticallyEnableFreeServers(autoEnable :: BOOLEAN)',
+        signature:
+          'dbms.cluster.setAutomaticallyEnableFreeServers(autoEnable :: BOOLEAN)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -35973,7 +38823,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.showParallelDiscoveryState': {
         name: 'dbms.cluster.showParallelDiscoveryState',
-        description: 'Compare the states of Discovery service V1 and Discovery service V2.',
+        description:
+          'Compare the states of Discovery service V1 and Discovery service V2.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -36134,7 +38985,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.uncordonServer': {
         name: 'dbms.cluster.uncordonServer',
-        description: "Remove the cordon on a server, returning it to 'enabled'.",
+        description:
+          "Remove the cordon on a server, returning it to 'enabled'.",
         mode: 'WRITE',
         worksOnSystem: true,
         signature: 'dbms.cluster.uncordonServer(server :: STRING)',
@@ -36198,7 +39050,8 @@ const mockSchema: DbSchema = {
         description: 'Provides information regarding the DBMS.',
         mode: 'DBMS',
         worksOnSystem: true,
-        signature: 'dbms.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
+        signature:
+          'dbms.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -36275,7 +39128,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.killConnections': {
         name: 'dbms.killConnections',
-        description: 'Kill all network connections with the given connection ids.',
+        description:
+          'Kill all network connections with the given connection ids.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -36373,7 +39227,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The full name of the capability (e.g. "dbms.instance.version").',
+            description:
+              'The full name of the capability (e.g. "dbms.instance.version").',
             name: 'name',
             type: 'STRING',
           },
@@ -36386,7 +39241,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The capability object if it is present in the system (e.g. "5.20.0").',
+            description:
+              'The capability object if it is present in the system (e.g. "5.20.0").',
             name: 'value',
             type: 'ANY',
           },
@@ -36402,7 +39258,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.listConfig': {
         name: 'dbms.listConfig',
-        description: 'List the currently active configuration settings of Neo4j.',
+        description:
+          'List the currently active configuration settings of Neo4j.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -36411,7 +39268,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A string that filters on the name of config settings.',
+            description:
+              'A string that filters on the name of config settings.',
             name: 'searchString',
             type: 'STRING',
           },
@@ -36628,7 +39486,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the database to set the quarantine status of.',
+            description:
+              'The name of the database to set the quarantine status of.',
             name: 'databaseName',
             type: 'STRING',
           },
@@ -36640,7 +39499,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=No reason given, type=STRING}',
+            default:
+              'DefaultParameterValue{value=No reason given, type=STRING}',
             description: 'The reason to quarantine the database.',
             name: 'reason',
             type: 'STRING',
@@ -36707,7 +39567,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A collection with the attributes (values) of that metric.',
+            description:
+              'A collection with the attributes (values) of that metric.',
             name: 'attributes',
             type: 'MAP',
           },
@@ -36753,7 +39614,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Servers grouped by whether they are readers, writers, or routers.',
+            description:
+              'Servers grouped by whether they are readers, writers, or routers.',
             name: 'servers',
             type: 'LIST<MAP>',
           },
@@ -36769,7 +39631,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.failedJobs': {
         name: 'dbms.scheduler.failedJobs',
-        description: 'List failed job runs. There is a limit for amount of historical data.',
+        description:
+          'List failed job runs. There is a limit for amount of historical data.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -36848,10 +39711,12 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.groups': {
         name: 'dbms.scheduler.groups',
-        description: 'List the job groups that are active in the database internal job scheduler.',
+        description:
+          'List the job groups that are active in the database internal job scheduler.',
         mode: 'DBMS',
         worksOnSystem: true,
-        signature: 'dbms.scheduler.groups() :: (group :: STRING, threads :: INTEGER)',
+        signature:
+          'dbms.scheduler.groups() :: (group :: STRING, threads :: INTEGER)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -36878,7 +39743,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.jobs': {
         name: 'dbms.scheduler.jobs',
-        description: 'List all jobs that are active in the database internal job scheduler.',
+        description:
+          'List all jobs that are active in the database internal job scheduler.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -37040,7 +39906,8 @@ const mockSchema: DbSchema = {
           'With this method you can set the default number of primaries and secondaries.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.setDefaultAllocationNumbers(primaries :: INTEGER, secondaries :: INTEGER)',
+        signature:
+          'dbms.setDefaultAllocationNumbers(primaries :: INTEGER, secondaries :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -37071,7 +39938,8 @@ const mockSchema: DbSchema = {
           'Change the default database to the provided value. The database must exist and the old default database must be stopped.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.setDefaultDatabase(databaseName :: STRING) :: (result :: STRING)',
+        signature:
+          'dbms.setDefaultDatabase(databaseName :: STRING) :: (result :: STRING)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -37136,7 +40004,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.showTopologyGraphConfig': {
         name: 'dbms.showTopologyGraphConfig',
-        description: 'With this method the configuration of the Topology Graph can be displayed.',
+        description:
+          'With this method the configuration of the Topology Graph can be displayed.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -37185,10 +40054,12 @@ const mockSchema: DbSchema = {
       },
       'dbms.upgrade': {
         name: 'dbms.upgrade',
-        description: 'Upgrade the system database schema if it is not the current schema.',
+        description:
+          'Upgrade the system database schema if it is not the current schema.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.upgrade() :: (status :: STRING, upgradeResult :: STRING)',
+        signature:
+          'dbms.upgrade() :: (status :: STRING, upgradeResult :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -37215,7 +40086,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.upgradeStatus': {
         name: 'dbms.upgradeStatus',
-        description: 'Report the current status of the system database sub-graph schema.',
+        description:
+          'Report the current status of the system database sub-graph schema.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -37322,7 +40194,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.mutate.estimate': {
         name: 'gds.allShortestPaths.delta.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -37466,7 +40339,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.stats.estimate': {
         name: 'gds.allShortestPaths.delta.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -37628,7 +40502,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.stream.estimate': {
         name: 'gds.allShortestPaths.delta.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -37784,7 +40659,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.write.estimate': {
         name: 'gds.allShortestPaths.delta.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -37940,7 +40816,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.mutate.estimate': {
         name: 'gds.allShortestPaths.dijkstra.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38102,7 +40979,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.stream.estimate': {
         name: 'gds.allShortestPaths.dijkstra.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38258,7 +41136,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.write.estimate': {
         name: 'gds.allShortestPaths.dijkstra.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38530,7 +41409,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.linkPrediction.configureAutoTuning': {
         name: 'gds.alpha.pipeline.linkPrediction.configureAutoTuning',
-        description: 'Configures the auto-tuning of the link prediction pipeline.',
+        description:
+          'Configures the auto-tuning of the link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38668,7 +41548,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeClassification.configureAutoTuning': {
         name: 'gds.alpha.pipeline.nodeClassification.configureAutoTuning',
-        description: 'Configures the auto-tuning of the node classification pipeline.',
+        description:
+          'Configures the auto-tuning of the node classification pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38736,7 +41617,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addLinearRegression': {
         name: 'gds.alpha.pipeline.nodeRegression.addLinearRegression',
-        description: 'Add a linear regression model candidate to a node regression pipeline.',
+        description:
+          'Add a linear regression model candidate to a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38805,7 +41687,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addNodeProperty': {
         name: 'gds.alpha.pipeline.nodeRegression.addNodeProperty',
-        description: 'Add a node property step to an existing node regression training pipeline.',
+        description:
+          'Add a node property step to an existing node regression training pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38879,7 +41762,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addRandomForest': {
         name: 'gds.alpha.pipeline.nodeRegression.addRandomForest',
-        description: 'Add a random forest model candidate to a node regression pipeline.',
+        description:
+          'Add a random forest model candidate to a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -38947,7 +41831,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.configureAutoTuning': {
         name: 'gds.alpha.pipeline.nodeRegression.configureAutoTuning',
-        description: 'Configures the auto-tuning of a node regression pipeline.',
+        description:
+          'Configures the auto-tuning of a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39015,7 +41900,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.configureSplit': {
         name: 'gds.alpha.pipeline.nodeRegression.configureSplit',
-        description: 'Configures the graph splitting of a node regression pipeline.',
+        description:
+          'Configures the graph splitting of a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39083,7 +41969,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.create': {
         name: 'gds.alpha.pipeline.nodeRegression.create',
-        description: 'Creates a node regression training pipeline in the pipeline catalog.',
+        description:
+          'Creates a node regression training pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39474,7 +42361,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.mutate.estimate': {
         name: 'gds.articleRank.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39636,7 +42524,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.stats.estimate': {
         name: 'gds.articleRank.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39768,7 +42657,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.stream.estimate': {
         name: 'gds.articleRank.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -39942,7 +42832,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.write.estimate': {
         name: 'gds.articleRank.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40028,7 +42919,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.mutate': {
         name: 'gds.articulationPoints.mutate',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40091,7 +42983,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.mutate.estimate': {
         name: 'gds.articulationPoints.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40177,7 +43070,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stats': {
         name: 'gds.articulationPoints.stats',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40228,7 +43122,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stats.estimate': {
         name: 'gds.articulationPoints.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40314,7 +43209,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stream': {
         name: 'gds.articulationPoints.stream',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40353,7 +43249,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stream.estimate': {
         name: 'gds.articulationPoints.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40439,7 +43336,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.write': {
         name: 'gds.articulationPoints.write',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -40502,7 +43400,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.write.estimate': {
         name: 'gds.articulationPoints.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40727,7 +43626,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.mutate.estimate': {
         name: 'gds.bellmanFord.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -40877,7 +43777,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.stats.estimate': {
         name: 'gds.bellmanFord.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41045,7 +43946,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.stream.estimate': {
         name: 'gds.bellmanFord.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41207,7 +44109,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.write.estimate': {
         name: 'gds.bellmanFord.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41363,7 +44266,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.mutate.estimate': {
         name: 'gds.beta.graphSage.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41495,7 +44399,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.stream.estimate': {
         name: 'gds.beta.graphSage.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41633,7 +44538,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.train.estimate': {
         name: 'gds.beta.graphSage.train.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41789,7 +44695,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.write.estimate': {
         name: 'gds.beta.graphSage.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -41875,7 +44782,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.addFeature': {
         name: 'gds.beta.pipeline.linkPrediction.addFeature',
-        description: 'Add a feature step to an existing link prediction pipeline.',
+        description:
+          'Add a feature step to an existing link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -42019,7 +44927,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.addNodeProperty': {
         name: 'gds.beta.pipeline.linkPrediction.addNodeProperty',
-        description: 'Add a node property step to an existing link prediction pipeline.',
+        description:
+          'Add a node property step to an existing link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -42230,7 +45139,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.create': {
         name: 'gds.beta.pipeline.linkPrediction.create',
-        description: 'Creates a link prediction pipeline in the pipeline catalog.',
+        description:
+          'Creates a link prediction pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -42957,7 +45867,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.configureSplit': {
         name: 'gds.beta.pipeline.nodeClassification.configureSplit',
-        description: 'Configures the split of the node classification training pipeline.',
+        description:
+          'Configures the split of the node classification training pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -43025,7 +45936,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.create': {
         name: 'gds.beta.pipeline.nodeClassification.create',
-        description: 'Creates a node classification training pipeline in the pipeline catalog.',
+        description:
+          'Creates a node classification training pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -43087,7 +45999,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.mutate': {
         name: 'gds.beta.pipeline.nodeClassification.predict.mutate',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -43243,7 +46156,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.stream': {
         name: 'gds.beta.pipeline.nodeClassification.predict.stream',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -43381,7 +46295,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.write': {
         name: 'gds.beta.pipeline.nodeClassification.predict.write',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -43826,7 +46741,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.mutate.estimate': {
         name: 'gds.betweenness.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -43976,7 +46892,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.stats.estimate': {
         name: 'gds.betweenness.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44108,7 +47025,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.stream.estimate': {
         name: 'gds.betweenness.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44270,7 +47188,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.write.estimate': {
         name: 'gds.betweenness.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44426,7 +47345,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.mutate.estimate': {
         name: 'gds.bfs.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44570,7 +47490,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.stats.estimate': {
         name: 'gds.bfs.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44708,7 +47629,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.stream.estimate': {
         name: 'gds.bfs.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44795,7 +47717,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bridges.stream': {
         name: 'gds.bridges.stream',
-        description: 'Bridges find relationships that disconnect  components if removed',
+        description:
+          'Bridges find relationships that disconnect  components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -44840,7 +47763,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bridges.stream.estimate': {
         name: 'gds.bridges.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -45600,7 +48524,8 @@ const mockSchema: DbSchema = {
       },
       'gds.config.defaults.set': {
         name: 'gds.config.defaults.set',
-        description: 'Set a default; global by, default, but also optionally for a specific user',
+        description:
+          'Set a default; global by, default, but also optionally for a specific user',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -45622,7 +48547,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d81eb72e-c499-4f78-90c7-0c76123606a2, type=STRING}',
-            description: 'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
+            description:
+              'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
             name: 'username',
             type: 'STRING',
           },
@@ -45679,7 +48605,8 @@ const mockSchema: DbSchema = {
       },
       'gds.config.limits.set': {
         name: 'gds.config.limits.set',
-        description: 'Set a limit; global by, default, but also optionally for a specific user',
+        description:
+          'Set a limit; global by, default, but also optionally for a specific user',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -45701,7 +48628,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d81eb72e-c499-4f78-90c7-0c76123606a2, type=STRING}',
-            description: 'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
+            description:
+              'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
             name: 'username',
             type: 'STRING',
           },
@@ -45839,7 +48767,8 @@ const mockSchema: DbSchema = {
       },
       'gds.debug.arrow': {
         name: 'gds.debug.arrow',
-        description: 'Returns details about the status of the GDS Flight server',
+        description:
+          'Returns details about the status of the GDS Flight server',
         mode: 'DEFAULT',
         worksOnSystem: true,
         signature:
@@ -46012,7 +48941,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.mutate.estimate': {
         name: 'gds.degree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46162,7 +49092,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.stats.estimate': {
         name: 'gds.degree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46294,7 +49225,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.stream.estimate': {
         name: 'gds.degree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46456,7 +49388,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.write.estimate': {
         name: 'gds.degree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46612,7 +49545,8 @@ const mockSchema: DbSchema = {
       },
       'gds.dfs.mutate.estimate': {
         name: 'gds.dfs.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46750,7 +49684,8 @@ const mockSchema: DbSchema = {
       },
       'gds.dfs.stream.estimate': {
         name: 'gds.dfs.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -46925,7 +49860,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.mutate.estimate': {
         name: 'gds.eigenvector.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47087,7 +50023,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.stats.estimate': {
         name: 'gds.eigenvector.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47219,7 +50156,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.stream.estimate': {
         name: 'gds.eigenvector.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47393,7 +50331,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.write.estimate': {
         name: 'gds.eigenvector.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47479,7 +50418,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.mutate': {
         name: 'gds.fastRP.mutate',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47548,7 +50488,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.mutate.estimate': {
         name: 'gds.fastRP.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47634,7 +50575,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stats': {
         name: 'gds.fastRP.stats',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47691,7 +50633,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stats.estimate': {
         name: 'gds.fastRP.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47777,7 +50720,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stream': {
         name: 'gds.fastRP.stream',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47822,7 +50766,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stream.estimate': {
         name: 'gds.fastRP.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -47908,7 +50853,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.write': {
         name: 'gds.fastRP.write',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -47977,7 +50923,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.write.estimate': {
         name: 'gds.fastRP.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -48063,7 +51010,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.drop': {
         name: 'gds.graph.drop',
-        description: 'Drops a named graph from the catalog and frees up the resources it occupies.',
+        description:
+          'Drops a named graph from the catalog and frees up the resources it occupies.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -48388,7 +51336,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.export.csv.estimate': {
         name: 'gds.graph.export.csv.estimate',
-        description: 'Estimate the required disk space for exporting a named graph to CSV files.',
+        description:
+          'Estimate the required disk space for exporting a named graph to CSV files.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -48569,7 +51518,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.generate': {
         name: 'gds.graph.generate',
-        description: 'Computes a random graph, which will be stored in the graph catalog.',
+        description:
+          'Computes a random graph, which will be stored in the graph catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -48764,7 +51714,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.list': {
         name: 'gds.graph.list',
-        description: 'Lists information about named graphs stored in the catalog.',
+        description:
+          'Lists information about named graphs stored in the catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -48774,7 +51725,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d9b6394a-9482-4929-adab-f97df578a6c6, type=STRING}',
-            description: 'graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING',
+            description:
+              'graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING',
             name: 'graphName',
             type: 'STRING',
           },
@@ -49151,7 +52103,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.nodeProperties.write': {
         name: 'gds.graph.nodeProperties.write',
-        description: 'Writes the given node properties to an online Neo4j database.',
+        description:
+          'Writes the given node properties to an online Neo4j database.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -49291,7 +52244,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.project': {
         name: 'gds.graph.project',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -49372,7 +52326,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.project.cypher': {
         name: 'gds.graph.project.cypher',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -49446,14 +52401,16 @@ const mockSchema: DbSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: true,
-        deprecatedBy: 'gds.graph.project Cypher projection as an aggregation function',
+        deprecatedBy:
+          'gds.graph.project Cypher projection as an aggregation function',
         option: {
           deprecated: true,
         },
       },
       'gds.graph.project.cypher.estimate': {
         name: 'gds.graph.project.cypher.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -49539,14 +52496,16 @@ const mockSchema: DbSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: true,
-        deprecatedBy: 'gds.graph.project Cypher projection as an aggregation function',
+        deprecatedBy:
+          'gds.graph.project Cypher projection as an aggregation function',
         option: {
           deprecated: true,
         },
       },
       'gds.graph.project.estimate': {
         name: 'gds.graph.project.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -49961,7 +52920,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.relationships.drop': {
         name: 'gds.graph.relationships.drop',
-        description: 'Delete the relationship type for a given graph stored in the graph-catalog.',
+        description:
+          'Delete the relationship type for a given graph stored in the graph-catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50151,7 +53111,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.relationships.toUndirected.estimate': {
         name: 'gds.graph.relationships.toUndirected.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50237,7 +53198,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.cnarw': {
         name: 'gds.graph.sample.cnarw',
-        description: 'Constructs a random subgraph based on common neighbour aware random walks',
+        description:
+          'Constructs a random subgraph based on common neighbour aware random walks',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50312,7 +53274,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.cnarw.estimate': {
         name: 'gds.graph.sample.cnarw.estimate',
-        description: 'Estimate memory requirements for sampling graph using CNARW algorithm',
+        description:
+          'Estimate memory requirements for sampling graph using CNARW algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50399,7 +53362,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.rwr': {
         name: 'gds.graph.sample.rwr',
-        description: 'Constructs a random subgraph based on random walks with restarts',
+        description:
+          'Constructs a random subgraph based on random walks with restarts',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50474,7 +53438,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.mutate': {
         name: 'gds.hashgnn.mutate',
-        description: 'HashGNN creates node embeddings by hashing and message passing.',
+        description:
+          'HashGNN creates node embeddings by hashing and message passing.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50543,7 +53508,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.mutate.estimate': {
         name: 'gds.hashgnn.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50629,7 +53595,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.stream': {
         name: 'gds.hashgnn.stream',
-        description: 'HashGNN creates node embeddings by hashing and message passing.',
+        description:
+          'HashGNN creates node embeddings by hashing and message passing.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50674,7 +53641,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.stream.estimate': {
         name: 'gds.hashgnn.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50836,7 +53804,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.mutate.estimate': {
         name: 'gds.hits.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -50986,7 +53955,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.stats.estimate': {
         name: 'gds.hits.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51119,7 +54089,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.stream.estimate': {
         name: 'gds.hits.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51282,7 +54253,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.write.estimate': {
         name: 'gds.hits.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51439,7 +54411,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.mutate.estimate': {
         name: 'gds.influenceMaximization.celf.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51583,7 +54556,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.stats.estimate': {
         name: 'gds.influenceMaximization.celf.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51715,7 +54689,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.stream.estimate': {
         name: 'gds.influenceMaximization.celf.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51872,7 +54847,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.write.estimate': {
         name: 'gds.influenceMaximization.celf.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -51958,7 +54934,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.mutate': {
         name: 'gds.k1coloring.mutate',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52039,7 +55016,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.mutate.estimate': {
         name: 'gds.k1coloring.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52125,7 +55103,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stats': {
         name: 'gds.k1coloring.stats',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52200,7 +55179,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stats.estimate': {
         name: 'gds.k1coloring.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52286,7 +55266,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stream': {
         name: 'gds.k1coloring.stream',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52331,7 +55312,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stream.estimate': {
         name: 'gds.k1coloring.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52417,7 +55399,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.write': {
         name: 'gds.k1coloring.write',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -52498,7 +55481,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.write.estimate': {
         name: 'gds.k1coloring.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52729,7 +55713,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.mutate.estimate': {
         name: 'gds.kcore.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -52878,7 +55863,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.stats.estimate': {
         name: 'gds.kcore.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53009,7 +55995,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.stream.estimate': {
         name: 'gds.kcore.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53170,7 +56157,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.write.estimate': {
         name: 'gds.kcore.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53350,7 +56338,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.mutate.estimate': {
         name: 'gds.kmeans.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53518,7 +56507,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.stats.estimate': {
         name: 'gds.kmeans.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53662,7 +56652,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.stream.estimate': {
         name: 'gds.kmeans.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -53842,7 +56833,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.write.estimate': {
         name: 'gds.kmeans.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54028,7 +57020,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.mutate.estimate': {
         name: 'gds.knn.filtered.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54208,7 +57201,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.stats.estimate': {
         name: 'gds.knn.filtered.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54346,7 +57340,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.stream.estimate': {
         name: 'gds.knn.filtered.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54532,7 +57527,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.write.estimate': {
         name: 'gds.knn.filtered.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54718,7 +57714,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.mutate.estimate': {
         name: 'gds.knn.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -54898,7 +57895,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.stats.estimate': {
         name: 'gds.knn.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55036,7 +58034,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.stream.estimate': {
         name: 'gds.knn.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55222,7 +58221,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.write.estimate': {
         name: 'gds.knn.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55402,7 +58402,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.mutate.estimate': {
         name: 'gds.labelPropagation.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55570,7 +58571,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.stats.estimate': {
         name: 'gds.labelPropagation.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55702,7 +58704,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.stream.estimate': {
         name: 'gds.labelPropagation.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -55882,7 +58885,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.write.estimate': {
         name: 'gds.labelPropagation.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -56080,7 +59084,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.mutate.estimate': {
         name: 'gds.leiden.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -56266,7 +59271,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.stats.estimate': {
         name: 'gds.leiden.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -56404,7 +59410,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.stream.estimate': {
         name: 'gds.leiden.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -56602,7 +59609,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.write.estimate': {
         name: 'gds.leiden.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -56691,7 +59699,8 @@ const mockSchema: DbSchema = {
         description: 'Returns details about the license state',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'gds.license.state() :: (isLicensed :: BOOLEAN, details :: STRING)',
+        signature:
+          'gds.license.state() :: (isLicensed :: BOOLEAN, details :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -56927,7 +59936,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.mutate.estimate': {
         name: 'gds.localClusteringCoefficient.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57083,7 +60093,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.stats.estimate': {
         name: 'gds.localClusteringCoefficient.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57215,7 +60226,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.stream.estimate': {
         name: 'gds.localClusteringCoefficient.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57383,7 +60395,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.write.estimate': {
         name: 'gds.localClusteringCoefficient.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57569,7 +60582,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.mutate.estimate': {
         name: 'gds.louvain.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57743,7 +60757,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.stats.estimate': {
         name: 'gds.louvain.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -57881,7 +60896,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.stream.estimate': {
         name: 'gds.louvain.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -58067,7 +61083,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.write.estimate': {
         name: 'gds.louvain.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -58229,7 +61246,8 @@ const mockSchema: DbSchema = {
       },
       'gds.maxkcut.mutate.estimate': {
         name: 'gds.maxkcut.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -58361,7 +61379,8 @@ const mockSchema: DbSchema = {
       },
       'gds.maxkcut.stream.estimate': {
         name: 'gds.maxkcut.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -58447,7 +61466,8 @@ const mockSchema: DbSchema = {
       },
       'gds.memory.list': {
         name: 'gds.memory.list',
-        description: 'List memory for currently running tasks or stored graphs.',
+        description:
+          'List memory for currently running tasks or stored graphs.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -58490,7 +61510,8 @@ const mockSchema: DbSchema = {
       },
       'gds.memory.summary': {
         name: 'gds.memory.summary',
-        description: 'List memory for currently running tasks or stored graphs.',
+        description:
+          'List memory for currently running tasks or stored graphs.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -58565,7 +61586,8 @@ const mockSchema: DbSchema = {
       },
       'gds.model.drop': {
         name: 'gds.model.drop',
-        description: 'Drops a loaded model and frees up the resources it occupies.',
+        description:
+          'Drops a loaded model and frees up the resources it occupies.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59022,7 +62044,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularity.stats.estimate': {
         name: 'gds.modularity.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59154,7 +62177,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularity.stream.estimate': {
         name: 'gds.modularity.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59340,7 +62364,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.mutate.estimate': {
         name: 'gds.modularityOptimization.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59520,7 +62545,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.stats.estimate': {
         name: 'gds.modularityOptimization.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59652,7 +62678,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.stream.estimate': {
         name: 'gds.modularityOptimization.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59838,7 +62865,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.write.estimate': {
         name: 'gds.modularityOptimization.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -59924,7 +62952,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.mutate': {
         name: 'gds.node2vec.mutate',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60005,7 +63034,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.mutate.estimate': {
         name: 'gds.node2vec.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60091,7 +63121,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.stream': {
         name: 'gds.node2vec.stream',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60136,7 +63167,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.stream.estimate': {
         name: 'gds.node2vec.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60222,7 +63254,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.write': {
         name: 'gds.node2vec.write',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -60297,7 +63330,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.write.estimate': {
         name: 'gds.node2vec.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60465,7 +63499,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.mutate.estimate': {
         name: 'gds.nodeSimilarity.filtered.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60627,7 +63662,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.stats.estimate': {
         name: 'gds.nodeSimilarity.filtered.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60765,7 +63801,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.stream.estimate': {
         name: 'gds.nodeSimilarity.filtered.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -60933,7 +63970,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.write.estimate': {
         name: 'gds.nodeSimilarity.filtered.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61101,7 +64139,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.mutate.estimate': {
         name: 'gds.nodeSimilarity.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61263,7 +64302,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.stats.estimate': {
         name: 'gds.nodeSimilarity.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61401,7 +64441,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.stream.estimate': {
         name: 'gds.nodeSimilarity.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61569,7 +64610,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.write.estimate': {
         name: 'gds.nodeSimilarity.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61743,7 +64785,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.mutate.estimate': {
         name: 'gds.pageRank.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -61905,7 +64948,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.stats.estimate': {
         name: 'gds.pageRank.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62037,7 +65081,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.stream.estimate': {
         name: 'gds.pageRank.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62211,7 +65256,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.write.estimate': {
         name: 'gds.pageRank.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62354,7 +65400,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pipeline.exists': {
         name: 'gds.pipeline.exists',
-        description: 'Checks if a given pipeline exists in the pipeline catalog.',
+        description:
+          'Checks if a given pipeline exists in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62501,7 +65548,8 @@ const mockSchema: DbSchema = {
       },
       'gds.prizeSteinerTree.stream.estimate': {
         name: 'gds.prizeSteinerTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62657,7 +65705,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.mutate.estimate': {
         name: 'gds.randomWalk.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62795,7 +65844,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.stats.estimate': {
         name: 'gds.randomWalk.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -62927,7 +65977,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.stream.estimate': {
         name: 'gds.randomWalk.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63139,7 +66190,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.mutate.estimate': {
         name: 'gds.scaleProperties.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63288,7 +66340,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.stats.estimate': {
         name: 'gds.scaleProperties.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63419,7 +66472,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.stream.estimate': {
         name: 'gds.scaleProperties.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63580,7 +66634,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.write.estimate': {
         name: 'gds.scaleProperties.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63748,7 +66803,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.mutate.estimate': {
         name: 'gds.scc.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -63904,7 +66960,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.stats.estimate': {
         name: 'gds.scc.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64036,7 +67093,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.stream.estimate': {
         name: 'gds.scc.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64204,7 +67262,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.write.estimate': {
         name: 'gds.scc.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64360,7 +67419,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.mutate.estimate': {
         name: 'gds.shortestPath.astar.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64522,7 +67582,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.stream.estimate': {
         name: 'gds.shortestPath.astar.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64678,7 +67739,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.write.estimate': {
         name: 'gds.shortestPath.astar.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64834,7 +67896,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.mutate.estimate': {
         name: 'gds.shortestPath.dijkstra.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -64996,7 +68059,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.stream.estimate': {
         name: 'gds.shortestPath.dijkstra.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65152,7 +68216,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.write.estimate': {
         name: 'gds.shortestPath.dijkstra.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65308,7 +68373,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.mutate.estimate': {
         name: 'gds.shortestPath.yens.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65470,7 +68536,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.stream.estimate': {
         name: 'gds.shortestPath.yens.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65626,7 +68693,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.write.estimate': {
         name: 'gds.shortestPath.yens.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65788,7 +68856,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.mutate.estimate': {
         name: 'gds.sllpa.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -65938,7 +69007,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.stats.estimate': {
         name: 'gds.sllpa.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66070,7 +69140,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.stream.estimate': {
         name: 'gds.sllpa.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66232,7 +69303,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.write.estimate': {
         name: 'gds.sllpa.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66394,7 +69466,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.mutate.estimate': {
         name: 'gds.spanningTree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66544,7 +69617,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.stats.estimate': {
         name: 'gds.spanningTree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66682,7 +69756,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.stream.estimate': {
         name: 'gds.spanningTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -66844,7 +69919,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.write.estimate': {
         name: 'gds.spanningTree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67012,7 +70088,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.mutate.estimate': {
         name: 'gds.steinerTree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67169,7 +70246,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.stats.estimate': {
         name: 'gds.steinerTree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67308,7 +70386,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.stream.estimate': {
         name: 'gds.steinerTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67477,7 +70556,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.write.estimate': {
         name: 'gds.steinerTree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67564,7 +70644,8 @@ const mockSchema: DbSchema = {
       },
       'gds.systemMonitor': {
         name: 'gds.systemMonitor',
-        description: "Get an overview of the system's workload and available resources",
+        description:
+          "Get an overview of the system's workload and available resources",
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67707,7 +70788,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.mutate.estimate': {
         name: 'gds.triangleCount.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67863,7 +70945,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.stats.estimate': {
         name: 'gds.triangleCount.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -67995,7 +71078,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.stream.estimate': {
         name: 'gds.triangleCount.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68163,7 +71247,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.write.estimate': {
         name: 'gds.triangleCount.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68249,7 +71334,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangles': {
         name: 'gds.triangles',
-        description: 'Triangles streams the nodeIds of each triangle in the graph.',
+        description:
+          'Triangles streams the nodeIds of each triangle in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68452,7 +71538,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.mutate.estimate': {
         name: 'gds.wcc.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68608,7 +71695,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.stats.estimate': {
         name: 'gds.wcc.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68740,7 +71828,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.stream.estimate': {
         name: 'gds.wcc.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -68908,7 +71997,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.write.estimate': {
         name: 'gds.wcc.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -69202,7 +72292,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The max depth (in terms of nodes) the algorithm will explore.',
+            description:
+              'The max depth (in terms of nodes) the algorithm will explore.',
             name: 'maxNodes',
             type: 'INTEGER',
           },
@@ -69226,7 +72317,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.algo.cover': {
         name: 'apoc.algo.cover',
-        description: 'Returns all `RELATIONSHIP` values connecting the given set of `NODE` values.',
+        description:
+          'Returns all `RELATIONSHIP` values connecting the given set of `NODE` values.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature: 'apoc.algo.cover(nodes :: ANY) :: (rel :: RELATIONSHIP)',
@@ -69346,7 +72438,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the property whose value will be added to.',
+            description:
+              'The name of the property whose value will be added to.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -69481,13 +72574,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship that has a property containing a list.',
+            description:
+              'The node or relationship that has a property containing a list.',
             name: 'container',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'The name of the property into which the value will be inserted.',
+            description:
+              'The name of the property into which the value will be inserted.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -69557,13 +72652,15 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship that has a property containing a list.',
+            description:
+              'The node or relationship that has a property containing a list.',
             name: 'container',
             type: 'ANY',
           },
           {
             isDeprecated: false,
-            description: 'The name of the property from which the value will be removed.',
+            description:
+              'The name of the property from which the value will be removed.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -69634,7 +72731,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the property from which the value will be subtracted.',
+            description:
+              'The name of the property from which the value will be subtracted.',
             name: 'propertyName',
             type: 'STRING',
           },
@@ -69697,7 +72795,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node or relationship with the property to be updated.',
+            description:
+              'The node or relationship with the property to be updated.',
             name: 'container',
             type: 'ANY',
           },
@@ -69775,14 +72874,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A Cypher query to evaluate if all conditionals evaluate to false.',
+            description:
+              'A Cypher query to evaluate if all conditionals evaluate to false.',
             name: 'elseQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'A map of parameters to be used in the executed Cypher query.',
+            description:
+              'A map of parameters to be used in the executed Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -69806,7 +72907,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.coll.elements': {
         name: 'apoc.coll.elements',
-        description: 'Deconstructs a `LIST<ANY>` into identifiers indicating their specific type.',
+        description:
+          'Deconstructs a `LIST<ANY>` into identifiers indicating their specific type.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -69821,7 +72923,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=-1, type=INTEGER}',
-            description: 'The maximum size of elements to deconstruct from the given list.',
+            description:
+              'The maximum size of elements to deconstruct from the given list.',
             name: 'limit',
             type: 'INTEGER',
           },
@@ -69896,121 +72999,141 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a string value.',
+            description:
+              'The value of the first item, if it is a string value.',
             name: '_1s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a string value.',
+            description:
+              'The value of the second item, if it is a string value.',
             name: '_2s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a string value.',
+            description:
+              'The value of the third item, if it is a string value.',
             name: '_3s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a string value.',
+            description:
+              'The value of the fourth item, if it is a string value.',
             name: '_4s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a string value.',
+            description:
+              'The value of the fifth item, if it is a string value.',
             name: '_5s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a string value.',
+            description:
+              'The value of the sixth item, if it is a string value.',
             name: '_6s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a string value.',
+            description:
+              'The value of the seventh item, if it is a string value.',
             name: '_7s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a string value.',
+            description:
+              'The value of the eighth item, if it is a string value.',
             name: '_8s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a string value.',
+            description:
+              'The value of the ninth item, if it is a string value.',
             name: '_9s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a string value.',
+            description:
+              'The value of the tenth item, if it is a string value.',
             name: '_10s',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is an integer value.',
+            description:
+              'The value of the first item, if it is an integer value.',
             name: '_1i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is an integer value.',
+            description:
+              'The value of the second item, if it is an integer value.',
             name: '_2i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is an integer value.',
+            description:
+              'The value of the third item, if it is an integer value.',
             name: '_3i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is an integer value.',
+            description:
+              'The value of the fourth item, if it is an integer value.',
             name: '_4i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is an integer value.',
+            description:
+              'The value of the fifth item, if it is an integer value.',
             name: '_5i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is an integer value.',
+            description:
+              'The value of the sixth item, if it is an integer value.',
             name: '_6i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is an integer value.',
+            description:
+              'The value of the seventh item, if it is an integer value.',
             name: '_7i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is an integer value.',
+            description:
+              'The value of the eighth item, if it is an integer value.',
             name: '_8i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is an integer value.',
+            description:
+              'The value of the ninth item, if it is an integer value.',
             name: '_9i',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is an integer value.',
+            description:
+              'The value of the tenth item, if it is an integer value.',
             name: '_10i',
             type: 'INTEGER',
           },
@@ -70022,7 +73145,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a float value.',
+            description:
+              'The value of the second item, if it is a float value.',
             name: '_2f',
             type: 'FLOAT',
           },
@@ -70034,7 +73158,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a float value.',
+            description:
+              'The value of the fourth item, if it is a float value.',
             name: '_4f',
             type: 'FLOAT',
           },
@@ -70052,13 +73177,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a float value.',
+            description:
+              'The value of the seventh item, if it is a float value.',
             name: '_7f',
             type: 'FLOAT',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a float value.',
+            description:
+              'The value of the eighth item, if it is a float value.',
             name: '_8f',
             type: 'FLOAT',
           },
@@ -70076,61 +73203,71 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a boolean value.',
+            description:
+              'The value of the first item, if it is a boolean value.',
             name: '_1b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a boolean value.',
+            description:
+              'The value of the second item, if it is a boolean value.',
             name: '_2b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a boolean value.',
+            description:
+              'The value of the third item, if it is a boolean value.',
             name: '_3b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a boolean value.',
+            description:
+              'The value of the fourth item, if it is a boolean value.',
             name: '_4b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a boolean value.',
+            description:
+              'The value of the fifth item, if it is a boolean value.',
             name: '_5b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a boolean value.',
+            description:
+              'The value of the sixth item, if it is a boolean value.',
             name: '_6b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a boolean value.',
+            description:
+              'The value of the seventh item, if it is a boolean value.',
             name: '_7b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a boolean value.',
+            description:
+              'The value of the eighth item, if it is a boolean value.',
             name: '_8b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a boolean value.',
+            description:
+              'The value of the ninth item, if it is a boolean value.',
             name: '_9b',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a boolean value.',
+            description:
+              'The value of the tenth item, if it is a boolean value.',
             name: '_10b',
             type: 'BOOLEAN',
           },
@@ -70172,7 +73309,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a list value.',
+            description:
+              'The value of the seventh item, if it is a list value.',
             name: '_7l',
             type: 'LIST<ANY>',
           },
@@ -70292,7 +73430,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a node value.',
+            description:
+              'The value of the seventh item, if it is a node value.',
             name: '_7n',
             type: 'NODE',
           },
@@ -70316,61 +73455,71 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the first item, if it is a relationship value.',
+            description:
+              'The value of the first item, if it is a relationship value.',
             name: '_1r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the second item, if it is a relationship value.',
+            description:
+              'The value of the second item, if it is a relationship value.',
             name: '_2r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the third item, if it is a relationship value.',
+            description:
+              'The value of the third item, if it is a relationship value.',
             name: '_3r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fourth item, if it is a relationship value.',
+            description:
+              'The value of the fourth item, if it is a relationship value.',
             name: '_4r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the fifth item, if it is a relationship value.',
+            description:
+              'The value of the fifth item, if it is a relationship value.',
             name: '_5r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the sixth item, if it is a relationship value.',
+            description:
+              'The value of the sixth item, if it is a relationship value.',
             name: '_6r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a relationship value.',
+            description:
+              'The value of the seventh item, if it is a relationship value.',
             name: '_7r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the eighth item, if it is a relationship value.',
+            description:
+              'The value of the eighth item, if it is a relationship value.',
             name: '_8r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the ninth item, if it is a relationship value.',
+            description:
+              'The value of the ninth item, if it is a relationship value.',
             name: '_9r',
             type: 'RELATIONSHIP',
           },
           {
             isDeprecated: false,
-            description: 'The value of the tenth item, if it is a relationship value.',
+            description:
+              'The value of the tenth item, if it is a relationship value.',
             name: '_10r',
             type: 'RELATIONSHIP',
           },
@@ -70412,7 +73561,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The value of the seventh item, if it is a path value.',
+            description:
+              'The value of the seventh item, if it is a path value.',
             name: '_7p',
             type: 'PATH',
           },
@@ -70466,7 +73616,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The offset to make each pair with from the given list.',
+            description:
+              'The offset to make each pair with from the given list.',
             name: 'offset',
             type: 'INTEGER',
           },
@@ -70533,7 +73684,8 @@ const mockSchema: DbSchema = {
           'Splits a collection by the given value.\nThe value itself will not be part of the resulting `LIST<ANY>` values.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.coll.split(coll :: LIST<ANY>, value :: ANY) :: (value :: LIST<ANY>)',
+        signature:
+          'apoc.coll.split(coll :: LIST<ANY>, value :: ANY) :: (value :: LIST<ANY>)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70610,7 +73762,8 @@ const mockSchema: DbSchema = {
           'Serializes the given JSON object and sets it as a property on the given `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.convert.setJsonProperty(node :: NODE, key :: STRING, value :: ANY)',
+        signature:
+          'apoc.convert.setJsonProperty(node :: NODE, key :: STRING, value :: ANY)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70646,7 +73799,8 @@ const mockSchema: DbSchema = {
         description: 'Adds the given labels to the given `NODE` values.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.addLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
+        signature:
+          'apoc.create.addLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70680,10 +73834,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.clonePathToVirtual': {
         name: 'apoc.create.clonePathToVirtual',
-        description: 'Takes the given `PATH` and returns a virtual representation of it.',
+        description:
+          'Takes the given `PATH` and returns a virtual representation of it.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.clonePathToVirtual(path :: PATH) :: (path :: PATH)',
+        signature:
+          'apoc.create.clonePathToVirtual(path :: PATH) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70711,10 +73867,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.clonePathsToVirtual': {
         name: 'apoc.create.clonePathsToVirtual',
-        description: 'Takes the given `LIST<PATH>` and returns a virtual representation of them.',
+        description:
+          'Takes the given `LIST<PATH>` and returns a virtual representation of them.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.clonePathsToVirtual(paths :: LIST<PATH>) :: (path :: PATH)',
+        signature:
+          'apoc.create.clonePathsToVirtual(paths :: LIST<PATH>) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70745,7 +73903,8 @@ const mockSchema: DbSchema = {
         description: 'Creates a `NODE` with the given dynamic labels.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.node(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.create.node(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -70817,7 +73976,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.relationship': {
         name: 'apoc.create.relationship',
-        description: 'Creates a `RELATIONSHIP` with the given dynamic relationship type.',
+        description:
+          'Creates a `RELATIONSHIP` with the given dynamic relationship type.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -70825,7 +73985,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node from which the outgoing relationship will start.',
+            description:
+              'The node from which the outgoing relationship will start.',
             name: 'from',
             type: 'NODE',
           },
@@ -70843,7 +74004,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The node to which the incoming relationship will be connected.',
+            description:
+              'The node to which the incoming relationship will be connected.',
             name: 'to',
             type: 'NODE',
           },
@@ -70905,7 +74067,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.removeProperties': {
         name: 'apoc.create.removeProperties',
-        description: 'Removes the given properties from the given `NODE` values.',
+        description:
+          'Removes the given properties from the given `NODE` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -70943,7 +74106,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.create.removeRelProperties': {
         name: 'apoc.create.removeRelProperties',
-        description: 'Removes the given properties from the given `RELATIONSHIP` values.',
+        description:
+          'Removes the given properties from the given `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -70985,7 +74149,8 @@ const mockSchema: DbSchema = {
           'Sets the given labels to the given `NODE` values. Non-matching labels are removed from the nodes.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.create.setLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
+        signature:
+          'apoc.create.setLabels(nodes :: ANY, labels :: LIST<STRING>) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71039,7 +74204,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The values to assign to the properties on the given nodes.',
+            description:
+              'The values to assign to the properties on the given nodes.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -71121,13 +74287,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The keys of the properties to set on the given relationships.',
+            description:
+              'The keys of the properties to set on the given relationships.',
             name: 'keys',
             type: 'LIST<STRING>',
           },
           {
             isDeprecated: false,
-            description: 'The values of the properties to set on the given relationships.',
+            description:
+              'The values of the properties to set on the given relationships.',
             name: 'values',
             type: 'LIST<ANY>',
           },
@@ -71198,7 +74366,8 @@ const mockSchema: DbSchema = {
         description: 'Returns a virtual `NODE`.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.create.vNode(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.create.vNode(labels :: LIST<STRING>, props :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71278,7 +74447,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The node to connect the outgoing virtual relationship from.',
+            description:
+              'The node to connect the outgoing virtual relationship from.',
             name: 'from',
             type: 'NODE',
           },
@@ -71290,13 +74460,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual relationship.',
+            description:
+              'The properties to assign to the new virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'The node to which the incoming virtual relationship will be connected.',
+            description:
+              'The node to which the incoming virtual relationship will be connected.',
             name: 'to',
             type: 'NODE',
           },
@@ -71334,7 +74506,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual start node.',
+            description:
+              'The properties to assign to the new virtual start node.',
             name: 'n',
             type: 'MAP',
           },
@@ -71346,7 +74519,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The properties to assign to the new virtual relationship.',
+            description:
+              'The properties to assign to the new virtual relationship.',
             name: 'props',
             type: 'MAP',
           },
@@ -71398,7 +74572,8 @@ const mockSchema: DbSchema = {
           'Runs a dynamically constructed statement with the given parameters. This procedure allows for both read and write statements.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.cypher.doIt(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.doIt(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71436,7 +74611,8 @@ const mockSchema: DbSchema = {
           'Runs a dynamically constructed read-only statement with the given parameters.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.cypher.run(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.run(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71479,7 +74655,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The Cypher statements to run, semicolon separated (;).',
+            description:
+              'The Cypher statements to run, semicolon separated (;).',
             name: 'statement',
             type: 'STRING',
           },
@@ -71531,7 +74708,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The Cypher statements to run, semicolon separated (;).',
+            description:
+              'The Cypher statements to run, semicolon separated (;).',
             name: 'statement',
             type: 'STRING',
           },
@@ -71574,10 +74752,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.cypher.runSchema': {
         name: 'apoc.cypher.runSchema',
-        description: 'Runs the given query schema statement with the given parameters.',
+        description:
+          'Runs the given query schema statement with the given parameters.',
         mode: 'SCHEMA',
         worksOnSystem: false,
-        signature: 'apoc.cypher.runSchema(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.runSchema(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71638,7 +74818,8 @@ const mockSchema: DbSchema = {
           },
           {
             name: 'config',
-            description: '{ failOnError = false :: BOOLEAN, appendStatusRow = false :: BOOLEAN }',
+            description:
+              '{ failOnError = false :: BOOLEAN, appendStatusRow = false :: BOOLEAN }',
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
             type: 'MAP',
@@ -71666,7 +74847,8 @@ const mockSchema: DbSchema = {
         description: 'Alias for `apoc.cypher.doIt`.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.cypher.runWrite(statement :: STRING, params :: MAP) :: (value :: MAP)',
+        signature:
+          'apoc.cypher.runWrite(statement :: STRING, params :: MAP) :: (value :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -71717,14 +74899,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A Cypher query to evaluate if all conditionals evaluate to false.',
+            description:
+              'A Cypher query to evaluate if all conditionals evaluate to false.',
             name: 'elseQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'A map of parameters to be used in the executed Cypher query.',
+            description:
+              'A map of parameters to be used in the executed Cypher query.',
             name: 'params',
             type: 'MAP',
           },
@@ -71757,19 +74941,22 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The predicate that determines whether to execute the `ifQuery`.',
+            description:
+              'The predicate that determines whether to execute the `ifQuery`.',
             name: 'condition',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is true.',
+            description:
+              'The Cypher statement to run if the condition is true.',
             name: 'ifQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is false.',
+            description:
+              'The Cypher statement to run if the condition is false.',
             name: 'elseQuery',
             type: 'STRING',
           },
@@ -71899,7 +75086,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -71996,7 +75184,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.csv.data': {
         name: 'apoc.export.csv.data',
-        description: 'Exports the given `NODE` and `RELATIONSHIP` values to the provided CSV file.',
+        description:
+          'Exports the given `NODE` and `RELATIONSHIP` values to the provided CSV file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -72016,7 +75205,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72127,7 +75317,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72239,7 +75430,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72346,7 +75538,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72484,7 +75677,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72615,7 +75809,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72747,7 +75942,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72863,7 +76059,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.cypher.schema': {
         name: 'apoc.export.cypher.schema',
-        description: 'Exports all schema indexes and constraints to Cypher statements.',
+        description:
+          'Exports all schema indexes and constraints to Cypher statements.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -72872,7 +76069,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -72996,7 +76194,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73114,7 +76313,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73225,7 +76425,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73337,7 +76538,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73442,7 +76644,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73561,7 +76764,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73673,7 +76877,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73771,7 +76976,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.export.json.query': {
         name: 'apoc.export.json.query',
-        description: 'Exports the results from the Cypher statement to the provided JSON file.',
+        description:
+          'Exports the results from the Cypher statement to the provided JSON file.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -73785,7 +76991,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The name of the file to which the data will be exported.',
+            description:
+              'The name of the file to which the data will be exported.',
             name: 'file',
             type: 'STRING',
           },
@@ -73887,7 +77094,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the given data.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.graph.from(data :: ANY, name :: STRING, props :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.from(data :: ANY, name :: STRING, props :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -73983,7 +77191,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the data returned by the given database.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.graph.fromDB(name :: STRING, props :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.fromDB(name :: STRING, props :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -74072,7 +77281,8 @@ const mockSchema: DbSchema = {
           'Generates a virtual sub-graph by extracting all of the `NODE` and `RELATIONSHIP` values from the data returned by the given JSON file.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.graph.fromDocument(json :: ANY, config = {} :: MAP) :: (graph :: MAP)',
+        signature:
+          'apoc.graph.fromDocument(json :: ANY, config = {} :: MAP) :: (graph :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -74162,7 +77372,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A list of paths to extract nodes and relationships from.',
+            description:
+              'A list of paths to extract nodes and relationships from.',
             name: 'paths',
             type: 'LIST<PATH>',
           },
@@ -74198,10 +77409,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.graph.validateDocument': {
         name: 'apoc.graph.validateDocument',
-        description: 'Validates the JSON file and returns the result of the validation.',
+        description:
+          'Validates the JSON file and returns the result of the validation.',
         mode: 'READ',
         worksOnSystem: false,
-        signature: 'apoc.graph.validateDocument(json :: ANY, config = {} :: MAP) :: (row :: MAP)',
+        signature:
+          'apoc.graph.validateDocument(json :: ANY, config = {} :: MAP) :: (row :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -74344,13 +77557,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -74434,7 +77649,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinaryFile',
             type: 'ANY',
           },
@@ -74449,13 +77665,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -74539,7 +77757,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinaryFile',
             type: 'ANY',
           },
@@ -74555,13 +77774,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file from which the data was imported.',
+            description:
+              'The name of the file from which the data was imported.',
             name: 'file',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The source of the imported data: "file", "binary" or "file/binary".',
+            description:
+              'The source of the imported data: "file", "binary" or "file/binary".',
             name: 'source',
             type: 'STRING',
           },
@@ -74640,11 +77861,13 @@ const mockSchema: DbSchema = {
         description: 'Imports a graph from the provided XML file.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.import.xml(urlOrBinary :: ANY, config = {} :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.import.xml(urlOrBinary :: ANY, config = {} :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinary',
             type: 'ANY',
           },
@@ -74685,14 +77908,16 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrKeyOrBinary',
             type: 'ANY',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -74740,7 +77965,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A JSON path expression used to extract a certain part from the list.',
+            description:
+              'A JSON path expression used to extract a certain part from the list.',
             name: 'path',
             type: 'STRING',
           },
@@ -74772,7 +77998,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.load.xml': {
         name: 'apoc.load.xml',
-        description: 'Loads a single nested `MAP` from an XML URL (e.g. web-API).',
+        description:
+          'Loads a single nested `MAP` from an XML URL (e.g. web-API).',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -74780,14 +78007,16 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the file or binary data to import the data from.',
+            description:
+              'The name of the file or binary data to import the data from.',
             name: 'urlOrBinary',
             type: 'ANY',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=/, type=STRING}',
-            description: 'An xPath expression to select nodes from the given XML document.',
+            description:
+              'An xPath expression to select nodes from the given XML document.',
             name: 'path',
             type: 'STRING',
           },
@@ -74802,7 +78031,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not to parse the given XML in simple mode.',
+            description:
+              'Whether or not to parse the given XML in simple mode.',
             name: 'simple',
             type: 'BOOLEAN',
           },
@@ -74826,10 +78056,12 @@ const mockSchema: DbSchema = {
       },
       'apoc.lock.all': {
         name: 'apoc.lock.all',
-        description: 'Acquires a write lock on the given `NODE` and `RELATIONSHIP` values.',
+        description:
+          'Acquires a write lock on the given `NODE` and `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.lock.all(nodes :: LIST<NODE>, rels :: LIST<RELATIONSHIP>)',
+        signature:
+          'apoc.lock.all(nodes :: LIST<NODE>, rels :: LIST<RELATIONSHIP>)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -74839,7 +78071,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The list of relationships to acquire a write lock on.',
+            description:
+              'The list of relationships to acquire a write lock on.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -74928,14 +78161,16 @@ const mockSchema: DbSchema = {
       },
       'apoc.lock.rels': {
         name: 'apoc.lock.rels',
-        description: 'Acquires a write lock on the given `RELATIONSHIP` values.',
+        description:
+          'Acquires a write lock on the given `RELATIONSHIP` values.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature: 'apoc.lock.rels(rels :: LIST<RELATIONSHIP>)',
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of relationships to acquire a write lock on.',
+            description:
+              'The list of relationships to acquire a write lock on.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -75015,7 +78250,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.merge.node': {
         name: 'apoc.merge.node',
-        description: 'Merges the given `NODE` values with the given dynamic labels.',
+        description:
+          'Merges the given `NODE` values with the given dynamic labels.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -75023,7 +78259,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -75067,7 +78304,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.merge.node.eager': {
         name: 'apoc.merge.node.eager',
-        description: 'Merges the given `NODE` values with the given dynamic labels eagerly.',
+        description:
+          'Merges the given `NODE` values with the given dynamic labels eagerly.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -75075,7 +78313,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -75128,7 +78367,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -75187,7 +78427,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The list of labels used for the generated MERGE statement.',
+            description:
+              'The list of labels used for the generated MERGE statement.',
             name: 'labels',
             type: 'LIST<STRING>',
           },
@@ -75258,13 +78499,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -75277,7 +78520,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -75322,13 +78566,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -75341,7 +78587,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -75386,13 +78633,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -75405,7 +78654,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -75456,13 +78706,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Properties on the relationship that are always merged.',
+            description:
+              'Properties on the relationship that are always merged.',
             name: 'identProps',
             type: 'MAP',
           },
           {
             isDeprecated: false,
-            description: 'Properties that are merged when a relationship is created.',
+            description:
+              'Properties that are merged when a relationship is created.',
             name: 'onCreateProps',
             type: 'MAP',
           },
@@ -75475,7 +78727,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: 'Properties that are merged when a relationship is matched.',
+            description:
+              'Properties that are merged when a relationship is matched.',
             name: 'onMatchProps',
             type: 'MAP',
           },
@@ -75621,7 +78874,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.data.of': {
         name: 'apoc.meta.data.of',
-        description: 'Examines the given sub-graph and returns a table of metadata.',
+        description:
+          'Examines the given sub-graph and returns a table of metadata.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -75913,7 +79167,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not this property exists on all nodes of the given type.',
+            description:
+              'Whether or not this property exists on all nodes of the given type.',
             name: 'mandatory',
             type: 'BOOLEAN',
           },
@@ -75990,7 +79245,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not this property exists on all nodes of the given type.',
+            description:
+              'Whether or not this property exists on all nodes of the given type.',
             name: 'mandatory',
             type: 'BOOLEAN',
           },
@@ -76018,7 +79274,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.schema': {
         name: 'apoc.meta.schema',
-        description: 'Examines the given sub-graph and returns metadata as a `MAP`.',
+        description:
+          'Examines the given sub-graph and returns metadata as a `MAP`.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature: 'apoc.meta.schema(config = {} :: MAP) :: (value :: MAP)',
@@ -76051,7 +79308,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.meta.stats': {
         name: 'apoc.meta.stats',
-        description: 'Returns the metadata stored in the transactional database statistics.',
+        description:
+          'Returns the metadata stored in the transactional database statistics.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -76096,7 +79354,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A map of relationship types per start or end node label.',
+            description:
+              'A map of relationship types per start or end node label.',
             name: 'relTypes',
             type: 'MAP',
           },
@@ -76108,7 +79367,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A map containing all the given return fields from this procedure.',
+            description:
+              'A map containing all the given return fields from this procedure.',
             name: 'stats',
             type: 'MAP',
           },
@@ -76243,7 +79503,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The total count of neighboring nodes at the given hop distance.',
+            description:
+              'The total count of neighboring nodes at the given hop distance.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -76291,7 +79552,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of neighboring nodes at a distinct hop distance.',
+            description:
+              'A list of neighboring nodes at a distinct hop distance.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
@@ -76339,7 +79601,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of neighbor counts for each distinct hop distance.',
+            description:
+              'A list of neighbor counts for each distinct hop distance.',
             name: 'value',
             type: 'LIST<ANY>',
           },
@@ -76435,7 +79698,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The total count of neighboring nodes within the given hop distance.',
+            description:
+              'The total count of neighboring nodes within the given hop distance.',
             name: 'value',
             type: 'INTEGER',
           },
@@ -76488,7 +79752,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A node connected to the other end of the relationship.',
+            description:
+              'A node connected to the other end of the relationship.',
             name: 'to',
             type: 'NODE',
           },
@@ -76508,7 +79773,8 @@ const mockSchema: DbSchema = {
           'Detects all `PATH` cycles in the given `LIST<NODE>`.\nThis procedure can be limited on `RELATIONSHIP` values as well.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.nodes.cycles(nodes :: LIST<NODE>, config = {} :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.nodes.cycles(nodes :: LIST<NODE>, config = {} :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76519,7 +79785,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{\n    maxDepth :: INTEGER,\n    relTypes = [] :: LIST<STRING>\n}\n',
+            description:
+              '{\n    maxDepth :: INTEGER,\n    relTypes = [] :: LIST<STRING>\n}\n',
             name: 'config',
             type: 'MAP',
           },
@@ -76546,7 +79813,8 @@ const mockSchema: DbSchema = {
         description: 'Deletes all `NODE` values with the given ids.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.nodes.delete(nodes :: ANY, batchSize :: INTEGER) :: (value :: INTEGER)',
+        signature:
+          'apoc.nodes.delete(nodes :: ANY, batchSize :: INTEGER) :: (value :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76557,7 +79825,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The number of node values to delete in a single batch.',
+            description:
+              'The number of node values to delete in a single batch.',
             name: 'batchSize',
             type: 'INTEGER',
           },
@@ -76635,7 +79904,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=[{*=count}, {*=count}], type=LIST<MAP>}',
+            default:
+              'DefaultParameterValue{value=[{*=count}, {*=count}], type=LIST<MAP>}',
             description:
               'The first map specifies the node properties to aggregate with their corresponding aggregation functions, while the second map specifies the relationship properties for aggregation.',
             name: 'aggregations',
@@ -76653,13 +79923,15 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of grouped nodes represented as virtual nodes.',
+            description:
+              'A list of grouped nodes represented as virtual nodes.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
           {
             isDeprecated: false,
-            description: 'A list of grouped relationships represented as virtual relationships.',
+            description:
+              'A list of grouped relationships represented as virtual relationships.',
             name: 'relationships',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -76691,7 +79963,8 @@ const mockSchema: DbSchema = {
           'Creates a linked list of the given `NODE` values connected by the given `RELATIONSHIP` type.',
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'apoc.nodes.link(nodes :: LIST<NODE>, type :: STRING, config = {} :: MAP)',
+        signature:
+          'apoc.nodes.link(nodes :: LIST<NODE>, type :: STRING, config = {} :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76773,25 +80046,29 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'An allow list of types allowed on the returned relationships.',
+            description:
+              'An allow list of types allowed on the returned relationships.',
             name: 'relFilter',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'An allow list of labels allowed on the returned nodes.',
+            description:
+              'An allow list of labels allowed on the returned nodes.',
             name: 'labelFilter',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The minimum number of hops allowed in the returned paths.',
+            description:
+              'The minimum number of hops allowed in the returned paths.',
             name: 'minDepth',
             type: 'INTEGER',
           },
           {
             isDeprecated: false,
-            description: 'The maximum number of hops allowed in the returned paths.',
+            description:
+              'The maximum number of hops allowed in the returned paths.',
             name: 'maxDepth',
             type: 'INTEGER',
           },
@@ -76819,7 +80096,8 @@ const mockSchema: DbSchema = {
           'Returns `PATH` values expanded from the start `NODE` with the given `RELATIONSHIP` types from min-depth to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.expandConfig(startNode :: ANY, config :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.path.expandConfig(startNode :: ANY, config :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76859,7 +80137,8 @@ const mockSchema: DbSchema = {
           'Returns spanning tree `PATH` values expanded from the start `NODE` following the given `RELATIONSHIP` types to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.spanningTree(startNode :: ANY, config :: MAP) :: (path :: PATH)',
+        signature:
+          'apoc.path.spanningTree(startNode :: ANY, config :: MAP) :: (path :: PATH)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76946,7 +80225,8 @@ const mockSchema: DbSchema = {
           'Returns the `NODE` values in the sub-graph reachable from the start `NODE` following the given `RELATIONSHIP` types to max-depth.',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'apoc.path.subgraphNodes(startNode :: ANY, config :: MAP) :: (node :: NODE)',
+        signature:
+          'apoc.path.subgraphNodes(startNode :: ANY, config :: MAP) :: (node :: NODE)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -76998,14 +80278,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to convert relationship types to lower case.',
+            description:
+              'Whether or not to convert relationship types to lower case.',
             name: 'lowerCaseRels',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
+            description:
+              '{ nodes = {} :: MAP, rels = {} :: MAP, sortPaths = true :: BOOLEAN }',
             name: 'config',
             type: 'MAP',
           },
@@ -77085,7 +80367,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.commit': {
         name: 'apoc.periodic.commit',
-        description: 'Runs the given statement in separate batched transactions.',
+        description:
+          'Runs the given statement in separate batched transactions.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -77172,7 +80455,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.countdown': {
         name: 'apoc.periodic.countdown',
-        description: 'Runs a repeatedly called background statement until it returns 0.',
+        description:
+          'Runs a repeatedly called background statement until it returns 0.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -77193,7 +80477,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The delay in seconds to wait between each job execution.',
+            description:
+              'The delay in seconds to wait between each job execution.',
             name: 'delay',
             type: 'INTEGER',
           },
@@ -77435,7 +80720,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The delay in seconds to wait between each job execution.',
+            description:
+              'The delay in seconds to wait between each job execution.',
             name: 'rate',
             type: 'INTEGER',
           },
@@ -77490,7 +80776,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.periodic.submit': {
         name: 'apoc.periodic.submit',
-        description: 'Creates a background job which runs the given Cypher statement once.',
+        description:
+          'Creates a background job which runs the given Cypher statement once.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -77626,7 +80913,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A list of additional property keys to be copied to the new node.',
+            description:
+              'A list of additional property keys to be copied to the new node.',
             name: 'copiedKeys',
             type: 'LIST<STRING>',
           },
@@ -77665,14 +80953,16 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=false, type=BOOLEAN}',
-            description: 'Whether or not the connected relationships should also be cloned.',
+            description:
+              'Whether or not the connected relationships should also be cloned.',
             name: 'withRelationships',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=[], type=LIST<STRING>}',
-            description: 'Whether or not to skip the node properties when cloning.',
+            description:
+              'Whether or not to skip the node properties when cloning.',
             name: 'skipProperties',
             type: 'LIST<STRING>',
           },
@@ -77852,7 +81142,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -77992,7 +81283,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.refactor.from': {
         name: 'apoc.refactor.from',
-        description: 'Redirects the given `RELATIONSHIP` to the given start `NODE`.',
+        description:
+          'Redirects the given `RELATIONSHIP` to the given start `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -78136,7 +81428,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The relationships to be merged onto the first relationship.',
+            description:
+              'The relationships to be merged onto the first relationship.',
             name: 'rels',
             type: 'LIST<RELATIONSHIP>',
           },
@@ -78724,7 +82017,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -78746,7 +82040,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.refactor.to': {
         name: 'apoc.refactor.to',
-        description: 'Redirects the given `RELATIONSHIP` to the given end `NODE`.',
+        description:
+          'Redirects the given `RELATIONSHIP` to the given end `NODE`.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -78774,7 +82069,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The id of the new relationship with the updated type.',
+            description:
+              'The id of the new relationship with the updated type.',
             name: 'output',
             type: 'RELATIONSHIP',
           },
@@ -78805,7 +82101,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'A map that pairs labels with lists of properties to create indexes from.',
+            description:
+              'A map that pairs labels with lists of properties to create indexes from.',
             name: 'indexes',
             type: 'MAP',
           },
@@ -78819,7 +82116,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=true, type=BOOLEAN}',
-            description: 'Whether or not to drop all other existing indexes and constraints.',
+            description:
+              'Whether or not to drop all other existing indexes and constraints.',
             name: 'dropExisting',
             type: 'BOOLEAN',
           },
@@ -78833,13 +82131,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property key associated with the constraint or index.',
+            description:
+              'The property key associated with the constraint or index.',
             name: 'key',
             type: 'STRING',
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'keys',
             type: 'LIST<STRING>',
           },
@@ -78899,7 +82199,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'properties',
             type: 'LIST<STRING>',
           },
@@ -78923,13 +82224,15 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The percentage of the constraint or index population. ',
+            description:
+              'The percentage of the constraint or index population. ',
             name: 'populationProgress',
             type: 'FLOAT',
           },
           {
             isDeprecated: false,
-            description: 'The number of entries in the given constraint or index.',
+            description:
+              'The number of entries in the given constraint or index.',
             name: 'size',
             type: 'INTEGER',
           },
@@ -78958,7 +82261,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.schema.properties.distinct': {
         name: 'apoc.schema.properties.distinct',
-        description: 'Returns all distinct `NODE` property values for the given key.',
+        description:
+          'Returns all distinct `NODE` property values for the given key.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -78996,7 +82300,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.schema.properties.distinctCount': {
         name: 'apoc.schema.properties.distinctCount',
-        description: 'Returns all distinct property values and counts for the given key.',
+        description:
+          'Returns all distinct property values and counts for the given key.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -79012,7 +82317,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The name of the property to count distinct values of.',
+            description:
+              'The name of the property to count distinct values of.',
             name: 'key',
             type: 'STRING',
           },
@@ -79085,7 +82391,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The property keys associated with the constraint or index.',
+            description:
+              'The property keys associated with the constraint or index.',
             name: 'properties',
             type: 'LIST<STRING>',
           },
@@ -79097,7 +82404,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The relationship type associated with the constraint or index.',
+            description:
+              'The relationship type associated with the constraint or index.',
             name: 'relationshipType',
             type: 'ANY',
           },
@@ -79784,7 +83092,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The soundex character difference between the two given strings.',
+            description:
+              'The soundex character difference between the two given strings.',
             name: 'delta',
             type: 'INTEGER',
           },
@@ -79834,7 +83143,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -79896,7 +83206,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -79957,7 +83268,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -79984,7 +83296,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -80018,7 +83331,8 @@ const mockSchema: DbSchema = {
       },
       'apoc.trigger.list': {
         name: 'apoc.trigger.list',
-        description: 'Lists all currently installed triggers for the session database.',
+        description:
+          'Lists all currently installed triggers for the session database.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -80039,7 +83353,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -80101,7 +83416,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -80169,7 +83485,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -80237,7 +83554,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
+            description:
+              '{ phase = "before" :: ["before", "rollback", "after", "afterAsync"] }',
             name: 'selector',
             type: 'MAP',
           },
@@ -80310,7 +83628,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The error message to throw if the given predicate evaluates to true.',
+            description:
+              'The error message to throw if the given predicate evaluates to true.',
             name: 'message',
             type: 'STRING',
           },
@@ -80342,20 +83661,23 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The predicate deciding if to run the `ifQuery`or not.',
+            description:
+              'The predicate deciding if to run the `ifQuery`or not.',
             name: 'condition',
             type: 'BOOLEAN',
           },
           {
             isDeprecated: false,
-            description: 'The Cypher statement to run if the condition is true.',
+            description:
+              'The Cypher statement to run if the condition is true.',
             name: 'ifQuery',
             type: 'STRING',
           },
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'The Cypher statement to run if the condition is false.',
+            description:
+              'The Cypher statement to run if the condition is false.',
             name: 'elseQuery',
             type: 'STRING',
           },
@@ -80436,7 +83758,8 @@ const mockSchema: DbSchema = {
       },
       'cdc.query': {
         name: 'cdc.query',
-        description: 'Query changes happened from the provided change identifier.',
+        description:
+          'Query changes happened from the provided change identifier.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -80481,7 +83804,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Metadata from the transaction that caused this change event.',
+            description:
+              'Metadata from the transaction that caused this change event.',
             name: 'metadata',
             type: 'MAP',
           },
@@ -80507,7 +83831,8 @@ const mockSchema: DbSchema = {
           'Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300)).',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
+        signature:
+          'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -80611,7 +83936,8 @@ const mockSchema: DbSchema = {
       },
       'db.cdc.query': {
         name: 'db.cdc.query',
-        description: 'Query changes happened from the provided change identifier.',
+        description:
+          'Query changes happened from the provided change identifier.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -80656,7 +83982,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Metadata from the transaction that caused this change event.',
+            description:
+              'Metadata from the transaction that caused this change event.',
             name: 'metadata',
             type: 'MAP',
           },
@@ -80717,7 +84044,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'Information about the number of cleared query caches.',
+            description:
+              'Information about the number of cleared query caches.',
             name: 'value',
             type: 'STRING',
           },
@@ -80737,7 +84065,8 @@ const mockSchema: DbSchema = {
           "Set a vector property on a given node in a more space efficient representation than Cypher's SET.",
         mode: 'WRITE',
         worksOnSystem: false,
-        signature: 'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: ANY)',
+        signature:
+          'db.create.setNodeVectorProperty(node :: NODE, key :: STRING, vector :: ANY)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -80779,7 +84108,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The relationship on which the new property will be stored.',
+            description:
+              'The relationship on which the new property will be stored.',
             name: 'relationship',
             type: 'RELATIONSHIP',
           },
@@ -80920,7 +84250,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The stopwords used by the analyzer to tokenize strings.',
+            description:
+              'The stopwords used by the analyzer to tokenize strings.',
             name: 'stopwords',
             type: 'LIST<STRING>',
           },
@@ -80958,7 +84289,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
+            description:
+              '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
             name: 'options',
             type: 'MAP',
           },
@@ -80966,7 +84298,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A node which contains a property similar to the query string.',
+            description:
+              'A node which contains a property similar to the query string.',
             name: 'node',
             type: 'NODE',
           },
@@ -81011,7 +84344,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value={}, type=MAP}',
-            description: '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
+            description:
+              '{skip :: INTEGER, limit :: INTEGER, analyzer :: STRING}',
             name: 'options',
             type: 'MAP',
           },
@@ -81019,7 +84353,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A relationship which contains a property similar to the query string.',
+            description:
+              'A relationship which contains a property similar to the query string.',
             name: 'relationship',
             type: 'RELATIONSHIP',
           },
@@ -81071,7 +84406,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A node which contains a vector property similar to the query object.',
+            description:
+              'A node which contains a vector property similar to the query object.',
             name: 'node',
             type: 'NODE',
           },
@@ -81150,7 +84486,8 @@ const mockSchema: DbSchema = {
         description: 'Provides information regarding the database.',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
+        signature:
+          'db.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -81218,7 +84555,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The locking mode this lock is using, either "SHARED" or "EXCLUSIVE".',
+            description:
+              'The locking mode this lock is using, either "SHARED" or "EXCLUSIVE".',
             name: 'mode',
             type: 'STRING',
           },
@@ -81262,7 +84600,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'Whether or not the connection call to the database has been successful.',
+            description:
+              'Whether or not the connection call to the database has been successful.',
             name: 'success',
             type: 'BOOLEAN',
           },
@@ -81395,7 +84734,8 @@ const mockSchema: DbSchema = {
       },
       'db.schema.nodeTypeProperties': {
         name: 'db.schema.nodeTypeProperties',
-        description: 'Show the derived property schema of the nodes in tabular form.',
+        description:
+          'Show the derived property schema of the nodes in tabular form.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -81422,7 +84762,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'All types of a property belonging to a node category.',
+            description:
+              'All types of a property belonging to a node category.',
             name: 'propertyTypes',
             type: 'LIST<STRING>',
           },
@@ -81445,7 +84786,8 @@ const mockSchema: DbSchema = {
       },
       'db.schema.relTypeProperties': {
         name: 'db.schema.relTypeProperties',
-        description: 'Show the derived property schema of the relationships in tabular form.',
+        description:
+          'Show the derived property schema of the relationships in tabular form.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -81466,7 +84808,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'All types of a property belonging to a relationship category.',
+            description:
+              'All types of a property belonging to a relationship category.',
             name: 'propertyTypes',
             type: 'LIST<STRING>',
           },
@@ -81499,7 +84842,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'A list of virtual nodes representing each label in the database.',
+            description:
+              'A list of virtual nodes representing each label in the database.',
             name: 'nodes',
             type: 'LIST<NODE>',
           },
@@ -81522,7 +84866,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.clear': {
         name: 'db.stats.clear',
-        description: "Clear collected data of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Clear collected data of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -81530,7 +84875,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to clear. The only available section is: 'QUERIES'.",
+            description:
+              "The section to clear. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -81566,7 +84912,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.collect': {
         name: 'db.stats.collect',
-        description: "Start data collection of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Start data collection of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -81574,7 +84921,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to collect. The only available section is: 'QUERIES'.",
+            description:
+              "The section to collect. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -81710,10 +85058,12 @@ const mockSchema: DbSchema = {
       },
       'db.stats.status': {
         name: 'db.stats.status',
-        description: 'Retrieve the status of all available collector daemons, for this database.',
+        description:
+          'Retrieve the status of all available collector daemons, for this database.',
         mode: 'READ',
         worksOnSystem: true,
-        signature: 'db.stats.status() :: (section :: STRING, status :: STRING, data :: MAP)',
+        signature:
+          'db.stats.status() :: (section :: STRING, status :: STRING, data :: MAP)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -81724,7 +85074,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The status of the QueryCollector: "idle" or "collecting".',
+            description:
+              'The status of the QueryCollector: "idle" or "collecting".',
             name: 'status',
             type: 'STRING',
           },
@@ -81746,7 +85097,8 @@ const mockSchema: DbSchema = {
       },
       'db.stats.stop': {
         name: 'db.stats.stop',
-        description: "Stop data collection of a given data section. Valid sections are 'QUERIES'",
+        description:
+          "Stop data collection of a given data section. Valid sections are 'QUERIES'",
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -81754,7 +85106,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: "The section to stop. The only available section is: 'QUERIES'.",
+            description:
+              "The section to stop. The only available section is: 'QUERIES'.",
             name: 'section',
             type: 'STRING',
           },
@@ -81936,7 +85289,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateDatabaseFromServer': {
         name: 'dbms.cluster.deallocateDatabaseFromServer',
-        description: 'Deallocate a specific user database from a specific server.',
+        description:
+          'Deallocate a specific user database from a specific server.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -82011,7 +85365,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateDatabaseFromServers': {
         name: 'dbms.cluster.deallocateDatabaseFromServers',
-        description: 'Deallocate a specific user database from a list of servers.',
+        description:
+          'Deallocate a specific user database from a list of servers.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -82086,7 +85441,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.deallocateNumberOfDatabases': {
         name: 'dbms.cluster.deallocateNumberOfDatabases',
-        description: 'Deallocate a number of user databases from a specific server.',
+        description:
+          'Deallocate a number of user databases from a specific server.',
         mode: 'WRITE',
         worksOnSystem: true,
         signature:
@@ -82212,7 +85568,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Installed modifier protocols, for example, compression.',
+            description:
+              'Installed modifier protocols, for example, compression.',
             name: 'modifierProtocols',
             type: 'STRING',
           },
@@ -82244,7 +85601,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not to enable/disable the secondary replication process.',
+            description:
+              'Whether or not to enable/disable the secondary replication process.',
             name: 'pause',
             type: 'BOOLEAN',
           },
@@ -82252,7 +85610,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The current state of the secondary replication process.',
+            description:
+              'The current state of the secondary replication process.',
             name: 'state',
             type: 'STRING',
           },
@@ -82410,7 +85769,8 @@ const mockSchema: DbSchema = {
           'Recreates a database while keeping all RBAC settings. The procedure initiates a process, which when complete, will have synchronized and started all database instances within the cluster.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.cluster.recreateDatabase(database :: STRING, options = {} :: MAP)',
+        signature:
+          'dbms.cluster.recreateDatabase(database :: STRING, options = {} :: MAP)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -82468,7 +85828,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Servers grouped by whether they are readers, writers, or routers.',
+            description:
+              'Servers grouped by whether they are readers, writers, or routers.',
             name: 'servers',
             type: 'LIST<MAP>',
           },
@@ -82484,7 +85845,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.secondaryReplicationDisable': {
         name: 'dbms.cluster.secondaryReplicationDisable',
-        description: 'The toggle can pause or resume the secondary replication process.',
+        description:
+          'The toggle can pause or resume the secondary replication process.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -82499,7 +85861,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Whether or not to enable/disable the secondary replication process.',
+            description:
+              'Whether or not to enable/disable the secondary replication process.',
             name: 'pause',
             type: 'BOOLEAN',
           },
@@ -82507,7 +85870,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The current state of the secondary replication process.',
+            description:
+              'The current state of the secondary replication process.',
             name: 'state',
             type: 'STRING',
           },
@@ -82523,10 +85887,12 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.setAutomaticallyEnableFreeServers': {
         name: 'dbms.cluster.setAutomaticallyEnableFreeServers',
-        description: 'With this method you can set whether free servers are automatically enabled.',
+        description:
+          'With this method you can set whether free servers are automatically enabled.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.cluster.setAutomaticallyEnableFreeServers(autoEnable :: BOOLEAN)',
+        signature:
+          'dbms.cluster.setAutomaticallyEnableFreeServers(autoEnable :: BOOLEAN)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -82547,7 +85913,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.cluster.showParallelDiscoveryState': {
         name: 'dbms.cluster.showParallelDiscoveryState',
-        description: 'Compare the states of Discovery service V1 and Discovery service V2.',
+        description:
+          'Compare the states of Discovery service V1 and Discovery service V2.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -82748,7 +86115,8 @@ const mockSchema: DbSchema = {
         description: 'Provides information regarding the DBMS.',
         mode: 'DBMS',
         worksOnSystem: true,
-        signature: 'dbms.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
+        signature:
+          'dbms.info() :: (id :: STRING, name :: STRING, creationDate :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -82825,7 +86193,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.killConnections': {
         name: 'dbms.killConnections',
-        description: 'Kill all network connections with the given connection ids.',
+        description:
+          'Kill all network connections with the given connection ids.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -82923,7 +86292,8 @@ const mockSchema: DbSchema = {
         returnDescription: [
           {
             isDeprecated: false,
-            description: 'The full name of the capability (e.g. "dbms.instance.version").',
+            description:
+              'The full name of the capability (e.g. "dbms.instance.version").',
             name: 'name',
             type: 'STRING',
           },
@@ -82936,7 +86306,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'The capability object if it is present in the system (e.g. "5.20.0").',
+            description:
+              'The capability object if it is present in the system (e.g. "5.20.0").',
             name: 'value',
             type: 'ANY',
           },
@@ -82952,7 +86323,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.listConfig': {
         name: 'dbms.listConfig',
-        description: 'List the currently active configuration settings of Neo4j.',
+        description:
+          'List the currently active configuration settings of Neo4j.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -82961,7 +86333,8 @@ const mockSchema: DbSchema = {
           {
             isDeprecated: false,
             default: 'DefaultParameterValue{value=, type=STRING}',
-            description: 'A string that filters on the name of config settings.',
+            description:
+              'A string that filters on the name of config settings.',
             name: 'searchString',
             type: 'STRING',
           },
@@ -83178,7 +86551,8 @@ const mockSchema: DbSchema = {
         argumentDescription: [
           {
             isDeprecated: false,
-            description: 'The name of the database to set the quarantine status of.',
+            description:
+              'The name of the database to set the quarantine status of.',
             name: 'databaseName',
             type: 'STRING',
           },
@@ -83190,7 +86564,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            default: 'DefaultParameterValue{value=No reason given, type=STRING}',
+            default:
+              'DefaultParameterValue{value=No reason given, type=STRING}',
             description: 'The reason to quarantine the database.',
             name: 'reason',
             type: 'STRING',
@@ -83257,7 +86632,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'A collection with the attributes (values) of that metric.',
+            description:
+              'A collection with the attributes (values) of that metric.',
             name: 'attributes',
             type: 'MAP',
           },
@@ -83303,7 +86679,8 @@ const mockSchema: DbSchema = {
           },
           {
             isDeprecated: false,
-            description: 'Servers grouped by whether they are readers, writers, or routers.',
+            description:
+              'Servers grouped by whether they are readers, writers, or routers.',
             name: 'servers',
             type: 'LIST<MAP>',
           },
@@ -83319,7 +86696,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.failedJobs': {
         name: 'dbms.scheduler.failedJobs',
-        description: 'List failed job runs. There is a limit for amount of historical data.',
+        description:
+          'List failed job runs. There is a limit for amount of historical data.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -83398,10 +86776,12 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.groups': {
         name: 'dbms.scheduler.groups',
-        description: 'List the job groups that are active in the database internal job scheduler.',
+        description:
+          'List the job groups that are active in the database internal job scheduler.',
         mode: 'DBMS',
         worksOnSystem: true,
-        signature: 'dbms.scheduler.groups() :: (group :: STRING, threads :: INTEGER)',
+        signature:
+          'dbms.scheduler.groups() :: (group :: STRING, threads :: INTEGER)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -83428,7 +86808,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.scheduler.jobs': {
         name: 'dbms.scheduler.jobs',
-        description: 'List all jobs that are active in the database internal job scheduler.',
+        description:
+          'List all jobs that are active in the database internal job scheduler.',
         mode: 'DBMS',
         worksOnSystem: true,
         signature:
@@ -83590,7 +86971,8 @@ const mockSchema: DbSchema = {
           'With this method you can set the default number of primaries and secondaries.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.setDefaultAllocationNumbers(primaries :: INTEGER, secondaries :: INTEGER)',
+        signature:
+          'dbms.setDefaultAllocationNumbers(primaries :: INTEGER, secondaries :: INTEGER)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -83621,7 +87003,8 @@ const mockSchema: DbSchema = {
           'Change the default database to the provided value. The database must exist and the old default database must be stopped.',
         mode: 'WRITE',
         worksOnSystem: true,
-        signature: 'dbms.setDefaultDatabase(databaseName :: STRING) :: (result :: STRING)',
+        signature:
+          'dbms.setDefaultDatabase(databaseName :: STRING) :: (result :: STRING)',
         argumentDescription: [
           {
             isDeprecated: false,
@@ -83686,7 +87069,8 @@ const mockSchema: DbSchema = {
       },
       'dbms.showTopologyGraphConfig': {
         name: 'dbms.showTopologyGraphConfig',
-        description: 'With this method the configuration of the Topology Graph can be displayed.',
+        description:
+          'With this method the configuration of the Topology Graph can be displayed.',
         mode: 'READ',
         worksOnSystem: true,
         signature:
@@ -83805,7 +87189,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.mutate.estimate': {
         name: 'gds.allShortestPaths.delta.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -83949,7 +87334,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.stats.estimate': {
         name: 'gds.allShortestPaths.delta.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -84111,7 +87497,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.stream.estimate': {
         name: 'gds.allShortestPaths.delta.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -84267,7 +87654,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.delta.write.estimate': {
         name: 'gds.allShortestPaths.delta.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -84423,7 +87811,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.mutate.estimate': {
         name: 'gds.allShortestPaths.dijkstra.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -84585,7 +87974,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.stream.estimate': {
         name: 'gds.allShortestPaths.dijkstra.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -84741,7 +88131,8 @@ const mockSchema: DbSchema = {
       },
       'gds.allShortestPaths.dijkstra.write.estimate': {
         name: 'gds.allShortestPaths.dijkstra.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85013,7 +88404,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.linkPrediction.configureAutoTuning': {
         name: 'gds.alpha.pipeline.linkPrediction.configureAutoTuning',
-        description: 'Configures the auto-tuning of the link prediction pipeline.',
+        description:
+          'Configures the auto-tuning of the link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85151,7 +88543,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeClassification.configureAutoTuning': {
         name: 'gds.alpha.pipeline.nodeClassification.configureAutoTuning',
-        description: 'Configures the auto-tuning of the node classification pipeline.',
+        description:
+          'Configures the auto-tuning of the node classification pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85219,7 +88612,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addLinearRegression': {
         name: 'gds.alpha.pipeline.nodeRegression.addLinearRegression',
-        description: 'Add a linear regression model candidate to a node regression pipeline.',
+        description:
+          'Add a linear regression model candidate to a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85288,7 +88682,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addNodeProperty': {
         name: 'gds.alpha.pipeline.nodeRegression.addNodeProperty',
-        description: 'Add a node property step to an existing node regression training pipeline.',
+        description:
+          'Add a node property step to an existing node regression training pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85362,7 +88757,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.addRandomForest': {
         name: 'gds.alpha.pipeline.nodeRegression.addRandomForest',
-        description: 'Add a random forest model candidate to a node regression pipeline.',
+        description:
+          'Add a random forest model candidate to a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85430,7 +88826,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.configureAutoTuning': {
         name: 'gds.alpha.pipeline.nodeRegression.configureAutoTuning',
-        description: 'Configures the auto-tuning of a node regression pipeline.',
+        description:
+          'Configures the auto-tuning of a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85498,7 +88895,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.configureSplit': {
         name: 'gds.alpha.pipeline.nodeRegression.configureSplit',
-        description: 'Configures the graph splitting of a node regression pipeline.',
+        description:
+          'Configures the graph splitting of a node regression pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85566,7 +88964,8 @@ const mockSchema: DbSchema = {
       },
       'gds.alpha.pipeline.nodeRegression.create': {
         name: 'gds.alpha.pipeline.nodeRegression.create',
-        description: 'Creates a node regression training pipeline in the pipeline catalog.',
+        description:
+          'Creates a node regression training pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -85957,7 +89356,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.mutate.estimate': {
         name: 'gds.articleRank.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86119,7 +89519,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.stats.estimate': {
         name: 'gds.articleRank.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86251,7 +89652,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.stream.estimate': {
         name: 'gds.articleRank.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86425,7 +89827,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articleRank.write.estimate': {
         name: 'gds.articleRank.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86511,7 +89914,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.mutate': {
         name: 'gds.articulationPoints.mutate',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86574,7 +89978,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.mutate.estimate': {
         name: 'gds.articulationPoints.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86660,7 +90065,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stats': {
         name: 'gds.articulationPoints.stats',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86711,7 +90117,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stats.estimate': {
         name: 'gds.articulationPoints.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86797,7 +90204,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stream': {
         name: 'gds.articulationPoints.stream',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86836,7 +90244,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.stream.estimate': {
         name: 'gds.articulationPoints.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -86922,7 +90331,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.write': {
         name: 'gds.articulationPoints.write',
-        description: 'Algorithm that finds nodes that disconnect components if removed',
+        description:
+          'Algorithm that finds nodes that disconnect components if removed',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -86985,7 +90395,8 @@ const mockSchema: DbSchema = {
       },
       'gds.articulationPoints.write.estimate': {
         name: 'gds.articulationPoints.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87210,7 +90621,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.mutate.estimate': {
         name: 'gds.bellmanFord.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87360,7 +90772,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.stats.estimate': {
         name: 'gds.bellmanFord.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87528,7 +90941,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.stream.estimate': {
         name: 'gds.bellmanFord.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87690,7 +91104,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bellmanFord.write.estimate': {
         name: 'gds.bellmanFord.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87846,7 +91261,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.mutate.estimate': {
         name: 'gds.beta.graphSage.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -87978,7 +91394,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.stream.estimate': {
         name: 'gds.beta.graphSage.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -88116,7 +91533,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.train.estimate': {
         name: 'gds.beta.graphSage.train.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -88272,7 +91690,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.graphSage.write.estimate': {
         name: 'gds.beta.graphSage.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -88358,7 +91777,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.addFeature': {
         name: 'gds.beta.pipeline.linkPrediction.addFeature',
-        description: 'Add a feature step to an existing link prediction pipeline.',
+        description:
+          'Add a feature step to an existing link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -88502,7 +91922,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.addNodeProperty': {
         name: 'gds.beta.pipeline.linkPrediction.addNodeProperty',
-        description: 'Add a node property step to an existing link prediction pipeline.',
+        description:
+          'Add a node property step to an existing link prediction pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -88713,7 +92134,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.linkPrediction.create': {
         name: 'gds.beta.pipeline.linkPrediction.create',
-        description: 'Creates a link prediction pipeline in the pipeline catalog.',
+        description:
+          'Creates a link prediction pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -89440,7 +92862,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.configureSplit': {
         name: 'gds.beta.pipeline.nodeClassification.configureSplit',
-        description: 'Configures the split of the node classification training pipeline.',
+        description:
+          'Configures the split of the node classification training pipeline.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -89508,7 +92931,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.create': {
         name: 'gds.beta.pipeline.nodeClassification.create',
-        description: 'Creates a node classification training pipeline in the pipeline catalog.',
+        description:
+          'Creates a node classification training pipeline in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -89570,7 +92994,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.mutate': {
         name: 'gds.beta.pipeline.nodeClassification.predict.mutate',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -89726,7 +93151,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.stream': {
         name: 'gds.beta.pipeline.nodeClassification.predict.stream',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -89864,7 +93290,8 @@ const mockSchema: DbSchema = {
       },
       'gds.beta.pipeline.nodeClassification.predict.write': {
         name: 'gds.beta.pipeline.nodeClassification.predict.write',
-        description: 'Predicts classes for all nodes based on a previously trained pipeline model',
+        description:
+          'Predicts classes for all nodes based on a previously trained pipeline model',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -90309,7 +93736,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.mutate.estimate': {
         name: 'gds.betweenness.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -90459,7 +93887,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.stats.estimate': {
         name: 'gds.betweenness.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -90591,7 +94020,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.stream.estimate': {
         name: 'gds.betweenness.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -90753,7 +94183,8 @@ const mockSchema: DbSchema = {
       },
       'gds.betweenness.write.estimate': {
         name: 'gds.betweenness.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -90909,7 +94340,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.mutate.estimate': {
         name: 'gds.bfs.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -91053,7 +94485,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.stats.estimate': {
         name: 'gds.bfs.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -91191,7 +94624,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bfs.stream.estimate': {
         name: 'gds.bfs.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -91278,7 +94712,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bridges.stream': {
         name: 'gds.bridges.stream',
-        description: 'Bridges find relationships that disconnect  components if removed',
+        description:
+          'Bridges find relationships that disconnect  components if removed',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -91323,7 +94758,8 @@ const mockSchema: DbSchema = {
       },
       'gds.bridges.stream.estimate': {
         name: 'gds.bridges.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -92083,7 +95519,8 @@ const mockSchema: DbSchema = {
       },
       'gds.config.defaults.set': {
         name: 'gds.config.defaults.set',
-        description: 'Set a default; global by, default, but also optionally for a specific user',
+        description:
+          'Set a default; global by, default, but also optionally for a specific user',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -92105,7 +95542,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d81eb72e-c499-4f78-90c7-0c76123606a2, type=STRING}',
-            description: 'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
+            description:
+              'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
             name: 'username',
             type: 'STRING',
           },
@@ -92162,7 +95600,8 @@ const mockSchema: DbSchema = {
       },
       'gds.config.limits.set': {
         name: 'gds.config.limits.set',
-        description: 'Set a limit; global by, default, but also optionally for a specific user',
+        description:
+          'Set a limit; global by, default, but also optionally for a specific user',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -92184,7 +95623,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d81eb72e-c499-4f78-90c7-0c76123606a2, type=STRING}',
-            description: 'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
+            description:
+              'username = d81eb72e-c499-4f78-90c7-0c76123606a2 :: STRING',
             name: 'username',
             type: 'STRING',
           },
@@ -92322,7 +95762,8 @@ const mockSchema: DbSchema = {
       },
       'gds.debug.arrow': {
         name: 'gds.debug.arrow',
-        description: 'Returns details about the status of the GDS Flight server',
+        description:
+          'Returns details about the status of the GDS Flight server',
         mode: 'DEFAULT',
         worksOnSystem: true,
         signature:
@@ -92495,7 +95936,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.mutate.estimate': {
         name: 'gds.degree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -92645,7 +96087,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.stats.estimate': {
         name: 'gds.degree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -92777,7 +96220,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.stream.estimate': {
         name: 'gds.degree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -92939,7 +96383,8 @@ const mockSchema: DbSchema = {
       },
       'gds.degree.write.estimate': {
         name: 'gds.degree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93095,7 +96540,8 @@ const mockSchema: DbSchema = {
       },
       'gds.dfs.mutate.estimate': {
         name: 'gds.dfs.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93233,7 +96679,8 @@ const mockSchema: DbSchema = {
       },
       'gds.dfs.stream.estimate': {
         name: 'gds.dfs.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93408,7 +96855,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.mutate.estimate': {
         name: 'gds.eigenvector.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93570,7 +97018,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.stats.estimate': {
         name: 'gds.eigenvector.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93702,7 +97151,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.stream.estimate': {
         name: 'gds.eigenvector.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93876,7 +97326,8 @@ const mockSchema: DbSchema = {
       },
       'gds.eigenvector.write.estimate': {
         name: 'gds.eigenvector.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -93962,7 +97413,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.mutate': {
         name: 'gds.fastRP.mutate',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94031,7 +97483,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.mutate.estimate': {
         name: 'gds.fastRP.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94117,7 +97570,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stats': {
         name: 'gds.fastRP.stats',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94174,7 +97628,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stats.estimate': {
         name: 'gds.fastRP.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94260,7 +97715,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stream': {
         name: 'gds.fastRP.stream',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94305,7 +97761,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.stream.estimate': {
         name: 'gds.fastRP.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94391,7 +97848,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.write': {
         name: 'gds.fastRP.write',
-        description: 'Random Projection produces node embeddings via the fastrp algorithm',
+        description:
+          'Random Projection produces node embeddings via the fastrp algorithm',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -94460,7 +97918,8 @@ const mockSchema: DbSchema = {
       },
       'gds.fastRP.write.estimate': {
         name: 'gds.fastRP.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94546,7 +98005,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.drop': {
         name: 'gds.graph.drop',
-        description: 'Drops a named graph from the catalog and frees up the resources it occupies.',
+        description:
+          'Drops a named graph from the catalog and frees up the resources it occupies.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -94871,7 +98331,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.export.csv.estimate': {
         name: 'gds.graph.export.csv.estimate',
-        description: 'Estimate the required disk space for exporting a named graph to CSV files.',
+        description:
+          'Estimate the required disk space for exporting a named graph to CSV files.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -95052,7 +98513,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.generate': {
         name: 'gds.graph.generate',
-        description: 'Computes a random graph, which will be stored in the graph catalog.',
+        description:
+          'Computes a random graph, which will be stored in the graph catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -95247,7 +98709,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.list': {
         name: 'gds.graph.list',
-        description: 'Lists information about named graphs stored in the catalog.',
+        description:
+          'Lists information about named graphs stored in the catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -95257,7 +98720,8 @@ const mockSchema: DbSchema = {
             isDeprecated: false,
             default:
               'DefaultParameterValue{value=d9b6394a-9482-4929-adab-f97df578a6c6, type=STRING}',
-            description: 'graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING',
+            description:
+              'graphName = d9b6394a-9482-4929-adab-f97df578a6c6 :: STRING',
             name: 'graphName',
             type: 'STRING',
           },
@@ -95634,7 +99098,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.nodeProperties.write': {
         name: 'gds.graph.nodeProperties.write',
-        description: 'Writes the given node properties to an online Neo4j database.',
+        description:
+          'Writes the given node properties to an online Neo4j database.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -95774,7 +99239,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.project': {
         name: 'gds.graph.project',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -95855,7 +99321,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.project.cypher': {
         name: 'gds.graph.project.cypher',
-        description: 'Creates a named graph in the catalog for use by algorithms.',
+        description:
+          'Creates a named graph in the catalog for use by algorithms.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -95929,14 +99396,16 @@ const mockSchema: DbSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: true,
-        deprecatedBy: 'gds.graph.project Cypher projection as an aggregation function',
+        deprecatedBy:
+          'gds.graph.project Cypher projection as an aggregation function',
         option: {
           deprecated: true,
         },
       },
       'gds.graph.project.cypher.estimate': {
         name: 'gds.graph.project.cypher.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96022,14 +99491,16 @@ const mockSchema: DbSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: true,
-        deprecatedBy: 'gds.graph.project Cypher projection as an aggregation function',
+        deprecatedBy:
+          'gds.graph.project Cypher projection as an aggregation function',
         option: {
           deprecated: true,
         },
       },
       'gds.graph.project.estimate': {
         name: 'gds.graph.project.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96444,7 +99915,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.relationships.drop': {
         name: 'gds.graph.relationships.drop',
-        description: 'Delete the relationship type for a given graph stored in the graph-catalog.',
+        description:
+          'Delete the relationship type for a given graph stored in the graph-catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96634,7 +100106,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.relationships.toUndirected.estimate': {
         name: 'gds.graph.relationships.toUndirected.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96720,7 +100193,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.cnarw': {
         name: 'gds.graph.sample.cnarw',
-        description: 'Constructs a random subgraph based on common neighbour aware random walks',
+        description:
+          'Constructs a random subgraph based on common neighbour aware random walks',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96795,7 +100269,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.cnarw.estimate': {
         name: 'gds.graph.sample.cnarw.estimate',
-        description: 'Estimate memory requirements for sampling graph using CNARW algorithm',
+        description:
+          'Estimate memory requirements for sampling graph using CNARW algorithm',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96882,7 +100357,8 @@ const mockSchema: DbSchema = {
       },
       'gds.graph.sample.rwr': {
         name: 'gds.graph.sample.rwr',
-        description: 'Constructs a random subgraph based on random walks with restarts',
+        description:
+          'Constructs a random subgraph based on random walks with restarts',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -96957,7 +100433,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.mutate': {
         name: 'gds.hashgnn.mutate',
-        description: 'HashGNN creates node embeddings by hashing and message passing.',
+        description:
+          'HashGNN creates node embeddings by hashing and message passing.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97026,7 +100503,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.mutate.estimate': {
         name: 'gds.hashgnn.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97112,7 +100590,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.stream': {
         name: 'gds.hashgnn.stream',
-        description: 'HashGNN creates node embeddings by hashing and message passing.',
+        description:
+          'HashGNN creates node embeddings by hashing and message passing.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97157,7 +100636,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hashgnn.stream.estimate': {
         name: 'gds.hashgnn.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97319,7 +100799,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.mutate.estimate': {
         name: 'gds.hits.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97469,7 +100950,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.stats.estimate': {
         name: 'gds.hits.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97602,7 +101084,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.stream.estimate': {
         name: 'gds.hits.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97765,7 +101248,8 @@ const mockSchema: DbSchema = {
       },
       'gds.hits.write.estimate': {
         name: 'gds.hits.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -97922,7 +101406,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.mutate.estimate': {
         name: 'gds.influenceMaximization.celf.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98066,7 +101551,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.stats.estimate': {
         name: 'gds.influenceMaximization.celf.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98198,7 +101684,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.stream.estimate': {
         name: 'gds.influenceMaximization.celf.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98355,7 +101842,8 @@ const mockSchema: DbSchema = {
       },
       'gds.influenceMaximization.celf.write.estimate': {
         name: 'gds.influenceMaximization.celf.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98441,7 +101929,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.mutate': {
         name: 'gds.k1coloring.mutate',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98522,7 +102011,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.mutate.estimate': {
         name: 'gds.k1coloring.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98608,7 +102098,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stats': {
         name: 'gds.k1coloring.stats',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98683,7 +102174,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stats.estimate': {
         name: 'gds.k1coloring.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98769,7 +102261,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stream': {
         name: 'gds.k1coloring.stream',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98814,7 +102307,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.stream.estimate': {
         name: 'gds.k1coloring.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -98900,7 +102394,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.write': {
         name: 'gds.k1coloring.write',
-        description: 'The K-1 Coloring algorithm assigns a color to every node in the graph.',
+        description:
+          'The K-1 Coloring algorithm assigns a color to every node in the graph.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -98981,7 +102476,8 @@ const mockSchema: DbSchema = {
       },
       'gds.k1coloring.write.estimate': {
         name: 'gds.k1coloring.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -99212,7 +102708,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.mutate.estimate': {
         name: 'gds.kcore.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -99361,7 +102858,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.stats.estimate': {
         name: 'gds.kcore.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -99492,7 +102990,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.stream.estimate': {
         name: 'gds.kcore.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -99653,7 +103152,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kcore.write.estimate': {
         name: 'gds.kcore.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -99833,7 +103333,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.mutate.estimate': {
         name: 'gds.kmeans.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100001,7 +103502,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.stats.estimate': {
         name: 'gds.kmeans.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100145,7 +103647,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.stream.estimate': {
         name: 'gds.kmeans.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100325,7 +103828,8 @@ const mockSchema: DbSchema = {
       },
       'gds.kmeans.write.estimate': {
         name: 'gds.kmeans.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100511,7 +104015,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.mutate.estimate': {
         name: 'gds.knn.filtered.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100691,7 +104196,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.stats.estimate': {
         name: 'gds.knn.filtered.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -100829,7 +104335,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.stream.estimate': {
         name: 'gds.knn.filtered.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101015,7 +104522,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.filtered.write.estimate': {
         name: 'gds.knn.filtered.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101201,7 +104709,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.mutate.estimate': {
         name: 'gds.knn.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101381,7 +104890,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.stats.estimate': {
         name: 'gds.knn.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101519,7 +105029,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.stream.estimate': {
         name: 'gds.knn.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101705,7 +105216,8 @@ const mockSchema: DbSchema = {
       },
       'gds.knn.write.estimate': {
         name: 'gds.knn.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -101885,7 +105397,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.mutate.estimate': {
         name: 'gds.labelPropagation.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102053,7 +105566,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.stats.estimate': {
         name: 'gds.labelPropagation.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102185,7 +105699,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.stream.estimate': {
         name: 'gds.labelPropagation.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102365,7 +105880,8 @@ const mockSchema: DbSchema = {
       },
       'gds.labelPropagation.write.estimate': {
         name: 'gds.labelPropagation.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102563,7 +106079,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.mutate.estimate': {
         name: 'gds.leiden.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102749,7 +106266,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.stats.estimate': {
         name: 'gds.leiden.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -102887,7 +106405,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.stream.estimate': {
         name: 'gds.leiden.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -103085,7 +106604,8 @@ const mockSchema: DbSchema = {
       },
       'gds.leiden.write.estimate': {
         name: 'gds.leiden.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -103174,7 +106694,8 @@ const mockSchema: DbSchema = {
         description: 'Returns details about the license state',
         mode: 'DEFAULT',
         worksOnSystem: false,
-        signature: 'gds.license.state() :: (isLicensed :: BOOLEAN, details :: STRING)',
+        signature:
+          'gds.license.state() :: (isLicensed :: BOOLEAN, details :: STRING)',
         argumentDescription: [],
         returnDescription: [
           {
@@ -103410,7 +106931,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.mutate.estimate': {
         name: 'gds.localClusteringCoefficient.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -103566,7 +107088,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.stats.estimate': {
         name: 'gds.localClusteringCoefficient.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -103698,7 +107221,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.stream.estimate': {
         name: 'gds.localClusteringCoefficient.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -103866,7 +107390,8 @@ const mockSchema: DbSchema = {
       },
       'gds.localClusteringCoefficient.write.estimate': {
         name: 'gds.localClusteringCoefficient.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104052,7 +107577,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.mutate.estimate': {
         name: 'gds.louvain.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104226,7 +107752,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.stats.estimate': {
         name: 'gds.louvain.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104364,7 +107891,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.stream.estimate': {
         name: 'gds.louvain.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104550,7 +108078,8 @@ const mockSchema: DbSchema = {
       },
       'gds.louvain.write.estimate': {
         name: 'gds.louvain.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104712,7 +108241,8 @@ const mockSchema: DbSchema = {
       },
       'gds.maxkcut.mutate.estimate': {
         name: 'gds.maxkcut.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104844,7 +108374,8 @@ const mockSchema: DbSchema = {
       },
       'gds.maxkcut.stream.estimate': {
         name: 'gds.maxkcut.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -104930,7 +108461,8 @@ const mockSchema: DbSchema = {
       },
       'gds.memory.list': {
         name: 'gds.memory.list',
-        description: 'List memory for currently running tasks or stored graphs.',
+        description:
+          'List memory for currently running tasks or stored graphs.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -104973,7 +108505,8 @@ const mockSchema: DbSchema = {
       },
       'gds.memory.summary': {
         name: 'gds.memory.summary',
-        description: 'List memory for currently running tasks or stored graphs.',
+        description:
+          'List memory for currently running tasks or stored graphs.',
         mode: 'DEFAULT',
         worksOnSystem: false,
         signature:
@@ -105048,7 +108581,8 @@ const mockSchema: DbSchema = {
       },
       'gds.model.drop': {
         name: 'gds.model.drop',
-        description: 'Drops a loaded model and frees up the resources it occupies.',
+        description:
+          'Drops a loaded model and frees up the resources it occupies.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -105505,7 +109039,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularity.stats.estimate': {
         name: 'gds.modularity.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -105637,7 +109172,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularity.stream.estimate': {
         name: 'gds.modularity.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -105823,7 +109359,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.mutate.estimate': {
         name: 'gds.modularityOptimization.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106003,7 +109540,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.stats.estimate': {
         name: 'gds.modularityOptimization.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106135,7 +109673,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.stream.estimate': {
         name: 'gds.modularityOptimization.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106321,7 +109860,8 @@ const mockSchema: DbSchema = {
       },
       'gds.modularityOptimization.write.estimate': {
         name: 'gds.modularityOptimization.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106407,7 +109947,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.mutate': {
         name: 'gds.node2vec.mutate',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106488,7 +110029,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.mutate.estimate': {
         name: 'gds.node2vec.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106574,7 +110116,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.stream': {
         name: 'gds.node2vec.stream',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106619,7 +110162,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.stream.estimate': {
         name: 'gds.node2vec.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106705,7 +110249,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.write': {
         name: 'gds.node2vec.write',
-        description: 'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
+        description:
+          'The Node2Vec algorithm computes embeddings for nodes based on random walks.',
         mode: 'WRITE',
         worksOnSystem: false,
         signature:
@@ -106780,7 +110325,8 @@ const mockSchema: DbSchema = {
       },
       'gds.node2vec.write.estimate': {
         name: 'gds.node2vec.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -106948,7 +110494,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.mutate.estimate': {
         name: 'gds.nodeSimilarity.filtered.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107110,7 +110657,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.stats.estimate': {
         name: 'gds.nodeSimilarity.filtered.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107248,7 +110796,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.stream.estimate': {
         name: 'gds.nodeSimilarity.filtered.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107416,7 +110965,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.filtered.write.estimate': {
         name: 'gds.nodeSimilarity.filtered.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107584,7 +111134,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.mutate.estimate': {
         name: 'gds.nodeSimilarity.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107746,7 +111297,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.stats.estimate': {
         name: 'gds.nodeSimilarity.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -107884,7 +111436,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.stream.estimate': {
         name: 'gds.nodeSimilarity.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108052,7 +111605,8 @@ const mockSchema: DbSchema = {
       },
       'gds.nodeSimilarity.write.estimate': {
         name: 'gds.nodeSimilarity.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108226,7 +111780,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.mutate.estimate': {
         name: 'gds.pageRank.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108388,7 +111943,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.stats.estimate': {
         name: 'gds.pageRank.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108520,7 +112076,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.stream.estimate': {
         name: 'gds.pageRank.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108694,7 +112251,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pageRank.write.estimate': {
         name: 'gds.pageRank.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108837,7 +112395,8 @@ const mockSchema: DbSchema = {
       },
       'gds.pipeline.exists': {
         name: 'gds.pipeline.exists',
-        description: 'Checks if a given pipeline exists in the pipeline catalog.',
+        description:
+          'Checks if a given pipeline exists in the pipeline catalog.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -108984,7 +112543,8 @@ const mockSchema: DbSchema = {
       },
       'gds.prizeSteinerTree.stream.estimate': {
         name: 'gds.prizeSteinerTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109140,7 +112700,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.mutate.estimate': {
         name: 'gds.randomWalk.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109278,7 +112839,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.stats.estimate': {
         name: 'gds.randomWalk.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109410,7 +112972,8 @@ const mockSchema: DbSchema = {
       },
       'gds.randomWalk.stream.estimate': {
         name: 'gds.randomWalk.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109622,7 +113185,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.mutate.estimate': {
         name: 'gds.scaleProperties.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109771,7 +113335,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.stats.estimate': {
         name: 'gds.scaleProperties.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -109902,7 +113467,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.stream.estimate': {
         name: 'gds.scaleProperties.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110063,7 +113629,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scaleProperties.write.estimate': {
         name: 'gds.scaleProperties.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110231,7 +113798,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.mutate.estimate': {
         name: 'gds.scc.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110387,7 +113955,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.stats.estimate': {
         name: 'gds.scc.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110519,7 +114088,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.stream.estimate': {
         name: 'gds.scc.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110687,7 +114257,8 @@ const mockSchema: DbSchema = {
       },
       'gds.scc.write.estimate': {
         name: 'gds.scc.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -110843,7 +114414,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.mutate.estimate': {
         name: 'gds.shortestPath.astar.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111005,7 +114577,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.stream.estimate': {
         name: 'gds.shortestPath.astar.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111161,7 +114734,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.astar.write.estimate': {
         name: 'gds.shortestPath.astar.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111317,7 +114891,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.mutate.estimate': {
         name: 'gds.shortestPath.dijkstra.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111479,7 +115054,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.stream.estimate': {
         name: 'gds.shortestPath.dijkstra.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111635,7 +115211,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.dijkstra.write.estimate': {
         name: 'gds.shortestPath.dijkstra.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111791,7 +115368,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.mutate.estimate': {
         name: 'gds.shortestPath.yens.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -111953,7 +115531,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.stream.estimate': {
         name: 'gds.shortestPath.yens.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112109,7 +115688,8 @@ const mockSchema: DbSchema = {
       },
       'gds.shortestPath.yens.write.estimate': {
         name: 'gds.shortestPath.yens.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112271,7 +115851,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.mutate.estimate': {
         name: 'gds.sllpa.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112421,7 +116002,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.stats.estimate': {
         name: 'gds.sllpa.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112553,7 +116135,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.stream.estimate': {
         name: 'gds.sllpa.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112715,7 +116298,8 @@ const mockSchema: DbSchema = {
       },
       'gds.sllpa.write.estimate': {
         name: 'gds.sllpa.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -112877,7 +116461,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.mutate.estimate': {
         name: 'gds.spanningTree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113027,7 +116612,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.stats.estimate': {
         name: 'gds.spanningTree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113165,7 +116751,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.stream.estimate': {
         name: 'gds.spanningTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113327,7 +116914,8 @@ const mockSchema: DbSchema = {
       },
       'gds.spanningTree.write.estimate': {
         name: 'gds.spanningTree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113495,7 +117083,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.mutate.estimate': {
         name: 'gds.steinerTree.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113652,7 +117241,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.stats.estimate': {
         name: 'gds.steinerTree.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113791,7 +117381,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.stream.estimate': {
         name: 'gds.steinerTree.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -113960,7 +117551,8 @@ const mockSchema: DbSchema = {
       },
       'gds.steinerTree.write.estimate': {
         name: 'gds.steinerTree.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114047,7 +117639,8 @@ const mockSchema: DbSchema = {
       },
       'gds.systemMonitor': {
         name: 'gds.systemMonitor',
-        description: "Get an overview of the system's workload and available resources",
+        description:
+          "Get an overview of the system's workload and available resources",
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114190,7 +117783,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.mutate.estimate': {
         name: 'gds.triangleCount.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114346,7 +117940,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.stats.estimate': {
         name: 'gds.triangleCount.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114478,7 +118073,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.stream.estimate': {
         name: 'gds.triangleCount.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114646,7 +118242,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangleCount.write.estimate': {
         name: 'gds.triangleCount.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114732,7 +118329,8 @@ const mockSchema: DbSchema = {
       },
       'gds.triangles': {
         name: 'gds.triangles',
-        description: 'Triangles streams the nodeIds of each triangle in the graph.',
+        description:
+          'Triangles streams the nodeIds of each triangle in the graph.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -114935,7 +118533,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.mutate.estimate': {
         name: 'gds.wcc.mutate.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -115091,7 +118690,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.stats.estimate': {
         name: 'gds.wcc.stats.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -115223,7 +118823,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.stream.estimate': {
         name: 'gds.wcc.stream.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:
@@ -115391,7 +118992,8 @@ const mockSchema: DbSchema = {
       },
       'gds.wcc.write.estimate': {
         name: 'gds.wcc.write.estimate',
-        description: 'Returns an estimation of the memory consumption for that procedure.',
+        description:
+          'Returns an estimation of the memory consumption for that procedure.',
         mode: 'READ',
         worksOnSystem: false,
         signature:

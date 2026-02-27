@@ -260,7 +260,8 @@ describe('Completes parameters outside of databases, roles, user names', () => {
   });
 
   test('Suggests parameter in options field of create constraint', () => {
-    const query = 'CREATE CONSTRAINT abc FOR (n:person) REQUIRE n.name IS NOT NULL OPTIONS ';
+    const query =
+      'CREATE CONSTRAINT abc FOR (n:person) REQUIRE n.name IS NOT NULL OPTIONS ';
     testCompletions({
       query,
       dbSchema,
@@ -376,7 +377,10 @@ describe('Completes parameters outside of databases, roles, user names', () => {
       'DEALLOCATE DATABASES FROM SERVERS ',
       'DEALLOCATE DATABASES FROM SERVERS "ab", ',
     ];
-    const optionsCases = ['ENABLE SERVER "abc" OPTIONS ', 'ALTER SERVER "abc" SET OPTIONS '];
+    const optionsCases = [
+      'ENABLE SERVER "abc" OPTIONS ',
+      'ALTER SERVER "abc" SET OPTIONS ',
+    ];
 
     nameCases.forEach((query) => {
       testCompletions({
@@ -442,9 +446,11 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
   test('Does not suggest duplicated parameters', () => {
     const query = 'CREATE ALIAS alias FOR DATABASE ';
-    const actualCompletionList = autocomplete(query, dbSchema, query.length).filter((v) =>
-      v.label.startsWith('$stringParam'),
-    );
+    const actualCompletionList = autocomplete(
+      query,
+      dbSchema,
+      query.length,
+    ).filter((v) => v.label.startsWith('$stringParam'));
 
     expect(actualCompletionList.length).toBe(1);
   });

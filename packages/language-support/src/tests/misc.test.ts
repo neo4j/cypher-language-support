@@ -1,5 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { clampUnsafePositions, SyntaxDiagnostic } from '../syntaxValidation/syntaxValidation';
+import {
+  clampUnsafePositions,
+  SyntaxDiagnostic,
+} from '../syntaxValidation/syntaxValidation';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 describe('Clean positions', () => {
@@ -19,7 +22,12 @@ describe('Clean positions', () => {
       start: 0,
       end: 5,
     });
-    testPositionCoversDoc('MATCH (n) RETURN n;\nMATCH(n) RETURN m', 2, 17, error);
+    testPositionCoversDoc(
+      'MATCH (n) RETURN n;\nMATCH(n) RETURN m',
+      2,
+      17,
+      error,
+    );
   });
 
   test('Cleaning positions should not make any change when position is valid.', () => {
@@ -28,7 +36,12 @@ describe('Clean positions', () => {
       end: 3,
     });
     const text = 'abcdefg \n ababab';
-    const textDoc: TextDocument = TextDocument.create('testDoc.cypher', 'cypher', 0, text);
+    const textDoc: TextDocument = TextDocument.create(
+      'testDoc.cypher',
+      'cypher',
+      0,
+      text,
+    );
     const cleanedError = clampUnsafePositions([error], textDoc)[0];
     expect(cleanedError).toBe(error);
   });
@@ -40,7 +53,12 @@ function testPositionCoversDoc(
   endChar: number,
   error: SyntaxDiagnostic,
 ) {
-  const textDoc: TextDocument = TextDocument.create('testDoc.cypher', 'cypher', 0, text);
+  const textDoc: TextDocument = TextDocument.create(
+    'testDoc.cypher',
+    'cypher',
+    0,
+    text,
+  );
   const cleanedResult = clampUnsafePositions([error], textDoc)[0];
 
   expect(cleanedResult.range.start.line).toBe(0);

@@ -23,7 +23,16 @@ describe('extractNodesAndRels', () => {
       'node2',
     );
 
-    const relationship = new Relationship(3, 1, 2, 'ACTED_IN', {}, 'rel1', 'node1', 'node2');
+    const relationship = new Relationship(
+      3,
+      1,
+      2,
+      'ACTED_IN',
+      {},
+      'rel1',
+      'node1',
+      'node2',
+    );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
@@ -35,11 +44,19 @@ describe('extractNodesAndRels', () => {
 
     const { nodes, relationships } = extractUniqueNodesAndRels([boltRecord]);
 
-    const [graphNodeStart] = nodes.filter((node) => node.elementId.toString() === 'node1');
-    const [graphNodeEnd] = nodes.filter((node) => node.elementId.toString() === 'node2');
+    const [graphNodeStart] = nodes.filter(
+      (node) => node.elementId.toString() === 'node1',
+    );
+    const [graphNodeEnd] = nodes.filter(
+      (node) => node.elementId.toString() === 'node2',
+    );
     const [firstRel] = relationships;
 
-    if (graphNodeStart === undefined || graphNodeEnd === undefined || firstRel === undefined) {
+    if (
+      graphNodeStart === undefined ||
+      graphNodeEnd === undefined ||
+      firstRel === undefined
+    ) {
       throw new Error('Error in test data, got undefined');
     }
 
@@ -76,7 +93,16 @@ describe('extractNodesAndRels', () => {
       },
       'node1',
     );
-    const relationship = new Relationship(2, 1, 34, 'ACTED_IN', {}, 'rel1', 'node1', 'node34');
+    const relationship = new Relationship(
+      2,
+      1,
+      34,
+      'ACTED_IN',
+      {},
+      'rel1',
+      'node1',
+      'node34',
+    );
 
     // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const boltRecord = {
@@ -84,7 +110,9 @@ describe('extractNodesAndRels', () => {
       get: () => [node1, node2, relationship],
     } as unknown as Record;
 
-    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([boltRecord]);
+    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([
+      boltRecord,
+    ]);
     expect(limitHit).toBe(false);
     expect(nodes.length).toBe(1);
     expect(relationships.length).toBe(0);
@@ -107,7 +135,16 @@ describe('extractNodesAndRels', () => {
       },
       'node2',
     );
-    const relationship = new Relationship(3, 1, 2, 'ACTED_IN', {}, 'rel1', 'node1', 'node2');
+    const relationship = new Relationship(
+      3,
+      1,
+      2,
+      'ACTED_IN',
+      {},
+      'rel1',
+      'node1',
+      'node2',
+    );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
@@ -117,9 +154,12 @@ describe('extractNodesAndRels', () => {
       get: () => path,
     } as unknown as Record;
 
-    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([boltRecord], {
-      nodeLimit: 1,
-    });
+    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(
+      [boltRecord],
+      {
+        nodeLimit: 1,
+      },
+    );
     expect(limitHit).toBe(true);
     expect(nodes.length).toBe(1);
     const [graphNodeStart] = nodes;
@@ -149,7 +189,16 @@ describe('extractNodesAndRels', () => {
       },
       'node2',
     );
-    const relationship = new Relationship(3, 1, 2, 'ACTED_IN', {}, 'rel1', 'node1', 'node2');
+    const relationship = new Relationship(
+      3,
+      1,
+      2,
+      'ACTED_IN',
+      {},
+      'rel1',
+      'node1',
+      'node2',
+    );
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
@@ -159,10 +208,13 @@ describe('extractNodesAndRels', () => {
       get: () => path,
     } as unknown as Record;
 
-    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([boltRecord], {
-      nodeLimit: 1,
-      keepDanglingRels: true,
-    });
+    const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(
+      [boltRecord],
+      {
+        nodeLimit: 1,
+        keepDanglingRels: true,
+      },
+    );
     expect(limitHit).toBe(true);
     expect(nodes.length).toBe(1);
     const [graphNodeStart] = nodes;

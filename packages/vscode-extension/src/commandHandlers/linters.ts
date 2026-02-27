@@ -17,8 +17,12 @@ import { getFilesInExtensionStorage } from '../linterService';
 export async function manuallyAdjustLinter(): Promise<void> {
   const npmReleases = await getTaggedRegistryVersions();
   const fileNames = await getFilesInExtensionStorage();
-  const npmLinterVersions = npmReleases.map((release) => npmTagToLinterVersion(release.tag));
-  const existingVersions = fileNames.map((name) => linterFileToServerVersion(name));
+  const npmLinterVersions = npmReleases.map((release) =>
+    npmTagToLinterVersion(release.tag),
+  );
+  const existingVersions = fileNames.map((name) =>
+    linterFileToServerVersion(name),
+  );
   const allVersions = new Set(
     existingVersions.concat(npmLinterVersions).filter((v) => v !== undefined),
   );

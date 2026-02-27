@@ -27,7 +27,11 @@ export enum CypherTokenType {
   setting = 'setting',
 }
 
-export const lexerSettingValues = [CypherLexer.ACYCLIC, CypherLexer.TRAIL, CypherLexer.WALK];
+export const lexerSettingValues = [
+  CypherLexer.ACYCLIC,
+  CypherLexer.TRAIL,
+  CypherLexer.WALK,
+];
 
 export const lexerOperators = [
   CypherLexer.AMPERSAND,
@@ -85,7 +89,11 @@ export const lexerStringLiteral = [
   CypherLexer.OBFUSCATION,
 ];
 
-export const lexerGarbage = [CypherLexer.ErrorChar, CypherLexer.EOF, CypherLexer.SPACE];
+export const lexerGarbage = [
+  CypherLexer.ErrorChar,
+  CypherLexer.EOF,
+  CypherLexer.SPACE,
+];
 
 export const identifier = [
   CypherLexer.IDENTIFIER,
@@ -93,7 +101,10 @@ export const identifier = [
   CypherLexer.EXTENDED_IDENTIFIER,
 ];
 
-export const lexerComment = [CypherLexer.MULTI_LINE_COMMENT, CypherLexer.SINGLE_LINE_COMMENT];
+export const lexerComment = [
+  CypherLexer.MULTI_LINE_COMMENT,
+  CypherLexer.SINGLE_LINE_COMMENT,
+];
 
 export const lexerKeywords = [
   CypherLexer.ACCESS,
@@ -452,7 +463,11 @@ const { literalNames, symbolicNames } = CypherLexer;
 const length = Math.max(literalNames.length, symbolicNames.length);
 
 export const tokenNames: string[] = Array.from({ length }).map(
-  (_, i) => hasIncorrectSymbolicName[i] ?? literalNames[i] ?? symbolicNames[i] ?? '<INVALID',
+  (_, i) =>
+    hasIncorrectSymbolicName[i] ??
+    literalNames[i] ??
+    symbolicNames[i] ??
+    '<INVALID',
 );
 
 export const keywordNames = new Set(lexerKeywords.map((i) => tokenNames[i]));

@@ -10,7 +10,11 @@ import { join } from 'path';
 import { Diagnostic } from 'vscode-languageserver';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import { convertDbSchema, LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import {
+  convertDbSchema,
+  LinterTask,
+  LintWorker,
+} from '@neo4j-cypher/lint-worker';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
@@ -55,11 +59,18 @@ async function rawLintDocument(
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
     const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
-    lastSemanticJob = proxyWorker.lintCypherQuery(query, fixedDbSchema, _internalFeatureFlags);
+    lastSemanticJob = proxyWorker.lintCypherQuery(
+      query,
+      fixedDbSchema,
+      _internalFeatureFlags,
+    );
     const result = await lastSemanticJob;
 
     //marks the entire text if any position is negative
-    const positionSafeResult = clampUnsafePositions(result.diagnostics, document);
+    const positionSafeResult = clampUnsafePositions(
+      result.diagnostics,
+      document,
+    );
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
@@ -80,10 +91,14 @@ async function rawLintDocument(
   }
 }
 
-export const lintDocument: typeof rawLintDocument = debounce(rawLintDocument, 600, {
-  leading: false,
-  trailing: true,
-});
+export const lintDocument: typeof rawLintDocument = debounce(
+  rawLintDocument,
+  600,
+  {
+    leading: false,
+    trailing: true,
+  },
+);
 
 export const cleanupWorkers = async () => {
   await pool.terminate();

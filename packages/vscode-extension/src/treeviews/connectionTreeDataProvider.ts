@@ -16,12 +16,16 @@ import {
   getConnectionDatabases,
 } from './../connectionService';
 
-export type ConnectionItemType = 'connection' | 'activeConnection' | 'database' | 'activeDatabase';
+export type ConnectionItemType =
+  | 'connection'
+  | 'activeConnection'
+  | 'database'
+  | 'activeDatabase';
 
 export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
-  private _onDidChangeTreeData: EventEmitter<ConnectionItem | undefined | void> = new EventEmitter<
+  private _onDidChangeTreeData: EventEmitter<
     ConnectionItem | undefined | void
-  >();
+  > = new EventEmitter<ConnectionItem | undefined | void>();
   readonly onDidChangeTreeData: Event<ConnectionItem | undefined | void> =
     this._onDidChangeTreeData.event;
 
@@ -81,7 +85,9 @@ export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionIt
     return connectionItems;
   }
 
-  private getDatabaseConnectionItems(element: ConnectionItem): ConnectionItem[] {
+  private getDatabaseConnectionItems(
+    element: ConnectionItem,
+  ): ConnectionItem[] {
     const connection = getConnectionByKey(element.key);
 
     if (!connection) {
@@ -92,26 +98,48 @@ export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionIt
 
     getConnectionDatabases().forEach(
       (database: Pick<Database, 'name' | 'default' | 'home' | 'aliases'>) => {
-        const name: string = database.home ? `${database.name} 🏠` : database.name;
+        const name: string = database.home
+          ? `${database.name} 🏠`
+          : database.name;
 
         const activeDatabase: boolean =
-          database.name === connection.database || (!connection.database && database.default);
+          database.name === connection.database ||
+          (!connection.database && database.default);
 
         const description: string = activeDatabase ? 'active' : '';
 
-        const type: ConnectionItemType = activeDatabase ? 'activeDatabase' : 'database';
+        const type: ConnectionItemType = activeDatabase
+          ? 'activeDatabase'
+          : 'database';
 
         dbs.push(
-          new ConnectionItem(type, name, description, TreeItemCollapsibleState.None, database.name),
+          new ConnectionItem(
+            type,
+            name,
+            description,
+            TreeItemCollapsibleState.None,
+            database.name,
+          ),
         );
         const aliases = database.aliases ?? [];
         aliases.forEach((alias) => {
           const activeDatabase: boolean = alias === connection.database;
-          const type: ConnectionItemType = activeDatabase ? 'activeDatabase' : 'database';
+          const type: ConnectionItemType = activeDatabase
+            ? 'activeDatabase'
+            : 'database';
           const description: string =
-            (activeDatabase ? 'active ' : '') + '(Alias for "' + database.name + '")';
+            (activeDatabase ? 'active ' : '') +
+            '(Alias for "' +
+            database.name +
+            '")';
           dbs.push(
-            new ConnectionItem(type, alias, description, TreeItemCollapsibleState.None, alias),
+            new ConnectionItem(
+              type,
+              alias,
+              description,
+              TreeItemCollapsibleState.None,
+              alias,
+            ),
           );
         });
       },
@@ -127,7 +155,9 @@ export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionIt
 
     const nameString = connection.name ?? '';
 
-    return nameString ? `${nameString} [${connectionString}]` : connectionString;
+    return nameString
+      ? `${nameString} [${connectionString}]`
+      : connectionString;
   }
 }
 
@@ -156,19 +186,45 @@ export class ConnectionItem extends TreeItem {
       case 'activeConnection':
         this.iconPath = {
           light: Uri.file(
-            path.join(__dirname, '..', 'resources', 'images', 'Neo4jActiveLight.svg'),
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jActiveLight.svg',
+            ),
           ),
-          dark: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'Neo4jActiveDark.svg')),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jActiveDark.svg',
+            ),
+          ),
         };
         this.id = `${key}${collapsibleState}`;
         break;
       case 'connection':
         this.iconPath = {
           light: Uri.file(
-            path.join(__dirname, '..', 'resources', 'images', 'Neo4jInactiveLight.svg'),
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jInactiveLight.svg',
+            ),
           ),
           dark: Uri.file(
-            path.join(__dirname, '..', 'resources', 'images', 'Neo4jInactiveDark.svg'),
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'Neo4jInactiveDark.svg',
+            ),
           ),
         };
         this.id = `${key}${collapsibleState}`;
@@ -181,17 +237,47 @@ export class ConnectionItem extends TreeItem {
       case 'activeDatabase':
         this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
         this.iconPath = {
-          light: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'ConnectedLight.svg')),
-          dark: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'ConnectedDark.svg')),
+          light: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'ConnectedLight.svg',
+            ),
+          ),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'ConnectedDark.svg',
+            ),
+          ),
         };
         break;
       case 'database':
         this.resourceUri = Uri.from({ scheme: '', query: `type=${this.type}` });
         this.iconPath = {
           light: Uri.file(
-            path.join(__dirname, '..', 'resources', 'images', 'DisconnectedLight.svg'),
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'DisconnectedLight.svg',
+            ),
           ),
-          dark: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'DisconnectedDark.svg')),
+          dark: Uri.file(
+            path.join(
+              __dirname,
+              '..',
+              'resources',
+              'images',
+              'DisconnectedDark.svg',
+            ),
+          ),
         };
         this.command = {
           title: 'onClickDbConnect',

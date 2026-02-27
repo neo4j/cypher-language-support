@@ -7,7 +7,12 @@ export { _internalFeatureFlags } from './featureFlags';
 export { formatQuery } from './formatting/formatting';
 export { antlrUtils } from './helpers';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols';
-export { parse, parseParameters, parserWrapper, parseStatementsStrs } from './parserWrapper';
+export {
+  parse,
+  parseParameters,
+  parserWrapper,
+  parseStatementsStrs,
+} from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,
@@ -15,7 +20,10 @@ export {
   syntaxColouringLegend,
 } from './syntaxColouring/syntaxColouring';
 export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
-export { lintCypherQuery, clampUnsafePositions } from './syntaxValidation/syntaxValidation';
+export {
+  lintCypherQuery,
+  clampUnsafePositions,
+} from './syntaxValidation/syntaxValidation';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 export { testData } from './tests/testData';
 export { textMateGrammar } from './textMateGrammar';

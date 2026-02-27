@@ -13,7 +13,9 @@ import {
 
 //** Checks that the query result for each statement containts the expected summaries in query details.
 // If we pass an expected summary that is undefined we expect an empty result from query execution */
-export async function expectSummariesContain(expectedSubstrings: (string | undefined)[]) {
+export async function expectSummariesContain(
+  expectedSubstrings: (string | undefined)[],
+) {
   const queryDetails = await $$('#queryDetails .collapsible');
   await expect(queryDetails.length).toBe(expectedSubstrings.length);
 
@@ -21,7 +23,8 @@ export async function expectSummariesContain(expectedSubstrings: (string | undef
     const queryDetail = (await $$('#queryDetails .collapsible'))[i];
     //This matches the expand/collapse button, but we only want to click when collapsed
     const expandButton = await queryDetail.$('button[aria-label*="statement"]');
-    const isCollapsed = (await expandButton.getAttribute('aria-expanded')) === 'false';
+    const isCollapsed =
+      (await expandButton.getAttribute('aria-expanded')) === 'false';
     if (isCollapsed) {
       await expandButton.click();
     }
@@ -73,7 +76,10 @@ suite('Params panel testing', () => {
   async function forceDeleteParam(key: string) {
     await browser.executeWorkbench(async (vscode, key: string) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.commands.executeCommand('neo4j.internal.forceDeleteParam', key);
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceDeleteParam',
+        key,
+      );
     }, key);
   }
 
@@ -81,7 +87,11 @@ suite('Params panel testing', () => {
     await browser.executeWorkbench(
       async (vscode, key: string, value: string) => {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-        await vscode.commands.executeCommand('neo4j.internal.evalParam', key, value);
+        await vscode.commands.executeCommand(
+          'neo4j.internal.evalParam',
+          key,
+          value,
+        );
       },
       key,
       value,
@@ -111,7 +121,10 @@ suite('Params panel testing', () => {
   async function forceSwitchDatabase(database: string) {
     await browser.executeWorkbench(async (vscode, database: string) => {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-      await vscode.commands.executeCommand('neo4j.internal.forceSwitchDatabase', database);
+      await vscode.commands.executeCommand(
+        'neo4j.internal.forceSwitchDatabase',
+        database,
+      );
     }, database);
     await waitUntilNotification(browser, `Switched to database '${database}'.`);
   }
@@ -141,7 +154,9 @@ suite('Params panel testing', () => {
     await escapeModal(4);
 
     await checkResultsContent(workbench, true, async () => {
-      await expectSummariesContain(['Expected parameter(s): a, b, some param, some-param']);
+      await expectSummariesContain([
+        'Expected parameter(s): a, b, some param, some-param',
+      ]);
     });
   });
 
@@ -151,7 +166,10 @@ suite('Params panel testing', () => {
     // This tries to add the params with the window prompts we cannot manipulate in the tests
     // but it will fail before showing those prompts because we are not connected to the database
     void addParamWithInputBox();
-    await waitUntilNotification(browser, 'You need to be connected to neo4j to set parameters.');
+    await waitUntilNotification(
+      browser,
+      'You need to be connected to neo4j to set parameters.',
+    );
 
     await ensureNotificationsAreDismissed(browser);
     const connectionSection = await getConnectionSection(workbench);
@@ -191,7 +209,13 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
     await checkResultsContent(workbench, false, async () => {
-      await expectTableContent(['abra', 'caterpie', 'pikachu', 'bulbasaur', 'abracaterpie']);
+      await expectTableContent([
+        'abra',
+        'caterpie',
+        'pikachu',
+        'bulbasaur',
+        'abracaterpie',
+      ]);
     });
   });
 

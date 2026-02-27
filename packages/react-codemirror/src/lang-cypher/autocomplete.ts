@@ -1,6 +1,16 @@
-import { Completion, CompletionSource, snippet } from '@codemirror/autocomplete';
-import { autocomplete, shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
-import { CompletionItemKind, CompletionItemTag } from 'vscode-languageserver-types';
+import {
+  Completion,
+  CompletionSource,
+  snippet,
+} from '@codemirror/autocomplete';
+import {
+  autocomplete,
+  shouldAutoCompleteYield,
+} from '@neo4j-cypher/language-support';
+import {
+  CompletionItemKind,
+  CompletionItemTag,
+} from 'vscode-languageserver-types';
 import { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
@@ -38,9 +48,9 @@ const completionKindToCodemirrorIcon = (c: CompletionItemKind) => {
   return map[c];
 };
 
-export const completionStyles: (completion: Completion & { deprecated?: boolean }) => string = (
-  completion,
-) => {
+export const completionStyles: (
+  completion: Completion & { deprecated?: boolean },
+) => string = (completion) => {
   if (completion.deprecated) {
     return 'cm-deprecated-element';
   } else {
@@ -58,7 +68,10 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const lastWord = context.matchBefore(/\w*/);
     const inWord = lastWord.from !== lastWord.to;
     const shouldTriggerCompletion =
-      inWord || context.explicit || triggerCharacters.includes(lastCharacter) || yieldTriggered;
+      inWord ||
+      context.explicit ||
+      triggerCharacters.includes(lastCharacter) ||
+      yieldTriggered;
 
     if (config.useLightVersion && !context.explicit) {
       return null;
@@ -68,7 +81,12 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(documentText, config.schema ?? {}, offset, context.explicit);
+    const options = autocomplete(
+      documentText,
+      config.schema ?? {},
+      offset,
+      context.explicit,
+    );
 
     return {
       from: context.matchBefore(/(\w)*$/).from,
@@ -101,11 +119,14 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
             info: () => Promise.resolve(newDiv),
           };
         }
-        const deprecated = o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
+        const deprecated =
+          o.tags?.find((tag) => tag === CompletionItemTag.Deprecated) ?? false;
         // The negative boost moves the deprecation down the list
         // so we offer the user the completions that are
         // deprecated the last
-        const maybeDeprecated = deprecated ? { boost: -99, deprecated: true } : {};
+        const maybeDeprecated = deprecated
+          ? { boost: -99, deprecated: true }
+          : {};
 
         return {
           label: o.insertText ? o.insertText : o.label,

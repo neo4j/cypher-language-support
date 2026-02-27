@@ -300,10 +300,13 @@ describe('Function syntax colouring', () => {
   test.each(['all', 'any', 'none', 'single'])(
     'Colours %s list predicate as a function',
     (listPredicate) => {
-      const query = 'RETURN ' + listPredicate + '(x IN coll WHERE x.property IS NOT NULL)';
+      const query =
+        'RETURN ' + listPredicate + '(x IN coll WHERE x.property IS NOT NULL)';
 
       const tokens = applySyntaxColouring(query);
-      expect(tokens.find((t) => t.tokenType === CypherTokenType.predicateFunction)).toEqual({
+      expect(
+        tokens.find((t) => t.tokenType === CypherTokenType.predicateFunction),
+      ).toEqual({
         bracketInfo: undefined,
         length: listPredicate.length,
         position: { line: 0, startCharacter: 7, startOffset: 7 },

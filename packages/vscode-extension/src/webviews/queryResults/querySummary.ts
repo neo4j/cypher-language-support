@@ -10,7 +10,9 @@ export function querySummary(result: QueryResultWithLimit): string[] {
     // Started streaming 1 records after 5 ms and completed after 10  ms.
     output.push(
       `${
-        result.recordLimitHit ? `Fetch limit hit at ${result.records.length} records. ` : ''
+        result.recordLimitHit
+          ? `Fetch limit hit at ${result.records.length} records. `
+          : ''
       }Started streaming ${rows} record${
         rows === 1 ? '' : 's'
       } after ${result.summary.resultConsumedAfter.toString()} ms and completed after ${result.summary.resultAvailableAfter.toString()}ms.`,
@@ -26,7 +28,9 @@ export function querySummary(result: QueryResultWithLimit): string[] {
       const count = updateCounts[key];
       if (count > 0) {
         const parts = key.split(/(?=[A-Z])/);
-        updates.push(`${count} ${parts.map((value) => value.toLowerCase()).join(' ')}`);
+        updates.push(
+          `${count} ${parts.map((value) => value.toLowerCase()).join(' ')}`,
+        );
       }
     }
 

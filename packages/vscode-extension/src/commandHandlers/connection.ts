@@ -40,7 +40,10 @@ export async function saveConnectionAndDisplayConnectionResult(
     return;
   }
 
-  const result = await saveConnectionAndUpdateDatabaseConnection(connection, password);
+  const result = await saveConnectionAndUpdateDatabaseConnection(
+    connection,
+    password,
+  );
   const errorDetail = result?.error?.friendlyMessage;
 
   if (!result.success) {
@@ -88,7 +91,9 @@ export async function showConnectionPanelForConnectionItem(
   const connection: Connection = connectionItem
     ? getConnectionByKey(connectionItem.key)
     : undefined;
-  const password: string = connection ? await getPasswordForConnection(connection.key) : '';
+  const password: string = connection
+    ? await getPasswordForConnection(connection.key)
+    : '';
 
   ConnectionPanel.createOrShow(context.extensionPath, connection, password);
 }
@@ -108,7 +113,9 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
 
   if (result === 'Yes') {
     await deleteConnectionAndUpdateDatabaseConnection(connectionItem.key);
-    void commands.executeCommand(CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
+    void commands.executeCommand(
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
     void window.showInformationMessage(CONSTANTS.MESSAGES.CONNECTION_DELETED);
   }
 }
@@ -137,7 +144,9 @@ export async function toggleConnectionItemsConnectionState(
  * @param connectionItem The ConnectionItem of the database to switch to.
  * @returns A promise that resolves when the handler has completed.
  */
-export async function switchToDatabase(connectionItem: ConnectionItem): Promise<void> {
+export async function switchToDatabase(
+  connectionItem: ConnectionItem,
+): Promise<void> {
   if (connectionItem.type !== 'database') {
     return;
   }
@@ -145,7 +154,9 @@ export async function switchToDatabase(connectionItem: ConnectionItem): Promise<
   await switchToDatabaseWithName(database);
 }
 
-export async function switchToDatabaseWithName(database: string): Promise<void> {
+export async function switchToDatabaseWithName(
+  database: string,
+): Promise<void> {
   const connection = getActiveConnection();
   const result = await switchDatabase({ ...connection, database });
   displayMessageForSwitchDatabaseResult(database, result);
@@ -192,7 +203,9 @@ export async function runCypher(
     const activeConnection = getActiveConnection();
 
     if (!activeConnection) {
-      void window.showErrorMessage(CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EXECUTION);
+      void window.showErrorMessage(
+        CONSTANTS.MESSAGES.ERROR_DISCONNECTED_EXECUTION,
+      );
 
       return;
     }
@@ -211,7 +224,10 @@ export function getCurrentStatement(): string | undefined {
 }
 
 //exported for testing
-export function getStatementAtCaret(input: string, caretOffset: number): string {
+export function getStatementAtCaret(
+  input: string,
+  caretOffset: number,
+): string {
   const statements = parserWrapper.parse(input);
   // Since the find goes through the statements in order this will work out.
   let currentStatement = statements.statementsParsing.find((statement) => {

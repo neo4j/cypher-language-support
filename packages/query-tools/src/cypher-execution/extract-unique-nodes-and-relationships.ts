@@ -1,4 +1,11 @@
-import type { Integer, Node, Path, Record, RecordShape, Relationship } from 'neo4j-driver';
+import type {
+  Integer,
+  Node,
+  Path,
+  Record,
+  RecordShape,
+  Relationship,
+} from 'neo4j-driver';
 import { isNode, isPath, isRelationship } from 'neo4j-driver';
 import { CypherProperty } from '../types/cypher-data-types';
 
@@ -33,7 +40,10 @@ export type DeduplicatedNodesAndRels = {
  */
 export const extractUniqueNodesAndRels = (
   records: Record[],
-  { nodeLimit, keepDanglingRels = false }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
+  {
+    nodeLimit,
+    keepDanglingRels = false,
+  }: { nodeLimit?: number; keepDanglingRels?: boolean } = {},
 ): DeduplicatedNodesAndRels => {
   let limitHit = false;
 

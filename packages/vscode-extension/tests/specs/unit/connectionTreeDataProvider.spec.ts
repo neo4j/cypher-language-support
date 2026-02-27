@@ -57,13 +57,19 @@ suite('Connection tree data provider spec', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox.stub(connectionService, 'getAllConnections').returns(mockConnections);
+    sandbox
+      .stub(connectionService, 'getAllConnections')
+      .returns(mockConnections);
 
-    sandbox.stub(connectionService, 'getConnectionByKey').callsFake((key: string) => {
-      return mockConnections.find((connection) => connection.key === key);
-    });
+    sandbox
+      .stub(connectionService, 'getConnectionByKey')
+      .callsFake((key: string) => {
+        return mockConnections.find((connection) => connection.key === key);
+      });
 
-    sandbox.stub(connectionService, 'getConnectionDatabases').returns(mockDatabases as Database[]);
+    sandbox
+      .stub(connectionService, 'getConnectionDatabases')
+      .returns(mockDatabases as Database[]);
   });
 
   afterEach(() => {
@@ -81,7 +87,9 @@ suite('Connection tree data provider spec', () => {
 
   test('An active Connection should have a list of child databases, including aliases', () => {
     const children = connectionTreeDataProvider.getChildren();
-    const connection = children.find((child) => child.key === 'test-connection');
+    const connection = children.find(
+      (child) => child.key === 'test-connection',
+    );
 
     const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
@@ -90,7 +98,9 @@ suite('Connection tree data provider spec', () => {
 
   test('An active Connection should show the default database as active if no database is specified', () => {
     const children = connectionTreeDataProvider.getChildren();
-    const connection = children.find((child) => child.key === 'test-connection');
+    const connection = children.find(
+      (child) => child.key === 'test-connection',
+    );
     const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     const database = { ...databases.find((child) => child.key === 'neo4j') };
@@ -105,7 +115,9 @@ suite('Connection tree data provider spec', () => {
 
   test('An active Connection should show the specified database as active', () => {
     const children = connectionTreeDataProvider.getChildren();
-    const connection = children.find((child) => child.key === 'test-connection-2');
+    const connection = children.find(
+      (child) => child.key === 'test-connection-2',
+    );
     const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     const database = { ...databases.find((child) => child.key === 'schemas') };
@@ -120,7 +132,9 @@ suite('Connection tree data provider spec', () => {
 
   test('An alias should show the name of the db it is an alias for', () => {
     const children = connectionTreeDataProvider.getChildren();
-    const connection = children.find((child) => child.key === 'test-connection-2');
+    const connection = children.find(
+      (child) => child.key === 'test-connection-2',
+    );
     const databases = connectionTreeDataProvider.getChildren({ ...connection });
 
     const database = { ...databases.find((child) => child.key === 'main') };

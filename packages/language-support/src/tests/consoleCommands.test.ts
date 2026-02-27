@@ -4,9 +4,14 @@ import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
 import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
 import { testData } from './testData';
 
-function expectParsedCommands(query: string, toEqual: ParsedCommandNoPosition[]) {
+function expectParsedCommands(
+  query: string,
+  toEqual: ParsedCommandNoPosition[],
+) {
   const result = parserWrapper.parse(query);
-  expect(result.statementsParsing.flatMap((statement) => statement.syntaxErrors)).toEqual([]);
+  expect(
+    result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
+  ).toEqual([]);
   expect(
     result.statementsParsing
       .flatMap((statement) => [statement.command])
@@ -24,7 +29,9 @@ function expectParsedCommands(query: string, toEqual: ParsedCommandNoPosition[])
 function expectErrorMessage(query: string, msg: string) {
   const result = parserWrapper.parse(query);
   expect(
-    result.statementsParsing.flatMap((statement) => statement.syntaxErrors).map((e) => e.message),
+    result.statementsParsing
+      .flatMap((statement) => statement.syntaxErrors)
+      .map((e) => e.message),
   ).toContain(msg);
 }
 
@@ -248,7 +255,10 @@ describe('sanity checks', () => {
   });
 
   test('accepts trailing ; ', () => {
-    expectParsedCommands(':history;', [{ type: 'history' }, { type: 'cypher', statement: '' }]);
+    expectParsedCommands(':history;', [
+      { type: 'history' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('parses multiple cmds', () => {
@@ -260,11 +270,17 @@ describe('sanity checks', () => {
   });
 
   test('accepts upper case', () => {
-    expectParsedCommands(':HISTORY;', [{ type: 'history' }, { type: 'cypher', statement: '' }]);
+    expectParsedCommands(':HISTORY;', [
+      { type: 'history' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('accepts mixed case', () => {
-    expectParsedCommands(':cLeaR;', [{ type: 'clear' }, { type: 'cypher', statement: '' }]);
+    expectParsedCommands(':cLeaR;', [
+      { type: 'clear' },
+      { type: 'cypher', statement: '' },
+    ]);
   });
 
   test('handles misspelled or non-existing command', () => {
@@ -295,7 +311,9 @@ describe(':use', () => {
   });
 
   test('completes database & alias names', () => {
-    expect(autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] })).toEqual([
+    expect(
+      autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] }),
+    ).toEqual([
       { kind: 12, label: 'foo' },
       { kind: 12, label: 'bar' },
     ]);
@@ -519,7 +537,10 @@ describe('parameters', () => {
   test('incorrect usage of :params', () => {
     expectErrorMessage(':param x=21', "Expected '>'");
     expectErrorMessage(':param x=>', 'Expected an expression');
-    expectErrorMessage(':param {a: 3', "Expected any of '}', ',', AND, OR, XOR or an expression");
+    expectErrorMessage(
+      ':param {a: 3',
+      "Expected any of '}', ',', AND, OR, XOR or an expression",
+    );
     expectErrorMessage(':param RETURN', "Expected '='");
     expectErrorMessage(':param RETURN b', "Expected '='");
     expectErrorMessage(':param b => ', 'Expected an expression');
@@ -712,8 +733,12 @@ describe('server', () => {
   });
 
   test('basic server usage', () => {
-    expectParsedCommands(':server connect', [{ type: 'server', operation: 'connect' }]);
-    expectParsedCommands(':server disconnect', [{ type: 'server', operation: 'disconnect' }]);
+    expectParsedCommands(':server connect', [
+      { type: 'server', operation: 'connect' },
+    ]);
+    expectParsedCommands(':server disconnect', [
+      { type: 'server', operation: 'disconnect' },
+    ]);
   });
 
   test('autocompletes operation', () => {
@@ -836,17 +861,20 @@ describe('command parser also handles cypher', () => {
   });
 
   test('can weave cypher with cmds', () => {
-    expectParsedCommands(':use neo4j; :param x => 23;RETURN $x;:use system; SHOW DATABASES; ', [
-      { database: 'neo4j', type: 'use' },
-      {
-        parameters: [{ name: 'x', expression: '23' }],
-        type: 'set-parameters',
-      },
-      { statement: 'RETURN $x', type: 'cypher' },
-      { database: 'system', type: 'use' },
-      { statement: 'SHOW DATABASES', type: 'cypher' },
-      { statement: '', type: 'cypher' },
-    ]);
+    expectParsedCommands(
+      ':use neo4j; :param x => 23;RETURN $x;:use system; SHOW DATABASES; ',
+      [
+        { database: 'neo4j', type: 'use' },
+        {
+          parameters: [{ name: 'x', expression: '23' }],
+          type: 'set-parameters',
+        },
+        { statement: 'RETURN $x', type: 'cypher' },
+        { database: 'system', type: 'use' },
+        { statement: 'SHOW DATABASES', type: 'cypher' },
+        { statement: '', type: 'cypher' },
+      ],
+    );
   });
 });
 
@@ -863,7 +891,9 @@ describe('style', () => {
   });
 
   test('parses style reset', () => {
-    expectParsedCommands(':style reset', [{ type: 'style', operation: 'reset' }]);
+    expectParsedCommands(':style reset', [
+      { type: 'style', operation: 'reset' },
+    ]);
   });
 });
 
@@ -880,11 +910,17 @@ describe('access-mode', () => {
   });
 
   test('basic access-mode usage', () => {
-    expectParsedCommands(':access-mode', [{ type: 'access-mode', operation: undefined }]);
+    expectParsedCommands(':access-mode', [
+      { type: 'access-mode', operation: undefined },
+    ]);
 
-    expectParsedCommands(':access-mode read', [{ type: 'access-mode', operation: 'read' }]);
+    expectParsedCommands(':access-mode read', [
+      { type: 'access-mode', operation: 'read' },
+    ]);
 
-    expectParsedCommands(':access-mode write', [{ type: 'access-mode', operation: 'write' }]);
+    expectParsedCommands(':access-mode write', [
+      { type: 'access-mode', operation: 'write' },
+    ]);
   });
 
   test('highlights :access-mode properly', () => {
@@ -985,6 +1021,9 @@ describe('access-mode', () => {
   });
 
   test('incorrect usage of :access-mode', () => {
-    expectErrorMessage(':access-mode xyz', "Expected any of ';', read or write");
+    expectErrorMessage(
+      ':access-mode xyz',
+      "Expected any of ';', read or write",
+    );
   });
 });

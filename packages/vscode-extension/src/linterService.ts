@@ -1,4 +1,7 @@
-import { linterFileToServerVersion, NpmRelease } from '@neo4j-cypher/lint-worker';
+import {
+  linterFileToServerVersion,
+  NpmRelease,
+} from '@neo4j-cypher/lint-worker';
 import { getExtensionContext } from './contextService';
 import * as vscode from 'vscode';
 import { sendNotificationToLanguageClient } from './languageClientService';
@@ -16,7 +19,9 @@ export async function getFilesInExtensionStorage(): Promise<string[]> {
       .filter(([, fileType]) => fileType === vscode.FileType.File)
       .map(([name]) => name);
   } catch (err) {
-    void vscode.window.showErrorMessage(CONSTANTS.MESSAGES.GLOBALSTORAGE_READ_FAILED);
+    void vscode.window.showErrorMessage(
+      CONSTANTS.MESSAGES.GLOBALSTORAGE_READ_FAILED,
+    );
     return [];
   }
 }
@@ -27,9 +32,14 @@ export async function getFilesInExtensionStorage(): Promise<string[]> {
  * @param fileName The name of the linter file, e.g. "5.20.0-lintWorker-0.0.0.cjs".
  * @param storageUri The uri pointing to the vscode global storage of the extension.
  */
-export async function switchWorkerOnLanguageServer(fileName?: string, storageUri?: vscode.Uri) {
+export async function switchWorkerOnLanguageServer(
+  fileName?: string,
+  storageUri?: vscode.Uri,
+) {
   const linterPath =
-    fileName && storageUri ? vscode.Uri.joinPath(storageUri, fileName).fsPath : undefined;
+    fileName && storageUri
+      ? vscode.Uri.joinPath(storageUri, fileName).fsPath
+      : undefined;
   const linterVersion = linterFileToServerVersion(fileName);
   await sendNotificationToLanguageClient('updateLintWorker', {
     lintWorkerPath: linterPath,
@@ -54,13 +64,17 @@ export async function downloadLintWorker(
   storageUri: vscode.Uri,
   npmReleases: NpmRelease[],
 ): Promise<{ success: false } | { success: true; fileName?: string }> {
-  void vscode.window.showInformationMessage(`Downloading linter ${linterVersion} for your server`);
+  void vscode.window.showInformationMessage(
+    `Downloading linter ${linterVersion} for your server`,
+  );
 
   const newestLegacyLinter = npmReleases?.find(
     (release) => release.tag === `neo4j-${linterVersion}`,
   );
   if (!newestLegacyLinter) {
-    void vscode.window.showErrorMessage(CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE);
+    void vscode.window.showErrorMessage(
+      CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
+    );
     return { success: false };
   }
   const fileName = `${linterVersion}-lintWorker-${newestLegacyLinter.version}.cjs`;
@@ -91,7 +105,9 @@ export async function downloadLintWorker(
     await vscode.workspace.fs.delete(newFolderUri, { recursive: true });
     return { success: true, fileName: fileName };
   } catch (error) {
-    void vscode.window.showErrorMessage(CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED);
+    void vscode.window.showErrorMessage(
+      CONSTANTS.MESSAGES.LINTER_DOWNLOAD_FAILED,
+    );
     return { success: false };
   }
 }
@@ -107,7 +123,10 @@ export async function deleteOutdatedLinters(
       .map((name) => [linterFileToServerVersion(name), name])
       .filter(
         (v): v is [string, string] =>
-          v !== undefined && v.length === 2 && v[0] === linterVersion && v[1] !== newFile,
+          v !== undefined &&
+          v.length === 2 &&
+          v[0] === linterVersion &&
+          v[1] !== newFile,
       ),
   );
   for (const [, fileName] of Object.entries(outDatedLinters)) {

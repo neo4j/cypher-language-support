@@ -11,18 +11,26 @@ import {
   rangeToString,
   toggleLinting,
 } from '../../helpers';
-import { connectDefault, neo4j2025ConnectionKey, disconnectDefault } from '../../suiteSetup';
+import {
+  connectDefault,
+  neo4j2025ConnectionKey,
+  disconnectDefault,
+} from '../../suiteSetup';
 
 type InclusionTestArgs = {
   docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
 };
 
-export async function testSyntaxValidation({ docUri, expected }: InclusionTestArgs) {
+export async function testSyntaxValidation({
+  docUri,
+  expected,
+}: InclusionTestArgs) {
   await eventually(
     () =>
       new Promise((resolve, reject) => {
-        const diagnostics: vscode.Diagnostic[] = vscode.languages.getDiagnostics(docUri);
+        const diagnostics: vscode.Diagnostic[] =
+          vscode.languages.getDiagnostics(docUri);
 
         try {
           // We need to test diagnostics one by one
@@ -76,12 +84,18 @@ suite('Syntax validation spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 5), new vscode.Position(0, 22)),
+          new vscode.Range(
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
+          ),
           "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(1, 7), new vscode.Position(1, 23)),
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
           'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
           vscode.DiagnosticSeverity.Warning,
         ),
@@ -135,7 +149,10 @@ suite('Syntax validation spec', () => {
     await editor.edit((editBuilder) =>
       editBuilder.replace(
         // Select the whole file
-        new vscode.Range(new vscode.Position(0, 0), new vscode.Position(100, 0)),
+        new vscode.Range(
+          new vscode.Position(0, 0),
+          new vscode.Position(100, 0),
+        ),
         'MATCH (n)',
       ),
     );
@@ -146,7 +163,10 @@ suite('Syntax validation spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 9)),
+          new vscode.Range(
+            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
+          ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
           vscode.DiagnosticSeverity.Error,
         ),
@@ -156,7 +176,10 @@ suite('Syntax validation spec', () => {
     await editor.edit((editBuilder) =>
       editBuilder.replace(
         // Select the whole file
-        new vscode.Range(new vscode.Position(0, 0), new vscode.Position(100, 0)),
+        new vscode.Range(
+          new vscode.Position(0, 0),
+          new vscode.Position(100, 0),
+        ),
         '',
       ),
     );
@@ -180,7 +203,10 @@ suite('Syntax validation spec', () => {
       docUri: textDocument.uri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 9)),
+          new vscode.Range(
+            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
+          ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
           vscode.DiagnosticSeverity.Error,
         ),
@@ -191,7 +217,8 @@ suite('Syntax validation spec', () => {
   test('Correctly re-validates cypher when switching databases', async () => {
     const textFile = 'movies-syntax-validation.cypher';
     const docUri = getDocumentUri(textFile);
-    const { scheme, host, port, user, database, password } = getNeo4j2025Configuration();
+    const { scheme, host, port, user, database, password } =
+      getNeo4j2025Configuration();
     const connection = {
       key: neo4j2025ConnectionKey,
       scheme: scheme,
@@ -210,17 +237,26 @@ suite('Syntax validation spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 11), new vscode.Position(0, 17)),
+          new vscode.Range(
+            new vscode.Position(0, 11),
+            new vscode.Position(0, 17),
+          ),
           "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 21), new vscode.Position(0, 29)),
+          new vscode.Range(
+            new vscode.Position(0, 21),
+            new vscode.Position(0, 29),
+          ),
           "Relationship type ACTED_IN is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 35), new vscode.Position(0, 40)),
+          new vscode.Range(
+            new vscode.Position(0, 35),
+            new vscode.Position(0, 40),
+          ),
           "Label Movie is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Warning,
         ),
@@ -271,12 +307,18 @@ suite('Syntax validation spec', () => {
       docUri: textDocument.uri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(1, 20), new vscode.Position(1, 37)),
+          new vscode.Range(
+            new vscode.Position(1, 20),
+            new vscode.Position(1, 37),
+          ),
           "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(2, 21), new vscode.Position(2, 38)),
+          new vscode.Range(
+            new vscode.Position(2, 21),
+            new vscode.Position(2, 38),
+          ),
           "Procedure apoc.create.uuids is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Error,
         ),
@@ -294,12 +336,18 @@ suite('Syntax validation spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(0, 5), new vscode.Position(0, 22)),
+          new vscode.Range(
+            new vscode.Position(0, 5),
+            new vscode.Position(0, 22),
+          ),
           "Procedure apoc.create.uuids is deprecated. Alternative: Neo4j's randomUUID() function can be used as a replacement, for example: `UNWIND range(0,$count) AS row RETURN row, randomUUID() AS uuid`",
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(1, 7), new vscode.Position(1, 23)),
+          new vscode.Range(
+            new vscode.Position(1, 7),
+            new vscode.Position(1, 23),
+          ),
           'Function apoc.create.uuid is deprecated. Alternative: Neo4j randomUUID() function',
           vscode.DiagnosticSeverity.Warning,
         ),

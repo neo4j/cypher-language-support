@@ -37,7 +37,9 @@ export class CypherEditorPage {
             .split(',')
             .filter((string, index) => !forceRemoveAlpha || index !== 3)
             .map((string) => parseFloat(string))
-            .map((number, index) => (index === 3 ? Math.round(number * 255) : number))
+            .map((number, index) =>
+              index === 3 ? Math.round(number * 255) : number,
+            )
             .map((number) => number.toString(16))
             .map((string) => (string.length === 1 ? '0' + string : string))
             .join('')
@@ -72,7 +74,9 @@ export class CypherEditorPage {
     queryChunk: string,
     expectedMsg: string,
   ) {
-    await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible({ timeout: 10000 });
+    await expect(this.page.locator('.cm-lintRange-' + type).last()).toBeVisible(
+      { timeout: 10000 },
+    );
 
     await this.page.getByText(queryChunk, { exact: true }).hover();
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
@@ -86,17 +90,24 @@ export class CypherEditorPage {
     */
     await this.page.mouse.move(0, 0);
     // Make sure the tooltip closed
-    await expect(this.page.locator('.cm-tooltip-hover').last()).not.toBeVisible();
+    await expect(
+      this.page.locator('.cm-tooltip-hover').last(),
+    ).not.toBeVisible();
   }
 
-  private async checkHoverMessage(expectedMsg: string, type: 'error' | 'warning') {
+  private async checkHoverMessage(
+    expectedMsg: string,
+    type: 'error' | 'warning',
+  ) {
     const locator =
       type === 'error'
         ? 'li.cm-diagnostic.cm-diagnostic-error'
         : 'li.cm-diagnostic.cm-diagnostic-warning';
     const tooltips = await this.page.locator(locator).all();
 
-    const tooltipTexts = await Promise.all(tooltips.map((t) => t.textContent()));
+    const tooltipTexts = await Promise.all(
+      tooltips.map((t) => t.textContent()),
+    );
     expect(tooltipTexts).toContain(expectedMsg);
   }
 }

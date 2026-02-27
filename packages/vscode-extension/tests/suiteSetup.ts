@@ -14,8 +14,13 @@ export async function saveDefaultConnection(
   opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
 ): Promise<void> {
   const { scheme, host, port, user, database, password } =
-    opts.version === 'neo4j 2025' ? getNeo4j2025Configuration() : getNeo4j5Configuration();
-  const key = opts.version === 'neo4j 2025' ? neo4j2025ConnectionKey : neo4j5ConnectionKey;
+    opts.version === 'neo4j 2025'
+      ? getNeo4j2025Configuration()
+      : getNeo4j5Configuration();
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
 
   await vscode.commands.executeCommand(
     CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
@@ -36,7 +41,10 @@ export async function saveDefaultConnection(
 export async function connectDefault(
   opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
 ): Promise<void> {
-  const key = opts.version === 'neo4j 2025' ? neo4j2025ConnectionKey : neo4j5ConnectionKey;
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
 
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.CONNECT_COMMAND, {
     key: key,
@@ -46,7 +54,10 @@ export async function connectDefault(
 export async function disconnectDefault(
   opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
 ): Promise<void> {
-  const key = opts.version === 'neo4j 2025' ? neo4j2025ConnectionKey : neo4j5ConnectionKey;
+  const key =
+    opts.version === 'neo4j 2025'
+      ? neo4j2025ConnectionKey
+      : neo4j5ConnectionKey;
 
   await vscode.commands.executeCommand(CONSTANTS.COMMANDS.DISCONNECT_COMMAND, {
     key: key,
@@ -57,11 +68,17 @@ export async function createTestDatabase(
   opts: { version: Neo4jVersion } = { version: 'neo4j 2025' },
 ): Promise<void> {
   const { scheme, host, port, user, password } =
-    opts.version === 'neo4j 2025' ? getNeo4j2025Configuration() : getNeo4j5Configuration();
+    opts.version === 'neo4j 2025'
+      ? getNeo4j2025Configuration()
+      : getNeo4j5Configuration();
 
-  const driver = neo4j.driver(`${scheme}://${host}:${port}`, neo4j.auth.basic(user, password), {
-    userAgent: 'vscode-e2e-tests',
-  });
+  const driver = neo4j.driver(
+    `${scheme}://${host}:${port}`,
+    neo4j.auth.basic(user, password),
+    {
+      userAgent: 'vscode-e2e-tests',
+    },
+  );
 
   const neo4jSession = driver.session({ database: 'neo4j' });
   await neo4jSession.run('CREATE (n {`foo bar`: "something"})');

@@ -1,4 +1,8 @@
-import { HighlightStyle, syntaxHighlighting, TagStyle } from '@codemirror/language';
+import {
+  HighlightStyle,
+  syntaxHighlighting,
+  TagStyle,
+} from '@codemirror/language';
 import { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { CypherTokenType } from '@neo4j-cypher/language-support';

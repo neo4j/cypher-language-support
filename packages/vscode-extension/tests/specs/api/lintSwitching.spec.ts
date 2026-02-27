@@ -3,7 +3,10 @@ import * as sinon from 'sinon';
 import { commands, window } from 'vscode';
 import * as vscode from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
-import { getExtensionStoragePath, newUntitledFileWithContent } from '../../helpers';
+import {
+  getExtensionStoragePath,
+  newUntitledFileWithContent,
+} from '../../helpers';
 import { saveDefaultConnection } from '../../suiteSetup';
 import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
@@ -42,7 +45,10 @@ suite('Lint switching spec', () => {
 
     const stubs = setupMockContextStubs(sandbox);
     mockLanguageClient = stubs.mockLanguageClient;
-    switchWorkerOnLanguageServerSpy = sandbox.spy(linterService, 'switchWorkerOnLanguageServer');
+    switchWorkerOnLanguageServerSpy = sandbox.spy(
+      linterService,
+      'switchWorkerOnLanguageServer',
+    );
     sendNotificationSpy = sandbox.spy(mockLanguageClient, 'sendNotification');
     await saveDefaultConnection();
     sandbox.resetHistory();
@@ -63,7 +69,8 @@ suite('Lint switching spec', () => {
     assert(sendNotificationSpy.args[0].length === 2);
     assert(sendNotificationSpy.args[0][0] === 'updateLintWorker');
 
-    const { linterVersion, lintWorkerPath } = sendNotificationSpy.args[0][1] as LintWorkerSettings;
+    const { linterVersion, lintWorkerPath } = sendNotificationSpy
+      .args[0][1] as LintWorkerSettings;
     assert(linterVersion === (version != 'Default' ? version : undefined));
 
     if (version != 'Default') {
@@ -76,7 +83,10 @@ suite('Lint switching spec', () => {
 
   test('Switching the linter to an old one should show different errors', async () => {
     const linterVersion = '5.26';
-    const stub = sandbox.stub(window, 'showQuickPick') as unknown as sinon.SinonStub<
+    const stub = sandbox.stub(
+      window,
+      'showQuickPick',
+    ) as unknown as sinon.SinonStub<
       [string[], vscode.QuickPickOptions],
       Thenable<string>
     >;
@@ -88,7 +98,10 @@ suite('Lint switching spec', () => {
       docUri: textDocument.uri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(new vscode.Position(5, 33), new vscode.Position(5, 38)),
+          new vscode.Range(
+            new vscode.Position(5, 33),
+            new vscode.Position(5, 38),
+          ),
           'Expected any of BREAK, CONTINUE or FAIL',
           vscode.DiagnosticSeverity.Error,
         ),
@@ -100,7 +113,10 @@ suite('Lint switching spec', () => {
     const lintersFolder = getExtensionStoragePath();
     rmSync(lintersFolder, { force: true, recursive: true });
     const linterVersion = '2025.06';
-    const stub = sandbox.stub(window, 'showQuickPick') as unknown as sinon.SinonStub<
+    const stub = sandbox.stub(
+      window,
+      'showQuickPick',
+    ) as unknown as sinon.SinonStub<
       [string[], vscode.QuickPickOptions],
       Thenable<string>
     >;
@@ -118,7 +134,10 @@ suite('Lint switching spec', () => {
 
   test('Switching the linter when it is downloaded should not trigger a download', async () => {
     const linterVersion = '2025.06';
-    const stub = sandbox.stub(window, 'showQuickPick') as unknown as sinon.SinonStub<
+    const stub = sandbox.stub(
+      window,
+      'showQuickPick',
+    ) as unknown as sinon.SinonStub<
       [string[], vscode.QuickPickOptions],
       Thenable<string>
     >;
@@ -140,7 +159,11 @@ suite('Lint switching spec', () => {
     sandbox.assert.calledOnce(switchWorkerOnLanguageServerSpy);
     assert(switchWorkerOnLanguageServerSpy.args.length === 1);
     assert(switchWorkerOnLanguageServerSpy.args[0].length === 2);
-    assert((switchWorkerOnLanguageServerSpy.args[0][0] as string).includes(linterVersion));
+    assert(
+      (switchWorkerOnLanguageServerSpy.args[0][0] as string).includes(
+        linterVersion,
+      ),
+    );
     checkLinterUpdatedInLanguageServer(linterVersion);
   });
 
@@ -157,7 +180,10 @@ suite('Lint switching spec', () => {
 
   test('Switching the linter back to a new one should show different errors', async () => {
     const linterVersion = '2025.06';
-    const stub = sandbox.stub(window, 'showQuickPick') as unknown as sinon.SinonStub<
+    const stub = sandbox.stub(
+      window,
+      'showQuickPick',
+    ) as unknown as sinon.SinonStub<
       [string[], vscode.QuickPickOptions],
       Thenable<string>
     >;
@@ -173,7 +199,10 @@ suite('Lint switching spec', () => {
 
   test('If the linter is not available on npm we get an error message', async () => {
     const linterVersion = '5.28';
-    const stub = sandbox.stub(window, 'showQuickPick') as unknown as sinon.SinonStub<
+    const stub = sandbox.stub(
+      window,
+      'showQuickPick',
+    ) as unknown as sinon.SinonStub<
       [string[], vscode.QuickPickOptions],
       Thenable<string>
     >;
@@ -186,7 +215,10 @@ suite('Lint switching spec', () => {
       `Downloading linter ${linterVersion} for your server`,
     );
 
-    sandbox.assert.calledWith(showErrorMessageSpy, CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE);
+    sandbox.assert.calledWith(
+      showErrorMessageSpy,
+      CONSTANTS.MESSAGES.LINTER_VERSION_NOT_AVAILABLE,
+    );
     checkLinterUpdatedInLanguageServer('Default');
   });
 

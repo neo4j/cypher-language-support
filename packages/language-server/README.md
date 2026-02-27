@@ -148,7 +148,7 @@ initialize();
 
 ##### With [lsp-mode](https://github.com/emacs-lsp/lsp-mode)
 
-As of version 8.0.1, `lsp-mode` provides built in support for the `cypher-language-server`. `lsp-mode` will connect to a `cypher-language-server` for any file ending with `.cypher`, or if you're currently in a `cypher-mode`.
+As of version 8.0.1, `lsp-mode` provides built in support for the `cypher-language-server`. `lsp-mode` will connect to a `cypher-language-server` for any file ending with `.cypher`, or if you're currently in a `cypher-mode`. 
 
 If the `cypher-language-server` is not already installed, you can install the server by running `M-x lsp-install-server RET` and then selecting `cypher-ls` from the list.
 
@@ -166,7 +166,7 @@ If the `cypher-language-server` is not already installed, you can install the se
   :server-id 'cypher)))
 ```
 
-If you want semantic highlighting, remember to set
+If you want semantic highlighting, remember to set 
 
 ```elisp
 (setq lsp-semantic-tokens-enable t)
@@ -187,7 +187,6 @@ As of Emacs 29, `eglot` is built in. In `eglot`, a language server needs to be a
 There is built-in support for the `cypher-language-server` in the plugin ([cypher_ls](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cypher_ls)).
 
 Activate the language server support in your config file.
-
 ```lua
 require('lspconfig').cypher_ls.setup{}
 ```
@@ -198,3 +197,4 @@ To make neovim aware of this type, add a file to your _neovim-configuration-path
 ```vim
 au BufRead,BufNewFile *.cypher                set filetype=cypher
 ```
+

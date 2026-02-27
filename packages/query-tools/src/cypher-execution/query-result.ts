@@ -43,7 +43,11 @@ export function addAnnotationProp(
 
   // Recursively escape the reserved property if it already exists.
   if (Object.prototype.hasOwnProperty.call(objShallowCopy, prop)) {
-    objShallowCopy = addAnnotationProp(objShallowCopy, objShallowCopy[prop], ESCAPE_CHAR + prop);
+    objShallowCopy = addAnnotationProp(
+      objShallowCopy,
+      objShallowCopy[prop],
+      ESCAPE_CHAR + prop,
+    );
     delete objShallowCopy[prop];
   }
 
@@ -82,7 +86,9 @@ function copyAndAnnotate(
   }, {});
 }
 
-export function serializeTypeAnnotations(item: QueryResult | Neo4jRecord): Record<string, unknown>;
+export function serializeTypeAnnotations(
+  item: QueryResult | Neo4jRecord,
+): Record<string, unknown>;
 export function serializeTypeAnnotations(
   item: Neo4jType,
 ): Record<string, unknown> | null | undefined | unknown[];
@@ -225,8 +231,12 @@ export function deserializeTypeAnnotations(
         type: item.queryType,
         db: item.database.name,
 
-        result_available_after: deserializeTypeAnnotations(item.resultAvailableAfter),
-        result_consumed_after: deserializeTypeAnnotations(item.resultConsumedAfter),
+        result_available_after: deserializeTypeAnnotations(
+          item.resultAvailableAfter,
+        ),
+        result_consumed_after: deserializeTypeAnnotations(
+          item.resultConsumedAfter,
+        ),
 
         profile: item.profile === false ? null : item.profile,
         plan: item.plan === false ? null : item.plan,
@@ -276,7 +286,9 @@ export function deserializeTypeAnnotations(
       return new types.Path(
         deserializeTypeAnnotations(item.start),
         deserializeTypeAnnotations(item.end),
-        (Array.isArray(segments) ? segments : []).map((x: any) => deserializeTypeAnnotations(x)),
+        (Array.isArray(segments) ? segments : []).map((x: any) =>
+          deserializeTypeAnnotations(x),
+        ),
       );
     }
     case 'Point':
@@ -376,10 +388,13 @@ export function deserializeTypeAnnotations(
       return new Vector(typedArray);
     }
     case 'Object':
-      return Object.keys(item).reduce<Record<string, unknown>>((newObj, key) => {
-        newObj[key] = deserializeTypeAnnotations(item[key]);
-        return newObj;
-      }, {});
+      return Object.keys(item).reduce<Record<string, unknown>>(
+        (newObj, key) => {
+          newObj[key] = deserializeTypeAnnotations(item[key]);
+          return newObj;
+        },
+        {},
+      );
     default:
       return item;
   }

@@ -8,7 +8,8 @@ describe('Semantic validation spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query });
     expect(diagnostics).toEqual([
       {
-        message: "Invalid Cypher version '25000'. Valid Cypher versions are: 5, 25",
+        message:
+          "Invalid Cypher version '25000'. Valid Cypher versions are: 5, 25",
         offsets: {
           end: 54,
           start: 49,
@@ -201,7 +202,8 @@ describe('Semantic validation spec', () => {
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
     expect(diagnostics1).toEqual([
       {
-        message: '50 is not a valid option for cypher version. Valid options are: 5, 25',
+        message:
+          '50 is not a valid option for cypher version. Valid options are: 5, 25',
         offsets: {
           end: 10,
           start: 8,
@@ -221,7 +223,8 @@ describe('Semantic validation spec', () => {
     ]);
     expect(diagnostics2).toEqual([
       {
-        message: '007 is not a valid option for cypher version. Valid options are: 5, 25',
+        message:
+          '007 is not a valid option for cypher version. Valid options are: 5, 25',
         offsets: {
           end: 10,
           start: 7,
@@ -250,7 +253,8 @@ describe('Semantic validation spec', () => {
     const diagnostics3 = getDiagnosticsForQuery({ query: query3 });
     expect(diagnostics1).toEqual([
       {
-        message: '1.0.2.0 is not a valid option for cypher version. Valid options are: 5, 25',
+        message:
+          '1.0.2.0 is not a valid option for cypher version. Valid options are: 5, 25',
         offsets: {
           end: 15,
           start: 8,
@@ -270,7 +274,8 @@ describe('Semantic validation spec', () => {
     ]);
     expect(diagnostics2).toEqual([
       {
-        message: '00.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        message:
+          '00.1 is not a valid option for cypher version. Valid options are: 5, 25',
         offsets: {
           end: 11,
           start: 7,
@@ -290,7 +295,8 @@ describe('Semantic validation spec', () => {
     ]);
     expect(diagnostics3).toEqual([
       {
-        message: '030.1 is not a valid option for cypher version. Valid options are: 5, 25',
+        message:
+          '030.1 is not a valid option for cypher version. Valid options are: 5, 25',
         offsets: {
           end: 12,
           start: 7,
@@ -845,7 +851,8 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
+        message:
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 100,
           start: 26,
@@ -926,7 +933,8 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
       {
-        message: "Invalid input. '-1' is not a valid value. Must be a positive integer.",
+        message:
+          "Invalid input. '-1' is not a valid value. Must be a positive integer.",
         offsets: {
           end: 51,
           start: 49,
@@ -1197,7 +1205,8 @@ Attempted to access graph other`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'All sub queries in an UNION must have the same return column names',
+        message:
+          'All sub queries in an UNION must have the same return column names',
         offsets: {
           end: 125,
           start: 96,
@@ -1429,7 +1438,8 @@ Attempted to access graph other`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported in Cypher 5.',
+        message:
+          'Match modes such as `DIFFERENT RELATIONSHIPS` are not supported in Cypher 5.',
         offsets: {
           end: 37,
           start: 15,
@@ -1484,7 +1494,8 @@ Attempted to access graph other`,
     const result = getDiagnosticsForQuery({ query });
     expect(result).toEqual([
       {
-        message: 'Assigning a path in a quantified path pattern is not yet supported.',
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 19,
           start: 7,
@@ -1539,7 +1550,8 @@ Attempted to access graph other`,
         severity: 1,
       },
       {
-        message: 'Assigning a path in a quantified path pattern is not yet supported.',
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 35,
           start: 23,
@@ -1564,7 +1576,8 @@ Attempted to access graph other`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Assigning a path in a quantified path pattern is not yet supported.',
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 19,
           start: 7,
@@ -1650,7 +1663,8 @@ Attempted to access graph other`,
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message: 'Assigning a path in a quantified path pattern is not yet supported.',
+        message:
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 36,
           start: 7,
@@ -1823,7 +1837,8 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
       {
-        message: 'Variable length relationships cannot be part of a quantified path pattern.',
+        message:
+          'Variable length relationships cannot be part of a quantified path pattern.',
         offsets: {
           end: 21,
           start: 8,
@@ -1962,7 +1977,9 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
   test('gives error on console commands when they are disabled', () => {
     _internalFeatureFlags.consoleCommands = true;
 
-    expect(getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' })).toEqual([
+    expect(
+      getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
+    ).toEqual([
       {
         message: 'Variable `a` not defined',
         offsets: {
@@ -2167,7 +2184,8 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       }),
     ).toEqual([
       {
-        message: 'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
+        message:
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 62,
           start: 0,
@@ -2200,7 +2218,8 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       }),
     ).toEqual([
       {
-        message: 'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
+        message:
+          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 67,
           start: 22,
@@ -2221,9 +2240,12 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
   });
 
   test('Shows errors for missing parameters', () => {
-    const query = 'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
+    const query =
+      'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
 
-    expect(getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema })).toEqual([
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
       {
         message: 'Parameter $missingParam is not defined.',
         offsets: {
@@ -2249,7 +2271,9 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     const query =
       'MATCH (n: Person) WHERE n.name = $`missingParam` and n.age = $`myParam` RETURN n';
 
-    expect(getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema })).toEqual([
+    expect(
+      getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
+    ).toEqual([
       {
         message: 'Parameter $`missingParam` is not defined.',
         offsets: {

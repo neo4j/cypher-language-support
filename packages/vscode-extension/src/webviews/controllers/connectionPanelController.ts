@@ -30,7 +30,10 @@ export function highlightInvalidFields(): void {
   const scheme = document.getElementById('scheme') as HTMLInputElement;
   const host = document.getElementById('host') as HTMLInputElement;
 
-  scheme.classList.toggle('invalid', !scheme.value || !isValidScheme(scheme.value));
+  scheme.classList.toggle(
+    'invalid',
+    !scheme.value || !isValidScheme(scheme.value),
+  );
   host.classList.toggle('invalid', !host.value);
 }
 
@@ -76,7 +79,14 @@ export function getConnection(): Connection | null {
  * @returns True if the string is a valid Scheme, false otherwise.
  */
 export function isValidScheme(scheme: string): scheme is Scheme {
-  return ['neo4j', 'neo4j+s', 'neo4j+ssc', 'bolt', 'bolt+s', 'bolt+ssc'].includes(scheme);
+  return [
+    'neo4j',
+    'neo4j+s',
+    'neo4j+ssc',
+    'bolt',
+    'bolt+s',
+    'bolt+ssc',
+  ].includes(scheme);
 }
 
 /**

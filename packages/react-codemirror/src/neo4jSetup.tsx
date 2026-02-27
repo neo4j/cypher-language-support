@@ -65,7 +65,9 @@ type SetupProps = {
   moveFocusOnTab?: boolean;
 };
 
-export const basicNeo4jSetup = ({ moveFocusOnTab = false }: SetupProps): Extension[] => {
+export const basicNeo4jSetup = ({
+  moveFocusOnTab = false,
+}: SetupProps): Extension[] => {
   const keymaps: KeyBinding[] = [
     closeBracketsKeymap,
     defaultKeymap,
@@ -105,7 +107,9 @@ export const basicNeo4jSetup = ({ moveFocusOnTab = false }: SetupProps): Extensi
   extensions.push(dropCursor());
   extensions.push(EditorState.allowMultipleSelections.of(true));
   extensions.push(indentOnInput());
-  extensions.push(syntaxHighlighting(defaultHighlightStyle, { fallback: true }));
+  extensions.push(
+    syntaxHighlighting(defaultHighlightStyle, { fallback: true }),
+  );
 
   extensions.push(bracketMatching());
   extensions.push(closeBrackets());

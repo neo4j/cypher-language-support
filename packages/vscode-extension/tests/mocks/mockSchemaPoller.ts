@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { ConnnectionResult, Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import {
+  ConnnectionResult,
+  Neo4jSchemaPoller,
+} from '@neo4j-cypher/query-tools';
 import EventEmitter from 'events';
 import { Config } from 'neo4j-driver';
 

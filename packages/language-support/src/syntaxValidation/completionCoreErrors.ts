@@ -3,7 +3,12 @@ import { distance } from 'fastest-levenshtein';
 import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser from '../generated-parser/CypherCmdParser';
-import { CypherTokenType, keywordNames, lexerSymbols, tokenNames } from '../lexerSymbols';
+import {
+  CypherTokenType,
+  keywordNames,
+  lexerSymbols,
+  tokenNames,
+} from '../lexerSymbols';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -64,7 +69,10 @@ export function completionCoreErrormessage(
 
   // If we can complete only a statement, we don't want to suggest that
   // We want to be using the database errors stack instead
-  if (ruleCandidates.length === 1 && ruleCandidates[0] === CypherParser.RULE_statement) {
+  if (
+    ruleCandidates.length === 1 &&
+    ruleCandidates[0] === CypherParser.RULE_statement
+  ) {
     return undefined;
   }
   const humanReadableRulename = ruleCandidates.flatMap((ruleNumber) => {
@@ -78,7 +86,8 @@ export function completionCoreErrormessage(
 
   const tokenEntries = candidates.tokens.entries();
   const tokenCandidates = Array.from(tokenEntries).flatMap(([tokenNumber]) => {
-    const isConsoleCommand = lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
+    const isConsoleCommand =
+      lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
 
     const tokenName = isConsoleCommand
       ? tokenNames[tokenNumber].toLowerCase()
@@ -114,10 +123,18 @@ export function completionCoreErrormessage(
     }
   });
 
-  const keywordCandidates = tokenCandidates.filter((v) => keywordNames.has(v)).sort();
-  const nonKeywordCandidates = tokenCandidates.filter((v) => !keywordNames.has(v));
+  const keywordCandidates = tokenCandidates
+    .filter((v) => keywordNames.has(v))
+    .sort();
+  const nonKeywordCandidates = tokenCandidates.filter(
+    (v) => !keywordNames.has(v),
+  );
 
-  const options = [...nonKeywordCandidates, ...keywordCandidates, ...humanReadableRulename];
+  const options = [
+    ...nonKeywordCandidates,
+    ...keywordCandidates,
+    ...humanReadableRulename,
+  ];
 
   if (options.length === 0) {
     return undefined;
@@ -136,7 +153,10 @@ export function completionCoreErrormessage(
     currentBest: string;
   }>((best, suggestion) => {
     const similarity = normalizedLevenshteinDistance(suggestion, errorText);
-    if (similarity > similarityForSuggestions && (!best || similarity > best.similarity)) {
+    if (
+      similarity > similarityForSuggestions &&
+      (!best || similarity > best.similarity)
+    ) {
       return { similarity, currentBest: suggestion };
     }
     return best;

@@ -1,6 +1,10 @@
 import { formatQuery } from '@neo4j-cypher/language-support';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { DocumentFormattingParams, TextDocuments, TextEdit } from 'vscode-languageserver/node';
+import {
+  DocumentFormattingParams,
+  TextDocuments,
+  TextEdit,
+} from 'vscode-languageserver/node';
 
 export const formatDocument = (
   params: DocumentFormattingParams,

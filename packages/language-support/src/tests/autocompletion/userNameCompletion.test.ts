@@ -169,7 +169,10 @@ describe('Can complete user names', () => {
   });
 
   test('Correctly completes parameters and existing user names in GRANT SHOW', () => {
-    const cases = ['GRANT SHOW TRANSACTION ( ', 'GRANT SHOW TRANSACTION (user, '];
+    const cases = [
+      'GRANT SHOW TRANSACTION ( ',
+      'GRANT SHOW TRANSACTION (user, ',
+    ];
 
     cases.forEach((query) =>
       testCompletions({
@@ -211,7 +214,10 @@ describe('Can complete user names', () => {
   });
 
   test('Correctly completes parameters and existing user names in GRANT database privilege', () => {
-    const cases = ['GRANT TERMINATE TRANSACTION (', 'GRANT TERMINATE TRANSACTION (user, '];
+    const cases = [
+      'GRANT TERMINATE TRANSACTION (',
+      'GRANT TERMINATE TRANSACTION (user, ',
+    ];
 
     cases.forEach((query) =>
       testCompletions({

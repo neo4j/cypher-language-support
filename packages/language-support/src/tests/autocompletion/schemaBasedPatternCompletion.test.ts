@@ -1,12 +1,24 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { getSymbolCompletions, testCompletions } from './completionAssertionHelpers';
+import {
+  getSymbolCompletions,
+  testCompletions,
+} from './completionAssertionHelpers';
 import {
   allLabelCompletions,
   allReltypeCompletions,
 } from '../../autocompletion/schemaBasedCompletions';
 
 const dbSchema = {
-  labels: ['Pokemon', 'Trainer', 'Gym', 'Region', 'Type', 'Move', 'UnrelatedLabel', 'Unconnected'],
+  labels: [
+    'Pokemon',
+    'Trainer',
+    'Gym',
+    'Region',
+    'Type',
+    'Move',
+    'UnrelatedLabel',
+    'Unconnected',
+  ],
   relationshipTypes: [
     'CATCHES',
     'TRAINS',
@@ -112,7 +124,9 @@ describe('Schema based completions', () => {
 
   test('Label completion becomes no labels completion when relType is NOT(ANY)', () => {
     const wildcardQuery = 'MATCH (t:Trainer)-[r:!%]->(:';
-    expect([]).toEqual(getSymbolCompletions({ query: wildcardQuery, dbSchema }));
+    expect([]).toEqual(
+      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
+    );
   });
 
   test('Simple relType completion is the same when using & with wildcard', () => {
@@ -148,12 +162,16 @@ describe('Schema based completions', () => {
 
   test('If only label is negated wildcard we get no completions', () => {
     const wildcardQuery = 'MATCH (t:!%)-[r:';
-    expect([]).toEqual(getSymbolCompletions({ query: wildcardQuery, dbSchema }));
+    expect([]).toEqual(
+      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
+    );
   });
 
   test('Negated wildcard dominates AND-tree', () => {
     const wildcardQuery = 'MATCH (t:Trainer & !%)-[r:';
-    expect([]).toEqual(getSymbolCompletions({ query: wildcardQuery, dbSchema }));
+    expect([]).toEqual(
+      getSymbolCompletions({ query: wildcardQuery, dbSchema }),
+    );
   });
 
   test('Negated wildcard also dominates inner AND-tree', () => {
@@ -299,7 +317,9 @@ describe('Schema based completions', () => {
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
       ],
-      excluded: [{ label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -428,7 +448,9 @@ RETURN [(p)-[:`;
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [{ label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter }],
+      expected: [
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
       excluded: [
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
@@ -453,7 +475,9 @@ RETURN [(p)-[:`;
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
       ],
-      excluded: [{ label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -518,7 +542,8 @@ RETURN [(p)-[:`;
   });
 
   test('Handles undirected rels for rel completions', () => {
-    const query = 'MATCH (p:Pokemon)-[r:CHALLENGES]-(m:Gym)-[r2:IS_IN]->(reg:Region)-[:';
+    const query =
+      'MATCH (p:Pokemon)-[r:CHALLENGES]-(m:Gym)-[r2:IS_IN]->(reg:Region)-[:';
     testCompletions({
       query,
       dbSchema,
@@ -551,7 +576,9 @@ RETURN [(p)-[:`;
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
       ],
-      excluded: [{ label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -562,7 +589,9 @@ RETURN [(p)-[:`;
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [{ label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter }],
+      expected: [
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
       excluded: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
@@ -614,7 +643,9 @@ RETURN [(p)-[:`;
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
       ],
-      excluded: [{ label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter }],
+      excluded: [
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
     });
   });
 
@@ -625,7 +656,9 @@ RETURN [(p)-[:`;
       query,
       dbSchema,
       computeSymbolsInfo: true,
-      expected: [{ label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter }],
+      expected: [
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+      ],
       excluded: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
@@ -683,7 +716,8 @@ RETURN [(p)-[:`;
   });
 
   test('Handles simple NOT in a WHERE clause in conjunction with AND', () => {
-    const query = 'MATCH (x) WHERE NOT x:Trainer AND NOT x:Pokemon AND NOT x:Gym MATCH (x)-[:';
+    const query =
+      'MATCH (x) WHERE NOT x:Trainer AND NOT x:Pokemon AND NOT x:Gym MATCH (x)-[:';
     testCompletions({
       query,
       dbSchema,
@@ -865,7 +899,8 @@ RETURN [(p)-[:`;
   });
 
   test('Works as expected for NOT(OR(all labels))', () => {
-    const query = 'MATCH (n:!(Gym|Trainer|Pokemon|Type|Move|Region|UnrelatedLabel))<-[:';
+    const query =
+      'MATCH (n:!(Gym|Trainer|Pokemon|Type|Move|Region|UnrelatedLabel))<-[:';
     testCompletions({
       query,
       dbSchema,

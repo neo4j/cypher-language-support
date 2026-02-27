@@ -71,7 +71,8 @@ class SymbolFetcher {
     this.processing = true;
     while (this.nextJob) {
       try {
-        const proxyWorker = (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
@@ -186,7 +187,10 @@ connection.onInitialized(() => {
       delta: false,
     },
   };
-  void connection.client.register(SemanticTokensRegistrationType.type, registrationOptions);
+  void connection.client.register(
+    SemanticTokensRegistrationType.type,
+    registrationOptions,
+  );
 });
 
 connection.onDidChangeConfiguration((params) => {
@@ -198,37 +202,54 @@ connection.onDidChangeConfiguration((params) => {
 documents.onDidChangeContent((change) => lintSingleDocument(change.document));
 
 // Trigger the syntax colouring
-connection.languages.semanticTokens.on(applySyntaxColouringForDocument(documents));
+connection.languages.semanticTokens.on(
+  applySyntaxColouringForDocument(documents),
+);
 
 // Trigger the signature help, providing info about functions / procedures
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
 
-connection.onNotification('updateLintWorker', (linterSettings: LintWorkerSettings) => {
-  const lintWorkerPath = linterSettings.lintWorkerPath;
-  const linterVersion = linterSettings.linterVersion;
-  if (lintWorkerPath !== workerPath) {
-    workerPath = lintWorkerPath;
-    void (async () => {
-      symbolFetcher.setLintWorker(workerPath, linterVersion);
-      await setLintWorker(workerPath, linterVersion);
-      relintAllDocuments();
-    })();
-  }
-});
+connection.onNotification(
+  'updateLintWorker',
+  (linterSettings: LintWorkerSettings) => {
+    const lintWorkerPath = linterSettings.lintWorkerPath;
+    const linterVersion = linterSettings.linterVersion;
+    if (lintWorkerPath !== workerPath) {
+      workerPath = lintWorkerPath;
+      void (async () => {
+        symbolFetcher.setLintWorker(workerPath, linterVersion);
+        await setLintWorker(workerPath, linterVersion);
+        relintAllDocuments();
+      })();
+    }
+  },
+);
 
-connection.onNotification('connectionUpdated', (connectionSettings: Neo4jConnectionSettings) => {
-  changeConnection(connectionSettings);
-  neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
-});
+connection.onNotification(
+  'connectionUpdated',
+  (connectionSettings: Neo4jConnectionSettings) => {
+    changeConnection(connectionSettings);
+    neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
+  },
+);
 
 connection.onNotification(
   'fetchSymbolTable',
-  (params: { query: string; uri: string; version: number; schema: DbSchema }) => {
+  (params: {
+    query: string;
+    uri: string;
+    version: number;
+    schema: DbSchema;
+  }) => {
     neo4jSchemaPoller.events.once(
       'schemaFetched',
-      void symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema),
+      void symbolFetcher.queueSymbolJob(
+        params.query,
+        params.uri,
+        params.schema,
+      ),
     );
   },
 );

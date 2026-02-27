@@ -29,7 +29,11 @@ function verifyFormatting(query: string): void {
 
   // AST integrity check
   if (formattedStandardized !== queryStandardized) {
-    throwError('Standardized query does not match standardized formatted query', query, formatted);
+    throwError(
+      'Standardized query does not match standardized formatted query',
+      query,
+      formatted,
+    );
   }
 
   // Idempotency check

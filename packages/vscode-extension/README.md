@@ -20,7 +20,7 @@ Our extension provides a rich set of features for working with Cypher, the query
 
 ![demo-gif](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo.gif?raw=true)
 
-It also provides syntax highlighting embedded in other languages, namely Markdown, Java, Python, Javascriopt, .NET and Go. This is possible having a multiline string that starts with `//cypher` or `/*cypher*/` or a single line string starting with `/*cypher*/`. We also support a templated string `/*cypher*/`{{query here}}` in Javascript.
+It also provides syntax highlighting embedded in other languages, namely Markdown, Java, Python, Javascriopt, .NET and Go. This is possible having a multiline string that starts with `//cypher` or `/*cypher*/` or a single line string starting with `/*cypher*/`. We also support a templated string `/*cypher*/`{{query here}}` in Javascript. 
 
 Inside those languages you can also select a Cypher snippet and either create a `cypher` file with language smarts (completions, linting, etc) from it or execute that snippet.
 
@@ -113,13 +113,13 @@ Parameters can be edited / deleted hovering over them.
 
 ![demo-param-editing](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-param-editing.png?raw=true)
 
+
 ## Executing a Cypher file
 
 Once you've written your desired query (for example `CREATE (n)-[r:Rel]->(m) RETURN n, r, m, $a, $b`) you can execute it by either of:
-
-- Using the `Neo4j: Run cypher statements` command from the Command Palette. This executes the statements selected, or if no selection is made, the statement the caret is in.
-- Right clicking inside the file you want to run and clicking on the `Neo4j: Run Cypher statements` or the `Neo4j: Run Single Cypher statement` item.
-- Using the shortcuts `⌘/Ctrl+Enter` to run single statement or `Ctrl+⌘/alt+Enter` to run all/selected statements. For legacy reasons we also have the alias `Ctrl+Command+Space` to run all/selected.
+* Using the `Neo4j: Run cypher statements` command from the Command Palette. This executes the statements selected, or if no selection is made, the statement the caret is in.
+* Right clicking inside the file you want to run and clicking on the `Neo4j: Run Cypher statements` or the `Neo4j: Run Single Cypher statement` item.
+* Using the shortcuts `⌘/Ctrl+Enter` to run single statement or `Ctrl+⌘/alt+Enter` to run all/selected statements. For legacy reasons we also have the alias  `Ctrl+Command+Space` to run all/selected.
 
 ![demo-execution](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-execution.png?raw=true)
 

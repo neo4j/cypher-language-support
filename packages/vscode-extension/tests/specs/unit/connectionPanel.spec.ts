@@ -3,7 +3,10 @@ import * as sinon from 'sinon';
 import { commands, WebviewPanel, window } from 'vscode';
 import * as connectionService from '../../../src/connectionService';
 import { CONSTANTS } from '../../../src/constants';
-import { ConnectionPanel, ConnectionPanelMessage } from '../../../src/webviews/connectionPanel';
+import {
+  ConnectionPanel,
+  ConnectionPanelMessage,
+} from '../../../src/webviews/connectionPanel';
 import { getMockConnection } from '../../helpers';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
@@ -32,7 +35,9 @@ suite('Connection panel spec', () => {
 
     sandbox.stub(window, 'createWebviewPanel').returns({
       webview: {
-        onDidReceiveMessage: (callback: (message: ConnectionPanelMessage) => void): void => {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
           messageReceived = callback;
           done();
         },
@@ -58,7 +63,11 @@ suite('Connection panel spec', () => {
       'mock-password',
     );
 
-    sandbox.assert.calledOnceWithExactly(saveConnectionStub, mockConnection, 'mock-password');
+    sandbox.assert.calledOnceWithExactly(
+      saveConnectionStub,
+      mockConnection,
+      'mock-password',
+    );
   });
 
   test('Should display an error message and not call through to saveConnection when receiving an onValidationError command', (done) => {
@@ -66,7 +75,9 @@ suite('Connection panel spec', () => {
 
     sandbox.stub(window, 'createWebviewPanel').returns({
       webview: {
-        onDidReceiveMessage: (callback: (message: ConnectionPanelMessage) => void): void => {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
           messageReceived = callback;
           done();
         },
@@ -95,7 +106,9 @@ suite('Connection panel spec', () => {
 
     sandbox.stub(window, 'createWebviewPanel').returns({
       webview: {
-        onDidReceiveMessage: (callback: (message: ConnectionPanelMessage) => void): void => {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
           messageReceived = callback;
           done();
         },
@@ -121,7 +134,9 @@ suite('Connection panel spec', () => {
 
     sandbox.stub(window, 'createWebviewPanel').returns({
       webview: {
-        onDidReceiveMessage: (callback: (message: ConnectionPanelMessage) => void): void => {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
           messageReceived = callback;
           done();
         },
@@ -146,7 +161,9 @@ suite('Connection panel spec', () => {
 
     sandbox.stub(window, 'createWebviewPanel').returns({
       webview: {
-        onDidReceiveMessage: (callback: (message: ConnectionPanelMessage) => void): void => {
+        onDidReceiveMessage: (
+          callback: (message: ConnectionPanelMessage) => void,
+        ): void => {
           messageReceived = callback;
           done();
         },

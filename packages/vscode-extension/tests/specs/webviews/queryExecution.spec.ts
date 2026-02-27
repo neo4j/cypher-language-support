@@ -12,7 +12,9 @@ import {
 
 //** Checks that the query result for each statement containts the expected summaries in query details.
 // If we pass an expected summary that is undefined we expect an empty result from query execution */
-export async function expectSummariesContain(expectedSubstrings: (string | undefined)[]) {
+export async function expectSummariesContain(
+  expectedSubstrings: (string | undefined)[],
+) {
   const queryDetails = await $$('#queryDetails .collapsible');
   await expect(queryDetails.length).toBe(expectedSubstrings.length);
 
@@ -20,7 +22,8 @@ export async function expectSummariesContain(expectedSubstrings: (string | undef
     const queryDetail = (await $$('#queryDetails .collapsible'))[i];
     //This matches the expand/collapse button, but we only want to click when collapsed
     const expandButton = await queryDetail.$('button[aria-label*="statement"]');
-    const isCollapsed = (await expandButton.getAttribute('aria-expanded')) === 'false';
+    const isCollapsed =
+      (await expandButton.getAttribute('aria-expanded')) === 'false';
     if (isCollapsed) {
       await expandButton.click();
     }
@@ -47,7 +50,9 @@ suite('Query results testing', () => {
   test('should manage queries that need implicit transactions', async function () {
     await executeFile(workbench, 'call-in-transactions.cypher');
     await checkResultsContent(workbench, true, async () => {
-      await expectSummariesContain(['6 nodes created, 12 properties set, 6 labels added.']);
+      await expectSummariesContain([
+        '6 nodes created, 12 properties set, 6 labels added.',
+      ]);
     });
   });
 

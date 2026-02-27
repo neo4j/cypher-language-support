@@ -1,9 +1,16 @@
 import { Facet } from '@codemirror/state';
 import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
-import { applySyntaxColouring, ParsedCypherToken } from '@neo4j-cypher/language-support';
+import {
+  applySyntaxColouring,
+  ParsedCypherToken,
+} from '@neo4j-cypher/language-support';
 
 import Prism from 'prismjs';
-import { CodemirrorParseTokenType, cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
+import {
+  CodemirrorParseTokenType,
+  cypherTokenTypeToNode,
+  parserAdapterNodeSet,
+} from './constants';
 // This import will load the cypher support in prisma
 import 'prismjs/components/prism-cypher';
 import { CypherConfig } from './langCypher';
@@ -28,7 +35,8 @@ export class ParserAdapter extends Parser {
 
   /* There are more arguments, but since we don't do any incremental parsing, they are not useful */
   startParse(input: string | Input): PartialParse {
-    const document = typeof input === 'string' ? input : input.read(0, input.length);
+    const document =
+      typeof input === 'string' ? input : input.read(0, input.length);
 
     const tree = this.buildTree(document);
 
@@ -113,7 +121,12 @@ export class ParserAdapter extends Parser {
 
   private createEmptyTree(document: string) {
     return Tree.build({
-      buffer: [this.cypherTokenTypeToNode.topNode.id, 0, document.length, DEFAULT_NODE_GROUP_SIZE],
+      buffer: [
+        this.cypherTokenTypeToNode.topNode.id,
+        0,
+        document.length,
+        DEFAULT_NODE_GROUP_SIZE,
+      ],
       nodeSet: parserAdapterNodeSet(this.cypherTokenTypeToNode),
       topID: this.cypherTokenTypeToNode.topNode.id,
     });
@@ -125,6 +138,11 @@ export class ParserAdapter extends Parser {
     const endOffset = document.length;
     const totalBufferLength = buffer.length * DEFAULT_NODE_GROUP_SIZE;
 
-    buffer.push([id, startOffset, endOffset, totalBufferLength + DEFAULT_NODE_GROUP_SIZE]);
+    buffer.push([
+      id,
+      startOffset,
+      endOffset,
+      totalBufferLength + DEFAULT_NODE_GROUP_SIZE,
+    ]);
   }
 }

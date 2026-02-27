@@ -52,7 +52,8 @@ describe('Functions semantic validation spec', () => {
       }),
     ).toEqual([
       {
-        message: 'Function apoc.text.regreplace is deprecated. Alternative: apoc.text.replace',
+        message:
+          'Function apoc.text.regreplace is deprecated. Alternative: apoc.text.replace',
         offsets: {
           end: 27,
           start: 7,

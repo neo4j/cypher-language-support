@@ -51,7 +51,12 @@ export class Neo4jSchemaPoller {
     database?: string,
   ): Promise<ConnnectionResult> {
     try {
-      this.driver = await this.initializeDriver(url, credentials, config, database);
+      this.driver = await this.initializeDriver(
+        url,
+        credentials,
+        config,
+        database,
+      );
     } catch (error: unknown) {
       console.error('Error connecting to Neo4j.', error);
       return {
@@ -84,9 +89,19 @@ export class Neo4jSchemaPoller {
       }
 
       try {
-        await this.connectAndStartMetadataPoller(url, credentials, config, database);
+        await this.connectAndStartMetadataPoller(
+          url,
+          credentials,
+          config,
+          database,
+        );
 
-        this.reconnectionTimeout = this.setReconnectionTimeout(url, credentials, config, database);
+        this.reconnectionTimeout = this.setReconnectionTimeout(
+          url,
+          credentials,
+          config,
+          database,
+        );
 
         return this.handleSuccessfulConnection();
       } catch (error) {
@@ -113,7 +128,12 @@ export class Neo4jSchemaPoller {
       }
     }
 
-    this.reconnectionTimeout = this.setReconnectionTimeout(url, credentials, config, database);
+    this.reconnectionTimeout = this.setReconnectionTimeout(
+      url,
+      credentials,
+      config,
+      database,
+    );
 
     return { success: true };
   }
@@ -136,7 +156,8 @@ export class Neo4jSchemaPoller {
     // We need to use a query we can fire against the system database
     // because we might not have no information on what user database
     // we could use to try a simpler CYPHER 25 RETURN true query
-    const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } = getVersion();
+    const { query: cypherVersionQuery, queryConfig: cypherVersionQueryConfig } =
+      getVersion();
 
     try {
       if (this.driver) {
@@ -160,12 +181,19 @@ export class Neo4jSchemaPoller {
     config: { driverConfig?: Config; appName: string },
     database?: string,
   ) {
-    this.driver = this.driver ?? (await this.initializeDriver(url, credentials, config, database));
+    this.driver =
+      this.driver ??
+      (await this.initializeDriver(url, credentials, config, database));
 
     const { query: dbQuery, queryConfig: dbQueryConfig } = listDatabases();
-    const { databases, summary } = await this.driver.executeQuery(dbQuery, {}, dbQueryConfig);
+    const { databases, summary } = await this.driver.executeQuery(
+      dbQuery,
+      {},
+      dbQueryConfig,
+    );
 
-    const protocolVersion = summary.server.protocolVersion?.toString() ?? 'unknown';
+    const protocolVersion =
+      summary.server.protocolVersion?.toString() ?? 'unknown';
 
     this.connection = new Neo4jConnection(
       credentials.username,
@@ -177,7 +205,8 @@ export class Neo4jSchemaPoller {
 
     const serverCypherVersions = await this.getAvailableCypherVersions();
 
-    const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } = getVersion();
+    const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
+      getVersion();
     let { serverVersion } = await this.driver.executeQuery(
       serverVersionQuery,
       {},
@@ -215,10 +244,14 @@ export class Neo4jSchemaPoller {
     config: { driverConfig?: Config; appName: string },
     database?: string,
   ): Promise<Driver> {
-    const driver = neo4j.driver(url, neo4j.auth.basic(credentials.username, credentials.password), {
-      userAgent: config.appName,
-      ...config.driverConfig,
-    });
+    const driver = neo4j.driver(
+      url,
+      neo4j.auth.basic(credentials.username, credentials.password),
+      {
+        userAgent: config.appName,
+        ...config.driverConfig,
+      },
+    );
 
     await driver.verifyConnectivity({ database: database });
 
@@ -253,7 +286,10 @@ export class Neo4jSchemaPoller {
   }
 
   private handleNonSuccessfulConnection(): ConnnectionResult {
-    const connectionError = this.formatConnectionErrorFriendlyMessage(this.lastError, true);
+    const connectionError = this.formatConnectionErrorFriendlyMessage(
+      this.lastError,
+      true,
+    );
 
     this.events.emit('connectionErrored', connectionError);
 
@@ -267,7 +303,10 @@ export class Neo4jSchemaPoller {
   private handlePermanentlyFailingConnection(): ConnnectionResult {
     this.resetRetries();
 
-    const connectionError = this.formatConnectionErrorFriendlyMessage(this.lastError, false);
+    const connectionError = this.formatConnectionErrorFriendlyMessage(
+      this.lastError,
+      false,
+    );
 
     this.events.emit('connectionFailed', connectionError);
 

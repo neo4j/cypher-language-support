@@ -10,7 +10,10 @@ import {
   isVector,
 } from 'neo4j-driver';
 
-import type { CypherDataType, CypherProperty } from '../types/cypher-data-types';
+import type {
+  CypherDataType,
+  CypherProperty,
+} from '../types/cypher-data-types';
 import {
   isCypherPropertyType,
   isCypherTemporalType,
@@ -82,7 +85,10 @@ export function propertyToString(
 
 const cypherShellStyleStringify = (
   value: Node | Relationship | Path,
-  { stringStyle, quoteStrings = true }: { stringStyle: CypherStringStyle; quoteStrings: boolean },
+  {
+    stringStyle,
+    quoteStrings = true,
+  }: { stringStyle: CypherStringStyle; quoteStrings: boolean },
 ): string => {
   const includeIds = stringStyle === 'cypher-with-ids';
   if (isNode(value)) {
@@ -93,7 +99,9 @@ const cypherShellStyleStringify = (
       })
       .concat(
         includeIds
-          ? [`<elementId>: "${value.elementId.toString()}", <id>: ${value.identity.toString()}`]
+          ? [
+              `<elementId>: "${value.elementId.toString()}", <id>: ${value.identity.toString()}`,
+            ]
           : [],
       )
       .join(', ');
@@ -112,7 +120,9 @@ const cypherShellStyleStringify = (
         includeIds
           ? [
               `<elementId>: ${
-                quoteStrings ? `"${value.elementId.toString()}"` : value.elementId.toString()
+                quoteStrings
+                  ? `"${value.elementId.toString()}"`
+                  : value.elementId.toString()
               }, <id>: ${value.identity.toString()}`,
             ]
           : [],
@@ -142,7 +152,9 @@ const cypherShellStyleStringify = (
           );
         }
 
-        if (segment.start.elementId === segment.relationship.startNodeElementId) {
+        if (
+          segment.start.elementId === segment.relationship.startNodeElementId
+        ) {
           result.push('-');
           result.push(
             cypherShellStyleStringify(segment.relationship, {
@@ -225,7 +237,10 @@ ${value
   // Now we have nodes, relationships, paths and cypher maps left.
   // No special care for them stringify them as we would normal objects
   // unless we are in cypher-shell style
-  if (stringStyle !== 'json' && (isNode(value) || isRelationship(value) || isPath(value))) {
+  if (
+    stringStyle !== 'json' &&
+    (isNode(value) || isRelationship(value) || isPath(value))
+  ) {
     return cypherShellStyleStringify(value, { stringStyle, quoteStrings });
   }
 

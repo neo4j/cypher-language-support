@@ -1376,7 +1376,8 @@ describe('Administration commands syntax colouring', () => {
   });
 
   test('Correctly colours ALTER DATABASE', () => {
-    const query = 'ALTER DATABASE `topology-example` SET TOPOLOGY 1 PRIMARY SET ACCESS READ ONLY';
+    const query =
+      'ALTER DATABASE `topology-example` SET TOPOLOGY 1 PRIMARY SET ACCESS READ ONLY';
 
     expect(applySyntaxColouring(query)).toEqual([
       {
@@ -3020,7 +3021,8 @@ describe('Administration commands syntax colouring', () => {
   });
 
   test('Correctly colours CREATE ROLE', () => {
-    const query = 'CREATE ROLE role_name IF NOT EXISTS AS COPY OF other_role_name';
+    const query =
+      'CREATE ROLE role_name IF NOT EXISTS AS COPY OF other_role_name';
 
     expect(applySyntaxColouring(query)).toEqual([
       {
@@ -3884,7 +3886,8 @@ describe('Administration commands syntax colouring', () => {
   });
 
   test('Correctly colours DENY PRIVILEGE', () => {
-    const query = 'DENY IMPERSONATE (user_name1, user_name2) ON DBMS TO role_name';
+    const query =
+      'DENY IMPERSONATE (user_name1, user_name2) ON DBMS TO role_name';
 
     expect(applySyntaxColouring(query)).toEqual([
       {
