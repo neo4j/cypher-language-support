@@ -4,6 +4,7 @@
   "singleQuote": true,
   "ignorePatterns": [
     "**/*.md",
+    "**/*.html",
     "out/",
     "packages/language-support/src/generated-parser/*",
     "vendor/*",
