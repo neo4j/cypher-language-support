@@ -44,7 +44,7 @@ async function main() {
         DEBUG_VSCODE_TESTS: process.env.DEBUG_VSCODE_TESTS,
       },
     });
-  } catch (err) {
+  } catch {
     console.error('Failed to run integration tests');
     process.exit(1);
   } finally {

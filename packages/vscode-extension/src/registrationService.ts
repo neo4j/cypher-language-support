@@ -51,7 +51,7 @@ export function registerDisposables(): Disposable[] {
       await commands.executeCommand('neo4jQueryVisualization.open', {
         preserveFocus: true,
       });
-    } catch (e) {
+    } catch {
       /* no-op */
       //If a user (or a test framework) has an old version of vscode, <webview>.open won't exist
       //A user can still open the webview manually, so we prefer not to remove focus from the editor

@@ -10,8 +10,9 @@ export default defineConfig({
   plugins: ['typescript'],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],
-    // Preserve original ESLint overrides
-    '@typescript-eslint/no-var-requires': 'off',
-    '@typescript-eslint/unbound-method': 'off',
+    // These rules produce systematic false positives because neo4j-driver
+    // types use `any` internally, causing cascading type issues in unions.
+    '@typescript-eslint/no-redundant-type-constituents': 'off',
+    '@typescript-eslint/no-duplicate-type-constituents': 'off',
   },
 });

@@ -20,7 +20,7 @@ export async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(fileUri);
     return true;
-  } catch (e) {
+  } catch {
     return false;
   }
 }
@@ -99,7 +99,7 @@ export async function switchToLinter(
         }
       }
     }
-  } catch (e) {
+  } catch {
     // In case of error use default linter (i.e. the one included with the language server)
     await switchWorkerOnLanguageServer();
   }

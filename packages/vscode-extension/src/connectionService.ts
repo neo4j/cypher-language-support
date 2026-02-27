@@ -295,9 +295,11 @@ export async function establishPersistentConnectionToSchemaPoller(
     connectionSettings.database,
   );
 
-  result.success
-    ? attachSchemaPollerConnectionEventListeners()
-    : attachSchemaPollerConnectionFailedEventListeners();
+  if (result.success) {
+    attachSchemaPollerConnectionEventListeners();
+  } else {
+    attachSchemaPollerConnectionFailedEventListeners();
+  }
 
   return result;
 }
@@ -417,9 +419,11 @@ async function connectToDatabaseAndNotifyLanguageClient(
     ? 'error'
     : 'inactive';
 
-  result.success
-    ? await sendNotificationToLanguageClient('connectionUpdated', settings)
-    : await sendNotificationToLanguageClient('connectionDisconnected');
+  if (result.success) {
+    await sendNotificationToLanguageClient('connectionUpdated', settings);
+  } else {
+    await sendNotificationToLanguageClient('connectionDisconnected');
+  }
 
   // Note the e2e tests are always going to be on an older neo4j version (a docker container)
   // We want for all of the tests to run with the latest version of the linter,

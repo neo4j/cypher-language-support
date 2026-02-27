@@ -1,3 +1,4 @@
+// oxlint-disable typescript-eslint/no-misused-spread -- intentional spreads for plain object comparison in tests
 import { Database } from '@neo4j-cypher/query-tools';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';

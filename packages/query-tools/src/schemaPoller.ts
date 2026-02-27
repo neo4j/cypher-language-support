@@ -168,7 +168,7 @@ export class Neo4jSchemaPoller {
         );
         return ['5', '25'];
       }
-    } catch (e) {
+    } catch {
       return ['5'];
     }
 

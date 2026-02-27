@@ -57,7 +57,7 @@ export function getShortPathCompletions(
       return [];
     }
     cnfTree = convertToCNF(treeWithRewrittenAnys);
-  } catch (e) {
+  } catch {
     return [];
   }
   const { inLabels, outLabels } = walkCNFTree(
@@ -119,7 +119,7 @@ export function getPathCompletions(
       return [];
     }
     cnfTree = convertToCNF(treeWithRewrittenAnys);
-  } catch (e) {
+  } catch {
     return [];
   }
   const { inLabels: inRelTypes, outLabels: outRelTypes } = walkCNFTree(
@@ -393,7 +393,7 @@ export function completeNodeLabel(
           return [];
         }
         cnfTree = convertToCNF(treeWithRewrittenAnys);
-      } catch (e) {
+      } catch {
         return allLabelCompletions(dbSchema);
       }
       let allIncomingLabels = new Set<string>();
@@ -490,7 +490,7 @@ export function completeRelationshipType(
           return [];
         }
         cnfTree = convertToCNF(treeWithRewrittenAnys);
-      } catch (e) {
+      } catch {
         return [];
       }
       let allIncomingLabels = new Set<string>();
