@@ -3,14 +3,6 @@ name: 'Setup and build project'
 runs:
   using: 'composite'
   steps:
-    - name: Setup antlr
-      shell: bash
-      run: |
-        curl https://www.antlr.org/download/antlr-4.13.0-complete.jar --output antlr4.jar
-        mkdir -p $HOME/.local/bin
-        echo -e "#bin/bash\njava -jar $PWD/antlr4.jar \$@" > $HOME/.local/bin/antlr4
-        chmod a+x $HOME/.local/bin/antlr4
-
     - name: Setup pnpm
       uses: pnpm/action-setup@v4
 
@@ -31,7 +23,7 @@ runs:
       with:
         path: |
           # Build artifacts only (not node_modules), based on .gitignore
-          # Generaged parsers from us and vendor
+          # Generated parsers
           **/generated-parser
           **/generated
           # Build outputs
