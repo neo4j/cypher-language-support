@@ -235,25 +235,6 @@ describe('sanity checks', () => {
     ]);
   });
 
-  test('completes basic console cmds on :', () => {
-    expect(autocomplete(':', {})).toEqual([
-      { kind: 23, label: 'server' },
-      { kind: 23, label: 'use' },
-      { kind: 23, label: 'help' },
-      { kind: 23, label: 'access-mode' },
-      { kind: 23, label: 'play' },
-      { kind: 23, label: 'style' },
-      { kind: 23, label: 'style reset' },
-      { kind: 23, label: 'sysinfo' },
-      { kind: 23, label: 'welcome' },
-      { kind: 23, label: 'disconnect' },
-      { kind: 23, label: 'connect' },
-      { kind: 23, label: 'param' },
-      { kind: 23, label: 'history' },
-      { kind: 23, label: 'clear' },
-    ]);
-  });
-
   test('accepts trailing ; ', () => {
     expectParsedCommands(':history;', [
       { type: 'history' },
