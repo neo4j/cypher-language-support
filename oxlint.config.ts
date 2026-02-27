@@ -1,7 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  ignorePatterns: ['semanticAnalysis.js', 'vendor/**'],
+  ignorePatterns: ['semanticAnalysis.js', 'vendor/**', '**/fixtures/textmate/**'],
   plugins: ['typescript'],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],

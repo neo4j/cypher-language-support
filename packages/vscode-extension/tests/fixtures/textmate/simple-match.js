@@ -1,11 +1,10 @@
-/* eslint-disable no-unused-vars */
 
 const a = /* cypher */`
     // This is a comment
     MATCH (n:Label) RETURN function(n.property)
 `
 
-const b = /*cypher*/`
+const b = /*cypher*/`  
     // This is a comment
     MATCH (n:Label) RETURN function(n.property)
 `
