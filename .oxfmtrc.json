@@ -1,0 +1,12 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "ignorePatterns": [
+    "out/",
+    "packages/language-support/src/generated-parser/*",
+    "vendor/*",
+    "packages/vscode-extension/tests/fixtures/textmate/*",
+    "packages/vscode-extension/syntaxes/cypher.json"
+  ]
+}
