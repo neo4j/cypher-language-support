@@ -5,7 +5,6 @@ export default defineConfig({
     'semanticAnalysis.js',
     'vendor/**',
     'packages/vscode-extension/tests/fixtures/textmate/simple-match.js',
-    'packages/react-codemirror/playwright/index.tsx',
   ],
   plugins: ['typescript'],
   rules: {
