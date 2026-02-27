@@ -15,8 +15,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('correctly completes variables from pattern in match', () => {
-    const query =
-      'MATCH p=(n:Person {n: 23})-[r:KNOWS {since: 213, g: rand()}]->(m:Person) WHERE ';
+    const query = 'MATCH p=(n:Person {n: 23})-[r:KNOWS {since: 213, g: rand()}]->(m:Person) WHERE ';
 
     testCompletions({
       query,
@@ -76,8 +75,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('does not complete unstarted variables that are used but not defined', () => {
-    const query =
-      'MATCH (m:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
+    const query = 'MATCH (m:Person) WHERE n.name = "foo" RETURN n.name, n.age, ';
 
     testCompletions({
       query,
@@ -87,8 +85,7 @@ describe('unscoped variable completions', () => {
   });
 
   test('does not complete variables that are used but not defined', () => {
-    const query =
-      'MATCH (abc:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
+    const query = 'MATCH (abc:Person) WHERE movie.name = "foo" RETURN movie.name, movie.age, m';
 
     testCompletions({
       query,

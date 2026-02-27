@@ -10,19 +10,16 @@ export class ParameterItem extends TreeItem {
     this.contextValue = 'parameter';
     this.label = label;
     this.iconPath = {
-      light: Uri.file(
-        path.join(__dirname, '..', 'resources', 'images', 'ParameterLight.svg'),
-      ),
-      dark: Uri.file(
-        path.join(__dirname, '..', 'resources', 'images', 'ParameterDark.svg'),
-      ),
+      light: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'ParameterLight.svg')),
+      dark: Uri.file(path.join(__dirname, '..', 'resources', 'images', 'ParameterDark.svg')),
     };
   }
 }
 
 export class ParameterTreeDataProvider implements TreeDataProvider<ParameterItem> {
-  private _onDidChangeTreeData: EventEmitter<ParameterItem | undefined | void> =
-    new EventEmitter<ParameterItem | undefined | void>();
+  private _onDidChangeTreeData: EventEmitter<ParameterItem | undefined | void> = new EventEmitter<
+    ParameterItem | undefined | void
+  >();
   readonly onDidChangeTreeData: Event<ParameterItem | undefined | void> =
     this._onDidChangeTreeData.event;
 
@@ -37,9 +34,7 @@ export class ParameterTreeDataProvider implements TreeDataProvider<ParameterItem
   getChildren(): ParameterItem[] {
     const parameters: Record<string, Parameter> = getParameters();
 
-    return Object.values(parameters).map(
-      (parameter) => new ParameterItem(parameter),
-    );
+    return Object.values(parameters).map((parameter) => new ParameterItem(parameter));
   }
 }
 

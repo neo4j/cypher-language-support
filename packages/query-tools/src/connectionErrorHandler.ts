@@ -1,16 +1,11 @@
 import { Neo4jError } from 'neo4j-driver';
 
 export const FRIENDLY_ERROR_MESSAGES: { [key: string]: string } = {
-  'Neo.ClientError.Security.AuthenticationRateLimit':
-    'Double check your username and password',
-  'Neo.ClientError.Security.CredentialsExpired':
-    'Double check your username and password',
-  'Neo.ClientError.Security.Unauthorized':
-    'Double check your username and password',
-  'Neo.ClientError.Security.TokenExpired':
-    'Double check your username and password',
-  'Neo.ClientError.Database.DatabaseNotFound':
-    'Double check that the database exists',
+  'Neo.ClientError.Security.AuthenticationRateLimit': 'Double check your username and password',
+  'Neo.ClientError.Security.CredentialsExpired': 'Double check your username and password',
+  'Neo.ClientError.Security.Unauthorized': 'Double check your username and password',
+  'Neo.ClientError.Security.TokenExpired': 'Double check your username and password',
+  'Neo.ClientError.Database.DatabaseNotFound': 'Double check that the database exists',
   ServiceUnavailable:
     'Double check the scheme, host and port are correct, make sure Neo4j is running and that you have a network connection if needed',
   Default: 'An error occurred while connecting to Neo4j',
@@ -39,8 +34,7 @@ export function getConnectionError(error: unknown): ConnectionError {
     return {
       message: stripTrailingPeriod(error.message),
       code: error.code,
-      friendlyMessage:
-        FRIENDLY_ERROR_MESSAGES[error.code] ?? FRIENDLY_ERROR_MESSAGES.Default,
+      friendlyMessage: FRIENDLY_ERROR_MESSAGES[error.code] ?? FRIENDLY_ERROR_MESSAGES.Default,
     };
   }
 

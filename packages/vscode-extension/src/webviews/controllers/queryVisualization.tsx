@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
-  QueryResultsMessage,
-  QueryResult,
-} from '../queryResults/queryResultsTypes';
+import { QueryResultsMessage, QueryResult } from '../queryResults/queryResultsTypes';
 import { VizWrapper } from '../../components/viz-wrapper';
 
 interface vscode {
@@ -17,9 +14,7 @@ const renderContent = (result: QueryResult) => {
     return <div className="n-px-token-5 n-py-token-4">Executing...</div>;
   }
   if (result.type === 'error') {
-    return (
-      <div className="n-px-token-5 n-py-token-4">{result.errorMessage}</div>
-    );
+    return <div className="n-px-token-5 n-py-token-4">{result.errorMessage}</div>;
   }
   if (result.type === 'success') {
     return (
@@ -50,10 +45,7 @@ export function QueryVisualization() {
         vscode.postMessage(message);
         setStatementResult(message.result);
       } else if (message.type === 'themeUpdate') {
-        document.documentElement.classList.toggle(
-          'ndl-theme-dark',
-          message.isDarkTheme,
-        );
+        document.documentElement.classList.toggle('ndl-theme-dark', message.isDarkTheme);
       }
     };
 
@@ -76,6 +68,4 @@ export function QueryVisualization() {
   );
 }
 
-createRoot(document.getElementById('queryVisualization')).render(
-  <QueryVisualization />,
-);
+createRoot(document.getElementById('queryVisualization')).render(<QueryVisualization />);

@@ -19,15 +19,12 @@ const exampleQueries = {
   innerAnd: 'MATCH (n:(Person|(Monkey&Litterate)))',
   doubleInnerAnds: 'MATCH (n:((Person&Friend)|(Monkey&Litterate)))',
   deepCNFCase: 'MATCH (n:(Person|(Monkey&(Litterate|College_Educated))))',
-  messyNonCNF:
-    'MATCH (n:(Monkey&((Monkey&Litterate)|(Monkey&College_Educated))))',
-  duplicationRiskOfOr:
-    'MATCH (n:(((Monkey&Litterate)|(Monkey&College_Educated))))',
+  messyNonCNF: 'MATCH (n:(Monkey&((Monkey&Litterate)|(Monkey&College_Educated))))',
+  duplicationRiskOfOr: 'MATCH (n:(((Monkey&Litterate)|(Monkey&College_Educated))))',
   orWithNot: 'MATCH (n:(!A|B|C))',
   orWithMultipleNots: 'MATCH (n:(!A|B|!C))',
   mixOfAndsOrsNots: 'MATCH (n:(!A|B|C)&(B&D)|E)',
-  orWithinOr:
-    'MATCH (n:(Person|((Monkey&Litterate)|(Monkey&College_Educated))))',
+  orWithinOr: 'MATCH (n:(Person|((Monkey&Litterate)|(Monkey&College_Educated))))',
   threeInnerAnds: 'MATCH (n:((A&B)|(C&D)|(E&F)))',
 };
 
@@ -48,11 +45,7 @@ describe('rewrite tree', () => {
   });
 
   test('Pushing nots and removing duplicates should not affect tree without duplicates/nots', () => {
-    const parsing = lintCypherQuery(
-      exampleQueries.twoDifferentLabels,
-      {},
-      false,
-    );
+    const parsing = lintCypherQuery(exampleQueries.twoDifferentLabels, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -70,11 +63,7 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should not break label tree already on CNF', () => {
-    const parsing = lintCypherQuery(
-      exampleQueries.twoDifferentLabels,
-      {},
-      false,
-    );
+    const parsing = lintCypherQuery(exampleQueries.twoDifferentLabels, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const cnfTree = convertToCNF(firstSymbolLabels);
     expect(cnfTree).toEqual({
@@ -291,11 +280,7 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation simplifies away AND(OR(Monkey,Monkey), ...) to AND(Monkey, ...)', () => {
-    const parsing = lintCypherQuery(
-      exampleQueries.duplicationRiskOfOr,
-      {},
-      false,
-    );
+    const parsing = lintCypherQuery(exampleQueries.duplicationRiskOfOr, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -345,11 +330,7 @@ describe('rewrite tree', () => {
   });
 
   test('CNF removes Tautology: OR with multiple NOTs inside', () => {
-    const parsing = lintCypherQuery(
-      exampleQueries.orWithMultipleNots,
-      {},
-      false,
-    );
+    const parsing = lintCypherQuery(exampleQueries.orWithMultipleNots, {}, false);
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -738,9 +719,7 @@ describe('rewrite tree', () => {
 
   test('Should be able to detect if a duplicate label already exists', () => {
     const existingConditions: LabelOrCondition[] = [{ value: 'A' }];
-    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
-      true,
-    );
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(true);
   });
 
   test('Should be able to detect if a duplicate label already exists among all children', () => {
@@ -750,9 +729,7 @@ describe('rewrite tree', () => {
       { value: 'A' },
       { value: 'D' },
     ];
-    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
-      true,
-    );
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(true);
   });
 
   test('Should ignore position', () => {
@@ -762,9 +739,7 @@ describe('rewrite tree', () => {
       { value: 'A' },
       { value: 'D' },
     ];
-    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(
-      true,
-    );
+    expect(childAlreadyExists(existingConditions, { value: 'A' })).toEqual(true);
   });
 
   test('Should respect label', () => {
@@ -774,9 +749,7 @@ describe('rewrite tree', () => {
       { value: 'A' },
       { value: 'D' },
     ];
-    expect(childAlreadyExists(existingConditions, { value: 'AB' })).toEqual(
-      false,
-    );
+    expect(childAlreadyExists(existingConditions, { value: 'AB' })).toEqual(false);
   });
 
   test('AND with only ANY label should become ANY', () => {
@@ -850,10 +823,7 @@ describe('rewrite tree', () => {
       children: [
         {
           condition: 'or',
-          children: [
-            { value: 'A' },
-            { condition: 'and', children: [{ value: 'B' }] },
-          ],
+          children: [{ value: 'A' }, { condition: 'and', children: [{ value: 'B' }] }],
         },
       ],
     });
@@ -864,9 +834,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(convertToCNF(removeInnerAnys(firstSymbolLabels))).toEqual({
       condition: 'and',
-      children: [
-        { condition: 'or', children: [{ value: 'A' }, { value: 'B' }] },
-      ],
+      children: [{ condition: 'or', children: [{ value: 'A' }, { value: 'B' }] }],
     });
   });
 
@@ -893,9 +861,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
-      children: [
-        { condition: 'or', children: [{ value: 'A' }, { value: 'B' }] },
-      ],
+      children: [{ condition: 'or', children: [{ value: 'A' }, { value: 'B' }] }],
     });
   });
 
@@ -904,10 +870,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
-      children: [
-        { value: 'A' },
-        { condition: 'or', children: [{ value: 'B' }, { value: 'C' }] },
-      ],
+      children: [{ value: 'A' }, { condition: 'or', children: [{ value: 'B' }, { value: 'C' }] }],
     });
   });
 });

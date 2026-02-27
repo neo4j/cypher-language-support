@@ -13,14 +13,8 @@ import {
   isVector,
 } from 'neo4j-driver';
 
-import type {
-  CypherDataType,
-  CypherProperty,
-} from '../types/cypher-data-types';
-import {
-  isCypherBasicPropertyType,
-  isInt8Array,
-} from '../types/cypher-data-types';
+import type { CypherDataType, CypherProperty } from '../types/cypher-data-types';
+import { isCypherBasicPropertyType, isInt8Array } from '../types/cypher-data-types';
 
 type CypherPropertyName =
   | 'Float'
@@ -43,9 +37,7 @@ type CypherPropertyName =
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
-export const getPropertyTypeDisplayName = (
-  val?: CypherProperty,
-): CypherPropertyName => {
+export const getPropertyTypeDisplayName = (val?: CypherProperty): CypherPropertyName => {
   const jsType = typeof val;
   if (jsType === 'number') {
     return 'Float';

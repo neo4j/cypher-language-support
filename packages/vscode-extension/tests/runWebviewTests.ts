@@ -150,10 +150,7 @@ export const config: Options.Testrunner = {
   // See the full list at http://mochajs.org/
   mochaOpts: {
     ui: 'tdd',
-    timeout:
-      process.env.DEBUG_VSCODE_TESTS === 'true'
-        ? Number.POSITIVE_INFINITY
-        : 120000,
+    timeout: process.env.DEBUG_VSCODE_TESTS === 'true' ? Number.POSITIVE_INFINITY : 120000,
   },
 
   //

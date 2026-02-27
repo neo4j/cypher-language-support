@@ -35,9 +35,7 @@ describe('getHTML', () => {
   });
 
   it('wraps selected DOM content with monospace wrapper and inlines class styles', () => {
-    createStyleSheet(
-      '.foo { color: red; font-weight: bold; } .bar { background: yellow; }',
-    );
+    createStyleSheet('.foo { color: red; font-weight: bold; } .bar { background: yellow; }');
 
     const div = document.createElement('div');
     div.className = 'foo bar';

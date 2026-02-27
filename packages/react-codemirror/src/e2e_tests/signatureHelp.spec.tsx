@@ -11,8 +11,7 @@ type TooltipExpectations = {
   excludes?: string[];
 };
 
-const importCsvProc =
-  testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'];
+const importCsvProc = testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'];
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -40,13 +39,7 @@ function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
 test('Signature help works for functions', async ({ page, mount }) => {
   const query = 'RETURN abs(';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
     timeout: 10000,
@@ -56,39 +49,24 @@ test('Signature help works for functions', async ({ page, mount }) => {
 test('Signature help works for procedures', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   await expect(page.locator('.cm-signature-help-panel')).toBeVisible({
     timeout: 10000,
   });
 });
 
-test('Signature help shows the description for the first argument', async ({
-  page,
-  mount,
-}) => {
+test('Signature help shows the description for the first argument', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
     includes: [
-      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv']
-        .argumentDescription[0].description,
+      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'].argumentDescription[0]
+        .description,
       testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'].description,
     ],
   });
@@ -100,41 +78,24 @@ test('Signature help shows the description for the first argument when the curso
 }) => {
   const query = 'CALL apoc.import.csv()';
 
-  await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={21} />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} offset={21} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
-    includes: [
-      importCsvProc.argumentDescription[0].description,
-      importCsvProc.description,
-    ],
+    includes: [importCsvProc.argumentDescription[0].description, importCsvProc.description],
   });
 });
 
-test('Signature help shows the description for the second argument', async ({
-  page,
-  mount,
-}) => {
+test('Signature help shows the description for the second argument', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(nodes,';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
-    includes: [
-      importCsvProc.argumentDescription[1].description,
-      importCsvProc.description,
-    ],
+    includes: [importCsvProc.argumentDescription[1].description, importCsvProc.description],
   });
 });
 
@@ -144,17 +105,12 @@ test('Signature help shows the description for the second argument when the curs
 }) => {
   const query = 'CALL apoc.import.csv(nodes,)';
 
-  await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={27} />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} offset={27} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
   await testTooltip(tooltip, {
-    includes: [
-      importCsvProc.argumentDescription[1].description,
-      importCsvProc.description,
-    ],
+    includes: [importCsvProc.argumentDescription[1].description, importCsvProc.description],
   });
 });
 
@@ -164,9 +120,7 @@ test('Signature help shows the description for the second argument when the curs
 }) => {
   const query = 'CALL apoc.import.csv(nodes,  )';
 
-  await mount(
-    <CypherEditor value={query} schema={testData.mockSchema} offset={28} />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} offset={28} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
@@ -184,13 +138,7 @@ test('Signature help shows description for arguments with a space following a se
 }) => {
   const query = 'CALL apoc.import.csv(nodes, ';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
@@ -202,19 +150,10 @@ test('Signature help shows description for arguments with a space following a se
   });
 });
 
-test('Signature help shows the description for the third argument', async ({
-  page,
-  mount,
-}) => {
+test('Signature help shows the description for the third argument', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(nodes, rels,';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
@@ -232,13 +171,7 @@ test('Signature help works on multiline queries', async ({ page, mount }) => {
     rels,  
     `;
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   const tooltip = page.locator('.cm-signature-help-panel');
 
@@ -256,13 +189,7 @@ test('Signature help only shows the description past the last argument', async (
 }) => {
   const query = 'CALL apoc.import.csv(nodes, rels, config,';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
   1;
 
   const tooltip = page.locator('.cm-signature-help-panel');
@@ -275,63 +202,34 @@ test('Signature help only shows the description past the last argument', async (
   });
 });
 
-test('Signature help does not show any help when method finished', async ({
-  page,
-  mount,
-}) => {
+test('Signature help does not show any help when method finished', async ({ page, mount }) => {
   const query = 'CALL apoc.import.csv(nodes, rels, config)';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
     timeout: 10000,
   });
 });
 
-test('Signature help does not blow up on empty query', async ({
-  page,
-  mount,
-}) => {
+test('Signature help does not blow up on empty query', async ({ page, mount }) => {
   const query = '';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
   await expect(page.locator('.cm-signature-help-panel')).not.toBeVisible({
     timeout: 10000,
   });
 });
 
-test('Signature help is shown below the text by default', async ({
-  page,
-  mount,
-}) => {
+test('Signature help is shown below the text by default', async ({ page, mount }) => {
   // We need to introduce new lines to make sure there's
   // enough space to show the tooltip above
   const query = '\n\n\n\n\n\n\nRETURN abs(';
 
-  await mount(
-    <CypherEditor
-      value={query}
-      schema={testData.mockSchema}
-      autofocus={true}
-    />,
-  );
+  await mount(<CypherEditor value={query} schema={testData.mockSchema} autofocus={true} />);
 
-  await expect(
-    page.locator('.cm-signature-help-panel.cm-tooltip-below'),
-  ).toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel.cm-tooltip-below')).toBeVisible({
     timeout: 10000,
   });
 });
@@ -353,9 +251,7 @@ test('Setting showSignatureTooltipBelow to true shows the signature help above t
     />,
   );
 
-  await expect(
-    page.locator('.cm-signature-help-panel.cm-tooltip-below'),
-  ).toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel.cm-tooltip-below')).toBeVisible({
     timeout: 10000,
   });
 });
@@ -377,17 +273,12 @@ test('Setting showSignatureTooltipBelow to false shows the signature help above 
     />,
   );
 
-  await expect(
-    page.locator('.cm-signature-help-panel.cm-tooltip-above'),
-  ).toBeVisible({
+  await expect(page.locator('.cm-signature-help-panel.cm-tooltip-above')).toBeVisible({
     timeout: 10000,
   });
 });
 
-test('Signature help depends on the Cypher version', async ({
-  page,
-  mount,
-}) => {
+test('Signature help depends on the Cypher version', async ({ page, mount }) => {
   const cypher5ArgDescription = 'The Cypher 5 statement to run.';
   const cypher25ArgDescription = 'The Cypher 25 statement to run.';
 

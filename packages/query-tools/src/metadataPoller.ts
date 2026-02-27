@@ -39,12 +39,7 @@ class QueryPoller<T> {
   private onRefetchDone?: FetchCallback<T>;
   private queryArgs: ExecuteQueryArgs<T>;
 
-  constructor({
-    prefetchedData,
-    queryArgs,
-    connection,
-    onRefetchDone,
-  }: PollerConfig<T>) {
+  constructor({ prefetchedData, queryArgs, connection, onRefetchDone }: PollerConfig<T>) {
     this.connection = connection;
     this.queryArgs = queryArgs;
     this.onRefetchDone = onRefetchDone;
@@ -101,9 +96,8 @@ export class DisconnectedMetadataPoller extends MetadataPoller {
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
   private dataSummary: QueryPoller<DataSummary>;
-  private functions: Partial<
-    Record<CypherVersion, QueryPoller<{ functions: Neo4jFunction[] }>>
-  > = {};
+  private functions: Partial<Record<CypherVersion, QueryPoller<{ functions: Neo4jFunction[] }>>> =
+    {};
   private procedures: Partial<
     Record<CypherVersion, QueryPoller<{ procedures: Neo4jProcedure[] }>>
   > = {};
@@ -133,16 +127,10 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       prefetchedData: { databases },
       onRefetchDone: (result) => {
         if (result.success) {
-          this.dbSchema.databaseNames = result.data.databases.flatMap(
-            (db) => db.name,
-          );
-          this.dbSchema.aliasNames = result.data.databases.flatMap(
-            (db) => db.aliases ?? [],
-          );
+          this.dbSchema.databaseNames = result.data.databases.flatMap((db) => db.name);
+          this.dbSchema.aliasNames = result.data.databases.flatMap((db) => db.aliases ?? []);
           const dbs = result.data.databases;
-          const currentDb = dbs.find(
-            (db) => db.name === this.connection.currentDb,
-          );
+          const currentDb = dbs.find((db) => db.name === this.connection.currentDb);
           if (currentDb) {
             this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
           }
@@ -194,8 +182,9 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       },
     });
 
-    const versions: (CypherVersion | undefined)[] =
-      serverCypherVersions?.includes('25') ? allCypherVersions : [undefined];
+    const versions: (CypherVersion | undefined)[] = serverCypherVersions?.includes('25')
+      ? allCypherVersions
+      : [undefined];
 
     versions.forEach((cypherVersion) => {
       const effectiveCypherVersion: CypherVersion = cypherVersion ?? 'CYPHER 5';
@@ -207,13 +196,14 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         }),
         onRefetchDone: (result) => {
           if (result.success) {
-            const procedures = result.data.procedures.reduce<
-              Record<string, Neo4jProcedure>
-            >((acc, curr) => {
-              const { name } = curr;
-              acc[name] = curr;
-              return acc;
-            }, {});
+            const procedures = result.data.procedures.reduce<Record<string, Neo4jProcedure>>(
+              (acc, curr) => {
+                const { name } = curr;
+                acc[name] = curr;
+                return acc;
+              },
+              {},
+            );
             if (!this.dbSchema.procedures) {
               this.dbSchema.procedures = {};
             }
@@ -229,13 +219,14 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         }),
         onRefetchDone: (result) => {
           if (result.success) {
-            const functions = result.data.functions.reduce<
-              Record<string, Neo4jFunction>
-            >((acc, curr) => {
-              const { name } = curr;
-              acc[name] = curr;
-              return acc;
-            }, {});
+            const functions = result.data.functions.reduce<Record<string, Neo4jFunction>>(
+              (acc, curr) => {
+                const { name } = curr;
+                acc[name] = curr;
+                return acc;
+              },
+              {},
+            );
             if (!this.dbSchema.functions) {
               this.dbSchema.functions = {};
             }
@@ -273,9 +264,6 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
     void this.fetchDbSchema();
-    this.dbPollingInterval = setInterval(
-      () => void this.fetchDbSchema(),
-      intervalSeconds * 1000,
-    );
+    this.dbPollingInterval = setInterval(() => void this.fetchDbSchema(), intervalSeconds * 1000);
   }
 }

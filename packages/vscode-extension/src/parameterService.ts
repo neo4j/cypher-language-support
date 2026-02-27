@@ -1,7 +1,4 @@
-import {
-  CypherDataTypeName,
-  deserializeTypeAnnotations,
-} from '@neo4j-cypher/query-tools';
+import { CypherDataTypeName, deserializeTypeAnnotations } from '@neo4j-cypher/query-tools';
 import * as vscode from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext } from './contextService';
@@ -50,10 +47,7 @@ export function getDeserializedParams(): Record<string, unknown> {
   const parameters = getParameters();
 
   const res = Object.fromEntries(
-    Object.values(parameters).map((p) => [
-      p.key,
-      deserializeTypeAnnotations(p.serializedValue),
-    ]),
+    Object.values(parameters).map((p) => [p.key, deserializeTypeAnnotations(p.serializedValue)]),
   );
   return res;
 }
@@ -67,9 +61,7 @@ export async function setParameter(param: Parameter) {
   const key = param.key;
   parameters[key] = param;
   await updateParameters(parameters);
-  void vscode.window.showInformationMessage(
-    CONSTANTS.MESSAGES.PARAMETER_SET(key),
-  );
+  void vscode.window.showInformationMessage(CONSTANTS.MESSAGES.PARAMETER_SET(key));
 }
 
 /**
@@ -82,9 +74,7 @@ export async function deleteParameter(keyToDelete: string) {
     Object.entries(parameters).filter(([key]) => key !== keyToDelete),
   );
   await updateParameters(modifiedParams);
-  void vscode.window.showInformationMessage(
-    CONSTANTS.MESSAGES.PARAMETER_DELETED(keyToDelete),
-  );
+  void vscode.window.showInformationMessage(CONSTANTS.MESSAGES.PARAMETER_DELETED(keyToDelete));
 }
 
 export function getParameterByKey(key: string): Parameter | undefined {

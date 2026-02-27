@@ -1,7 +1,4 @@
-import {
-  SignatureHelp,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import { SignatureHelp, SignatureInformation } from 'vscode-languageserver-types';
 
 import { ParseTreeWalker } from 'antlr4';
 import CypherParser, {
@@ -33,9 +30,7 @@ interface ParsedMethod {
   methodType: MethodType;
 }
 
-export function toSignatureInformation(
-  curr: Neo4jFunction | Neo4jProcedure,
-): SignatureInformation {
+export function toSignatureInformation(curr: Neo4jFunction | Neo4jProcedure): SignatureInformation {
   const { name, argumentDescription, description } = curr;
   const argDescriptions = argumentDescription.map((arg) => {
     let label = '';
@@ -61,11 +56,7 @@ export function toSignatureInformation(
   const argsString = argDescriptions.map((arg) => arg.label).join(', ');
   const signature = `${name}(${argsString})`;
 
-  return SignatureInformation.create(
-    signature,
-    description,
-    ...argDescriptions,
-  );
+  return SignatureInformation.create(signature, description, ...argDescriptions);
 }
 
 function toSignatureHelp(
@@ -106,18 +97,12 @@ class SignatureHelper extends CypherCmdParserListener {
       let index = ctx.stop.tokenIndex + 1;
       let nextToken = this.tokens[index];
 
-      while (
-        nextToken.type === CypherParser.SPACE &&
-        index < this.tokens.length
-      ) {
+      while (nextToken.type === CypherParser.SPACE && index < this.tokens.length) {
         index++;
         nextToken = this.tokens[index];
       }
 
-      if (
-        this.caretToken.start === nextToken?.start &&
-        this.caretToken.stop === nextToken?.stop
-      ) {
+      if (this.caretToken.start === nextToken?.start && this.caretToken.stop === nextToken?.stop) {
         const methodName = ctx.getText();
         const numMethodArgs = 0;
         this.result = {
@@ -194,29 +179,17 @@ export function signatureHelp(
     if (caret) {
       const statement = caret.statement;
 
-      const signatureHelper = new SignatureHelper(
-        statement.tokens,
-        caret.token,
-      );
+      const signatureHelper = new SignatureHelper(statement.tokens, caret.token);
 
       ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
       const method = signatureHelper.result;
 
       if (method !== undefined) {
-        const cypherVersion = resolveCypherVersion(
-          statement.cypherVersion,
-          dbSchema,
-        );
+        const cypherVersion = resolveCypherVersion(statement.cypherVersion, dbSchema);
         if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(
-            dbSchema.functions?.[cypherVersion] ?? {},
-            method,
-          );
+          result = toSignatureHelp(dbSchema.functions?.[cypherVersion] ?? {}, method);
         } else {
-          result = toSignatureHelp(
-            dbSchema.procedures?.[cypherVersion] ?? {},
-            method,
-          );
+          result = toSignatureHelp(dbSchema.procedures?.[cypherVersion] ?? {}, method);
         }
       }
     }

@@ -1,8 +1,4 @@
-import {
-  _internalFeatureFlags,
-  DbSchema,
-  testData,
-} from '@neo4j-cypher/language-support';
+import { _internalFeatureFlags, DbSchema, testData } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
@@ -78,10 +74,7 @@ export function App() {
           <div className="auto min-w-[500px] w-3/6 flex flex-col gap-5 bg-white dark:bg-gray-600 p-10 rounded-lg shadow-lg">
             <div className="flex justify-between items-center">
               <h1 className="text-4xl ">Cypher Codemirror Demo</h1>
-              <button
-                className="w-10 h-10"
-                onClick={() => setShowConfigPanel((s) => !s)}
-              >
+              <button className="w-10 h-10" onClick={() => setShowConfigPanel((s) => !s)}>
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -109,9 +102,7 @@ export function App() {
                 <button
                   key={demoName}
                   className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded 
-                ${
-                  selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
-                }`}
+                ${selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'}`}
                   onClick={() => {
                     setSelectedDemoName(demoName);
                     setValue(demos[demoName]);
@@ -143,18 +134,12 @@ export function App() {
             <p
               onClick={() => editorRef.current.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
-              title={
-                window.navigator.userAgent.includes('Mac')
-                  ? 'Shift-Option-F'
-                  : 'Ctrl-Shift-I'
-              }
+              title={window.navigator.userAgent.includes('Mac') ? 'Shift-Option-F' : 'Ctrl-Shift-I'}
             >
               Format Query
             </p>
             {commandRanCount > 0 && (
-              <span className="text-gray-400">
-                "commands" ran so far: {commandRanCount}
-              </span>
+              <span className="text-gray-400">"commands" ran so far: {commandRanCount}</span>
             )}
             {!!showCodemirrorParse && <TokenTable document={value} />}
           </div>
@@ -170,11 +155,7 @@ export function App() {
                 Show codemirror parsed tokens
               </label>
               <label className="flex gap-1">
-                <input
-                  type="checkbox"
-                  checked={darkMode}
-                  onChange={() => setDarkMode((l) => !l)}
-                />
+                <input type="checkbox" checked={darkMode} onChange={() => setDarkMode((l) => !l)} />
                 Dark Mode
               </label>
               <label className="flex gap-1">

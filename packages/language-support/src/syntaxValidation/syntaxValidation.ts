@@ -33,12 +33,10 @@ function detectNonDeclaredLabel(
   const labelName = labelOrRelType.labelText;
   const normalizedLabelName = labelName.replace(/^`|`$/g, '');
   const notInDatabase =
-    (labelOrRelType.labelType === LabelType.nodeLabelType &&
-      !dbLabels.has(normalizedLabelName)) ||
+    (labelOrRelType.labelType === LabelType.nodeLabelType && !dbLabels.has(normalizedLabelName)) ||
     (labelOrRelType.labelType === LabelType.relLabelType &&
       !dbRelationshipTypes.has(normalizedLabelName)) ||
-    (!dbLabels.has(normalizedLabelName) &&
-      !dbRelationshipTypes.has(normalizedLabelName));
+    (!dbLabels.has(normalizedLabelName) && !dbRelationshipTypes.has(normalizedLabelName));
 
   if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
     const message =
@@ -46,12 +44,7 @@ function detectNonDeclaredLabel(
       ' ' +
       labelName +
       " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
-    return generateSyntaxDiagnostic(
-      labelName,
-      labelOrRelType,
-      DiagnosticSeverity.Warning,
-      message,
-    );
+    return generateSyntaxDiagnostic(labelName, labelOrRelType, DiagnosticSeverity.Warning, message);
   }
 
   return undefined;
@@ -64,8 +57,7 @@ export function clampUnsafePositions(
   const endLine = document.lineCount;
   const endOffset = document.getText().length;
   const endLineOffset =
-    endOffset -
-    document.offsetAt({ line: document.lineCount - 1, character: 0 });
+    endOffset - document.offsetAt({ line: document.lineCount - 1, character: 0 });
   return diagnostics.map((diagnostic: SyntaxDiagnostic) => {
     if (
       [
@@ -103,9 +95,7 @@ function generateSyntaxDiagnostic(
   const lineIndex = parsedText.line - 1;
   const startColumn = parsedText.column;
   const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : (nameChunks.at(-1)?.length ?? 0);
+    linesOffset == 0 ? startColumn + rawText.length : (nameChunks.at(-1)?.length ?? 0);
 
   const error: SyntaxDiagnostic = {
     severity,
@@ -127,8 +117,7 @@ function detectNonDeclaredFunction(
 ): SyntaxDiagnostic | undefined {
   const exists = functionExists(parsedFunction, functionsSchema);
   if (!exists) {
-    const existsAsProcedure =
-      procedureSchema && Boolean(procedureSchema[parsedFunction.name]);
+    const existsAsProcedure = procedureSchema && Boolean(procedureSchema[parsedFunction.name]);
     if (existsAsProcedure) {
       return generateProcedureUsedAsFunctionError(parsedFunction);
     }
@@ -143,9 +132,7 @@ function functionExists(
   if (!functionCandidate || !functionsSchema) {
     return false;
   }
-  const functionExistsWithExactName = Boolean(
-    functionsSchema[functionCandidate.name],
-  );
+  const functionExistsWithExactName = Boolean(functionsSchema[functionCandidate.name]);
   const lowerCaseFunctionName = functionCandidate.name.toLowerCase();
   const caseInsensitiveBuiltInFunctionExists = Boolean(
     Object.values(functionsSchema).find(
@@ -156,9 +143,7 @@ function functionExists(
   return caseInsensitiveBuiltInFunctionExists || functionExistsWithExactName;
 }
 
-function generateFunctionUsedAsProcedureError(
-  parsedProcedure: ParsedProcedure,
-): SyntaxDiagnostic {
+function generateFunctionUsedAsProcedureError(parsedProcedure: ParsedProcedure): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
     parsedProcedure.rawText,
     parsedProcedure,
@@ -167,9 +152,7 @@ function generateFunctionUsedAsProcedureError(
   );
 }
 
-function generateFunctionNotFoundError(
-  parsedFunction: ParsedFunction,
-): SyntaxDiagnostic {
+function generateFunctionNotFoundError(parsedFunction: ParsedFunction): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
     parsedFunction.rawText,
     parsedFunction,
@@ -178,9 +161,7 @@ function generateFunctionNotFoundError(
   );
 }
 
-function generateProcedureUsedAsFunctionError(
-  parsedFunction: ParsedFunction,
-): SyntaxDiagnostic {
+function generateProcedureUsedAsFunctionError(parsedFunction: ParsedFunction): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
     parsedFunction.rawText,
     parsedFunction,
@@ -189,9 +170,7 @@ function generateProcedureUsedAsFunctionError(
   );
 }
 
-function generateProcedureNotFoundError(
-  parsedProcedure: ParsedProcedure,
-): SyntaxDiagnostic {
+function generateProcedureNotFoundError(parsedProcedure: ParsedProcedure): SyntaxDiagnostic {
   return generateSyntaxDiagnostic(
     parsedProcedure.rawText,
     parsedProcedure,
@@ -209,9 +188,7 @@ function generateProcedureDeprecatedWarning(
     parsedProcedure.rawText,
     parsedProcedure,
     DiagnosticSeverity.Warning,
-    deprecatedBy
-      ? procDeprecatedWarning + ` Alternative: ${deprecatedBy}`
-      : procDeprecatedWarning,
+    deprecatedBy ? procDeprecatedWarning + ` Alternative: ${deprecatedBy}` : procDeprecatedWarning,
     true,
   );
 }
@@ -225,9 +202,7 @@ function generateFunctionDeprecatedWarning(
     parsedFunction.rawText,
     parsedFunction,
     DiagnosticSeverity.Warning,
-    deprecatedBy
-      ? funcDeprecatedWarning + ` Alternative: ${deprecatedBy}`
-      : funcDeprecatedWarning,
+    deprecatedBy ? funcDeprecatedWarning + ` Alternative: ${deprecatedBy}` : funcDeprecatedWarning,
     true,
   );
 }
@@ -244,11 +219,7 @@ function warnOnUndeclaredLabels(
     const labelsAndRelTypes = parsingResult.collectedLabelOrRelTypes;
 
     labelsAndRelTypes.forEach((labelOrRelType) => {
-      const warning = detectNonDeclaredLabel(
-        labelOrRelType,
-        dbLabels,
-        dbRelationshipTypes,
-      );
+      const warning = detectNonDeclaredLabel(labelOrRelType, dbLabels, dbRelationshipTypes);
 
       if (warning) warnings.push(warning);
     });
@@ -257,10 +228,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-export function sortByPositionAndMessage(
-  a: SyntaxDiagnostic,
-  b: SyntaxDiagnostic,
-) {
+export function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
@@ -291,15 +259,9 @@ function fixOffsets({
     const colAdjust = range.start.line === 0 ? cmd.start.column : 0;
     const offsetAdjust = cmd.start.start;
 
-    const start = Position.create(
-      range.start.line + lineAdjust,
-      range.start.character + colAdjust,
-    );
+    const start = Position.create(range.start.line + lineAdjust, range.start.character + colAdjust);
 
-    const end = Position.create(
-      range.end.line + lineAdjust,
-      range.end.character + colAdjust,
-    );
+    const end = Position.create(range.end.line + lineAdjust, range.end.character + colAdjust);
 
     const adjustedRange = { start, end };
     const adjustedOffset = {
@@ -346,10 +308,7 @@ export function lintCypherQuery(
         const parameterErrors = errorOnUndeclaredParameters(current, dbSchema);
         const functionErrors = errorOnUndeclaredFunctions(current, dbSchema);
         const procedureErrors = errorOnUndeclaredProcedures(current, dbSchema);
-        const procedureWarnings = warningOnDeprecatedProcedure(
-          current,
-          dbSchema,
-        );
+        const procedureWarnings = warningOnDeprecatedProcedure(current, dbSchema);
         const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
         const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
 
@@ -357,11 +316,7 @@ export function lintCypherQuery(
           notifications,
           errors,
           symbolTable: rawSymbolTable,
-        } = wrappedSemanticAnalysis(
-          cmd.statement,
-          dbSchema,
-          current.cypherVersion,
-        );
+        } = wrappedSemanticAnalysis(cmd.statement, dbSchema, current.cypherVersion);
 
         // This contains both the syntax and the semantic errors
         const rawSemanticDiagnostics = notifications.concat(errors);
@@ -407,10 +362,7 @@ function warningOnDeprecatedProcedure(
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
   if (dbSchema.procedures) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
+    const cypherVersion = resolveCypherVersion(parsingResult.cypherVersion, dbSchema);
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
@@ -419,9 +371,7 @@ function warningOnDeprecatedProcedure(
       const deprecatedBy = proc?.deprecatedBy;
       if (deprecatedBy)
         if (procedureDeprecated) {
-          warnings.push(
-            generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy),
-          );
+          warnings.push(generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy));
         }
     });
   }
@@ -434,19 +384,14 @@ function warningOnDeprecatedFunction(
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
   if (dbSchema.functions) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
+    const cypherVersion = resolveCypherVersion(parsingResult.cypherVersion, dbSchema);
     const functionsInQuery = parsingResult.collectedFunctions;
     functionsInQuery.forEach((parsedFunction) => {
       const fn = dbSchema.functions?.[cypherVersion]?.[parsedFunction.name];
       const functionDeprecated = fn?.isDeprecated;
       const deprecatedBy = fn?.deprecatedBy;
       if (functionDeprecated) {
-        warnings.push(
-          generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy),
-        );
+        warnings.push(generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy));
       }
     });
   }
@@ -488,10 +433,7 @@ function errorOnUndeclaredFunctions(
   const warnings: SyntaxDiagnostic[] = [];
 
   if (dbSchema.functions) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
+    const cypherVersion = resolveCypherVersion(parsingResult.cypherVersion, dbSchema);
     const functionsInQuery = parsingResult.collectedFunctions;
 
     functionsInQuery.forEach((parsedFunction) => {
@@ -515,16 +457,11 @@ function errorOnUndeclaredProcedures(
   const errors: SyntaxDiagnostic[] = [];
 
   if (dbSchema.procedures) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
+    const cypherVersion = resolveCypherVersion(parsingResult.cypherVersion, dbSchema);
     const proceduresInQuery = parsingResult.collectedProcedures;
 
     proceduresInQuery.forEach((parsedProcedure) => {
-      const procedureExists = Boolean(
-        dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name],
-      );
+      const procedureExists = Boolean(dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name]);
       if (!procedureExists) {
         const existsAsFunction = functionExists(
           parsedProcedure,

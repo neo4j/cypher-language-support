@@ -1,7 +1,4 @@
-import {
-  CompletionItemKind,
-  CompletionItemTag,
-} from 'vscode-languageserver-types';
+import { CompletionItemKind, CompletionItemTag } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
@@ -14,9 +11,7 @@ describe('Procedures auto-completion', () => {
       'CYPHER 5': {
         'tx.getMetaData': procedures['CYPHER 5']['tx.getMetaData'],
         'db.index.fulltext.awaitEventuallyConsistentIndexRefresh':
-          procedures['CYPHER 5'][
-            'db.index.fulltext.awaitEventuallyConsistentIndexRefresh'
-          ],
+          procedures['CYPHER 5']['db.index.fulltext.awaitEventuallyConsistentIndexRefresh'],
         'db.ping': procedures['CYPHER 5']['db.ping'],
         'db.stats.retrieve': procedures['CYPHER 5']['db.stats.retrieve'],
         'db.stats.collect': procedures['CYPHER 5']['db.stats.collect'],
@@ -111,11 +106,7 @@ describe('Procedures auto-completion', () => {
           documentation: procedures['CYPHER 5']['db.ping'].description,
         },
       ],
-      excluded: [
-        { label: 'jwt.security.requestAccess' },
-        { label: 'jwt' },
-        { label: 'security' },
-      ],
+      excluded: [{ label: 'jwt.security.requestAccess' }, { label: 'jwt' }, { label: 'security' }],
     });
   });
 
@@ -130,8 +121,7 @@ describe('Procedures auto-completion', () => {
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
           signature: procedures['CYPHER 5']['db.stats.retrieve'].signature,
-          documentation:
-            procedures['CYPHER 5']['db.stats.retrieve'].description,
+          documentation: procedures['CYPHER 5']['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
@@ -179,8 +169,7 @@ describe('Procedures auto-completion', () => {
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
           signature: procedures['CYPHER 5']['db.stats.retrieve'].signature,
-          documentation:
-            procedures['CYPHER 5']['db.stats.retrieve'].description,
+          documentation: procedures['CYPHER 5']['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
@@ -345,8 +334,7 @@ describe('Procedures auto-completion', () => {
   test('Correctly completes RETURN when we have variables from a YIELD statement', () => {
     const query1 = 'CALL dbms.components() YIELD name, edition RETURN ';
     const query2 = 'CALL dbms.components() YIELD name, versions RETURN ';
-    const query3 =
-      'CALL dbms.components() YIELD name, edition RETURN edition, nam';
+    const query3 = 'CALL dbms.components() YIELD name, edition RETURN edition, nam';
     testCompletions({
       query: query1,
       dbSchema,
@@ -443,8 +431,7 @@ describe('Procedures auto-completion', () => {
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
           signature: procedures['CYPHER 5']['apoc.create.uuids'].signature,
-          documentation:
-            procedures['CYPHER 5']['apoc.create.uuids'].description,
+          documentation: procedures['CYPHER 5']['apoc.create.uuids'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],
@@ -459,8 +446,7 @@ describe('Procedures auto-completion', () => {
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
           signature: procedures['CYPHER 5']['apoc.create.uuids'].signature,
-          documentation:
-            procedures['CYPHER 5']['apoc.create.uuids'].description,
+          documentation: procedures['CYPHER 5']['apoc.create.uuids'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],

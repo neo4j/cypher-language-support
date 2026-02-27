@@ -7,9 +7,7 @@ export function getCSSStyleForClass(className: string): string {
       for (const rule of Array.from(rules)) {
         if (
           rule instanceof CSSStyleRule &&
-          rule.selectorText
-            .split(',')
-            .some((sel) => sel.trim() === `.${className}`)
+          rule.selectorText.split(',').some((sel) => sel.trim() === `.${className}`)
         ) {
           cssText += rule.style.cssText;
         }
@@ -48,9 +46,7 @@ export function getHTML(view: EditorView, from: number, to: number): string {
 
   const commonAncestor = range.commonAncestorContainer;
   const wrapperElement =
-    commonAncestor instanceof Text
-      ? commonAncestor.parentElement
-      : (commonAncestor as HTMLElement);
+    commonAncestor instanceof Text ? commonAncestor.parentElement : (commonAncestor as HTMLElement);
 
   const wrapper = document.createElement('div');
 
@@ -64,9 +60,7 @@ export function getHTML(view: EditorView, from: number, to: number): string {
   wrapper.appendChild(range.cloneContents());
 
   replaceClassWithStyle(wrapper);
-  wrapper
-    .querySelectorAll<HTMLElement>('[class]')
-    .forEach(replaceClassWithStyle);
+  wrapper.querySelectorAll<HTMLElement>('[class]').forEach(replaceClassWithStyle);
 
   const editorElement = document.querySelector('.cm-editor');
   const editorStyles = editorElement ? getComputedStyle(editorElement) : null;
@@ -74,9 +68,7 @@ export function getHTML(view: EditorView, from: number, to: number): string {
   return `<div style="font-family: monospace; ${
     editorStyles?.color ? `color: ${editorStyles.color};` : ''
   } ${
-    editorStyles?.backgroundColor
-      ? `background-color: ${editorStyles.backgroundColor};`
-      : ''
+    editorStyles?.backgroundColor ? `background-color: ${editorStyles.backgroundColor};` : ''
   }">${wrapper.outerHTML}</div>`;
 }
 

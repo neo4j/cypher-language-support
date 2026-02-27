@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Collapsible } from '../../components/collapsible';
-import {
-  QueryResult,
-  QueryResults,
-  QueryResultsMessage,
-} from '../queryResults/queryResultsTypes';
+import { QueryResult, QueryResults, QueryResultsMessage } from '../queryResults/queryResultsTypes';
 import { ColorThemeKind } from 'vscode';
 
 interface vscode {
@@ -53,19 +49,14 @@ export function QueryDetails() {
       } else if (message.type === 'executionUpdate') {
         setStatementResults((prev) => {
           const newState = [...prev];
-          const index = newState.findIndex(
-            (s) => s.statement === message.result.statement,
-          );
+          const index = newState.findIndex((s) => s.statement === message.result.statement);
           if (index !== -1) {
             newState[index] = message.result;
           }
           return newState;
         });
       } else if (message.type === 'themeUpdate') {
-        document.documentElement.classList.toggle(
-          'ndl-theme-dark',
-          message.isDarkTheme,
-        );
+        document.documentElement.classList.toggle('ndl-theme-dark', message.isDarkTheme);
       }
     };
 
@@ -111,9 +102,7 @@ export function QueryDetails() {
           </Collapsible>
         ))
       ) : (
-        <div className="n-px-token-5 n-py-token-4">
-          Run a Cypher query to see the details
-        </div>
+        <div className="n-px-token-5 n-py-token-4">Run a Cypher query to see the details</div>
       )}
     </div>
   );

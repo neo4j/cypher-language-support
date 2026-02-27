@@ -6,16 +6,10 @@ type SyntaxValidationTestArgs = {
   dbSchema?: DbSchema;
 };
 
-export function getDiagnosticsForQuery({
-  query,
-  dbSchema = {},
-}: SyntaxValidationTestArgs) {
+export function getDiagnosticsForQuery({ query, dbSchema = {} }: SyntaxValidationTestArgs) {
   return lintCypherQuery(query, dbSchema).diagnostics;
 }
 
-export function getSymbolTablesForQuery({
-  query,
-  dbSchema = {},
-}: SyntaxValidationTestArgs) {
+export function getSymbolTablesForQuery({ query, dbSchema = {} }: SyntaxValidationTestArgs) {
   return lintCypherQuery(query, dbSchema).symbolTables;
 }

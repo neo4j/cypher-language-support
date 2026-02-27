@@ -60,10 +60,7 @@ test('can add new lines without onExecute', async ({ page, mount }) => {
   });
 });
 
-test('can add new lines with newLineOnEnter and without onExecute', async ({
-  page,
-  mount,
-}) => {
+test('can add new lines with newLineOnEnter and without onExecute', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
 
   const editorComponent = await mount(<CypherEditor newLineOnEnter />);
@@ -90,10 +87,7 @@ test('can add new lines with newLineOnEnter and without onExecute', async ({
   });
 });
 
-test('can execute queries and see them in history with newLineOnEnter', async ({
-  page,
-  mount,
-}) => {
+test('can execute queries and see them in history with newLineOnEnter', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
 
   const initialValue = `MATCH (n)
@@ -105,12 +99,7 @@ RETURN n;`;
   };
 
   const editor = await mount(
-    <CypherEditor
-      value={initialValue}
-      history={history}
-      onExecute={onExecute}
-      newLineOnEnter
-    />,
+    <CypherEditor value={initialValue} history={history} onExecute={onExecute} newLineOnEnter />,
   );
 
   // Execute initial query
@@ -139,11 +128,7 @@ RETURN n;`;
 
   // rerender with new history
   await editor.update(
-    <CypherEditor
-      value={initialValue}
-      history={history}
-      onExecute={onExecute}
-    />,
+    <CypherEditor value={initialValue} history={history} onExecute={onExecute} />,
   );
 
   // type a new query and make sure it's not lost when navigating history
@@ -191,9 +176,7 @@ test('can execute queries without newLineOnEnter', async ({ page, mount }) => {
     history.unshift(cmd);
   };
 
-  const editorComponent = await mount(
-    <CypherEditor value={initialValue} onExecute={onExecute} />,
-  );
+  const editorComponent = await mount(<CypherEditor value={initialValue} onExecute={onExecute} />);
 
   // Cmd/Control still executes initial query
   await editorPage.getEditor().press('Control+Enter');
@@ -290,9 +273,7 @@ test('test onExecute', async ({ page, mount }) => {
     history.unshift(cmd);
   };
 
-  const cypherEditor = await mount(
-    <CypherEditor value={initialValue} onExecute={onExecute} />,
-  );
+  const cypherEditor = await mount(<CypherEditor value={initialValue} onExecute={onExecute} />);
   await editorPage.getEditor().press(execButton);
   expect(history).toEqual([initialValue]);
 
@@ -304,9 +285,7 @@ test('test onExecute', async ({ page, mount }) => {
   const newOnExecute = () => {
     newExecRan = true;
   };
-  await cypherEditor.update(
-    <CypherEditor value={initialValue} onExecute={newOnExecute} />,
-  );
+  await cypherEditor.update(<CypherEditor value={initialValue} onExecute={newOnExecute} />);
 
   await editorPage.getEditor().press(execButton);
   expect(newExecRan).toEqual(true);

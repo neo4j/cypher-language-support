@@ -1,10 +1,6 @@
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import {
-  emptyResult,
-  signatureHelp,
-  toSignatureInformation,
-} from '../signatureHelp';
+import { emptyResult, signatureHelp, toSignatureInformation } from '../signatureHelp';
 import { testData } from './testData';
 
 export function testSignatureHelp(
@@ -59,39 +55,19 @@ describe('Procedures signature help', () => {
   test('Provides signature help for CALLs second argument', () => {
     testSignatureHelp('CALL apoc.do.when(true,', dbSchema, expectedArgIndex(1));
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, "foo"',
-      dbSchema,
-      expectedArgIndex(1),
-    );
+    testSignatureHelp('CALL apoc.do.when(true, "foo"', dbSchema, expectedArgIndex(1));
   });
 
   test('Provides signature help for CALLs third argument', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true, "foo",',
-      dbSchema,
-      expectedArgIndex(2),
-    );
+    testSignatureHelp('CALL apoc.do.when(true, "foo",', dbSchema, expectedArgIndex(2));
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, "foo", false',
-      dbSchema,
-      expectedArgIndex(2),
-    );
+    testSignatureHelp('CALL apoc.do.when(true, "foo", false', dbSchema, expectedArgIndex(2));
   });
 
   test('Provides signature help for CALLs fourth argument', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true, "foo", false,',
-      dbSchema,
-      expectedArgIndex(3),
-    );
+    testSignatureHelp('CALL apoc.do.when(true, "foo", false,', dbSchema, expectedArgIndex(3));
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, "foo", false, "bar"',
-      dbSchema,
-      expectedArgIndex(3),
-    );
+    testSignatureHelp('CALL apoc.do.when(true, "foo", false, "bar"', dbSchema, expectedArgIndex(3));
   });
 
   test('Provides signature help with several statements where cursor one requires autocompletion', () => {
@@ -118,67 +94,27 @@ describe('Procedures signature help', () => {
   });
 
   test('Provides signature help for CALLs when offset is before end of query for first argument', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true, something',
-      dbSchema,
-      expectedArgIndex(0),
-      18,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, something', dbSchema, expectedArgIndex(0), 18);
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, something',
-      dbSchema,
-      expectedArgIndex(0),
-      20,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, something', dbSchema, expectedArgIndex(0), 20);
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, something',
-      dbSchema,
-      expectedArgIndex(0),
-      22,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, something', dbSchema, expectedArgIndex(0), 22);
   });
 
   test('Provides signature help for CALLs when offset is before end of query for second argument', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true, foo, bar',
-      dbSchema,
-      expectedArgIndex(1),
-      23,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, foo, bar', dbSchema, expectedArgIndex(1), 23);
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, foo, bar',
-      dbSchema,
-      expectedArgIndex(1),
-      25,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, foo, bar', dbSchema, expectedArgIndex(1), 25);
 
-    testSignatureHelp(
-      'CALL apoc.do.when(true, foo, bar',
-      dbSchema,
-      expectedArgIndex(1),
-      27,
-    );
+    testSignatureHelp('CALL apoc.do.when(true, foo, bar', dbSchema, expectedArgIndex(1), 27);
   });
 
   test('Provides signature help for CALLs even on several spaces', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true,   )',
-      dbSchema,
-      expectedArgIndex(1),
-      25,
-    );
+    testSignatureHelp('CALL apoc.do.when(true,   )', dbSchema, expectedArgIndex(1), 25);
   });
 
   test('Provides signature help for CALLs even on several spaces', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(true,   )',
-      dbSchema,
-      expectedArgIndex(1),
-      25,
-    );
+    testSignatureHelp('CALL apoc.do.when(true,   )', dbSchema, expectedArgIndex(1), 25);
   });
 
   test('Provides signature help for CALLs when argument far apart from parenthesis', () => {
@@ -239,11 +175,7 @@ describe('Procedures signature help', () => {
       },
     };
 
-    testSignatureHelp(
-      'CYPHER 5 CALL apoc.do.when(',
-      dbSchema,
-      expectedArgIndex(0),
-    );
+    testSignatureHelp('CYPHER 5 CALL apoc.do.when(', dbSchema, expectedArgIndex(0));
 
     testSignatureHelp('CYPHER 25 CALL apoc.do.when(', dbSchema, {
       activeParameter: 0,
@@ -286,17 +218,9 @@ describe('Functions signature help', () => {
   });
 
   test('Provides signature help for functions second argument', () => {
-    testSignatureHelp(
-      'RETURN apoc.coll.combinations(coll,',
-      dbSchema,
-      expectedArgIndex(1),
-    );
+    testSignatureHelp('RETURN apoc.coll.combinations(coll,', dbSchema, expectedArgIndex(1));
 
-    testSignatureHelp(
-      'RETURN apoc.coll.combinations(coll, "foo"',
-      dbSchema,
-      expectedArgIndex(1),
-    );
+    testSignatureHelp('RETURN apoc.coll.combinations(coll, "foo"', dbSchema, expectedArgIndex(1));
   });
 
   test('Provides signature help for functions third argument', () => {
@@ -425,11 +349,7 @@ describe('Functions signature help', () => {
   });
 
   test('Provides signature help for functions inside procedures, first argument', () => {
-    testSignatureHelp(
-      'CALL apoc.do.when(apoc.coll.combinations(',
-      dbSchema,
-      expectedArgIndex(0),
-    );
+    testSignatureHelp('CALL apoc.do.when(apoc.coll.combinations(', dbSchema, expectedArgIndex(0));
   });
 
   test('Provides signature help for functions inside procedures, second argument', () => {
@@ -451,11 +371,7 @@ describe('Functions signature help', () => {
       },
     };
 
-    testSignatureHelp(
-      'CYPHER 5 RETURN apoc.coll.combinations(',
-      dbSchema,
-      expectedArgIndex(0),
-    );
+    testSignatureHelp('CYPHER 5 RETURN apoc.coll.combinations(', dbSchema, expectedArgIndex(0));
 
     testSignatureHelp('CYPHER 25 RETURN apoc.coll.combinations(', dbSchema, {
       activeParameter: 0,

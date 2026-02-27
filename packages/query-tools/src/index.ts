@@ -3,10 +3,7 @@ export type { ConnectionError } from './connectionErrorHandler';
 export * from './cypher-execution/extract-unique-nodes-and-relationships';
 export * from './cypher-execution/query-result';
 export type { Neo4jType } from './cypher-execution/query-result';
-export {
-  getCypherTypeName,
-  getPropertyTypeDisplayName,
-} from './data-transforms/cypher-type-names';
+export { getCypherTypeName, getPropertyTypeDisplayName } from './data-transforms/cypher-type-names';
 export type { CypherDataTypeName } from './data-transforms/cypher-type-names';
 export * from './data-transforms/record-to-string';
 export * from './types/cypher-data-types';

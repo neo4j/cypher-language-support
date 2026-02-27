@@ -49,24 +49,14 @@ RETURN n`.trimStart();
 
   test('should correctly identify formatted and unformatted files with --check flag', async () => {
     const notFormattedPath = join(testFilesDir, 'not-formatted.cy');
-    const nestedNotFormattedPath = join(
-      testFilesDir,
-      'nested',
-      'also-not-formatted.cy',
-    );
+    const nestedNotFormattedPath = join(testFilesDir, 'nested', 'also-not-formatted.cy');
     const formattedPath = join(testFilesDir, 'formatted.cy');
 
     const result = await runCli(['-c', testFilesDir]);
 
     expect(result.code).toBe(1);
-    expect(result.stderr).toContain(
-      `File ${notFormattedPath} is not formatted correctly`,
-    );
-    expect(result.stderr).toContain(
-      `File ${nestedNotFormattedPath} is not formatted correctly`,
-    );
-    expect(result.stderr).not.toContain(
-      `File ${formattedPath} is not formatted correctly`,
-    );
+    expect(result.stderr).toContain(`File ${notFormattedPath} is not formatted correctly`);
+    expect(result.stderr).toContain(`File ${nestedNotFormattedPath} is not formatted correctly`);
+    expect(result.stderr).not.toContain(`File ${formattedPath} is not formatted correctly`);
   });
 });

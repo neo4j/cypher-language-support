@@ -21,16 +21,12 @@ describe('Lexer tokens', () => {
     });
 
     // Check for keywords that exist in the parser but not the lexer
-    const addedKeywords = symbolicNames.filter(
-      (x) => x !== null && !lexerKeywords.includes(x),
-    );
+    const addedKeywords = symbolicNames.filter((x) => x !== null && !lexerKeywords.includes(x));
     expect(addedKeywords).toHaveLength(0);
 
     // Check for keywords that exist in the lexer but not the parser
     // With the current setup this should not happen
-    const deletedKeywords = lexerKeywords.filter(
-      (x) => x !== 'EOF' && !symbolicNames.includes(x),
-    );
+    const deletedKeywords = lexerKeywords.filter((x) => x !== 'EOF' && !symbolicNames.includes(x));
     expect(deletedKeywords).toHaveLength(0);
   });
 

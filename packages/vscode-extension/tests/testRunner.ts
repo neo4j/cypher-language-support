@@ -9,11 +9,7 @@ export function run(): Promise<void> {
     ui: 'tdd',
     color: true,
   });
-  mocha.timeout(
-    process.env.DEBUG_VSCODE_TESTS === 'true'
-      ? Number.POSITIVE_INFINITY
-      : 30000,
-  );
+  mocha.timeout(process.env.DEBUG_VSCODE_TESTS === 'true' ? Number.POSITIVE_INFINITY : 30000);
 
   const testsRoot = __dirname;
 

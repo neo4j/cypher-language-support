@@ -29,10 +29,7 @@ let _queryRunner: CypherRunner | undefined;
  * @param context The global context of the extension's runtime.
  * @param languageClient The language client for the extension.
  */
-export function setContext(
-  context: ExtensionContext,
-  languageClient: LanguageClient,
-) {
+export function setContext(context: ExtensionContext, languageClient: LanguageClient) {
   _context = context;
   _languageClient = languageClient;
   _schemaPoller = new Neo4jSchemaPoller();

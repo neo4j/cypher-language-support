@@ -1,9 +1,5 @@
 import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
-import {
-  ConnectionError,
-  ConnnectionResult,
-  Database,
-} from '@neo4j-cypher/query-tools';
+import { ConnectionError, ConnnectionResult, Database } from '@neo4j-cypher/query-tools';
 import { commands } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
@@ -14,13 +10,7 @@ import { databaseInformationTreeDataProvider } from './treeviews/databaseInforma
 import { displayMessageForConnectionResult } from './uiUtils';
 import { dynamicallyAdjustLinter, switchToLinter } from './linterSwitching';
 
-export type Scheme =
-  | 'neo4j'
-  | 'neo4j+s'
-  | 'neo4j+ssc'
-  | 'bolt'
-  | 'bolt+s'
-  | 'bolt+ssc';
+export type Scheme = 'neo4j' | 'neo4j+s' | 'neo4j+ssc' | 'bolt' | 'bolt+s' | 'bolt+ssc';
 
 export type State = 'inactive' | 'activating' | 'active' | 'error';
 
@@ -52,9 +42,7 @@ const CONNECTIONS_KEY: string = 'connections';
  * @param key The key of the Connection to delete.
  * @returns A promise that resolves when the Connection has been deleted and database connection dropped.
  */
-export async function deleteConnectionAndUpdateDatabaseConnection(
-  key: string,
-): Promise<void> {
+export async function deleteConnectionAndUpdateDatabaseConnection(key: string): Promise<void> {
   const connections = getConnections();
   const connection = connections[key];
   if (!connection) {
@@ -143,8 +131,7 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
   await disconnectAllDatabaseConnections();
   await saveConnection(connection);
 
-  const result =
-    await updateDatabaseConnectionAndNotifyLanguageClient(connection);
+  const result = await updateDatabaseConnectionAndNotifyLanguageClient(connection);
 
   return { result, connection };
 }
@@ -170,9 +157,7 @@ export async function saveConnection(connection: Connection): Promise<void> {
  * @param key The key of the Connection to get the password for.
  * @returns A promise that resolves with the password, or null if no password exists.
  */
-export async function getPasswordForConnection(
-  key: string,
-): Promise<string | null> {
+export async function getPasswordForConnection(key: string): Promise<string | null> {
   const context = getExtensionContext();
   return (await context.secrets.get(key)) ?? null;
 }
@@ -183,9 +168,7 @@ export async function getPasswordForConnection(
  */
 export function getActiveConnection(): Connection | null {
   return (
-    Object.values(getConnections()).find(
-      (connection) => connection.state !== 'inactive',
-    ) ?? null
+    Object.values(getConnections()).find((connection) => connection.state !== 'inactive') ?? null
   );
 }
 
@@ -213,9 +196,7 @@ export function getConnectionByKey(key: string): Connection | null {
  * @param connection The Connection to get the connection string for.
  * @returns The connection string, or null if the Connection is null.
  */
-export function getDatabaseConnectionString(
-  connection: Connection,
-): string | null {
+export function getDatabaseConnectionString(connection: Connection): string | null {
   if (connection) {
     return connection.port
       ? `${connection.scheme}://${connection.host}:${connection.port}`
@@ -257,10 +238,7 @@ export async function reconnectDatabaseConnectionOnExtensionActivation(): Promis
 
   const password = await getPasswordForConnection(connection.key);
 
-  const result = await saveConnectionAndUpdateDatabaseConnection(
-    connection,
-    password,
-  );
+  const result = await saveConnectionAndUpdateDatabaseConnection(connection, password);
 
   displayMessageForConnectionResult(connection, result);
 }
@@ -305,17 +283,11 @@ export async function establishPersistentConnectionToSchemaPoller(
  *  Gets an array of database names from the connection, if they exist.
  * @returns An array of database names, or an empty array if no databases exist.
  */
-export function getConnectionDatabases(): Pick<
-  Database,
-  'name' | 'default' | 'home'
->[] {
+export function getConnectionDatabases(): Pick<Database, 'name' | 'default' | 'home'>[] {
   const schemaPoller = getSchemaPoller();
   const databases = schemaPoller.connection?.databases ?? [];
 
-  if (
-    !schemaPoller.metadata ||
-    !schemaPoller.metadata.dbSchema?.databaseNames
-  ) {
+  if (!schemaPoller.metadata || !schemaPoller.metadata.dbSchema?.databaseNames) {
     return databases;
   }
 
@@ -410,11 +382,7 @@ async function connectToDatabaseAndNotifyLanguageClient(
   const settings = getDatabaseConnectionSettings(connection, password);
 
   const result = await establishPersistentConnectionToSchemaPoller(settings);
-  const state: State = result.success
-    ? 'active'
-    : result.retriable
-      ? 'error'
-      : 'inactive';
+  const state: State = result.success ? 'active' : result.retriable ? 'error' : 'inactive';
 
   result.success
     ? await sendNotificationToLanguageClient('connectionUpdated', settings)

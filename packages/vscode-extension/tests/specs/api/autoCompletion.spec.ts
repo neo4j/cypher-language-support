@@ -48,18 +48,15 @@ export async function testCompletionContains({
   }
 
   await eventually(async () => {
-    const actualCompletionList: vscode.CompletionList =
-      await vscode.commands.executeCommand(
-        'vscode.executeCompletionItemProvider',
-        docUri,
-        position,
-      );
+    const actualCompletionList: vscode.CompletionList = await vscode.commands.executeCommand(
+      'vscode.executeCompletionItemProvider',
+      docUri,
+      position,
+    );
 
     expected.forEach((expectedItem) => {
       const found = actualCompletionList.items.find(
-        (value) =>
-          value.kind === expectedItem.kind &&
-          value.label === expectedItem.label,
+        (value) => value.kind === expectedItem.kind && value.label === expectedItem.label,
       );
 
       assert.equal(
@@ -106,18 +103,15 @@ export async function testCompletionNotContains({
   }
 
   await eventually(async () => {
-    const actualCompletionList: vscode.CompletionList =
-      await vscode.commands.executeCommand(
-        'vscode.executeCompletionItemProvider',
-        docUri,
-        position,
-      );
+    const actualCompletionList: vscode.CompletionList = await vscode.commands.executeCommand(
+      'vscode.executeCompletionItemProvider',
+      docUri,
+      position,
+    );
 
     excluded.forEach((excludedItem) => {
       const found = actualCompletionList.items.find(
-        (value) =>
-          value.kind === excludedItem.kind &&
-          value.label === excludedItem.label,
+        (value) => value.kind === excludedItem.kind && value.label === excludedItem.label,
       );
 
       assert.equal(
@@ -182,19 +176,14 @@ suite('Auto completion spec', () => {
       {
         label: 'resume',
         kind: vscode.CompletionItemKind.Method,
-        detail:
-          '(procedure) ' +
-          procedures['CYPHER 5']['apoc.trigger.resume'].signature,
-        documentation:
-          procedures['CYPHER 5']['apoc.trigger.resume'].description,
+        detail: '(procedure) ' + procedures['CYPHER 5']['apoc.trigger.resume'].signature,
+        documentation: procedures['CYPHER 5']['apoc.trigger.resume'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'start',
         kind: vscode.CompletionItemKind.Method,
-        detail:
-          '(procedure) ' +
-          procedures['CYPHER 5']['apoc.trigger.start'].signature,
+        detail: '(procedure) ' + procedures['CYPHER 5']['apoc.trigger.start'].signature,
         documentation: procedures['CYPHER 5']['apoc.trigger.start'].description,
       },
     ];
@@ -211,19 +200,15 @@ suite('Auto completion spec', () => {
       {
         label: 'uuid',
         kind: vscode.CompletionItemKind.Function,
-        detail:
-          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        detail: '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
         documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
       {
         label: 'uuidBase64',
         kind: vscode.CompletionItemKind.Function,
-        detail:
-          '(function) ' +
-          functions['CYPHER 5']['apoc.create.uuidBase64'].signature,
-        documentation:
-          functions['CYPHER 5']['apoc.create.uuidBase64'].description,
+        detail: '(function) ' + functions['CYPHER 5']['apoc.create.uuidBase64'].signature,
+        documentation: functions['CYPHER 5']['apoc.create.uuidBase64'].description,
       },
     ];
     await testCompletionContains({
@@ -272,8 +257,7 @@ suite('Auto completion spec', () => {
       {
         label: 'apoc.create.uuid',
         kind: vscode.CompletionItemKind.Function,
-        detail:
-          '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
+        detail: '(function) ' + functions['CYPHER 5']['apoc.create.uuid'].signature,
         documentation: functions['CYPHER 5']['apoc.create.uuid'].description,
         tags: [CompletionItemTag.Deprecated],
       },
@@ -391,9 +375,7 @@ suite('Auto completion spec', () => {
       'b',
       '"pikachu"',
     );
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT,
-    );
+    await vscode.commands.executeCommand(CONSTANTS.COMMANDS.INTERNAL.FORCE_DISCONNECT);
     const textDocument = await newUntitledFileWithContent(`RETURN `);
     const position = new vscode.Position(0, 7);
     const expecations: vscode.CompletionItem[] = [
@@ -412,9 +394,6 @@ suite('Auto completion spec', () => {
       expected: expecations,
     });
 
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
-      0,
-    );
+    await vscode.commands.executeCommand(CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT, 0);
   });
 });

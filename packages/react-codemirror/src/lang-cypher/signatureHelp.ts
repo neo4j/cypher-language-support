@@ -1,10 +1,7 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
 import { signatureHelp } from '@neo4j-cypher/language-support';
-import {
-  MarkupContent,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import { MarkupContent, SignatureInformation } from 'vscode-languageserver-types';
 import { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
 
@@ -22,13 +19,7 @@ function getTriggerCharacter(query: string, caretPosition: number) {
 }
 
 const createSignatureHelpElement =
-  ({
-    signature,
-    activeParameter,
-  }: {
-    signature: SignatureInformation;
-    activeParameter: number;
-  }) =>
+  ({ signature, activeParameter }: { signature: SignatureInformation; activeParameter: number }) =>
   () => {
     const parameters = signature.parameters;
     const doc = getDocString(signature.documentation);
@@ -57,9 +48,7 @@ const createSignatureHelpElement =
         if (index === activeParameter) {
           span.className = 'cm-signature-help-panel-current-argument';
           const paramDoc = param.documentation;
-          currentParamDescription = MarkupContent.is(paramDoc)
-            ? paramDoc.value
-            : paramDoc;
+          currentParamDescription = MarkupContent.is(paramDoc) ? paramDoc.value : paramDoc;
         }
         signatureLabel.appendChild(span);
       }
@@ -78,9 +67,7 @@ const createSignatureHelpElement =
     if (currentParamDescription !== undefined) {
       const argDescription = document.createElement('div');
       argDescription.className = 'cm-signature-help-panel-arg-description';
-      argDescription.appendChild(
-        document.createTextNode(currentParamDescription),
-      );
+      argDescription.appendChild(document.createTextNode(currentParamDescription));
       contents.appendChild(argDescription);
     }
     const methodDescription = document.createElement('div');
@@ -91,10 +78,7 @@ const createSignatureHelpElement =
     return { dom };
   };
 
-function getSignatureHelpTooltip(
-  state: EditorState,
-  config: CypherConfig,
-): Tooltip[] {
+function getSignatureHelpTooltip(state: EditorState, config: CypherConfig): Tooltip[] {
   let result: Tooltip[] = [];
   const schema = config.schema;
   const ranges = state.selection.ranges;
@@ -119,8 +103,7 @@ function getSignatureHelpTooltip(
         signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
-        const showSignatureTooltipBelow =
-          config.showSignatureTooltipBelow ?? true;
+        const showSignatureTooltipBelow = config.showSignatureTooltipBelow ?? true;
 
         result = [
           {

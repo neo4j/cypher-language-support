@@ -1,11 +1,6 @@
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore There is a default export but not in the types
-import antlrDefaultExport, {
-  CommonTokenStream,
-  ParserRuleContext,
-  ParseTree,
-  Token,
-} from 'antlr4';
+import antlrDefaultExport, { CommonTokenStream, ParserRuleContext, ParseTree, Token } from 'antlr4';
 import { DbSchema } from './dbSchema';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
@@ -43,9 +38,7 @@ export function findStopNode(root: StatementsOrCommandsContext) {
 
     while (
       index > 0 &&
-      (child === root.EOF() ||
-        child.getText() === '' ||
-        child.getText().startsWith('<missing'))
+      (child === root.EOF() || child.getText() === '' || child.getText().startsWith('<missing'))
     ) {
       index--;
       child = children[index];
@@ -77,11 +70,7 @@ export function isDefined(x: unknown) {
 type AntlrDefaultExport = {
   tree: {
     Trees: {
-      getNodeText(
-        node: ParserRuleContext,
-        s: string[],
-        c: typeof CypherParser,
-      ): string;
+      getNodeText(node: ParserRuleContext, s: string[], c: typeof CypherParser): string;
       getChildren(node: ParserRuleContext): ParserRuleContext[];
     };
   };
@@ -91,9 +80,7 @@ export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
-    (p) =>
-      p instanceof NodePatternContext ||
-      p instanceof RelationshipPatternContext,
+    (p) => p instanceof NodePatternContext || p instanceof RelationshipPatternContext,
   );
 
   return nodePattern instanceof NodePatternContext;
@@ -102,9 +89,7 @@ export function inNodeLabel(stopNode: ParserRuleContext) {
 export function inRelationshipType(stopNode: ParserRuleContext) {
   const relPattern = findParent(
     stopNode,
-    (p) =>
-      p instanceof NodePatternContext ||
-      p instanceof RelationshipPatternContext,
+    (p) => p instanceof NodePatternContext || p instanceof RelationshipPatternContext,
   );
 
   return relPattern instanceof RelationshipPatternContext;
@@ -158,10 +143,7 @@ export function splitIntoStatements(
 
     chunk.push(current);
 
-    if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
-    ) {
+    if (current.type === CypherLexer.SEMICOLON || current.type === CypherLexer.EOF) {
       // This does not relex since we are not calling fill on the token stream
       const tokenStream = new CommonTokenStream(lexer);
       tokenStream.tokens = chunk;
@@ -176,10 +158,7 @@ export function splitIntoStatements(
   return result;
 }
 
-export function findPreviousNonSpace(
-  tokens: Token[],
-  index: number,
-): Token | undefined {
+export function findPreviousNonSpace(tokens: Token[], index: number): Token | undefined {
   let i = index;
   while (i > 0) {
     const token = tokens[--i];
@@ -192,19 +171,12 @@ export function findPreviousNonSpace(
   return undefined;
 }
 
-export function isCommentOpener(
-  thisToken: Token,
-  nextToken: Token | undefined,
-): boolean {
+export function isCommentOpener(thisToken: Token, nextToken: Token | undefined): boolean {
   return thisToken.text === '/' && nextToken?.text === '*';
 }
 
-export function resolveCypherVersion(
-  parsedVersion: CypherVersion | undefined,
-  dbSchema: DbSchema,
-) {
-  const cypherVersion: CypherVersion =
-    parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
+export function resolveCypherVersion(parsedVersion: CypherVersion | undefined, dbSchema: DbSchema) {
+  const cypherVersion: CypherVersion = parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
 
   return cypherVersion;
 }

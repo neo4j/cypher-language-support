@@ -16,9 +16,7 @@ export async function openDocument(docUri: Uri) {
   }
 }
 
-export async function newUntitledFileWithContent(
-  content: string,
-): Promise<TextDocument> {
+export async function newUntitledFileWithContent(content: string): Promise<TextDocument> {
   try {
     // The language server will not be activated automatically
     const document = await workspace.openTextDocument({ content: content });
@@ -105,9 +103,7 @@ export function rangeToString(range: vscode.Range) {
   return `${range.start.line}:${range.start.character} to ${range.end.line}:${range.end.character}`;
 }
 
-export function documentationToString(
-  doc: string | vscode.MarkdownString | undefined,
-) {
+export function documentationToString(doc: string | vscode.MarkdownString | undefined) {
   if (typeof doc === 'string') {
     return doc;
   } else if (typeof doc === 'undefined') {
@@ -117,9 +113,7 @@ export function documentationToString(
   }
 }
 
-export function tagsToString(
-  doc: readonly vscode.CompletionItemTag[] | undefined,
-) {
+export function tagsToString(doc: readonly vscode.CompletionItemTag[] | undefined) {
   if (!doc) {
     return 'undefined';
   } else {
@@ -148,16 +142,10 @@ export function getExtensionStoragePath(): string {
 
   if (platform === 'darwin') {
     // macOS
-    userDataDir = path.join(
-      os.homedir(),
-      'Library',
-      'Application Support',
-      'Code',
-    );
+    userDataDir = path.join(os.homedir(), 'Library', 'Application Support', 'Code');
   } else if (platform === 'win32') {
     // Windows
-    const appData =
-      process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
+    const appData = process.env.APPDATA || path.join(os.homedir(), 'AppData', 'Roaming');
     userDataDir = path.join(appData, 'Code');
   } else {
     // Linux

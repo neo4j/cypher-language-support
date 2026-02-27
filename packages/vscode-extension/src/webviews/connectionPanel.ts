@@ -1,14 +1,6 @@
 import { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import path from 'path';
-import {
-  commands,
-  Disposable,
-  Uri,
-  ViewColumn,
-  Webview,
-  WebviewPanel,
-  window,
-} from 'vscode';
+import { commands, Disposable, Uri, ViewColumn, Webview, WebviewPanel, window } from 'vscode';
 import { Connection } from '../connectionService';
 import { CONSTANTS } from '../constants';
 import { getNonce } from '../getNonce';
@@ -51,14 +43,8 @@ export class ConnectionPanel {
     this._panel.onDidDispose(() => this.dispose(), null, this._disposables);
   }
 
-  public static createOrShow(
-    extensionPath: string,
-    connection?: Connection,
-    password?: string,
-  ) {
-    const column = window.activeTextEditor
-      ? window.activeTextEditor.viewColumn
-      : undefined;
+  public static createOrShow(extensionPath: string, connection?: Connection, password?: string) {
+    const column = window.activeTextEditor ? window.activeTextEditor.viewColumn : undefined;
 
     if (ConnectionPanel._currentPanel) {
       ConnectionPanel._currentPanel._connection = connection;
@@ -82,12 +68,7 @@ export class ConnectionPanel {
       },
     );
 
-    ConnectionPanel._currentPanel = new ConnectionPanel(
-      panel,
-      extensionPath,
-      connection,
-      password,
-    );
+    ConnectionPanel._currentPanel = new ConnectionPanel(panel, extensionPath, connection, password);
   }
 
   private dispose() {
@@ -120,9 +101,7 @@ export class ConnectionPanel {
             break;
           }
           case 'onValidationError': {
-            void window.showErrorMessage(
-              CONSTANTS.MESSAGES.CONNECTION_VALIDATION_MESSAGE,
-            );
+            void window.showErrorMessage(CONSTANTS.MESSAGES.CONNECTION_VALIDATION_MESSAGE);
             break;
           }
         }
@@ -153,20 +132,10 @@ export class ConnectionPanel {
       path.join(this._extensionPath, 'resources', 'styles', 'vscode.css'),
     );
     const connectionPanelCssPath = Uri.file(
-      path.join(
-        this._extensionPath,
-        'resources',
-        'styles',
-        'connectionPanel.css',
-      ),
+      path.join(this._extensionPath, 'resources', 'styles', 'connectionPanel.css'),
     );
     const connectionPanelJsPath = Uri.file(
-      path.join(
-        this._extensionPath,
-        'dist',
-        'webviews',
-        'connectionPanelController.js',
-      ),
+      path.join(this._extensionPath, 'dist', 'webviews', 'connectionPanelController.js'),
     );
 
     const resetCssUri = webview.asWebviewUri(resetCssPath);
@@ -199,19 +168,13 @@ export class ConnectionPanel {
             <div class="container">
               <div>
                 <h1 id="connection-header">${
-                  this._editConnection
-                    ? 'Edit Connection'
-                    : 'Add New Connection'
+                  this._editConnection ? 'Edit Connection' : 'Add New Connection'
                 }</h1>
                 <form class="form" action="" novalidate method="post">
-                  <input type="hidden" id="key" value="${
-                    this._connection?.key ?? getNonce(16)
-                  }" />
+                  <input type="hidden" id="key" value="${this._connection?.key ?? getNonce(16)}" />
                   <div class="form--input-wrapper">
                     <label for="name">Display name</label>
-                    <input type="text" id="name" value="${
-                      this._connection?.name ?? ''
-                    }" />
+                    <input type="text" id="name" value="${this._connection?.name ?? ''}" />
                   </div>
                   <div class="form--input-wrapper">
                     <label for="scheme">Scheme *</label>
@@ -220,30 +183,21 @@ export class ConnectionPanel {
                           this._connection?.scheme === 'bolt' ? 'selected' : ''
                         }>bolt://</option>
                         <option value="bolt+s" ${
-                          this._connection?.scheme === 'bolt+s'
-                            ? 'selected'
-                            : ''
+                          this._connection?.scheme === 'bolt+s' ? 'selected' : ''
                         }>bolt+s://</option>
                         <option value="bolt+ssc" ${
-                          this._connection?.scheme === 'bolt+ssc'
-                            ? 'selected'
-                            : ''
+                          this._connection?.scheme === 'bolt+ssc' ? 'selected' : ''
                         }>bolt+ssc://</option>
                         <option value="neo4j" ${
-                          this._connection?.scheme === 'neo4j' ||
-                          !this._connection
+                          this._connection?.scheme === 'neo4j' || !this._connection
                             ? 'selected'
                             : ''
                         }>neo4j://</option>
                         <option value="neo4j+s" ${
-                          this._connection?.scheme === 'neo4j+s'
-                            ? 'selected'
-                            : ''
+                          this._connection?.scheme === 'neo4j+s' ? 'selected' : ''
                         }>neo4j+s://</option>
                         <option value="neo4j+ssc" ${
-                          this._connection?.scheme === 'neo4j+ssc'
-                            ? 'selected'
-                            : ''
+                          this._connection?.scheme === 'neo4j+ssc' ? 'selected' : ''
                         }>neo4j+ssc://</option>
                     </select>
                   </div>
@@ -267,9 +221,7 @@ export class ConnectionPanel {
                   </div>
                   <div class="form--input-wrapper">
                     <label for="password">Password *</label>
-                    <input type="password" id="password" required value="${
-                      this._password ?? ''
-                    }"/>
+                    <input type="password" id="password" required value="${this._password ?? ''}"/>
                   </div>
                   <div class="form--actions">
                     <input id="save-connection" type="submit" value="Save & Connect" />

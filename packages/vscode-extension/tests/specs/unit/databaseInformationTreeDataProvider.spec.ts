@@ -14,9 +14,7 @@ suite('Database information tree data provider spec', () => {
   beforeEach(() => {
     sandbox = sinon.createSandbox();
 
-    sandbox
-      .stub(connectionService, 'getActiveConnection')
-      .returns(getMockConnection(true));
+    sandbox.stub(connectionService, 'getActiveConnection').returns(getMockConnection(true));
 
     const stubs = setupMockContextStubs(sandbox);
 
@@ -50,9 +48,7 @@ suite('Database information tree data provider spec', () => {
     const expectedRelationshipTypes = ['ACTED_IN', 'DIRECTED'];
 
     const actualLabels = labels.map((label) => label.label);
-    const actualRelationshipTypes = relationshipTypes.map(
-      (relationship) => relationship.label,
-    );
+    const actualRelationshipTypes = relationshipTypes.map((relationship) => relationship.label);
 
     assert.equal(labels.length, 2);
     assert.equal(relationshipTypes.length, 2);

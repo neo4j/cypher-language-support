@@ -1,7 +1,4 @@
-import {
-  CompletionItemKind,
-  CompletionItemTag,
-} from 'vscode-languageserver-types';
+import { CompletionItemKind, CompletionItemTag } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParser, {
@@ -16,12 +13,7 @@ import {
   resolveCypherVersion,
   rulesDefiningVariables,
 } from '../helpers';
-import {
-  CypherTokenType,
-  lexerKeywords,
-  lexerSymbols,
-  tokenNames,
-} from '../lexerSymbols';
+import { CypherTokenType, lexerKeywords, lexerSymbols, tokenNames } from '../lexerSymbols';
 
 import { getMethodName, ParsedStatement } from '../parserWrapper';
 
@@ -75,9 +67,7 @@ const procedureReturnCompletions = (
   cypherVersion: CypherVersion,
 ): CompletionItem[] => {
   return (
-    dbSchema.procedures?.[cypherVersion]?.[
-      procedureName
-    ]?.returnDescription?.map((x) => {
+    dbSchema.procedures?.[cypherVersion]?.[procedureName]?.returnDescription?.map((x) => {
       return { label: x.name, kind: CompletionItemKind.Variable };
     }) ?? []
   );
@@ -132,9 +122,7 @@ function getMethodCompletionItem(
   const maybeTags: { tags?: CompletionItemTag[] } = deprecated
     ? { tags: [CompletionItemTag.Deprecated] }
     : {};
-  const maybeMethodSignature = maybeSignature
-    ? { signature: maybeSignature.signature }
-    : {};
+  const maybeMethodSignature = maybeSignature ? { signature: maybeSignature.signature } : {};
 
   return {
     ...maybeTags,
@@ -158,10 +146,7 @@ const namespacedCompletion = (
     return [];
   }
 
-  const kind =
-    type === 'procedure'
-      ? CompletionItemKind.Method
-      : CompletionItemKind.Function;
+  const kind = type === 'procedure' ? CompletionItemKind.Method : CompletionItemKind.Function;
 
   if (namespacePrefix === '') {
     // If we don't have any prefix show full functions and top level namespaces
@@ -170,18 +155,10 @@ const namespacedCompletion = (
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map(
-        (label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem,
-      )
+      .map((label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem)
       .concat(
         fullNames.map((label) => {
-          const result = getMethodCompletionItem(
-            label,
-            label,
-            signatures,
-            type,
-            kind,
-          );
+          const result = getMethodCompletionItem(label, label, signatures, type, kind);
 
           return result;
         }),
@@ -212,15 +189,12 @@ const namespacedCompletion = (
     }
 
     // test handle namespace with same name as function
-    const functionNameCompletions: CompletionItem[] = Array.from(
-      funcOptions,
-    ).map(({ completion: label, fullName }) =>
-      getMethodCompletionItem(label, fullName, signatures, type, kind),
+    const functionNameCompletions: CompletionItem[] = Array.from(funcOptions).map(
+      ({ completion: label, fullName }) =>
+        getMethodCompletionItem(label, fullName, signatures, type, kind),
     );
 
-    const namespaceCompletions: CompletionItem[] = Array.from(
-      namespaceOptions,
-    ).map((label) => ({
+    const namespaceCompletions: CompletionItem[] = Array.from(namespaceOptions).map((label) => ({
       label,
       kind,
       detail: '(namespace)',
@@ -240,21 +214,16 @@ function getTokenCompletions(
     const [tokenNumber, followUpList] = value;
 
     if (!ignoredTokens.has(tokenNumber)) {
-      const isConsoleCommand =
-        lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
+      const isConsoleCommand = lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
 
-      const kind = isConsoleCommand
-        ? CompletionItemKind.Event
-        : CompletionItemKind.Keyword;
+      const kind = isConsoleCommand ? CompletionItemKind.Event : CompletionItemKind.Keyword;
 
       const firstToken = isConsoleCommand
         ? tokenNames[tokenNumber].toLowerCase()
         : tokenNames[tokenNumber];
 
       const followUpIndexes = followUpList.indexes;
-      const firstIgnoredToken = followUpIndexes.findIndex((t) =>
-        ignoredTokens.has(t),
-      );
+      const firstIgnoredToken = followUpIndexes.findIndex((t) => ignoredTokens.has(t));
 
       const followUpTokens = followUpIndexes.slice(
         0,
@@ -269,9 +238,7 @@ function getTokenCompletions(
         return [{ label: firstToken, kind }];
       } else {
         const followUp =
-          firstToken +
-          ' ' +
-          (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
+          firstToken + ' ' + (isConsoleCommand ? followUpString.toLowerCase() : followUpString);
 
         if (followUpList.optional) {
           return [
@@ -298,14 +265,10 @@ const parameterCompletions = (
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, paramType]) =>
-      isExpectedParameterType(expectedType, paramType),
-    )
+    .filter(([_, paramType]) => isExpectedParameterType(expectedType, paramType))
     .map(([paramName]) => {
       const backtickedName = backtickIfNeeded(paramName, 'param');
-      let maybeInsertText = backtickedName
-        ? { insertText: `$${backtickedName}` }
-        : {};
+      let maybeInsertText = backtickedName ? { insertText: `$${backtickedName}` } : {};
       // If there is a preceding token and it's not empty, compute the suffix
       if (previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
@@ -316,9 +279,7 @@ const parameterCompletions = (
         // text without the starting $ in VSCode, otherwise when we have
         // 'RETURN $' and we get offered $param we would complete
         // RETURN $$param, which is not what we want
-        maybeInsertText = hasDollar
-          ? { insertText: param.slice(1) }
-          : maybeInsertText;
+        maybeInsertText = hasDollar ? { insertText: param.slice(1) } : maybeInsertText;
       }
 
       return {
@@ -331,9 +292,7 @@ const parameterCompletions = (
 const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
   dbInfo.propertyKeys?.map((propertyKey) => {
     const backtickedName = backtickIfNeeded(propertyKey, 'propertyKey');
-    const maybeInsertText = backtickedName
-      ? { insertText: backtickedName }
-      : {};
+    const maybeInsertText = backtickedName ? { insertText: backtickedName } : {};
 
     const result: CompletionItem = {
       label: propertyKey,
@@ -372,9 +331,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   ) {
     return ExpectedParameterType.String;
   } else if (
-    [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(
-      parentRule,
-    )
+    [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(parentRule)
   ) {
     return ExpectedParameterType.Map;
   } else {
@@ -382,10 +339,7 @@ const inferExpectedParameterTypeFromContext = (context: CandidateRule) => {
   }
 };
 
-const isExpectedParameterType = (
-  expectedType: ExpectedParameterType,
-  value: unknown,
-) => {
+const isExpectedParameterType = (expectedType: ExpectedParameterType, value: unknown) => {
   const typeName = typeof value;
   switch (expectedType) {
     case ExpectedParameterType.String:
@@ -412,10 +366,7 @@ function couldBeNodeOrRel(
     );
 
     if (foundVariable) {
-      return (
-        foundVariable.types.includes('Node') ||
-        foundVariable.types.includes('Relationship')
-      );
+      return foundVariable.types.includes('Node') || foundVariable.types.includes('Relationship');
     }
   }
 
@@ -423,16 +374,12 @@ function couldBeNodeOrRel(
   return collectedVariables.includes(variableName);
 }
 
-function calculateNamespacePrefix(
-  candidateRule: CandidateRule,
-  tokens: Token[],
-): string | null {
+function calculateNamespacePrefix(candidateRule: CandidateRule, tokens: Token[]): string | null {
   const ruleTokens = tokens.slice(candidateRule.startTokenIndex);
   const lastNonEOFToken = ruleTokens.at(-2);
 
   const nonSpaceTokens = ruleTokens.filter(
-    (token) =>
-      token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
+    (token) => token.type !== CypherLexer.SPACE && token.type !== CypherLexer.EOF,
   );
 
   const lastNonSpaceIsDot = nonSpaceTokens.at(-1)?.type === CypherLexer.DOT;
@@ -463,10 +410,7 @@ export function completionCoreCompletion(
   symbolsInfo: SymbolsInfo | undefined,
   manualTrigger = false,
 ): CompletionItem[] {
-  const cypherVersion = resolveCypherVersion(
-    parsingResult.cypherVersion,
-    dbSchema,
-  );
+  const cypherVersion = resolveCypherVersion(parsingResult.cypherVersion, dbSchema);
   const parser = parsingResult.parser;
   const tokens = parsingResult.tokens;
 
@@ -541,9 +485,7 @@ export function completionCoreCompletion(
   const ignoredTokens = new Set<number>(
     Object.entries(lexerSymbols)
       .filter(
-        ([, type]) =>
-          type !== CypherTokenType.keyword &&
-          type !== CypherTokenType.consoleCommand,
+        ([, type]) => type !== CypherTokenType.keyword && type !== CypherTokenType.consoleCommand,
       )
       .map(([token]) => Number(token)),
   );
@@ -578,30 +520,18 @@ export function completionCoreCompletion(
             callContext.procedureResultItem_list().map((a) => a.getText()),
           );
           const name = getMethodName(procedureNameCtx);
-          return procedureReturnCompletions(
-            name,
-            dbSchema,
-            cypherVersion,
-          ).filter((a) => !existingYieldItems.has(a?.label));
+          return procedureReturnCompletions(name, dbSchema, cypherVersion).filter(
+            (a) => !existingYieldItems.has(a?.label),
+          );
         }
       }
 
       if (ruleNumber === CypherParser.RULE_functionName) {
-        return functionNameCompletions(
-          candidateRule,
-          tokens,
-          dbSchema,
-          cypherVersion,
-        );
+        return functionNameCompletions(candidateRule, tokens, dbSchema, cypherVersion);
       }
 
       if (ruleNumber === CypherParser.RULE_procedureName) {
-        return procedureNameCompletions(
-          candidateRule,
-          tokens,
-          dbSchema,
-          cypherVersion,
-        );
+        return procedureNameCompletions(candidateRule, tokens, dbSchema, cypherVersion);
       }
 
       if (ruleNumber === CypherParser.RULE_parameter) {
@@ -620,10 +550,7 @@ export function completionCoreCompletion(
         // to avoid suggesting property keys when defining a map literal
         const parentRule = candidateRule.ruleList.at(-1);
         const grandParentRule = candidateRule.ruleList.at(-2);
-        if (
-          parentRule === CypherParser.RULE_map &&
-          grandParentRule === CypherParser.RULE_literal
-        ) {
+        if (parentRule === CypherParser.RULE_map && grandParentRule === CypherParser.RULE_literal) {
           return [];
         }
 
@@ -664,10 +591,7 @@ export function completionCoreCompletion(
       if (ruleNumber === CypherParser.RULE_variable) {
         const parentRule = candidateRule.ruleList.at(-1);
         // some rules only define, never use variables
-        if (
-          typeof parentRule === 'number' &&
-          rulesDefiningVariables.includes(parentRule)
-        ) {
+        if (typeof parentRule === 'number' && rulesDefiningVariables.includes(parentRule)) {
           return [];
         }
 
@@ -697,16 +621,14 @@ export function completionCoreCompletion(
       }
       if (
         ruleNumber === CypherParser.RULE_symbolicNameString &&
-        candidateRule.ruleList.at(-1) ===
-          CypherParser.RULE_multiLabelNodePattern
+        candidateRule.ruleList.at(-1) === CypherParser.RULE_multiLabelNodePattern
       ) {
         return completeNodeLabel(dbSchema, parsingResult, symbolsInfo);
       }
 
       if (
         ruleNumber === CypherParser.RULE_symbolicNameString &&
-        candidateRule.ruleList.at(-1) ===
-          CypherParser.RULE_multiRelTypeRelPattern
+        candidateRule.ruleList.at(-1) === CypherParser.RULE_multiRelTypeRelPattern
       ) {
         return completeRelationshipType(dbSchema, parsingResult, symbolsInfo);
       }
@@ -720,9 +642,7 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_labelExpression1) {
-        const topExprIndex = candidateRule.ruleList.indexOf(
-          CypherParser.RULE_labelExpression,
-        );
+        const topExprIndex = candidateRule.ruleList.indexOf(CypherParser.RULE_labelExpression);
 
         const topExprParent = candidateRule.ruleList[topExprIndex - 1];
 
@@ -738,10 +658,7 @@ export function completionCoreCompletion(
           return completeRelationshipType(dbSchema, parsingResult, symbolsInfo);
         }
 
-        return [
-          ...allLabelCompletions(dbSchema),
-          ...allReltypeCompletions(dbSchema),
-        ];
+        return [...allLabelCompletions(dbSchema), ...allReltypeCompletions(dbSchema)];
       }
 
       // These are simple tokens that get completed as the wrong kind, due to a lexer conflict
@@ -766,13 +683,11 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_arrowLine) {
-        const possiblePatternElementParent =
-          parsingResult.stopNode?.parentCtx?.parentCtx;
+        const possiblePatternElementParent = parsingResult.stopNode?.parentCtx?.parentCtx;
         const lastNode: RelationshipPatternContext | NodePatternContext =
           possiblePatternElementParent?.children.findLast(
             (x) =>
-              (x instanceof RelationshipPatternContext ||
-                x instanceof NodePatternContext) &&
+              (x instanceof RelationshipPatternContext || x instanceof NodePatternContext) &&
               x.exception === null,
           ) as RelationshipPatternContext | NodePatternContext;
 
@@ -784,8 +699,7 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_leftArrow) {
-        const possiblePatternElementParent =
-          parsingResult?.stopNode?.parentCtx?.parentCtx;
+        const possiblePatternElementParent = parsingResult?.stopNode?.parentCtx?.parentCtx;
         if (possiblePatternElementParent) {
           const lastNodePattern = possiblePatternElementParent.children
             .toReversed()
@@ -811,19 +725,13 @@ export function completionCoreCompletion(
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
   if (
-    (CypherLexer.RPAREN === previousToken?.type ||
-      CypherLexer.RBRACKET === previousToken?.type) &&
+    (CypherLexer.RPAREN === previousToken?.type || CypherLexer.RBRACKET === previousToken?.type) &&
     !manualTrigger
   ) {
-    return ruleCompletions.filter(
-      (completion) => completion.kind === CompletionItemKind.Snippet,
-    );
+    return ruleCompletions.filter((completion) => completion.kind === CompletionItemKind.Snippet);
   }
 
-  return [
-    ...ruleCompletions,
-    ...getTokenCompletions(candidates, ignoredTokens),
-  ];
+  return [...ruleCompletions, ...getTokenCompletions(candidates, ignoredTokens)];
 }
 
 type CompletionHelperArgs = {
@@ -846,10 +754,7 @@ function completeAliasName({
   // To handle this we check if the token after the first identifier in the rule is a space (as opposed to a dot)
   // if so we have a false positive and we return null to ignore the rule
   // symbolicAliasName: (symbolicNameString (DOT symbolicNameString)* | parameter);
-  if (
-    parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type ===
-    CypherLexer.SPACE
-  ) {
+  if (parsingResult.tokens[candidateRule.startTokenIndex + 1]?.type === CypherLexer.SPACE) {
     return [];
   }
 
@@ -858,9 +763,7 @@ function completeAliasName({
     CypherParser.RULE_createCompositeDatabase,
   ];
   // avoid suggesting existing database names when creating a new database
-  if (
-    rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))
-  ) {
+  if (rulesCreatingNewDb.some((rule) => candidateRule.ruleList.includes(rule))) {
     return [];
   }
 
@@ -879,16 +782,10 @@ function completeAliasName({
     CypherParser.RULE_alterAlias,
     CypherParser.RULE_showAliases,
   ];
-  if (
-    rulesThatOnlyAcceptAlias.some((rule) =>
-      candidateRule.ruleList.includes(rule),
-    )
-  ) {
+  if (rulesThatOnlyAcceptAlias.some((rule) => candidateRule.ruleList.includes(rule))) {
     return (dbSchema.aliasNames ?? []).map((aliasName) => {
       const backtickedName = backtickIfNeeded(aliasName, 'dbName');
-      const maybeInsertText = backtickedName
-        ? { insertText: backtickedName }
-        : {};
+      const maybeInsertText = backtickedName ? { insertText: backtickedName } : {};
       return {
         label: aliasName,
         kind: CompletionItemKind.Value,
@@ -898,20 +795,16 @@ function completeAliasName({
   }
 
   // Suggest both database and alias names when it's not alias specific or creating new alias or database
-  return (dbSchema.databaseNames ?? [])
-    .concat(dbSchema.aliasNames ?? [])
-    .map((databaseName) => {
-      const backtickedName = backtickIfNeeded(databaseName, 'dbName');
-      const maybeInsertText = backtickedName
-        ? { insertText: backtickedName }
-        : {};
+  return (dbSchema.databaseNames ?? []).concat(dbSchema.aliasNames ?? []).map((databaseName) => {
+    const backtickedName = backtickIfNeeded(databaseName, 'dbName');
+    const maybeInsertText = backtickedName ? { insertText: backtickedName } : {};
 
-      return {
-        label: databaseName,
-        kind: CompletionItemKind.Value,
-        ...maybeInsertText,
-      };
-    });
+    return {
+      label: databaseName,
+      kind: CompletionItemKind.Value,
+      ...maybeInsertText,
+    };
+  });
 }
 
 function completeSymbolicName({
@@ -929,10 +822,7 @@ function completeSymbolicName({
     ExpectedParameterType.String,
   );
 
-  const rulesCreatingNewUserOrRole = [
-    CypherParser.RULE_createUser,
-    CypherParser.RULE_createRole,
-  ];
+  const rulesCreatingNewUserOrRole = [CypherParser.RULE_createUser, CypherParser.RULE_createRole];
 
   const previousNonSpace = findPreviousNonSpace(
     parsingResult.tokens,

@@ -33,28 +33,20 @@ RETURN n;`}
   await textField.press('Control+ ');
 
   await expect(page.locator('.cm-tooltip-autocomplete')).toBeVisible();
-  await page
-    .locator('.cm-tooltip-autocomplete')
-    .getByText('WHERE', { exact: true })
-    .click();
+  await page.locator('.cm-tooltip-autocomplete').getByText('WHERE', { exact: true }).click();
 
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
   await expect(component).toContainText('WHERE true');
 });
 
-test('get completions when typing and can accept completions with tab', async ({
-  mount,
-  page,
-}) => {
+test('get completions when typing and can accept completions with tab', async ({ mount, page }) => {
   const component = await mount(<CypherEditor />);
   const textField = page.getByRole('textbox');
 
   await textField.fill('RETU');
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('RETURN'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('RETURN')).toBeVisible();
 
   // We need to wait for the editor to realise there is a completion open
   // so that it does not just indent with tab key
@@ -66,27 +58,20 @@ test('get completions when typing and can accept completions with tab', async ({
   await expect(component).toContainText('RETURN');
 });
 
-test('get completions when typing in controlled component', async ({
-  mount,
-  page,
-}) => {
+test('get completions when typing in controlled component', async ({ mount, page }) => {
   let value = '';
   const onChange = (val: string) => {
     value = val;
     void component.update(<CypherEditor value={val} onChange={onChange} />);
   };
 
-  const component = await mount(
-    <CypherEditor value={value} onChange={onChange} />,
-  );
+  const component = await mount(<CypherEditor value={value} onChange={onChange} />);
   const textField = page.getByRole('textbox');
 
   await textField.fill('RETU');
   await page.waitForTimeout(500); // wait for debounce
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('RETURN'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('RETURN')).toBeVisible();
 
   // We need to wait for the editor to realise there is a completion open
   // so that it does not just indent with tab key
@@ -151,9 +136,7 @@ test('can update dbschema', async ({ mount, page }) => {
 
   await textField.fill('MATCH (n :');
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('Pokemon'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('Pokemon')).toBeVisible();
 
   await textField.press('Escape');
 
@@ -169,13 +152,9 @@ test('can update dbschema', async ({ mount, page }) => {
 
   await textField.press('Control+ ');
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('Pokemon'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('Pokemon')).toBeVisible();
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('Digimon'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('Digimon')).toBeVisible();
 });
 
 test('can complete rel types', async ({ page, mount }) => {
@@ -197,10 +176,7 @@ test('can complete rel types', async ({ page, mount }) => {
   await expect(component).toContainText('MATCH (n)-[:KNOWS');
 });
 
-test('can complete YIELD clauses without manual trigger', async ({
-  page,
-  mount,
-}) => {
+test('can complete YIELD clauses without manual trigger', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
@@ -219,10 +195,7 @@ test('can complete YIELD clauses without manual trigger', async ({
   await expect(component).toContainText('CALL dbms.components() YIELD edition');
 });
 
-test('automatic yield trigger is not case sensitive', async ({
-  page,
-  mount,
-}) => {
+test('automatic yield trigger is not case sensitive', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
@@ -261,10 +234,7 @@ test('can complete functions', async ({ page, mount }) => {
 
   await textField.fill('RETURN func');
 
-  await page
-    .locator('.cm-tooltip-autocomplete')
-    .getByText('function123')
-    .click();
+  await page.locator('.cm-tooltip-autocomplete').getByText('function123').click();
 
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
@@ -328,15 +298,10 @@ test('completes allShortestPaths correctly', async ({ page, mount }) => {
   // syntax errors get triggered before the auto-completion
   await textField.fill('MATCH (n) REURN n; MATCH a');
 
-  await page
-    .locator('.cm-tooltip-autocomplete')
-    .getByText('allShortestPaths')
-    .click();
+  await page.locator('.cm-tooltip-autocomplete').getByText('allShortestPaths').click();
   await expect(page.locator('.cm-tooltip-autocomplete')).not.toBeVisible();
 
-  expect(await textField.textContent()).toEqual(
-    'MATCH (n) REURN n; MATCH allShortestPaths',
-  );
+  expect(await textField.textContent()).toEqual('MATCH (n) REURN n; MATCH allShortestPaths');
 });
 
 async function getInfoTooltip(page: Page, methodName: string) {
@@ -391,10 +356,7 @@ test('shows signature help information on auto-completion for functions', async 
   await expect(infoTooltip).toContainText(fn.description);
 });
 
-test('shows deprecated procedures as strikethrough on auto-completion', async ({
-  page,
-  mount,
-}) => {
+test('shows deprecated procedures as strikethrough on auto-completion', async ({ page, mount }) => {
   const procName = 'apoc.trigger.resume';
 
   await mount(
@@ -416,10 +378,7 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
   await expect(page.locator('.cm-deprecated-element')).toBeVisible();
 });
 
-test('shows deprecated function as strikethrough on auto-completion', async ({
-  page,
-  mount,
-}) => {
+test('shows deprecated function as strikethrough on auto-completion', async ({ page, mount }) => {
   const fnName = 'apoc.create.uuid';
 
   await mount(
@@ -536,9 +495,7 @@ test('completions depend on the Cypher version', async ({ page, mount }) => {
 
   await textField.fill('CYPHER 5 RETURN cypher');
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('cypher5Function'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('cypher5Function')).toBeVisible();
 
   await textField.fill('CYPHER 25 RETURN cypher');
 
@@ -562,9 +519,7 @@ test('does not complete properties for non node / relationship variables', async
   const textField = page.getByRole('textbox');
   await textField.fill('MATCH (n) RETURN n.');
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('nodeProperty'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('nodeProperty')).toBeVisible();
 
   await textField.fill('WITH 1 AS x RETURN x.');
   // This could be flaky if the semantic analysis takes too long

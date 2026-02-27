@@ -1,10 +1,4 @@
-import {
-  CommonTokenStream,
-  ErrorNode,
-  ParserRuleContext,
-  TerminalNode,
-  Token,
-} from 'antlr4';
+import { CommonTokenStream, ErrorNode, ParserRuleContext, TerminalNode, Token } from 'antlr4';
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
 import {
   AddPropContext,
@@ -186,10 +180,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   format = () => {
     this._visit(this.root);
     this.fillInGroupSizes();
-    const maxColumn = Math.max(
-      0,
-      this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL,
-    );
+    const maxColumn = Math.max(0, this.formattingOptions?.maxColumn ?? DEFAULT_MAX_COL);
     const result = chunksToFormattedString(this.chunkList, maxColumn);
     this.cursorPos += result.cursorPos;
     const resultString = result.formatted + this.unParseable;
@@ -295,12 +286,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * Skips any preceding comments or special chunks we did not expect.
    */
   setChunkProperty = (
-    propertyName:
-      | 'noSpace'
-      | 'noBreak'
-      | 'mustBreak'
-      | 'specialSplit'
-      | 'oneItem',
+    propertyName: 'noSpace' | 'noBreak' | 'mustBreak' | 'specialSplit' | 'oneItem',
   ): void => {
     if (this.chunkList.length === 0) {
       return;
@@ -339,10 +325,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   doubleBreakBetweenNonComment = (): void => {
-    if (
-      this.chunkList.length > 0 &&
-      this.lastInChunkList().type !== 'COMMENT'
-    ) {
+    if (this.chunkList.length > 0 && this.lastInChunkList().type !== 'COMMENT') {
       this.lastInChunkList().doubleBreak = true;
     }
   };
@@ -440,10 +423,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewline(ctx, 'before');
   };
 
-  preserveExplicitNewline = (
-    ctx: ParserRuleContext | TerminalNode,
-    side: 'before' | 'after',
-  ) => {
+  preserveExplicitNewline = (ctx: ParserRuleContext | TerminalNode, side: 'before' | 'after') => {
     const bottomChild = this.getBottomChild(ctx, side);
     // If the bottom child does not exist (missing due to syntax error) or is a MISSING token,
     // disregard preserving explicit newlines
@@ -458,12 +438,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       side === 'before'
         ? this.tokenStream.getHiddenTokensToLeft(token.tokenIndex)
         : this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
-    const hiddenNewlines = hiddenTokens?.filter(
-      (token) => token.text === '\n',
-    ).length;
-    const commentCount = hiddenTokens?.filter((token) =>
-      isComment(token),
-    ).length;
+    const hiddenNewlines = hiddenTokens?.filter((token) => token.text === '\n').length;
+    const commentCount = hiddenTokens?.filter((token) => isComment(token)).length;
     // If there are comments, they take responsibility of the explicit newlines.
     if (hiddenNewlines > 1 && commentCount === 0) {
       this.doubleBreakBetweenNonComment();
@@ -473,12 +449,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Comments are in the hidden channel, so grab them manually
   addCommentsBefore = (node: TerminalNode) => {
     const token = node.symbol;
-    const hiddenTokens = this.tokenStream.getHiddenTokensToLeft(
-      token.tokenIndex,
-    );
-    const commentTokens = (hiddenTokens || []).filter((token) =>
-      isComment(token),
-    );
+    const hiddenTokens = this.tokenStream.getHiddenTokensToLeft(token.tokenIndex);
+    const commentTokens = (hiddenTokens || []).filter((token) => isComment(token));
     for (const commentToken of commentTokens) {
       const text = commentToken.text.trim();
       // Comments before the first token always become chunks
@@ -496,9 +468,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   addCommentsAfter = (node: TerminalNode) => {
     const token = node.symbol;
-    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(
-      token.tokenIndex,
-    );
+    const hiddenTokens = this.tokenStream.getHiddenTokensToRight(token.tokenIndex);
     const nodeLine = node.symbol.line;
     let breakCount = 0;
     let includesComment = false;
@@ -565,10 +535,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // So to restore all the syntactically incorrect parts, we keep track of the last valid
   // token, and grab everything between it and the error node
   visitErrorNode = (node: ErrorNode) => {
-    if (
-      this.unParseableStart &&
-      node.symbol.tokenIndex >= this.unParseableStart
-    ) {
+    if (this.unParseableStart && node.symbol.tokenIndex >= this.unParseableStart) {
       return;
     }
     const token = node.symbol;
@@ -625,10 +592,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitCommandIfNotExists = (
-    ctx:
-      | CreateConstraintContext
-      | CreateIndex_Context
-      | CreateFulltextIndexContext,
+    ctx: CreateConstraintContext | CreateIndex_Context | CreateFulltextIndexContext,
   ) => {
     if (ctx.IF()) {
       this.avoidBreakBetween();
@@ -1304,9 +1268,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   // The patterns are handled separately because we need spaces
   // between labels and property predicates in patterns
-  handleInnerPatternContext = (
-    ctx: NodePatternContext | RelationshipPatternContext,
-  ) => {
+  handleInnerPatternContext = (ctx: NodePatternContext | RelationshipPatternContext) => {
     this._visit(ctx.variable());
     this.avoidBreakBetween();
     this._visit(ctx.labelExpression());
@@ -1502,11 +1464,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Very convoluted logic related to visitPatternElement, used becase we want to be able
   // to put groups around node patterns and relationships like this: START (node)-[rel](qpp?) END
   // and the grammar is very unhelpful...
-  _processNodeRelSequence = (
-    ctx: PatternElementContext,
-    startIndex: number,
-    n: number,
-  ): number => {
+  _processNodeRelSequence = (ctx: PatternElementContext, startIndex: number, n: number): number => {
     let i = startIndex;
     let nodeRelPatternGrp = this.startGroup();
 
@@ -1514,9 +1472,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     i++;
     while (i < n && ctx.getChild(i) instanceof RelationshipPatternContext) {
       const relPatternIndent = this.addIndentation();
-      this.visitRelationshipPattern(
-        ctx.getChild(i) as RelationshipPatternContext,
-      );
+      this.visitRelationshipPattern(ctx.getChild(i) as RelationshipPatternContext);
       i++;
       this.removeIndentation(relPatternIndent);
 
@@ -1526,10 +1482,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
       this.endGroup(nodeRelPatternGrp);
       if (i < n && ctx.getChild(i) instanceof NodePatternContext) {
-        if (
-          i + 1 < n &&
-          ctx.getChild(i + 1) instanceof RelationshipPatternContext
-        ) {
+        if (i + 1 < n && ctx.getChild(i + 1) instanceof RelationshipPatternContext) {
           nodeRelPatternGrp = this.startGroup();
         }
         this.visitNodePattern(ctx.getChild(i) as NodePatternContext);
@@ -2490,8 +2443,7 @@ export function formatQuery(
   query: string,
   formattingOptions?: FormattingOptions,
 ): FormattingResult {
-  const { tree, tokens, unParseable, firstUnParseableToken } =
-    getParseTreeAndTokens(query);
+  const { tree, tokens, unParseable, firstUnParseableToken } = getParseTreeAndTokens(query);
 
   tokens.fill();
   const visitor = new TreePrintVisitor(

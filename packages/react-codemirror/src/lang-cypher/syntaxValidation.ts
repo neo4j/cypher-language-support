@@ -47,13 +47,9 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
         return {
           from: diagnostic.offsets.start,
           to: diagnostic.offsets.end,
-          severity:
-            diagnostic.severity === DiagnosticSeverity.Error
-              ? 'error'
-              : 'warning',
+          severity: diagnostic.severity === DiagnosticSeverity.Error ? 'error' : 'warning',
           message: diagnostic.message,
-          ...(diagnostic.tags !== undefined &&
-          diagnostic.tags.includes(DiagnosticTag.Deprecated)
+          ...(diagnostic.tags !== undefined && diagnostic.tags.includes(DiagnosticTag.Deprecated)
             ? { markClass: 'cm-deprecated-element' }
             : {}),
         };

@@ -1,24 +1,13 @@
-import {
-  Event,
-  EventEmitter,
-  TreeDataProvider,
-  TreeItem,
-  TreeItemCollapsibleState,
-} from 'vscode';
-import {
-  getActiveConnection,
-  getDbSchemaInformation,
-} from '../connectionService';
+import { Event, EventEmitter, TreeDataProvider, TreeItem, TreeItemCollapsibleState } from 'vscode';
+import { getActiveConnection, getDbSchemaInformation } from '../connectionService';
 
 type DatabaseInformationItemType = 'label' | 'relationship';
 
 export class DatabaseInformationTreeDataProvider implements TreeDataProvider<DatabaseInformationItem> {
-  private _onDidChangeTreeData: EventEmitter<
-    DatabaseInformationItem | undefined | void
-  > = new EventEmitter<DatabaseInformationItem | undefined | void>();
-  readonly onDidChangeTreeData: Event<
-    DatabaseInformationItem | undefined | void
-  > = this._onDidChangeTreeData.event;
+  private _onDidChangeTreeData: EventEmitter<DatabaseInformationItem | undefined | void> =
+    new EventEmitter<DatabaseInformationItem | undefined | void>();
+  readonly onDidChangeTreeData: Event<DatabaseInformationItem | undefined | void> =
+    this._onDidChangeTreeData.event;
 
   refresh(): void {
     this._onDidChangeTreeData.fire();
@@ -43,11 +32,7 @@ export class DatabaseInformationTreeDataProvider implements TreeDataProvider<Dat
     }
 
     return [
-      new DatabaseInformationItem(
-        'label',
-        'Labels',
-        TreeItemCollapsibleState.Collapsed,
-      ),
+      new DatabaseInformationItem('label', 'Labels', TreeItemCollapsibleState.Collapsed),
       new DatabaseInformationItem(
         'relationship',
         'Relationships',
@@ -67,10 +52,7 @@ export class DatabaseInformationTreeDataProvider implements TreeDataProvider<Dat
 
     return element.type === 'label'
       ? this.mapDbSchemaProperties('label', dbSchemaInformation.labels)
-      : this.mapDbSchemaProperties(
-          'relationship',
-          dbSchemaInformation.relationships,
-        );
+      : this.mapDbSchemaProperties('relationship', dbSchemaInformation.relationships);
   }
 
   private mapDbSchemaProperties(
@@ -78,18 +60,12 @@ export class DatabaseInformationTreeDataProvider implements TreeDataProvider<Dat
     properties: string[],
   ): DatabaseInformationItem[] {
     return properties?.map(
-      (property) =>
-        new DatabaseInformationItem(
-          type,
-          property,
-          TreeItemCollapsibleState.None,
-        ),
+      (property) => new DatabaseInformationItem(type, property, TreeItemCollapsibleState.None),
     );
   }
 }
 
-export const databaseInformationTreeDataProvider =
-  new DatabaseInformationTreeDataProvider();
+export const databaseInformationTreeDataProvider = new DatabaseInformationTreeDataProvider();
 
 class DatabaseInformationItem extends TreeItem {
   constructor(

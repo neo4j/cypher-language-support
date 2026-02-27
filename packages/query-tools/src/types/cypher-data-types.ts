@@ -61,14 +61,7 @@ export type CypherBasicPropertyType =
   | Int8Array
   | CypherTemporalType
   | Point
-  | Vector<
-      | BigInt64Array
-      | Float32Array
-      | Float64Array
-      | Int8Array
-      | Int16Array
-      | Int32Array
-    >;
+  | Vector<BigInt64Array | Float32Array | Float64Array | Int8Array | Int16Array | Int32Array>;
 
 export type CypherTemporalType =
   | Date<NumberOrInteger>
@@ -79,9 +72,7 @@ export type CypherTemporalType =
   | Duration<NumberOrInteger>;
 
 // Lists are also allowed as property types, as long as all items are the same basic type
-export type CypherProperty =
-  | CypherBasicPropertyType
-  | CypherBasicPropertyType[];
+export type CypherProperty = CypherBasicPropertyType | CypherBasicPropertyType[];
 
 // CypherStructuralType can NOT be used as property or parameter
 export type CypherStructuralType = Node | Relationship | Path;
@@ -96,11 +87,7 @@ export type CypherList = (
 )[];
 
 export interface CypherMap {
-  [key: string]:
-    | CypherBasicPropertyType
-    | CypherStructuralType
-    | CypherMap
-    | CypherList;
+  [key: string]: CypherBasicPropertyType | CypherStructuralType | CypherMap | CypherList;
 }
 
 export type CypherDataType =
@@ -109,25 +96,16 @@ export type CypherDataType =
   | CypherMap
   | CypherList;
 
-export const isCypherTemporalType = (
-  anything: unknown,
-): anything is CypherTemporalType => {
+export const isCypherTemporalType = (anything: unknown): anything is CypherTemporalType => {
   if (typeof anything === 'object' && anything !== null) {
-    return [
-      isDate,
-      isTime,
-      isDateTime,
-      isLocalTime,
-      isLocalDateTime,
-      isDuration,
-    ].some((tester) => tester(anything));
+    return [isDate, isTime, isDateTime, isLocalTime, isLocalDateTime, isDuration].some((tester) =>
+      tester(anything),
+    );
   }
   return false;
 };
 
-export const isCypherBasicPropertyType = (
-  value: unknown,
-): value is CypherBasicPropertyType => {
+export const isCypherBasicPropertyType = (value: unknown): value is CypherBasicPropertyType => {
   const valType = typeof value;
 
   return (
@@ -144,9 +122,7 @@ export const isCypherBasicPropertyType = (
   );
 };
 
-export const isCypherPropertyType = (
-  value: unknown,
-): value is CypherProperty => {
+export const isCypherPropertyType = (value: unknown): value is CypherProperty => {
   if (Array.isArray(value)) {
     if (value.length === 0) {
       return true;
@@ -158,7 +134,5 @@ export const isCypherPropertyType = (
 };
 
 export function isInt8Array(val: unknown): val is Int8Array {
-  return (
-    typeof val === 'object' && val !== null && val.constructor === Int8Array
-  );
+  return typeof val === 'object' && val !== null && val.constructor === Int8Array;
 }

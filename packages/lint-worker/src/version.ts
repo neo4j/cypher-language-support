@@ -7,10 +7,7 @@ import { integer } from 'vscode-languageserver-types';
  *  -  1 if  v1 > v2
  *  But ignores patch version,
  *  and returns undefined if versions are of incorrect format */
-export function compareMajorMinorVersions(
-  version1: string,
-  version2: string,
-): integer | undefined {
+export function compareMajorMinorVersions(version1: string, version2: string): integer | undefined {
   const semVer1: semver.SemVer | null = semver.coerce(version1, {
     includePrerelease: false,
     loose: true,

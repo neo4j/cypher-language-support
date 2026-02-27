@@ -27,15 +27,11 @@ import { sendNotificationToLanguageClient } from './languageClientService';
 let client: LanguageClient;
 let symbolTableVersion = 0;
 
-export const linterStatusBarItem = window.createStatusBarItem(
-  StatusBarAlignment.Right,
-);
+export const linterStatusBarItem = window.createStatusBarItem(StatusBarAlignment.Right);
 
 export async function activate(context: ExtensionContext) {
   // The server is implemented in node
-  const runServer = context.asAbsolutePath(
-    path.join('dist', 'cypher-language-server.js'),
-  );
+  const runServer = context.asAbsolutePath(path.join('dist', 'cypher-language-server.js'));
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
@@ -68,12 +64,7 @@ export async function activate(context: ExtensionContext) {
     },
   };
   // Create the language client and start the client.
-  client = new LanguageClient(
-    'neo4j',
-    'Cypher Language Client',
-    serverOptions,
-    clientOptions,
-  );
+  client = new LanguageClient('neo4j', 'Cypher Language Client', serverOptions, clientOptions);
 
   setContext(context, client);
 
@@ -91,17 +82,12 @@ export async function activate(context: ExtensionContext) {
   // in developement mode, we manually reload the extension.
   if (process.env.watch === 'true') {
     const watcher = workspace.createFileSystemWatcher(
-      new RelativePattern(
-        Uri.file(context.asAbsolutePath('dist')),
-        'extension.js',
-      ),
+      new RelativePattern(Uri.file(context.asAbsolutePath('dist')), 'extension.js'),
     );
 
     watcher.onDidChange(() => {
       void window.showInformationMessage('Extension rebuilt, reloading...');
-      void commands.executeCommand<void>(
-        'workbench.action.restartExtensionHost',
-      );
+      void commands.executeCommand<void>('workbench.action.restartExtensionHost');
     });
 
     context.subscriptions.push(watcher);
@@ -109,8 +95,7 @@ export async function activate(context: ExtensionContext) {
 
   client.onNotification('symbolTableDone', (params) => {
     symbolTableVersion++;
-    const symbolTables = (params as { symbolTables: SymbolTable[] })
-      .symbolTables;
+    const symbolTables = (params as { symbolTables: SymbolTable[] }).symbolTables;
     void window.showInformationMessage(
       'Calculated symbol table nbr' +
         symbolTableVersion +

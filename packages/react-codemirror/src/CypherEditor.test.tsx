@@ -32,9 +32,7 @@ function mockEditorView(editorView: EditorView) {
 }
 
 async function debounce() {
-  await new Promise((resolve) =>
-    setTimeout(resolve, DEBOUNCE_TIME_WITH_MARGIN),
-  );
+  await new Promise((resolve) => setTimeout(resolve, DEBOUNCE_TIME_WITH_MARGIN));
 }
 
 function getEditorValue() {
@@ -197,7 +195,5 @@ test('rerender with prior external update should not cancel onChange', async () 
 });
 
 test('setValueAndFocus should handle CRLF newline characters', () => {
-  expect(() =>
-    ref.current.setValueAndFocus('new value\r\nnew line'),
-  ).not.toThrow();
+  expect(() => ref.current.setValueAndFocus('new value\r\nnew line')).not.toThrow();
 });

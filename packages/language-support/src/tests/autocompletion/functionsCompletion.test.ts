@@ -1,7 +1,4 @@
-import {
-  CompletionItemKind,
-  CompletionItemTag,
-} from 'vscode-languageserver-types';
+import { CompletionItemKind, CompletionItemTag } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
@@ -307,8 +304,7 @@ describe('function invocations', () => {
           kind: CompletionItemKind.Function,
           detail: '(function)',
           signature: functions['CYPHER 5']['apoc.agg.percentiles'].signature,
-          documentation:
-            functions['CYPHER 5']['apoc.agg.percentiles'].description,
+          documentation: functions['CYPHER 5']['apoc.agg.percentiles'].description,
         },
         {
           label: 'acos',
@@ -332,8 +328,7 @@ describe('function invocations', () => {
           kind: CompletionItemKind.Function,
           detail: '(function)',
           signature: functions['CYPHER 5']['apoc.agg.percentiles'].signature,
-          documentation:
-            functions['CYPHER 5']['apoc.agg.percentiles'].description,
+          documentation: functions['CYPHER 5']['apoc.agg.percentiles'].description,
         },
         {
           label: 'apoc',

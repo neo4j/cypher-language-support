@@ -1,8 +1,5 @@
 import { Extension } from '@codemirror/state';
-import {
-  createCypherTheme,
-  ThemeOptions,
-} from './lang-cypher/createCypherTheme';
+import { createCypherTheme, ThemeOptions } from './lang-cypher/createCypherTheme';
 import { tokens } from './ndlTokensCopy';
 
 export const lightThemeConstants: ThemeOptions = {

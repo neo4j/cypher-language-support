@@ -20,10 +20,7 @@ If a directory is provided, it will be processed recursively, and format all .cy
   process.exit(1);
 }
 
-function processFile(
-  filePath: string,
-  options: { inPlace: boolean; check: boolean },
-): boolean {
+function processFile(filePath: string, options: { inPlace: boolean; check: boolean }): boolean {
   const input = readFileSync(filePath, 'utf8');
   const formatted = formatQuery(input).formattedQuery;
 
@@ -43,10 +40,7 @@ function processFile(
   return true;
 }
 
-function processDirectory(
-  dirPath: string,
-  options: { inPlace: boolean; check: boolean },
-): boolean {
+function processDirectory(dirPath: string, options: { inPlace: boolean; check: boolean }): boolean {
   let allFilesFormatted = true;
 
   const entries = readdirSync(dirPath, { withFileTypes: true });
@@ -57,10 +51,7 @@ function processDirectory(
     if (entry.isDirectory()) {
       const subDirResult = processDirectory(fullPath, options);
       allFilesFormatted = allFilesFormatted && subDirResult;
-    } else if (
-      entry.isFile() &&
-      CYPHER_FILE_EXTENSIONS.some((ext) => entry.name.endsWith(ext))
-    ) {
+    } else if (entry.isFile() && CYPHER_FILE_EXTENSIONS.some((ext) => entry.name.endsWith(ext))) {
       const fileResult = processFile(fullPath, options);
       allFilesFormatted = allFilesFormatted && fileResult;
     }
@@ -136,10 +127,7 @@ function main() {
       }
     }
   } catch (error) {
-    console.error(
-      'Error:',
-      error instanceof Error ? error.message : String(error),
-    );
+    console.error('Error:', error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
 }

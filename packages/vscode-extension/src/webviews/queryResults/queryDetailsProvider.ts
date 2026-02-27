@@ -17,13 +17,7 @@ import {
   Path,
 } from 'neo4j-driver';
 import path from 'path';
-import {
-  ColorThemeKind,
-  Uri,
-  WebviewView,
-  WebviewViewProvider,
-  window,
-} from 'vscode';
+import { ColorThemeKind, Uri, WebviewView, WebviewViewProvider, window } from 'vscode';
 import { getExtensionContext, getSchemaPoller } from '../../contextService';
 import { getNonce } from '../../getNonce';
 import { getDeserializedParams } from '../../parameterService';
@@ -64,9 +58,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     window.onDidChangeActiveColorTheme(async (e) => {
       await this.view.webview.postMessage({
         type: 'themeUpdate',
-        isDarkTheme:
-          e.kind === ColorThemeKind.Dark ||
-          e.kind === ColorThemeKind.HighContrast,
+        isDarkTheme: e.kind === ColorThemeKind.Dark || e.kind === ColorThemeKind.HighContrast,
         to: 'detailsView',
       });
     });
@@ -96,17 +88,11 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
     const result = await this.runQuery(statement);
     if ('summary' in result) {
       const containsUpdates = result.summary.counters.containsUpdates();
-      const containsSystemUpdates =
-        result.summary.counters.containsSystemUpdates();
-      const isSupportedDatabase =
-        this.schemaPoller.connection?.currentDb !== 'system';
-      const couldbeLoadingDataWithApoc = result.summary.query.text
-        .toLowerCase()
-        .includes('apoc');
+      const containsSystemUpdates = result.summary.counters.containsSystemUpdates();
+      const isSupportedDatabase = this.schemaPoller.connection?.currentDb !== 'system';
+      const couldbeLoadingDataWithApoc = result.summary.query.text.toLowerCase().includes('apoc');
       if (
-        (containsUpdates ||
-          containsSystemUpdates ||
-          couldbeLoadingDataWithApoc) &&
+        (containsUpdates || containsSystemUpdates || couldbeLoadingDataWithApoc) &&
         isSupportedDatabase
       ) {
         this.schemaPoller.metadata?.fetchDbSchema();
@@ -128,12 +114,8 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         errorMessage: result.message,
       };
     } else {
-      const resultRecords = result.records.map((record) =>
-        toNativeTypes(record.toObject()),
-      );
-      const { nodes, relationships } = this.extractUniqueNodesAndRels(
-        result.records,
-      );
+      const resultRecords = result.records.map((record) => toNativeTypes(record.toObject()));
+      const { nodes, relationships } = this.extractUniqueNodesAndRels(result.records);
       message.result = {
         ...message.result,
         type: 'success',
@@ -219,10 +201,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         id: item.identity.toString(),
         labels: item.labels,
         properties: Object.entries(item.properties).reduce(
-          (
-            res: Record<string, { stringified: string; type: string }>,
-            [currKey, currVal],
-          ) => {
+          (res: Record<string, { stringified: string; type: string }>, [currKey, currVal]) => {
             res[currKey] = {
               stringified: cypherDataToString(currVal as CypherDataType),
               type: getPropertyTypeDisplayName(currVal as CypherProperty),
@@ -250,10 +229,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
           to: item.end.toString(),
           type: item.type,
           properties: Object.entries(item.properties).reduce(
-            (
-              res: Record<string, { stringified: string; type: string }>,
-              [currKey, currVal],
-            ) => {
+            (res: Record<string, { stringified: string; type: string }>, [currKey, currVal]) => {
               res[currKey] = {
                 stringified: cypherDataToString(currVal as CypherDataType),
                 type: getPropertyTypeDisplayName(currVal as CypherProperty),
@@ -303,8 +279,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
         return error;
       }
     } else {
-      const errorMessage =
-        'Could not execute query, the connection to Neo4j was not set';
+      const errorMessage = 'Could not execute query, the connection to Neo4j was not set';
       return Error(errorMessage);
     }
   }
@@ -312,37 +287,20 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private renderQueryDetails() {
     const extensionContext = getExtensionContext();
     const queryDetailsContainerJsPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'dist',
-        'webviews',
-        'queryDetails.js',
-      ),
+      path.join(extensionContext.extensionPath, 'dist', 'webviews', 'queryDetails.js'),
     );
     const ndlCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'ndl.css',
-      ),
+      path.join(extensionContext.extensionPath, 'resources', 'styles', 'ndl.css'),
     );
     const queryDetailsCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'queryDetails.css',
-      ),
+      path.join(extensionContext.extensionPath, 'resources', 'styles', 'queryDetails.css'),
     );
 
     const queryDetailsContainerJs = this.view.webview
       .asWebviewUri(queryDetailsContainerJsPath)
       .toString();
     const ndlCssUri = this.view.webview.asWebviewUri(ndlCssPath).toString();
-    const queryDetailsCssUri = this.view.webview
-      .asWebviewUri(queryDetailsCssPath)
-      .toString();
+    const queryDetailsCssUri = this.view.webview.asWebviewUri(queryDetailsCssPath).toString();
 
     const nonce = getNonce();
 

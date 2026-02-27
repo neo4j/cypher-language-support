@@ -6,8 +6,7 @@ const operatorsRegex = new Array(...operatorSymbols.values())
   .join('|');
 
 export const textMateGrammar = {
-  $schema:
-    'https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json',
+  $schema: 'https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json',
   name: 'Cypher',
   patterns: [
     {

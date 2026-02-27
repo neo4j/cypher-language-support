@@ -1,10 +1,4 @@
-import {
-  FileDecoration,
-  FileDecorationProvider,
-  ProviderResult,
-  ThemeColor,
-  Uri,
-} from 'vscode';
+import { FileDecoration, FileDecorationProvider, ProviderResult, ThemeColor, Uri } from 'vscode';
 import { ConnectionItemType } from './connectionTreeDataProvider';
 
 class ConnectionTreeDecorationProvider implements FileDecorationProvider {
@@ -23,5 +17,4 @@ class ConnectionTreeDecorationProvider implements FileDecorationProvider {
   }
 }
 
-export const connectionTreeDecorationProvider =
-  new ConnectionTreeDecorationProvider();
+export const connectionTreeDecorationProvider = new ConnectionTreeDecorationProvider();

@@ -72,9 +72,7 @@ export const isCondition = (condition: string): condition is Condition => {
 export type LabelLeaf = {
   value: string;
 };
-export const isLabelLeaf = (
-  labelOrCondition: LabelOrCondition,
-): labelOrCondition is LabelLeaf => {
+export const isLabelLeaf = (labelOrCondition: LabelOrCondition): labelOrCondition is LabelLeaf => {
   return 'value' in labelOrCondition;
 };
 

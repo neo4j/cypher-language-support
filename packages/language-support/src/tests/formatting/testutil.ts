@@ -11,9 +11,7 @@ export function verifyFormatting(
   const queryStandardized = standardizeQuery(query);
   const formattedStandardized = standardizeQuery(formatted);
   if (formattedStandardized !== queryStandardized) {
-    throw new Error(
-      `Standardized query does not match standardized formatted query`,
-    );
+    throw new Error(`Standardized query does not match standardized formatted query`);
   }
   // Idempotency check
   const formattedTwice = formatQuery(query, formattingOptions).formattedQuery;

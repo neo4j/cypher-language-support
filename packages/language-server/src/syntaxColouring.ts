@@ -9,9 +9,7 @@ import {
   TextDocuments,
 } from 'vscode-languageserver';
 
-export function applySyntaxColouringForDocument(
-  documents: TextDocuments<TextDocument>,
-) {
+export function applySyntaxColouringForDocument(documents: TextDocuments<TextDocument>) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };

@@ -31,10 +31,7 @@ import {
   VariableContext,
 } from '../generated-parser/CypherCmdParser';
 
-import {
-  SemanticTokensLegend,
-  SemanticTokenTypes,
-} from 'vscode-languageserver-types';
+import { SemanticTokensLegend, SemanticTokenTypes } from 'vscode-languageserver-types';
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
@@ -106,12 +103,10 @@ class SyntaxHighlighter extends CypherParserListener {
     if (token.start >= 0) {
       const tokenPosition = getTokenPosition(token);
 
-      toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach(
-        (token) => {
-          const tokenKey = computeTokenKey(token.position, token.token.length);
-          this.colouredTokens.set(tokenKey, token);
-        },
-      );
+      toParsedTokens(tokenPosition, tokenType, tokenStr, token).forEach((token) => {
+        const tokenKey = computeTokenKey(token.position, token.token.length);
+        this.colouredTokens.set(tokenKey, token);
+      });
     }
   }
 
@@ -224,11 +219,7 @@ class SyntaxHighlighter extends CypherParserListener {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
     this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
-    this.addToken(
-      parameterName.start,
-      CypherTokenType.paramValue,
-      parameterName.getText(),
-    );
+    this.addToken(parameterName.start, CypherTokenType.paramValue, parameterName.getText());
   };
 
   exitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -249,11 +240,7 @@ class SyntaxHighlighter extends CypherParserListener {
   // Fix coloring of colon in console commands (operator -> consoleCommand)
   exitConsoleCommand = (ctx: ConsoleCommandContext) => {
     const colon = ctx.COLON();
-    this.addToken(
-      colon.symbol,
-      CypherTokenType.consoleCommand,
-      colon.getText(),
-    );
+    this.addToken(colon.symbol, CypherTokenType.consoleCommand, colon.getText());
   };
 
   // console commands that clash with cypher keywords
@@ -266,50 +253,30 @@ class SyntaxHighlighter extends CypherParserListener {
   exitServerCompletionRule = (ctx: ServerCompletionRuleContext) => {
     const server = ctx.SERVER();
 
-    this.addToken(
-      server.symbol,
-      CypherTokenType.consoleCommand,
-      server.getText(),
-    );
+    this.addToken(server.symbol, CypherTokenType.consoleCommand, server.getText());
   };
 
   exitParamsArgs = (ctx: ParamsArgsContext) => {
     const clear = ctx.CLEAR();
     if (clear) {
-      this.addToken(
-        clear.symbol,
-        CypherTokenType.consoleCommand,
-        clear.getText(),
-      );
+      this.addToken(clear.symbol, CypherTokenType.consoleCommand, clear.getText());
     }
 
     const list = ctx.listCompletionRule()?.LIST();
     if (list) {
-      this.addToken(
-        list.symbol,
-        CypherTokenType.consoleCommand,
-        list.getText(),
-      );
+      this.addToken(list.symbol, CypherTokenType.consoleCommand, list.getText());
     }
   };
 
   exitAccessModeArgs = (ctx: AccessModeArgsContext) => {
     const read = ctx.readCompletionRule()?.READ();
     if (read) {
-      this.addToken(
-        read.symbol,
-        CypherTokenType.consoleCommand,
-        read.getText(),
-      );
+      this.addToken(read.symbol, CypherTokenType.consoleCommand, read.getText());
     }
 
     const write = ctx.writeCompletionRule()?.WRITE();
     if (write) {
-      this.addToken(
-        write.symbol,
-        CypherTokenType.consoleCommand,
-        write.getText(),
-      );
+      this.addToken(write.symbol, CypherTokenType.consoleCommand, write.getText());
     }
   };
 }
@@ -329,10 +296,7 @@ function colourLexerTokens(tokens: Token[]) {
     const token = tokens.at(i);
     const nextToken = tokens.at(i + 1);
     if (shouldAssignTokenType(token)) {
-      const { tokenType, finished: tokenFinished } = getCypherTokenType(
-        token,
-        nextToken,
-      );
+      const { tokenType, finished: tokenFinished } = getCypherTokenType(token, nextToken);
       const tokenPosition = getTokenPosition(token);
       let tokenStr = token.text ?? '';
 
@@ -344,13 +308,7 @@ function colourLexerTokens(tokens: Token[]) {
         });
         moreToProcess = false;
       }
-      toParsedTokens(
-        tokenPosition,
-        tokenType,
-        tokenStr,
-        token,
-        bracketsLevel,
-      ).forEach((t) => {
+      toParsedTokens(tokenPosition, tokenType, tokenStr, token, bracketsLevel).forEach((t) => {
         const tokenKey = computeTokenKey(t.position, t.length);
         result.set(tokenKey, t);
       });
@@ -361,9 +319,7 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function applySyntaxColouring(
-  wholeFileText: string,
-): ParsedCypherToken[] {
+export function applySyntaxColouring(wholeFileText: string): ParsedCypherToken[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
   const statements = parsingResult.statementsParsing;
 
@@ -379,15 +335,12 @@ export function applySyntaxColouring(
     const tokens = statement.tokens;
 
     // Get a first pass at the colouring using only the lexer
-    const lexerTokens: Map<string, ParsedCypherToken> =
-      colourLexerTokens(tokens);
+    const lexerTokens: Map<string, ParsedCypherToken> = colourLexerTokens(tokens);
     const treeSyntaxHighlighter = new SyntaxHighlighter(lexerTokens);
 
     ParseTreeWalker.DEFAULT.walk(treeSyntaxHighlighter, statement.ctx);
 
-    treeSyntaxHighlighter.colouredTokens.forEach((value, key) =>
-      allColouredTokens.set(key, value),
-    );
+    treeSyntaxHighlighter.colouredTokens.forEach((value, key) => allColouredTokens.set(key, value));
   });
 
   // When we push to the builder, tokens need to be sorted in ascending
@@ -400,9 +353,7 @@ export function applySyntaxColouring(
   //
   // Example: -1 would be split as [-, UNSIGNED_DECIMAL_INTEGER] by the lexer
   // (2 tokens), but as a unique numeric literal by the parsing tree
-  const result = removeOverlappingTokens(
-    sortTokens(Array.from(allColouredTokens.values())),
-  );
+  const result = removeOverlappingTokens(sortTokens(Array.from(allColouredTokens.values())));
 
   return result;
 }

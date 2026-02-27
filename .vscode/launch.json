@@ -16,9 +16,7 @@
       "env": {
         "watch": "true"
       },
-      "args": [
-        "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"
-      ],
+      "args": ["--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension"],
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",
         "${workspaceRoot}/packages/language-support/**/*.js",

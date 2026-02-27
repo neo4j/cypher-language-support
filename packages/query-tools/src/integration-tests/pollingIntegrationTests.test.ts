@@ -14,10 +14,7 @@ describe('Polling integration', () => {
   beforeAll(async () => {
     neo4jInstance = await createAndStartTestContainer();
     const containerPort = neo4jInstance.getMappedPort(7687).toString();
-    testDriver = driver(
-      `neo4j://localhost:${containerPort}`,
-      auth.basic('neo4j', 'password'),
-    );
+    testDriver = driver(`neo4j://localhost:${containerPort}`, auth.basic('neo4j', 'password'));
     session = testDriver.session();
     const createQuery =
       'CREATE (n:Teacher {Age: 44, Name: "Åke"})-[:LIVES_WITH]->(m:Nurse {Age: 47, Name: "Robin"})';

@@ -1,8 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import {
-  testCompletions,
-  testCompletionsExactly,
-} from './completionAssertionHelpers';
+import { testCompletions, testCompletionsExactly } from './completionAssertionHelpers';
 
 describe('Misc auto-completion', () => {
   test('Correctly completes cypher version number, when cypher25 is enabled', () => {
@@ -232,9 +229,7 @@ describe('Inserts correct text when symbolic name is not display name', () => {
 
     testCompletions({
       query,
-      expected: [
-        { label: 'allShortestPaths', kind: CompletionItemKind.Keyword },
-      ],
+      expected: [{ label: 'allShortestPaths', kind: CompletionItemKind.Keyword }],
     });
   });
 

@@ -145,8 +145,7 @@ describe('Syntactic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
+        message: 'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 114,
           start: 60,
@@ -709,8 +708,7 @@ describe('Syntactic validation spec', () => {
         severity: 1,
       },
       {
-        message:
-          "Invalid input ')': expected a node label/relationship type name, '$', '%' or '('",
+        message: "Invalid input ')': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 10,
           start: 9,
@@ -971,8 +969,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message:
-          'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
+        message: 'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
         offsets: {
           end: 34,
           start: 0,
@@ -1001,8 +998,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message:
-          'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
+        message: 'CALL subquery without a variable scope clause is deprecated. Use CALL () { ... }',
         offsets: {
           end: 41,
           start: 0,
@@ -1267,8 +1263,7 @@ describe('Syntactic validation spec', () => {
         severity: 1,
       },
       {
-        message:
-          "Invalid input 'foo': expected a parameter, a string or 'CHANGE'",
+        message: "Invalid input 'foo': expected a parameter, a string or 'CHANGE'",
         offsets: {
           end: 39,
           start: 36,
@@ -1442,8 +1437,7 @@ describe('Syntactic validation spec', () => {
         severity: 1,
       },
       {
-        message:
-          "Invalid input ''Person'': expected an identifier, '$', '%' or '('",
+        message: "Invalid input ''Person'': expected an identifier, '$', '%' or '('",
         offsets: {
           end: 20,
           start: 12,
@@ -1497,16 +1491,13 @@ describe('Syntactic validation spec', () => {
     `MATCH (n:MyLabel) RETURN n.CYPHER`,
     `CREATE (n:Test1 {explain: 'Explain'});`,
     `RETURN { clear: 'Clear', params: 'params', history: 'history'}`,
-  ])(
-    'Syntax validation should not fail if cmd keywords are used in map properties %s',
-    (query) => {
-      expect(
-        getDiagnosticsForQuery({
-          query,
-        }),
-      ).toEqual([]);
-    },
-  );
+  ])('Syntax validation should not fail if cmd keywords are used in map properties %s', (query) => {
+    expect(
+      getDiagnosticsForQuery({
+        query,
+      }),
+    ).toEqual([]);
+  });
 
   test('Existing relationship types are not incorrectly reported inside node predicates', () => {
     const query = `MATCH ()-[]->*(n WHERE COUNT{ (n)-[:R]->()} = 0) RETURN n`;
@@ -1585,8 +1576,7 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message:
-          'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
+        message: 'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.',
         offsets: {
           end: 59,
           start: 17,

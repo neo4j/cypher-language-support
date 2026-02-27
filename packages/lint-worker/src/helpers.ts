@@ -75,8 +75,7 @@ export type NpmRelease = {
   version: string;
 };
 
-export const npmTagToLinterVersion = (tag: string) =>
-  tag.match(/^neo4j-(\d+\.\d+)$/)?.[1];
+export const npmTagToLinterVersion = (tag: string) => tag.match(/^neo4j-(\d+\.\d+)$/)?.[1];
 
 export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
   const registryUrl = 'https://registry.npmjs.org/@neo4j-cypher/lint-worker';

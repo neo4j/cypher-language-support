@@ -35,27 +35,16 @@ function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
     return false;
   }
 
-  return (
-    chunk.mustBreak ||
-    chunk.doubleBreak ||
-    state.activeGroups.at(-1)?.shouldBreak
-  );
+  return chunk.mustBreak || chunk.doubleBreak || state.activeGroups.at(-1)?.shouldBreak;
 }
 
-function updateActiveGroups(
-  state: State,
-  chunk: Chunk,
-  maxColumn: number,
-): void {
+function updateActiveGroups(state: State, chunk: Chunk, maxColumn: number): void {
   for (const group of chunk.groupsStarting) {
-    const breaksAll =
-      state.column + group.size > maxColumn || group.shouldBreak;
+    const breaksAll = state.column + group.size > maxColumn || group.shouldBreak;
     state.activeGroups.push({ ...group, shouldBreak: breaksAll });
   }
   for (const group of chunk.groupsEnding) {
-    const indexToRemove = state.activeGroups.findIndex(
-      (item) => item.id === group.id,
-    );
+    const indexToRemove = state.activeGroups.findIndex((item) => item.id === group.id);
 
     if (indexToRemove !== -1) {
       state.activeGroups.splice(indexToRemove, 1);
@@ -74,9 +63,7 @@ function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
       state.indentation += INDENTATION_SPACES;
     }
     if (indent.change === -1) {
-      const indexToRemove = state.activeIndentations.findIndex(
-        (item) => item.id === indent.id,
-      );
+      const indexToRemove = state.activeIndentations.findIndex((item) => item.id === indent.id);
 
       if (!state.activeIndentations[indexToRemove]?.isApplied) {
         continue;
@@ -185,10 +172,7 @@ function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
   return nextChunk?.specialSplit && chunk.oneItem && !chunk.comment;
 }
 
-export function chunksToFormattedString(
-  chunkList: Chunk[],
-  maxColumn: number,
-): FinalResultWithPos {
+export function chunksToFormattedString(chunkList: Chunk[], maxColumn: number): FinalResultWithPos {
   const state = createInitialState();
 
   for (let i = 0; i < chunkList.length; i++) {

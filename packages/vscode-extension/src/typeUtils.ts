@@ -52,11 +52,7 @@ function valueToNativeType(value: unknown) {
     value = value.toString();
   } else if (isPoint(value)) {
     value = spacialFormat(value);
-  } else if (
-    typeof value === 'object' &&
-    value !== undefined &&
-    value !== null
-  ) {
+  } else if (typeof value === 'object' && value !== undefined && value !== null) {
     value = toNativeTypes(value);
   }
 

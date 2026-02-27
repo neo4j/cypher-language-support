@@ -10,11 +10,7 @@ declare global {
   }
 }
 
-test('benchmarking & performance test session', async ({
-  browserName,
-  mount,
-  page,
-}) => {
+test('benchmarking & performance test session', async ({ browserName, mount, page }) => {
   test.skip(browserName !== 'chromium');
   const client = await page.context().newCDPSession(page);
   if (process.env.BENCHMARKING === 'true') {
@@ -36,12 +32,7 @@ test('benchmarking & performance test session', async ({
   }
   const editorPage = new CypherEditorPage(page);
   const component = await mount(
-    <CypherEditor
-      prompt="neo4j>"
-      theme="dark"
-      lint
-      schema={testData.mockSchema}
-    />,
+    <CypherEditor prompt="neo4j>" theme="dark" lint schema={testData.mockSchema} />,
   );
 
   // pressSequentially is less efficient -> we want to test the performance of the editor
@@ -51,42 +42,24 @@ test('benchmarking & performance test session', async ({
   await editorPage.checkErrorMessage('m', 'Variable `m` not defined');
 
   // set and unset large query a few times
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
-  await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
-  );
+  await component.update(<CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />);
+  await component.update(<CypherEditor value="" schema={testData.mockSchema} />);
 
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
+  await component.update(<CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />);
   await component.update(<CypherEditor value="" />);
 
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
-  await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
-  );
+  await component.update(<CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />);
+  await component.update(<CypherEditor value="" schema={testData.mockSchema} />);
 
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
-  await component.update(
-    <CypherEditor value="" schema={testData.mockSchema} />,
-  );
+  await component.update(<CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />);
+  await component.update(<CypherEditor value="" schema={testData.mockSchema} />);
 
-  await component.update(
-    <CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />,
-  );
+  await component.update(<CypherEditor value={testData.largeQuery} schema={testData.mockSchema} />);
 
   await editorPage.getEditor().pressSequentially(`
  MATCH (n:P`);
 
-  await expect(
-    page.locator('.cm-tooltip-autocomplete').getByText('Person'),
-  ).toBeVisible();
+  await expect(page.locator('.cm-tooltip-autocomplete').getByText('Person')).toBeVisible();
 
   await page.locator('.cm-tooltip-autocomplete').getByText('Person').click();
 
@@ -103,20 +76,15 @@ test('benchmarking & performance test session', async ({
     `Invalid input 'RETRN': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>`,
   );
 
-  await editorPage
-    .getEditor()
-    .pressSequentially('veryveryveryverylongvariable');
+  await editorPage.getEditor().pressSequentially('veryveryveryverylongvariable');
 
   if (process.env.BENCHMARKING === 'true') {
     const longtasks = await page.evaluate(() => window.longtasks);
     const sortedLongTasks = longtasks.sort((a, b) => a - b);
-    const medianLongTask =
-      sortedLongTasks[Math.floor(sortedLongTasks.length / 2)];
-    const averageLongTask =
-      sortedLongTasks.reduce((a, b) => a + b, 0) / sortedLongTasks.length;
+    const medianLongTask = sortedLongTasks[Math.floor(sortedLongTasks.length / 2)];
+    const averageLongTask = sortedLongTasks.reduce((a, b) => a + b, 0) / sortedLongTasks.length;
     const over500 = sortedLongTasks.filter((t) => t > 500).length;
-    const nintyninethPercentile =
-      sortedLongTasks[Math.floor(sortedLongTasks.length * 0.99)];
+    const nintyninethPercentile = sortedLongTasks[Math.floor(sortedLongTasks.length * 0.99)];
     const longTaskCount = longtasks.length;
     const totalLongTaskTime = longtasks.reduce((a, b) => a + b, 0);
 
@@ -135,23 +103,17 @@ test('benchmarking & performance test session', async ({
       totalLongTaskTime,
     };
     const body = Object.entries(metrics)
-      .map(
-        ([key, value]) =>
-          `benchmark,bar_label=${key},source=playwright metric=${value}`,
-      )
+      .map(([key, value]) => `benchmark,bar_label=${key},source=playwright metric=${value}`)
       .join('\n');
 
-    await fetch(
-      'https://influx-prod-39-prod-eu-north-0.grafana.net/api/v1/push/influx/write',
-      {
-        method: 'post',
-        body,
-        headers: {
-          Authorization: `Bearer ${USER_ID}:${API_KEY}`,
-          'Content-Type': 'text/plain',
-        },
+    await fetch('https://influx-prod-39-prod-eu-north-0.grafana.net/api/v1/push/influx/write', {
+      method: 'post',
+      body,
+      headers: {
+        Authorization: `Bearer ${USER_ID}:${API_KEY}`,
+        'Content-Type': 'text/plain',
       },
-    ).then((res) => {
+    }).then((res) => {
       if (res.ok) {
         // eslint-disable-next-line no-console
         console.log('Metrics pushed to grafana successfully');

@@ -148,13 +148,7 @@ describe('MATCH auto-completion', () => {
     testCompletions({
       query,
       dbSchema: {
-        relationshipTypes: [
-          'Cat12',
-          'Foo_Bar',
-          'Glögg',
-          'Glühwein',
-          '_GingerBread_',
-        ],
+        relationshipTypes: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein', '_GingerBread_'],
       },
       expected: [
         {
@@ -545,9 +539,7 @@ describe('Type relationship auto-completion', () => {
     testCompletions({
       query,
       dbSchema: { relationshipTypes: ['RelationshipType'] },
-      expected: [
-        { label: 'RelationshipType', kind: CompletionItemKind.TypeParameter },
-      ],
+      expected: [{ label: 'RelationshipType', kind: CompletionItemKind.TypeParameter }],
     });
   });
 

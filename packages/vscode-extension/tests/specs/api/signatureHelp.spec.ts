@@ -1,7 +1,4 @@
-import {
-  testData,
-  toSignatureInformation,
-} from '@neo4j-cypher/language-support';
+import { testData, toSignatureInformation } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {
@@ -19,11 +16,7 @@ type InclusionTestArgs = {
   expected: vscode.SignatureHelp;
 };
 
-export async function testSignatureHelp({
-  textFile,
-  position,
-  expected,
-}: InclusionTestArgs) {
+export async function testSignatureHelp({ textFile, position, expected }: InclusionTestArgs) {
   let docUri: vscode.Uri;
   if (typeof textFile === 'string') {
     docUri = getDocumentUri(textFile);
@@ -33,12 +26,11 @@ export async function testSignatureHelp({
   }
 
   await eventually(async () => {
-    const signatureHelp: vscode.SignatureHelp =
-      await vscode.commands.executeCommand(
-        'vscode.executeSignatureHelpProvider',
-        docUri,
-        position,
-      );
+    const signatureHelp: vscode.SignatureHelp = await vscode.commands.executeCommand(
+      'vscode.executeSignatureHelpProvider',
+      docUri,
+      position,
+    );
 
     assert.equal(
       signatureHelp.activeParameter,
@@ -56,9 +48,7 @@ export async function testSignatureHelp({
         expectedSignature.documentation,
         `Documentation for the signature does not match. Actual: ${documentationToString(
           foundSignature.documentation,
-        )}, expected: ${documentationToString(
-          expectedSignature.documentation,
-        )}`,
+        )}, expected: ${documentationToString(expectedSignature.documentation)}`,
       );
 
       expectedSignature.parameters.forEach((expectedParameter) => {
@@ -73,9 +63,7 @@ export async function testSignatureHelp({
             expectedParameter.label,
           )} does not match. Actual: ${documentationToString(
             foundParameter?.documentation,
-          )}, expected: ${documentationToString(
-            expectedParameter.documentation,
-          )}`,
+          )}, expected: ${documentationToString(expectedParameter.documentation)}`,
         );
       });
     });

@@ -22,13 +22,9 @@ export function displayMessageForConnectionResult(
   } else if (result.success && connection.state === 'inactive') {
     void window.showInformationMessage(CONSTANTS.MESSAGES.DISCONNECTED_MESSAGE);
   } else if (!result.success && !result.retriable) {
-    void window.showErrorMessage(
-      `${result.error?.message}. ${result.error?.friendlyMessage}.`,
-    );
+    void window.showErrorMessage(`${result.error?.message}. ${result.error?.friendlyMessage}.`);
   } else {
-    void window.showWarningMessage(
-      `${result.error?.message}. ${result.error?.friendlyMessage}.`,
-    );
+    void window.showWarningMessage(`${result.error?.message}. ${result.error?.friendlyMessage}.`);
   }
 }
 
@@ -36,9 +32,7 @@ export function displayMessageForConnectionResult(
  * Utility function to prompt the user to save a connection that failed with a retriable error.
  * @returns A promise that resolves with the result of the prompt ("Yes" or null).
  */
-export async function displaySaveConnectionAnywayPrompt(
-  detail?: string,
-): Promise<string | null> {
+export async function displaySaveConnectionAnywayPrompt(detail?: string): Promise<string | null> {
   return await window.showWarningMessage<string>(
     'Unable to connect to Neo4j. Would you like to save the connection anyway?',
     {

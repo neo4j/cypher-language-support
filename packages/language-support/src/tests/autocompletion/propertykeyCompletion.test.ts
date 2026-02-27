@@ -32,12 +32,7 @@ describe('property key completions', () => {
   });
 
   test('correctly completes property keys in match clauses', () => {
-    const cases = [
-      'MATCH ({',
-      'MATCH (n {',
-      'MATCH (n:Person {',
-      'MATCH (n:Person {p: 1, ',
-    ];
+    const cases = ['MATCH ({', 'MATCH (n {', 'MATCH (n:Person {', 'MATCH (n:Person {p: 1, '];
     cases.forEach((query) =>
       testCompletions({
         query,
@@ -165,13 +160,7 @@ RETURN movie {
     testCompletions({
       query,
       dbSchema: {
-        propertyKeys: [
-          'Cat12',
-          'Foo_Bar',
-          'Glögg',
-          'Glühwein',
-          '_GingerBread_',
-        ],
+        propertyKeys: ['Cat12', 'Foo_Bar', 'Glögg', 'Glühwein', '_GingerBread_'],
       },
       expected: [
         {

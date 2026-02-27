@@ -101,8 +101,7 @@ export function isComment(token: Token) {
   );
 }
 
-export const isInlineComment = (chunk: Chunk) =>
-  chunk.comment && chunk.comment.startsWith('/*');
+export const isInlineComment = (chunk: Chunk) => chunk.comment && chunk.comment.startsWith('/*');
 
 // Variables, functions/procedures namespaces or property names that have the same name as a keyword should not be
 // treated as keywords
@@ -115,10 +114,7 @@ function isSymbolicName(node: TerminalNode): boolean {
     node,
     (x) => x instanceof EscapedSymbolicNameStringContext,
   );
-  return !(
-    unescapedSymbolicNameStringParent == null &&
-    escapedSymbolicNameStringParent == null
-  );
+  return !(unescapedSymbolicNameStringParent == null && escapedSymbolicNameStringParent == null);
 }
 
 export function getParseTreeAndTokens(query: string) {
@@ -134,9 +130,7 @@ export function getParseTreeAndTokens(query: string) {
   if (tree.exception) {
     const idx = tree.exception.offendingToken.tokenIndex;
     const errorTokens = tokens.tokens.slice(idx);
-    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
-      .map((t) => t.text)
-      .join('');
+    const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || []).map((t) => t.text).join('');
     unParseable =
       hiddenBefore +
       errorTokens
@@ -148,10 +142,7 @@ export function getParseTreeAndTokens(query: string) {
   return { tree, tokens, unParseable, firstUnParseableToken };
 }
 
-export function findTargetToken(
-  tokens: Token[],
-  cursorPosition: number,
-): Token | false {
+export function findTargetToken(tokens: Token[], cursorPosition: number): Token | false {
   let targetToken: Token;
   for (const token of tokens) {
     if (token.channel === 0) {
@@ -165,10 +156,7 @@ export function findTargetToken(
 }
 
 // These three are helpers for the fillInGroupSizes method to make it more manageable
-export function fillInRegularChunkGroupSizes(
-  chunk: RegularChunk,
-  activeGroups: Group[],
-) {
+export function fillInRegularChunkGroupSizes(chunk: RegularChunk, activeGroups: Group[]) {
   const groupsEnding = new Set<number>(chunk.groupsEnding.map((g) => g.id));
   for (const group of activeGroups) {
     if (!chunk.text) {
@@ -185,19 +173,11 @@ export function fillInRegularChunkGroupSizes(
     // It does not seem to have any significant performance downsides, but only doing so
     // when e.g. a flag is set might be a more prudent choice.
     group.dbgText += chunk.text;
-    if (
-      !chunk.noSpace &&
-      shouldAddSpace(chunk, chunk) &&
-      !isInlineComment(chunk)
-    ) {
+    if (!chunk.noSpace && shouldAddSpace(chunk, chunk) && !isInlineComment(chunk)) {
       group.size++;
       group.dbgText += ' ';
     }
-    if (
-      chunk.comment &&
-      !groupsEnding.has(group.id) &&
-      !isInlineComment(chunk)
-    ) {
+    if (chunk.comment && !groupsEnding.has(group.id) && !isInlineComment(chunk)) {
       group.shouldBreak = true;
     }
   }
@@ -229,11 +209,7 @@ export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
   return true;
 }
 
-export function getActiveGroups(
-  activeGroups: Group[],
-  groupsEnding: Set<number>,
-  chunk: Chunk,
-) {
+export function getActiveGroups(activeGroups: Group[], groupsEnding: Set<number>, chunk: Chunk) {
   for (const group of chunk.groupsStarting) {
     activeGroups.push(group);
   }

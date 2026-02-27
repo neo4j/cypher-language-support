@@ -153,8 +153,7 @@ describe('Symbol table spec', () => {
   });
 
   test('Symbol table contains labels and rels from MATCH with WHERE using OR', () => {
-    const query =
-      'MATCH (n) WHERE n:Person AND n:Parsnip OR n:Parish AND n:Party  RETURN n';
+    const query = 'MATCH (n) WHERE n:Person AND n:Parsnip OR n:Parish AND n:Party  RETURN n';
     expect(
       getSymbolTablesForQuery({
         query,
@@ -285,8 +284,7 @@ describe('Symbol table spec', () => {
   });
 
   test('Symbol table contains labels and rels from mixed MATCH and WHERE', () => {
-    const query =
-      'MATCH (n:Person)-[r:KNOWS]->(p:Person) WHERE n:Driver RETURN n';
+    const query = 'MATCH (n:Person)-[r:KNOWS]->(p:Person) WHERE n:Driver RETURN n';
     expect(
       getSymbolTablesForQuery({
         query,

@@ -1,9 +1,5 @@
 import * as vscode from 'vscode';
-import {
-  getDocumentUri,
-  getExtensionStoragePath,
-  openDocument,
-} from '../../helpers';
+import { getDocumentUri, getExtensionStoragePath, openDocument } from '../../helpers';
 import { connectDefault, disconnectDefault } from '../../suiteSetup';
 import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
@@ -41,10 +37,7 @@ suite('Neo4j version specific linting spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(
-            new vscode.Position(0, 26),
-            new vscode.Position(0, 27),
-          ),
+          new vscode.Range(new vscode.Position(0, 26), new vscode.Position(0, 27)),
           'Variable `m` not defined',
           vscode.DiagnosticSeverity.Error,
         ),
@@ -56,10 +49,7 @@ suite('Neo4j version specific linting spec', () => {
       docUri,
       expected: [
         new vscode.Diagnostic(
-          new vscode.Range(
-            new vscode.Position(0, 0),
-            new vscode.Position(0, 6),
-          ),
+          new vscode.Range(new vscode.Position(0, 0), new vscode.Position(0, 6)),
           'Expected any of ALTER, CALL, CREATE, DEALLOCATE, DELETE, DENY, DETACH, DROP, DRYRUN, ENABLE, EXPLAIN, FINISH, FOREACH, GRANT, INSERT, LOAD, MATCH, MERGE, NODETACH, OPTIONAL, PROFILE, REALLOCATE, REMOVE, RENAME, RETURN, REVOKE, SET, SHOW, START, STOP, TERMINATE, UNWIND, USE, USING or WITH',
           vscode.DiagnosticSeverity.Error,
         ),

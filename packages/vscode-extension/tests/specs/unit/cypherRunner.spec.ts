@@ -46,20 +46,12 @@ MATCH (n) RETURN n`,
     sandbox.stub(window, 'activeTextEditor').value({
       ...textEditorArgs,
     });
-    sandbox
-      .stub(connectionService, 'getActiveConnection')
-      .returns(getMockConnection());
+    sandbox.stub(connectionService, 'getActiveConnection').returns(getMockConnection());
   };
 
   test('Should reorder and concatenate statements correctly when selecting from different parts of the file', async () => {
-    const firstLineSelection = new Selection(
-      new Position(1, 0),
-      new Position(1, 17),
-    );
-    const thirdLineSelection = new Selection(
-      new Position(3, 10),
-      new Position(3, 19),
-    );
+    const firstLineSelection = new Selection(new Position(1, 0), new Position(1, 17));
+    const thirdLineSelection = new Selection(new Position(3, 10), new Position(3, 19));
     // We pick the `CREATE (n:Person)` from the first line of the document and the `RETURN n` from the last one
     const selections = [thirdLineSelection, firstLineSelection];
 
@@ -76,10 +68,7 @@ MATCH (n) RETURN n`,
   });
 
   test('Running single query should work', async () => {
-    const currentSelection = new Selection(
-      new Position(3, 10),
-      new Position(3, 10),
-    );
+    const currentSelection = new Selection(new Position(3, 10), new Position(3, 10));
     setupStubs({
       selection: currentSelection,
       document: document,
@@ -105,17 +94,13 @@ MATCH (n) RETURN n`,
       },
       {
         name: 'multi-lined statement',
-        query:
-          ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y  ',
-        caret:
-          ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y  '
-            .length,
+        query: ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y  ',
+        caret: ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y  '.length,
         expected: '  \n MATCH (x:Person)\n RETURN y  ',
       },
       {
         name: 'middle statement of three',
-        query:
-          ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y ',
+        query: ' MATCH (n) RETURN n; \n RETURN 50;  \n MATCH (x:Person)\n RETURN y ',
         caret: ' MATCH (n) RETURN n; \n RETURN '.length,
         expected: ' \n RETURN 50;',
       },
@@ -146,11 +131,7 @@ MATCH (n) RETURN n`,
     ];
     cases.forEach((c) => {
       const statement = getStatementAtCaret(c.query, c.caret);
-      assert.strictEqual(
-        statement,
-        c.expected,
-        "Failed on case '" + c.name + "'",
-      );
+      assert.strictEqual(statement, c.expected, "Failed on case '" + c.name + "'");
     });
   });
 });

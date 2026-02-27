@@ -1,10 +1,4 @@
-import {
-  WebviewViewProvider,
-  WebviewView,
-  Uri,
-  window,
-  ColorThemeKind,
-} from 'vscode';
+import { WebviewViewProvider, WebviewView, Uri, window, ColorThemeKind } from 'vscode';
 import { getExtensionContext } from '../../contextService';
 import path from 'path';
 import { getNonce } from '../../getNonce';
@@ -43,9 +37,7 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
     window.onDidChangeActiveColorTheme(async (e) => {
       await this.view.webview.postMessage({
         type: 'themeUpdate',
-        isDarkTheme:
-          e.kind === ColorThemeKind.Dark ||
-          e.kind === ColorThemeKind.HighContrast,
+        isDarkTheme: e.kind === ColorThemeKind.Dark || e.kind === ColorThemeKind.HighContrast,
         to: 'visualizationView',
       });
     });
@@ -54,36 +46,17 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
   renderQueryVisualization() {
     const extensionContext = getExtensionContext();
     const queryVizContainerJsPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'dist',
-        'webviews',
-        'queryVisualization.js',
-      ),
+      path.join(extensionContext.extensionPath, 'dist', 'webviews', 'queryVisualization.js'),
     );
     const queryVisualizationCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'queryVisualization.css',
-      ),
+      path.join(extensionContext.extensionPath, 'resources', 'styles', 'queryVisualization.css'),
     );
     const ndlCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'ndl.css',
-      ),
+      path.join(extensionContext.extensionPath, 'resources', 'styles', 'ndl.css'),
     );
-    const queryVizCssUri = this.view.webview
-      .asWebviewUri(queryVisualizationCssPath)
-      .toString();
+    const queryVizCssUri = this.view.webview.asWebviewUri(queryVisualizationCssPath).toString();
     const ndlCssUri = this.view.webview.asWebviewUri(ndlCssPath).toString();
-    const queryVizContainerJs = this.view.webview
-      .asWebviewUri(queryVizContainerJsPath)
-      .toString();
+    const queryVizContainerJs = this.view.webview.asWebviewUri(queryVizContainerJsPath).toString();
     const nonce = getNonce();
 
     const isDarkTheme =

@@ -5,48 +5,36 @@ import { CypherEditorPage } from './e2eUtils';
 
 const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 // value updates from outside onExecute are overwritten by pending updates
-test.fail(
-  'external updates should override debounced updates',
-  async ({ mount, page }) => {
-    const editorPage = new CypherEditorPage(page);
-    let value = '';
+test.fail('external updates should override debounced updates', async ({ mount, page }) => {
+  const editorPage = new CypherEditorPage(page);
+  let value = '';
 
-    const onChange = (val: string) => {
-      value = val;
-      void component.update(<CypherEditor value={val} onChange={onChange} />);
-    };
+  const onChange = (val: string) => {
+    value = val;
+    void component.update(<CypherEditor value={val} onChange={onChange} />);
+  };
 
-    const component = await mount(
-      <CypherEditor value={value} onChange={onChange} />,
-    );
+  const component = await mount(<CypherEditor value={value} onChange={onChange} />);
 
-    await editorPage.getEditor().pressSequentially('RETURN 1');
-    onChange('foo');
-    await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
-    await expect(component).toContainText('foo');
-  },
-);
+  await editorPage.getEditor().pressSequentially('RETURN 1');
+  onChange('foo');
+  await page.waitForTimeout(DEBOUNCE_TIME_WITH_MARGIN);
+  await expect(component).toContainText('foo');
+});
 
 // TODO Fix this test
-test.fixme('onExecute updates should override debounce updates', async ({
-  mount,
-  page,
-}) => {
+test.fixme('onExecute updates should override debounce updates', async ({ mount, page }) => {
   const editorPage = new CypherEditorPage(page);
   let value = '';
 
   const onExecute = () => {
     value = '';
-    void component.update(
-      <CypherEditor value={value} onChange={onChange} onExecute={onExecute} />,
-    );
+    void component.update(<CypherEditor value={value} onChange={onChange} onExecute={onExecute} />);
   };
 
   const onChange = (val: string) => {
     value = val;
-    void component.update(
-      <CypherEditor value={val} onChange={onChange} onExecute={onExecute} />,
-    );
+    void component.update(<CypherEditor value={val} onChange={onChange} onExecute={onExecute} />);
   };
 
   const component = await mount(
@@ -66,26 +54,19 @@ test.fixme('onExecute updates should override debounce updates', async ({
   await expect(component).not.toContainText('RETURN 1');
 });
 
-test('onExecute should fire after debounced updates', async ({
-  mount,
-  page,
-}) => {
+test('onExecute should fire after debounced updates', async ({ mount, page }) => {
   const editorPage = new CypherEditorPage(page);
   let value = '';
   let executedCommand = '';
 
   const onExecute = (cmd: string) => {
     executedCommand = cmd;
-    void component.update(
-      <CypherEditor value={value} onChange={onChange} onExecute={onExecute} />,
-    );
+    void component.update(<CypherEditor value={value} onChange={onChange} onExecute={onExecute} />);
   };
 
   const onChange = (val: string) => {
     value = val;
-    void component.update(
-      <CypherEditor value={val} onChange={onChange} onExecute={onExecute} />,
-    );
+    void component.update(<CypherEditor value={val} onChange={onChange} onExecute={onExecute} />);
   };
 
   const component = await mount(

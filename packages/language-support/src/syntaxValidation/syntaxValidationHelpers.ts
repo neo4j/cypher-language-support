@@ -48,9 +48,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
       const unfinishedComment = isCommentOpener(offendingSymbol, nextToken);
       const preparserOrConsoleCommand = findParent(
         ctx,
-        (n) =>
-          n instanceof PreparserOptionContext ||
-          n instanceof ConsoleCommandContext,
+        (n) => n instanceof PreparserOptionContext || n instanceof ConsoleCommandContext,
       );
 
       if (
@@ -62,10 +60,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         if (unfinishedComment) {
           errorMessage =
             'Failed to parse comment. A comment starting on `/*` must have a closing `*/`.';
-        } else if (
-          offendingSymbol.text === '"' ||
-          offendingSymbol.text === "'"
-        ) {
+        } else if (offendingSymbol.text === '"' || offendingSymbol.text === "'") {
           errorMessage =
             'Failed to parse string literal. The query must contain an even number of non-escaped quotes.';
         } else if (offendingSymbol.text === '`') {
@@ -93,10 +88,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
 
           this.errors.push(diagnostic);
         }
-      } else if (
-        offendingSymbol.type !== CypherLexer.ErrorChar &&
-        !unfinishedComment
-      ) {
+      } else if (offendingSymbol.type !== CypherLexer.ErrorChar && !unfinishedComment) {
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,

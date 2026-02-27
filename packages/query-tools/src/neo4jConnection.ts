@@ -16,14 +16,9 @@ const METADATA_BASE = {
 };
 const RECORD_LIMIT = 5000;
 
-function resolveInitialDatabase(
-  databases: Database[],
-  database?: string,
-): string | undefined {
+function resolveInitialDatabase(databases: Database[], database?: string): string | undefined {
   if (database) {
-    return databases.find(
-      (d) => d.name === database || d?.aliases?.includes(database),
-    )?.name;
+    return databases.find((d) => d.name === database || d?.aliases?.includes(database))?.name;
   }
 
   const home = databases.find((d) => d.home);
@@ -121,13 +116,7 @@ export class Neo4jConnection {
       } else {
         result = session.executeWrite(
           async (tx) => {
-            const result = this.evalQuery(
-              session,
-              query,
-              parameters,
-              metadata,
-              tx,
-            );
+            const result = this.evalQuery(session, query, parameters, metadata, tx);
             return result;
           },
           {

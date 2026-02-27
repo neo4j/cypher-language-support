@@ -8,9 +8,7 @@ import {
 } from './connectionService';
 import { CONSTANTS } from './constants';
 
-export async function handleConnectionErrored(
-  error: ConnectionError,
-): Promise<void> {
+export async function handleConnectionErrored(error: ConnectionError): Promise<void> {
   await saveConnectionStateAsErroredAndShowWarningMessage(error);
 }
 
@@ -18,9 +16,7 @@ export async function handleConnectionReconnected(): Promise<void> {
   await saveConnectionStateAsConnectedAndShowInfoMessage();
 }
 
-export async function handleConnectionFailed(
-  error: ConnectionError,
-): Promise<void> {
+export async function handleConnectionFailed(error: ConnectionError): Promise<void> {
   await saveConnectionStateAsDisconnectedAndShowErrorMessage(error);
 }
 

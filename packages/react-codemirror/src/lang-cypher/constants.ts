@@ -52,10 +52,7 @@ export type PrismSpecificTokenType =
   | 'boolean'
   | 'number';
 
-export type CodemirrorParseTokenType =
-  | CypherTokenType
-  | PrismSpecificTokenType
-  | 'topNode';
+export type CodemirrorParseTokenType = CypherTokenType | PrismSpecificTokenType | 'topNode';
 
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
 export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {

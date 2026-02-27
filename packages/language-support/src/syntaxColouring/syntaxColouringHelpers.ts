@@ -13,10 +13,7 @@ export interface TokenPosition {
   startOffset: number;
 }
 
-export function computeTokenKey(
-  tokenPosition: TokenPosition,
-  tokenLength: number,
-): string {
+export function computeTokenKey(tokenPosition: TokenPosition, tokenLength: number): string {
   return `${tokenPosition.line},${tokenPosition.startCharacter},${tokenLength}`;
 }
 
@@ -67,19 +64,11 @@ function getBracketType(token: Token): BracketType | undefined {
 }
 
 function isClosingBracket(token: Token): boolean {
-  return [
-    CypherLexer.RPAREN,
-    CypherLexer.RBRACKET,
-    CypherLexer.RCURLY,
-  ].includes(token.type);
+  return [CypherLexer.RPAREN, CypherLexer.RBRACKET, CypherLexer.RCURLY].includes(token.type);
 }
 
 function isOpeningBracket(token: Token): boolean {
-  return [
-    CypherLexer.LPAREN,
-    CypherLexer.LBRACKET,
-    CypherLexer.LCURLY,
-  ].includes(token.type);
+  return [CypherLexer.LPAREN, CypherLexer.LBRACKET, CypherLexer.LCURLY].includes(token.type);
 }
 
 function computeBracketInfo(
@@ -135,10 +124,7 @@ export function toParsedTokens(
       return [];
     }
 
-    const bracketInfo: BracketInfo | undefined = computeBracketInfo(
-      token,
-      bracketsLevel,
-    );
+    const bracketInfo: BracketInfo | undefined = computeBracketInfo(token, bracketsLevel);
 
     return [
       {
@@ -183,8 +169,7 @@ export function shouldAssignTokenType(token: Token): boolean {
   const nonEOF = token.type !== Token.EOF || token.text !== '<EOF>';
   const inMainChannel = token.channel == 0;
   const isComment =
-    token.type === CypherLexer.SINGLE_LINE_COMMENT ||
-    token.type === CypherLexer.MULTI_LINE_COMMENT;
+    token.type === CypherLexer.SINGLE_LINE_COMMENT || token.type === CypherLexer.MULTI_LINE_COMMENT;
 
   return nonEOF && (inMainChannel || isComment);
 }
