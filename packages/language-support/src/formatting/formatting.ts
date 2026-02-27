@@ -185,6 +185,10 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
+    // Catch any trailing tokens that weren't visited (before EOF)
+    const allTokens = this.tokenStream.getTokens();
+    const eofIndex = allTokens.length > 0 ? allTokens.length - 1 : 0;
+    this.emitSkippedTokensBefore(eofIndex);
     this.fillInGroupSizes();
     const maxColumn = Math.max(
       0,
@@ -561,6 +565,43 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visitTerminalRaw(ctx, options);
   };
 
+  // When error recovery causes tokens to be skipped (neither visited by any
+  // rule nor attached as ErrorNodes), emit them as SYNTAX_ERROR chunks so no
+  // characters are lost. Called before emitting any terminal token.
+  emitSkippedTokensBefore = (tokenIndex: number) => {
+    if (this.unParseableStart && tokenIndex >= this.unParseableStart) {
+      return;
+    }
+    if (this.previousTokenIndex >= tokenIndex - 1) {
+      return;
+    }
+    const allSkipped = this.tokenStream
+      .getTokens()
+      .slice(this.previousTokenIndex + 1, tokenIndex);
+
+    const hasSkippedContent = allSkipped.some(
+      (t) => t.channel === 0 && !t.text.startsWith(MISSING),
+    );
+    if (!hasSkippedContent) {
+      return;
+    }
+
+    // Include all tokens (including whitespace) to preserve original spacing
+    const gapText = allSkipped
+      .filter((t) => !t.text.startsWith(MISSING))
+      .map((t) => t.text)
+      .join('');
+    const chunk: SyntaxErrorChunk = {
+      type: 'SYNTAX_ERROR',
+      text: gapText,
+      groupsStarting: this.pendingGroups,
+      groupsEnding: [],
+      indentation: [],
+    };
+    this.pendingGroups = [];
+    this.chunkList.push(chunk);
+  };
+
   // Error nodes are attached to the first token that the parser recognizes again.
   // So to restore all the syntactically incorrect parts, we keep track of the last valid
   // token, and grab everything between it and the error node
@@ -585,7 +626,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const errorText = token.text.startsWith(MISSING) ? '' : token.text;
     const combinedText = gapText + errorText;
 
-    this.previousTokenIndex = errorTokenIndex;
+    if (errorTokenIndex >= 0) {
+      this.previousTokenIndex = errorTokenIndex;
+    }
 
     const chunk: SyntaxErrorChunk = {
       type: 'SYNTAX_ERROR',
@@ -1196,6 +1239,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (node.symbol.type === CypherCmdLexer.EOF) {
       return;
     }
+    this.emitSkippedTokensBefore(node.symbol.tokenIndex);
     let text = node.getText();
     if (wantsToBeUpperCase(node)) {
       text = text.toUpperCase();
@@ -1234,6 +1278,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (this.chunkList.length === 0) {
       this.addCommentsBefore(node);
     }
+    this.emitSkippedTokensBefore(node.symbol.tokenIndex);
     let text = node.getText();
     if (options?.lowerCase) {
       text = text.toLowerCase();

@@ -1,4 +1,3 @@
-import { formatQuery } from '../../formatting/formatting';
 import { verifyFormatting } from './testutil';
 
 describe('formatting despite syntax errors', () => {
@@ -112,11 +111,7 @@ WITH n ERROR RETURN n;`;
     verifyFormatting(query, expected);
   });
 
-  // TODO: make the formatter able to handle these syntax errors as well. This one is tricky
-  // because the parser miraculously recovers to find 'RETURN m' as a clause, though outside
-  // the CALL expression. If this kind of unbehavior (which seems extremely hard
-  // to account for) happens, just give up and return the query as is.
-  test('query that we are currently unable to handle should throw.', () => {
+  test('syntax error inside subquery', () => {
     const query = `MATCH (n:Person)
 CALL {
   WITH n
@@ -125,9 +120,15 @@ CALL {
   RETURN m
 }
 RETURN n`;
-    expect(() => formatQuery(query)).toThrowError(
-      `Unable to format query due to syntax error near } at line 7`,
-    );
+    const expected = `MATCH (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie)
+  syntax error inside subquery
+  RETURN m
+}
+RETURN n`;
+    verifyFormatting(query, expected);
   });
 
   test('map that uses dot instead of colon', () => {
