@@ -9,8 +9,11 @@ import antlrDefaultExport, {
 import { DbSchema } from './dbSchema';
 import CypherLexer from './generated-parser/CypherCmdLexer';
 import CypherParser, {
+  ClauseContext,
   NodePatternContext,
+  QueryWithLocalDefinitionsContext,
   RelationshipPatternContext,
+  SingleQueryContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser';
 import { ParsedStatement, ParsingResult } from './parserWrapper';
@@ -207,6 +210,69 @@ export function resolveCypherVersion(
     parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
 
   return cypherVersion;
+}
+
+/**
+ * Takes a rule context checks if the current (rightmost) rule is within a clause.
+ * If so, checks how many other clauses are inside the corresponding SingleQueryContext and returns the current
+ * ClauseContext if the count is >= 15. This is so we can use the clause as context for candidate collection, 
+ * which can get slow when there are multiple clauses in a single query.
+ */
+export function findLastClause(ctx: ParserRuleContext) {
+  let current: ParserRuleContext = ctx;
+  //ctx can vary from rule inside latest clause statement containing it
+  //Here we go up to the outer singlequery (which is not empty)
+  while(!(current instanceof SingleQueryContext && current.getText()) && current.parentCtx) {
+    current = current.parentCtx;
+  };
+  
+  const newCtx = checkNumClauses(current);
+
+  return newCtx;
+}
+
+/**
+ * Takes a parser rule, and returns the number of clauses under the rightmost SingleQueryContext
+ * If the rightmost child of said SingleQueryContext is a QueryWithLocalDefinitionsContext:s 
+ * it can contain more SingleQueryContext:s and we thus recursively search this.
+ * @param ctx 
+ * @returns 
+ */
+export function checkNumClauses(ctx: ParserRuleContext): ParserRuleContext {
+  let current = ctx;
+  let lastCurrent: ParserRuleContext = undefined;
+  while(lastCurrent !== current && current.children) {
+    lastCurrent = current;
+    if (current instanceof SingleQueryContext) {
+      const foundClauseCount: boolean = false;
+      let lastCandidate = 1;
+      while (!foundClauseCount && lastCandidate <= current.children.length){
+        const lastChild = current.children.at(-1*lastCandidate);
+        if (lastChild instanceof ClauseContext) {
+          const clauseChildren = current.children.filter(x => x instanceof ClauseContext);
+          const numClauses = clauseChildren.length;
+          if (numClauses >= 15) {
+            return lastChild;
+          } else {
+            return undefined;
+          }
+        } else if (lastChild instanceof QueryWithLocalDefinitionsContext) {
+          return checkNumClauses(lastChild);
+        } else {
+          lastCandidate ++;
+        }
+      }
+      return undefined;
+    }
+    for (let i = current.children.length-1; i >= 0; i--) {
+      const candidate = current.children[i];
+      if (candidate instanceof ParserRuleContext) {
+        current = candidate;
+        break;
+      }
+    }
+  }
+  return undefined;
 }
 
 export const rulesDefiningVariables = [
