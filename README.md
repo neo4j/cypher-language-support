@@ -27,7 +27,7 @@ The project comprises several packages:
 - Autocompletion
 - Signature help
 - Linting
-- Formatting
+- Pretty printing
 
 ## Building the project and contributing
 
