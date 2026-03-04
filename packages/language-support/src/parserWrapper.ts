@@ -201,14 +201,11 @@ export function createParsingResult(
         tokens,
         consoleCommandsEnabled,
       );
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-      (parser as unknown as Record<string, unknown>).parseListeners = [
-        labelsCollector,
-        parameterFinder,
-        variableFinder,
-        methodsFinder,
-        cypherVersionCollector,
-      ];
+      parser.addParseListener(labelsCollector);
+      parser.addParseListener(parameterFinder);
+      parser.addParseListener(variableFinder);
+      parser.addParseListener(methodsFinder);
+      parser.addParseListener(cypherVersionCollector);
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
