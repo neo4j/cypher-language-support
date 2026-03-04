@@ -66,7 +66,7 @@ export function linterFileToServerVersion(fileName: string) {
 }
 
 //The data object we get from npm contains more fields than this, but we only need dist-tags here
-export type NpmData = {
+type NpmData = {
   'dist-tags'?: Record<string, string>;
 };
 
