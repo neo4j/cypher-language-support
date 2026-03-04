@@ -60,8 +60,8 @@ export function findStopNode(root: StatementsOrCommandsContext) {
 export function findParent(
   leaf: EnrichedParseTree | undefined,
   condition: (node: EnrichedParseTree) => boolean,
-): EnrichedParseTree {
-  let current: EnrichedParseTree | undefined = leaf;
+): EnrichedParseTree | null {
+  let current: EnrichedParseTree | null = leaf;
 
   while (current && !condition(current)) {
     current = current.parentCtx;
