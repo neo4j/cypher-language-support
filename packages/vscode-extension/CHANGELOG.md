@@ -1,7 +1,8 @@
 # neo4j-for-vscode
 
-## 1.14.1
+## 1.16.0
 - Add aliases to connections pane
+- Add path segment completions
 
 ## 1.14.0
 - Adds schema (from db.schema.visualization) based completions for labels/reltypes
