@@ -1,6 +1,6 @@
 # neo4j-for-vscode
 
-## 1.15.0
+## 1.16.0
 - Add aliases to connections pane
 - Add path segment completions
 

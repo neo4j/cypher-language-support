@@ -768,7 +768,41 @@ export function completionCoreCompletion(
     },
   );
 
-  let extraCompletions: CompletionItem[] = [];
+  const snippetCompletions: CompletionItem[] = getSnippetCompletions(
+    parsingResult,
+    dbSchema,
+    tokens,
+    candidates,
+    symbolsInfo,
+  );
+  const snippetTriggers = [
+    CypherParser.RPAREN,
+    CypherParser.RBRACKET,
+    CypherParser.ARROW_LINE,
+    CypherParser.ARROW_LEFT_HEAD,
+  ];
+
+  // if the completion was automatically triggered by a snippet trigger character
+  // we should only return snippet completions
+  if (snippetTriggers.includes(previousToken?.type) && !manualTrigger) {
+    return snippetCompletions;
+  }
+
+  return [
+    ...ruleCompletions,
+    ...getTokenCompletions(candidates, ignoredTokens),
+    ...snippetCompletions,
+  ];
+}
+
+function getSnippetCompletions(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+  tokens: Token[],
+  candidates: CandidatesCollection,
+  symbolsInfo: SymbolsInfo,
+) {
+  let snippetCompletions: CompletionItem[] = [];
   if (
     tokens.length > 4 &&
     candidates.tokens
@@ -779,7 +813,7 @@ export function completionCoreCompletion(
           CypherParser.ARROW_LINE,
           CypherParser.LPAREN,
           CypherParser.ARROW_RIGHT_HEAD,
-          CypherParser.RBRACKET,
+          CypherParser.LBRACKET,
         ].includes(x),
       )
   ) {
@@ -797,11 +831,19 @@ export function completionCoreCompletion(
       ) as RelationshipPatternContext | NodePatternContext;
     const finalNonEofToken = tokens.at(-2);
 
-    if (lastNode && ['<', '-'].includes(finalNonEofToken.text)) {
+    if (
+      lastNode &&
+      [
+        CypherParser.LT,
+        CypherParser.ARROW_LEFT_HEAD,
+        CypherParser.ARROW_LINE,
+        CypherParser.MINUS,
+      ].includes(finalNonEofToken.type)
+    ) {
       const secondLastToken = tokens.at(-3);
       // case: ]-
       if (
-        secondLastToken.text === ']' &&
+        secondLastToken.type === CypherParser.RBRACKET &&
         lastNode instanceof RelationshipPatternContext
       ) {
         const shortPathCompletions: CompletionItem[] = getShortPathCompletions(
@@ -818,12 +860,12 @@ export function completionCoreCompletion(
               label: x.label.slice(1, x.label.length),
             };
           });
-        extraCompletions = cutSnippets;
+        snippetCompletions = cutSnippets;
         // cases:
         // )<
-        // )<-
+        // )-
       } else if (
-        secondLastToken.text === ')' &&
+        secondLastToken.type === CypherParser.RPAREN &&
         lastNode instanceof NodePatternContext
       ) {
         const pathCompletions: CompletionItem[] = getPathCompletions(
@@ -840,13 +882,17 @@ export function completionCoreCompletion(
               label: x.label.slice(1, x.label.length),
             };
           });
-        extraCompletions = cutSnippets;
+        snippetCompletions = cutSnippets;
         // case: )<-
         // Needed because the "-" will re-trigger completions
       } else if (
-        tokens.at(-4).text === ')' &&
-        secondLastToken.text === '<' &&
-        finalNonEofToken.text === '-' &&
+        tokens.at(-4).type === CypherParser.RPAREN &&
+        [CypherParser.ARROW_LEFT_HEAD, CypherParser.LT].includes(
+          secondLastToken.type,
+        ) &&
+        [CypherParser.ARROW_LINE, CypherParser.MINUS].includes(
+          finalNonEofToken.type,
+        ) &&
         lastNode instanceof NodePatternContext
       ) {
         const pathCompletions: CompletionItem[] = getPathCompletions(
@@ -863,13 +909,13 @@ export function completionCoreCompletion(
               label: x.label.slice(2, x.label.length),
             };
           });
-        extraCompletions = cutSnippets;
+        snippetCompletions = cutSnippets;
       }
     } else if (
       lastNode instanceof RelationshipPatternContext &&
       finalNonEofToken.text === ']'
     ) {
-      extraCompletions = getShortPathCompletions(
+      snippetCompletions = getShortPathCompletions(
         lastNode,
         symbolsInfo,
         dbSchema,
@@ -878,25 +924,10 @@ export function completionCoreCompletion(
       lastNode instanceof NodePatternContext &&
       finalNonEofToken.text === ')'
     ) {
-      extraCompletions = getPathCompletions(lastNode, symbolsInfo, dbSchema);
+      snippetCompletions = getPathCompletions(lastNode, symbolsInfo, dbSchema);
     }
   }
-
-  // if the completion was automatically triggered by a snippet trigger character
-  // we should only return snippet completions
-  if (
-    (CypherLexer.RPAREN === previousToken?.type ||
-      CypherLexer.RBRACKET === previousToken?.type) &&
-    !manualTrigger
-  ) {
-    return extraCompletions;
-  }
-
-  return [
-    ...ruleCompletions,
-    ...getTokenCompletions(candidates, ignoredTokens),
-    ...extraCompletions,
-  ];
+  return snippetCompletions;
 }
 
 type CompletionHelperArgs = {
@@ -906,6 +937,7 @@ type CompletionHelperArgs = {
   tokens: Token[];
   candidateRule: CandidateRule;
 };
+
 function completeAliasName({
   candidateRule,
   dbSchema,
