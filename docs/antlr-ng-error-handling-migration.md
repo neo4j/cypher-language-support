@@ -74,6 +74,14 @@ set in **two places**:
   `ParserRuleContext.exception` but this is stale documentation copied from the
   Java implementation.
 
+**From the antlr4ng 3.0.0 release notes:**
+
+> "Neither `BailErrorStrategy` nor `ParserRuleContext` track the original
+> exception in error cases anymore. Instead it is wrapped in the exception thrown
+> (for bailing out) or passed to the error listeners."
+
+This was an intentional design decision, not an oversight.
+
 ## Impact on This Codebase
 
 ### Affected Code Locations
@@ -244,6 +252,46 @@ function parseWithExceptionTracking(parser: CypherCmdParser): StatementsOrComman
 **Pros:** Targeted fix for the specific use case
 **Cons:** Only catches exceptions that propagate to the caller, doesn't handle
 cases where error recovery succeeds within the parser
+
+### Strategy 5: Error Listener with Context Map
+
+Use the error listener's `syntaxError` callback to build a
+`Map<ParserRuleContext, RecognitionException>` during parsing, then consult this
+map when walking the tree:
+
+```typescript
+import { ParserRuleContext, RecognitionException, Token } from "antlr4ng";
+
+class ExceptionTrackingListener implements ANTLRErrorListener {
+    readonly exceptions = new Map<ParserRuleContext, RecognitionException>();
+
+    syntaxError(recognizer: Recognizer, offendingSymbol: Token | null,
+                line: number, charPositionInLine: number,
+                msg: string, e: RecognitionException | null): void {
+        if (e && e.ctx) {
+            this.exceptions.set(e.ctx, e);
+        }
+    }
+}
+
+// Usage:
+const listener = new ExceptionTrackingListener();
+parser.addErrorListener(listener);
+const tree = parser.statementsOrCommands();
+
+// Instead of: tree.exception
+// Use:        listener.exceptions.get(tree)
+
+// Instead of: x.exception === null
+// Use:        !listener.exceptions.has(x)
+```
+
+**Pros:** Clean separation, no monkey-patching, fully typed, directly uses the
+error information that antlr4ng already provides to listeners
+**Cons:** Requires threading the listener/map through to all call sites that need
+it. The `RecognitionException.ctx` property gives the innermost context where the
+error occurred, not necessarily all ancestor contexts (unlike old
+BailErrorStrategy behavior).
 
 ## Recommended Approach
 
