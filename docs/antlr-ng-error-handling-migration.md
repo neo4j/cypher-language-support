@@ -347,4 +347,16 @@ use cases:
 | `parser.addErrorListener()` | `parser.addErrorListener()` | Unchanged |
 | `FileStream` | **Removed** | Use `CharStream.fromString()` |
 
+**In generated parser code:**
+
+| antlr4 generated | antlr-ng generated |
+|---|---|
+| `_localctx` | `localContext` |
+| `this._errHandler` | `this.errorHandler` |
+| `localctx.exception = re;` | **Removed** |
+
+**Template sources:**
+- Old: [`antlr4/tool/.../TypeScript/TypeScript.stg`](https://github.com/antlr/antlr4/blob/dev/tool/resources/org/antlr/v4/tool/templates/codegen/TypeScript/TypeScript.stg)
+- New: [`antlr-ng/antlr-ng/templates/codegen/TypeScript/TypeScript.stg`](https://github.com/antlr-ng/antlr-ng/blob/main/templates/codegen/TypeScript/TypeScript.stg)
+
 **Runtime requirements:** antlr4ng 3.x requires ES2022+.
