@@ -59,6 +59,7 @@
   },
   "dependencies": {
     "antlr4": "4.13.2",
+    "antlr4ng": "^3.0.16",
     "fastest-levenshtein": "^1.0.16",
     "vscode-languageserver-types": "^3.17.3"
   },
