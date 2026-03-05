@@ -12,7 +12,7 @@ type NeoRel = {
   startNodeElementId: string;
 };
 
-//exported for testing
+// exported for testing
 export type GraphSchema = {
   nodes: NeoNode[];
   relationships: NeoRel[];
@@ -54,7 +54,7 @@ const graphSchemaSchema: JSONSchemaType<GraphSchema> = {
   additionalProperties: true,
 };
 
-//exported for testing
+// exported for testing
 export const validateGraphSchema = new Ajv({ useDefaults: true }).compile(
   graphSchemaSchema,
 );
@@ -85,7 +85,7 @@ export function listGraphSchema(
   };
 }
 
-//exported for testing
+// exported for testing
 export function extractRelationshipsWithNamedNodes(
   graphSchemas: GraphSchema[],
 ): { from: string; to: string; relType: string }[] {

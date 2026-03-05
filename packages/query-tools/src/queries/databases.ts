@@ -152,7 +152,7 @@ export function sortDatabases(databases: Database[]) {
     // home is greater than default
     if (a.default && b.home) return 1;
 
-    // otherwiser default is greater than anything else
+    // otherwise default is greater than anything else
     if (a.default) return -1;
     if (b.default) return 1;
 

@@ -98,7 +98,7 @@ class SymbolFetcher {
           );
         }
       } catch {
-        //eslint-disable-next-line
+        // eslint-disable-next-line no-console
         console.log('Symbol table calculation failed');
       }
     }

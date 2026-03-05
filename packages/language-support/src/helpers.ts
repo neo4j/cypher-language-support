@@ -1,5 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore There is a default export but not in the types
+// @ts-expect-error There is a default export but not in the types
 import antlrDefaultExport, {
   CommonTokenStream,
   ParserRuleContext,

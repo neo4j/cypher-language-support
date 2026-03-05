@@ -223,7 +223,7 @@ export function getCurrentStatement(): string | undefined {
   } else return '';
 }
 
-//exported for testing
+// exported for testing
 export function getStatementAtCaret(
   input: string,
   caretOffset: number,

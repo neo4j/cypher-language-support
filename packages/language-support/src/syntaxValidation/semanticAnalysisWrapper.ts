@@ -12,8 +12,7 @@ import {
   Neo4jProcedure,
   SymbolTable,
 } from '../types';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
+// @ts-expect-error - no type declarations for semanticAnalysis
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
@@ -47,7 +46,7 @@ function copySettingSeverity(
   severity: DiagnosticSeverity,
 ): SyntaxDiagnostic[] {
   return elements.map(({ message, startPosition, endPosition }) => ({
-    severity: severity,
+    severity,
     message,
     range: {
       start: Position.create(startPosition.line, startPosition.column),
@@ -120,8 +119,8 @@ function updateResolverForVersion(
     const functions = Object.values(dbSchema?.functions?.[cypherVersion] ?? {});
     updateSignatureResolver(
       {
-        procedures: procedures,
-        functions: functions,
+        procedures,
+        functions,
       },
       cypherVersion,
     );
