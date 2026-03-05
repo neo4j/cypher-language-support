@@ -314,14 +314,37 @@ Use a **combination of Strategy 1 and Strategy 3**:
    still available through error listeners - it's just no longer stored on
    context nodes.
 
-## Additional API Changes to Be Aware Of
+## Other Error Detection Approaches in antlr4ng
 
-When migrating, also note:
-- `parser._ctx` → `parser.context`
-- `parser._errHandler` → `parser.errorHandler`
-- `context.parentCtx` → `context.parent`
-- `parser.removeErrorListeners()` still exists
-- `parser.addErrorListener()` still exists
-- `ErrorListener` → slightly different interface (check import paths)
-- Generated parser context classes may have different method signatures for
-  accessing child rules (e.g., method-based accessors vs property-based)
+Beyond the strategies above, there are simpler checks that may suffice for some
+use cases:
+
+- **`parser.numberOfSyntaxErrors`** — A simple count of all errors after
+  parsing. Useful for quick "did parsing succeed?" checks.
+- **`context.stop` token** — If a rule was interrupted by an error, the `stop`
+  token may be `null` or point to an unexpected position.
+- **`ErrorNode` in children** — During error recovery, the parser adds
+  `ErrorNode` children (via `addErrorNode()`) instead of `TerminalNode`. You can
+  detect these by checking `child instanceof ErrorNode` or by implementing
+  `visitErrorNode()` in a listener/visitor.
+
+## Full API Migration Table
+
+| antlr4 (current) | antlr4ng 3.x / antlr-ng | Notes |
+|---|---|---|
+| `Parser._ctx` | `Parser.context` | Public property now |
+| `Parser._errHandler` | `Parser.errorHandler` | |
+| `Parser._input` | `Parser.inputStream` | |
+| `Recognizer._interp` | `Recognizer.interpreter` | |
+| `context.parentCtx` | `context.parent` | Was `undefined`, now `null` |
+| `context.exception` | **Removed** | See strategies above |
+| `RuleContext` (base class) | Merged into `ParserRuleContext` | |
+| `ErrorListener<T>` | `BaseErrorListener` | Class to extend |
+| `ANTLRErrorListener<T>` | `ANTLRErrorListener` | Interface (no generic) |
+| `getTypedRuleContext()` | `getRuleContext()` | |
+| `getTypedRuleContexts()` | `getRuleContexts()` | |
+| `parser.removeErrorListeners()` | `parser.removeErrorListeners()` | Unchanged |
+| `parser.addErrorListener()` | `parser.addErrorListener()` | Unchanged |
+| `FileStream` | **Removed** | Use `CharStream.fromString()` |
+
+**Runtime requirements:** antlr4ng 3.x requires ES2022+.
