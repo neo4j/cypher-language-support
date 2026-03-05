@@ -34,6 +34,7 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
+import { ErrorTrackingStrategy } from './errorTrackingListener';
 import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import {
@@ -60,6 +61,7 @@ export interface ParsedStatement {
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
   cypherVersion?: CypherVersion;
+  errorTracker: ErrorTrackingStrategy;
 }
 
 export interface ParsingResult {
@@ -201,6 +203,8 @@ export function createParsingResult(
         tokens,
         consoleCommandsEnabled,
       );
+      const errorTracker = new ErrorTrackingStrategy();
+      parser._errHandler = errorTracker;
       parser._parseListeners = [
         labelsCollector,
         parameterFinder,
@@ -236,6 +240,7 @@ export function createParsingResult(
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
         cypherVersion: cypherVersionCollector.cypherVersion,
+        errorTracker: errorTracker,
       };
     });
 

@@ -4,6 +4,7 @@ import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
 } from '../generated-parser/CypherCmdParser';
+import { ErrorTrackingStrategy } from '../errorTrackingListener';
 import { lexerKeywords } from '../lexerSymbols';
 import { findParent } from '../helpers';
 
@@ -127,12 +128,15 @@ export function getParseTreeAndTokens(query: string) {
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
+  const errorStrategy = new ErrorTrackingStrategy();
+  parser._errHandler = errorStrategy;
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
-  if (tree.exception) {
-    const idx = tree.exception.offendingToken.tokenIndex;
+  const offendingToken = errorStrategy.getOffendingToken(tree);
+  if (offendingToken) {
+    const idx = offendingToken.tokenIndex;
     const errorTokens = tokens.tokens.slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
       .map((t) => t.text)
@@ -143,7 +147,7 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    firstUnParseableToken = tree.exception.offendingToken;
+    firstUnParseableToken = offendingToken;
   }
   return { tree, tokens, unParseable, firstUnParseableToken };
 }

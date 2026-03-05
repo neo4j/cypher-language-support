@@ -827,7 +827,9 @@ function getSnippetCompletions(
         (x) =>
           (x instanceof RelationshipPatternContext ||
             x instanceof NodePatternContext) &&
-          x.exception === null,
+          !parsingResult.errorTracker.hasError(
+            x as RelationshipPatternContext | NodePatternContext,
+          ),
       ) as RelationshipPatternContext | NodePatternContext;
     const finalNonEofToken = tokens.at(-2);
 

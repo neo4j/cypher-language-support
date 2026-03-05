@@ -353,7 +353,7 @@ export function completeNodeLabel(
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
       if (child instanceof RelationshipPatternContext) {
-        if (child.exception === null) {
+        if (!parsingResult.errorTracker.hasError(child)) {
           return true;
         }
       }
@@ -443,7 +443,7 @@ export function completeRelationshipType(
       .toReversed()
       .find((child) => {
         if (child instanceof NodePatternContext) {
-          if (child.exception === null) {
+          if (!parsingResult.errorTracker.hasError(child)) {
             return true;
           }
         }
