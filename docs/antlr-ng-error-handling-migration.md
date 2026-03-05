@@ -82,6 +82,78 @@ set in **two places**:
 
 This was an intentional design decision, not an oversight.
 
+## Why Was This Removed?
+
+### Primary motivation: Performance
+
+The 3.0.0 release was heavily focused on performance ("profiled with VS Code and
+Node.js directly to identify bottlenecks", "excessive object creation and
+release", "big object initialization and garbage collection penalties").
+
+`ParserRuleContext` is instantiated for **every rule invocation** during parsing.
+Removing the `exception` property from this hot object reduces memory allocation
+and GC pressure. The `BailErrorStrategy` change (no longer walking the entire
+context chain to stamp exceptions on every ancestor) eliminates O(depth) work on
+every parse failure.
+
+### Secondary motivation: Architectural simplification
+
+Funneling error information through listeners and exception objects rather than
+mutable state on parse tree nodes is arguably a cleaner pattern for TypeScript.
+
+### Key insight: The relationship is inverted, not deleted
+
+`RecognitionException` still carries a `.ctx: ParserRuleContext | null` property
+pointing back to the rule context where the error originated. The pointer isn't
+gone — it's just reversed:
+
+| Before (antlr4) | After (antlr4ng 3.x) |
+|---|---|
+| `context.exception → RecognitionException` | `RecognitionException.ctx → context` |
+| Parse tree node stores error | Error stores parse tree node |
+| Walk tree, check each node | Collect errors, then look up by context |
+
+### How antlr4ng diverges from Java
+
+**Java ANTLR4 still has `ParserRuleContext.exception`** across all targets (Java,
+C#, Python, C++). antlr4ng is deliberately diverging from the reference
+implementation. This means:
+
+- Solutions that rely on `context.exception` may find support from the broader
+  ANTLR ecosystem (e.g., StackOverflow answers, the ANTLR book, other runtimes)
+- But they will be fighting the TypeScript runtime specifically
+- The Java codebase is maintained by Terence Parr; antlr4ng is maintained by Mike
+  Lischke with different design priorities
+
+### Was `.exception` ever used by ANTLR internals?
+
+**No — it was write-only from the runtime's perspective:**
+
+- `DefaultErrorStrategy` **never reads** `context.exception`. It receives the
+  exception as a parameter and routes everything through
+  `recognizer.notifyErrorListeners()`.
+- `BailErrorStrategy` **only writes** it (on all ancestors) then throws.
+- The generated catch block **writes** it before calling `reportError`/`recover`.
+- No runtime control flow depends on the field.
+
+This made it a prime candidate for removal — it was essentially a convenience
+cache for external consumers (like our code).
+
+## `ErrorNode` vs `context.exception`: Not interchangeable
+
+These are **complementary mechanisms**, not alternatives:
+
+| Aspect | `ErrorNode` | `context.exception` |
+|---|---|---|
+| **Level** | Token/leaf | Rule context node |
+| **Meaning** | "This specific token was inserted/deleted/recovered" | "This rule did not complete successfully" |
+| **When created** | During error recovery (token insertion/deletion, resync) | When a `RecognitionException` is caught in a rule |
+
+**Critical distinction:** A rule can have `ErrorNode` children but
+`exception === null` (recovery succeeded at a deeper level, the rule itself is
+fine). A rule can have `exception !== null` with no `ErrorNode` children (the rule
+itself failed). Replacing one with the other changes semantics.
+
 ## Impact on This Codebase
 
 ### Affected Code Locations
@@ -293,26 +365,110 @@ it. The `RecognitionException.ctx` property gives the innermost context where th
 error occurred, not necessarily all ancestor contexts (unlike old
 BailErrorStrategy behavior).
 
-## Recommended Approach
+## Strategic Recommendation
 
-Use a **combination of Strategy 1 and Strategy 3**:
+### The core question: swim with the current or against it?
 
-1. **For the formatting use case** (`formattingHelpers.ts`): Implement
-   `ExceptionTrackingErrorStrategy` that sets `.exception` on the context during
-   error reporting. This preserves the exact semantics needed to identify
-   unparseable segments.
+The removal of `context.exception` is **performance-motivated, not
+architecture-motivated**. The information still exists (on `RecognitionException`
+via `.ctx`), it's just no longer cached on every context node. This suggests the
+most sustainable solution should:
 
-2. **For the autocompletion use cases** (`completionCoreCompletions.ts`,
-   `schemaBasedCompletions.ts`): Migrate to ErrorNode-based detection using
-   Strategy 3. This is more idiomatic for antlr4ng and doesn't rely on the
-   removed `.exception` property. The codebase already has a `hasErrorNodesUnder()`
-   utility in `parserWrapper.ts` that demonstrates this pattern.
+1. **Not re-introduce per-node state** (that fights the performance motivation)
+2. **Use the inverted pointer** (`exception.ctx → context`) instead
+3. **Collect error info during parsing, query it during tree walking**
 
-3. **Long-term:** Consider whether the error recovery strategy itself needs
-   rethinking. The `DefaultErrorStrategy` in antlr4ng still performs the same
-   single-token insertion/deletion and resync recovery. The error information is
-   still available through error listeners - it's just no longer stored on
-   context nodes.
+### Recommended: Error Listener + Context Map (Strategy 5)
+
+**This is the most sustainable approach** because it:
+- Aligns with antlr4ng's intended error delivery mechanism
+- Preserves exact semantics (the `RecognitionException` with `.ctx` and
+  `.offendingToken` is passed to the listener)
+- Won't break on future antlr4ng updates
+- Doesn't fight the performance optimization (no per-node property allocation)
+- Gives us explicit control over what we track
+
+#### How it works for each use case
+
+**For the formatter** (Pattern A — `formattingHelpers.ts`):
+The error listener already receives `offendingToken` as a parameter. Store the
+first error's offending token. Replace `tree.exception.offendingToken` with
+a lookup on the stored value.
+
+**For autocompletion** (Pattern B — `completionCoreCompletions.ts`,
+`schemaBasedCompletions.ts`):
+Replace `x.exception === null` with `!errorMap.has(x)`. The map is built from
+`exception.ctx` references during parsing.
+
+#### When to consider ancestor marking
+
+The old `BailErrorStrategy` stamped exceptions on every ancestor context up to
+the root. If any call site needs "did an error occur anywhere in this subtree?",
+the error listener can walk up from `e.ctx` and mark ancestors in the map. But
+this should be done intentionally, not by default — the whole point of the removal
+was to avoid that O(depth) work on every error.
+
+### Why NOT the other strategies
+
+| Strategy | Why not (as primary approach) |
+|---|---|
+| **Custom error strategy (1)** | Re-introduces per-node mutable state — fights the performance motivation. Could break if antlr4ng adds property checks or freezes context objects. |
+| **Grammar catch clauses (2)** | Extremely verbose (every rule needs a catch clause). Maintenance nightmare with a large grammar like Cypher. |
+| **ErrorNode detection (3)** | **Semantically different** (see table above). Would silently change autocompletion behavior for edge cases where a rule failed but had no ErrorNode children, or recovered but left ErrorNodes. |
+| **Wrap parser calls (4)** | Only catches exceptions that propagate to caller. Misses errors where `DefaultErrorStrategy` recovers internally. |
+| **Monkey-patch (original 1)** | Fragile. Module augmentation + `as any` casts. Any antlr4ng minor release could break it. |
+
+### Implementation sketch
+
+```typescript
+import { ANTLRErrorListener, ParserRuleContext, RecognitionException, Token } from "antlr4ng";
+
+class ErrorTrackingListener implements ANTLRErrorListener {
+    readonly errorContexts = new Map<ParserRuleContext, RecognitionException>();
+    firstOffendingToken: Token | null = null;
+
+    syntaxError(
+        recognizer: Recognizer, offendingSymbol: Token | null,
+        line: number, charPositionInLine: number,
+        msg: string, e: RecognitionException | null
+    ): void {
+        // Track first offending token (for formatter)
+        if (!this.firstOffendingToken && offendingSymbol) {
+            this.firstOffendingToken = offendingSymbol;
+        }
+        // Build context → exception map (for autocompletion)
+        if (e?.ctx) {
+            this.errorContexts.set(e.ctx, e);
+        }
+    }
+
+    hasError(ctx: ParserRuleContext): boolean {
+        return this.errorContexts.has(ctx);
+    }
+}
+```
+
+**Migration at call sites:**
+```typescript
+// Formatter: instead of tree.exception.offendingToken
+errorListener.firstOffendingToken
+
+// Autocompletion: instead of x.exception === null
+!errorListener.hasError(x)
+```
+
+### Open question: threading the error map
+
+The main implementation challenge is getting the error map to the call sites that
+need it. Currently `context.exception` requires no threading — it's just there on
+the node. With a map, you need to pass it through. Options:
+
+1. **Return it alongside the parse tree** from the parse wrapper (cleanest)
+2. **Store it on a wrapper object** that bundles tree + error info
+3. **Store it on the parser instance** via a subclass (avoids changing signatures)
+
+The existing `parserWrapper.ts` already returns structured results from parsing,
+so option 1 or 2 should integrate naturally.
 
 ## Other Error Detection Approaches in antlr4ng
 
