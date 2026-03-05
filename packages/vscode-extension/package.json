@@ -27,6 +27,7 @@
   },
   "publisher": "neo4j-extensions",
   "main": "./dist/extension.js",
+  "browser": "./dist/browserExtension.js",
   "scripts": {
     "gen-textmate": "node ./genTextMate.js",
     "vscode:prepublish": "pnpm build",
@@ -43,7 +44,11 @@
     "test:e2e": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false pnpm test:apiAndUnit && cross-env DEBUG_VSCODE_TESTS=false pnpm test:webviews",
     "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && cross-env DEBUG_VSCODE_TESTS=false node ./dist/tests/runApiAndUnitTests.js && pnpm test:mocha",
     "test:webviews": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false wdio run ./dist/tests/runWebviewTests.js",
-    "test:mocha": "pnpm build:dev && cross-env mocha ./dist/test/paramUnitTest.test.js"
+    "test:mocha": "pnpm build:dev && cross-env mocha ./dist/test/paramUnitTest.test.js",
+    "bundle-browser-server": "cd ../language-server && node --experimental-strip-types esbuild-browser.mts --production && cp dist/browserServerMain.js ../vscode-extension/dist/",
+    "bundle-browser-extension": "node --experimental-strip-types esbuild-browser.mts --production",
+    "build:web": "tsc -b && pnpm gen-textmate && pnpm bundle-browser-server && pnpm bundle-browser-extension",
+    "test:web": "pnpm build:web && playwright test --config=playwright-web.config.ts"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",
@@ -60,6 +65,7 @@
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
+    "@playwright/test": "1.49.1",
     "@testcontainers/neo4j": "10.13.0",
     "@types/mocha": "10.0.7",
     "@types/react": "18.3.5",
@@ -67,6 +73,7 @@
     "@types/sinon": "17.0.3",
     "@types/vscode": "1.75.0",
     "@vscode/test-electron": "2.4.1",
+    "@vscode/test-web": "0.0.62",
     "@vscode/vsce": "3.3.2",
     "@wdio/cli": "8.41.0",
     "@wdio/globals": "8.41.0",

@@ -206,10 +206,12 @@ connection.languages.semanticTokens.on(
   applySyntaxColouringForDocument(documents),
 );
 
+const getDbSchema = () => neo4jSchemaPoller?.metadata?.dbSchema ?? {};
+
 // Trigger the signature help, providing info about functions / procedures
-connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
+connection.onSignatureHelp(doSignatureHelp(documents, getDbSchema));
 // Trigger the auto completion
-connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
+connection.onCompletion(doAutoCompletion(documents, getDbSchema));
 
 connection.onNotification(
   'updateLintWorker',

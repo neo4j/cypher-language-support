@@ -35,6 +35,7 @@
     "bundle": "esbuild ./src/server.ts --bundle --format=cjs --platform=node --outfile=dist/cypher-language-server.js --minify --conditions=require",
     "dev": "tsc --watch",
     "make-executable": "cd dist && echo '#!/usr/bin/env node' > cypher-language-server && cat cypher-language-server.js >> cypher-language-server",
+    "bundle:browser": "esbuild ./src/browserServer.ts --bundle --format=iife --platform=browser --outfile=dist/browserServerMain.js --minify",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "dependencies": {

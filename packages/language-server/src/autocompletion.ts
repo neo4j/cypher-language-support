@@ -3,19 +3,19 @@ import {
   CompletionTriggerKind,
   Position,
   TextDocuments,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
 import {
   autocomplete,
+  DbSchema,
   shouldAutoCompleteYield,
 } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSchemaPoller,
+  getDbSchema: () => DbSchema,
 ) {
   return (completionParams: CompletionParams) => {
     const textDocument = documents.get(completionParams.textDocument.uri);
@@ -32,7 +32,7 @@ export function doAutoCompletion(
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
       const completions: CompletionItem[] = autocomplete(
         textDocument.getText(),
-        neo4j.metadata?.dbSchema ?? {},
+        getDbSchema(),
         offset,
         completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
       );

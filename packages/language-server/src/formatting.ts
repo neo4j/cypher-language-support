@@ -4,7 +4,7 @@ import {
   DocumentFormattingParams,
   TextDocuments,
   TextEdit,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver';
 
 export const formatDocument = (
   params: DocumentFormattingParams,

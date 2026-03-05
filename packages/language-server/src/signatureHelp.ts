@@ -1,11 +1,10 @@
-import { signatureHelp } from '@neo4j-cypher/language-support';
+import { DbSchema, signatureHelp } from '@neo4j-cypher/language-support';
 import {
   SignatureHelp,
   SignatureHelpParams,
   TextDocuments,
-} from 'vscode-languageserver/node';
+} from 'vscode-languageserver';
 
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
 export const emptyResult: SignatureHelp = {
@@ -16,7 +15,7 @@ export const emptyResult: SignatureHelp = {
 
 export function doSignatureHelp(
   documents: TextDocuments<TextDocument>,
-  neo4j: Neo4jSchemaPoller,
+  getDbSchema: () => DbSchema,
 ) {
   return (params: SignatureHelpParams) => {
     const textDocument = documents.get(params.textDocument.uri);
@@ -26,10 +25,6 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return signatureHelp(
-      textDocument.getText(),
-      neo4j.metadata?.dbSchema ?? {},
-      offset,
-    );
+    return signatureHelp(textDocument.getText(), getDbSchema(), offset);
   };
 }
