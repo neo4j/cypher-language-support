@@ -12,6 +12,7 @@ on:
 jobs:
   check-day-of-month:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     outputs:
       skip: ${{ steps.check_skip.outputs.skip }}
     steps:
@@ -30,10 +31,11 @@ jobs:
   fetch-artifacts:
     environment: aws-artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     needs: check-day-of-month
     if: ${{ needs.check-day-of-month.outputs.skip == 'false' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Set Up Git User
         run: |
@@ -41,7 +43,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@5fd3084fc36e372ff1fff382a39b10d03659f355 # v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_USERNAME }}
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_PASSWORD }}
@@ -116,7 +118,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.git-check.outputs.modified == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@22a9089034f40e5a961c8808d113e2c98fb63676 # v7
         with:
           token: ${{ secrets.BROWSER_BOT_PAT }}
           branch: ${{ env.BRANCH_NAME }}
