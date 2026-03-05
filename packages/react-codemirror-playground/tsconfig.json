@@ -5,7 +5,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
     "lib": ["DOM"],
-    "esModuleInterop": true,
-    "module": "ES2020"
+    "module": "ES2020",
+    "strict": false,
+    "noImplicitOverride": false,
+    "noImplicitReturns": false,
+    "noUncheckedIndexedAccess": false
   }
 }

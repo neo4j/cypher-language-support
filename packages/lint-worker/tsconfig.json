@@ -4,10 +4,7 @@
   "exclude": [],
   "compilerOptions": {
     "outDir": "./dist",
-    "declaration": true,
-    "esModuleInterop": true,
     "module": "esnext",
-    "moduleResolution": "node",
     "types": ["vitest/globals"]
   }
 }
