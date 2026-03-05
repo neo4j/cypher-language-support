@@ -17,10 +17,9 @@ import { formatDocument } from './formatting';
 import { doSignatureHelp } from './signatureHelp';
 import { applySyntaxColouringForDocument } from './syntaxColouring';
 
-declare const self: DedicatedWorkerGlobalScope;
-
-const messageReader = new BrowserMessageReader(self);
-const messageWriter = new BrowserMessageWriter(self);
+/* eslint-disable @typescript-eslint/no-explicit-any */
+const messageReader = new BrowserMessageReader(globalThis as any);
+const messageWriter = new BrowserMessageWriter(globalThis as any);
 const connection = createConnection(messageReader, messageWriter);
 
 const documents: TextDocuments<TextDocument> = new TextDocuments(TextDocument);
