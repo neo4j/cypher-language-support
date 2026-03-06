@@ -2325,4 +2325,22 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
       }),
     ).toEqual([]);
   });
+
+  test('Semantic analysis should not error on correct usage of graph type', () => {
+    const query = `CYPHER 25 ALTER CURRENT GRAPH TYPE SET {
+(c:Customer => :LegalEntity {
+  customerId::STRING,
+  firstName::STRING
+}) REQUIRE c.customerId IS KEY
+}`;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
 });
