@@ -1,5 +1,18 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.31
+
+### Patch Changes
+
+- b0170f9: Increase path segment completion triggering
+- Updated dependencies [82f0c39]
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/query-tools@2.0.0-next.30
+  - @neo4j-cypher/language-support@2.0.0-next.30
+  - @neo4j-cypher/lint-worker@1.10.1-next.7
+
 ## 2.0.0-next.30
 
 ### Patch Changes

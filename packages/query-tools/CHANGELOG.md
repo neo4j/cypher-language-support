@@ -1,5 +1,15 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- 82f0c39: Workaround bug: Running db.schema.visualization on db with too large schema can crash db
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/language-support@2.0.0-next.30
+
 ## 2.0.0-next.29
 
 ### Patch Changes
