@@ -1,5 +1,13 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.30
+
+### Patch Changes
+
+- 0e457d6: Updates grammar and semantic analysis to 2026.03
+- b0170f9: Increase path segment completion triggering
+- 25fad16: Fix linting of :play command
+
 ## 2.0.0-next.29
 
 ### Patch Changes
