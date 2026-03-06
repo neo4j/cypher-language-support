@@ -1014,6 +1014,24 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 47,
+          start: 46,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 2,
+          },
+          start: {
+            character: 18,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+      {
         message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: i)',
         offsets: {
@@ -1033,24 +1051,6 @@ describe('Semantic validation spec', () => {
         severity: 2,
       },
       {
-        message: 'Variable `i` already declared in outer scope',
-        offsets: {
-          end: 64,
-          start: 56,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 3,
-          },
-          start: {
-            character: 8,
-            line: 3,
-          },
-        },
-        severity: 1,
-      },
-      {
         message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: i)',
         offsets: {
@@ -1068,24 +1068,6 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 2,
-      },
-      {
-        message: 'Variable `i` already declared in outer scope',
-        offsets: {
-          end: 117,
-          start: 109,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 6,
-          },
-          start: {
-            character: 8,
-            line: 6,
-          },
-        },
-        severity: 1,
       },
     ]);
   });
@@ -1377,6 +1359,25 @@ Attempted to access graph other`,
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
         offsets: {
           end: 120,
+          start: 102,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 4,
+          },
+          start: {
+            character: 14,
+            line: 4,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        offsets: {
+          end: 120,
           start: 119,
         },
         range: {
@@ -1514,18 +1515,18 @@ Attempted to access graph other`,
       },
       {
         message:
-          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
-          end: 19,
-          start: 7,
+          end: 35,
+          start: 23,
         },
         range: {
           end: {
-            character: 19,
+            character: 35,
             line: 0,
           },
           start: {
-            character: 7,
+            character: 23,
             line: 0,
           },
         },
@@ -1533,25 +1534,6 @@ Attempted to access graph other`,
       },
       {
         message: 'Variable `p` already declared',
-        offsets: {
-          end: 37,
-          start: 22,
-        },
-        range: {
-          end: {
-            character: 37,
-            line: 0,
-          },
-          start: {
-            character: 22,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 35,
           start: 23,
@@ -2333,6 +2315,24 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Semantic analysis should not error on using cypher 25', () => {
     const query = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Semantic analysis should not error on correct usage of graph type', () => {
+    const query = `CYPHER 25 ALTER CURRENT GRAPH TYPE SET {
+(c:Customer => :LegalEntity {
+  customerId::STRING,
+  firstName::STRING
+}) REQUIRE c.customerId IS KEY
+}`;
 
     expect(
       getDiagnosticsForQuery({

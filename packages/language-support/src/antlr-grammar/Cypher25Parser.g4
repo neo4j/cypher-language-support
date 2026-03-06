@@ -113,6 +113,7 @@ clause
    | loadCSVClause
    | foreachClause
    | orderBySkipLimitClause
+   | composableCommandClauses
    ;
 
 useClause
@@ -937,8 +938,7 @@ command
       | stopDatabase
       | enableServerCommand
       | allocationCommand
-      | showCommand
-      | terminateCommand
+      | showAdminCommand
    )
    ;
 
@@ -980,23 +980,16 @@ dropCommand
    )
    ;
 
-showCommand
+showAdminCommand
    : SHOW (
       showAliases
-      | showConstraintCommand
-      | showCurrentGraphTypeCommand
       | showCurrentUser
       | showDatabase
-      | showFunctions
-      | showIndexCommand
       | showPrivileges
-      | showProcedures
       | showRolePrivileges
       | showRoles
       | showServers
-      | showSettings
       | showSupportedPrivileges
-      | showTransactions
       | showUserPrivileges
       | showUsers
       | showAuthRules
@@ -1005,6 +998,11 @@ showCommand
 
 showCommandYield
    : yieldClause returnClause?
+   | whereClause
+   ;
+
+showCommandYieldWhere
+   : yieldClause
    | whereClause
    ;
 
@@ -1066,7 +1064,7 @@ showIndexType
     ;
 
 showIndexesEnd
-   : indexToken showCommandYield? composableCommandClauses?
+   : indexToken showCommandYieldWhere?
    ;
 
 showConstraintCommand
@@ -1090,19 +1088,19 @@ constraintExistType
    ;
 
 showConstraintsEnd
-   : constraintToken showCommandYield? composableCommandClauses?
+   : constraintToken showCommandYieldWhere?
    ;
 
 showCurrentGraphTypeCommand
-   : CURRENT GRAPH TYPE showCommandYield? composableCommandClauses?
+   : CURRENT GRAPH TYPE showCommandYieldWhere?
    ;
 
 showProcedures
-   : (PROCEDURE | PROCEDURES) executableBy? showCommandYield? composableCommandClauses?
+   : (PROCEDURE | PROCEDURES) executableBy? showCommandYieldWhere?
    ;
 
 showFunctions
-   : showFunctionsType? functionToken executableBy? showCommandYield? composableCommandClauses?
+   : showFunctionsType? functionToken executableBy? showCommandYieldWhere?
    ;
 
 functionToken
@@ -1124,7 +1122,7 @@ showTransactions
    ;
 
 terminateTransactions
-   : transactionToken stringsOrExpression showCommandYield? composableCommandClauses?
+   : transactionToken stringsOrExpression showCommandYieldWhere?
    ;
 
 showSettings
@@ -1135,8 +1133,12 @@ settingToken
    : SETTING | SETTINGS
    ;
 
+// Keeping both sides here as optional instead of having one mandatory and then optionally call `namesAndClauses`,
+// to not prioritize stringsOrExpression over regular clauses (for example, we don't want `SHOW SETTINGS WITH * MATCH (*)`
+// to be parsed as variable `WITH` multiplied with the function call `MATCH (*)`)
 namesAndClauses
-   : (showCommandYield? | stringsOrExpression showCommandYield?) composableCommandClauses?
+   : showCommandYieldWhere?
+   | stringsOrExpression showCommandYieldWhere?
    ;
 
 stringsOrExpression

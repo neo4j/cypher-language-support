@@ -129,8 +129,7 @@ OPTIONS {
   test('show indexes with where and return', () => {
     const query = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI" RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
-    const expected = `SHOW INDEXES
-YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+    const expected = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI"
 RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
     verifyFormatting(query, expected);
