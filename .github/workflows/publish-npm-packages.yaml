@@ -8,7 +8,7 @@ on:
       - completed
 
 env:
-  NODE_OPTIONS: '--max_old_space_size=4096'
+  NODE_OPTIONS: '--max_old_space_size=8192'
 
 permissions:
   id-token: write
@@ -18,11 +18,13 @@ permissions:
 jobs:
   canary-release-to-npm:
     name: 'Canary release to npm'
+    if: github.event.workflow_run.conclusion == 'success'
     needs: stable-release-to-npm
     environment: publish-npm
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup and build project
         uses: ./.github/actions/setup-and-build
@@ -32,10 +34,12 @@ jobs:
 
   stable-release-to-npm:
     name: 'Stable release to npm'
+    if: github.event.workflow_run.conclusion == 'success'
     environment: publish-npm
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup and build project
         uses: ./.github/actions/setup-and-build
