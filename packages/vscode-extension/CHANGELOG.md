@@ -3,6 +3,8 @@
 ## 1.16.0
 - Add aliases to connections pane
 - Add path segment completions
+- Handle wildcards (%) and nots (! / NOT) in schema based completions
+- Minor bugfixes: (Fix linting of :play, limit graph schema polling to graph sizes where the procedure is safe, )
 
 ## 1.14.0
 - Adds schema (from db.schema.visualization) based completions for labels/reltypes
