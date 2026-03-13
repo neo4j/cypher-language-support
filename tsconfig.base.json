@@ -12,7 +12,14 @@
     "target": "ESNext",
     "outDir": "dist",
     "incremental": true,
-    "noImplicitReturns": true
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "isolatedModules": true,
+    "resolveJsonModule": true,
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitOverride": true,
+    "noImplicitReturns": true,
+    "noUncheckedIndexedAccess": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
