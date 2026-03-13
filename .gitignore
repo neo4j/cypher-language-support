@@ -20,3 +20,6 @@ benchmarks.txt
 .idea/
 vite.config.ts.timestamp*
 .wdio-vscode-service
+playwright-report*
+test-results
+.vscode-test-web
