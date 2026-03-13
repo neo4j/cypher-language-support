@@ -4,8 +4,6 @@
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "dist",
-    "declaration": true,
-    "esModuleInterop": true,
     "types": ["vitest/globals"]
   }
 }

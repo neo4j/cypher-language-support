@@ -43,7 +43,7 @@
     "semver": "^7.6.1",
     "ts-node": "10.9.1",
     "tsx": "^4.19.4",
-    "typescript": "5.8.3",
+    "typescript": "5.9.3",
     "vitest": "^2.1.9"
   },
   "engines": {
