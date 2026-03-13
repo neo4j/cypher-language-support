@@ -65,7 +65,7 @@
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
-    "@playwright/test": "1.49.1",
+    "@playwright/test": "1.56.1",
     "@testcontainers/neo4j": "10.13.0",
     "@types/mocha": "10.0.7",
     "@types/react": "18.3.5",

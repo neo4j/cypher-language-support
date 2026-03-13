@@ -45,9 +45,9 @@ export default async function globalSetup() {
     [
       '@vscode/test-web',
       `--extensionDevelopmentPath=${extensionDir}`,
-      '--browserType=none',
+      '--browser=none',
       `--port=${VSCODE_WEB_PORT}`,
-      `--folderPath=${fixturesDir}`,
+      fixturesDir,
     ],
     {
       cwd: extensionDir,
