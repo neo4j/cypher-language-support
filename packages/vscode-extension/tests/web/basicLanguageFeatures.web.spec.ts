@@ -1,26 +1,15 @@
-import { test, expect } from '@playwright/test';
+import { test, expect, Page } from '@playwright/test';
 
 const VSCODE_WEB_URL = `http://localhost:${process.env.VSCODE_WEB_PORT ?? 3333}`;
 
-/**
- * Helper to wait for VS Code to fully load in the browser.
- */
-async function waitForVSCodeReady(
-  page: ReturnType<(typeof test)['info']> extends never
-    ? never
-    : Awaited<Parameters<Parameters<typeof test>[1]>[0]>['page'],
-) {
+async function waitForVSCodeReady(page: Page) {
   await page.goto(VSCODE_WEB_URL);
-  // Wait for the workbench to render
   await page.waitForSelector('.monaco-workbench', { timeout: 30_000 });
   // Give extensions a moment to activate
   await page.waitForTimeout(3_000);
 }
 
-/**
- * Helper to open the command palette and execute a command.
- */
-async function executeCommand(page: any, command: string) {
+async function executeCommand(page: Page, command: string) {
   await page.keyboard.press('Control+Shift+KeyP');
   await page.waitForSelector('.quick-input-widget', { timeout: 5_000 });
   await page.keyboard.type(command, { delay: 50 });
@@ -31,7 +20,7 @@ async function executeCommand(page: any, command: string) {
 /**
  * Helper to create a new file and set its language to Cypher.
  */
-async function createCypherFile(page: any) {
+async function createCypherFile(page: Page) {
   // Create a new untitled file
   await executeCommand(page, 'New Untitled Text File');
   await page.waitForTimeout(1_000);
