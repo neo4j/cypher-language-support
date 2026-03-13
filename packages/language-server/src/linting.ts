@@ -91,14 +91,10 @@ async function rawLintDocument(
   }
 }
 
-export const lintDocument: typeof rawLintDocument = debounce(
-  rawLintDocument,
-  600,
-  {
-    leading: false,
-    trailing: true,
-  },
-);
+export const lintDocument = debounce(rawLintDocument, 600, {
+  leading: false,
+  trailing: true,
+}) as unknown as typeof rawLintDocument;
 
 export const cleanupWorkers = async () => {
   await pool.terminate();

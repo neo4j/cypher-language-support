@@ -364,7 +364,7 @@ export class CypherEditor extends Component<
       )
     : undefined;
 
-  componentDidMount(): void {
+  override componentDidMount(): void {
     const {
       theme,
       extraKeybindings,
@@ -471,7 +471,7 @@ export class CypherEditor extends Component<
     }
   }
 
-  componentDidUpdate(prevProps: CypherEditorProps): void {
+  override componentDidUpdate(prevProps: CypherEditorProps): void {
     if (!this.editorView.current) {
       return;
     }
@@ -590,12 +590,12 @@ export class CypherEditor extends Component<
     this.schemaRef.current.featureFlags = this.props.featureFlags;
   }
 
-  componentWillUnmount(): void {
+  override componentWillUnmount(): void {
     this.editorView.current?.destroy();
     cleanupWorkers();
   }
 
-  render(): React.ReactNode {
+  override render(): React.ReactNode {
     const { className, theme } = this.props;
 
     const themeClass =

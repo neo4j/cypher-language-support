@@ -93,9 +93,9 @@ export class DisconnectedMetadataPoller extends MetadataPoller {
     super();
     this.dbSchema.parameters = parameters;
   }
-  stopBackgroundPolling() {}
-  startBackgroundPolling() {}
-  fetchDbSchema(): void {}
+  override stopBackgroundPolling() {}
+  override startBackgroundPolling() {}
+  override fetchDbSchema(): void {}
 }
 
 export class ConnectedMetadataPoller extends MetadataPoller {
@@ -246,7 +246,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     });
   }
 
-  public async fetchDbSchema(): Promise<void> {
+  public override async fetchDbSchema(): Promise<void> {
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
@@ -265,12 +265,12 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     this.events.emit('schemaFetched');
   }
 
-  stopBackgroundPolling() {
+  override stopBackgroundPolling() {
     clearInterval(this.dbPollingInterval);
     this.dbPollingInterval = undefined;
   }
 
-  startBackgroundPolling(intervalSeconds = 30) {
+  override startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
     void this.fetchDbSchema();
     this.dbPollingInterval = setInterval(

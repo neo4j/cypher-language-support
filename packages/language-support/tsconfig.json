@@ -4,6 +4,7 @@
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "dist",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "strict": false
   }
 }

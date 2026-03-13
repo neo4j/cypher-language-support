@@ -357,6 +357,7 @@ export function completeNodeLabel(
           return true;
         }
       }
+      return false;
     });
 
     // limitation: bailing out on quantifiers
@@ -447,6 +448,7 @@ export function completeRelationshipType(
             return true;
           }
         }
+        return false;
       });
 
     const thisCtx = findParent(

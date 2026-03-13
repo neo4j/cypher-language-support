@@ -285,17 +285,17 @@ export function parseParameters(
 class LabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
-  enterEveryRule() {
+  override enterEveryRule() {
     /* no-op */
   }
-  visitTerminal() {
+  override visitTerminal() {
     /* no-op */
   }
-  visitErrorNode() {
+  override visitErrorNode() {
     /* no-op */
   }
 
-  exitEveryRule(ctx: unknown) {
+  override exitEveryRule(ctx: unknown) {
     if (ctx instanceof LabelNameContext) {
       // If the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
@@ -453,17 +453,17 @@ class MethodsCollector extends ParseTreeListener {
     this.tokens = tokens;
   }
 
-  enterEveryRule() {
+  override enterEveryRule() {
     /* no-op */
   }
-  visitTerminal() {
+  override visitTerminal() {
     /* no-op */
   }
-  visitErrorNode() {
+  override visitErrorNode() {
     /* no-op */
   }
 
-  exitEveryRule(ctx: unknown) {
+  override exitEveryRule(ctx: unknown) {
     if (
       ctx instanceof FunctionNameContext ||
       ctx instanceof ProcedureNameContext
@@ -508,17 +508,17 @@ class CypherVersionCollector extends ParseTreeListener {
     super();
   }
 
-  enterEveryRule() {
+  override enterEveryRule() {
     /* no-op */
   }
-  visitTerminal() {
+  override visitTerminal() {
     /* no-op */
   }
-  visitErrorNode() {
+  override visitErrorNode() {
     /* no-op */
   }
 
-  exitEveryRule(ctx: unknown) {
+  override exitEveryRule(ctx: unknown) {
     if (ctx instanceof CypherVersionContext) {
       const parsedVersion = 'CYPHER ' + ctx.getText();
       allCypherVersions.forEach((validVersion) => {

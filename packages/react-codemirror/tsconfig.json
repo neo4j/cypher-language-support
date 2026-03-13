@@ -6,6 +6,7 @@
     "jsx": "react-jsx",
     "allowJs": true,
     "module": "esnext",
-    "outDir": "dist"
+    "outDir": "dist",
+    "strict": false
   }
 }

@@ -34,7 +34,7 @@ export class ParserAdapter extends Parser {
   }
 
   /* There are more arguments, but since we don't do any incremental parsing, they are not useful */
-  startParse(input: string | Input): PartialParse {
+  override startParse(input: string | Input): PartialParse {
     const document =
       typeof input === 'string' ? input : input.read(0, input.length);
 

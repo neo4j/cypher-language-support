@@ -45,6 +45,8 @@ export class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionIt
     if (element.type === 'activeConnection') {
       return this.getDatabaseConnectionItems(element);
     }
+
+    return [];
   }
 
   private getTopLevelConnections(): ConnectionItem[] {
@@ -173,9 +175,9 @@ export const connectionTreeDataProvider = new ConnectionTreeDataProvider();
 export class ConnectionItem extends TreeItem {
   constructor(
     readonly type: ConnectionItemType,
-    readonly label: string,
-    readonly description: string,
-    readonly collapsibleState: TreeItemCollapsibleState,
+    override readonly label: string,
+    override readonly description: string,
+    override readonly collapsibleState: TreeItemCollapsibleState,
     readonly key?: string,
   ) {
     super(label, collapsibleState);

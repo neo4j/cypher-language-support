@@ -121,6 +121,7 @@ export function onSubmit(event: Event): boolean {
       connection: connection,
       password: password,
     });
+    return true;
   }
 }
 

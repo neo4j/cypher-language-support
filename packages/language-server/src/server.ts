@@ -38,11 +38,13 @@ let workerPath = defaultWorkerPath;
 
 class SymbolFetcher {
   private processing = false;
-  private nextJob: {
-    query: string;
-    uri: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        uri: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,

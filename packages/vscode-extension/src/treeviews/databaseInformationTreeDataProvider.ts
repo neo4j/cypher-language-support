@@ -94,8 +94,8 @@ export const databaseInformationTreeDataProvider =
 class DatabaseInformationItem extends TreeItem {
   constructor(
     public readonly type: DatabaseInformationItemType,
-    public readonly label: string,
-    public readonly collapsibleState: TreeItemCollapsibleState,
+    public override readonly label: string,
+    public override readonly collapsibleState: TreeItemCollapsibleState,
   ) {
     super(label, collapsibleState);
   }

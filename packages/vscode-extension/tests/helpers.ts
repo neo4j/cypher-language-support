@@ -28,6 +28,7 @@ export async function newUntitledFileWithContent(
     return document;
   } catch (e) {
     console.error(e);
+    return undefined as unknown as TextDocument;
   }
 }
 

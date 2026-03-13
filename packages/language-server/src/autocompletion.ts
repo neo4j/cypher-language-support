@@ -34,7 +34,7 @@ export function doAutoCompletion(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
         offset,
-        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
+        completionParams.context?.triggerKind === CompletionTriggerKind.Invoked,
       );
 
       const result = completions.map((item) => {
@@ -51,5 +51,7 @@ export function doAutoCompletion(
 
       return result;
     }
+
+    return [];
   };
 }

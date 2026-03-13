@@ -57,7 +57,7 @@ export function App() {
       mac: 'Alt-Shift-f',
       preventDefault: true,
       run: () => {
-        editorRef.current.format();
+        editorRef.current?.format();
         return true;
       },
     },
@@ -105,7 +105,7 @@ export function App() {
               </button>
             </div>
             <div className="flex gap-1">
-              {Object.keys(demos).map((demoName: DemoName) => (
+              {(Object.keys(demos) as DemoName[]).map((demoName) => (
                 <button
                   key={demoName}
                   className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded 
@@ -139,7 +139,7 @@ export function App() {
               ariaLabel="Cypher Editor"
             />
             <p
-              onClick={() => editorRef.current.format()}
+              onClick={() => editorRef.current?.format()}
               className="text-blue-500 cursor-pointer hover:text-blue-700"
               title={
                 window.navigator.userAgent.includes('Mac')
