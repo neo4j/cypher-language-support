@@ -3,7 +3,7 @@
  * Licensed under the BSD-3-Clause license. See LICENSE file in the project root for license information.
  */
 
-import { Token } from 'antlr4';
+import { Token } from 'antlr4ng';
 import { Vocabulary } from './Vocabulary';
 
 /**

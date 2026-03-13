@@ -16,7 +16,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ATNState } from './antlr4';
+import { ATNState, getStateType } from './antlr4';
 
 export function advanceToNonEpsilon(current: ATNState) {
     const BLOCK_END = current.constructor.BLOCK_END;
@@ -58,31 +58,31 @@ export function advanceToNonEpsilon(current: ATNState) {
     const transitions = current.transitions;
     let optional = false;
 
-    if (current.stateType === BLOCK_END && transitions.length === 1 && transitions[0].isEpsilon) {
+    if (getStateType(current) === BLOCK_END && transitions.length === 1 && transitions[0].isEpsilon) {
       // Case i.
       const optStartState = (current as any).startState as ATNState;
       const optTransitions = optStartState.transitions;
 
-      if (optStartState.stateType === BLOCK_START && optTransitions.length === 2) {
+      if (getStateType(optStartState) === BLOCK_START && optTransitions.length === 2) {
         const a = optTransitions[0].target;
         const b = optTransitions[1].target;
 
         if (
-          (a.stateType === BLOCK_END && b.transitions.length >= 1 && b.transitions.at(0).target.stateNumber === current.stateNumber) ||
-          (b.stateType === BLOCK_END && a.transitions.length >= 1 && a.transitions.at(0).target.stateNumber === current.stateNumber)
+          (getStateType(a) === BLOCK_END && b.transitions.length >= 1 && b.transitions.at(0).target.stateNumber === current.stateNumber) ||
+          (getStateType(b) === BLOCK_END && a.transitions.length >= 1 && a.transitions.at(0).target.stateNumber === current.stateNumber)
         ) {
           current = transitions[0].target;
         }
       }
-    } else if (current.stateType === BLOCK_START && transitions.length === 2) {
+    } else if (getStateType(current) === BLOCK_START && transitions.length === 2) {
       // Case ii.
       const a = transitions[0].target;
       const b = transitions[1].target;
 
-      if (a.stateType === BLOCK_END) {
+      if (getStateType(a) === BLOCK_END) {
         optional = true;
         current = b;
-      } else if (b.stateType === BLOCK_END) {
+      } else if (getStateType(b) === BLOCK_END) {
         optional = true;
         current = a;
       }

@@ -17,18 +17,18 @@
  * limitations under the License.
  */
 import {
-  CharStreams,
+  CharStream,
   CommonTokenStream,
-} from 'antlr4';
+} from 'antlr4ng';
 import { CodeCompletionCore } from '../src/CodeCompletionCore';
-import OptionalsLexer from './generated/OptionalsLexer';
-import OptionalsParser from './generated/OptionalsParser';
+import { OptionalsLexer } from './generated/OptionalsLexer';
+import { OptionalsParser } from './generated/OptionalsParser';
 
 describe('Code Completion Tests for optionals', () => {
 
   it('Non optional token token followed by non optional token', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -47,7 +47,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Optional token followed by non optional token', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -78,7 +78,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Non optional token followed by optional token', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -103,7 +103,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Closure followed by non optional token', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -145,7 +145,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Non optional token followed by closure', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -176,7 +176,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Non optional token followed by closure', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -207,7 +207,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Non optionals followed by compound optionals', () => {
     const query = '';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 
@@ -230,7 +230,7 @@ describe('Code Completion Tests for optionals', () => {
 
   it('Compound optional followed by non optional', () => {
     const query = 'DD A ';
-    const inputStream = CharStreams.fromString(query);
+    const inputStream = CharStream.fromString(query);
     const lexer = new OptionalsLexer(inputStream);
     const tokenStream = new CommonTokenStream(lexer);
 

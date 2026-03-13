@@ -1,5 +1,5 @@
 
-import * as antlr4 from 'antlr4';
+import * as antlr4 from 'antlr4ng';
 
 export interface ParserRuleContext extends antlr4.ParserRuleContext {
     ruleIndex: number;
@@ -15,16 +15,10 @@ export const Token = antlr4.Token as unknown as {
     DEFAULT_CHANNEL: number;
     EOF: number;
 }
-export interface IntervalSet extends antlr4.IntervalSet {
-    addInterval(v: antlr4.Interval): void;
-    addSet(other: antlr4.IntervalSet): antlr4.IntervalSet;
-    complement(start: number, stop:number): IntervalSet;
-    length: number;
-}
+export type IntervalSet = antlr4.IntervalSet;
 export interface Parser extends antlr4.Parser {
-    getLiteralNames(): string[];
-    getSymbolicNames(): string[];
-    getTokenNames(): string[];
+    literalNames: (string | null)[];
+    symbolicNames: (string | null)[];
     ruleNames: string[];
     atn: ATN;
 }
@@ -62,7 +56,7 @@ export interface ATNStateTypeEnum {
 export type PredicateTransition = any;
 export interface Transition {
   target: ATNState;
-  serializationType: number;
+  transitionType: number;
   isEpsilon: boolean;
   constructor: TransitionTypeEnum;
   label: IntervalSet;
@@ -71,29 +65,20 @@ export type RuleTransition = any;
 export type PrecedencePredicateTransition = any;
 export interface ATNState {
   stateNumber: number;
-  stateType: number;
   transitions: Transition[];
   constructor: ATNStateTypeEnum;
   ruleIndex: number;
 };
 export type RuleStartState = any;
 
+export function getStateType(state: ATNState): number {
+  return (state.constructor as any).stateType;
+}
+
 export function intervalSetOf(a: number, b:number): IntervalSet {
-  let s = new antlr4.IntervalSet() as IntervalSet;
-  s.addInterval(new antlr4.Interval(a, b));
-  return s;
+  return antlr4.IntervalSet.of(a, b);
 }
 
 export function intervalSetToArray(set: antlr4.IntervalSet): number[] {
-  const values: number[] = [];
-  const n = set.intervals.length;
-  for (let i = 0; i < n; i++) {
-      const interval = set.intervals[i];
-      const a = interval.start;
-      const b = interval.stop;
-      for (let v = a; v < b; v++) {
-          values.push(v);
-      }
-  }
-  return values;
+  return set.toArray();
 }

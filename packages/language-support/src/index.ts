@@ -1,4 +1,4 @@
-export type { ParserRuleContext } from 'antlr4';
+export type { ParserRuleContext } from 'antlr4ng';
 export { autocomplete } from './autocompletion/autocompletion';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers';
@@ -37,10 +37,10 @@ export type {
 } from './types';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser from './generated-parser/CypherCmdParser';
-import CypherParserListener from './generated-parser/CypherCmdParserListener';
-import CypherParserVisitor from './generated-parser/CypherCmdParserVisitor';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer';
+import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser';
+import { CypherCmdParserListener as CypherParserListener } from './generated-parser/CypherCmdParserListener';
+import { CypherCmdParserVisitor as CypherParserVisitor } from './generated-parser/CypherCmdParserVisitor';
 
 export * from './generated-parser/CypherCmdLexer';
 export * from './generated-parser/CypherCmdParser';

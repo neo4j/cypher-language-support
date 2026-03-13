@@ -51,7 +51,7 @@ if($val.text.compareTo("0")!=0) throw new InputMismatchException(this);
 grammar CPP14;
 
 @header {
-	import {RecognitionException as RecognitionException2} from 'antlr4';
+	import {RecognitionException as RecognitionException2} from 'antlr4ng';
 	
 	class InputMismatchException extends RecognitionException2 {
 		public offendingToken: any;

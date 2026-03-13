@@ -1,14 +1,15 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore There is a default export but not in the types
-import antlrDefaultExport, {
+import {
+  CommonToken,
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
   Token,
-} from 'antlr4';
+  Trees,
+} from 'antlr4ng';
 import { DbSchema } from './dbSchema';
-import CypherLexer from './generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer } from './generated-parser/CypherCmdLexer';
+import {
+  CypherCmdParser,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsOrCommandsContext,
@@ -21,16 +22,16 @@ import { CypherVersion } from './types';
         ParseTree
            / \
           /   \
-TerminalNode   RuleContext
+ TerminalNode   RuleContext
                 \
-                ParserRuleContext                 
+                ParserRuleContext
 
-Both TerminalNode and RuleContext have parentCtx, but ParseTree doesn't
+Both TerminalNode and RuleContext have parent, but ParseTree doesn't
 This type fixes that because it's what we need to traverse the tree most
 of the time
 */
 export type EnrichedParseTree = ParseTree & {
-  parentCtx: ParserRuleContext | undefined;
+  parent: ParserRuleContext | undefined;
 };
 
 export function findStopNode(root: StatementsOrCommandsContext) {
@@ -64,7 +65,7 @@ export function findParent(
   let current: EnrichedParseTree | null = leaf;
 
   while (current && !condition(current)) {
-    current = current.parentCtx;
+    current = current.parent;
   }
 
   return current;
@@ -74,19 +75,22 @@ export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
 
-type AntlrDefaultExport = {
+export const antlrUtils = {
   tree: {
     Trees: {
       getNodeText(
         node: ParserRuleContext,
         s: string[],
-        c: typeof CypherParser,
-      ): string;
-      getChildren(node: ParserRuleContext): ParserRuleContext[];
-    };
-  };
+        _c: typeof CypherCmdParser,
+      ): string | undefined {
+        return Trees.getNodeText(node, s);
+      },
+      getChildren(node: ParserRuleContext): ParseTree[] {
+        return Trees.getChildren(node);
+      },
+    },
+  },
 };
-export const antlrUtils = antlrDefaultExport as unknown as AntlrDefaultExport;
 
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
@@ -140,12 +144,31 @@ export function findCaret(
   return result;
 }
 
+/**
+ * Helper to access the internal tokens array from a CommonTokenStream.
+ * In antlr4ng, the tokens property is protected, but we need direct access
+ * for performance and compatibility with existing patterns.
+ */
+export function getStreamTokens(tokenStream: CommonTokenStream): Token[] {
+  return (tokenStream as unknown as { tokens: Token[] }).tokens;
+}
+
+/**
+ * Helper to set the internal tokens array on a CommonTokenStream.
+ */
+export function setStreamTokens(
+  tokenStream: CommonTokenStream,
+  tokens: Token[],
+): void {
+  (tokenStream as unknown as { tokens: Token[] }).tokens = tokens;
+}
+
 export function splitIntoStatements(
   tokenStream: CommonTokenStream,
-  lexer: CypherLexer,
+  lexer: CypherCmdLexer,
 ): CommonTokenStream[] {
   tokenStream.fill();
-  const tokens = tokenStream.tokens;
+  const tokens = getStreamTokens(tokenStream);
 
   let i = 0;
   const result: CommonTokenStream[] = [];
@@ -153,18 +176,18 @@ export function splitIntoStatements(
   let offset = 0;
 
   while (i < tokens.length) {
-    const current = tokens[i].clone();
+    const current = (tokens[i] as CommonToken).clone();
     current.tokenIndex -= offset;
 
     chunk.push(current);
 
     if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
+      current.type === CypherCmdLexer.SEMICOLON ||
+      current.type === CypherCmdLexer.EOF
     ) {
       // This does not relex since we are not calling fill on the token stream
       const tokenStream = new CommonTokenStream(lexer);
-      tokenStream.tokens = chunk;
+      setStreamTokens(tokenStream, chunk);
       result.push(tokenStream);
       offset = i + 1;
       chunk = [];
@@ -184,7 +207,7 @@ export function findPreviousNonSpace(
   while (i > 0) {
     const token = tokens[--i];
 
-    if (token.type !== CypherParser.SPACE) {
+    if (token.type !== CypherCmdParser.SPACE) {
       return token;
     }
   }
@@ -210,20 +233,20 @@ export function resolveCypherVersion(
 }
 
 export const rulesDefiningVariables = [
-  CypherParser.RULE_returnItem,
-  CypherParser.RULE_unwindClause,
-  CypherParser.RULE_subqueryInTransactionsReportParameters,
-  CypherParser.RULE_procedureResultItem,
-  CypherParser.RULE_foreachClause,
-  CypherParser.RULE_loadCSVClause,
-  CypherParser.RULE_reduceExpression,
-  CypherParser.RULE_listItemsPredicate,
-  CypherParser.RULE_listComprehension,
+  CypherCmdParser.RULE_returnItem,
+  CypherCmdParser.RULE_unwindClause,
+  CypherCmdParser.RULE_subqueryInTransactionsReportParameters,
+  CypherCmdParser.RULE_procedureResultItem,
+  CypherCmdParser.RULE_foreachClause,
+  CypherCmdParser.RULE_loadCSVClause,
+  CypherCmdParser.RULE_reduceExpression,
+  CypherCmdParser.RULE_listItemsPredicate,
+  CypherCmdParser.RULE_listComprehension,
 ];
 
 export const rulesDefiningOrUsingVariables = [
   ...rulesDefiningVariables,
-  CypherParser.RULE_pattern,
-  CypherParser.RULE_nodePattern,
-  CypherParser.RULE_relationshipPattern,
+  CypherCmdParser.RULE_pattern,
+  CypherCmdParser.RULE_nodePattern,
+  CypherCmdParser.RULE_relationshipPattern,
 ];

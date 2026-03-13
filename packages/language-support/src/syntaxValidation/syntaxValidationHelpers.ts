@@ -1,13 +1,14 @@
 import {
-  CommonToken,
-  ErrorListener as ANTLRErrorListener,
+  ANTLRErrorListener,
   ParserRuleContext,
-  Recognizer,
+  RecognitionException,
   Token,
-} from 'antlr4';
+} from 'antlr4ng';
+import type { ATNSimulator } from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
+import {
+  CypherCmdParser as CypherParser,
   ConsoleCommandContext,
   PreparserOptionContext,
 } from '../generated-parser/CypherCmdParser';
@@ -15,7 +16,7 @@ import { findParent, isCommentOpener } from '../helpers';
 import { completionCoreErrormessage } from './completionCoreErrors';
 import { SyntaxDiagnostic } from './syntaxValidation';
 
-export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
+export class SyntaxErrorsListener implements ANTLRErrorListener {
   errors: SyntaxDiagnostic[];
   unfinishedToken: boolean;
   tokens: Token[];
@@ -28,20 +29,22 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
     this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
-  public syntaxError<T extends Token>(
-    recognizer: Recognizer<T>,
-    offendingSymbol: T,
+  public syntaxError<S extends Token, T extends ATNSimulator>(
+    recognizer: import('antlr4ng').Recognizer<T>,
+    offendingSymbol: S | null,
     line: number,
     charPositionInLine: number,
+    _msg: string,
+    _e: RecognitionException | null,
   ): void {
     // If we've found an unfinished comment, string or escaped identifier, we
     // throw an error from the start of those until the end of the file, so we
     // need to assume any other errors we find are false positives.
-    if (!this.unfinishedToken) {
+    if (!this.unfinishedToken && offendingSymbol) {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
-      const parser = recognizer as CypherParser;
-      const ctx: ParserRuleContext = parser._ctx;
+      const parser = recognizer as unknown as CypherParser;
+      const ctx: ParserRuleContext = parser.context;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);

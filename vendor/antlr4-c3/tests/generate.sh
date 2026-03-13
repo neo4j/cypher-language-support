@@ -1,6 +1,6 @@
 GRAMMAR_DIR=${PWD}
 
-antlr4 -Dlanguage=TypeScript \
-  -no-listener -no-visitor \
-  ${GRAMMAR_DIR}/*.g4 \
-  -o ${GRAMMAR_DIR}/generated -Xexact-output-dir
+antlr-ng -Dlanguage=TypeScript \
+  -l false -v false \
+  -o ${GRAMMAR_DIR}/generated --exact-output-dir \
+  -- ${GRAMMAR_DIR}/*.g4

@@ -3,8 +3,9 @@ import {
   CompletionItemTag,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser, {
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
+import {
+  CypherCmdParser as CypherParser,
   CallClauseContext,
   Expression2Context,
   NodePatternContext,
@@ -568,13 +569,13 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_procedureResultItem) {
         const callContext = findParent(
-          parsingResult.stopNode.parentCtx,
+          parsingResult.stopNode.parent,
           (x) => x instanceof CallClauseContext,
         );
         if (callContext instanceof CallClauseContext) {
           const procedureNameCtx = callContext.procedureName();
           const existingYieldItems = new Set(
-            callContext.procedureResultItem_list().map((a) => a.getText()),
+            callContext.procedureResultItem().map((a) => a.getText()),
           );
           const name = getMethodName(procedureNameCtx);
           return procedureReturnCompletions(
@@ -637,7 +638,7 @@ export function completionCoreCompletion(
           grandParentRule == CypherParser.RULE_postFix &&
           greatGrandParentRule === CypherParser.RULE_expression2
         ) {
-          const expr2 = parsingResult.stopNode?.parentCtx?.parentCtx?.parentCtx;
+          const expr2 = parsingResult.stopNode?.parent?.parent?.parent;
           if (expr2 instanceof Expression2Context) {
             const variable = expr2.expression1().variable();
             const variablePosition = variable?.start?.start;
@@ -819,15 +820,15 @@ function getSnippetCompletions(
   ) {
     const parent = findParent(
       parsingResult.stopNode,
-      (x) => x.parentCtx instanceof PatternElementContext,
-    )?.parentCtx;
+      (x) => x.parent instanceof PatternElementContext,
+    )?.parent;
 
     const lastNode: RelationshipPatternContext | NodePatternContext =
       parent?.children.findLast(
         (x) =>
           (x instanceof RelationshipPatternContext ||
             x instanceof NodePatternContext) &&
-          x.exception === null,
+          !parsingResult.errorTracker.hasError(x),
       ) as RelationshipPatternContext | NodePatternContext;
     const finalNonEofToken = tokens.at(-2);
 
