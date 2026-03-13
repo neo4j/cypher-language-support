@@ -8,6 +8,7 @@ import {
   CypherParser,
   parse,
   ParserRuleContext,
+  type StatementOrCommandContext,
 } from '@neo4j-cypher/language-support';
 
 export function getDebugTree(cypher: string): SimpleTree {
@@ -26,7 +27,9 @@ export function getDebugTree(cypher: string): SimpleTree {
     };
   }
 
-  const children = statements.map((statement) => walk(statement));
+  const children = statements.map((statement: StatementOrCommandContext) =>
+    walk(statement),
+  );
 
   return {
     name: 'topNode',

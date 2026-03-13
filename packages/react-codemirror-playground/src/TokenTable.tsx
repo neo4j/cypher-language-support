@@ -1,4 +1,7 @@
-import { applySyntaxColouring } from '@neo4j-cypher/language-support';
+import {
+  applySyntaxColouring,
+  type ParsedCypherToken,
+} from '@neo4j-cypher/language-support';
 import React from 'react';
 
 export function TokenTable({ document }: { document: string }) {
@@ -13,7 +16,7 @@ export function TokenTable({ document }: { document: string }) {
           {heading}
         </span>
       ))}
-      {tokens.map(({ token, tokenType, position }) => (
+      {tokens.map(({ token, tokenType, position }: ParsedCypherToken) => (
         <React.Fragment key={`${position.line}:${position.startCharacter}`}>
           <div>{token}</div>
           <div>{tokenType}</div>

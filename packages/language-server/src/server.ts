@@ -83,10 +83,14 @@ class SymbolFetcher {
 
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
+        // Re-check if a new job was queued during the await above
+        // (queueSymbolJob may have been called concurrently)
+        const newJobQueued = this.nextJob as
+          | { query: string; uri: string; schema: DbSchema }
+          | undefined;
         if (
-          //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
-          !(this.nextJob && this.nextJob.uri != docUri)
+          !(newJobQueued && newJobQueued.uri != docUri)
         ) {
           parserWrapper.setSymbolsInfo(
             {
