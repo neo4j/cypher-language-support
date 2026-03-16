@@ -13,7 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
+import { formatQuery, parserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -26,6 +26,8 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
+import workerpool from 'workerpool';
+import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
@@ -276,6 +278,81 @@ type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
 
+const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
+
+class SymbolFetcher {
+  private processing = false;
+  private nextJob: {
+    query: string;
+    uri: string;
+    schema: DbSchema;
+  };
+  private symbolTablePool = workerpool.pool(WorkerURL, {
+    minWorkers: 1,
+    workerOpts: { type: 'module' },
+    workerTerminateTimeout: 2000,
+  });
+  private linterVersion: string | undefined;
+
+  public setLintWorker(
+    newWorkerURL: string | undefined = WorkerURL,
+    linterVersion: string | undefined,
+  ) {
+    this.linterVersion = linterVersion;
+    this.symbolTablePool = workerpool.pool(newWorkerURL, {
+      minWorkers: 1,
+      workerOpts: { type: 'module' },
+      workerTerminateTimeout: 2000,
+    });
+  }
+
+  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+    this.nextJob = { query, uri, schema };
+    if (!this.processing) {
+      // console.log("Processing")
+      void this.processJobQueue();
+    }
+  }
+
+  private async processJobQueue() {
+    this.processing = true;
+    while (this.nextJob) {
+      try {
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        const docUri = this.nextJob.uri;
+        this.nextJob = undefined;
+        // const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
+
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+
+        if (
+          //if this.nextJob has new doc, our result is no longer valid
+          result.symbolTables &&
+          !(this.nextJob && this.nextJob.uri != docUri)
+        ) {
+          // console.log("not setting symbol table")
+          parserWrapper.setSymbolsInfo(
+            {
+              query,
+              symbolTables: result.symbolTables,
+            },
+          );
+        }
+      } catch {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed');
+      }
+    }
+    this.processing = false;
+  }
+}
+
+const symbolFetcher = new SymbolFetcher();
+
+
 export class CypherEditor extends Component<
   CypherEditorProps,
   CypherEditorState
@@ -402,6 +479,9 @@ export class CypherEditor extends Component<
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
+            if (upt.docChanged) {
+              symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
+            }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),
             );

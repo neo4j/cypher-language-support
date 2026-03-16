@@ -15,3 +15,5 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/interaction-handlers'
   - '@neo4j-nvl/layout-workers'
   - '@neo4j-nvl/react'
+  - '@neo4j-cypher/lint-worker'
+  - '@neo4j-cypher/language-support'
