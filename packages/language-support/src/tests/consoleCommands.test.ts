@@ -1,6 +1,9 @@
 import { autocomplete } from '../autocompletion/autocompletion';
 import { _internalFeatureFlags } from '../featureFlags';
-import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
+import {
+  ParsedCommandNoPosition,
+  defaultParserWrapper,
+} from '../parserWrapper';
 import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
 import { testData } from './testData';
 
@@ -8,7 +11,7 @@ function expectParsedCommands(
   query: string,
   toEqual: ParsedCommandNoPosition[],
 ) {
-  const result = parserWrapper.parse(query);
+  const result = defaultParserWrapper.parse(query);
   expect(
     result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
   ).toEqual([]);
@@ -27,7 +30,7 @@ function expectParsedCommands(
 }
 
 function expectErrorMessage(query: string, msg: string) {
-  const result = parserWrapper.parse(query);
+  const result = defaultParserWrapper.parse(query);
   expect(
     result.statementsParsing
       .flatMap((statement) => statement.syntaxErrors)
@@ -58,7 +61,7 @@ describe('sanity checks', () => {
   });
 
   test('properly highlights simple commands', () => {
-    expect(applySyntaxColouring(':clear')).toEqual([
+    expect(applySyntaxColouring(':clear', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: {
@@ -80,7 +83,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':history')).toEqual([
+    expect(applySyntaxColouring(':history', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: {
@@ -102,7 +105,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':connect')).toEqual([
+    expect(applySyntaxColouring(':connect', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: {
@@ -124,7 +127,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':disconnect')).toEqual([
+    expect(applySyntaxColouring(':disconnect', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: {
@@ -146,7 +149,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':sysinfo')).toEqual([
+    expect(applySyntaxColouring(':sysinfo', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: {
@@ -168,7 +171,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':style')).toEqual([
+    expect(applySyntaxColouring(':style', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -183,7 +186,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':style reset')).toEqual([
+    expect(applySyntaxColouring(':style reset', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -204,7 +207,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':play')).toEqual([
+    expect(applySyntaxColouring(':play', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -219,7 +222,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':help')).toEqual([
+    expect(applySyntaxColouring(':help', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -236,7 +239,7 @@ describe('sanity checks', () => {
   });
 
   test('completes basic console cmds on :', () => {
-    expect(autocomplete(':', {})).toEqual([
+    expect(autocomplete(':', {}, defaultParserWrapper)).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
       { kind: 23, label: 'help' },
@@ -312,7 +315,11 @@ describe(':use', () => {
 
   test('completes database & alias names', () => {
     expect(
-      autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] }),
+      autocomplete(
+        ':use ',
+        { databaseNames: ['foo'], aliasNames: ['bar'] },
+        defaultParserWrapper,
+      ),
     ).toEqual([
       { kind: 12, label: 'foo' },
       { kind: 12, label: 'bar' },
@@ -325,7 +332,7 @@ describe(':use', () => {
   });
 
   test('highlights properly', () => {
-    expect(applySyntaxColouring(':use')).toEqual([
+    expect(applySyntaxColouring(':use', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -339,7 +346,7 @@ describe(':use', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':use foo')).toEqual([
+    expect(applySyntaxColouring(':use foo', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -387,11 +394,11 @@ describe(':play', () => {
   });
 
   test('gives no completion on `:play `', () => {
-    expect(autocomplete(':play ', dbSchema)).toEqual([]);
+    expect(autocomplete(':play ', dbSchema, defaultParserWrapper)).toEqual([]);
   });
 
   test('gives no completion on `:play f`', () => {
-    expect(autocomplete(':play f', dbSchema)).toEqual([]);
+    expect(autocomplete(':play f', dbSchema, defaultParserWrapper)).toEqual([]);
   });
 
   test('gives errors on incorrect usage of :play', () => {
@@ -401,7 +408,7 @@ describe(':play', () => {
   });
 
   test('highlights properly', () => {
-    expect(applySyntaxColouring(':play')).toEqual([
+    expect(applySyntaxColouring(':play', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -415,7 +422,7 @@ describe(':play', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':play intro')).toEqual([
+    expect(applySyntaxColouring(':play intro', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -494,26 +501,34 @@ describe('parameters', () => {
   });
 
   test('autocompletes expressions', () => {
-    const arrowCompletions = autocomplete(':param foo => ', {
-      functions: {
-        'CYPHER 5': {
-          'duration.inSeconds': {
-            ...testData.emptyFunction,
-            name: 'duration.inSeconds',
+    const arrowCompletions = autocomplete(
+      ':param foo => ',
+      {
+        functions: {
+          'CYPHER 5': {
+            'duration.inSeconds': {
+              ...testData.emptyFunction,
+              name: 'duration.inSeconds',
+            },
           },
         },
       },
-    });
-    const mapCompletions = autocomplete(':param {a:  ', {
-      functions: {
-        'CYPHER 5': {
-          'duration.inSeconds': {
-            ...testData.emptyFunction,
-            name: 'duration.inSeconds',
+      defaultParserWrapper,
+    );
+    const mapCompletions = autocomplete(
+      ':param {a:  ',
+      {
+        functions: {
+          'CYPHER 5': {
+            'duration.inSeconds': {
+              ...testData.emptyFunction,
+              name: 'duration.inSeconds',
+            },
           },
         },
       },
-    });
+      defaultParserWrapper,
+    );
 
     const expected = [
       { detail: '(namespace)', kind: 3, label: 'duration' },
@@ -565,7 +580,7 @@ describe('parameters', () => {
   });
 
   test('highlights :params properly', () => {
-    expect(applySyntaxColouring(':param')).toEqual([
+    expect(applySyntaxColouring(':param', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -579,7 +594,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':params')).toEqual([
+    expect(applySyntaxColouring(':params', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -593,7 +608,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':params list')).toEqual([
+    expect(applySyntaxColouring(':params list', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -613,7 +628,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':param clear')).toEqual([
+    expect(applySyntaxColouring(':param clear', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -633,7 +648,9 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':param x => 324')).toEqual([
+    expect(
+      applySyntaxColouring(':param x => 324', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -671,7 +688,9 @@ describe('parameters', () => {
         tokenType: 'numberLiteral',
       },
     ]);
-    expect(applySyntaxColouring(':params {d: true}')).toEqual([
+    expect(
+      applySyntaxColouring(':params {d: true}', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -742,16 +761,20 @@ describe('server', () => {
   });
 
   test('autocompletes operation', () => {
-    const mapCompletions = autocomplete(':server conn', {
-      functions: {
-        'CYPHER 5': {
-          'duration.inSeconds': {
-            ...testData.emptyFunction,
-            name: 'duration.inSeconds',
+    const mapCompletions = autocomplete(
+      ':server conn',
+      {
+        functions: {
+          'CYPHER 5': {
+            'duration.inSeconds': {
+              ...testData.emptyFunction,
+              name: 'duration.inSeconds',
+            },
           },
         },
       },
-    });
+      defaultParserWrapper,
+    );
 
     const expected = [
       { kind: 23, label: 'connect' },
@@ -769,7 +792,7 @@ describe('server', () => {
   });
 
   test('highlights :server properly', () => {
-    expect(applySyntaxColouring(':server')).toEqual([
+    expect(applySyntaxColouring(':server', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -784,7 +807,9 @@ describe('server', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':server connect')).toEqual([
+    expect(
+      applySyntaxColouring(':server connect', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -805,7 +830,9 @@ describe('server', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':server disconnect')).toEqual([
+    expect(
+      applySyntaxColouring(':server disconnect', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -924,7 +951,7 @@ describe('access-mode', () => {
   });
 
   test('highlights :access-mode properly', () => {
-    expect(applySyntaxColouring(':access-mode')).toEqual([
+    expect(applySyntaxColouring(':access-mode', defaultParserWrapper)).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -939,7 +966,9 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':access-mode read')).toEqual([
+    expect(
+      applySyntaxColouring(':access-mode read', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -960,7 +989,9 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':access-mode write')).toEqual([
+    expect(
+      applySyntaxColouring(':access-mode write', defaultParserWrapper),
+    ).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -983,16 +1014,20 @@ describe('access-mode', () => {
   });
 
   test('autocompletes read operation', () => {
-    const mapCompletions = autocomplete(':access-mode r', {
-      functions: {
-        'CYPHER 5': {
-          'duration.inSeconds': {
-            ...testData.emptyFunction,
-            name: 'duration.inSeconds',
+    const mapCompletions = autocomplete(
+      ':access-mode r',
+      {
+        functions: {
+          'CYPHER 5': {
+            'duration.inSeconds': {
+              ...testData.emptyFunction,
+              name: 'duration.inSeconds',
+            },
           },
         },
       },
-    });
+      defaultParserWrapper,
+    );
 
     const expected = [{ kind: 23, label: 'read' }];
 
@@ -1002,16 +1037,20 @@ describe('access-mode', () => {
   });
 
   test('autocompletes write operation', () => {
-    const mapCompletions = autocomplete(':access-mode w', {
-      functions: {
-        'CYPHER 5': {
-          'duration.inSeconds': {
-            ...testData.emptyFunction,
-            name: 'duration.inSeconds',
+    const mapCompletions = autocomplete(
+      ':access-mode w',
+      {
+        functions: {
+          'CYPHER 5': {
+            'duration.inSeconds': {
+              ...testData.emptyFunction,
+              name: 'duration.inSeconds',
+            },
           },
         },
       },
-    });
+      defaultParserWrapper,
+    );
 
     const expected = [{ kind: 23, label: 'write' }];
 

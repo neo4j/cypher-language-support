@@ -8,6 +8,7 @@ import {
   TextDocument,
   TextDocuments,
 } from 'vscode-languageserver';
+import { parser } from './server';
 
 export function applySyntaxColouringForDocument(
   documents: TextDocuments<TextDocument>,
@@ -16,7 +17,7 @@ export function applySyntaxColouringForDocument(
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = applySyntaxColouring(textDocument.getText());
+    const tokens = applySyntaxColouring(textDocument.getText(), parser);
 
     const builder = new SemanticTokensBuilder();
 

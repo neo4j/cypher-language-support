@@ -7,6 +7,7 @@ import {
   removeInnerAnys,
   removeDuplicates,
 } from '../../labelTreeRewriting';
+import { defaultParserWrapper } from '../../parserWrapper';
 
 const exampleQueries = {
   singleLabel: 'MATCH (n:Move)-[:]',
@@ -33,7 +34,12 @@ const exampleQueries = {
 
 describe('rewrite tree', () => {
   test('CNF calculation should work on single label', () => {
-    const parsing = lintCypherQuery(exampleQueries.singleLabel, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.singleLabel,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(isLabelLeaf(firstSymbolLabels)).toEqual(false);
     const cnfTree = convertToCNF(firstSymbolLabels);
@@ -51,6 +57,7 @@ describe('rewrite tree', () => {
     const parsing = lintCypherQuery(
       exampleQueries.twoDifferentLabels,
       {},
+      defaultParserWrapper,
       false,
     );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -73,6 +80,7 @@ describe('rewrite tree', () => {
     const parsing = lintCypherQuery(
       exampleQueries.twoDifferentLabels,
       {},
+      defaultParserWrapper,
       false,
     );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -91,7 +99,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should deduplicate nodes', () => {
-    const parsing = lintCypherQuery(exampleQueries.repeatedLabel, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.repeatedLabel,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -100,7 +113,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should not break on NOTs', () => {
-    const parsing = lintCypherQuery(exampleQueries.simpleNot, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.simpleNot,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -109,7 +127,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should not break on NOT(OR(X,Y))', () => {
-    const parsing = lintCypherQuery(exampleQueries.deeperNot, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.deeperNot,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -121,7 +144,12 @@ describe('rewrite tree', () => {
     //AND(OR(Person, AND(Monkey, Litterate))) =
     //AND(AND(OR(Person, Monkey), OR(Person, Litterate))) =
     //AND(OR(Person,Monkey), OR(Person,Litterate))
-    const parsing = lintCypherQuery(exampleQueries.innerAnd, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.innerAnd,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -160,7 +188,12 @@ describe('rewrite tree', () => {
     //AND(OR(AND(Person, Friend), AND(Monkey, Litterate))) =
     //AND(AND(OR(Person, AND(Monkey, Litterate)), OR(Friend, AND(Monkey, Litterate)))) =
     //AND(OR(Person,Monkey), OR(Person,Litterate))
-    const parsing = lintCypherQuery(exampleQueries.doubleInnerAnds, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.doubleInnerAnds,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -218,7 +251,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation should work with even greater depth', () => {
-    const parsing = lintCypherQuery(exampleQueries.deepCNFCase, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.deepCNFCase,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -263,7 +301,12 @@ describe('rewrite tree', () => {
     //AND(Monkey, OR(Monkey, College_educated), OR(Monkey, Litterate), OR(Litterate, College_Educated))) =
     //AND(Monkey, OR(Litterate, College_Educated))
 
-    const parsing = lintCypherQuery(exampleQueries.messyNonCNF, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.messyNonCNF,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -294,6 +337,7 @@ describe('rewrite tree', () => {
     const parsing = lintCypherQuery(
       exampleQueries.duplicationRiskOfOr,
       {},
+      defaultParserWrapper,
       false,
     );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -323,7 +367,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF calculation simplifies OR with a NOT inside', () => {
-    const parsing = lintCypherQuery(exampleQueries.orWithNot, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.orWithNot,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -348,6 +397,7 @@ describe('rewrite tree', () => {
     const parsing = lintCypherQuery(
       exampleQueries.orWithMultipleNots,
       {},
+      defaultParserWrapper,
       false,
     );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
@@ -365,7 +415,12 @@ describe('rewrite tree', () => {
     // MATCH (n:(!A|B|C)&(B&D)|E) <- AND(OR(E, AND(!A, B, D)) =
     // AND(AND(OR(E, !A), OR(E,B), OR(E,D))) =
     // AND(!A, OR(E,B), OR(E,D))
-    const parsing = lintCypherQuery(exampleQueries.mixOfAndsOrsNots, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.mixOfAndsOrsNots,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -409,7 +464,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF handles nested ors', () => {
-    const parsing = lintCypherQuery(exampleQueries.orWithinOr, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.orWithinOr,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -450,7 +510,12 @@ describe('rewrite tree', () => {
   test('CNF calculation should work with three inner ANDs (regression test for slice bug)', () => {
     // OR(AND(A,B), AND(C,D), AND(E,F)) should distribute to:
     // AND(OR(A,C,E), OR(A,C,F), OR(A,D,E), OR(A,D,F), OR(B,C,E), OR(B,C,F), OR(B,D,E), OR(B,D,F))
-    const parsing = lintCypherQuery(exampleQueries.threeInnerAnds, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.threeInnerAnds,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const cnfTree = convertToCNF(firstSymbolLabels);
     expect(cnfTree).toEqual({
@@ -573,7 +638,12 @@ describe('rewrite tree', () => {
   });
 
   test('Pushing not to labels should work', () => {
-    const parsing = lintCypherQuery(exampleQueries.deeperNot, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.deeperNot,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     expect(labelsWithAdjustedNot).toEqual({
@@ -600,7 +670,12 @@ describe('rewrite tree', () => {
   });
 
   test('Removing duplicates should work with nots', () => {
-    const parsing = lintCypherQuery(exampleQueries.deeperNot, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.deeperNot,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
@@ -628,7 +703,12 @@ describe('rewrite tree', () => {
   });
 
   test('Removing duplicates should work for nested conditions', () => {
-    const parsing = lintCypherQuery(exampleQueries.repeatedLabel, {}, false);
+    const parsing = lintCypherQuery(
+      exampleQueries.repeatedLabel,
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(firstSymbolLabels).toEqual({
       children: [
@@ -780,7 +860,12 @@ describe('rewrite tree', () => {
   });
 
   test('AND with only ANY label should become ANY', () => {
-    const parsing = lintCypherQuery('MATCH (n:%)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:%)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'any',
@@ -789,7 +874,12 @@ describe('rewrite tree', () => {
   });
 
   test('Longer AND with only ANY labels should become ANY', () => {
-    const parsing = lintCypherQuery('MATCH (n:% & % & %)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:% & % & %)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'any',
@@ -798,7 +888,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should remove ANYs from AND with other labels', () => {
-    const parsing = lintCypherQuery('MATCH (n:A & % & % & %)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A & % & % & %)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
@@ -807,7 +902,12 @@ describe('rewrite tree', () => {
   });
 
   test('OR with ANY should become ANY', () => {
-    const parsing = lintCypherQuery('MATCH (n:A | %)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A | %)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'any',
@@ -816,7 +916,12 @@ describe('rewrite tree', () => {
   });
 
   test('OR with ANYs should become single ANY', () => {
-    const parsing = lintCypherQuery('MATCH (n:% | A | % | %)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:% | A | % | %)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'any',
@@ -825,7 +930,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle ANY inside nested ORs', () => {
-    const parsing = lintCypherQuery('MATCH (n:A | (% | y))', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A | (% | y))',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'any',
@@ -834,7 +944,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle ANY inside nested ANDs', () => {
-    const parsing = lintCypherQuery('MATCH (n:A & (% & B))', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A & (% & B))',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
@@ -843,7 +958,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should remove inner ANYs inside deeper AND', () => {
-    const parsing = lintCypherQuery('MATCH (n:A | % & B))', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A | % & B))',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
@@ -860,7 +980,12 @@ describe('rewrite tree', () => {
   });
 
   test('CNF on ANYs inside deeper AND should remove single-label AND', () => {
-    const parsing = lintCypherQuery('MATCH (n:A | % & B))', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:A | % & B))',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(convertToCNF(removeInnerAnys(firstSymbolLabels))).toEqual({
       condition: 'and',
@@ -871,7 +996,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle single NOT(ANY)', () => {
-    const parsing = lintCypherQuery('MATCH (n:!%)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:!%)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'not',
@@ -880,7 +1010,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle AND(NOT(ANY), ...)', () => {
-    const parsing = lintCypherQuery('MATCH (n:!% & A & B)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:!% & A & B)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'not',
@@ -889,7 +1024,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle OR(NOT(ANY), ...)', () => {
-    const parsing = lintCypherQuery('MATCH (n:!% | A | B)', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n:!% | A | B)',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',
@@ -900,7 +1040,12 @@ describe('rewrite tree', () => {
   });
 
   test('Should handle NOT(ANY) in joint AND/OR)', () => {
-    const parsing = lintCypherQuery('MATCH (n: A & (!% | B | C))', {}, false);
+    const parsing = lintCypherQuery(
+      'MATCH (n: A & (!% | B | C))',
+      {},
+      defaultParserWrapper,
+      false,
+    );
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(removeInnerAnys(firstSymbolLabels)).toEqual({
       condition: 'and',

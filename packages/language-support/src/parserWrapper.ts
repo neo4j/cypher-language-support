@@ -34,7 +34,10 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import {
+  lintCypherQuery,
+  SyntaxDiagnostic,
+} from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import {
   CypherVersion,
@@ -43,6 +46,10 @@ import {
   SymbolsInfo,
   SymbolTable,
 } from './types';
+import { DbSchema } from './dbSchema';
+import { signatureHelp } from './signatureHelp';
+import { autocomplete } from './autocompletion/autocompletion';
+import { applySyntaxColouring } from './syntaxColouring/syntaxColouring';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -807,7 +814,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
     );
 }
 
-class ParserWrapper {
+export class ParserWrapper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 
@@ -840,6 +847,30 @@ class ParserWrapper {
       void sendMessage(symbolsInfo.symbolTables);
     this.symbolsInfo = symbolsInfo;
   }
-}
 
-export const parserWrapper = new ParserWrapper();
+  lint(query: string, dbSchema: DbSchema, consoleCommandsEnabled?: boolean) {
+    return lintCypherQuery(query, dbSchema, this, consoleCommandsEnabled);
+  }
+
+  sigHelp(
+    query: string,
+    dbSchema: DbSchema,
+    caretPosition: number = query.length,
+  ) {
+    return signatureHelp(query, dbSchema, this, caretPosition);
+  }
+
+  autoComplete(
+    query: string,
+    dbSchema: DbSchema,
+    caretPosition: number = query.length,
+    manual = false,
+  ) {
+    return autocomplete(query, dbSchema, this, caretPosition, manual);
+  }
+
+  syntaxColour(wholeFileText: string) {
+    return applySyntaxColouring(wholeFileText, this);
+  }
+}
+export const defaultParserWrapper = new ParserWrapper();

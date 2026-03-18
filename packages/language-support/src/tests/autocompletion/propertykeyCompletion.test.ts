@@ -3,7 +3,7 @@ import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
-import { parserWrapper } from '../../parserWrapper';
+import { defaultParserWrapper } from '../../parserWrapper';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {
@@ -250,9 +250,10 @@ RETURN movie {
     const query = 'WITH [1,2,3] AS x RETURN x.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: lintCypherQuery(query, dbSchema, defaultParserWrapper)
+        .symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultParserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -264,7 +265,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultParserWrapper.clearCache();
   });
 
   test('completes properties for node variables when symbol table is available', () => {
@@ -272,9 +273,10 @@ RETURN movie {
     const query = 'MATCH (n) RETURN n.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: lintCypherQuery(query, dbSchema, defaultParserWrapper)
+        .symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultParserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -286,7 +288,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultParserWrapper.clearCache();
   });
 
   test('completes properties for relationship variables when symbol table is available', () => {
@@ -294,9 +296,10 @@ RETURN movie {
     const query = 'MATCH (n)-[r]-(m) RETURN r.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: lintCypherQuery(query, dbSchema, defaultParserWrapper)
+        .symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultParserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -308,6 +311,6 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultParserWrapper.clearCache();
   });
 });

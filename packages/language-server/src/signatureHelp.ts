@@ -7,6 +7,7 @@ import {
 
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { parser } from './server';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -29,6 +30,7 @@ export function doSignatureHelp(
     return signatureHelp(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
+      parser,
       offset,
     );
   };

@@ -1,10 +1,11 @@
+import { defaultParserWrapper } from '../../parserWrapper';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with double quotes', () => {
     const query = `RETURN "something`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -33,7 +34,7 @@ describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with single quotes', () => {
     const query = `RETURN 'something`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -64,7 +65,7 @@ describe('Unfinished tokens', () => {
         foo
         bar`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -117,7 +118,7 @@ describe('Unfinished tokens', () => {
         foo
         MATCH (n)`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 12,
@@ -160,7 +161,7 @@ describe('Unfinished tokens', () => {
     
     bar: "hello"}`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -239,7 +240,7 @@ describe('Unfinished tokens', () => {
     
     bar */`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 12,
@@ -290,7 +291,7 @@ describe('Unfinished tokens', () => {
   test('Correctly colours single line comments', () => {
     const query = `// single line comment`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 22,

@@ -12,6 +12,7 @@ import {
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { parser } from './server';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
@@ -33,6 +34,7 @@ export function doAutoCompletion(
       const completions: CompletionItem[] = autocomplete(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
+        parser,
         offset,
         completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
       );

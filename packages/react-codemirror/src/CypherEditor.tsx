@@ -13,7 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, parserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
+import { formatQuery, ParserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -29,8 +29,14 @@ import { richClipboardCopier } from './richClipboardCopier';
 import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 
+
+//export const parser = new ParserWrapper();
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
+  /**
+   * The parser wrapper used to parse queries and keep track of symbol information
+   */
+  parser: ParserWrapper;
   /**
    * The prompt to show on single line editors
    */
@@ -278,9 +284,13 @@ type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
 
-const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
+const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url).pathname;
 
 class SymbolFetcher {
+  constructor(parser: ParserWrapper) {
+    this.parser = parser
+  }
+  private parser: ParserWrapper;
   private processing = false;
   private nextJob: {
     query: string;
@@ -309,7 +319,6 @@ class SymbolFetcher {
   public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
     this.nextJob = { query, uri, schema };
     if (!this.processing) {
-      // console.log("Processing")
       void this.processJobQueue();
     }
   }
@@ -324,24 +333,23 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
-        // const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
+        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
-        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+        const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
           //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
-          // console.log("not setting symbol table")
-          parserWrapper.setSymbolsInfo(
+          this.parser.setSymbolsInfo(
             {
               query,
               symbolTables: result.symbolTables,
             },
           );
         }
-      } catch {
+      } catch (err) {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed');
       }
@@ -350,7 +358,6 @@ class SymbolFetcher {
   }
 }
 
-const symbolFetcher = new SymbolFetcher();
 
 
 export class CypherEditor extends Component<
@@ -396,6 +403,12 @@ export class CypherEditor extends Component<
   }
 
   /**
+   * The symbol fetcher object used to fetch the current symbol table on document changes
+   */
+  symbolFetcher: SymbolFetcher
+
+
+  /**
    * Externally set the editor value and focus the editor.
    */
   setValueAndFocus(value = '') {
@@ -419,6 +432,7 @@ export class CypherEditor extends Component<
   }
 
   static defaultProps: CypherEditorProps = {
+    parser: new ParserWrapper(),
     lint: true,
     schema: {},
     overrideThemeBackgroundColor: false,
@@ -456,6 +470,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
+      parser: new ParserWrapper(),
       schema,
       lint,
       showSignatureTooltipBelow,
@@ -471,6 +486,8 @@ export class CypherEditor extends Component<
       },
     };
 
+    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.parser);
+
     const themeExtension = getThemeExtension(
       theme,
       overrideThemeBackgroundColor,
@@ -480,7 +497,7 @@ export class CypherEditor extends Component<
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             if (upt.docChanged) {
-              symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
+              this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
             }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),

@@ -1,10 +1,11 @@
+import { defaultParserWrapper } from '../../parserWrapper';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('CALL syntax colouring', () => {
   test('Correctly colours standalone procedure CALL', () => {
     const query = 'CALL dbms.info() YIELD *';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -106,7 +107,7 @@ describe('CALL syntax colouring', () => {
     const query =
       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -337,7 +338,7 @@ describe('CASE syntax colouring', () => {
       END AS result
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -629,7 +630,7 @@ describe('LOAD CSV colouring', () => {
       } IN TRANSACTIONS OF 500 ROWS
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1095,7 +1096,7 @@ describe('USE colouring', () => {
       WHERE n.name = 'Alice'
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 3,
@@ -1194,7 +1195,7 @@ describe('FOREACH syntax colouring', () => {
     FOREACH ( r IN relationships(path) | SET r.marked = true )
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 7,
@@ -1395,7 +1396,7 @@ describe('UNWIND colouring', () => {
       RETURN iy AS number
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1542,7 +1543,7 @@ describe('Subqueries colouring', () => {
       }
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1693,7 +1694,7 @@ describe('Subqueries colouring', () => {
       RETURN person.name AS name
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1979,7 +1980,7 @@ describe('Subqueries colouring', () => {
       RETURN p.name AS name
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2125,7 +2126,12 @@ describe('Subqueries colouring', () => {
 describe('CREATE colouring', () => {
   test('correctly highlight broken create constraint', () => {
     // is missing :Label, should not crash
-    expect(applySyntaxColouring('CREATE CONSTRAINT FOR (node)')).toEqual([
+    expect(
+      applySyntaxColouring(
+        'CREATE CONSTRAINT FOR (node)',
+        defaultParserWrapper,
+      ),
+    ).toEqual([
       {
         bracketInfo: undefined,
         length: 6,

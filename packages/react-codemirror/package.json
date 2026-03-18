@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/react-codemirror",
-  "version": "1.0.3-symbolfetcher",
+  "version": "1.0.5-symbolfetcher",
   "keywords": [
     "codemirror",
     "codemirror 6",
@@ -49,8 +49,8 @@
     "@codemirror/view": "^6.38.1",
     "@lezer/common": "^1.0.2",
     "@lezer/highlight": "^1.1.3",
-    "@neo4j-cypher/language-support": "2.0.0-next.30",
-    "@neo4j-cypher/lint-worker": "1.10.3-symbolfetcher",
+    "@neo4j-cypher/language-support": "workspace:*",
+    "@neo4j-cypher/lint-worker": "workspace:*",
     "@types/prismjs": "^1.26.3",
     "@types/workerpool": "^6.4.7",
     "fastest-levenshtein": "^1.0.16",

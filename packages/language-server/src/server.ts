@@ -13,9 +13,10 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   DbSchema,
-  parserWrapper,
   SymbolTable,
   syntaxColouringLegend,
+  ParserWrapper,
+  _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -35,6 +36,8 @@ import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
+
+export const parser = new ParserWrapper();
 
 class SymbolFetcher {
   private processing = false;
@@ -86,7 +89,7 @@ class SymbolFetcher {
           result.symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
-          parserWrapper.setSymbolsInfo(
+          parser.setSymbolsInfo(
             {
               query,
               symbolTables: result.symbolTables,

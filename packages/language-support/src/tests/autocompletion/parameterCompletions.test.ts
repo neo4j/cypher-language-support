@@ -2,6 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 import { testCompletions } from './completionAssertionHelpers';
+import { defaultParserWrapper } from '../../parserWrapper';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
@@ -449,6 +450,7 @@ describe('Completes parameters outside of databases, roles, user names', () => {
     const actualCompletionList = autocomplete(
       query,
       dbSchema,
+      defaultParserWrapper,
       query.length,
     ).filter((v) => v.label.startsWith('$stringParam'));
 

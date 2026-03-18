@@ -1,4 +1,5 @@
-import type {
+import {
+  ParserWrapper,
   SymbolTable,
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
@@ -8,7 +9,7 @@ import {
   _internalFeatureFlags,
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
-
+const parserWrapper = new ParserWrapper();
 function lintCypherQuery(
   query: string,
   dbSchema,
@@ -19,7 +20,7 @@ function lintCypherQuery(
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
   //cast to appease git lint check
-  return _lintCypherQuery(query, dbSchema as DbSchema);
+  return parserWrapper.lint(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });

@@ -1,12 +1,13 @@
 import { DbSchema } from '../dbSchema';
 import { findCaret } from '../helpers';
-import { parserWrapper } from '../parserWrapper';
+import { ParserWrapper } from '../parserWrapper';
 import { CompletionItem } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
 
 export function autocomplete(
   query: string,
   dbSchema: DbSchema,
+  parserWrapper: ParserWrapper,
   caretPosition: number = query.length,
   manual = false,
 ): CompletionItem[] {

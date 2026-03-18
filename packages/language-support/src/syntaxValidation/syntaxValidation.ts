@@ -16,7 +16,7 @@ import {
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
-  parserWrapper,
+  ParserWrapper,
 } from '../parserWrapper';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
@@ -332,6 +332,7 @@ function fixSymbolTableOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
+  parserWrapper: ParserWrapper,
   consoleCommandsEnabled?: boolean,
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {

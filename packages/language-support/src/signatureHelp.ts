@@ -14,8 +14,8 @@ import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
-import { parserWrapper } from './parserWrapper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
+import { ParserWrapper } from './parserWrapper';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -175,6 +175,7 @@ class SignatureHelper extends CypherCmdParserListener {
 export function signatureHelp(
   query: string,
   dbSchema: DbSchema,
+  parserWrapper: ParserWrapper,
   caretPosition: number = query.length,
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;

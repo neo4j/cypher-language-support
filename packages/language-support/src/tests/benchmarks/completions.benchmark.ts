@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
 import { autocomplete } from '../../autocompletion/autocompletion';
-import { parse, parserWrapper } from '../../parserWrapper';
+import { parse, defaultParserWrapper } from '../../parserWrapper';
 import { testData } from '../testData';
 import { autocompletionQueries, tictactoe } from './benchmarkQueries';
 
@@ -9,10 +9,15 @@ describe('completions', () => {
   bench('multistatement - autocompletion', function () {
     const query = tictactoe + ';\n' + tictactoe;
     const subQuery = tictactoe;
-    parserWrapper.clearCache();
+    defaultParserWrapper.clearCache();
     // This mimics getting the cursor back in the query and retriggering auto-completion
-    autocomplete(query, testData.mockSchema);
-    autocomplete(query, testData.mockSchema, subQuery.length);
+    autocomplete(query, testData.mockSchema, defaultParserWrapper);
+    autocomplete(
+      query,
+      testData.mockSchema,
+      defaultParserWrapper,
+      subQuery.length,
+    );
   });
 
   // Handle autocomplete queries
@@ -22,8 +27,8 @@ describe('completions', () => {
     });
 
     bench(`autocomplete - ${name}`, function () {
-      parserWrapper.clearCache();
-      autocomplete(query, testData.mockSchema);
+      defaultParserWrapper.clearCache();
+      autocomplete(query, testData.mockSchema, defaultParserWrapper);
     });
   });
 });

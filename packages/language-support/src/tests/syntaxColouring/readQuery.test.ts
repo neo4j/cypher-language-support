@@ -1,10 +1,11 @@
+import { defaultParserWrapper } from '../../parserWrapper';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('MATCH syntax colouring', () => {
   test('Correctly colours labels conjunction', () => {
     const query = 'MATCH (n:A&B)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -105,7 +106,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours labels disjuntion', () => {
     const query = 'MATCH (n:A|B)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -206,7 +207,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours negated label', () => {
     const query = 'MATCH (n:!A)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -296,7 +297,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours parenthesized label expressions', () => {
     const query = 'MATCH (n:(!A&!B)|C)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -469,7 +470,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours parenthesized relationship type expressions', () => {
     const query = 'MATCH (n:Label)-[r:(!R1&!R2)|R3]';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -713,7 +714,7 @@ describe('MATCH syntax colouring', () => {
 
   test('Correctly colours OPTIONAL', () => {
     const query = 'OPTIONAL MATCH (n)';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 8,
@@ -786,7 +787,7 @@ describe('RETURN syntax colouring', () => {
       SKIP 10
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1108,7 +1109,7 @@ describe('RETURN syntax colouring', () => {
   test('Correctly colours ORDER BY', () => {
     const query = `RETURN n AS node, r AS rel ORDER BY n.name DESC`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1269,7 +1270,7 @@ describe('RETURN syntax colouring', () => {
   test('Correctly colours LIMIT', () => {
     const query = `RETURN n LIMIT 10`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1322,7 +1323,7 @@ describe('WHERE syntax colouring', () => {
   test('Correctly colours MATCH with WHERE and RETURN', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1491,7 +1492,7 @@ describe('WHERE syntax colouring', () => {
     WHERE n.property <> $value
     RETURN n, m`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1787,7 +1788,7 @@ describe('WHERE syntax colouring', () => {
     MATCH (a:Person {name: 'Andy'})
     RETURN [(a)-[r:KNOWS WHERE r.since < minYear]->(b:Person) | r.since] AS years`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(applySyntaxColouring(query, defaultParserWrapper)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,

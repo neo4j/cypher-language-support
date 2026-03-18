@@ -1,6 +1,6 @@
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
-import { parserWrapper } from '../../parserWrapper';
+import { defaultParserWrapper } from '../../parserWrapper';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { CompletionItem } from '../../types';
 
@@ -15,7 +15,12 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = autocomplete(query, dbSchema, offset);
+  const actualCompletionList = autocomplete(
+    query,
+    dbSchema,
+    defaultParserWrapper,
+    offset,
+  );
   expect(actualCompletionList).toEqual(expected);
 }
 
@@ -39,8 +44,8 @@ export function testCompletions({
   computeSymbolsInfo?: boolean;
 }) {
   if (computeSymbolsInfo) {
-    const result = lintCypherQuery(query, dbSchema);
-    parserWrapper.setSymbolsInfo({
+    const result = lintCypherQuery(query, dbSchema, defaultParserWrapper);
+    defaultParserWrapper.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
     });
@@ -49,6 +54,7 @@ export function testCompletions({
   const actualCompletionList = autocomplete(
     query,
     dbSchema,
+    defaultParserWrapper,
     offset,
     manualTrigger,
   );
@@ -96,12 +102,18 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = lintCypherQuery(query, dbSchema);
-  parserWrapper.setSymbolsInfo({
+  const result = lintCypherQuery(query, dbSchema, defaultParserWrapper);
+  defaultParserWrapper.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = autocomplete(query, dbSchema, query.length, false);
+  const completions = autocomplete(
+    query,
+    dbSchema,
+    defaultParserWrapper,
+    query.length,
+    false,
+  );
   return completions;
 }

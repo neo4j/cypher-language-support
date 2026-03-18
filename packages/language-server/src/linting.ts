@@ -1,7 +1,6 @@
 import {
   _internalFeatureFlags,
   clampUnsafePositions,
-  parserWrapper,
   SymbolTable,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
@@ -15,6 +14,7 @@ import {
   LinterTask,
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
+import { parser } from './server';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
@@ -74,7 +74,7 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
-      parserWrapper.setSymbolsInfo(
+      parser.setSymbolsInfo(
         {
           query,
           symbolTables: result.symbolTables,

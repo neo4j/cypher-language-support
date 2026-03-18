@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
 import { autocomplete } from '../../autocompletion/autocompletion';
-import { parse, parserWrapper } from '../../parserWrapper';
+import { parse, defaultParserWrapper } from '../../parserWrapper';
 import { signatureHelp } from '../../signatureHelp';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
@@ -26,42 +26,56 @@ function benchmarkQuery(queryName: string, queryContent: string) {
     });
 
     bench('parse with parserWrapper', () => {
-      parserWrapper.clearCache();
-      parserWrapper.parse(queryContent);
+      defaultParserWrapper.clearCache();
+      defaultParserWrapper.parse(queryContent);
     });
 
     bench('syntax highlighting', () => {
-      parserWrapper.clearCache();
-      applySyntaxColouring(queryContent);
+      defaultParserWrapper.clearCache();
+      applySyntaxColouring(queryContent, defaultParserWrapper);
     });
 
     bench(
       'syntax validation',
       () => {
-        parserWrapper.clearCache();
-        lintCypherQuery(queryContent, testData.mockSchema);
+        defaultParserWrapper.clearCache();
+        lintCypherQuery(
+          queryContent,
+          testData.mockSchema,
+          defaultParserWrapper,
+        );
       },
       // benchmarking the semantic analysis can be very slow, so we lower the minimum number of iterations & warmup iterations
       { iterations: 1, warmupIterations: 2 },
     );
 
     bench('autocomplete next statement - no schema', () => {
-      parserWrapper.clearCache();
-      autocomplete(queryContent, {});
+      defaultParserWrapper.clearCache();
+      autocomplete(queryContent, {}, defaultParserWrapper);
     });
 
     bench('autocomplete next statement - schema', () => {
-      parserWrapper.clearCache();
-      autocomplete(queryContent, testData.mockSchema);
+      defaultParserWrapper.clearCache();
+      autocomplete(queryContent, testData.mockSchema, defaultParserWrapper);
     });
 
     bench('signature help', () => {
       const subQuery = queryContent + periodicIterate;
       const fullQuery =
         queryContent + periodicIterate + periodicIterateFirstArg;
-      parserWrapper.clearCache();
-      signatureHelp(queryContent, testData.mockSchema, fullQuery.length);
-      signatureHelp(queryContent, testData.mockSchema, subQuery.length);
+      defaultParserWrapper.clearCache();
+      signatureHelp(
+        queryContent,
+        testData.mockSchema,
+        defaultParserWrapper,
+        fullQuery.length,
+      );
+      signatureHelp(
+        queryContent,
+        testData.mockSchema,
+        defaultParserWrapper,
+        subQuery.length,
+      );
     });
   });
 }
