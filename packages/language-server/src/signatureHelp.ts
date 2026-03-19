@@ -1,4 +1,4 @@
-import { signatureHelp } from '@neo4j-cypher/language-support';
+import { parserWrapper } from '@neo4j-cypher/language-support';
 import {
   SignatureHelp,
   SignatureHelpParams,
@@ -26,7 +26,7 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return signatureHelp(
+    return parserWrapper.sigHelp(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
       offset,

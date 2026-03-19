@@ -48,6 +48,7 @@ import {
 } from './types';
 import { DbSchema } from './dbSchema';
 import { applySyntaxColouring } from './syntaxColouring/syntaxColouring';
+import { signatureHelp } from './signatureHelp';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -852,6 +853,14 @@ export class ParserWrapper {
 
   syntaxColour(wholeFileText: string) {
     return applySyntaxColouring(wholeFileText, this);
+  }
+
+  sigHelp(
+    query: string,
+    dbSchema: DbSchema,
+    caretPosition: number = query.length,
+  ) {
+    return signatureHelp(query, dbSchema, this, caretPosition);
   }
 }
 

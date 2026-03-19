@@ -2,7 +2,6 @@
 import { bench, describe } from 'vitest';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { parse, parserWrapper } from '../../parserWrapper';
-import { signatureHelp } from '../../signatureHelp';
 import { testData } from '../testData';
 import {
   createMovieDb,
@@ -58,8 +57,12 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       const fullQuery =
         queryContent + periodicIterate + periodicIterateFirstArg;
       parserWrapper.clearCache();
-      signatureHelp(queryContent, testData.mockSchema, fullQuery.length);
-      signatureHelp(queryContent, testData.mockSchema, subQuery.length);
+      parserWrapper.sigHelp(
+        queryContent,
+        testData.mockSchema,
+        fullQuery.length,
+      );
+      parserWrapper.sigHelp(queryContent, testData.mockSchema, subQuery.length);
     });
   });
 }
