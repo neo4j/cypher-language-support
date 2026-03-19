@@ -38,7 +38,7 @@ import {
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
-import { parserWrapper } from '../parserWrapper';
+import { ParserWrapper } from '../parserWrapper';
 import {
   BracketType,
   computeTokenKey,
@@ -363,6 +363,7 @@ function colourLexerTokens(tokens: Token[]) {
 
 export function applySyntaxColouring(
   wholeFileText: string,
+  parserWrapper: ParserWrapper,
 ): ParsedCypherToken[] {
   const parsingResult = parserWrapper.parse(wholeFileText);
   const statements = parsingResult.statementsParsing;

@@ -13,7 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
+import { formatQuery, ParserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -379,6 +379,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
+      parserWrapper: new ParserWrapper(),
       schema,
       lint,
       showSignatureTooltipBelow,

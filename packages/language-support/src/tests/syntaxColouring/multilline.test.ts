@@ -1,11 +1,11 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { parserWrapper } from '../../parserWrapper';
 
 describe('Multiline syntax colouring', () => {
   test('Correctly colours multi-statements', () => {
     const query = `MATCH (n:Person) RETURN n
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(parserWrapper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -323,7 +323,7 @@ describe('Multiline syntax colouring', () => {
 
       CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(parserWrapper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -630,7 +630,7 @@ describe('Multiline syntax colouring', () => {
 Other\`)
 	`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(parserWrapper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -723,7 +723,7 @@ Other\`)
       when()
 	`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(parserWrapper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,

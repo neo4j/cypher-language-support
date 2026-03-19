@@ -47,6 +47,7 @@ import {
   SymbolTable,
 } from './types';
 import { DbSchema } from './dbSchema';
+import { applySyntaxColouring } from './syntaxColouring/syntaxColouring';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -847,6 +848,10 @@ export class ParserWrapper {
 
   lint(query: string, dbSchema: DbSchema, consoleCommandsEnabled?: boolean) {
     return lintCypherQuery(query, dbSchema, this, consoleCommandsEnabled);
+  }
+
+  syntaxColour(wholeFileText: string) {
+    return applySyntaxColouring(wholeFileText, this);
   }
 }
 

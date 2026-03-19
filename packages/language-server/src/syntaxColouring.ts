@@ -1,6 +1,6 @@
 import {
-  applySyntaxColouring,
   mapCypherToSemanticTokenIndex,
+  parserWrapper,
 } from '@neo4j-cypher/language-support';
 import {
   SemanticTokensBuilder,
@@ -16,7 +16,7 @@ export function applySyntaxColouringForDocument(
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = applySyntaxColouring(textDocument.getText());
+    const tokens = parserWrapper.syntaxColour(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
 

@@ -3,7 +3,6 @@ import { bench, describe } from 'vitest';
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { signatureHelp } from '../../signatureHelp';
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 import { testData } from '../testData';
 import {
   createMovieDb,
@@ -31,7 +30,7 @@ function benchmarkQuery(queryName: string, queryContent: string) {
 
     bench('syntax highlighting', () => {
       parserWrapper.clearCache();
-      applySyntaxColouring(queryContent);
+      parserWrapper.syntaxColour(queryContent);
     });
 
     bench(
