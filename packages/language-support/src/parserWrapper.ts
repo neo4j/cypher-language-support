@@ -49,6 +49,7 @@ import {
 import { DbSchema } from './dbSchema';
 import { applySyntaxColouring } from './syntaxColouring/syntaxColouring';
 import { signatureHelp } from './signatureHelp';
+import { autocomplete } from './autocompletion/autocompletion';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -861,6 +862,15 @@ export class ParserWrapper {
     caretPosition: number = query.length,
   ) {
     return signatureHelp(query, dbSchema, this, caretPosition);
+  }
+
+  complete(
+    query: string,
+    dbSchema: DbSchema,
+    caretPosition: number = query.length,
+    manual = false,
+  ) {
+    return autocomplete(query, dbSchema, this, caretPosition, manual);
   }
 }
 

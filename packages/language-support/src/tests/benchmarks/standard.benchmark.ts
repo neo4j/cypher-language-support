@@ -1,6 +1,5 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { autocomplete } from '../../autocompletion/autocompletion';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { testData } from '../testData';
 import {
@@ -44,12 +43,12 @@ function benchmarkQuery(queryName: string, queryContent: string) {
 
     bench('autocomplete next statement - no schema', () => {
       parserWrapper.clearCache();
-      autocomplete(queryContent, {});
+      parserWrapper.complete(queryContent, {});
     });
 
     bench('autocomplete next statement - schema', () => {
       parserWrapper.clearCache();
-      autocomplete(queryContent, testData.mockSchema);
+      parserWrapper.complete(queryContent, testData.mockSchema);
     });
 
     bench('signature help', () => {

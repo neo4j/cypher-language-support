@@ -1,4 +1,3 @@
-import { autocomplete } from '../autocompletion/autocompletion';
 import { _internalFeatureFlags } from '../featureFlags';
 import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
 import { testData } from './testData';
@@ -235,7 +234,7 @@ describe('sanity checks', () => {
   });
 
   test('completes basic console cmds on :', () => {
-    expect(autocomplete(':', {})).toEqual([
+    expect(parserWrapper.complete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
       { kind: 23, label: 'help' },
@@ -311,7 +310,10 @@ describe(':use', () => {
 
   test('completes database & alias names', () => {
     expect(
-      autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] }),
+      parserWrapper.complete(':use ', {
+        databaseNames: ['foo'],
+        aliasNames: ['bar'],
+      }),
     ).toEqual([
       { kind: 12, label: 'foo' },
       { kind: 12, label: 'bar' },
@@ -386,11 +388,11 @@ describe(':play', () => {
   });
 
   test('gives no completion on `:play `', () => {
-    expect(autocomplete(':play ', dbSchema)).toEqual([]);
+    expect(parserWrapper.complete(':play ', dbSchema)).toEqual([]);
   });
 
   test('gives no completion on `:play f`', () => {
-    expect(autocomplete(':play f', dbSchema)).toEqual([]);
+    expect(parserWrapper.complete(':play f', dbSchema)).toEqual([]);
   });
 
   test('gives errors on incorrect usage of :play', () => {
@@ -493,7 +495,7 @@ describe('parameters', () => {
   });
 
   test('autocompletes expressions', () => {
-    const arrowCompletions = autocomplete(':param foo => ', {
+    const arrowCompletions = parserWrapper.complete(':param foo => ', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -503,7 +505,7 @@ describe('parameters', () => {
         },
       },
     });
-    const mapCompletions = autocomplete(':param {a:  ', {
+    const mapCompletions = parserWrapper.complete(':param {a:  ', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -741,7 +743,7 @@ describe('server', () => {
   });
 
   test('autocompletes operation', () => {
-    const mapCompletions = autocomplete(':server conn', {
+    const mapCompletions = parserWrapper.complete(':server conn', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -982,7 +984,7 @@ describe('access-mode', () => {
   });
 
   test('autocompletes read operation', () => {
-    const mapCompletions = autocomplete(':access-mode r', {
+    const mapCompletions = parserWrapper.complete(':access-mode r', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -1001,7 +1003,7 @@ describe('access-mode', () => {
   });
 
   test('autocompletes write operation', () => {
-    const mapCompletions = autocomplete(':access-mode w', {
+    const mapCompletions = parserWrapper.complete(':access-mode w', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {

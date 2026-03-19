@@ -1,4 +1,3 @@
-import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 import { parserWrapper } from '../../parserWrapper';
 import { CompletionItem } from '../../types';
@@ -14,7 +13,7 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = autocomplete(query, dbSchema, offset);
+  const actualCompletionList = parserWrapper.complete(query, dbSchema, offset);
   expect(actualCompletionList).toEqual(expected);
 }
 
@@ -45,7 +44,7 @@ export function testCompletions({
     });
   }
 
-  const actualCompletionList = autocomplete(
+  const actualCompletionList = parserWrapper.complete(
     query,
     dbSchema,
     offset,
@@ -101,6 +100,11 @@ export function getSymbolCompletions({
     symbolTables: result.symbolTables,
   });
 
-  const completions = autocomplete(query, dbSchema, query.length, false);
+  const completions = parserWrapper.complete(
+    query,
+    dbSchema,
+    query.length,
+    false,
+  );
   return completions;
 }

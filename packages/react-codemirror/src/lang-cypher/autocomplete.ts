@@ -4,7 +4,7 @@ import {
   snippet,
 } from '@codemirror/autocomplete';
 import {
-  autocomplete,
+  parserWrapper,
   shouldAutoCompleteYield,
 } from '@neo4j-cypher/language-support';
 import {
@@ -81,7 +81,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(
+    const options = parserWrapper.complete(
       documentText,
       config.schema ?? {},
       offset,

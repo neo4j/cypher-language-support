@@ -7,7 +7,7 @@ import {
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
 import {
-  autocomplete,
+  parserWrapper,
   shouldAutoCompleteYield,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
@@ -30,7 +30,7 @@ export function doAutoCompletion(
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
-      const completions: CompletionItem[] = autocomplete(
+      const completions: CompletionItem[] = parserWrapper.complete(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
         offset,
