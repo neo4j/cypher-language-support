@@ -1,10 +1,10 @@
-import { parserWrapper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../parserWrapper';
 
 describe('CREATE syntax colouring', () => {
   test('Correctly colours CREATE', () => {
     const query = 'CREATE (n:Label)-[:TYPE {name: $value}]->(m:Label)';
 
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -313,7 +313,7 @@ describe('SET syntax colouring', () => {
       k: null
     }`;
 
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 3,
@@ -1657,7 +1657,7 @@ describe('REMOVE syntax colouring', () => {
     WHERE n.id = 123
     REMOVE n.alias  
   `;
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1852,7 +1852,7 @@ describe('MERGE syntax colouring', () => {
     MERGE (a)-[r:LOVES]->(b)
   `;
 
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2333,7 +2333,7 @@ describe('DELETE syntax colouring', () => {
     const query = `MATCH ()-[r]->()
     DELETE r
   `;
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2503,7 +2503,7 @@ describe('DELETE syntax colouring', () => {
     WHERE n.id = 123
     DETACH DELETE n
   `;
-    expect(parserWrapper.syntaxColour(query)).toEqual([
+    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,

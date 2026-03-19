@@ -1,6 +1,5 @@
 import { EditorState, StateField } from '@codemirror/state';
 import { showTooltip, Tooltip } from '@codemirror/view';
-import { parserWrapper } from '@neo4j-cypher/language-support';
 import {
   MarkupContent,
   SignatureInformation,
@@ -107,7 +106,7 @@ function getSignatureHelpTooltip(
     const triggerCharacter = getTriggerCharacter(query, caretPosition);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const signatureHelpInfo = parserWrapper.sigHelp(
+      const signatureHelpInfo = config.cypherHelper.sigHelp(
         query,
         schema,
         caretPosition,

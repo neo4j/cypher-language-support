@@ -13,7 +13,7 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, ParserWrapper, type DbSchema } from '@neo4j-cypher/language-support';
+import { formatQuery, CypherHelper, type DbSchema } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -280,10 +280,10 @@ const ExternalEdit = Annotation.define<boolean>();
 const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url).pathname;
 
 class SymbolFetcher {
-  constructor(parser: ParserWrapper) {
-    this.parser = parser
+  constructor(cypherHelper: CypherHelper) {
+    this.cypherHelper = cypherHelper
   }
-  private parser: ParserWrapper;
+  private cypherHelper: CypherHelper;
   private processing = false;
   private nextJob: {
     query: string;
@@ -322,7 +322,7 @@ class SymbolFetcher {
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
           console.log("Setting symbol table with fetcher")
-          this.parser.setSymbolsInfo(
+          this.cypherHelper.setSymbolsInfo(
             {
               query,
               symbolTables: result.symbolTables,
@@ -445,7 +445,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
-      parserWrapper: new ParserWrapper(),
+      cypherHelper: new CypherHelper(),
       schema,
       lint,
       showSignatureTooltipBelow,
@@ -461,7 +461,7 @@ export class CypherEditor extends Component<
       },
     };
 
-    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.parserWrapper);
+    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.cypherHelper);
 
     const themeExtension = getThemeExtension(
       theme,

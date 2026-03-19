@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
-import { parserWrapper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../parserWrapper';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {
@@ -249,9 +249,9 @@ RETURN movie {
     const query = 'WITH [1,2,3] AS x RETURN x.';
     const symbolsInfo = {
       query,
-      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
+      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -263,7 +263,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultCypherHelper.clearCache();
   });
 
   test('completes properties for node variables when symbol table is available', () => {
@@ -271,9 +271,9 @@ RETURN movie {
     const query = 'MATCH (n) RETURN n.';
     const symbolsInfo = {
       query,
-      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
+      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -285,7 +285,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultCypherHelper.clearCache();
   });
 
   test('completes properties for relationship variables when symbol table is available', () => {
@@ -293,9 +293,9 @@ RETURN movie {
     const query = 'MATCH (n)-[r]-(m) RETURN r.';
     const symbolsInfo = {
       query,
-      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
+      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
     };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
+    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -307,6 +307,6 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    parserWrapper.clearCache();
+    defaultCypherHelper.clearCache();
   });
 });

@@ -1,5 +1,5 @@
 import { DbSchema } from '../../dbSchema';
-import { parserWrapper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../parserWrapper';
 import { CompletionItem } from '../../types';
 
 export function testCompletionsExactly({
@@ -13,7 +13,11 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = parserWrapper.complete(query, dbSchema, offset);
+  const actualCompletionList = defaultCypherHelper.complete(
+    query,
+    dbSchema,
+    offset,
+  );
   expect(actualCompletionList).toEqual(expected);
 }
 
@@ -37,14 +41,14 @@ export function testCompletions({
   computeSymbolsInfo?: boolean;
 }) {
   if (computeSymbolsInfo) {
-    const result = parserWrapper.lint(query, dbSchema);
-    parserWrapper.setSymbolsInfo({
+    const result = defaultCypherHelper.lint(query, dbSchema);
+    defaultCypherHelper.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
     });
   }
 
-  const actualCompletionList = parserWrapper.complete(
+  const actualCompletionList = defaultCypherHelper.complete(
     query,
     dbSchema,
     offset,
@@ -94,13 +98,13 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = parserWrapper.lint(query, dbSchema);
-  parserWrapper.setSymbolsInfo({
+  const result = defaultCypherHelper.lint(query, dbSchema);
+  defaultCypherHelper.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = parserWrapper.complete(
+  const completions = defaultCypherHelper.complete(
     query,
     dbSchema,
     query.length,

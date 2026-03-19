@@ -1,12 +1,12 @@
 import { _internalFeatureFlags } from '../featureFlags';
-import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
+import { ParsedCommandNoPosition, defaultCypherHelper } from '../parserWrapper';
 import { testData } from './testData';
 
 function expectParsedCommands(
   query: string,
   toEqual: ParsedCommandNoPosition[],
 ) {
-  const result = parserWrapper.parse(query);
+  const result = defaultCypherHelper.parse(query);
   expect(
     result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
   ).toEqual([]);
@@ -25,7 +25,7 @@ function expectParsedCommands(
 }
 
 function expectErrorMessage(query: string, msg: string) {
-  const result = parserWrapper.parse(query);
+  const result = defaultCypherHelper.parse(query);
   expect(
     result.statementsParsing
       .flatMap((statement) => statement.syntaxErrors)
@@ -56,7 +56,7 @@ describe('sanity checks', () => {
   });
 
   test('properly highlights simple commands', () => {
-    expect(parserWrapper.syntaxColour(':clear')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':clear')).toEqual([
       {
         length: 1,
         position: {
@@ -78,7 +78,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':history')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':history')).toEqual([
       {
         length: 1,
         position: {
@@ -100,7 +100,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':connect')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':connect')).toEqual([
       {
         length: 1,
         position: {
@@ -122,7 +122,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':disconnect')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':disconnect')).toEqual([
       {
         length: 1,
         position: {
@@ -144,7 +144,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':sysinfo')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':sysinfo')).toEqual([
       {
         length: 1,
         position: {
@@ -166,7 +166,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':style')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':style')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -181,7 +181,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':style reset')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':style reset')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -202,7 +202,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':play')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':play')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -217,7 +217,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':help')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':help')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -234,7 +234,7 @@ describe('sanity checks', () => {
   });
 
   test('completes basic console cmds on :', () => {
-    expect(parserWrapper.complete(':', {})).toEqual([
+    expect(defaultCypherHelper.complete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
       { kind: 23, label: 'help' },
@@ -310,7 +310,7 @@ describe(':use', () => {
 
   test('completes database & alias names', () => {
     expect(
-      parserWrapper.complete(':use ', {
+      defaultCypherHelper.complete(':use ', {
         databaseNames: ['foo'],
         aliasNames: ['bar'],
       }),
@@ -326,7 +326,7 @@ describe(':use', () => {
   });
 
   test('highlights properly', () => {
-    expect(parserWrapper.syntaxColour(':use')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':use')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -340,7 +340,7 @@ describe(':use', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':use foo')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':use foo')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -388,11 +388,11 @@ describe(':play', () => {
   });
 
   test('gives no completion on `:play `', () => {
-    expect(parserWrapper.complete(':play ', dbSchema)).toEqual([]);
+    expect(defaultCypherHelper.complete(':play ', dbSchema)).toEqual([]);
   });
 
   test('gives no completion on `:play f`', () => {
-    expect(parserWrapper.complete(':play f', dbSchema)).toEqual([]);
+    expect(defaultCypherHelper.complete(':play f', dbSchema)).toEqual([]);
   });
 
   test('gives errors on incorrect usage of :play', () => {
@@ -402,7 +402,7 @@ describe(':play', () => {
   });
 
   test('highlights properly', () => {
-    expect(parserWrapper.syntaxColour(':play')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':play')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -416,7 +416,7 @@ describe(':play', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':play intro')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':play intro')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -495,7 +495,7 @@ describe('parameters', () => {
   });
 
   test('autocompletes expressions', () => {
-    const arrowCompletions = parserWrapper.complete(':param foo => ', {
+    const arrowCompletions = defaultCypherHelper.complete(':param foo => ', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -505,7 +505,7 @@ describe('parameters', () => {
         },
       },
     });
-    const mapCompletions = parserWrapper.complete(':param {a:  ', {
+    const mapCompletions = defaultCypherHelper.complete(':param {a:  ', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -566,7 +566,7 @@ describe('parameters', () => {
   });
 
   test('highlights :params properly', () => {
-    expect(parserWrapper.syntaxColour(':param')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':param')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -580,7 +580,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':params')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':params')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -594,7 +594,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':params list')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':params list')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -614,7 +614,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':param clear')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':param clear')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -634,7 +634,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':param x => 324')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':param x => 324')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -672,7 +672,7 @@ describe('parameters', () => {
         tokenType: 'numberLiteral',
       },
     ]);
-    expect(parserWrapper.syntaxColour(':params {d: true}')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':params {d: true}')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -743,7 +743,7 @@ describe('server', () => {
   });
 
   test('autocompletes operation', () => {
-    const mapCompletions = parserWrapper.complete(':server conn', {
+    const mapCompletions = defaultCypherHelper.complete(':server conn', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -770,7 +770,7 @@ describe('server', () => {
   });
 
   test('highlights :server properly', () => {
-    expect(parserWrapper.syntaxColour(':server')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':server')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -785,7 +785,7 @@ describe('server', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':server connect')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':server connect')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -806,7 +806,7 @@ describe('server', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':server disconnect')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':server disconnect')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -925,7 +925,7 @@ describe('access-mode', () => {
   });
 
   test('highlights :access-mode properly', () => {
-    expect(parserWrapper.syntaxColour(':access-mode')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':access-mode')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -940,7 +940,7 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':access-mode read')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':access-mode read')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -961,7 +961,7 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(parserWrapper.syntaxColour(':access-mode write')).toEqual([
+    expect(defaultCypherHelper.syntaxColour(':access-mode write')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -984,7 +984,7 @@ describe('access-mode', () => {
   });
 
   test('autocompletes read operation', () => {
-    const mapCompletions = parserWrapper.complete(':access-mode r', {
+    const mapCompletions = defaultCypherHelper.complete(':access-mode r', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {
@@ -1003,7 +1003,7 @@ describe('access-mode', () => {
   });
 
   test('autocompletes write operation', () => {
-    const mapCompletions = parserWrapper.complete(':access-mode w', {
+    const mapCompletions = defaultCypherHelper.complete(':access-mode w', {
       functions: {
         'CYPHER 5': {
           'duration.inSeconds': {

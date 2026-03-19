@@ -814,7 +814,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
     );
 }
 
-export class ParserWrapper {
+export class CypherHelper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 
@@ -874,4 +874,4 @@ export class ParserWrapper {
   }
 }
 
-export const parserWrapper = new ParserWrapper();
+export const defaultCypherHelper = new CypherHelper();

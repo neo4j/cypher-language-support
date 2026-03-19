@@ -1,13 +1,11 @@
-import {
-  mapCypherToSemanticTokenIndex,
-  parserWrapper,
-} from '@neo4j-cypher/language-support';
+import { mapCypherToSemanticTokenIndex } from '@neo4j-cypher/language-support';
 import {
   SemanticTokensBuilder,
   SemanticTokensParams,
   TextDocument,
   TextDocuments,
 } from 'vscode-languageserver';
+import { cypherHelper } from './server';
 
 export function applySyntaxColouringForDocument(
   documents: TextDocuments<TextDocument>,
@@ -16,7 +14,7 @@ export function applySyntaxColouringForDocument(
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = parserWrapper.syntaxColour(textDocument.getText());
+    const tokens = cypherHelper.syntaxColour(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
 

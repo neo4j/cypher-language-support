@@ -1,8 +1,8 @@
-import { parserWrapper } from '@neo4j-cypher/language-support';
+import { defaultCypherHelper } from '@neo4j-cypher/language-support';
 import React from 'react';
 
 export function TokenTable({ document }: { document: string }) {
-  const tokens = parserWrapper.syntaxColour(document);
+  const tokens = defaultCypherHelper.syntaxColour(document);
 
   const tableHeadings = ['text', 'type', 'startIndex'];
 

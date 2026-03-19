@@ -10,8 +10,8 @@ export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
   parse,
   parseParameters,
-  parserWrapper,
-  ParserWrapper,
+  defaultCypherHelper,
+  CypherHelper,
   parseStatementsStrs,
 } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';

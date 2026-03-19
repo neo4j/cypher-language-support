@@ -6,12 +6,10 @@ import {
 } from 'vscode-languageserver/node';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
-import {
-  parserWrapper,
-  shouldAutoCompleteYield,
-} from '@neo4j-cypher/language-support';
+import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { cypherHelper } from './server';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
@@ -30,7 +28,7 @@ export function doAutoCompletion(
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
-      const completions: CompletionItem[] = parserWrapper.complete(
+      const completions: CompletionItem[] = cypherHelper.complete(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
         offset,

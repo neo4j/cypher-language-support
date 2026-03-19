@@ -2,7 +2,7 @@ import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { emptyResult, toSignatureInformation } from '../signatureHelp';
 import { testData } from './testData';
-import { parserWrapper } from '../parserWrapper';
+import { defaultCypherHelper } from '../parserWrapper';
 
 export function testSignatureHelp(
   fileText: string,
@@ -10,7 +10,11 @@ export function testSignatureHelp(
   expected: SignatureHelp,
   offset: number = fileText.length,
 ) {
-  const actualSignatureHelp = parserWrapper.sigHelp(fileText, dbSchema, offset);
+  const actualSignatureHelp = defaultCypherHelper.sigHelp(
+    fileText,
+    dbSchema,
+    offset,
+  );
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);
