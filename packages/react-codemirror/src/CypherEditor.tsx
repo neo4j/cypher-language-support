@@ -307,6 +307,7 @@ class SymbolFetcher {
     this.processing = true;
     while (this.nextJob) {
       try {
+        console.log("Processing symbol job")
         const proxyWorker =
           (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
@@ -320,6 +321,7 @@ class SymbolFetcher {
           result.symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
+          console.log("Setting symbol table with fetcher")
           this.parser.setSymbolsInfo(
             {
               query,
@@ -470,6 +472,7 @@ export class CypherEditor extends Component<
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             if (upt.docChanged) {
+              console.log("Queueing symbol table job")
               this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
             }
             const wasUserEdit = !upt.transactions.some((tr) =>
