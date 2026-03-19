@@ -1,5 +1,5 @@
 import { DbSchema } from '../../dbSchema';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
+import { parserWrapper } from '../../parserWrapper';
 
 type SyntaxValidationTestArgs = {
   query: string;
@@ -10,12 +10,12 @@ export function getDiagnosticsForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return lintCypherQuery(query, dbSchema).diagnostics;
+  return parserWrapper.lint(query, dbSchema).diagnostics;
 }
 
 export function getSymbolTablesForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return lintCypherQuery(query, dbSchema).symbolTables;
+  return parserWrapper.lint(query, dbSchema).symbolTables;
 }

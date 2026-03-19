@@ -1,7 +1,6 @@
 import { autocomplete } from '../../autocompletion/autocompletion';
 import { DbSchema } from '../../dbSchema';
 import { parserWrapper } from '../../parserWrapper';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { CompletionItem } from '../../types';
 
 export function testCompletionsExactly({
@@ -39,7 +38,7 @@ export function testCompletions({
   computeSymbolsInfo?: boolean;
 }) {
   if (computeSymbolsInfo) {
-    const result = lintCypherQuery(query, dbSchema);
+    const result = parserWrapper.lint(query, dbSchema);
     parserWrapper.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
@@ -96,7 +95,7 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = lintCypherQuery(query, dbSchema);
+  const result = parserWrapper.lint(query, dbSchema);
   parserWrapper.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,

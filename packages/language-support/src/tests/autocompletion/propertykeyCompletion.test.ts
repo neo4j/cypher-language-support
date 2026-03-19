@@ -2,7 +2,6 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { parserWrapper } from '../../parserWrapper';
 
 describe('property key completions', () => {
@@ -250,7 +249,7 @@ RETURN movie {
     const query = 'WITH [1,2,3] AS x RETURN x.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
     };
     parserWrapper.setSymbolsInfo(symbolsInfo);
 
@@ -272,7 +271,7 @@ RETURN movie {
     const query = 'MATCH (n) RETURN n.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
     };
     parserWrapper.setSymbolsInfo(symbolsInfo);
 
@@ -294,7 +293,7 @@ RETURN movie {
     const query = 'MATCH (n)-[r]-(m) RETURN r.';
     const symbolsInfo = {
       query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
+      symbolTables: parserWrapper.lint(query, dbSchema).symbolTables,
     };
     parserWrapper.setSymbolsInfo(symbolsInfo);
 

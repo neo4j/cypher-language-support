@@ -4,7 +4,6 @@ import { autocomplete } from '../../autocompletion/autocompletion';
 import { parse, parserWrapper } from '../../parserWrapper';
 import { signatureHelp } from '../../signatureHelp';
 import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { testData } from '../testData';
 import {
   createMovieDb,
@@ -39,7 +38,7 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       'syntax validation',
       () => {
         parserWrapper.clearCache();
-        lintCypherQuery(queryContent, testData.mockSchema);
+        parserWrapper.lint(queryContent, testData.mockSchema);
       },
       // benchmarking the semantic analysis can be very slow, so we lower the minimum number of iterations & warmup iterations
       { iterations: 1, warmupIterations: 2 },

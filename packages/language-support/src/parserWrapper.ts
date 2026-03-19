@@ -34,7 +34,10 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers';
-import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
+import {
+  lintCypherQuery,
+  SyntaxDiagnostic,
+} from './syntaxValidation/syntaxValidation';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
 import {
   CypherVersion,
@@ -43,6 +46,7 @@ import {
   SymbolsInfo,
   SymbolTable,
 } from './types';
+import { DbSchema } from './dbSchema';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -807,7 +811,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
     );
 }
 
-class ParserWrapper {
+export class ParserWrapper {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 
@@ -839,6 +843,10 @@ class ParserWrapper {
     if (_internalFeatureFlags.debugSymbolTable && sendMessage)
       void sendMessage(symbolsInfo.symbolTables);
     this.symbolsInfo = symbolsInfo;
+  }
+
+  lint(query: string, dbSchema: DbSchema, consoleCommandsEnabled?: boolean) {
+    return lintCypherQuery(query, dbSchema, this, consoleCommandsEnabled);
   }
 }
 

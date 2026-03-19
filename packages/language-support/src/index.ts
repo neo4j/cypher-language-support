@@ -11,6 +11,7 @@ export {
   parse,
   parseParameters,
   parserWrapper,
+  ParserWrapper,
   parseStatementsStrs,
 } from './parserWrapper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
