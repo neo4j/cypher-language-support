@@ -26,6 +26,8 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
+import { LintWorker } from '@neo4j-cypher/lint-worker';
+import workerpool from 'workerpool';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
@@ -275,11 +277,73 @@ const formatLineNumber =
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
+const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url).pathname;
+
+class SymbolFetcher {
+  constructor(parser: ParserWrapper) {
+    this.parser = parser
+  }
+  private parser: ParserWrapper;
+  private processing = false;
+  private nextJob: {
+    query: string;
+    uri: string;
+    schema: DbSchema;
+  };
+  private symbolTablePool = workerpool.pool(WorkerURL, {
+    minWorkers: 1,
+    workerOpts: { type: 'module' },
+    workerTerminateTimeout: 2000,
+  });
+
+  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+    this.nextJob = { query, uri, schema };
+    if (!this.processing) {
+      void this.processJobQueue();
+    }
+  }
+
+  private async processJobQueue() {
+    this.processing = true;
+    while (this.nextJob) {
+      try {
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        const docUri = this.nextJob.uri;
+        this.nextJob = undefined;
+
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+
+        if (
+          result.symbolTables &&
+          !(this.nextJob && this.nextJob.uri != docUri)
+        ) {
+          this.parser.setSymbolsInfo(
+            {
+              query,
+              symbolTables: result.symbolTables,
+            },
+          );
+        }
+      } catch (err) {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed');
+      }
+    }
+    this.processing = false;
+  }
+}
 
 export class CypherEditor extends Component<
   CypherEditorProps,
   CypherEditorState
 > {
+  /**
+   * The symbol fetcher object used to fetch the current symbol table on document changes
+   */
+  symbolFetcher: SymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -395,6 +459,8 @@ export class CypherEditor extends Component<
       },
     };
 
+    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.parserWrapper);
+
     const themeExtension = getThemeExtension(
       theme,
       overrideThemeBackgroundColor,
@@ -403,6 +469,9 @@ export class CypherEditor extends Component<
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
+            if (upt.docChanged) {
+              this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
+            }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),
             );
