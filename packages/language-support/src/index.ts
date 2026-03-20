@@ -13,7 +13,7 @@ export {
   defaultCypherHelper,
   CypherHelper,
   parseStatementsStrs,
-} from './parserWrapper';
+} from './cypherHelper';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Comments syntax colouring', () => {
   test('Correctly colours one line comments', () => {

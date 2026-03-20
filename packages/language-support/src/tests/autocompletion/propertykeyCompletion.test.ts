@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {

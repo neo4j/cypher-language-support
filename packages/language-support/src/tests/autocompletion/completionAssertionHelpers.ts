@@ -1,5 +1,5 @@
 import { DbSchema } from '../../dbSchema';
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 import { CompletionItem } from '../../types';
 
 export function testCompletionsExactly({

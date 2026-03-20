@@ -1,5 +1,5 @@
 import { _internalFeatureFlags } from '../featureFlags';
-import { ParsedCommandNoPosition, defaultCypherHelper } from '../parserWrapper';
+import { ParsedCommandNoPosition, defaultCypherHelper } from '../cypherHelper';
 import { testData } from './testData';
 
 function expectParsedCommands(

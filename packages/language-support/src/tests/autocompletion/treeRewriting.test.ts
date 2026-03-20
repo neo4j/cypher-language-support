@@ -6,7 +6,7 @@ import {
   removeInnerAnys,
   removeDuplicates,
 } from '../../labelTreeRewriting';
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 const exampleQueries = {
   singleLabel: 'MATCH (n:Move)-[:]',

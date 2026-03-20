@@ -14,7 +14,7 @@ import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
-import { CypherHelper } from './parserWrapper';
+import { CypherHelper } from './cypherHelper';
 import { Neo4jFunction, Neo4jProcedure } from './types';
 
 export const emptyResult: SignatureHelp = {

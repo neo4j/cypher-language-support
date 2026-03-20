@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testCompletions } from './completionAssertionHelpers';
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {

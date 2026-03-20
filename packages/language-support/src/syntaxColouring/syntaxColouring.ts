@@ -38,7 +38,7 @@ import {
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
-import { CypherHelper } from '../parserWrapper';
+import { CypherHelper } from '../cypherHelper';
 import {
   BracketType,
   computeTokenKey,

@@ -1,6 +1,6 @@
 import { DbSchema } from '../dbSchema';
 import { findCaret } from '../helpers';
-import { CypherHelper } from '../parserWrapper';
+import { CypherHelper } from '../cypherHelper';
 import { CompletionItem } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
 

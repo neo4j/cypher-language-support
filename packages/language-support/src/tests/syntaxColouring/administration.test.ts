@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW INDEXES', () => {

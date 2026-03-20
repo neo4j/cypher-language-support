@@ -2,7 +2,7 @@ import { SignatureHelp } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema';
 import { emptyResult, toSignatureInformation } from '../signatureHelp';
 import { testData } from './testData';
-import { defaultCypherHelper } from '../parserWrapper';
+import { defaultCypherHelper } from '../cypherHelper';
 
 export function testSignatureHelp(
   fileText: string,

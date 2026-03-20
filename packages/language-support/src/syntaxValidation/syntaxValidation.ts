@@ -17,7 +17,7 @@ import {
   ParsedProcedure,
   ParsedStatement,
   CypherHelper,
-} from '../parserWrapper';
+} from '../cypherHelper';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
 

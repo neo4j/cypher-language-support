@@ -1,5 +1,5 @@
 import { CypherTokenType } from '../../lexerSymbols';
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Function syntax colouring', () => {
   test('Correctly colours function name', () => {

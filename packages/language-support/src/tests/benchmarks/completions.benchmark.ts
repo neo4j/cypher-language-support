@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { parse, defaultCypherHelper } from '../../parserWrapper';
+import { parse, defaultCypherHelper } from '../../cypherHelper';
 import { testData } from '../testData';
 import { autocompletionQueries, tictactoe } from './benchmarkQueries';
 

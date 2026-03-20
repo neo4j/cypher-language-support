@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('MATCH syntax colouring', () => {
   test('Correctly colours labels conjunction', () => {

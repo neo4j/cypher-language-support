@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Multiline syntax colouring', () => {
   test('Correctly colours multi-statements', () => {

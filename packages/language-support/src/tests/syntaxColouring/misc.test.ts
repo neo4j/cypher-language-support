@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../parserWrapper';
+import { defaultCypherHelper } from '../../cypherHelper';
 
 describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with double quotes', () => {

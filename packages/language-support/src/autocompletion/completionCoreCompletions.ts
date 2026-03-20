@@ -24,7 +24,7 @@ import {
   tokenNames,
 } from '../lexerSymbols';
 
-import { getMethodName, ParsedStatement } from '../parserWrapper';
+import { getMethodName, ParsedStatement } from '../cypherHelper';
 
 import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import {
