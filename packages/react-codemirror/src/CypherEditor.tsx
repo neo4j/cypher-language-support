@@ -287,7 +287,6 @@ class SymbolFetcher {
   private processing = false;
   private nextJob: {
     query: string;
-    uri: string;
     schema: DbSchema;
   };
   private symbolTablePool = workerpool.pool(WorkerURL, {
@@ -296,8 +295,8 @@ class SymbolFetcher {
     workerTerminateTimeout: 2000,
   });
 
-  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
-    this.nextJob = { query, uri, schema };
+  public queueSymbolJob(query: string, schema: DbSchema) {
+    this.nextJob = { query, schema };
     if (!this.processing) {
       void this.processJobQueue();
     }
@@ -311,14 +310,12 @@ class SymbolFetcher {
           (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
-        const docUri = this.nextJob.uri;
         this.nextJob = undefined;
 
         const result = await proxyWorker.lintCypherQuery(query, dbSchema);
 
         if (
-          result.symbolTables &&
-          !(this.nextJob && this.nextJob.uri != docUri)
+          result.symbolTables
         ) {
           this.cypherHelper.setSymbolsInfo(
             {
@@ -470,7 +467,7 @@ export class CypherEditor extends Component<
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             if (upt.docChanged) {
-              this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), "anyURI", schema)
+              this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), schema)
             }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),

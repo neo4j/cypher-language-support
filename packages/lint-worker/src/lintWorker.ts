@@ -23,7 +23,6 @@ function lintCypherQuery(
   }
   //cast to appease git lint check
   return cypherHelper.lint(query, dbSchema as DbSchema);
-  //_lintCypherQuery(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });
