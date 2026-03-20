@@ -1,9 +1,6 @@
 import { Facet } from '@codemirror/state';
 import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
-import {
-  ParsedCypherToken,
-  defaultCypherHelper,
-} from '@neo4j-cypher/language-support';
+import { ParsedCypherToken } from '@neo4j-cypher/language-support';
 
 import Prism from 'prismjs';
 import {
@@ -75,7 +72,7 @@ export class ParserAdapter extends Parser {
 
   private antlrParse(document: string) {
     const startTime = performance.now();
-    const tokens = defaultCypherHelper.syntaxColour(document);
+    const tokens = this.config.cypherHelper.syntaxColour(document);
     const timeTaken = performance.now() - startTime;
     if (timeTaken > 300) {
       this.config.setUseLightVersion?.(true);
