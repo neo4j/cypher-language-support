@@ -326,7 +326,7 @@ class SymbolFetcher {
         }
       } catch (err) {
         //eslint-disable-next-line
-        console.log('Symbol table calculation failed');
+        console.log('Symbol table calculation failed ' + String(err));
       }
     }
     this.processing = false;
