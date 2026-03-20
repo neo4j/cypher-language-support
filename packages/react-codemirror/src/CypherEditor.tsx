@@ -13,7 +13,11 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, CypherHelper, type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  formatQuery,
+  CypherHelper,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -277,11 +281,12 @@ const formatLineNumber =
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
-const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url).pathname;
+const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
+  .pathname;
 
 class SymbolFetcher {
   constructor(cypherHelper: CypherHelper) {
-    this.cypherHelper = cypherHelper
+    this.cypherHelper = cypherHelper;
   }
   private cypherHelper: CypherHelper;
   private processing = false;
@@ -314,15 +319,11 @@ class SymbolFetcher {
 
         const result = await proxyWorker.lintCypherQuery(query, dbSchema);
 
-        if (
-          result.symbolTables
-        ) {
-          this.cypherHelper.setSymbolsInfo(
-            {
-              query,
-              symbolTables: result.symbolTables,
-            },
-          );
+        if (result.symbolTables) {
+          this.cypherHelper.setSymbolsInfo({
+            query,
+            symbolTables: result.symbolTables,
+          });
         }
       } catch (err) {
         //eslint-disable-next-line
@@ -467,7 +468,10 @@ export class CypherEditor extends Component<
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             if (upt.docChanged) {
-              this.symbolFetcher.queueSymbolJob(upt.state.doc.toString(), schema)
+              this.symbolFetcher.queueSymbolJob(
+                upt.state.doc.toString(),
+                schema,
+              );
             }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),
