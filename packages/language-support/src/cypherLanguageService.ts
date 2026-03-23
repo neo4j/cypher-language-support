@@ -829,7 +829,6 @@ export class CypherLanguageService {
         query,
         consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
       );
-      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }
