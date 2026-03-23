@@ -60,11 +60,13 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       languageService.provideSignatureInfo(
         queryContent,
         testData.mockSchema,
+        true,
         fullQuery.length,
       );
       languageService.provideSignatureInfo(
         queryContent,
         testData.mockSchema,
+        true,
         subQuery.length,
       );
     });

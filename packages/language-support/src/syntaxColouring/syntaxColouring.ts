@@ -363,9 +363,9 @@ function colourLexerTokens(tokens: Token[]) {
 }
 
 export function applySyntaxColouring(
-  query: string,
+  wholeFileText: string,
   parsingResult: ParsingResult = createParsingResult(
-    query,
+    wholeFileText,
     _internalFeatureFlags.consoleCommands,
   ),
 ): ParsedCypherToken[] {

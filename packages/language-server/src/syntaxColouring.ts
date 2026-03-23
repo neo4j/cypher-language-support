@@ -16,6 +16,7 @@ export function applySyntaxColouringForDocument(
 
     const tokens = languageService.provideSyntaxColouring(
       textDocument.getText(),
+      false,
     );
 
     const builder = new SemanticTokensBuilder();

@@ -1,5 +1,6 @@
 import { CypherLanguageService } from '../../cypherLanguageService';
 import { DbSchema } from '../../dbSchema';
+import { _internalFeatureFlags } from '../../featureFlags';
 import { CompletionItem } from '../../types';
 
 const languageService = new CypherLanguageService();
@@ -18,6 +19,7 @@ export function testCompletionsExactly({
   const actualCompletionList = languageService.provideAutocompletions(
     query,
     dbSchema,
+    _internalFeatureFlags.consoleCommands,
     offset,
   );
   expect(actualCompletionList).toEqual(expected);
@@ -45,7 +47,11 @@ export function testCompletions({
   // TODO This is a temporary hack because completions are not working well
   query = query.slice(0, offset);
   if (computeSymbolsInfo) {
-    const result = languageService.provideLinting(query, dbSchema);
+    const result = languageService.provideLinting(
+      query,
+      dbSchema,
+      _internalFeatureFlags.consoleCommands,
+    );
     languageService.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
@@ -55,6 +61,7 @@ export function testCompletions({
   const actualCompletionList = languageService.provideAutocompletions(
     query,
     dbSchema,
+    _internalFeatureFlags.consoleCommands,
     offset,
     manualTrigger,
   );
@@ -105,7 +112,11 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = languageService.provideLinting(query, dbSchema);
+  const result = languageService.provideLinting(
+    query,
+    dbSchema,
+    _internalFeatureFlags.consoleCommands,
+  );
   languageService.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
@@ -114,6 +125,7 @@ export function getSymbolCompletions({
   const completions = languageService.provideAutocompletions(
     query,
     dbSchema,
+    _internalFeatureFlags.consoleCommands,
     query.length,
     false,
   );

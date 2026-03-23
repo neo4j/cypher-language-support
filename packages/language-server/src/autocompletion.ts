@@ -32,6 +32,7 @@ export function doAutoCompletion(
         languageService.provideAutocompletions(
           textDocument.getText(),
           neo4j.metadata?.dbSchema ?? {},
+          false,
           offset,
           completionParams.context.triggerKind ===
             CompletionTriggerKind.Invoked,

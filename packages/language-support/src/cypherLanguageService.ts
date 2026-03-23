@@ -851,7 +851,7 @@ export class CypherLanguageService {
   provideLinting(
     query: string,
     dbSchema: DbSchema,
-    consoleCommandsEnabled?: boolean,
+    consoleCommandsEnabled: boolean = true,
   ) {
     const parsingResult = this.parse(query, consoleCommandsEnabled);
     return lintCypherQuery(query, dbSchema, parsingResult);
@@ -859,7 +859,7 @@ export class CypherLanguageService {
 
   provideSyntaxColouring(
     wholeFileText: string,
-    consoleCommandsEnabled?: boolean,
+    consoleCommandsEnabled: boolean = true,
   ) {
     const parsingResult = this.parse(wholeFileText, consoleCommandsEnabled);
     return applySyntaxColouring(wholeFileText, parsingResult);
@@ -868,21 +868,23 @@ export class CypherLanguageService {
   provideSignatureInfo(
     query: string,
     dbSchema: DbSchema,
+    consoleCommandsEnabled: boolean = true,
     caretPosition: number = query.length,
   ) {
-    const parsingResult = this.parse(query);
+    const parsingResult = this.parse(query, consoleCommandsEnabled);
     return signatureHelp(query, dbSchema, caretPosition, parsingResult);
   }
 
   provideAutocompletions(
     query: string,
     dbSchema: DbSchema,
+    consoleCommandsEnabled = true,
     caretPosition: number = query.length,
     manual = false,
   ) {
     // TODO This is a temporary hack because completions are not working well
     query = query.slice(0, caretPosition);
-    const parsingResult = this.parse(query);
+    const parsingResult = this.parse(query, consoleCommandsEnabled);
     return autocomplete(
       query,
       dbSchema,

@@ -29,6 +29,7 @@ export function doSignatureHelp(
     return languageService.provideSignatureInfo(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
+      false,
       offset,
     );
   };

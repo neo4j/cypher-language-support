@@ -14,6 +14,7 @@ describe('completions', () => {
     languageService.provideAutocompletions(
       query,
       testData.mockSchema,
+      true,
       subQuery.length,
     );
   });
