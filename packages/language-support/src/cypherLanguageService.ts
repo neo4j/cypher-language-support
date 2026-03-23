@@ -880,6 +880,8 @@ export class CypherLanguageService {
     caretPosition: number = query.length,
     manual = false,
   ) {
+    // TODO This is a temporary hack because completions are not working well
+    query = query.slice(0, caretPosition);
     const parsingResult = this.parse(query);
     return autocomplete(
       query,
