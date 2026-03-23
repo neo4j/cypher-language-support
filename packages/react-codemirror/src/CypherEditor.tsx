@@ -457,7 +457,9 @@ export class CypherEditor extends Component<
       },
     };
 
-    this.symbolFetcher = new CodemirrorSymbolFetcher(this.schemaRef.current.languageService);
+    this.symbolFetcher = new CodemirrorSymbolFetcher(
+      this.schemaRef.current.languageService,
+    );
 
     const themeExtension = getThemeExtension(
       theme,
