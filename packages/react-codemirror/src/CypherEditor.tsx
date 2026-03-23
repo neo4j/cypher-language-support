@@ -284,7 +284,7 @@ const ExternalEdit = Annotation.define<boolean>();
 const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
   .pathname;
 
-class SymbolFetcher {
+class CodemirrorSymbolFetcher {
   constructor(languageService: CypherLanguageService) {
     this.languageService = languageService;
   }
@@ -341,7 +341,7 @@ export class CypherEditor extends Component<
   /**
    * The symbol fetcher object used to fetch the current symbol table on document changes
    */
-  symbolFetcher: SymbolFetcher;
+  symbolFetcher: CodemirrorSymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -457,7 +457,7 @@ export class CypherEditor extends Component<
       },
     };
 
-    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.languageService);
+    this.symbolFetcher = new CodemirrorSymbolFetcher(this.schemaRef.current.languageService);
 
     const themeExtension = getThemeExtension(
       theme,
