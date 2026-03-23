@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { parse, defaultCypherHelper } from '../../cypherHelper';
+import { CypherLanguageService, parse } from '../../cypherLanguageService';
 import { testData } from '../testData';
 import {
   createMovieDb,
@@ -11,6 +11,7 @@ import {
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';
+const languageService = new CypherLanguageService();
 
 /**
  * Run standard benchmarks for a given query
@@ -21,47 +22,47 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       parse(queryContent);
     });
 
-    bench('parse with cypherHelper', () => {
-      defaultCypherHelper.clearCache();
-      defaultCypherHelper.parse(queryContent);
+    bench('parse with CypherLanguageService', () => {
+      languageService.clearCache();
+      languageService.parse(queryContent);
     });
 
     bench('syntax highlighting', () => {
-      defaultCypherHelper.clearCache();
-      defaultCypherHelper.syntaxColour(queryContent);
+      languageService.clearCache();
+      languageService.provideSyntaxColouring(queryContent);
     });
 
     bench(
       'syntax validation',
       () => {
-        defaultCypherHelper.clearCache();
-        defaultCypherHelper.lint(queryContent, testData.mockSchema);
+        languageService.clearCache();
+        languageService.provideLinting(queryContent, testData.mockSchema);
       },
       // benchmarking the semantic analysis can be very slow, so we lower the minimum number of iterations & warmup iterations
       { iterations: 1, warmupIterations: 2 },
     );
 
     bench('autocomplete next statement - no schema', () => {
-      defaultCypherHelper.clearCache();
-      defaultCypherHelper.complete(queryContent, {});
+      languageService.clearCache();
+      languageService.provideAutocompletions(queryContent, {});
     });
 
     bench('autocomplete next statement - schema', () => {
-      defaultCypherHelper.clearCache();
-      defaultCypherHelper.complete(queryContent, testData.mockSchema);
+      languageService.clearCache();
+      languageService.provideAutocompletions(queryContent, testData.mockSchema);
     });
 
     bench('signature help', () => {
       const subQuery = queryContent + periodicIterate;
       const fullQuery =
         queryContent + periodicIterate + periodicIterateFirstArg;
-      defaultCypherHelper.clearCache();
-      defaultCypherHelper.sigHelp(
+      languageService.clearCache();
+      languageService.provideSignatureInfo(
         queryContent,
         testData.mockSchema,
         fullQuery.length,
       );
-      defaultCypherHelper.sigHelp(
+      languageService.provideSignatureInfo(
         queryContent,
         testData.mockSchema,
         subQuery.length,

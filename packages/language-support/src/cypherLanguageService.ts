@@ -814,7 +814,7 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
     );
 }
 
-export class CypherHelper {
+export class CypherLanguageService {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 
@@ -829,7 +829,7 @@ export class CypherHelper {
         query,
         consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
       );
-
+      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }
@@ -848,30 +848,46 @@ export class CypherHelper {
     this.symbolsInfo = symbolsInfo;
   }
 
-  lint(query: string, dbSchema: DbSchema, consoleCommandsEnabled?: boolean) {
-    return lintCypherQuery(query, dbSchema, this, consoleCommandsEnabled);
+  provideLinting(
+    query: string,
+    dbSchema: DbSchema,
+    consoleCommandsEnabled?: boolean,
+  ) {
+    const parsingResult = this.parse(query, consoleCommandsEnabled);
+    return lintCypherQuery(query, dbSchema, parsingResult);
   }
 
-  syntaxColour(wholeFileText: string) {
-    return applySyntaxColouring(wholeFileText, this);
+  provideSyntaxColouring(
+    wholeFileText: string,
+    consoleCommandsEnabled?: boolean,
+  ) {
+    const parsingResult = this.parse(wholeFileText, consoleCommandsEnabled);
+    return applySyntaxColouring(wholeFileText, parsingResult);
   }
 
-  sigHelp(
+  provideSignatureInfo(
     query: string,
     dbSchema: DbSchema,
     caretPosition: number = query.length,
   ) {
-    return signatureHelp(query, dbSchema, this, caretPosition);
+    const parsingResult = this.parse(query);
+    return signatureHelp(query, dbSchema, caretPosition, parsingResult);
   }
 
-  complete(
+  provideAutocompletions(
     query: string,
     dbSchema: DbSchema,
     caretPosition: number = query.length,
     manual = false,
   ) {
-    return autocomplete(query, dbSchema, this, caretPosition, manual);
+    const parsingResult = this.parse(query);
+    return autocomplete(
+      query,
+      dbSchema,
+      parsingResult,
+      this.symbolsInfo,
+      caretPosition,
+      manual,
+    );
   }
 }
-
-export const defaultCypherHelper = new CypherHelper();

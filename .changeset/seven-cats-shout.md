@@ -5,4 +5,4 @@
 "@neo4j-cypher/lint-worker": patch
 ---
 
-Rewrite global parserWrapper for instantiated cypherHelpers
+Rewrite global parserWrapper for instantiated CypherLanguageService objects

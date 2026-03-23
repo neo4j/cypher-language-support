@@ -14,7 +14,7 @@ import {
   LinterTask,
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
-import { cypherHelper } from './server';
+import { languageService } from './server';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
@@ -74,7 +74,7 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
-      cypherHelper.setSymbolsInfo(
+      languageService.setSymbolsInfo(
         {
           query,
           symbolTables: result.symbolTables,

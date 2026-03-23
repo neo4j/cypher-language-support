@@ -15,7 +15,7 @@ import {
 } from '@codemirror/view';
 import {
   formatQuery,
-  CypherHelper,
+  CypherLanguageService,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
@@ -285,10 +285,10 @@ const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
   .pathname;
 
 class SymbolFetcher {
-  constructor(cypherHelper: CypherHelper) {
-    this.cypherHelper = cypherHelper;
+  constructor(languageService: CypherLanguageService) {
+    this.languageService = languageService;
   }
-  private cypherHelper: CypherHelper;
+  private languageService: CypherLanguageService;
   private processing = false;
   private nextJob: {
     query: string;
@@ -320,7 +320,7 @@ class SymbolFetcher {
         const result = await proxyWorker.lintCypherQuery(query, dbSchema);
 
         if (result.symbolTables) {
-          this.cypherHelper.setSymbolsInfo({
+          this.languageService.setSymbolsInfo({
             query,
             symbolTables: result.symbolTables,
           });
@@ -441,7 +441,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
-      cypherHelper: new CypherHelper(),
+      languageService: new CypherLanguageService(),
       schema,
       lint,
       showSignatureTooltipBelow,
@@ -457,7 +457,7 @@ export class CypherEditor extends Component<
       },
     };
 
-    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.cypherHelper);
+    this.symbolFetcher = new SymbolFetcher(this.schemaRef.current.languageService);
 
     const themeExtension = getThemeExtension(
       theme,

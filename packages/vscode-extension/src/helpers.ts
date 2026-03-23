@@ -1,8 +1,4 @@
-import {
-  DbSchema,
-  defaultCypherHelper,
-  lintCypherQuery,
-} from '@neo4j-cypher/language-support';
+import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
 
 export function validateParamInput(
   paramValue: string,
@@ -11,8 +7,6 @@ export function validateParamInput(
   const diagnostics = lintCypherQuery(
     `RETURN ${paramValue}`,
     dbSchema,
-    defaultCypherHelper,
-    true,
   ).diagnostics;
   const errors = diagnostics.filter((d) => d.severity === 1);
   if (errors.length > 0) {

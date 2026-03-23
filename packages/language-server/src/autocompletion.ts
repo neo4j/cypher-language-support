@@ -9,7 +9,7 @@ import type { CompletionItem } from '@neo4j-cypher/language-support';
 import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { cypherHelper } from './server';
+import { languageService } from './server';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
@@ -28,12 +28,14 @@ export function doAutoCompletion(
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
-      const completions: CompletionItem[] = cypherHelper.complete(
-        textDocument.getText(),
-        neo4j.metadata?.dbSchema ?? {},
-        offset,
-        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
-      );
+      const completions: CompletionItem[] =
+        languageService.provideAutocompletions(
+          textDocument.getText(),
+          neo4j.metadata?.dbSchema ?? {},
+          offset,
+          completionParams.context.triggerKind ===
+            CompletionTriggerKind.Invoked,
+        );
 
       const result = completions.map((item) => {
         if (item.signature) {

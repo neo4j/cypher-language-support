@@ -6,11 +6,11 @@ import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
   _internalFeatureFlags,
-  CypherHelper,
+  CypherLanguageService,
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
 
-const cypherHelper = new CypherHelper();
+const languageService = new CypherLanguageService();
 
 function lintCypherQuery(
   query: string,
@@ -22,7 +22,7 @@ function lintCypherQuery(
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
   //cast to appease git lint check
-  return cypherHelper.lint(query, dbSchema as DbSchema);
+  return languageService.provideLinting(query, dbSchema as DbSchema);
 }
 
 workerpool.worker({ lintCypherQuery });

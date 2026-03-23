@@ -38,7 +38,7 @@ import {
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
-import { CypherHelper } from '../cypherHelper';
+import { createParsingResult, ParsingResult } from '../cypherLanguageService';
 import {
   BracketType,
   computeTokenKey,
@@ -50,6 +50,7 @@ import {
   sortTokens,
   toParsedTokens,
 } from './syntaxColouringHelpers';
+import { _internalFeatureFlags } from '../featureFlags';
 
 export const syntaxColouringLegend: SemanticTokensLegend = {
   tokenModifiers: [],
@@ -362,10 +363,12 @@ function colourLexerTokens(tokens: Token[]) {
 }
 
 export function applySyntaxColouring(
-  wholeFileText: string,
-  cypherHelper: CypherHelper,
+  query: string,
+  parsingResult: ParsingResult = createParsingResult(
+    query,
+    _internalFeatureFlags.consoleCommands,
+  ),
 ): ParsedCypherToken[] {
-  const parsingResult = cypherHelper.parse(wholeFileText);
   const statements = parsingResult.statementsParsing;
 
   /* Get a second pass at the colouring correcting the colours

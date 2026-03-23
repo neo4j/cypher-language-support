@@ -21,7 +21,7 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
-import { defaultCypherHelper } from '@neo4j-cypher/language-support';
+import { createParsingResult } from '@neo4j-cypher/language-support';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -228,7 +228,7 @@ export function getStatementAtCaret(
   input: string,
   caretOffset: number,
 ): string {
-  const statements = defaultCypherHelper.parse(input);
+  const statements = createParsingResult(input, true);
   // Since the find goes through the statements in order this will work out.
   let currentStatement = statements.statementsParsing.find((statement) => {
     const stopOffset = statement?.ctx?.stop?.stop;

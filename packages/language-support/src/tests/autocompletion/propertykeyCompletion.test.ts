@@ -2,9 +2,11 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
-import { defaultCypherHelper } from '../../cypherHelper';
+import { CypherLanguageService } from '../../cypherLanguageService';
 
 describe('property key completions', () => {
+  const languageService = new CypherLanguageService();
+
   const dbSchema: DbSchema = {
     propertyKeys: ['name', 'type', 'level'],
     functions: {
@@ -249,9 +251,10 @@ RETURN movie {
     const query = 'WITH [1,2,3] AS x RETURN x.';
     const symbolsInfo = {
       query,
-      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
+      symbolTables: languageService.provideLinting(query, dbSchema)
+        .symbolTables,
     };
-    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
+    languageService.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -263,7 +266,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    defaultCypherHelper.clearCache();
+    languageService.clearCache();
   });
 
   test('completes properties for node variables when symbol table is available', () => {
@@ -271,9 +274,10 @@ RETURN movie {
     const query = 'MATCH (n) RETURN n.';
     const symbolsInfo = {
       query,
-      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
+      symbolTables: languageService.provideLinting(query, dbSchema)
+        .symbolTables,
     };
-    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
+    languageService.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -285,7 +289,7 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    defaultCypherHelper.clearCache();
+    languageService.clearCache();
   });
 
   test('completes properties for relationship variables when symbol table is available', () => {
@@ -293,9 +297,10 @@ RETURN movie {
     const query = 'MATCH (n)-[r]-(m) RETURN r.';
     const symbolsInfo = {
       query,
-      symbolTables: defaultCypherHelper.lint(query, dbSchema).symbolTables,
+      symbolTables: languageService.provideLinting(query, dbSchema)
+        .symbolTables,
     };
-    defaultCypherHelper.setSymbolsInfo(symbolsInfo);
+    languageService.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -307,6 +312,6 @@ RETURN movie {
     });
 
     // Clean the symbol tables
-    defaultCypherHelper.clearCache();
+    languageService.clearCache();
   });
 });

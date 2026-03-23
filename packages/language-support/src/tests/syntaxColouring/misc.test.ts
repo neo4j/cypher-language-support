@@ -1,10 +1,10 @@
-import { defaultCypherHelper } from '../../cypherHelper';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with double quotes', () => {
     const query = `RETURN "something`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -33,7 +33,7 @@ describe('Unfinished tokens', () => {
   test('Correctly colours unfinished string with single quotes', () => {
     const query = `RETURN 'something`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -64,7 +64,7 @@ describe('Unfinished tokens', () => {
         foo
         bar`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -117,7 +117,7 @@ describe('Unfinished tokens', () => {
         foo
         MATCH (n)`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 12,
@@ -160,7 +160,7 @@ describe('Unfinished tokens', () => {
     
     bar: "hello"}`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -239,7 +239,7 @@ describe('Unfinished tokens', () => {
     
     bar */`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 12,
@@ -290,7 +290,7 @@ describe('Unfinished tokens', () => {
   test('Correctly colours single line comments', () => {
     const query = `// single line comment`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 22,

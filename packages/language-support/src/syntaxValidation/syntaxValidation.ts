@@ -16,10 +16,12 @@ import {
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
-  CypherHelper,
-} from '../cypherHelper';
+  ParsingResult,
+  createParsingResult,
+} from '../cypherLanguageService';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
+import { _internalFeatureFlags } from '../featureFlags';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -332,12 +334,13 @@ function fixSymbolTableOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
-  cypherHelper: CypherHelper,
-  consoleCommandsEnabled?: boolean,
+  parsingResult: ParsingResult = createParsingResult(
+    query,
+    _internalFeatureFlags.consoleCommands,
+  ),
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
-    const cachedParse = cypherHelper.parse(query, consoleCommandsEnabled);
-    const statements = cachedParse.statementsParsing;
+    const statements = parsingResult.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {

@@ -5,7 +5,7 @@ import {
   TextDocument,
   TextDocuments,
 } from 'vscode-languageserver';
-import { cypherHelper } from './server';
+import { languageService } from './server';
 
 export function applySyntaxColouringForDocument(
   documents: TextDocuments<TextDocument>,
@@ -14,7 +14,9 @@ export function applySyntaxColouringForDocument(
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = cypherHelper.syntaxColour(textDocument.getText());
+    const tokens = languageService.provideSyntaxColouring(
+      textDocument.getText(),
+    );
 
     const builder = new SemanticTokensBuilder();
 

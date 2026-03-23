@@ -1,20 +1,23 @@
 import { DbSchema } from '../dbSchema';
 import { findCaret } from '../helpers';
-import { CypherHelper } from '../cypherHelper';
-import { CompletionItem } from '../types';
+import { createParsingResult, ParsingResult } from '../cypherLanguageService';
+import { CompletionItem, SymbolsInfo } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
+import { _internalFeatureFlags } from '../featureFlags';
 
 export function autocomplete(
   query: string,
   dbSchema: DbSchema,
-  cypherHelper: CypherHelper,
+  parsingResult: ParsingResult = createParsingResult(
+    query,
+    _internalFeatureFlags.consoleCommands,
+  ),
+  symbolsInfo: SymbolsInfo = { query, symbolTables: [] },
   caretPosition: number = query.length,
   manual = false,
 ): CompletionItem[] {
   // TODO This is a temporary hack because completions are not working well
   query = query.slice(0, caretPosition);
-  const parsingResult = cypherHelper.parse(query);
-  const symbolsInfo = cypherHelper.symbolsInfo;
   /* We try to locate the statement where the caret is and the token of the caret
 
      The reason for doing that is we need a way to "resynchronise" when the 

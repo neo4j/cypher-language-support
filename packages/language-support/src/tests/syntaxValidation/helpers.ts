@@ -1,5 +1,5 @@
 import { DbSchema } from '../../dbSchema';
-import { defaultCypherHelper } from '../../cypherHelper';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 
 type SyntaxValidationTestArgs = {
   query: string;
@@ -10,12 +10,12 @@ export function getDiagnosticsForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return defaultCypherHelper.lint(query, dbSchema).diagnostics;
+  return lintCypherQuery(query, dbSchema).diagnostics;
 }
 
 export function getSymbolTablesForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return defaultCypherHelper.lint(query, dbSchema).symbolTables;
+  return lintCypherQuery(query, dbSchema).symbolTables;
 }

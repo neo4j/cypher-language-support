@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testCompletions } from './completionAssertionHelpers';
-import { defaultCypherHelper } from '../../cypherHelper';
+import { CypherLanguageService } from '../../cypherLanguageService';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
@@ -446,8 +446,9 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
   test('Does not suggest duplicated parameters', () => {
     const query = 'CREATE ALIAS alias FOR DATABASE ';
-    const actualCompletionList = defaultCypherHelper
-      .complete(query, dbSchema, query.length)
+    const languageService = new CypherLanguageService();
+    const actualCompletionList = languageService
+      .provideAutocompletions(query, dbSchema, query.length)
       .filter((v) => v.label.startsWith('$stringParam'));
 
     expect(actualCompletionList.length).toBe(1);

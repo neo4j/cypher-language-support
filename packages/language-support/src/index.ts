@@ -10,10 +10,10 @@ export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
   parse,
   parseParameters,
-  defaultCypherHelper,
-  CypherHelper,
+  CypherLanguageService,
   parseStatementsStrs,
-} from './cypherHelper';
+  createParsingResult,
+} from './cypherLanguageService';
 export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
   applySyntaxColouring,

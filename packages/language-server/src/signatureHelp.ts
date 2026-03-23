@@ -6,7 +6,7 @@ import {
 
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { cypherHelper } from './server';
+import { languageService } from './server';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -26,7 +26,7 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return cypherHelper.sigHelp(
+    return languageService.provideSignatureInfo(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
       offset,

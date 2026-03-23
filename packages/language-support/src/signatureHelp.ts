@@ -14,8 +14,9 @@ import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
-import { CypherHelper } from './cypherHelper';
+import { createParsingResult, ParsingResult } from './cypherLanguageService';
 import { Neo4jFunction, Neo4jProcedure } from './types';
+import { _internalFeatureFlags } from './featureFlags';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -175,8 +176,11 @@ class SignatureHelper extends CypherCmdParserListener {
 export function signatureHelp(
   query: string,
   dbSchema: DbSchema,
-  cypherHelper: CypherHelper,
   caretPosition: number = query.length,
+  parsingResult: ParsingResult = createParsingResult(
+    query,
+    _internalFeatureFlags.consoleCommands,
+  ),
 ): SignatureHelp {
   let result: SignatureHelp = emptyResult;
   /* We need the token immediately before the caret
@@ -189,8 +193,7 @@ export function signatureHelp(
   const prevCaretPosition = caretPosition - 1;
 
   if (prevCaretPosition > 0) {
-    const parserResult = cypherHelper.parse(query);
-    const caret = findCaret(parserResult, prevCaretPosition);
+    const caret = findCaret(parsingResult, prevCaretPosition);
 
     if (caret) {
       const statement = caret.statement;

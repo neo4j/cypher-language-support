@@ -106,7 +106,7 @@ function getSignatureHelpTooltip(
     const triggerCharacter = getTriggerCharacter(query, caretPosition);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const signatureHelpInfo = config.cypherHelper.sigHelp(
+      const signatureHelpInfo = config.languageService.provideSignatureInfo(
         query,
         schema,
         caretPosition,

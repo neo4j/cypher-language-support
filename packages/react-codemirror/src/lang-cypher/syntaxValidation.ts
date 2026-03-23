@@ -36,7 +36,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
 
       if (result.symbolTables) {
-        config.cypherHelper.setSymbolsInfo({
+        config.languageService.setSymbolsInfo({
           query,
           symbolTables: result.symbolTables,
         });

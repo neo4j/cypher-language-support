@@ -1,6 +1,8 @@
+import { CypherLanguageService } from '../../cypherLanguageService';
 import { DbSchema } from '../../dbSchema';
-import { defaultCypherHelper } from '../../cypherHelper';
 import { CompletionItem } from '../../types';
+
+const languageService = new CypherLanguageService();
 
 export function testCompletionsExactly({
   query,
@@ -13,7 +15,7 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = defaultCypherHelper.complete(
+  const actualCompletionList = languageService.provideAutocompletions(
     query,
     dbSchema,
     offset,
@@ -41,14 +43,14 @@ export function testCompletions({
   computeSymbolsInfo?: boolean;
 }) {
   if (computeSymbolsInfo) {
-    const result = defaultCypherHelper.lint(query, dbSchema);
-    defaultCypherHelper.setSymbolsInfo({
+    const result = languageService.provideLinting(query, dbSchema);
+    languageService.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
     });
   }
 
-  const actualCompletionList = defaultCypherHelper.complete(
+  const actualCompletionList = languageService.provideAutocompletions(
     query,
     dbSchema,
     offset,
@@ -98,13 +100,13 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = defaultCypherHelper.lint(query, dbSchema);
-  defaultCypherHelper.setSymbolsInfo({
+  const result = languageService.provideLinting(query, dbSchema);
+  languageService.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = defaultCypherHelper.complete(
+  const completions = languageService.provideAutocompletions(
     query,
     dbSchema,
     query.length,

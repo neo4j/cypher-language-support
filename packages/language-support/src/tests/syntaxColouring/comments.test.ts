@@ -1,4 +1,4 @@
-import { defaultCypherHelper } from '../../cypherHelper';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('Comments syntax colouring', () => {
   test('Correctly colours one line comments', () => {
@@ -8,7 +8,7 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 15,
@@ -114,7 +114,7 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 17,
@@ -226,7 +226,7 @@ describe('Comments syntax colouring', () => {
   test('Correctly colours comments which include cypher keywords', () => {
     const query = `MATCH (n) RETURN n // MATCH (n) finds all nodes`;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,

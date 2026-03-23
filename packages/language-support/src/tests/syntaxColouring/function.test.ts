@@ -1,11 +1,11 @@
 import { CypherTokenType } from '../../lexerSymbols';
-import { defaultCypherHelper } from '../../cypherHelper';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
 
 describe('Function syntax colouring', () => {
   test('Correctly colours function name', () => {
     const query = 'RETURN reduce()';
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -62,7 +62,7 @@ describe('Function syntax colouring', () => {
   test('Correctly colours function with arguments', () => {
     const query = "RETURN some.apoc.function(true, 'something')";
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -199,7 +199,7 @@ describe('Function syntax colouring', () => {
       function()
     `;
 
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -303,7 +303,7 @@ describe('Function syntax colouring', () => {
       const query =
         'RETURN ' + listPredicate + '(x IN coll WHERE x.property IS NOT NULL)';
 
-      const tokens = defaultCypherHelper.syntaxColour(query);
+      const tokens = applySyntaxColouring(query);
       expect(
         tokens.find((t) => t.tokenType === CypherTokenType.predicateFunction),
       ).toEqual({
@@ -318,7 +318,7 @@ describe('Function syntax colouring', () => {
 
   test('Colours reduce list predicate as a function', () => {
     const query = "RETURN reduce(s = '', x IN list | s + x.prop)";
-    expect(defaultCypherHelper.syntaxColour(query)).toEqual([
+    expect(applySyntaxColouring(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,

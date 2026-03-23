@@ -15,7 +15,7 @@ import {
   DbSchema,
   SymbolTable,
   syntaxColouringLegend,
-  CypherHelper,
+  CypherLanguageService,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -35,7 +35,7 @@ import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
-export const cypherHelper = new CypherHelper();
+export const languageService = new CypherLanguageService();
 
 class SymbolFetcher {
   private processing = false;
@@ -87,7 +87,7 @@ class SymbolFetcher {
           result.symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
-          cypherHelper.setSymbolsInfo(
+          languageService.setSymbolsInfo(
             {
               query,
               symbolTables: result.symbolTables,

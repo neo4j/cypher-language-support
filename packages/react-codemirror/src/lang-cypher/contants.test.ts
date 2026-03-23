@@ -1,7 +1,7 @@
 import { tags } from '@lezer/highlight';
 import {
+  applySyntaxColouring,
   CypherTokenType,
-  defaultCypherHelper,
 } from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
 import { tokenTypeToStyleTag } from './constants';
@@ -14,7 +14,7 @@ WHERE variable.property = "String"
 RETURN variable;`;
 
 test('correctly parses all cypher token types to style tags', () => {
-  const tokens = defaultCypherHelper.syntaxColour(cypherQueryWithAllTokenTypes);
+  const tokens = applySyntaxColouring(cypherQueryWithAllTokenTypes);
   const tokenTypes = tokens.map((token) => token.tokenType);
   expect(tokenTypes).toEqual([
     'keyword',
