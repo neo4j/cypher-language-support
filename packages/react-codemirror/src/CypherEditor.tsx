@@ -452,6 +452,12 @@ export class CypherEditor extends Component<
               'aria-label': this.props.ariaLabel,
             })
           : [],
+        !this.props.moveFocusOnTab
+          ? EditorView.contentAttributes.of({
+              'aria-description':
+                'Press Escape to leave the editor and continue tabbing through the page',
+            })
+          : [],
       ],
       doc: this.props.value,
     });
