@@ -16,7 +16,6 @@ import CypherCmdParserListener from './generated-parser/CypherCmdParserListener'
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
 import { createParsingResult, ParsingResult } from './cypherLanguageService';
 import { Neo4jFunction, Neo4jProcedure } from './types';
-import { _internalFeatureFlags } from './featureFlags';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],

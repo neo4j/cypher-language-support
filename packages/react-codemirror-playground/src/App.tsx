@@ -1,5 +1,4 @@
 import {
-  _internalFeatureFlags,
   DbSchema,
   testData,
 } from '@neo4j-cypher/language-support';
@@ -68,8 +67,6 @@ export function App() {
   const treeData = useMemo(() => {
     return getDebugTree(value);
   }, [value]);
-
-  _internalFeatureFlags.consoleCommands = true;
 
   return (
     <div className={darkMode ? 'dark' : ''}>

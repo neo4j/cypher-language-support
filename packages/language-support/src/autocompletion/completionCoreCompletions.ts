@@ -32,7 +32,6 @@ import {
   CodeCompletionCore,
   Token,
 } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
-import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
   CypherVersion,
@@ -463,6 +462,7 @@ export function completionCoreCompletion(
   caretToken: Token,
   symbolsInfo: SymbolsInfo | undefined,
   manualTrigger = false,
+  consoleCommandsEnabled = true,
 ): CompletionItem[] {
   const cypherVersion = resolveCypherVersion(
     parsingResult.cypherVersion,
@@ -518,7 +518,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_relType,
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(_internalFeatureFlags.consoleCommands
+    ...(consoleCommandsEnabled
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,

@@ -827,7 +827,7 @@ export class CypherLanguageService {
     } else {
       const parsingResult = createParsingResult(query, {
         consoleCommandsEnabled:
-          consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
+          consoleCommandsEnabled !== undefined ? consoleCommandsEnabled : true,
       });
       return parsingResult;
     }

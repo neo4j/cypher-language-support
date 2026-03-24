@@ -50,7 +50,6 @@ import {
   sortTokens,
   toParsedTokens,
 } from './syntaxHighlightingHelper';
-import { _internalFeatureFlags } from '../featureFlags';
 
 export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],

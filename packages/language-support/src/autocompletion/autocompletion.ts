@@ -3,7 +3,6 @@ import { findCaret } from '../helpers';
 import { createParsingResult, ParsingResult } from '../cypherLanguageService';
 import { CompletionItem, SymbolsInfo } from '../types';
 import { completionCoreCompletion } from './completionCoreCompletions';
-import { _internalFeatureFlags } from '../featureFlags';
 
 export function autocomplete(
   query: string,
@@ -50,6 +49,7 @@ export function autocomplete(
       caretToken,
       config?.symbolsInfo,
       config?.manual,
+      config?.consoleCommandsEnabled,
     );
   }
 

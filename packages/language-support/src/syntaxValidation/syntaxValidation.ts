@@ -21,7 +21,6 @@ import {
 } from '../cypherLanguageService';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
-import { _internalFeatureFlags } from '../featureFlags';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
