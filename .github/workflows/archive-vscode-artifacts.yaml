@@ -4,6 +4,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 env:
   NODE_OPTIONS: '--max_old_space_size=8192'
 
@@ -11,8 +14,9 @@ jobs:
   archive-vscode-artifacts:
     name: Archives VSCode artifacts
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup project
         uses: ./.github/actions/setup-and-build
@@ -22,7 +26,7 @@ jobs:
           cd packages/vscode-extension
           pnpm package
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         if: always()
         with:
           name: vscode-extension
