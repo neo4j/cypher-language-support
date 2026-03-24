@@ -1,7 +1,7 @@
 {
   "name": "neo4j-for-vscode",
   "displayName": "Neo4j for VS Code",
-  "version": "1.17.0",
+  "version": "1.17.1",
   "private": true,
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "categories": [
@@ -56,7 +56,7 @@
     "neo4j-driver": "catalog:",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "tar": "7.5.9",
+    "tar": "7.5.11",
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
