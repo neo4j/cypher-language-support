@@ -29,8 +29,7 @@ export function doSignatureHelp(
     return languageService.getSignatureHelp(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
-      false,
-      offset,
+      { consoleCommandsEnabled: false, caretPosition: offset },
     );
   };
 }

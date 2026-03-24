@@ -11,12 +11,9 @@ describe('completions', () => {
     languageService.clearCache();
     // This mimics getting the cursor back in the query and retriggering auto-completion
     languageService.autocomplete(query, testData.mockSchema);
-    languageService.autocomplete(
-      query,
-      testData.mockSchema,
-      true,
-      subQuery.length,
-    );
+    languageService.autocomplete(query, testData.mockSchema, {
+      caretPosition: subQuery.length,
+    });
   });
 
   // Handle autocomplete queries

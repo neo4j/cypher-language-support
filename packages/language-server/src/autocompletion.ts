@@ -31,9 +31,13 @@ export function doAutoCompletion(
       const completions: CompletionItem[] = languageService.autocomplete(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
-        false,
-        offset,
-        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
+        {
+          consoleCommandsEnabled: false,
+          caretPosition: offset,
+          manual:
+            completionParams.context.triggerKind ===
+            CompletionTriggerKind.Invoked,
+        },
       );
 
       const result = completions.map((item) => {

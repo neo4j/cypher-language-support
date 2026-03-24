@@ -11,7 +11,7 @@ function expectParsedCommands(
   query: string,
   toEqual: ParsedCommandNoPosition[],
 ) {
-  const result = createParsingResult(query, true);
+  const result = createParsingResult(query, { consoleCommandsEnabled: true });
   expect(
     result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
   ).toEqual([]);
@@ -30,7 +30,7 @@ function expectParsedCommands(
 }
 
 function expectErrorMessage(query: string, msg: string) {
-  const result = createParsingResult(query, true);
+  const result = createParsingResult(query, { consoleCommandsEnabled: true });
   expect(
     result.statementsParsing
       .flatMap((statement) => statement.syntaxErrors)

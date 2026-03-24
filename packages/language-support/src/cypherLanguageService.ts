@@ -192,7 +192,7 @@ export function parse(query: string): StatementOrCommandContext[] {
 
 export function createParsingResult(
   query: string,
-  consoleCommandsEnabled: boolean,
+  settings: { consoleCommandsEnabled: boolean },
 ): ParsingResult {
   const parsingScaffolding = createParsingScaffolding(query);
 
@@ -206,7 +206,7 @@ export function createParsingResult(
       const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(
         tokens,
-        consoleCommandsEnabled,
+        settings.consoleCommandsEnabled,
       );
       parser._parseListeners = [
         labelsCollector,
@@ -225,7 +225,7 @@ export function createParsingResult(
       const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
       const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
-      if (!consoleCommandsEnabled) {
+      if (!settings.consoleCommandsEnabled) {
         syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
       }
 
@@ -281,7 +281,7 @@ export function parseParameters(
   query: string,
   consoleCommandsEnabled: boolean,
 ): string[] {
-  const parsingResult = createParsingResult(query, consoleCommandsEnabled);
+  const parsingResult = createParsingResult(query, { consoleCommandsEnabled });
   const parameters = parsingResult.statementsParsing.flatMap((statement) =>
     statement.collectedParameters.map((param) => getClearParamName(param.name)),
   );
@@ -825,10 +825,10 @@ export class CypherLanguageService {
     ) {
       return this.parsingResult;
     } else {
-      const parsingResult = createParsingResult(
-        query,
-        consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
-      );
+      const parsingResult = createParsingResult(query, {
+        consoleCommandsEnabled:
+          consoleCommandsEnabled ?? _internalFeatureFlags.consoleCommands,
+      });
       return parsingResult;
     }
   }
@@ -850,47 +850,64 @@ export class CypherLanguageService {
   lint(
     query: string,
     dbSchema: DbSchema,
-    consoleCommandsEnabled: boolean = true,
+    optionals: { consoleCommandsEnabled?: boolean } = {},
   ) {
-    const parsingResult = this.parse(query, consoleCommandsEnabled);
-    return lintCypherQuery(query, dbSchema, parsingResult);
+    const config = { consoleCommandsEnabled: true, ...optionals };
+    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
+    return lintCypherQuery(query, dbSchema, { parsingResult });
   }
 
   highlightSyntax(
     wholeFileText: string,
-    consoleCommandsEnabled: boolean = true,
+    optionals: { consoleCommandsEnabled?: boolean } = {},
   ) {
-    const parsingResult = this.parse(wholeFileText, consoleCommandsEnabled);
-    return highlightSyntax(wholeFileText, parsingResult);
+    const config = { consoleCommandsEnabled: true, ...optionals };
+    const parsingResult = this.parse(
+      wholeFileText,
+      config.consoleCommandsEnabled,
+    );
+    return highlightSyntax(wholeFileText, { parsingResult });
   }
 
   getSignatureHelp(
     query: string,
     dbSchema: DbSchema,
-    consoleCommandsEnabled: boolean = true,
-    caretPosition: number = query.length,
+    optionals: {
+      consoleCommandsEnabled?: boolean;
+      caretPosition?: number;
+    } = {},
   ) {
-    const parsingResult = this.parse(query, consoleCommandsEnabled);
-    return getSignatureInfo(query, dbSchema, caretPosition, parsingResult);
+    const config = {
+      consoleCommandsEnabled: true,
+      caretPosition: query.length,
+      ...optionals,
+    };
+    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
+    return getSignatureInfo(query, dbSchema, { ...config, parsingResult });
   }
 
   autocomplete(
     query: string,
     dbSchema: DbSchema,
-    consoleCommandsEnabled = true,
-    caretPosition: number = query.length,
-    manual = false,
+    optionals: {
+      consoleCommandsEnabled?: boolean;
+      caretPosition?: number;
+      manual?: boolean;
+    } = {},
   ) {
+    const config = {
+      consoleCommandsEnabled: true,
+      caretPosition: query.length,
+      manual: false,
+      ...optionals,
+    };
     // TODO This is a temporary hack because completions are not working well
-    query = query.slice(0, caretPosition);
-    const parsingResult = this.parse(query, consoleCommandsEnabled);
-    return autocomplete(
-      query,
-      dbSchema,
+    query = query.slice(0, config.caretPosition);
+    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
+    return autocomplete(query, dbSchema, {
+      ...config,
+      symbolsInfo: this.symbolsInfo,
       parsingResult,
-      this.symbolsInfo,
-      caretPosition,
-      manual,
-    );
+    });
   }
 }

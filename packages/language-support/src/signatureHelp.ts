@@ -176,12 +176,25 @@ class SignatureHelper extends CypherCmdParserListener {
 export function getSignatureInfo(
   query: string,
   dbSchema: DbSchema,
-  caretPosition: number = query.length,
-  parsingResult: ParsingResult = createParsingResult(
-    query,
-    _internalFeatureFlags.consoleCommands,
-  ),
+  optionals: {
+    caretPosition?: number;
+    parsingResult?: ParsingResult;
+    consoleCommandsEnabled?: boolean;
+  } = {},
 ): SignatureHelp {
+  const config = {
+    caretPosition: query.length,
+    consoleCommands: true,
+    parsingResult:
+      optionals.parsingResult ??
+      createParsingResult(query, {
+        consoleCommandsEnabled:
+          optionals.consoleCommandsEnabled !== undefined
+            ? optionals.consoleCommandsEnabled
+            : true,
+      }),
+    ...optionals,
+  };
   let result: SignatureHelp = emptyResult;
   /* We need the token immediately before the caret
   
@@ -190,10 +203,10 @@ export function getSignatureInfo(
      because in this case what gives us information on where we are 
      in the procedure is not the space at the caret, but the opening (                
   */
-  const prevCaretPosition = caretPosition - 1;
+  const prevCaretPosition = config.caretPosition - 1;
 
   if (prevCaretPosition > 0) {
-    const caret = findCaret(parsingResult, prevCaretPosition);
+    const caret = findCaret(config.parsingResult, prevCaretPosition);
 
     if (caret) {
       const statement = caret.statement;

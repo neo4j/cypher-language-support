@@ -13,7 +13,9 @@ export function testSignatureHelp(
   expected: SignatureHelp,
   offset: number = fileText.length,
 ) {
-  const actualSignatureHelp = getSignatureInfo(fileText, dbSchema, offset);
+  const actualSignatureHelp = getSignatureInfo(fileText, dbSchema, {
+    caretPosition: offset,
+  });
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);

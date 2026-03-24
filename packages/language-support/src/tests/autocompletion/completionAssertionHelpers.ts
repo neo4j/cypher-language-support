@@ -16,12 +16,10 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = languageService.autocomplete(
-    query,
-    dbSchema,
-    _internalFeatureFlags.consoleCommands,
-    offset,
-  );
+  const actualCompletionList = languageService.autocomplete(query, dbSchema, {
+    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
+    caretPosition: offset,
+  });
   expect(actualCompletionList).toEqual(expected);
 }
 
@@ -47,24 +45,20 @@ export function testCompletions({
   // TODO This is a temporary hack because completions are not working well
   query = query.slice(0, offset);
   if (computeSymbolsInfo) {
-    const result = languageService.lint(
-      query,
-      dbSchema,
-      _internalFeatureFlags.consoleCommands,
-    );
+    const result = languageService.lint(query, dbSchema, {
+      consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
+    });
     languageService.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
     });
   }
 
-  const actualCompletionList = languageService.autocomplete(
-    query,
-    dbSchema,
-    _internalFeatureFlags.consoleCommands,
-    offset,
-    manualTrigger,
-  );
+  const actualCompletionList = languageService.autocomplete(query, dbSchema, {
+    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
+    caretPosition: offset,
+    manual: manualTrigger,
+  });
 
   if (assertEmpty) {
     expect(actualCompletionList).toEqual([]);
@@ -112,22 +106,16 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = languageService.lint(
-    query,
-    dbSchema,
-    _internalFeatureFlags.consoleCommands,
-  );
+  const result = languageService.lint(query, dbSchema, {
+    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
+  });
   languageService.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = languageService.autocomplete(
-    query,
-    dbSchema,
-    _internalFeatureFlags.consoleCommands,
-    query.length,
-    false,
-  );
+  const completions = languageService.autocomplete(query, dbSchema, {
+    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
+  });
   return completions;
 }

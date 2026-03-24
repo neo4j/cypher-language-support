@@ -57,18 +57,12 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       const fullQuery =
         queryContent + periodicIterate + periodicIterateFirstArg;
       languageService.clearCache();
-      languageService.getSignatureHelp(
-        queryContent,
-        testData.mockSchema,
-        true,
-        fullQuery.length,
-      );
-      languageService.getSignatureHelp(
-        queryContent,
-        testData.mockSchema,
-        true,
-        subQuery.length,
-      );
+      languageService.getSignatureHelp(queryContent, testData.mockSchema, {
+        caretPosition: fullQuery.length,
+      });
+      languageService.getSignatureHelp(queryContent, testData.mockSchema, {
+        caretPosition: subQuery.length,
+      });
     });
   });
 }

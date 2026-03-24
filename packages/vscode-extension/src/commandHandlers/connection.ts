@@ -228,7 +228,9 @@ export function getStatementAtCaret(
   input: string,
   caretOffset: number,
 ): string {
-  const statements = createParsingResult(input, true);
+  const statements = createParsingResult(input, {
+    consoleCommandsEnabled: true,
+  });
   // Since the find goes through the statements in order this will work out.
   let currentStatement = statements.statementsParsing.find((statement) => {
     const stopOffset = statement?.ctx?.stop?.stop;

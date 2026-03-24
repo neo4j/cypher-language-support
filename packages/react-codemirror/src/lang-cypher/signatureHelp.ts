@@ -109,8 +109,7 @@ function getSignatureHelpTooltip(
       const signatureHelpInfo = config.languageService.getSignatureHelp(
         query,
         schema,
-        true,
-        caretPosition,
+        { consoleCommandsEnabled: false, caretPosition },
       );
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;

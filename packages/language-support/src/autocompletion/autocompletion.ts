@@ -8,14 +8,29 @@ import { _internalFeatureFlags } from '../featureFlags';
 export function autocomplete(
   query: string,
   dbSchema: DbSchema,
-  parsingResult: ParsingResult = createParsingResult(
-    query,
-    _internalFeatureFlags.consoleCommands,
-  ),
-  symbolsInfo: SymbolsInfo = { query, symbolTables: [] },
-  caretPosition: number = query.length,
-  manual = false,
+  optionals: {
+    symbolsInfo?: SymbolsInfo | undefined;
+    parsingResult?: ParsingResult;
+    caretPosition?: number;
+    manual?: boolean;
+    consoleCommandsEnabled?: boolean;
+  } = {},
 ): CompletionItem[] {
+  //Add in default values, overwrite with provided values
+  const config = {
+    symbolsInfo: undefined,
+    parsingResult:
+      optionals.parsingResult ??
+      createParsingResult(query, {
+        consoleCommandsEnabled:
+          optionals.consoleCommandsEnabled !== undefined
+            ? optionals.consoleCommandsEnabled
+            : true,
+      }),
+    caretPosition: query.length,
+    manual: false,
+    ...optionals,
+  };
   /* We try to locate the statement where the caret is and the token of the caret
 
      The reason for doing that is we need a way to "resynchronise" when the 
@@ -25,7 +40,7 @@ export function autocomplete(
                                   ^ we should still be getting autocompletions here   
 
   */
-  const caret = findCaret(parsingResult, caretPosition);
+  const caret = findCaret(config.parsingResult, config.caretPosition);
   if (caret) {
     const statement = caret.statement;
     const caretToken = caret.token;
@@ -33,8 +48,8 @@ export function autocomplete(
       statement,
       dbSchema,
       caretToken,
-      symbolsInfo,
-      manual,
+      config?.symbolsInfo,
+      config?.manual,
     );
   }
 

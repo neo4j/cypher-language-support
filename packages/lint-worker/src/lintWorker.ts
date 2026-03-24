@@ -22,13 +22,12 @@ function lintCypherQuery(
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
   //cast to appease git lint check
-  return languageService.lint(
-    query,
-    dbSchema as DbSchema,
-    featureFlags?.consoleCommands != undefined
-      ? featureFlags.consoleCommands
-      : true,
-  );
+  return languageService.lint(query, dbSchema as DbSchema, {
+    consoleCommandsEnabled:
+      featureFlags?.consoleCommands != undefined
+        ? featureFlags.consoleCommands
+        : true,
+  });
 }
 
 workerpool.worker({ lintCypherQuery });

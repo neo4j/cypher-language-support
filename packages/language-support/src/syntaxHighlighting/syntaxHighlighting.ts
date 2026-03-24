@@ -364,11 +364,19 @@ function colourLexerTokens(tokens: Token[]) {
 
 export function highlightSyntax(
   wholeFileText: string,
-  parsingResult: ParsingResult = createParsingResult(
-    wholeFileText,
-    _internalFeatureFlags.consoleCommands,
-  ),
+  optionals: {
+    consoleCommandsEnabled?: boolean;
+    parsingResult?: ParsingResult;
+  } = {},
 ): ParsedCypherToken[] {
+  const parsingResult: ParsingResult =
+    optionals.parsingResult ??
+    createParsingResult(wholeFileText, {
+      consoleCommandsEnabled:
+        optionals.consoleCommandsEnabled !== undefined
+          ? optionals.consoleCommandsEnabled
+          : true,
+    });
   const statements = parsingResult.statementsParsing;
 
   /* Get a second pass at the colouring correcting the colours
