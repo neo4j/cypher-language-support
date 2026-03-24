@@ -106,7 +106,7 @@ function getSignatureHelpTooltip(
     const triggerCharacter = getTriggerCharacter(query, caretPosition);
 
     if (triggerCharacter === '(' || triggerCharacter === ',') {
-      const signatureHelpInfo = config.languageService.provideSignatureInfo(
+      const signatureHelpInfo = config.languageService.getSignatureHelp(
         query,
         schema,
         true,

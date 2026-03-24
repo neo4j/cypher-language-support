@@ -10,8 +10,8 @@ describe('completions', () => {
     const subQuery = tictactoe;
     languageService.clearCache();
     // This mimics getting the cursor back in the query and retriggering auto-completion
-    languageService.provideAutocompletions(query, testData.mockSchema);
-    languageService.provideAutocompletions(
+    languageService.autocomplete(query, testData.mockSchema);
+    languageService.autocomplete(
       query,
       testData.mockSchema,
       true,
@@ -27,7 +27,7 @@ describe('completions', () => {
 
     bench(`autocomplete - ${name}`, function () {
       languageService.clearCache();
-      languageService.provideAutocompletions(query, testData.mockSchema);
+      languageService.autocomplete(query, testData.mockSchema);
     });
   });
 });

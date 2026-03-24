@@ -22,7 +22,7 @@ function lintCypherQuery(
     _internalFeatureFlags.consoleCommands = featureFlags.consoleCommands;
   }
   //cast to appease git lint check
-  return languageService.provideLinting(
+  return languageService.lint(
     query,
     dbSchema as DbSchema,
     featureFlags?.consoleCommands != undefined

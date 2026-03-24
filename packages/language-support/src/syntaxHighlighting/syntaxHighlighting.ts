@@ -49,16 +49,16 @@ import {
   shouldAssignTokenType,
   sortTokens,
   toParsedTokens,
-} from './syntaxColouringHelpers';
+} from './syntaxHighlightingHelper';
 import { _internalFeatureFlags } from '../featureFlags';
 
-export const syntaxColouringLegend: SemanticTokensLegend = {
+export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],
   tokenTypes: Object.keys(SemanticTokenTypes),
 };
 
 const semanticTokenTypesNumber: Map<string, number> = new Map(
-  syntaxColouringLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
+  syntaxHighlightingLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
 );
 
 export function mapCypherToSemanticTokenIndex(
@@ -362,7 +362,7 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function applySyntaxColouring(
+export function highlightSyntax(
   wholeFileText: string,
   parsingResult: ParsingResult = createParsingResult(
     wholeFileText,

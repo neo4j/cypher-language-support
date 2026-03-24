@@ -14,13 +14,16 @@ export {
   parseStatementsStrs,
   createParsingResult,
 } from './cypherLanguageService';
-export { signatureHelp, toSignatureInformation } from './signatureHelp';
 export {
-  applySyntaxColouring,
+  getSignatureInfo as signatureHelp,
+  toSignatureInformation,
+} from './signatureHelp';
+export {
+  highlightSyntax,
   mapCypherToSemanticTokenIndex,
-  syntaxColouringLegend,
-} from './syntaxColouring/syntaxColouring';
-export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
+  syntaxHighlightingLegend,
+} from './syntaxHighlighting/syntaxHighlighting';
+export type { ParsedCypherToken } from './syntaxHighlighting/syntaxHighlightingHelper';
 export {
   lintCypherQuery,
   clampUnsafePositions,

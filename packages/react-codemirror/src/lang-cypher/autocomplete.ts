@@ -78,7 +78,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = config.languageService.provideAutocompletions(
+    const options = config.languageService.autocomplete(
       documentText,
       config.schema ?? {},
       true,

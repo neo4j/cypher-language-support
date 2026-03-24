@@ -1,9 +1,9 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
 
-describe('Preparser syntax colouring', () => {
+describe('Preparser syntax highlighting', () => {
   test('Correctly colours cypher versions', () => {
     const query = 'CYPHER 25 MATCH (m) RETURN m';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -102,7 +102,7 @@ describe('Preparser syntax colouring', () => {
   });
   test('Correctly colours CYPHER <setting> = <setting-value> options', () => {
     const query = 'CYPHER runtime = slotted RETURN ""';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -175,7 +175,7 @@ describe('Preparser syntax colouring', () => {
   test('Correctly colours PROFILE', () => {
     const query = 'PROFILE MATCH (n) RETURN n';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 7,
@@ -265,7 +265,7 @@ describe('Preparser syntax colouring', () => {
   test('Correctly colours EXPLAIN', () => {
     const query = 'EXPLAIN MATCH (n) RETURN n';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 7,
@@ -355,7 +355,7 @@ describe('Preparser syntax colouring', () => {
   test('Correctly colours EXPLAIN and PROFILE in different statements', () => {
     const query = 'EXPLAIN MATCH (n) RETURN n; PROFILE MATCH (m) RETURN m';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 7,
@@ -540,7 +540,7 @@ describe('Preparser syntax colouring', () => {
     const query = `CREATE (n:clear {use: 0})
 WITH $param AS map
 RETURN map.propertyKey`;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -779,7 +779,7 @@ RETURN map.propertyKey`;
   test('Correctly colours preparser options including unfinished comments', () => {
     const query = `CYPHER runtime = /*some unfinished comment
     slotted`;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -842,7 +842,7 @@ RETURN map.propertyKey`;
     const query = `CYPHER runtime = \`some unfinished 
     backticked element
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -916,7 +916,7 @@ RETURN map.propertyKey`;
     const query = `CYPHER runtime = "some unfinished 
     string
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -991,7 +991,7 @@ RETURN map.propertyKey`;
 
       adfsa
       asfds`;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,

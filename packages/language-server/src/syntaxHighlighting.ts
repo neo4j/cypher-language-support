@@ -7,14 +7,14 @@ import {
 } from 'vscode-languageserver';
 import { languageService } from './server';
 
-export function applySyntaxColouringForDocument(
+export function highlightSyntaxForDocument(
   documents: TextDocuments<TextDocument>,
 ) {
   return (params: SemanticTokensParams) => {
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = languageService.provideSyntaxColouring(
+    const tokens = languageService.highlightSyntax(
       textDocument.getText(),
       false,
     );

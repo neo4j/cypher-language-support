@@ -16,7 +16,7 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = languageService.provideAutocompletions(
+  const actualCompletionList = languageService.autocomplete(
     query,
     dbSchema,
     _internalFeatureFlags.consoleCommands,
@@ -47,7 +47,7 @@ export function testCompletions({
   // TODO This is a temporary hack because completions are not working well
   query = query.slice(0, offset);
   if (computeSymbolsInfo) {
-    const result = languageService.provideLinting(
+    const result = languageService.lint(
       query,
       dbSchema,
       _internalFeatureFlags.consoleCommands,
@@ -58,7 +58,7 @@ export function testCompletions({
     });
   }
 
-  const actualCompletionList = languageService.provideAutocompletions(
+  const actualCompletionList = languageService.autocomplete(
     query,
     dbSchema,
     _internalFeatureFlags.consoleCommands,
@@ -112,7 +112,7 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = languageService.provideLinting(
+  const result = languageService.lint(
     query,
     dbSchema,
     _internalFeatureFlags.consoleCommands,
@@ -122,7 +122,7 @@ export function getSymbolCompletions({
     symbolTables: result.symbolTables,
   });
 
-  const completions = languageService.provideAutocompletions(
+  const completions = languageService.autocomplete(
     query,
     dbSchema,
     _internalFeatureFlags.consoleCommands,

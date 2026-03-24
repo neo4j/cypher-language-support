@@ -26,7 +26,7 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return languageService.provideSignatureInfo(
+    return languageService.getSignatureHelp(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
       false,

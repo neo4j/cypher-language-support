@@ -28,15 +28,13 @@ export function doAutoCompletion(
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
-      const completions: CompletionItem[] =
-        languageService.provideAutocompletions(
-          textDocument.getText(),
-          neo4j.metadata?.dbSchema ?? {},
-          false,
-          offset,
-          completionParams.context.triggerKind ===
-            CompletionTriggerKind.Invoked,
-        );
+      const completions: CompletionItem[] = languageService.autocomplete(
+        textDocument.getText(),
+        neo4j.metadata?.dbSchema ?? {},
+        false,
+        offset,
+        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
+      );
 
       const result = completions.map((item) => {
         if (item.signature) {

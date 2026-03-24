@@ -29,14 +29,14 @@ function benchmarkQuery(queryName: string, queryContent: string) {
 
     bench('syntax highlighting', () => {
       languageService.clearCache();
-      languageService.provideSyntaxColouring(queryContent);
+      languageService.highlightSyntax(queryContent);
     });
 
     bench(
       'syntax validation',
       () => {
         languageService.clearCache();
-        languageService.provideLinting(queryContent, testData.mockSchema);
+        languageService.lint(queryContent, testData.mockSchema);
       },
       // benchmarking the semantic analysis can be very slow, so we lower the minimum number of iterations & warmup iterations
       { iterations: 1, warmupIterations: 2 },
@@ -44,12 +44,12 @@ function benchmarkQuery(queryName: string, queryContent: string) {
 
     bench('autocomplete next statement - no schema', () => {
       languageService.clearCache();
-      languageService.provideAutocompletions(queryContent, {});
+      languageService.autocomplete(queryContent, {});
     });
 
     bench('autocomplete next statement - schema', () => {
       languageService.clearCache();
-      languageService.provideAutocompletions(queryContent, testData.mockSchema);
+      languageService.autocomplete(queryContent, testData.mockSchema);
     });
 
     bench('signature help', () => {
@@ -57,13 +57,13 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       const fullQuery =
         queryContent + periodicIterate + periodicIterateFirstArg;
       languageService.clearCache();
-      languageService.provideSignatureInfo(
+      languageService.getSignatureHelp(
         queryContent,
         testData.mockSchema,
         true,
         fullQuery.length,
       );
-      languageService.provideSignatureInfo(
+      languageService.getSignatureHelp(
         queryContent,
         testData.mockSchema,
         true,

@@ -173,7 +173,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
-export function signatureHelp(
+export function getSignatureInfo(
   query: string,
   dbSchema: DbSchema,
   caretPosition: number = query.length,

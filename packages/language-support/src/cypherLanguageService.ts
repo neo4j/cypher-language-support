@@ -47,8 +47,8 @@ import {
   SymbolTable,
 } from './types';
 import { DbSchema } from './dbSchema';
-import { applySyntaxColouring } from './syntaxColouring/syntaxColouring';
-import { signatureHelp } from './signatureHelp';
+import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting';
+import { getSignatureInfo } from './signatureHelp';
 import { autocomplete } from './autocompletion/autocompletion';
 
 export interface ParsedStatement {
@@ -847,7 +847,7 @@ export class CypherLanguageService {
     this.symbolsInfo = symbolsInfo;
   }
 
-  provideLinting(
+  lint(
     query: string,
     dbSchema: DbSchema,
     consoleCommandsEnabled: boolean = true,
@@ -856,25 +856,25 @@ export class CypherLanguageService {
     return lintCypherQuery(query, dbSchema, parsingResult);
   }
 
-  provideSyntaxColouring(
+  highlightSyntax(
     wholeFileText: string,
     consoleCommandsEnabled: boolean = true,
   ) {
     const parsingResult = this.parse(wholeFileText, consoleCommandsEnabled);
-    return applySyntaxColouring(wholeFileText, parsingResult);
+    return highlightSyntax(wholeFileText, parsingResult);
   }
 
-  provideSignatureInfo(
+  getSignatureHelp(
     query: string,
     dbSchema: DbSchema,
     consoleCommandsEnabled: boolean = true,
     caretPosition: number = query.length,
   ) {
     const parsingResult = this.parse(query, consoleCommandsEnabled);
-    return signatureHelp(query, dbSchema, caretPosition, parsingResult);
+    return getSignatureInfo(query, dbSchema, caretPosition, parsingResult);
   }
 
-  provideAutocompletions(
+  autocomplete(
     query: string,
     dbSchema: DbSchema,
     consoleCommandsEnabled = true,

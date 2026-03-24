@@ -14,7 +14,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   DbSchema,
   SymbolTable,
-  syntaxColouringLegend,
+  syntaxHighlightingLegend,
   CypherLanguageService,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
@@ -22,7 +22,7 @@ import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
-import { applySyntaxColouringForDocument } from './syntaxColouring';
+import { highlightSyntaxForDocument } from './syntaxHighlighting';
 import {
   LintWorkerSettings,
   Neo4jConnectionSettings,
@@ -159,7 +159,7 @@ connection.onInitialize(() => {
       },
       semanticTokensProvider: {
         documentSelector: [{ language: 'cypher' }],
-        legend: syntaxColouringLegend,
+        legend: syntaxHighlightingLegend,
         range: false,
         full: {
           delta: false,
@@ -182,7 +182,7 @@ connection.onInitialized(() => {
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: [{ language: 'cypher' }],
-    legend: syntaxColouringLegend,
+    legend: syntaxHighlightingLegend,
     range: false,
     full: {
       delta: false,
@@ -202,10 +202,8 @@ connection.onDidChangeConfiguration((params) => {
 
 documents.onDidChangeContent((change) => lintSingleDocument(change.document));
 
-// Trigger the syntax colouring
-connection.languages.semanticTokens.on(
-  applySyntaxColouringForDocument(documents),
-);
+// Trigger the syntax highlighting
+connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
 
 // Trigger the signature help, providing info about functions / procedures
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));

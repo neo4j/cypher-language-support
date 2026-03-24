@@ -72,10 +72,7 @@ export class ParserAdapter extends Parser {
 
   private antlrParse(document: string) {
     const startTime = performance.now();
-    const tokens = this.config.languageService.provideSyntaxColouring(
-      document,
-      true,
-    );
+    const tokens = this.config.languageService.highlightSyntax(document, true);
     const timeTaken = performance.now() - startTime;
     if (timeTaken > 300) {
       this.config.setUseLightVersion?.(true);
