@@ -1,4 +1,4 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('styleguide examples', () => {
   // NOTE: We do not swap the order of ON MATCH and ON CREATE since

@@ -8,7 +8,7 @@ import {
 import {
   DeduplicatedNodesAndRels,
   extractUniqueNodesAndRels,
-} from '../cypher-execution/extract-unique-nodes-and-relationships';
+} from '../cypher-execution/extract-unique-nodes-and-relationships.js';
 
 /**
  * Result type for graph queries that includes deduplicated nodes and relationships

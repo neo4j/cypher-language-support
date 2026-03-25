@@ -2,7 +2,7 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   clampUnsafePositions,
   SyntaxDiagnostic,
-} from '../syntaxValidation/syntaxValidation';
+} from '../syntaxValidation/syntaxValidation.js';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 describe('Clean positions', () => {

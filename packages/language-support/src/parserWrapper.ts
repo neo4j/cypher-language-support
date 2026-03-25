@@ -6,10 +6,10 @@ import {
   ParseTreeListener,
 } from 'antlr4';
 
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import CypherLexer from './generated-parser/CypherCmdLexer.js';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { _internalFeatureFlags } from './featureFlags';
+import { _internalFeatureFlags } from './featureFlags.js';
 import {
   ClauseContext,
   CypherVersionContext,
@@ -24,7 +24,7 @@ import {
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
   VariableContext,
-} from './generated-parser/CypherCmdParser';
+} from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
   findStopNode,
@@ -33,16 +33,16 @@ import {
   isDefined,
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
-} from './helpers';
-import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation';
-import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers';
+} from './helpers.js';
+import { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
+import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
 import {
   CypherVersion,
   cypherVersionNumbers,
   allCypherVersions,
   SymbolsInfo,
   SymbolTable,
-} from './types';
+} from './types.js';
 
 export interface ParsedStatement {
   command: ParsedCommand;

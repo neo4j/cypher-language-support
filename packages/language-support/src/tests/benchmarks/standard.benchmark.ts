@@ -1,17 +1,17 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { autocomplete } from '../../autocompletion/autocompletion';
-import { parse, parserWrapper } from '../../parserWrapper';
-import { signatureHelp } from '../../signatureHelp';
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
-import { testData } from '../testData';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
+import { parse, parserWrapper } from '../../parserWrapper.js';
+import { signatureHelp } from '../../signatureHelp.js';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
+import { testData } from '../testData.js';
 import {
   createMovieDb,
   largePokemonquery,
   simpleQuery,
   tictactoe,
-} from './benchmarkQueries';
+} from './benchmarkQueries.js';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';

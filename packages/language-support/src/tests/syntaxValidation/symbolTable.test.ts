@@ -1,5 +1,5 @@
-import { testData } from '../testData';
-import { getSymbolTablesForQuery } from './helpers';
+import { testData } from '../testData.js';
+import { getSymbolTablesForQuery } from './helpers.js';
 
 describe('Symbol table spec', () => {
   test('Symbol table works for the happy path', () => {

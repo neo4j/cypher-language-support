@@ -6,14 +6,14 @@ import {
   Token,
 } from 'antlr4';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
 import CypherParser, {
   ConsoleCommandContext,
   PreparserOptionContext,
-} from '../generated-parser/CypherCmdParser';
-import { findParent, isCommentOpener } from '../helpers';
-import { completionCoreErrormessage } from './completionCoreErrors';
-import { SyntaxDiagnostic } from './syntaxValidation';
+} from '../generated-parser/CypherCmdParser.js';
+import { findParent, isCommentOpener } from '../helpers.js';
+import { completionCoreErrormessage } from './completionCoreErrors.js';
+import { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
   errors: SyntaxDiagnostic[];

@@ -8,7 +8,7 @@ import {
 } from 'neo4j-driver';
 import { version } from '../package.json';
 import { Database } from './queries/databases.js';
-import { ExecuteQueryArgs, QueryType } from './types/sdkTypes';
+import { ExecuteQueryArgs, QueryType } from './types/sdkTypes.js';
 
 const METADATA_BASE = {
   app: 'neo4j-sdk',

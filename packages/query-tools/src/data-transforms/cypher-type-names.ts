@@ -16,11 +16,11 @@ import {
 import type {
   CypherDataType,
   CypherProperty,
-} from '../types/cypher-data-types';
+} from '../types/cypher-data-types.js';
 import {
   isCypherBasicPropertyType,
   isInt8Array,
-} from '../types/cypher-data-types';
+} from '../types/cypher-data-types.js';
 
 type CypherPropertyName =
   | 'Float'
