@@ -5,11 +5,8 @@ import type {
 import {
   DbSchema,
   lintCypherQuery as _lintCypherQuery,
-  CypherLanguageService,
 } from '@neo4j-cypher/language-support';
 import workerpool from 'workerpool';
-
-const languageService = new CypherLanguageService();
 
 function lintCypherQuery(
   query: string,
@@ -17,11 +14,8 @@ function lintCypherQuery(
   featureFlags: { consoleCommands?: boolean } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
   //cast to appease git lint check
-  return languageService.lint(query, dbSchema as DbSchema, {
-    consoleCommandsEnabled:
-      featureFlags?.consoleCommands !== undefined
-        ? featureFlags.consoleCommands
-        : true,
+  return _lintCypherQuery(query, dbSchema as DbSchema, {
+    consoleCommandsEnabled: featureFlags?.consoleCommands,
   });
 }
 

@@ -472,7 +472,7 @@ export class CypherEditor extends Component<
             if (upt.docChanged) {
               this.symbolFetcher.queueSymbolJob(
                 upt.state.doc.toString(),
-                schema,
+                this.schemaRef.current.schema,
               );
             }
             const wasUserEdit = !upt.transactions.some((tr) =>

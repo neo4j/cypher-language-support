@@ -1,9 +1,10 @@
 import { CypherLanguageService } from '../../cypherLanguageService';
 import { DbSchema } from '../../dbSchema';
-import { _internalFeatureFlags } from '../../featureFlags';
 import { CompletionItem } from '../../types';
 
-const languageService = new CypherLanguageService();
+const languageService = new CypherLanguageService({
+  consoleCommandsEnabled: false,
+});
 
 export function testCompletionsExactly({
   query,
@@ -17,7 +18,6 @@ export function testCompletionsExactly({
   expected?: CompletionItem[];
 }) {
   const actualCompletionList = languageService.autocomplete(query, dbSchema, {
-    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
     caretPosition: offset,
   });
   expect(actualCompletionList).toEqual(expected);
@@ -45,9 +45,7 @@ export function testCompletions({
   // TODO This is a temporary hack because completions are not working well
   query = query.slice(0, offset);
   if (computeSymbolsInfo) {
-    const result = languageService.lint(query, dbSchema, {
-      consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
-    });
+    const result = languageService.lint(query, dbSchema);
     languageService.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
@@ -55,7 +53,6 @@ export function testCompletions({
   }
 
   const actualCompletionList = languageService.autocomplete(query, dbSchema, {
-    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
     caretPosition: offset,
     manual: manualTrigger,
   });
@@ -106,16 +103,12 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = languageService.lint(query, dbSchema, {
-    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
-  });
+  const result = languageService.lint(query, dbSchema);
   languageService.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = languageService.autocomplete(query, dbSchema, {
-    consoleCommandsEnabled: _internalFeatureFlags.consoleCommands,
-  });
+  const completions = languageService.autocomplete(query, dbSchema);
   return completions;
 }

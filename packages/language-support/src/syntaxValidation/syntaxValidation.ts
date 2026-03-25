@@ -333,21 +333,18 @@ function fixSymbolTableOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
-  optionals: {
+  {
+    consoleCommandsEnabled = true,
+    parsingResult,
+  }: {
     consoleCommandsEnabled?: boolean;
     parsingResult?: ParsingResult;
   } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
-    const parsingResult: ParsingResult =
-      optionals.parsingResult ??
-      createParsingResult(query, {
-        consoleCommandsEnabled:
-          optionals.consoleCommandsEnabled !== undefined
-            ? optionals.consoleCommandsEnabled
-            : true,
-      });
-    const statements = parsingResult.statementsParsing;
+    const resolvedParsingResult =
+      parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+    const statements = resolvedParsingResult.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {

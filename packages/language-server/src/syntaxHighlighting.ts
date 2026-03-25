@@ -14,9 +14,7 @@ export function highlightSyntaxForDocument(
     const textDocument = documents.get(params.textDocument.uri);
     if (textDocument === undefined) return { data: [] };
 
-    const tokens = languageService.highlightSyntax(textDocument.getText(), {
-      consoleCommandsEnabled: false,
-    });
+    const tokens = languageService.highlightSyntax(textDocument.getText());
 
     const builder = new SemanticTokensBuilder();
 

@@ -82,7 +82,6 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       documentText,
       config.schema ?? {},
       {
-        consoleCommandsEnabled: true,
         caretPosition: offset,
         manual: context.explicit,
       },

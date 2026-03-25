@@ -32,7 +32,6 @@ export function doAutoCompletion(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
         {
-          consoleCommandsEnabled: false,
           caretPosition: offset,
           manual:
             completionParams.context.triggerKind ===

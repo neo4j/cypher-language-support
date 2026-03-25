@@ -171,7 +171,7 @@ export function parseStatementsStrs(query: string): string[] {
       .join('');
 
     // Do not return empty statements
-    if (statementStr.trimLeft().length != 0) {
+    if (statementStr.trimStart().length != 0) {
       result.push(statementStr);
     }
   }
@@ -817,8 +817,15 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 export class CypherLanguageService {
   parsingResult?: ParsingResult;
   symbolsInfo?: SymbolsInfo;
+  private consoleCommandsEnabled: boolean;
 
-  parse(query: string, consoleCommandsEnabled?: boolean): ParsingResult {
+  constructor({
+    consoleCommandsEnabled = true,
+  }: { consoleCommandsEnabled?: boolean } = {}) {
+    this.consoleCommandsEnabled = consoleCommandsEnabled;
+  }
+
+  parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
@@ -826,8 +833,7 @@ export class CypherLanguageService {
       return this.parsingResult;
     } else {
       const parsingResult = createParsingResult(query, {
-        consoleCommandsEnabled:
-          consoleCommandsEnabled !== undefined ? consoleCommandsEnabled : true,
+        consoleCommandsEnabled: this.consoleCommandsEnabled,
       });
       return parsingResult;
     }
@@ -847,65 +853,40 @@ export class CypherLanguageService {
     this.symbolsInfo = symbolsInfo;
   }
 
-  lint(
-    query: string,
-    dbSchema: DbSchema,
-    optionals: { consoleCommandsEnabled?: boolean } = {},
-  ) {
-    const config = { consoleCommandsEnabled: true, ...optionals };
-    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
+  lint(query: string, dbSchema: DbSchema) {
+    const parsingResult = this.parse(query);
     return lintCypherQuery(query, dbSchema, { parsingResult });
   }
 
-  highlightSyntax(
-    wholeFileText: string,
-    optionals: { consoleCommandsEnabled?: boolean } = {},
-  ) {
-    const config = { consoleCommandsEnabled: true, ...optionals };
-    const parsingResult = this.parse(
-      wholeFileText,
-      config.consoleCommandsEnabled,
-    );
-    return highlightSyntax(wholeFileText, { parsingResult });
+  highlightSyntax(query: string) {
+    const parsingResult = this.parse(query);
+    return highlightSyntax(query, { parsingResult });
   }
 
   getSignatureHelp(
     query: string,
     dbSchema: DbSchema,
-    optionals: {
-      consoleCommandsEnabled?: boolean;
-      caretPosition?: number;
-    } = {},
+    { caretPosition = query.length }: { caretPosition?: number } = {},
   ) {
-    const config = {
-      consoleCommandsEnabled: true,
-      caretPosition: query.length,
-      ...optionals,
-    };
-    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
-    return getSignatureInfo(query, dbSchema, { ...config, parsingResult });
+    const parsingResult = this.parse(query);
+    return getSignatureInfo(query, dbSchema, { caretPosition, parsingResult });
   }
 
   autocomplete(
     query: string,
     dbSchema: DbSchema,
-    optionals: {
-      consoleCommandsEnabled?: boolean;
-      caretPosition?: number;
-      manual?: boolean;
-    } = {},
+    {
+      caretPosition = query.length,
+      manual = false,
+    }: { caretPosition?: number; manual?: boolean } = {},
   ) {
-    const config = {
-      consoleCommandsEnabled: true,
-      caretPosition: query.length,
-      manual: false,
-      ...optionals,
-    };
     // TODO This is a temporary hack because completions are not working well
-    query = query.slice(0, config.caretPosition);
-    const parsingResult = this.parse(query, config.consoleCommandsEnabled);
+    query = query.slice(0, caretPosition);
+    const parsingResult = this.parse(query);
     return autocomplete(query, dbSchema, {
-      ...config,
+      consoleCommandsEnabled: this.consoleCommandsEnabled,
+      caretPosition,
+      manual,
       symbolsInfo: this.symbolsInfo,
       parsingResult,
     });

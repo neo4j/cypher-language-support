@@ -35,7 +35,9 @@ import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
-export const languageService = new CypherLanguageService();
+export const languageService = new CypherLanguageService({
+  consoleCommandsEnabled: false,
+});
 
 class SymbolFetcher {
   private processing = false;
