@@ -20,9 +20,9 @@ import {
   CharStreams,
   CommonTokenStream,
 } from 'antlr4';
-import { CodeCompletionCore } from '../src/CodeCompletionCore';
-import OptionalsLexer from './generated/OptionalsLexer';
-import OptionalsParser from './generated/OptionalsParser';
+import { CodeCompletionCore } from '../src/CodeCompletionCore.js';
+import OptionalsLexer from './generated/OptionalsLexer.js';
+import OptionalsParser from './generated/OptionalsParser.js';
 
 describe('Code Completion Tests for optionals', () => {
 

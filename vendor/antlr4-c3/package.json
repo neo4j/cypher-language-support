@@ -27,7 +27,7 @@
   "scripts": {
     "build": "pnpm generate && pnpm build-esm && pnpm build-commonjs",
     "build-esm": "tsc --module esnext --outDir dist/esm",
-    "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
+    "build-commonjs": "tsc --module commonjs --moduleResolution node --outDir dist/cjs",
     "prepublishOnly": "pnpm generate && pnpm test",
     "test": "vitest run",
     "generate": "cd tests && sh generate.sh",
