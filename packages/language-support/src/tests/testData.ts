@@ -1,5 +1,5 @@
-import { DbSchema } from '../dbSchema';
-import { Neo4jFunction, Neo4jProcedure } from '../types';
+import { DbSchema } from '../dbSchema.js';
+import { Neo4jFunction, Neo4jProcedure } from '../types.js';
 
 function asNeo4jFunctions<T extends Record<string, Neo4jFunction>>(obj: T) {
   return obj as { [P in keyof T]: Neo4jFunction };

@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { autocomplete } from '../../autocompletion/autocompletion';
-import { parse, parserWrapper } from '../../parserWrapper';
-import { testData } from '../testData';
-import { autocompletionQueries, tictactoe } from './benchmarkQueries';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
+import { parse, parserWrapper } from '../../parserWrapper.js';
+import { testData } from '../testData.js';
+import { autocompletionQueries, tictactoe } from './benchmarkQueries.js';
 
 describe('completions', () => {
   bench('multistatement - autocompletion', function () {

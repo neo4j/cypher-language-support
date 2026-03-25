@@ -1,8 +1,8 @@
-import { DbSchema } from '../dbSchema';
-import { findCaret } from '../helpers';
-import { parserWrapper } from '../parserWrapper';
-import { CompletionItem } from '../types';
-import { completionCoreCompletion } from './completionCoreCompletions';
+import { DbSchema } from '../dbSchema.js';
+import { findCaret } from '../helpers.js';
+import { parserWrapper } from '../parserWrapper.js';
+import { CompletionItem } from '../types.js';
+import { completionCoreCompletion } from './completionCoreCompletions.js';
 
 export function autocomplete(
   query: string,

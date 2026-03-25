@@ -13,13 +13,13 @@ import {
 import type {
   CypherDataType,
   CypherProperty,
-} from '../types/cypher-data-types';
+} from '../types/cypher-data-types.js';
 import {
   isCypherPropertyType,
   isCypherTemporalType,
   isInt8Array,
-} from '../types/cypher-data-types';
-import { formatFloat } from './format-float';
+} from '../types/cypher-data-types.js';
+import { formatFloat } from './format-float.js';
 
 export const spacialFormat = (p: Point): string => {
   const zString = p.z !== undefined ? `, z:${formatFloat(p.z)}` : '';

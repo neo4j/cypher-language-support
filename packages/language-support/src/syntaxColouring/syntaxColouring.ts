@@ -29,16 +29,16 @@ import {
   SymbolicNameStringContext,
   UseCompletionRuleContext,
   VariableContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 
 import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParserListener from '../generated-parser/CypherCmdParserListener';
-import { CypherTokenType } from '../lexerSymbols';
-import { parserWrapper } from '../parserWrapper';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
+import CypherParserListener from '../generated-parser/CypherCmdParserListener.js';
+import { CypherTokenType } from '../lexerSymbols.js';
+import { parserWrapper } from '../parserWrapper.js';
 import {
   BracketType,
   computeTokenKey,
@@ -49,7 +49,7 @@ import {
   shouldAssignTokenType,
   sortTokens,
   toParsedTokens,
-} from './syntaxColouringHelpers';
+} from './syntaxColouringHelpers.js';
 
 export const syntaxColouringLegend: SemanticTokensLegend = {
   tokenModifiers: [],

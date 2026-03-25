@@ -1,11 +1,11 @@
 import { SignatureHelp } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
+import { DbSchema } from '../dbSchema.js';
 import {
   emptyResult,
   signatureHelp,
   toSignatureInformation,
-} from '../signatureHelp';
-import { testData } from './testData';
+} from '../signatureHelp.js';
+import { testData } from './testData.js';
 
 export function testSignatureHelp(
   fileText: string,

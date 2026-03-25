@@ -1,6 +1,6 @@
 import { DiagnosticTag } from 'vscode-languageserver-types';
-import { testData } from '../testData';
-import { getDiagnosticsForQuery } from './helpers';
+import { testData } from '../testData.js';
+import { getDiagnosticsForQuery } from './helpers.js';
 
 describe('Functions semantic validation spec', () => {
   test('Syntax validation warns on deprecated function when database can be contacted and deprecated by is not present', () => {

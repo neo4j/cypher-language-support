@@ -8,14 +8,14 @@ import CypherParser, {
   CallClauseContext,
   ExpressionContext,
   FunctionInvocationContext,
-} from './generated-parser/CypherCmdParser';
+} from './generated-parser/CypherCmdParser.js';
 
 import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
-import { DbSchema } from './dbSchema';
-import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
-import { findCaret, isDefined, resolveCypherVersion } from './helpers';
-import { parserWrapper } from './parserWrapper';
-import { Neo4jFunction, Neo4jProcedure } from './types';
+import { DbSchema } from './dbSchema.js';
+import CypherCmdParserListener from './generated-parser/CypherCmdParserListener.js';
+import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
+import { parserWrapper } from './parserWrapper.js';
+import { Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],

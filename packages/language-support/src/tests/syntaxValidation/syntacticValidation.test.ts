@@ -1,5 +1,5 @@
-import { testData } from '../testData';
-import { getDiagnosticsForQuery } from './helpers';
+import { testData } from '../testData.js';
+import { getDiagnosticsForQuery } from './helpers.js';
 
 describe('Syntactic validation spec', () => {
   test('Misspelt keyword at the beginning of the statement', () => {

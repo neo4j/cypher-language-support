@@ -1,7 +1,7 @@
 import { CharStreams, CommonTokenStream } from 'antlr4';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
-import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
+import CypherParser from '../generated-parser/CypherCmdParser.js';
+import { CypherTokenType, lexerSymbols, tokenNames } from '../lexerSymbols.js';
 
 describe('Lexer tokens', () => {
   test('List of tokens should match generated parser symbolic names', () => {

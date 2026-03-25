@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { testCompletions } from './completionAssertionHelpers';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('Preparser auto-completions', () => {
   test('Correctly completes EXPLAIN and PROFILE', () => {
