@@ -1,10 +1,10 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
 
-describe('MATCH syntax colouring', () => {
+describe('MATCH syntax highlighting', () => {
   test('Correctly colours labels conjunction', () => {
     const query = 'MATCH (n:A&B)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -105,7 +105,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours labels disjuntion', () => {
     const query = 'MATCH (n:A|B)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -206,7 +206,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours negated label', () => {
     const query = 'MATCH (n:!A)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -296,7 +296,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours parenthesized label expressions', () => {
     const query = 'MATCH (n:(!A&!B)|C)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -469,7 +469,7 @@ describe('MATCH syntax colouring', () => {
   test('Correctly colours parenthesized relationship type expressions', () => {
     const query = 'MATCH (n:Label)-[r:(!R1&!R2)|R3]';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -713,7 +713,7 @@ describe('MATCH syntax colouring', () => {
 
   test('Correctly colours OPTIONAL', () => {
     const query = 'OPTIONAL MATCH (n)';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 8,
@@ -779,14 +779,14 @@ describe('MATCH syntax colouring', () => {
   });
 });
 
-describe('RETURN syntax colouring', () => {
+describe('RETURN syntax highlighting', () => {
   test('Correctly colours AS and SKIP', () => {
     const query = `MATCH (n:Label)-[r]->(m:Label)
       RETURN n AS node, r AS rel
       SKIP 10
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1108,7 +1108,7 @@ describe('RETURN syntax colouring', () => {
   test('Correctly colours ORDER BY', () => {
     const query = `RETURN n AS node, r AS rel ORDER BY n.name DESC`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1269,7 +1269,7 @@ describe('RETURN syntax colouring', () => {
   test('Correctly colours LIMIT', () => {
     const query = `RETURN n LIMIT 10`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1318,11 +1318,11 @@ describe('RETURN syntax colouring', () => {
   });
 });
 
-describe('WHERE syntax colouring', () => {
+describe('WHERE syntax highlighting', () => {
   test('Correctly colours MATCH with WHERE and RETURN', () => {
     const query = 'MATCH (n:Person) WHERE n.name = "foo" RETURN n';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1491,7 +1491,7 @@ describe('WHERE syntax colouring', () => {
     WHERE n.property <> $value
     RETURN n, m`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1787,7 +1787,7 @@ describe('WHERE syntax colouring', () => {
     MATCH (a:Person {name: 'Andy'})
     RETURN [(a)-[r:KNOWS WHERE r.since < minYear]->(b:Person) | r.since] AS years`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,

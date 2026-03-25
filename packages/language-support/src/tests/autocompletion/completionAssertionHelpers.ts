@@ -1,8 +1,10 @@
-import { autocomplete } from '../../autocompletion/autocompletion';
+import { CypherLanguageService } from '../../cypherLanguageService';
 import { DbSchema } from '../../dbSchema';
-import { parserWrapper } from '../../parserWrapper';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
 import { CompletionItem } from '../../types';
+
+const languageService = new CypherLanguageService({
+  consoleCommandsEnabled: false,
+});
 
 export function testCompletionsExactly({
   query,
@@ -15,7 +17,9 @@ export function testCompletionsExactly({
   dbSchema?: DbSchema;
   expected?: CompletionItem[];
 }) {
-  const actualCompletionList = autocomplete(query, dbSchema, offset);
+  const actualCompletionList = languageService.autocomplete(query, dbSchema, {
+    caretPosition: offset,
+  });
   expect(actualCompletionList).toEqual(expected);
 }
 
@@ -38,20 +42,20 @@ export function testCompletions({
   manualTrigger?: boolean;
   computeSymbolsInfo?: boolean;
 }) {
+  // TODO This is a temporary hack because completions are not working well
+  query = query.slice(0, offset);
   if (computeSymbolsInfo) {
-    const result = lintCypherQuery(query, dbSchema);
-    parserWrapper.setSymbolsInfo({
+    const result = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({
       query,
       symbolTables: result.symbolTables,
     });
   }
 
-  const actualCompletionList = autocomplete(
-    query,
-    dbSchema,
-    offset,
-    manualTrigger,
-  );
+  const actualCompletionList = languageService.autocomplete(query, dbSchema, {
+    caretPosition: offset,
+    manual: manualTrigger,
+  });
 
   if (assertEmpty) {
     expect(actualCompletionList).toEqual([]);
@@ -87,6 +91,9 @@ export function testCompletions({
   );
 
   expect(unexpectedCompletions).toEqual([]);
+  if (computeSymbolsInfo) {
+    languageService.clearCache();
+  }
 }
 
 export function getSymbolCompletions({
@@ -96,12 +103,12 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = lintCypherQuery(query, dbSchema);
-  parserWrapper.setSymbolsInfo({
+  const result = languageService.lint(query, dbSchema);
+  languageService.setSymbolsInfo({
     query: query,
     symbolTables: result.symbolTables,
   });
 
-  const completions = autocomplete(query, dbSchema, query.length, false);
+  const completions = languageService.autocomplete(query, dbSchema);
   return completions;
 }

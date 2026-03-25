@@ -1,8 +1,4 @@
-import {
-  _internalFeatureFlags,
-  DbSchema,
-  testData,
-} from '@neo4j-cypher/language-support';
+import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import { CypherEditor } from '@neo4j-cypher/react-codemirror';
 import { useMemo, useRef, useState } from 'react';
 import { Tree } from 'react-d3-tree';
@@ -68,8 +64,6 @@ export function App() {
   const treeData = useMemo(() => {
     return getDebugTree(value);
   }, [value]);
-
-  _internalFeatureFlags.consoleCommands = true;
 
   return (
     <div className={darkMode ? 'dark' : ''}>

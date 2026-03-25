@@ -10,16 +10,20 @@ export { CypherTokenType, lexerSymbols } from './lexerSymbols';
 export {
   parse,
   parseParameters,
-  parserWrapper,
+  CypherLanguageService,
   parseStatementsStrs,
-} from './parserWrapper';
-export { signatureHelp, toSignatureInformation } from './signatureHelp';
+  createParsingResult,
+} from './cypherLanguageService';
 export {
-  applySyntaxColouring,
+  getSignatureInfo as signatureHelp,
+  toSignatureInformation,
+} from './signatureHelp';
+export {
+  highlightSyntax,
   mapCypherToSemanticTokenIndex,
-  syntaxColouringLegend,
-} from './syntaxColouring/syntaxColouring';
-export type { ParsedCypherToken } from './syntaxColouring/syntaxColouringHelpers';
+  syntaxHighlightingLegend,
+} from './syntaxHighlighting/syntaxHighlighting';
+export type { ParsedCypherToken } from './syntaxHighlighting/syntaxHighlightingHelper';
 export {
   lintCypherQuery,
   clampUnsafePositions,

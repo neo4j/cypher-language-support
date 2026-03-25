@@ -1,10 +1,10 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
 
-describe('Administration commands syntax colouring', () => {
+describe('Administration commands syntax highlighting', () => {
   test('Correctly colours SHOW INDEXES', () => {
     const query = 'SHOW INDEXES YIELD *';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -55,7 +55,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours CREATE INDEX', () => {
     const query = 'CREATE INDEX index_name FOR (p:Person) ON (p.name)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -238,7 +238,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours DROP INDEX', () => {
     const query = 'DROP INDEX index_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -277,7 +277,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours SHOW CONSTRAINTS', () => {
     const query = 'SHOW ALL CONSTRAINTS YIELD *';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -344,7 +344,7 @@ describe('Administration commands syntax colouring', () => {
         indexProvider: 'range-1.0'
       }`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -627,7 +627,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours DROP CONSTRAINT', () => {
     const query = 'DROP CONSTRAINT constraint_name IF EXISTS';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -688,7 +688,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours SHOW FUNCTIONS', () => {
     const query = 'SHOW FUNCTIONS EXECUTABLE BY user_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -749,7 +749,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours SHOW PROCEDURES', () => {
     const query = 'SHOW PROCEDURES EXECUTABLE BY user_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -811,7 +811,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW SETTINGS', () => {
     const query =
       "SHOW SETTINGS 'server.bolt.advertised_address', 'server.bolt.listen_address' YIELD *";
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -901,7 +901,7 @@ describe('Administration commands syntax colouring', () => {
       WHERE NOT message = 'Transaction terminated.'
       RETURN txId
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1172,7 +1172,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours CREATE DATABASE', () => {
     const query =
       'CREATE DATABASE `topology-example` IF NOT EXISTS TOPOLOGY 1 PRIMARY 0 SECONDARIES';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1299,7 +1299,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours START DATABASE', () => {
     const query = 'START DATABASE `database-name`';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1338,7 +1338,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours STOP DATABASE', () => {
     const query = 'STOP DATABASE `database-name`';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1379,7 +1379,7 @@ describe('Administration commands syntax colouring', () => {
     const query =
       'ALTER DATABASE `topology-example` SET TOPOLOGY 1 PRIMARY SET ACCESS READ ONLY';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1511,7 +1511,7 @@ describe('Administration commands syntax colouring', () => {
       AND currentStatus = 'online'
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1677,7 +1677,7 @@ describe('Administration commands syntax colouring', () => {
       PASSWORD $password
       PROPERTIES { property: $value }
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1968,7 +1968,7 @@ describe('Administration commands syntax colouring', () => {
       USER user_name
       PASSWORD $password
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2106,7 +2106,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours DROP ALIAS', () => {
     const query = 'DROP ALIAS `database-alias` IF EXISTS FOR DATABASE';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -2190,7 +2190,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours ENABLE SERVER', () => {
     const query = "ENABLE SERVER 'serverId'";
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -2229,7 +2229,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours ALTER SERVER', () => {
     const query = "ALTER SERVER 'name' SET OPTIONS {modeConstraint: 'PRIMARY'}";
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2351,7 +2351,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours RENAME SERVER', () => {
     const query = "RENAME SERVER 'oldName' TO 'newName'";
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -2412,7 +2412,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours DEALLOCATE DATABASES', () => {
     const query = "DEALLOCATE DATABASES FROM SERVER 'name'";
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 10,
@@ -2473,7 +2473,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours REALLOCATE DATABASES', () => {
     const query = 'REALLOCATE DATABASES';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 10,
@@ -2501,7 +2501,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours SHOW SERVERS', () => {
     const query = 'SHOW SERVERS';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -2535,7 +2535,7 @@ describe('Administration commands syntax colouring', () => {
       SET HOME DATABASE \`database-name\`
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -2733,7 +2733,7 @@ describe('Administration commands syntax colouring', () => {
       SET STATUS ACTIVE
       SET HOME DATABASE \`database-name\`
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2928,7 +2928,7 @@ describe('Administration commands syntax colouring', () => {
     const query = `SHOW USERS
       WHERE suspended = true AND passwordChangeRequired
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -3024,7 +3024,7 @@ describe('Administration commands syntax colouring', () => {
     const query =
       'CREATE ROLE role_name IF NOT EXISTS AS COPY OF other_role_name';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -3140,7 +3140,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours DROP ROLE', () => {
     const query = 'DROP ROLE role_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -3183,7 +3183,7 @@ describe('Administration commands syntax colouring', () => {
       WHERE member = $user
       RETURN role
     `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -3355,7 +3355,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW POPULATED ROLES', () => {
     const query = 'SHOW POPULATED ROLES';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -3394,7 +3394,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours GRANT ROLE', () => {
     const query = 'GRANT ROLE role_name1, role_name2 TO user_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -3477,7 +3477,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours REVOKE ROLE', () => {
     const query = 'REVOKE ROLE role_name FROM user_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -3538,7 +3538,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours RENAME ROLE', () => {
     const query = 'RENAME ROLE role_name TO other_role_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -3599,7 +3599,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours SHOW ROLE', () => {
     const query = 'SHOW ROLE role_name PRIVILEGES AS COMMANDS';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -3671,7 +3671,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours GRANT PRIVILEGE', () => {
     const query = 'GRANT EXECUTE BOOSTED FUNCTIONS * ON DBMS TO role_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -3776,7 +3776,7 @@ describe('Administration commands syntax colouring', () => {
 
   test('Correctly colours REVOKE PRIVILEGE', () => {
     const query = 'REVOKE IMPERSONATE (*) ON DBMS FROM role_name';
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -3889,7 +3889,7 @@ describe('Administration commands syntax colouring', () => {
     const query =
       'DENY IMPERSONATE (user_name1, user_name2) ON DBMS TO role_name';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -4023,7 +4023,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW PRIVILEGES', () => {
     const query = 'SHOW PRIVILEGES AS COMMANDS';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -4074,7 +4074,7 @@ describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW USER PRIVILEGES', () => {
     const query = 'SHOW USER user_name PRIVILEGES';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,

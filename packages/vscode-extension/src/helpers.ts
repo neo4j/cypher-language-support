@@ -7,7 +7,6 @@ export function validateParamInput(
   const diagnostics = lintCypherQuery(
     `RETURN ${paramValue}`,
     dbSchema,
-    true,
   ).diagnostics;
   const errors = diagnostics.filter((d) => d.severity === 1);
   if (errors.length > 0) {

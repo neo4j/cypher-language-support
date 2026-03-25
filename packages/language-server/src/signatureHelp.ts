@@ -1,4 +1,3 @@
-import { signatureHelp } from '@neo4j-cypher/language-support';
 import {
   SignatureHelp,
   SignatureHelpParams,
@@ -7,6 +6,7 @@ import {
 
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { languageService } from './server';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -26,10 +26,10 @@ export function doSignatureHelp(
     const position = params.position;
     const offset = textDocument.offsetAt(position);
 
-    return signatureHelp(
+    return languageService.getSignatureHelp(
       textDocument.getText(),
       neo4j.metadata?.dbSchema ?? {},
-      offset,
+      { caretPosition: offset },
     );
   };
 }

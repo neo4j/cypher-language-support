@@ -14,7 +14,7 @@ import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
 import { DbSchema } from './dbSchema';
 import CypherCmdParserListener from './generated-parser/CypherCmdParserListener';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers';
-import { parserWrapper } from './parserWrapper';
+import { createParsingResult, ParsingResult } from './cypherLanguageService';
 import { Neo4jFunction, Neo4jProcedure } from './types';
 
 export const emptyResult: SignatureHelp = {
@@ -172,24 +172,34 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
-export function signatureHelp(
+export function getSignatureInfo(
   query: string,
   dbSchema: DbSchema,
-  caretPosition: number = query.length,
+  {
+    caretPosition = query.length,
+    parsingResult,
+    consoleCommandsEnabled = true,
+  }: {
+    caretPosition?: number;
+    parsingResult?: ParsingResult;
+    consoleCommandsEnabled?: boolean;
+  } = {},
 ): SignatureHelp {
+  const resolvedParsingResult =
+    parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+
   let result: SignatureHelp = emptyResult;
   /* We need the token immediately before the caret
-  
+
       CALL something(
                      ^
-     because in this case what gives us information on where we are 
-     in the procedure is not the space at the caret, but the opening (                
+     because in this case what gives us information on where we are
+     in the procedure is not the space at the caret, but the opening (
   */
   const prevCaretPosition = caretPosition - 1;
 
   if (prevCaretPosition > 0) {
-    const parserResult = parserWrapper.parse(query);
-    const caret = findCaret(parserResult, prevCaretPosition);
+    const caret = findCaret(resolvedParsingResult, prevCaretPosition);
 
     if (caret) {
       const statement = caret.statement;

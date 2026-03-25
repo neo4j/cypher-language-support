@@ -2,8 +2,6 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import { DbSchema } from '../../dbSchema';
 import { testData } from '../testData';
 import { testCompletions } from './completionAssertionHelpers';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
-import { parserWrapper } from '../../parserWrapper';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {
@@ -248,11 +246,6 @@ RETURN movie {
   test('does not complete properties for non node / relationship variables when symbol table is available', () => {
     const dbSchema = { propertyKeys: ['name', 'surname'] };
     const query = 'WITH [1,2,3] AS x RETURN x.';
-    const symbolsInfo = {
-      query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
-    };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -261,20 +254,13 @@ RETURN movie {
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'surname', kind: CompletionItemKind.Property },
       ],
+      computeSymbolsInfo: true,
     });
-
-    // Clean the symbol tables
-    parserWrapper.clearCache();
   });
 
   test('completes properties for node variables when symbol table is available', () => {
     const dbSchema = { propertyKeys: ['name', 'surname'] };
     const query = 'MATCH (n) RETURN n.';
-    const symbolsInfo = {
-      query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
-    };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -283,20 +269,13 @@ RETURN movie {
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'surname', kind: CompletionItemKind.Property },
       ],
+      computeSymbolsInfo: true,
     });
-
-    // Clean the symbol tables
-    parserWrapper.clearCache();
   });
 
   test('completes properties for relationship variables when symbol table is available', () => {
     const dbSchema = { propertyKeys: ['name', 'surname'] };
     const query = 'MATCH (n)-[r]-(m) RETURN r.';
-    const symbolsInfo = {
-      query,
-      symbolTables: lintCypherQuery(query, dbSchema).symbolTables,
-    };
-    parserWrapper.setSymbolsInfo(symbolsInfo);
 
     testCompletions({
       query,
@@ -305,9 +284,7 @@ RETURN movie {
         { label: 'name', kind: CompletionItemKind.Property },
         { label: 'surname', kind: CompletionItemKind.Property },
       ],
+      computeSymbolsInfo: true,
     });
-
-    // Clean the symbol tables
-    parserWrapper.clearCache();
   });
 });

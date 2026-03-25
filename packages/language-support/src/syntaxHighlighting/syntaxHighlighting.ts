@@ -38,7 +38,7 @@ import {
 import CypherLexer from '../generated-parser/CypherCmdLexer';
 import CypherParserListener from '../generated-parser/CypherCmdParserListener';
 import { CypherTokenType } from '../lexerSymbols';
-import { parserWrapper } from '../parserWrapper';
+import { createParsingResult, ParsingResult } from '../cypherLanguageService';
 import {
   BracketType,
   computeTokenKey,
@@ -49,15 +49,15 @@ import {
   shouldAssignTokenType,
   sortTokens,
   toParsedTokens,
-} from './syntaxColouringHelpers';
+} from './syntaxHighlightingHelper';
 
-export const syntaxColouringLegend: SemanticTokensLegend = {
+export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],
   tokenTypes: Object.keys(SemanticTokenTypes),
 };
 
 const semanticTokenTypesNumber: Map<string, number> = new Map(
-  syntaxColouringLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
+  syntaxHighlightingLegend.tokenTypes.map((tokenType, i) => [tokenType, i]),
 );
 
 export function mapCypherToSemanticTokenIndex(
@@ -361,11 +361,19 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function applySyntaxColouring(
-  wholeFileText: string,
+export function highlightSyntax(
+  query: string,
+  {
+    consoleCommandsEnabled = true,
+    parsingResult,
+  }: {
+    consoleCommandsEnabled?: boolean;
+    parsingResult?: ParsingResult;
+  } = {},
 ): ParsedCypherToken[] {
-  const parsingResult = parserWrapper.parse(wholeFileText);
-  const statements = parsingResult.statementsParsing;
+  const resolvedParsingResult =
+    parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+  const statements = resolvedParsingResult.statementsParsing;
 
   /* Get a second pass at the colouring correcting the colours
      using structural information from the parsing tree

@@ -4,7 +4,6 @@ import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LintWorker } from '@neo4j-cypher/lint-worker';
-import { parserWrapper } from '@neo4j-cypher/language-support';
 
 const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
@@ -37,7 +36,7 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       );
 
       if (result.symbolTables) {
-        parserWrapper.setSymbolsInfo({
+        config.languageService.setSymbolsInfo({
           query,
           symbolTables: result.symbolTables,
         });
