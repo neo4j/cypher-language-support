@@ -41,8 +41,9 @@ jobs:
       - name: Check relative imports have .js extensions
         # Ideally we'd use moduleResolution: "nodenext" which enforces .js extensions at the
         # TypeScript level, but antlr4@4.13.2's type declarations (.d.cts) use extensionless
-        # imports that break nodenext resolution. Once we stop vendoring antlr4-c3 (which
-        # depends on antlr4), we can switch to nodenext and remove this grep-based check.
+        # imports that break nodenext resolution. Once we switch to depending on antlr4-ng,
+        # both directly and in our (currently vendored) antlr4-c3 dependency, we can switch
+        # to nodenext and remove this grep-based check.
         # We also can't use oxlint's import/extensions rule because it doesn't support
         # TypeScript's .js-in-source convention: https://github.com/oxc-project/oxc/issues/19431
         run: pnpm check-imports

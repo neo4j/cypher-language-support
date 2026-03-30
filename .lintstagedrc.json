@@ -1,5 +1,9 @@
 {
   "*.ts": ["oxfmt", "oxlint --fix --type-aware --max-warnings 0"],
+  "{packages/language-support/src,packages/query-tools/src,packages/lint-worker/src,vendor/antlr4-c3/src,vendor/antlr4-c3/tests}/**/*.ts": [
+    "bash check-imports.sh"
+  ],
+  "vendor/antlr4-c3/index.ts": ["bash check-imports.sh"],
   "*.js": ["oxlint --fix --type-aware --max-warnings 0"],
   "*.json": ["oxfmt"]
 }
