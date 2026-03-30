@@ -307,6 +307,11 @@ class CodemirrorSymbolFetcher {
     }
   }
 
+  public terminate() {
+    this.nextJob = undefined;
+    void this.symbolTablePool.terminate();
+  }
+
   private async processJobQueue() {
     this.processing = true;
     while (this.nextJob) {
@@ -665,6 +670,7 @@ export class CypherEditor extends Component<
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
+    this.symbolFetcher?.terminate();
     cleanupWorkers();
   }
 

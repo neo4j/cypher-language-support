@@ -1,4 +1,3 @@
-import { _internalFeatureFlags } from '../featureFlags';
 import {
   createParsingResult,
   ParsedCommandNoPosition,
@@ -39,17 +38,6 @@ function expectErrorMessage(query: string, msg: string) {
 }
 
 describe('sanity checks', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses simple commands without args ', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
@@ -297,15 +285,6 @@ describe('sanity checks', () => {
 });
 
 describe(':use', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
   });
@@ -369,7 +348,6 @@ describe(':use', () => {
 });
 
 describe(':play', () => {
-  let consoleCommands: boolean;
   const dbSchema = {
     databaseNames: ['foo'],
     aliasNames: ['bar'],
@@ -381,13 +359,6 @@ describe(':play', () => {
     propertyKeys: ['firstName'],
   };
 
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('parses with arg', () => {
     expectParsedCommands(':play intro', [{ type: 'play', guide: 'intro' }]);
   });
@@ -445,15 +416,6 @@ describe(':play', () => {
 });
 
 describe('parameters', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
     expectParsedCommands(':params ', [{ type: 'list-parameters' }]);
@@ -727,17 +689,6 @@ describe('parameters', () => {
 });
 
 describe('server', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('basic server usage', () => {
     expectParsedCommands(':server connect', [
       { type: 'server', operation: 'connect' },
@@ -835,17 +786,6 @@ describe('server', () => {
 });
 
 describe('command parser also handles cypher', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [
       { statement: 'MATCH (n) RETURN n', type: 'cypher' },
@@ -885,17 +825,6 @@ describe('command parser also handles cypher', () => {
 });
 
 describe('style', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses style reset', () => {
     expectParsedCommands(':style reset', [
       { type: 'style', operation: 'reset' },
@@ -904,17 +833,6 @@ describe('style', () => {
 });
 
 describe('access-mode', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('basic access-mode usage', () => {
     expectParsedCommands(':access-mode', [
       { type: 'access-mode', operation: undefined },

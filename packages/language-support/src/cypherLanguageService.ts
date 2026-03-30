@@ -815,8 +815,8 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 }
 
 export class CypherLanguageService {
-  parsingResult?: ParsingResult;
-  symbolsInfo?: SymbolsInfo;
+  private parsingResult?: ParsingResult;
+  private symbolsInfo?: SymbolsInfo;
   private consoleCommandsEnabled: boolean;
 
   constructor({
