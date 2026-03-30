@@ -3,29 +3,29 @@ import {
   CompletionItemKind,
   InsertTextFormat,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
-import { ParsedStatement } from '../cypherLanguageService';
+import { DbSchema } from '../dbSchema.js';
+import { ParsedStatement } from '../cypherLanguageService.js';
 import {
   ConditionNode,
   isLabelLeaf,
   LabelLeaf,
   LabelOrCondition,
   SymbolsInfo,
-} from '../types';
-import { findParent } from '../helpers';
+} from '../types.js';
+import { findParent } from '../helpers.js';
 import {
   NodePatternContext,
   PatternElementContext,
   QuantifierContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser';
-import { backtickIfNeeded } from './autocompletionHelpers';
+} from '../generated-parser/CypherCmdParser.js';
+import { backtickIfNeeded } from './autocompletionHelpers.js';
 import {
   convertToCNF,
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
-} from '../labelTreeRewriting';
+} from '../labelTreeRewriting.js';
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,

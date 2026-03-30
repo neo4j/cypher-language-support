@@ -1,4 +1,4 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('should not forget to include all comments', () => {
   test('property comments', () => {

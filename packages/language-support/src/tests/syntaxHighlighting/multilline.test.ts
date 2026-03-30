@@ -1,4 +1,4 @@
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('Multiline syntax highlighting', () => {
   test('Correctly colours multi-statements', () => {

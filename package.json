@@ -22,6 +22,7 @@
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
     "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
+    "check-imports": "! grep -rn --include='*.ts' --exclude-dir=node_modules --exclude-dir=generated-parser --exclude-dir=generated \"from '\\./\\|from '\\.\\./\" packages/language-support/src packages/query-tools/src packages/lint-worker/src vendor/antlr4-c3/src vendor/antlr4-c3/index.ts vendor/antlr4-c3/tests | grep -v \"\\.js'\" | grep -v \"\\.json'\" | grep -v \"\\.mjs'\" && echo 'All relative imports have file extensions.'",
     "lint": "oxlint --type-aware --max-warnings 0",
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",

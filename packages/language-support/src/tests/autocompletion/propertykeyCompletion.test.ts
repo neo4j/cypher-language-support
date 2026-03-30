@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema';
-import { testData } from '../testData';
-import { testCompletions } from './completionAssertionHelpers';
+import { DbSchema } from '../../dbSchema.js';
+import { testData } from '../testData.js';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {

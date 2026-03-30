@@ -1,5 +1,5 @@
-import { formatQuery, FormattingOptions } from '../../formatting/formatting';
-import { standardizeQuery } from '../../formatting/standardizer';
+import { formatQuery, FormattingOptions } from '../../formatting/formatting.js';
+import { standardizeQuery } from '../../formatting/standardizer.js';
 
 export function verifyFormatting(
   query: string,

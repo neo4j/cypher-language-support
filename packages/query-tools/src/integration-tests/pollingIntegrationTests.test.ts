@@ -1,11 +1,11 @@
 import { auth, Driver, driver, Session } from 'neo4j-driver';
-import { createAndStartTestContainer } from './setupTestContainer';
+import { createAndStartTestContainer } from './setupTestContainer.js';
 import { StartedNeo4jContainer } from '@testcontainers/neo4j';
 import {
   extractRelationshipsWithNamedNodes,
   GraphSchema,
   validateGraphSchema,
-} from '../queries/graphSchema';
+} from '../queries/graphSchema.js';
 
 describe('Polling integration', () => {
   let session: Session;

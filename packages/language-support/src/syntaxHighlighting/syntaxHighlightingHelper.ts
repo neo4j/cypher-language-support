@@ -2,10 +2,10 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 
 import { Token } from 'antlr4';
 
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
 
-import { isCommentOpener } from '../helpers';
-import { CypherTokenType, lexerSymbols } from '../lexerSymbols';
+import { isCommentOpener } from '../helpers.js';
+import { CypherTokenType, lexerSymbols } from '../lexerSymbols.js';
 
 export interface TokenPosition {
   line: number;

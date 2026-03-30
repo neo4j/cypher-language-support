@@ -2,7 +2,7 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import {
   testCompletions,
   testCompletionsExactly,
-} from './completionAssertionHelpers';
+} from './completionAssertionHelpers.js';
 
 describe('Misc auto-completion', () => {
   test('Correctly completes cypher version number, when cypher25 is enabled', () => {

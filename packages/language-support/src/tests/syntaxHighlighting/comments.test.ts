@@ -1,4 +1,4 @@
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('Comments syntax highlighting', () => {
   test('Correctly colours one line comments', () => {

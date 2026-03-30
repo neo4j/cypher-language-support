@@ -1,8 +1,8 @@
 import { CypherVersion, Neo4jProcedure } from '@neo4j-cypher/language-support';
 import Ajv, { JSONSchemaType } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
-import { cleanTypeDescription } from '../data-transforms/clean-type';
-import type { ExecuteQueryArgs } from '../types/sdkTypes';
+import { cleanTypeDescription } from '../data-transforms/clean-type.js';
+import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
 type ListProcedureArgs = {
   executableByMe: boolean;

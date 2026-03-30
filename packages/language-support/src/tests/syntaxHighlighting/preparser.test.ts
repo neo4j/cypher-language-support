@@ -1,4 +1,4 @@
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('Preparser syntax highlighting', () => {
   test('Correctly colours cypher versions', () => {

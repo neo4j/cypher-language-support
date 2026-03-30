@@ -1,4 +1,4 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('tests for commands', () => {
   test('basic create constraint is unique', () => {

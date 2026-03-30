@@ -9,10 +9,10 @@
 
 import * as fs from 'fs';
 
-import CPP14Lexer from './generated/CPP14Lexer';
-import CPP14Parser from './generated/CPP14Parser';
-import WhiteboxLexer from './generated/WhiteboxLexer';
-import WhiteboxParser from './generated/WhiteboxParser';
+import CPP14Lexer from './generated/CPP14Lexer.js';
+import CPP14Parser from './generated/CPP14Parser.js';
+import WhiteboxLexer from './generated/WhiteboxLexer.js';
+import WhiteboxParser from './generated/WhiteboxParser.js';
 
 import {
   CharStreams,
@@ -23,9 +23,9 @@ import {
   Recognizer,
   Token,
 } from 'antlr4';
-import { CodeCompletionCore } from '../src/CodeCompletionCore';
-import ExprLexer from './generated/ExprLexer';
-import ExprParser from './generated/ExprParser';
+import { CodeCompletionCore } from '../src/CodeCompletionCore.js';
+import ExprLexer from './generated/ExprLexer.js';
+import ExprParser from './generated/ExprParser.js';
 
 // Some helper functions + types to create certain setups.
 

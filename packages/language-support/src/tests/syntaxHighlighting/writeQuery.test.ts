@@ -1,4 +1,4 @@
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('CREATE syntax highlighting', () => {
   test('Correctly colours CREATE', () => {

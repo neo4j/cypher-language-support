@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema';
-import { testCompletions } from './completionAssertionHelpers';
-import { autocomplete } from '../../autocompletion/autocompletion';
+import { DbSchema } from '../../dbSchema.js';
+import { testCompletions } from './completionAssertionHelpers.js';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {

@@ -1,6 +1,6 @@
-import { DbSchema } from '../../dbSchema';
-import { _internalFeatureFlags } from '../../featureFlags';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
+import { DbSchema } from '../../dbSchema.js';
+import { _internalFeatureFlags } from '../../featureFlags.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
 
 type SyntaxValidationTestArgs = {
   query: string;

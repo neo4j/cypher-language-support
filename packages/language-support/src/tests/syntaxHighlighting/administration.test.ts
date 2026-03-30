@@ -1,4 +1,4 @@
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('Administration commands syntax highlighting', () => {
   test('Correctly colours SHOW INDEXES', () => {
