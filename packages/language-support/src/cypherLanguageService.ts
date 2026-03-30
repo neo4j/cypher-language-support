@@ -47,8 +47,8 @@ import {
   SymbolTable,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
-import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { getSignatureInfo } from './signatureHelp.js';
+import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from './autocompletion/autocompletion.js';
 
 export interface ParsedStatement {
