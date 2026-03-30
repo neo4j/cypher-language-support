@@ -1,4 +1,4 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('various edgecases', () => {
   test('Should be space in between', () => {

@@ -1,8 +1,8 @@
-import { autocomplete } from '../../autocompletion/autocompletion';
-import { DbSchema } from '../../dbSchema';
-import { parserWrapper } from '../../parserWrapper';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
-import { CompletionItem } from '../../types';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
+import { DbSchema } from '../../dbSchema.js';
+import { parserWrapper } from '../../parserWrapper.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
+import { CompletionItem } from '../../types.js';
 
 export function testCompletionsExactly({
   query,

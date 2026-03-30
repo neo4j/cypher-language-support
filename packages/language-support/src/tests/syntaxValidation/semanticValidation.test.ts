@@ -1,6 +1,6 @@
-import { _internalFeatureFlags } from '../../featureFlags';
-import { testData } from '../testData';
-import { getDiagnosticsForQuery } from './helpers';
+import { _internalFeatureFlags } from '../../featureFlags.js';
+import { testData } from '../testData.js';
+import { getDiagnosticsForQuery } from './helpers.js';
 
 describe('Semantic validation spec', () => {
   test('SyntaxChecker-exceptions work', () => {

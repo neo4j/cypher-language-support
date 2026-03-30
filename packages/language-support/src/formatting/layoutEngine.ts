@@ -5,7 +5,7 @@ import {
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isInlineComment,
   shouldAddSpace,
-} from './formattingHelpers';
+} from './formattingHelpers.js';
 
 const INDENTATION_SPACES = 2;
 

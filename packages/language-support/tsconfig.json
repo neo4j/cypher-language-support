@@ -4,6 +4,8 @@
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "dist",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "esModuleInterop": true,
     "types": ["vitest/globals"]

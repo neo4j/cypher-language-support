@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { testCompletions } from './completionAssertionHelpers';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('unscoped variable completions', () => {
   test('correctly completes variables in WHERE clause that have been defined in a simple match', () => {

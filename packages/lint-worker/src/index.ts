@@ -1,3 +1,3 @@
-export * from './lintWorker';
-export * from './helpers';
-export * from './version';
+export * from './lintWorker.js';
+export * from './helpers.js';
+export * from './version.js';

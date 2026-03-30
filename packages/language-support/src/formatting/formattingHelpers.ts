@@ -1,11 +1,11 @@
 import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
-import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
+import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import CypherCmdParser, {
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
-} from '../generated-parser/CypherCmdParser';
-import { lexerKeywords } from '../lexerSymbols';
-import { findParent } from '../helpers';
+} from '../generated-parser/CypherCmdParser.js';
+import { lexerKeywords } from '../lexerSymbols.js';
+import { findParent } from '../helpers.js';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.

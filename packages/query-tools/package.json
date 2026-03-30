@@ -25,7 +25,7 @@
   "scripts": {
     "build": "concurrently 'npm:build-esm' 'npm:build-commonjs' 'npm:build-types'",
     "build-esm": "tsc --module esnext --outDir dist/esm",
-    "build-commonjs": "tsc --module commonjs --outDir dist/cjs",
+    "build-commonjs": "tsc --module commonjs --moduleResolution node --outDir dist/cjs",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",

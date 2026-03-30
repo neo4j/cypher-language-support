@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
 
 describe('Administration commands syntax colouring', () => {
   test('Correctly colours SHOW INDEXES', () => {

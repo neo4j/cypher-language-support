@@ -1,9 +1,9 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema';
-import { testData } from '../testData';
-import { testCompletions } from './completionAssertionHelpers';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
-import { parserWrapper } from '../../parserWrapper';
+import { DbSchema } from '../../dbSchema.js';
+import { testData } from '../testData.js';
+import { testCompletions } from './completionAssertionHelpers.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
+import { parserWrapper } from '../../parserWrapper.js';
 
 describe('property key completions', () => {
   const dbSchema: DbSchema = {

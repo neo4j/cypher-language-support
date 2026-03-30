@@ -1,12 +1,12 @@
-import { isLabelLeaf, LabelOrCondition } from '../../types';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
+import { isLabelLeaf, LabelOrCondition } from '../../types.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
 import {
   childAlreadyExists,
   convertToCNF,
   pushInNots,
   removeInnerAnys,
   removeDuplicates,
-} from '../../labelTreeRewriting';
+} from '../../labelTreeRewriting.js';
 
 const exampleQueries = {
   singleLabel: 'MATCH (n:Move)-[:]',

@@ -1,4 +1,4 @@
-import { compareMajorMinorVersions } from './version';
+import { compareMajorMinorVersions } from './version.js';
 import {
   DbSchema as DbSchemaV2,
   Neo4jFunction,

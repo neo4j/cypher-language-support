@@ -1,8 +1,8 @@
-import { autocomplete } from '../autocompletion/autocompletion';
-import { _internalFeatureFlags } from '../featureFlags';
-import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper';
-import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring';
-import { testData } from './testData';
+import { autocomplete } from '../autocompletion/autocompletion.js';
+import { _internalFeatureFlags } from '../featureFlags.js';
+import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper.js';
+import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring.js';
+import { testData } from './testData.js';
 
 function expectParsedCommands(
   query: string,

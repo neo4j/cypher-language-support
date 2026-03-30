@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
 
 describe('Comments syntax colouring', () => {
   test('Correctly colours one line comments', () => {

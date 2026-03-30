@@ -1,5 +1,5 @@
-import { formatQuery } from '../../formatting/formatting';
-import { verifyFormatting } from './testutil';
+import { formatQuery } from '../../formatting/formatting.js';
+import { verifyFormatting } from './testutil.js';
 
 describe('formatting despite syntax errors', () => {
   test('syntax error at the beginning', () => {

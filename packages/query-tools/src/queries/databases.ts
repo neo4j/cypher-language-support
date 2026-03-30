@@ -1,6 +1,6 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs, DbType } from '../types/sdkTypes';
+import { ExecuteQueryArgs, DbType } from '../types/sdkTypes.js';
 
 export type DatabaseStatus =
   | 'online'

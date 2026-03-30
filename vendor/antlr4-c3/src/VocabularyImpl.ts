@@ -4,7 +4,7 @@
  */
 
 import { Token } from 'antlr4';
-import { Vocabulary } from './Vocabulary';
+import { Vocabulary } from './Vocabulary.js';
 
 /**
  * This class provides a default implementation of the {@link Vocabulary}

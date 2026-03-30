@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { testCompletions } from './completionAssertionHelpers';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('expression completions', () => {
   describe('misc expression tests', () => {

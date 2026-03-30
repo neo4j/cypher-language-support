@@ -2,11 +2,11 @@ import { CompletionItemKind } from 'vscode-languageserver-types';
 import {
   getSymbolCompletions,
   testCompletions,
-} from './completionAssertionHelpers';
+} from './completionAssertionHelpers.js';
 import {
   allLabelCompletions,
   allReltypeCompletions,
-} from '../../autocompletion/schemaBasedCompletions';
+} from '../../autocompletion/schemaBasedCompletions.js';
 
 const dbSchema = {
   labels: [

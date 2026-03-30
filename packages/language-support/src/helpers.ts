@@ -6,15 +6,15 @@ import antlrDefaultExport, {
   ParseTree,
   Token,
 } from 'antlr4';
-import { DbSchema } from './dbSchema';
-import CypherLexer from './generated-parser/CypherCmdLexer';
+import { DbSchema } from './dbSchema.js';
+import CypherLexer from './generated-parser/CypherCmdLexer.js';
 import CypherParser, {
   NodePatternContext,
   RelationshipPatternContext,
   StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
-import { ParsedStatement, ParsingResult } from './parserWrapper';
-import { CypherVersion } from './types';
+} from './generated-parser/CypherCmdParser.js';
+import { ParsedStatement, ParsingResult } from './parserWrapper.js';
+import { CypherVersion } from './types.js';
 
 /* In antlr we have
 

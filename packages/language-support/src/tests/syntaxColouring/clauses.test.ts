@@ -1,4 +1,4 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring';
+import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
 
 describe('CALL syntax colouring', () => {
   test('Correctly colours standalone procedure CALL', () => {

@@ -2,9 +2,9 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema';
-import { testData } from '../testData';
-import { testCompletions } from './completionAssertionHelpers';
+import { DbSchema } from '../../dbSchema.js';
+import { testData } from '../testData.js';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('function invocations', () => {
   const dbSchema: DbSchema = testData.mockSchema;
