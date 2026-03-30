@@ -7,8 +7,8 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DbSchema } from '../dbSchema';
-import { resolveCypherVersion } from '../helpers';
+import { DbSchema } from '../dbSchema.js';
+import { resolveCypherVersion } from '../helpers.js';
 import {
   LabelOrRelType,
   LabelType,
@@ -18,9 +18,9 @@ import {
   ParsedStatement,
   ParsingResult,
   createParsingResult,
-} from '../cypherLanguageService';
-import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
-import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
+} from '../cypherLanguageService.js';
+import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
+import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

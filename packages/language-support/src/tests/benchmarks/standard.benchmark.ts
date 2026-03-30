@@ -1,13 +1,13 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { CypherLanguageService, parse } from '../../cypherLanguageService';
-import { testData } from '../testData';
+import { CypherLanguageService, parse } from '../../cypherLanguageService.js';
+import { testData } from '../testData.js';
 import {
   createMovieDb,
   largePokemonquery,
   simpleQuery,
   tictactoe,
-} from './benchmarkQueries';
+} from './benchmarkQueries.js';
 
 const periodicIterate = 'CALL apoc.periodic.iterate(';
 const periodicIterateFirstArg = '"MATCH (p:Person) RETURN id(p) as personId", ';

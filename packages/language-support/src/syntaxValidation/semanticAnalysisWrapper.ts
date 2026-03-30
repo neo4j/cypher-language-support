@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { DbSchema, Registry } from '../dbSchema';
+import { DbSchema, Registry } from '../dbSchema.js';
 import {
   CypherVersion,
   isCondition,
@@ -11,11 +11,11 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
-} from '../types';
+} from '../types.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis';
-import { SyntaxDiagnostic } from './syntaxValidation';
+import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
+import { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];

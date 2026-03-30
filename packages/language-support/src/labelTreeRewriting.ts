@@ -3,7 +3,7 @@ import {
   ConditionNode,
   isLabelLeaf,
   LabelOrCondition,
-} from './types';
+} from './types.js';
 
 function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(labelTree)) {

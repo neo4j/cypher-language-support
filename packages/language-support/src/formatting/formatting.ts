@@ -5,7 +5,7 @@ import {
   TerminalNode,
   Token,
 } from 'antlr4';
-import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
+import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   AddPropContext,
   ArrowLineContext,
@@ -110,8 +110,8 @@ import {
   WhenContext,
   WhereClauseContext,
   WithClauseContext,
-} from '../generated-parser/CypherCmdParser';
-import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor';
+} from '../generated-parser/CypherCmdParser.js';
+import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor.js';
 import {
   Chunk,
   CommentChunk,
@@ -128,8 +128,8 @@ import {
   verifyGroupSizes,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
-} from './formattingHelpers';
-import { chunksToFormattedString } from './layoutEngine';
+} from './formattingHelpers.js';
+import { chunksToFormattedString } from './layoutEngine.js';
 
 const MISSING = '<missing';
 

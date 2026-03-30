@@ -1,7 +1,10 @@
 import { CypherVersion, Neo4jFunction } from '@neo4j-cypher/language-support';
 import Ajv, { JSONSchemaType } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
-import { cleanType, cleanTypeDescription } from '../data-transforms/clean-type';
+import {
+  cleanType,
+  cleanTypeDescription,
+} from '../data-transforms/clean-type.js';
 import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
 type ListFunctionArgs = {

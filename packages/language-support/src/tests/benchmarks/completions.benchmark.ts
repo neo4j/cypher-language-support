@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { bench, describe } from 'vitest';
-import { CypherLanguageService, parse } from '../../cypherLanguageService';
-import { testData } from '../testData';
-import { autocompletionQueries, tictactoe } from './benchmarkQueries';
+import { CypherLanguageService, parse } from '../../cypherLanguageService.js';
+import { testData } from '../testData.js';
+import { autocompletionQueries, tictactoe } from './benchmarkQueries.js';
 const languageService = new CypherLanguageService();
 describe('completions', () => {
   bench('multistatement - autocompletion', function () {

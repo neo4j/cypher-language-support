@@ -1,8 +1,11 @@
-import { DbSchema } from '../dbSchema';
-import { findCaret } from '../helpers';
-import { createParsingResult, ParsingResult } from '../cypherLanguageService';
-import { CompletionItem, SymbolsInfo } from '../types';
-import { completionCoreCompletion } from './completionCoreCompletions';
+import { DbSchema } from '../dbSchema.js';
+import { findCaret } from '../helpers.js';
+import {
+  createParsingResult,
+  ParsingResult,
+} from '../cypherLanguageService.js';
+import { CompletionItem, SymbolsInfo } from '../types.js';
+import { completionCoreCompletion } from './completionCoreCompletions.js';
 
 export function autocomplete(
   query: string,

@@ -2,29 +2,29 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
+import { DbSchema } from '../dbSchema.js';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
 import CypherParser, {
   CallClauseContext,
   Expression2Context,
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import {
   findParent,
   findPreviousNonSpace,
   resolveCypherVersion,
   rulesDefiningVariables,
-} from '../helpers';
+} from '../helpers.js';
 import {
   CypherTokenType,
   lexerKeywords,
   lexerSymbols,
   tokenNames,
-} from '../lexerSymbols';
+} from '../lexerSymbols.js';
 
-import { getMethodName, ParsedStatement } from '../cypherLanguageService';
+import { getMethodName, ParsedStatement } from '../cypherLanguageService.js';
 
 import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import {
@@ -40,7 +40,7 @@ import {
   Neo4jProcedure,
   SymbolTable,
   SymbolsInfo,
-} from '../types';
+} from '../types.js';
 import {
   completeRelationshipType,
   allLabelCompletions,
@@ -48,8 +48,8 @@ import {
   getPathCompletions,
   getShortPathCompletions,
   allReltypeCompletions,
-} from './schemaBasedCompletions';
-import { backtickIfNeeded, uniq } from './autocompletionHelpers';
+} from './schemaBasedCompletions.js';
+import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {

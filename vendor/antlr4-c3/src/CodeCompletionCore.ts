@@ -8,11 +8,11 @@
 /* eslint-disable max-classes-per-file */
 
 import * as antlr4 from 'antlr4';
-import { Vocabulary } from './Vocabulary';
-import { VocabularyImpl } from './VocabularyImpl';
+import { Vocabulary } from './Vocabulary.js';
+import { VocabularyImpl } from './VocabularyImpl.js';
 import { ATNState, ParserRuleContext, IntervalSet, Token, Parser, PrecedencePredicateTransition,
-    PredicateTransition, RuleStartState, RuleTransition, Transition, ATN, intervalSetOf, intervalSetToArray } from './antlr4';
-import { advanceToNonEpsilon } from './CodeCompletionHelpers'
+    PredicateTransition, RuleStartState, RuleTransition, Transition, ATN, intervalSetOf, intervalSetToArray } from './antlr4.js';
+import { advanceToNonEpsilon } from './CodeCompletionHelpers.js'
 
 export type TokenList = number[];
 export type RuleList = number[];

@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { testCompletions } from './completionAssertionHelpers';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('snippet completions', () => {
   test('does not suggest paths when trigger character used in other contexts', () => {

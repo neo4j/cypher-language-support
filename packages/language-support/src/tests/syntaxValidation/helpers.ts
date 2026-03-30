@@ -1,5 +1,5 @@
-import { DbSchema } from '../../dbSchema';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation';
+import { DbSchema } from '../../dbSchema.js';
+import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
 
 type SyntaxValidationTestArgs = {
   query: string;

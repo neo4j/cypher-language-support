@@ -1,5 +1,5 @@
-import { CypherTokenType } from '../../lexerSymbols';
-import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting';
+import { CypherTokenType } from '../../lexerSymbols.js';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
 describe('Function syntax highlighting', () => {
   test('Correctly colours function name', () => {

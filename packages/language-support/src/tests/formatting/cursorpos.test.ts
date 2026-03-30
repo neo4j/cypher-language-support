@@ -1,4 +1,4 @@
-import { formatQuery } from '../../formatting/formatting';
+import { formatQuery } from '../../formatting/formatting.js';
 
 // The @ represents the position of the cursor
 describe('tests for correct cursor position', () => {

@@ -1,14 +1,14 @@
 import { Token } from 'antlr4';
 import { distance } from 'fastest-levenshtein';
 import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
-import CypherLexer from '../generated-parser/CypherCmdLexer';
-import CypherParser from '../generated-parser/CypherCmdParser';
+import CypherLexer from '../generated-parser/CypherCmdLexer.js';
+import CypherParser from '../generated-parser/CypherCmdParser.js';
 import {
   CypherTokenType,
   keywordNames,
   lexerSymbols,
   tokenNames,
-} from '../lexerSymbols';
+} from '../lexerSymbols.js';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 

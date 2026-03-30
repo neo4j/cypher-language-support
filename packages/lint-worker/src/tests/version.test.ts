@@ -1,4 +1,4 @@
-import { compareMajorMinorVersions } from '../version';
+import { compareMajorMinorVersions } from '../version.js';
 
 describe('Version comparison', () => {
   test('Comparing versions for major/minor version', () => {

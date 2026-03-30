@@ -1,10 +1,10 @@
 import {
   createParsingResult,
   ParsedCommandNoPosition,
-} from '../cypherLanguageService';
-import { testData } from './testData';
-import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting';
-import { autocomplete } from '../autocompletion/autocompletion';
+} from '../cypherLanguageService.js';
+import { testData } from './testData.js';
+import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
+import { autocomplete } from '../autocompletion/autocompletion.js';
 
 function expectParsedCommands(
   query: string,
