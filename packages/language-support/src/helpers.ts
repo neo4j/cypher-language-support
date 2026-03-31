@@ -13,7 +13,7 @@ import CypherParser, {
   RelationshipPatternContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser.js';
-import { ParsedStatement, ParsingResult } from './parserWrapper.js';
+import { ParsedStatement, ParsingResult } from './cypherLanguageService.js';
 import { CypherVersion } from './types.js';
 
 /* In antlr we have

@@ -1,4 +1,3 @@
-import { _internalFeatureFlags } from '../../featureFlags.js';
 import { testData } from '../testData.js';
 import { getDiagnosticsForQuery } from './helpers.js';
 
@@ -1957,10 +1956,11 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
   });
 
   test('gives error on console commands when they are disabled', () => {
-    _internalFeatureFlags.consoleCommands = true;
-
     expect(
-      getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
+      getDiagnosticsForQuery({
+        query: 'RETURN a;:clear; RETURN b;:history;',
+        consoleCommandsEnabled: true,
+      }),
     ).toEqual([
       {
         message: 'Variable `a` not defined',
@@ -1999,12 +1999,15 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles multiple cypher statements in a single query', () => {
-    _internalFeatureFlags.consoleCommands = true;
-    expect(getDiagnosticsForQuery({ query: 'RETURN a; RETURN b;' })).toEqual([
+    expect(
+      getDiagnosticsForQuery({
+        query: 'RETURN a; RETURN b;',
+        consoleCommandsEnabled: true,
+      }),
+    ).toEqual([
       {
         message: 'Variable `a` not defined',
         offsets: {
@@ -2042,14 +2045,13 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with client commands', () => {
-    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
         query: ':clear;RETURN a;:clear; RETURN b;:history;',
+        consoleCommandsEnabled: true,
       }),
     ).toEqual([
       {
@@ -2089,13 +2091,12 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with complex client command', () => {
-    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
+        consoleCommandsEnabled: true,
         query: `
       :param {
 
@@ -2124,7 +2125,6 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Does not error on SHORTEST k', () => {

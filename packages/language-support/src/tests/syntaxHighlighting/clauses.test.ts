@@ -1,10 +1,10 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
-describe('CALL syntax colouring', () => {
+describe('CALL syntax highlighting', () => {
   test('Correctly colours standalone procedure CALL', () => {
     const query = 'CALL dbms.info() YIELD *';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -106,7 +106,7 @@ describe('CALL syntax colouring', () => {
     const query =
       'CALL apoc.do.when(true, "foo", false, "bar") YIELD name, result';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -326,7 +326,7 @@ describe('CALL syntax colouring', () => {
   });
 });
 
-describe('CASE syntax colouring', () => {
+describe('CASE syntax highlighting', () => {
   test('Correctly colours CASE', () => {
     const query = `
       RETURN
@@ -337,7 +337,7 @@ describe('CASE syntax colouring', () => {
       END AS result
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -617,7 +617,7 @@ describe('CASE syntax colouring', () => {
   });
 });
 
-describe('LOAD CSV colouring', () => {
+describe('LOAD CSV highlighting', () => {
   test('Correctly colours LOAD CSV', () => {
     const query = `
       LOAD CSV WITH HEADERS FROM
@@ -629,7 +629,7 @@ describe('LOAD CSV colouring', () => {
       } IN TRANSACTIONS OF 500 ROWS
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1088,14 +1088,14 @@ describe('LOAD CSV colouring', () => {
   });
 });
 
-describe('USE colouring', () => {
+describe('USE highlighting', () => {
   test('Correctly colours USE', () => {
     const query = `
       USE neo4j
       WHERE n.name = 'Alice'
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 3,
@@ -1188,13 +1188,13 @@ describe('USE colouring', () => {
   });
 });
 
-describe('FOREACH syntax colouring', () => {
+describe('FOREACH syntax highlighting', () => {
   test('Correctly colours FOREACH', () => {
     const query = `
     FOREACH ( r IN relationships(path) | SET r.marked = true )
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 7,
@@ -1387,7 +1387,7 @@ describe('FOREACH syntax colouring', () => {
   });
 });
 
-describe('UNWIND colouring', () => {
+describe('UNWIND highlighting', () => {
   test('Correctly colours UNWIND', () => {
     const query = `
       UNWIND nested AS ix
@@ -1395,7 +1395,7 @@ describe('UNWIND colouring', () => {
       RETURN iy AS number
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -1532,7 +1532,7 @@ describe('UNWIND colouring', () => {
   });
 });
 
-describe('Subqueries colouring', () => {
+describe('Subqueries highlighting', () => {
   test('Correctly colours subquery with two union parts', () => {
     const query = `
       CALL {
@@ -1542,7 +1542,7 @@ describe('Subqueries colouring', () => {
       }
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 4,
@@ -1693,7 +1693,7 @@ describe('Subqueries colouring', () => {
       RETURN person.name AS name
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1979,7 +1979,7 @@ describe('Subqueries colouring', () => {
       RETURN p.name AS name
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2122,10 +2122,10 @@ describe('Subqueries colouring', () => {
   });
 });
 
-describe('CREATE colouring', () => {
+describe('CREATE highlighting', () => {
   test('correctly highlight broken create constraint', () => {
     // is missing :Label, should not crash
-    expect(applySyntaxColouring('CREATE CONSTRAINT FOR (node)')).toEqual([
+    expect(highlightSyntax('CREATE CONSTRAINT FOR (node)')).toEqual([
       {
         bracketInfo: undefined,
         length: 6,

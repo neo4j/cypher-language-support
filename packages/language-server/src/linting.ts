@@ -1,7 +1,5 @@
 import {
-  _internalFeatureFlags,
   clampUnsafePositions,
-  parserWrapper,
   SymbolTable,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
@@ -15,6 +13,7 @@ import {
   LinterTask,
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
+import { languageService } from './server';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
@@ -59,11 +58,9 @@ async function rawLintDocument(
     const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
 
     const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
-    lastSemanticJob = proxyWorker.lintCypherQuery(
-      query,
-      fixedDbSchema,
-      _internalFeatureFlags,
-    );
+    lastSemanticJob = proxyWorker.lintCypherQuery(query, fixedDbSchema, {
+      consoleCommands: false,
+    });
     const result = await lastSemanticJob;
 
     //marks the entire text if any position is negative
@@ -74,7 +71,7 @@ async function rawLintDocument(
 
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
-      parserWrapper.setSymbolsInfo(
+      languageService.setSymbolsInfo(
         {
           query,
           symbolTables: result.symbolTables,

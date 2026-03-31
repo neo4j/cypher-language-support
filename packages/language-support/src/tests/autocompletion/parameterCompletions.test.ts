@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { autocomplete } from '../../autocompletion/autocompletion.js';
 import { DbSchema } from '../../dbSchema.js';
 import { testCompletions } from './completionAssertionHelpers.js';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
@@ -446,11 +446,9 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
   test('Does not suggest duplicated parameters', () => {
     const query = 'CREATE ALIAS alias FOR DATABASE ';
-    const actualCompletionList = autocomplete(
-      query,
-      dbSchema,
-      query.length,
-    ).filter((v) => v.label.startsWith('$stringParam'));
+    const actualCompletionList = autocomplete(query, dbSchema).filter((v) =>
+      v.label.startsWith('$stringParam'),
+    );
 
     expect(actualCompletionList.length).toBe(1);
   });

@@ -1,6 +1,6 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
-describe('Comments syntax colouring', () => {
+describe('Comments syntax highlighting', () => {
   test('Correctly colours one line comments', () => {
     const query = `
     // Some comment
@@ -8,7 +8,7 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 15,
@@ -114,7 +114,7 @@ describe('Comments syntax colouring', () => {
     CALL foo.bar()
     `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 17,
@@ -226,7 +226,7 @@ describe('Comments syntax colouring', () => {
   test('Correctly colours comments which include cypher keywords', () => {
     const query = `MATCH (n) RETURN n // MATCH (n) finds all nodes`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,

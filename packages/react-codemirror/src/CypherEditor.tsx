@@ -13,7 +13,11 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  formatQuery,
+  CypherLanguageService,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
 import { Component, createRef } from 'react';
 import { DEBOUNCE_TIME } from './constants';
@@ -26,6 +30,8 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
+import { LintWorker } from '@neo4j-cypher/lint-worker';
+import workerpool from 'workerpool';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
 export interface CypherEditorProps {
@@ -275,11 +281,72 @@ const formatLineNumber =
 type CypherEditorState = { cypherSupportEnabled: boolean };
 
 const ExternalEdit = Annotation.define<boolean>();
+const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
+  .pathname;
+
+class CodemirrorSymbolFetcher {
+  constructor(languageService: CypherLanguageService) {
+    this.languageService = languageService;
+  }
+  private languageService: CypherLanguageService;
+  private processing = false;
+  private nextJob: {
+    query: string;
+    schema: DbSchema;
+  };
+  private symbolTablePool = workerpool.pool(WorkerURL, {
+    minWorkers: 1,
+    workerOpts: { type: 'module' },
+    workerTerminateTimeout: 2000,
+  });
+
+  public queueSymbolJob(query: string, schema: DbSchema) {
+    this.nextJob = { query, schema };
+    if (!this.processing) {
+      void this.processJobQueue();
+    }
+  }
+
+  public terminate() {
+    this.nextJob = undefined;
+    void this.symbolTablePool.terminate();
+  }
+
+  private async processJobQueue() {
+    this.processing = true;
+    while (this.nextJob) {
+      try {
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        this.nextJob = undefined;
+
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+
+        if (result.symbolTables) {
+          this.languageService.setSymbolsInfo({
+            query,
+            symbolTables: result.symbolTables,
+          });
+        }
+      } catch (err) {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed ' + String(err));
+      }
+    }
+    this.processing = false;
+  }
+}
 
 export class CypherEditor extends Component<
   CypherEditorProps,
   CypherEditorState
 > {
+  /**
+   * The symbol fetcher object used to fetch the current symbol table on document changes
+   */
+  symbolFetcher: CodemirrorSymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -379,6 +446,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
+      languageService: new CypherLanguageService(),
       schema,
       lint,
       showSignatureTooltipBelow,
@@ -394,6 +462,10 @@ export class CypherEditor extends Component<
       },
     };
 
+    this.symbolFetcher = new CodemirrorSymbolFetcher(
+      this.schemaRef.current.languageService,
+    );
+
     const themeExtension = getThemeExtension(
       theme,
       overrideThemeBackgroundColor,
@@ -402,6 +474,12 @@ export class CypherEditor extends Component<
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
+            if (upt.docChanged) {
+              this.symbolFetcher.queueSymbolJob(
+                upt.state.doc.toString(),
+                this.schemaRef.current.schema,
+              );
+            }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),
             );
@@ -598,6 +676,7 @@ export class CypherEditor extends Component<
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
+    this.symbolFetcher?.terminate();
     cleanupWorkers();
   }
 

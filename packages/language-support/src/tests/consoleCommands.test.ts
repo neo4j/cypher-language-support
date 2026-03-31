@@ -1,14 +1,16 @@
-import { autocomplete } from '../autocompletion/autocompletion.js';
-import { _internalFeatureFlags } from '../featureFlags.js';
-import { ParsedCommandNoPosition, parserWrapper } from '../parserWrapper.js';
-import { applySyntaxColouring } from '../syntaxColouring/syntaxColouring.js';
+import {
+  createParsingResult,
+  ParsedCommandNoPosition,
+} from '../cypherLanguageService.js';
 import { testData } from './testData.js';
+import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
+import { autocomplete } from '../autocompletion/autocompletion.js';
 
 function expectParsedCommands(
   query: string,
   toEqual: ParsedCommandNoPosition[],
 ) {
-  const result = parserWrapper.parse(query);
+  const result = createParsingResult(query, { consoleCommandsEnabled: true });
   expect(
     result.statementsParsing.flatMap((statement) => statement.syntaxErrors),
   ).toEqual([]);
@@ -27,7 +29,7 @@ function expectParsedCommands(
 }
 
 function expectErrorMessage(query: string, msg: string) {
-  const result = parserWrapper.parse(query);
+  const result = createParsingResult(query, { consoleCommandsEnabled: true });
   expect(
     result.statementsParsing
       .flatMap((statement) => statement.syntaxErrors)
@@ -36,17 +38,6 @@ function expectErrorMessage(query: string, msg: string) {
 }
 
 describe('sanity checks', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses simple commands without args ', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
@@ -58,7 +49,7 @@ describe('sanity checks', () => {
   });
 
   test('properly highlights simple commands', () => {
-    expect(applySyntaxColouring(':clear')).toEqual([
+    expect(highlightSyntax(':clear')).toEqual([
       {
         length: 1,
         position: {
@@ -80,7 +71,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':history')).toEqual([
+    expect(highlightSyntax(':history')).toEqual([
       {
         length: 1,
         position: {
@@ -102,7 +93,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':connect')).toEqual([
+    expect(highlightSyntax(':connect')).toEqual([
       {
         length: 1,
         position: {
@@ -124,7 +115,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':disconnect')).toEqual([
+    expect(highlightSyntax(':disconnect')).toEqual([
       {
         length: 1,
         position: {
@@ -146,7 +137,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':sysinfo')).toEqual([
+    expect(highlightSyntax(':sysinfo')).toEqual([
       {
         length: 1,
         position: {
@@ -168,7 +159,7 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':style')).toEqual([
+    expect(highlightSyntax(':style')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -183,7 +174,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':style reset')).toEqual([
+    expect(highlightSyntax(':style reset')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -204,7 +195,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':play')).toEqual([
+    expect(highlightSyntax(':play')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -219,7 +210,7 @@ describe('sanity checks', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':help')).toEqual([
+    expect(highlightSyntax(':help')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -294,15 +285,6 @@ describe('sanity checks', () => {
 });
 
 describe(':use', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('parses without arg', () => {
     expectParsedCommands(':use', [{ type: 'use' }]);
   });
@@ -312,7 +294,10 @@ describe(':use', () => {
 
   test('completes database & alias names', () => {
     expect(
-      autocomplete(':use ', { databaseNames: ['foo'], aliasNames: ['bar'] }),
+      autocomplete(':use ', {
+        databaseNames: ['foo'],
+        aliasNames: ['bar'],
+      }),
     ).toEqual([
       { kind: 12, label: 'foo' },
       { kind: 12, label: 'bar' },
@@ -325,7 +310,7 @@ describe(':use', () => {
   });
 
   test('highlights properly', () => {
-    expect(applySyntaxColouring(':use')).toEqual([
+    expect(highlightSyntax(':use')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -339,7 +324,7 @@ describe(':use', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':use foo')).toEqual([
+    expect(highlightSyntax(':use foo')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -363,7 +348,6 @@ describe(':use', () => {
 });
 
 describe(':play', () => {
-  let consoleCommands: boolean;
   const dbSchema = {
     databaseNames: ['foo'],
     aliasNames: ['bar'],
@@ -375,13 +359,6 @@ describe(':play', () => {
     propertyKeys: ['firstName'],
   };
 
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('parses with arg', () => {
     expectParsedCommands(':play intro', [{ type: 'play', guide: 'intro' }]);
   });
@@ -401,7 +378,7 @@ describe(':play', () => {
   });
 
   test('highlights properly', () => {
-    expect(applySyntaxColouring(':play')).toEqual([
+    expect(highlightSyntax(':play')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -415,7 +392,7 @@ describe(':play', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':play intro')).toEqual([
+    expect(highlightSyntax(':play intro')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -439,15 +416,6 @@ describe(':play', () => {
 });
 
 describe('parameters', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
   test('basic param usage', () => {
     expectParsedCommands(':param', [{ type: 'list-parameters' }]);
     expectParsedCommands(':params ', [{ type: 'list-parameters' }]);
@@ -565,7 +533,7 @@ describe('parameters', () => {
   });
 
   test('highlights :params properly', () => {
-    expect(applySyntaxColouring(':param')).toEqual([
+    expect(highlightSyntax(':param')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -579,7 +547,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':params')).toEqual([
+    expect(highlightSyntax(':params')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -593,7 +561,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':params list')).toEqual([
+    expect(highlightSyntax(':params list')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -613,7 +581,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':param clear')).toEqual([
+    expect(highlightSyntax(':param clear')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -633,7 +601,7 @@ describe('parameters', () => {
         tokenType: 'consoleCommand',
       },
     ]);
-    expect(applySyntaxColouring(':param x => 324')).toEqual([
+    expect(highlightSyntax(':param x => 324')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -671,7 +639,7 @@ describe('parameters', () => {
         tokenType: 'numberLiteral',
       },
     ]);
-    expect(applySyntaxColouring(':params {d: true}')).toEqual([
+    expect(highlightSyntax(':params {d: true}')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -721,17 +689,6 @@ describe('parameters', () => {
 });
 
 describe('server', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('basic server usage', () => {
     expectParsedCommands(':server connect', [
       { type: 'server', operation: 'connect' },
@@ -769,7 +726,7 @@ describe('server', () => {
   });
 
   test('highlights :server properly', () => {
-    expect(applySyntaxColouring(':server')).toEqual([
+    expect(highlightSyntax(':server')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -784,7 +741,7 @@ describe('server', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':server connect')).toEqual([
+    expect(highlightSyntax(':server connect')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -805,7 +762,7 @@ describe('server', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':server disconnect')).toEqual([
+    expect(highlightSyntax(':server disconnect')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -829,17 +786,6 @@ describe('server', () => {
 });
 
 describe('command parser also handles cypher', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses cypher', () => {
     expectParsedCommands('MATCH (n) RETURN n', [
       { statement: 'MATCH (n) RETURN n', type: 'cypher' },
@@ -879,17 +825,6 @@ describe('command parser also handles cypher', () => {
 });
 
 describe('style', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('parses style reset', () => {
     expectParsedCommands(':style reset', [
       { type: 'style', operation: 'reset' },
@@ -898,17 +833,6 @@ describe('style', () => {
 });
 
 describe('access-mode', () => {
-  let consoleCommands: boolean;
-
-  beforeAll(() => {
-    consoleCommands = _internalFeatureFlags.consoleCommands;
-    _internalFeatureFlags.consoleCommands = true;
-  });
-
-  afterAll(() => {
-    _internalFeatureFlags.consoleCommands = consoleCommands;
-  });
-
   test('basic access-mode usage', () => {
     expectParsedCommands(':access-mode', [
       { type: 'access-mode', operation: undefined },
@@ -924,7 +848,7 @@ describe('access-mode', () => {
   });
 
   test('highlights :access-mode properly', () => {
-    expect(applySyntaxColouring(':access-mode')).toEqual([
+    expect(highlightSyntax(':access-mode')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -939,7 +863,7 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':access-mode read')).toEqual([
+    expect(highlightSyntax(':access-mode read')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },
@@ -960,7 +884,7 @@ describe('access-mode', () => {
       },
     ]);
 
-    expect(applySyntaxColouring(':access-mode write')).toEqual([
+    expect(highlightSyntax(':access-mode write')).toEqual([
       {
         length: 1,
         position: { line: 0, startCharacter: 0, startOffset: 0 },

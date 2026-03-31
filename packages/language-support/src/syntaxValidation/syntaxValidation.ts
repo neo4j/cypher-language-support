@@ -16,8 +16,9 @@ import {
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
-  parserWrapper,
-} from '../parserWrapper.js';
+  ParsingResult,
+  createParsingResult,
+} from '../cypherLanguageService.js';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 
@@ -332,11 +333,18 @@ function fixSymbolTableOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
-  consoleCommandsEnabled?: boolean,
+  {
+    consoleCommandsEnabled = true,
+    parsingResult,
+  }: {
+    consoleCommandsEnabled?: boolean;
+    parsingResult?: ParsingResult;
+  } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
-    const cachedParse = parserWrapper.parse(query, consoleCommandsEnabled);
-    const statements = cachedParse.statementsParsing;
+    const resolvedParsingResult =
+      parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+    const statements = resolvedParsingResult.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
       if (cmd.type === 'cypher' && cmd.statement.length > 0) {

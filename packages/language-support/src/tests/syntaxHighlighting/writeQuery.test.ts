@@ -1,10 +1,10 @@
-import { applySyntaxColouring } from '../../syntaxColouring/syntaxColouring.js';
+import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 
-describe('CREATE syntax colouring', () => {
+describe('CREATE syntax highlighting', () => {
   test('Correctly colours CREATE', () => {
     const query = 'CREATE (n:Label)-[:TYPE {name: $value}]->(m:Label)';
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 6,
@@ -297,7 +297,7 @@ describe('CREATE syntax colouring', () => {
   });
 });
 
-describe('SET syntax colouring', () => {
+describe('SET syntax highlighting', () => {
   test('Correctly colours SET', () => {
     const query = `SET n += {
       a: 1,
@@ -313,7 +313,7 @@ describe('SET syntax colouring', () => {
       k: null
     }`;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 3,
@@ -1651,13 +1651,13 @@ describe('SET syntax colouring', () => {
   });
 });
 
-describe('REMOVE syntax colouring', () => {
+describe('REMOVE syntax highlighting', () => {
   test('Correctly colours REMOVE', () => {
     const query = `MATCH (n:Label)
     WHERE n.id = 123
     REMOVE n.alias  
   `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -1844,7 +1844,7 @@ describe('REMOVE syntax colouring', () => {
   });
 });
 
-describe('MERGE syntax colouring', () => {
+describe('MERGE syntax highlighting', () => {
   test('Correctly colours MERGE', () => {
     const query = `MATCH
     (a:Person {name: $value1}),
@@ -1852,7 +1852,7 @@ describe('MERGE syntax colouring', () => {
     MERGE (a)-[r:LOVES]->(b)
   `;
 
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2328,12 +2328,12 @@ describe('MERGE syntax colouring', () => {
   });
 });
 
-describe('DELETE syntax colouring', () => {
+describe('DELETE syntax highlighting', () => {
   test('Correctly colours DELETE', () => {
     const query = `MATCH ()-[r]->()
     DELETE r
   `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,
@@ -2503,7 +2503,7 @@ describe('DELETE syntax colouring', () => {
     WHERE n.id = 123
     DETACH DELETE n
   `;
-    expect(applySyntaxColouring(query)).toEqual([
+    expect(highlightSyntax(query)).toEqual([
       {
         bracketInfo: undefined,
         length: 5,

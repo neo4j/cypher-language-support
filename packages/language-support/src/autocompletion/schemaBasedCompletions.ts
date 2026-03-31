@@ -4,7 +4,7 @@ import {
   InsertTextFormat,
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema.js';
-import { ParsedStatement } from '../parserWrapper.js';
+import { ParsedStatement } from '../cypherLanguageService.js';
 import {
   ConditionNode,
   isLabelLeaf,
