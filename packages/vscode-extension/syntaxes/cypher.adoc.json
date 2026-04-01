@@ -1,0 +1,46 @@
+{
+  "scopeName": "inline.cypher.asciidoc.codeblock",
+  "injectionSelector": "L:text.asciidoc -meta.embedded.block",
+  "patterns": [
+    {
+      "name": "markup.code.cypher.asciidoc",
+      "begin": "^\\[(source)(,|#)\\s*(?i:(cypher))([^\\]]+)*\\]\\s*$",
+      "beginCaptures": {
+        "1": {
+          "name": "markup.meta.attribute-list.asciidoc entity.name.function.asciidoc"
+        },
+        "3": {
+          "name": "markup.meta.attribute-list.asciidoc markup.heading.asciidoc"
+        },
+        "4": {
+          "name": "markup.meta.attribute-list.asciidoc markup.heading.asciidoc"
+        }
+      },
+      "patterns": [
+        {
+          "comment": "listing block",
+          "begin": "^(-{4,})\\s*$",
+          "contentName": "source.block.cypher",
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ],
+          "end": "^(\\1)$"
+        },
+        {
+          "comment": "open block",
+          "begin": "^(-{2})\\s*$",
+          "contentName": "source.embedded.cypher",
+          "patterns": [
+            {
+              "include": "source.cypher"
+            }
+          ],
+          "end": "^(\\1)$"
+        }
+      ],
+      "end": "((?<=--|\\.\\.\\.\\.)$|^\\s*$)"
+    }
+  ]
+}
