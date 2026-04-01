@@ -574,7 +574,8 @@ export type ParsedCommandNoPosition =
   | { type: 'style'; operation?: 'reset' }
   | { type: 'play'; guide?: string }
   | { type: 'access-mode'; operation?: string }
-  | { type: 'help' };
+  | { type: 'help' }
+  | { type: 'auto'; statement?: string };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -775,6 +776,19 @@ function parseToCommand(
       const helpCmd = consoleCmd.helpCmd();
       if (helpCmd) {
         return { type: 'help', start, stop };
+      }
+
+      const autoCmd = consoleCmd.autoCmd();
+      if (autoCmd) {
+        const autoStmt = autoCmd.statement();
+        if (autoStmt && autoStmt.start && autoStmt.stop) {
+          const statement = inputstream.getText(
+            autoStmt.start.start,
+            autoStmt.stop.stop,
+          );
+          return { type: 'auto', statement, start, stop };
+        }
+        return { type: 'auto', start, stop };
       }
 
       return { type: 'parse-error', start, stop };

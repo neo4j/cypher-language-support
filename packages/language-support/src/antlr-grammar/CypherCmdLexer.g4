@@ -25,3 +25,5 @@ PLAY: P L A Y;
 ACCESSMODE: A C C E S S '-' M O D E;
 
 HELP: H E L P;
+
+AUTO: A U T O;

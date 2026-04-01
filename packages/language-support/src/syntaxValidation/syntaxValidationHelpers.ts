@@ -97,10 +97,15 @@ export class SyntaxErrorsListener implements ANTLRErrorListener<CommonToken> {
         offendingSymbol.type !== CypherLexer.ErrorChar &&
         !unfinishedComment
       ) {
+        const insideConsoleCommand = !!findParent(
+          ctx,
+          (n) => n instanceof ConsoleCommandContext,
+        );
         const errorMessage = completionCoreErrormessage(
           parser,
           offendingSymbol,
           this.consoleCommandsEnabled,
+          insideConsoleCommand,
         );
 
         if (errorMessage) {

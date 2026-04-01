@@ -224,12 +224,28 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+
+    expect(highlightSyntax(':auto')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'auto',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'auto' },
       { kind: 23, label: 'help' },
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
@@ -277,7 +293,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of auto, help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -782,6 +798,26 @@ describe('server', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+  });
+});
+
+describe('auto', () => {
+  test('parses without arg', () => {
+    expectParsedCommands(':auto', [{ type: 'auto' }]);
+  });
+
+  test('parses with valid statement', () => {
+    expectParsedCommands(':auto RETURN 1', [
+      { type: 'auto', statement: 'RETURN 1' },
+    ]);
+  });
+
+  test('gives errors on invalid statement', () => {
+    expectErrorMessage(':auto asdf', 'Expected a statement');
+  });
+
+  test('gives errors on trailing garbage after valid statement', () => {
+    expectErrorMessage(':auto RETURN 1 asdf', "Expected ';' or a statement");
   });
 });
 

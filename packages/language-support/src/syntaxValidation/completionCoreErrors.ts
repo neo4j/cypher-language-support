@@ -28,6 +28,7 @@ export function completionCoreErrormessage(
   parser: CypherParser,
   currentToken: Token,
   consoleCommandsEnabled: boolean,
+  insideConsoleCommand: boolean = false,
 ): string | undefined {
   const codeCompletion = new CodeCompletionCore(parser);
   const caretIndex = currentToken.tokenIndex;
@@ -69,7 +70,10 @@ export function completionCoreErrormessage(
 
   // If we can complete only a statement, we don't want to suggest that
   // We want to be using the database errors stack instead
+  // Exception: inside console commands (e.g. :auto) we do want to report
+  // statement-level errors since there's no database error stack for those
   if (
+    !insideConsoleCommand &&
     ruleCandidates.length === 1 &&
     ruleCandidates[0] === CypherParser.RULE_statement
   ) {
