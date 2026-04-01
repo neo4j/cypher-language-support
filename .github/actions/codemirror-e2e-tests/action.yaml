@@ -13,25 +13,33 @@ runs:
   steps:
     - name: Validate browser input
       shell: bash
+      env: 
+        BROWSER: ${{ inputs.browser }}
       run: |
-        if [[ "${{ inputs.browser }}" != "chromium" && "${{ inputs.browser }}" != "firefox" ]]; then
-          echo "Invalid browser (should be one of firefox or chromium): ${{ inputs.browser }}"
+        if [[ "$BROWSER" != "chromium" && "$BROWSER" != "firefox" ]]; then
+          echo "Invalid browser (should be one of firefox or chromium): $BROWSER"
           exit 1
         fi
 
     - name: Install Playwright Browsers
       shell: bash
-      run: pnpm exec playwright install --only-shell --with-deps ${{ inputs.browser }}
+      env: 
+        BROWSER: ${{ inputs.browser }}
+      run: pnpm exec playwright install --only-shell --with-deps "$BROWSER"
       working-directory: packages/react-codemirror
 
     - name: Run e2e test
       shell: bash
-      run: pnpm --filter react-codemirror test:e2e --project=${{ inputs.browser }}
+      env: 
+        BROWSER: ${{ inputs.browser }}
+      run: pnpm --filter react-codemirror test:e2e --project="$BROWSER"
 
     - name: Upload Playwright Report
       uses: actions/upload-artifact@v4
       if: always()
+      env: 
+        BROWSER: ${{ inputs.browser }}
       with:
-        name: playwright-report-${{ inputs.browser }}
+        name: playwright-report-"$BROWSER"
         path: packages/react-codemirror/playwright-report/
         retention-days: 30
