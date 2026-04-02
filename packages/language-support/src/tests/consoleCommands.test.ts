@@ -5,7 +5,10 @@ import {
 import { testData } from './testData.js';
 import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../autocompletion/autocompletion.js';
-import { getDiagnosticsForQuery } from './syntaxValidation/helpers.js';
+import {
+  getDiagnosticsForQuery,
+  getSymbolTablesForQuery,
+} from './syntaxValidation/helpers.js';
 
 function expectParsedCommands(
   query: string,
@@ -866,6 +869,27 @@ describe('auto', () => {
         },
         severity: 1,
       },
+    ]);
+  });
+
+  test('provides symbol tables with correct positions', () => {
+    const symbolTables = getSymbolTablesForQuery({
+      query: ':auto MATCH (n) RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(symbolTables).toEqual([
+      [
+        {
+          variable: 'n',
+          definitionPosition: 13,
+          types: ['Node'],
+          references: [13, 23],
+          labels: {
+            condition: 'and',
+            children: [],
+          },
+        },
+      ],
     ]);
   });
 
