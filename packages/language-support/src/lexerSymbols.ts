@@ -425,6 +425,7 @@ export const lexerConsoleCmds = [
   CypherLexer.PLAY,
   CypherLexer.ACCESSMODE,
   CypherLexer.HELP,
+  CypherLexer.AUTO,
 ];
 
 function toTokentypeObject(arr: number[], tokenType: CypherTokenType) {

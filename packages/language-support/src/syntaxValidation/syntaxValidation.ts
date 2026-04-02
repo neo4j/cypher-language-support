@@ -347,7 +347,10 @@ export function lintCypherQuery(
     const statements = resolvedParsingResult.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
-      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+      if (
+        (cmd.type === 'cypher' || cmd.type === 'auto') &&
+        cmd.statement.length > 0
+      ) {
         if (current.cypherVersionError)
           return { diagnostics: [current.cypherVersionError], symbolTable: [] };
 

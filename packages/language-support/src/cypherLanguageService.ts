@@ -574,7 +574,8 @@ export type ParsedCommandNoPosition =
   | { type: 'style'; operation?: 'reset' }
   | { type: 'play'; guide?: string }
   | { type: 'access-mode'; operation?: string }
-  | { type: 'help' };
+  | { type: 'help' }
+  | { type: 'auto'; statement?: string };
 
 export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
@@ -775,6 +776,21 @@ function parseToCommand(
       const helpCmd = consoleCmd.helpCmd();
       if (helpCmd) {
         return { type: 'help', start, stop };
+      }
+
+      const autoCmd = consoleCmd.autoCmd();
+      if (autoCmd) {
+        const autoStmt = autoCmd.statement();
+        if (autoStmt && autoStmt.start && autoStmt.stop) {
+          //we want autoStmt.start so we skip :auto when calling semantic analysis
+          //but regular stop, so we include trailing error nodes not parsed as statement
+          const statement = inputstream.getText(
+            autoStmt.start.start,
+            stop.stop,
+          );
+          return { type: 'auto', statement, start: autoStmt.start, stop };
+        }
+        return { type: 'auto', start, stop };
       }
 
       return { type: 'parse-error', start, stop };

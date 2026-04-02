@@ -22,6 +22,7 @@ consoleCommand: COLON (
     | playCmd
     | accessModeCmd
     | helpCmd
+    | autoCmd
 );
 
 paramsCmd: PARAM paramsArgs?;
@@ -58,7 +59,9 @@ accessModeCmd: ACCESSMODE accessModeArgs?;
 
 helpCmd: HELP;
 
-// These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
+autoCmd: AUTO statement;
+
+// These rules are needed to distinguish cypher <-> commands, for example `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
 
 useCompletionRule: USE;
