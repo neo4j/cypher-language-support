@@ -59,7 +59,7 @@ accessModeCmd: ACCESSMODE accessModeArgs?;
 
 helpCmd: HELP;
 
-autoCmd: AUTO statement?;
+autoCmd: AUTO statement;
 
 // These rules are needed to distinguish cypher <-> commands, for example `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
