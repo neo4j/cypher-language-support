@@ -59,9 +59,9 @@ accessModeCmd: ACCESSMODE accessModeArgs?;
 
 helpCmd: HELP;
 
-autoCmd: AUTO statement SEMICOLON? EOF | AUTO EOF;
+autoCmd: AUTO statement?;
 
-// These rules are needed to distinguish cypher <-> commands, for exapmle `USE` and `:use` in autocompletion
+// These rules are needed to distinguish cypher <-> commands, for example `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
 
 useCompletionRule: USE;

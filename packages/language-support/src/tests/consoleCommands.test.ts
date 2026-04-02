@@ -5,6 +5,7 @@ import {
 import { testData } from './testData.js';
 import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../autocompletion/autocompletion.js';
+import { getDiagnosticsForQuery } from './syntaxValidation/helpers.js';
 
 function expectParsedCommands(
   query: string,
@@ -803,7 +804,7 @@ describe('server', () => {
 
 describe('auto', () => {
   test('parses without arg', () => {
-    expectParsedCommands(':auto', [{ type: 'auto' }]);
+    expectParsedCommands(':auto', [{ type: 'auto', statement: '' }]);
   });
 
   test('parses with valid statement', () => {
@@ -813,11 +814,113 @@ describe('auto', () => {
   });
 
   test('gives errors on invalid statement', () => {
-    expectErrorMessage(':auto asdf', 'Expected a statement');
+    const linting = getDiagnosticsForQuery({
+      query: ':auto asdf',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 10,
+          start: 6,
+        },
+        message:
+          "Invalid input 'asdf': expected 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'FOREACH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 
   test('gives errors on trailing garbage after valid statement', () => {
-    expectErrorMessage(':auto RETURN 1 asdf', "Expected ';' or a statement");
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN 1 asdf',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 19,
+          start: 15,
+        },
+        message:
+          "Invalid input 'asdf': expected an expression, ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('provides semantic errors', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 14,
+          start: 13,
+        },
+        message: 'Variable `n` not defined',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('handles multiple statements', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN n; MATCH (n) RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 14,
+          start: 13,
+        },
+        message: 'Variable `n` not defined',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });
 
