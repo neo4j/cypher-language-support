@@ -107,6 +107,7 @@ clause
    | withClause
    | filterClause
    | unwindClause
+   | forListClause
    | letClause
    | callClause
    | subqueryClause
@@ -263,6 +264,10 @@ filterClause
 
 unwindClause
    : UNWIND expression AS variable
+   ;
+
+forListClause
+   : FOR variable IN expression
    ;
 
 letClause
@@ -544,6 +549,7 @@ expression8
 
 expression7
    : expression6 comparisonExpression6?
+   | propertyExistsPredicate
    ;
 
 // Making changes here? Consider looking at extendedWhen too.
@@ -558,7 +564,7 @@ comparisonExpression6
    | IS NOT? NULL                                     # NullComparison
    | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type # TypeComparison
    | IS NOT? normalForm? NORMALIZED                   # NormalFormComparison
-   | labelExpression                                  # LabelComparison
+   | (IS NOT? LABELED? | COLON) labelExpression4      # LabelComparison
    ;
 
 normalForm
@@ -777,6 +783,10 @@ countStar
 
 existsExpression
    : EXISTS LCURLY (queryWithLocalDefinitions | matchMode? patternList whereClause?) RCURLY
+   ;
+
+propertyExistsPredicate
+   : PROPERTY_EXISTS LPAREN variable COMMA propertyKeyName RPAREN
    ;
 
 countExpression
@@ -2288,6 +2298,7 @@ unescapedSymbolicNameString_
    | JOIN
    | KEY
    | LABEL
+   | LABELED
    | LABELS
    | LANGUAGE
    | LEADING
