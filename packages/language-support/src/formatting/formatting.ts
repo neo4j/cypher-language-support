@@ -573,9 +573,30 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
    * otherwise be silently dropped by explicit visitor methods.
    */
   _emitPrecedingErrorNodes = (upToTokenIdx: number) => {
+    let emittedAny = false;
     for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
       if (tokenIdx > this.previousTokenIndex && tokenIdx < upToTokenIdx) {
         this.visitErrorNode(errorNode);
+        emittedAny = true;
+      }
+    }
+    // After emitting error nodes, capture any remaining gap tokens (whitespace
+    // on the hidden channel, etc.) between the last emitted error node and the
+    // upcoming terminal so they are not silently dropped.
+    if (emittedAny && this.previousTokenIndex < upToTokenIdx - 1) {
+      const trailingTokens = this.tokenStream.tokens.slice(
+        this.previousTokenIndex + 1,
+        upToTokenIdx,
+      );
+      const trailingText = trailingTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
+      if (trailingText.length > 0) {
+        const lastChunk = this.lastInChunkList();
+        if (lastChunk && lastChunk.type === 'SYNTAX_ERROR') {
+          lastChunk.text += trailingText;
+        }
       }
     }
   };
@@ -620,7 +641,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.previousTokenIndex + 1,
         errorTokenIndex,
       );
-      gapText = skippedTokens.map((t) => t.text).join('');
+      // Normalize \r\n to \n so the layout engine (which uses \n) works
+      // consistently across platforms.
+      gapText = skippedTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
     }
 
     const errorText = token.text.startsWith(MISSING) ? '' : token.text;

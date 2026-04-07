@@ -1,4 +1,3 @@
-import { formatQuery } from '../../formatting/formatting.js';
 import { verifyFormatting } from './testutil.js';
 
 describe('formatting despite syntax errors', () => {
@@ -112,6 +111,52 @@ WITH n ERROR RETURN n;`;
     verifyFormatting(query, expected);
   });
 
+  test('syntax error inside subquery with error recovery leaves error as is, and fixes formatting in parsed text', () => {
+    const query = `MATCH   (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie)
+  syntax error inside subquery
+  RETURN   m
+}
+RETURN n;`;
+
+    const expected = `MATCH (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie)
+  syntax error inside subquery
+  RETURN m
+}
+RETURN n;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('syntax error inside subquery with error recovery with newlines/spaces around recovery leaves error as is, and fixes formatting in parsed text', () => {
+    const query = `MATCH   (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie) 
+
+
+  syntax error inside subquery
+  RETURN   m
+}
+RETURN n;`;
+
+    const expected = `MATCH (n:Person)
+CALL {
+  WITH n
+  MATCH (m:Movie) 
+
+
+  syntax error inside subquery
+  RETURN m
+}
+RETURN n;`;
+    verifyFormatting(query, expected);
+  });
+
   test('syntax error inside subquery with error recovery', () => {
     const query = `MATCH (n:Person)
 CALL {
@@ -121,16 +166,16 @@ CALL {
   RETURN m
 }
 RETURN n`;
+
     const expected = `MATCH (n:Person)
 CALL {
   WITH n
   MATCH (m:Movie)
-  syntax error inside subqueryRETURN m
+  syntax error inside subquery
+  RETURN m
 }
 RETURN n`;
-    // verifyFormatting's standardize check is too strict here: the error tokens
-    // run adjacent to RETURN m due to SyntaxErrorChunk spacing rules.
-    expect(formatQuery(query).formattedQuery).toEqual(expected);
+    verifyFormatting(query, expected);
   });
 
   test('Should handle error recovery v1', () => {
