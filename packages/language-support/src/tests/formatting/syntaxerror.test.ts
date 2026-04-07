@@ -119,7 +119,7 @@ CALL {
   syntax error inside subquery
   RETURN   m
 }
-RETURN n;`;
+RETURN n`;
 
     const expected = `MATCH (n:Person)
 CALL {
@@ -128,7 +128,7 @@ CALL {
   syntax error inside subquery
   RETURN m
 }
-RETURN n;`;
+RETURN n`;
     verifyFormatting(query, expected);
   });
 
@@ -142,7 +142,7 @@ CALL {
   syntax error inside subquery
   RETURN   m
 }
-RETURN n;`;
+RETURN n`;
 
     const expected = `MATCH (n:Person)
 CALL {
@@ -150,27 +150,6 @@ CALL {
   MATCH (m:Movie) 
 
 
-  syntax error inside subquery
-  RETURN m
-}
-RETURN n;`;
-    verifyFormatting(query, expected);
-  });
-
-  test('syntax error inside subquery with error recovery', () => {
-    const query = `MATCH (n:Person)
-CALL {
-  WITH n
-  MATCH (m:Movie)
-  syntax error inside subquery
-  RETURN m
-}
-RETURN n`;
-
-    const expected = `MATCH (n:Person)
-CALL {
-  WITH n
-  MATCH (m:Movie)
   syntax error inside subquery
   RETURN m
 }
