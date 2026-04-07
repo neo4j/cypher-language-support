@@ -51,6 +51,7 @@ import {
   IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
+  LabelComparisonContext,
   LabelExpression2Context,
   LabelExpression3Context,
   LabelExpression4Context,
@@ -1124,6 +1125,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     if (ctx.IS()) {
       this._visit(ctx.IS());
+    } else {
+      this.avoidSpaceBetween();
+    }
+    this._visit(ctx.labelExpression4());
+  };
+
+  visitLabelComparison = (ctx: LabelComparisonContext) => {
+    this._visitTerminalRaw(ctx.COLON());
+    this.avoidBreakBetween();
+    if (ctx.IS()) {
+      this._visit(ctx.IS());
+      if (ctx.NOT()) {
+        this._visit(ctx.NOT());
+      }
+      if (ctx.LABELED) {
+        this._visit(ctx.LABELED());
+      }
     } else {
       this.avoidSpaceBetween();
     }
