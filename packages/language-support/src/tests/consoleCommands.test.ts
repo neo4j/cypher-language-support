@@ -5,6 +5,10 @@ import {
 import { testData } from './testData.js';
 import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../autocompletion/autocompletion.js';
+import {
+  getDiagnosticsForQuery,
+  getSymbolTablesForQuery,
+} from './syntaxValidation/helpers.js';
 
 function expectParsedCommands(
   query: string,
@@ -224,12 +228,28 @@ describe('sanity checks', () => {
         tokenType: 'consoleCommand',
       },
     ]);
+
+    expect(highlightSyntax(':auto')).toEqual([
+      {
+        length: 1,
+        position: { line: 0, startCharacter: 0, startOffset: 0 },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        length: 4,
+        position: { line: 0, startCharacter: 1, startOffset: 1 },
+        token: 'auto',
+        tokenType: 'consoleCommand',
+      },
+    ]);
   });
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
+      { kind: 23, label: 'auto' },
       { kind: 23, label: 'help' },
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
@@ -277,7 +297,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of auto, help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');
@@ -780,6 +800,149 @@ describe('server', () => {
         position: { line: 0, startCharacter: 8, startOffset: 8 },
         token: 'disconnect',
         tokenType: 'consoleCommand',
+      },
+    ]);
+  });
+});
+
+describe('auto', () => {
+  test('parses without arg', () => {
+    expectParsedCommands(':auto', [{ type: 'auto', statement: '' }]);
+  });
+
+  test('parses with valid statement', () => {
+    expectParsedCommands(':auto RETURN 1', [
+      { type: 'auto', statement: 'RETURN 1' },
+    ]);
+  });
+
+  test('gives errors on invalid statement', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto asdf',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 10,
+          start: 6,
+        },
+        message:
+          "Invalid input 'asdf': expected 'ALTER', 'ORDER BY', 'CALL', 'USING PERIODIC COMMIT', 'CREATE', 'LOAD CSV', 'START DATABASE', 'STOP DATABASE', 'DEALLOCATE', 'DELETE', 'DENY', 'DETACH', 'DROP', 'DRYRUN', 'FINISH', 'FOREACH', 'GRANT', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REALLOCATE', 'REMOVE', 'RENAME', 'RETURN', 'REVOKE', 'ENABLE SERVER', 'SET', 'SHOW', 'SKIP', 'TERMINATE', 'UNWIND', 'USE' or 'WITH'",
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('gives errors on trailing garbage after valid statement', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN 1 asdf',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 19,
+          start: 15,
+        },
+        message:
+          "Invalid input 'asdf': expected an expression, ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('provides symbol tables with correct positions', () => {
+    const symbolTables = getSymbolTablesForQuery({
+      query: ':auto MATCH (n) RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(symbolTables).toEqual([
+      [
+        {
+          variable: 'n',
+          definitionPosition: 13,
+          types: ['Node'],
+          references: [13, 23],
+          labels: {
+            condition: 'and',
+            children: [],
+          },
+        },
+      ],
+    ]);
+  });
+
+  test('provides semantic errors', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 14,
+          start: 13,
+        },
+        message: 'Variable `n` not defined',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('handles multiple statements', () => {
+    const linting = getDiagnosticsForQuery({
+      query: ':auto RETURN n; MATCH (n) RETURN n',
+      consoleCommandsEnabled: true,
+    });
+    expect(linting).toEqual([
+      {
+        offsets: {
+          end: 14,
+          start: 13,
+        },
+        message: 'Variable `n` not defined',
+        range: {
+          end: {
+            character: 14,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 1,
       },
     ]);
   });
