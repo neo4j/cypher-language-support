@@ -8,6 +8,6 @@
   "vendor/antlr4-c3/index.ts": ["bash check-imports.sh"],
   "*.js": ["oxlint --fix --type-aware --max-warnings 0"],
   "*.json": ["oxfmt"],
-  "*.yaml": ["oxfmt"],
+  "!(pnpm-lock).yaml": ["oxfmt"],
   "*.yml": ["oxfmt"]
 }
