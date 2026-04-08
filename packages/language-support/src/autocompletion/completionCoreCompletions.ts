@@ -726,6 +726,20 @@ export function completionCoreCompletion(
         const topExprParent = candidateRule.ruleList[topExprIndex - 1];
 
         if (topExprParent === undefined) {
+          //Changes to the grammar have added a case where we want to complete a labelExpression1 outside of a labelExpression (in comparisonExpression6)
+          const patternExprIndex = candidateRule.ruleList.indexOf(
+            CypherParser.RULE_labelExpression4,
+          );
+          const labelExpressionParent =
+            candidateRule.ruleList[patternExprIndex - 1];
+          if (
+            labelExpressionParent === CypherParser.RULE_comparisonExpression6
+          ) {
+            return [
+              ...allLabelCompletions(dbSchema),
+              ...allReltypeCompletions(dbSchema),
+            ];
+          }
           return [];
         }
 
