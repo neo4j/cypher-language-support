@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter @neo4j-cypher/language-support build)",
+      "Bash(pnpm --filter @neo4j-cypher/language-support exec vitest run src/tests/formatting/styleguide.test.ts src/tests/formatting/commands.test.ts)",
+      "Bash(pnpm --filter @neo4j-cypher/language-support exec vitest run src/tests/formatting/styleguide.test.ts)",
+      "Bash(antlr4-parse.exe ./CypherCmdLexer.g4 ./CypherCmdParser.g4 statementsOrCommands -tree query.txt)",
+      "Bash(pnpm --filter @neo4j-cypher/language-support exec vitest run src/tests/formatting/commands.test.ts)"
+    ]
+  }
+}
