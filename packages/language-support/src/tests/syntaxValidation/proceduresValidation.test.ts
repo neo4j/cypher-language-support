@@ -746,25 +746,6 @@ meaning that it expects at least 3 arguments of types NODE, STRING, ANY
       }),
     ).toEqual([
       {
-        severity: 1,
-        message:
-          'Procedure call inside a query does not support naming results implicitly (name explicitly using `YIELD` instead)',
-        range: {
-          start: {
-            line: 1,
-            character: 8,
-          },
-          end: {
-            line: 2,
-            character: 36,
-          },
-        },
-        offsets: {
-          start: 9,
-          end: 73,
-        },
-      },
-      {
         message: 'Type mismatch: expected Integer but was String',
         offsets: {
           end: 43,
@@ -804,24 +785,39 @@ meaning that it expects at least 1 argument of type STRING
         },
         severity: 1,
       },
+    ]);
+  });
+
+  test('Provides "name explicitly using `YIELD` instead" error when calling procedure inside query, if call has return columns', () => {
+    const query = `
+        MATCH (n)
+        CALL db.schema.visualization()
+        RETURN n
+        `;
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: testData.mockSchema,
+      }),
+    ).toEqual([
       {
-        severity: 1,
         message:
           'Procedure call inside a query does not support naming results implicitly (name explicitly using `YIELD` instead)',
-        range: {
-          start: {
-            line: 2,
-            character: 8,
-          },
-          end: {
-            line: 2,
-            character: 28,
-          },
-        },
         offsets: {
-          start: 53,
-          end: 73,
+          end: 57,
+          start: 27,
         },
+        range: {
+          end: {
+            character: 38,
+            line: 2,
+          },
+          start: {
+            character: 8,
+            line: 2,
+          },
+        },
+        severity: 1,
       },
     ]);
   });
