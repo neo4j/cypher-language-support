@@ -1139,7 +1139,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       if (ctx.NOT()) {
         this._visit(ctx.NOT());
       }
-      if (ctx.LABELED) {
+      if (ctx.LABELED()) {
         this._visit(ctx.LABELED());
       }
     } else {
