@@ -162,6 +162,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseable: string = '';
   unParseableStart: number | undefined;
   firstUnParseableToken: Token | undefined;
+  private errorNodesByIndex: Map<number, ErrorNode> = new Map();
 
   constructor(
     formattingOptions: FormattingOptions,
@@ -182,6 +183,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.firstUnParseableToken = firstUnParseableToken;
       this.unParseableStart = firstUnParseableToken.tokenIndex;
     }
+    this._collectErrorNodes(this.root);
   }
 
   format = () => {
@@ -549,6 +551,57 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  private _collectErrorNodes(node: ParserRuleContext | TerminalNode): void {
+    if (node instanceof TerminalNode) {
+      // @ts-expect-error isErrorNode exists on ErrorNode at runtime but not in TerminalNode types
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (node.isErrorNode && node.isErrorNode()) {
+        const tokenIdx = node.symbol.tokenIndex;
+        if (tokenIdx >= 0) {
+          this.errorNodesByIndex.set(tokenIdx, node as ErrorNode);
+        }
+      }
+    } else if (node instanceof ParserRuleContext) {
+      for (const child of node.children ?? []) {
+        this._collectErrorNodes(child as ParserRuleContext | TerminalNode);
+      }
+    }
+  }
+
+  /**
+   * Emits any ErrorNodes that fall between the last visited token and the given
+   * token index. These are tokens consumed by ANTLR error recovery that would
+   * otherwise be silently dropped by explicit visitor methods.
+   */
+  _emitPrecedingErrorNodes = (upToTokenIdx: number) => {
+    let emittedAny = false;
+    for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
+      if (tokenIdx > this.previousTokenIndex && tokenIdx < upToTokenIdx) {
+        this.visitErrorNode(errorNode);
+        emittedAny = true;
+      }
+    }
+    // After emitting error nodes, capture any remaining gap tokens (whitespace
+    // on the hidden channel, etc.) between the last emitted error node and the
+    // upcoming terminal so they are not silently dropped.
+    if (emittedAny && this.previousTokenIndex < upToTokenIdx - 1) {
+      const trailingTokens = this.tokenStream.tokens.slice(
+        this.previousTokenIndex + 1,
+        upToTokenIdx,
+      );
+      const trailingText = trailingTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
+      if (trailingText.length > 0) {
+        const lastChunk = this.lastInChunkList();
+        if (lastChunk && lastChunk.type === 'SYNTAX_ERROR') {
+          lastChunk.text += trailingText;
+        }
+      }
+    }
+  };
+
   _visitTerminalRaw = (ctx: TerminalNode, options?: RawTerminalOptions) => {
     if (!ctx) {
       return;
@@ -566,6 +619,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // So to restore all the syntactically incorrect parts, we keep track of the last valid
   // token, and grab everything between it and the error node
   visitErrorNode = (node: ErrorNode) => {
+    // Skip missing tokens (tokenIndex = -1) and already-emitted nodes
+    // (prevents double-emission when also reached via visitChildren).
+    if (
+      node.symbol.tokenIndex < 0 ||
+      node.symbol.tokenIndex <= this.previousTokenIndex
+    ) {
+      return;
+    }
     if (
       this.unParseableStart &&
       node.symbol.tokenIndex >= this.unParseableStart
@@ -581,7 +642,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         this.previousTokenIndex + 1,
         errorTokenIndex,
       );
-      gapText = skippedTokens.map((t) => t.text).join('');
+      // Normalize \r\n to \n so the layout engine (which uses \n) works
+      // consistently across platforms.
+      gapText = skippedTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
     }
 
     const errorText = token.text.startsWith(MISSING) ? '' : token.text;
@@ -1206,6 +1272,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
+    this._emitPrecedingErrorNodes(node.symbol.tokenIndex);
     if (node.getText().startsWith(MISSING)) {
       return;
     }
@@ -1247,6 +1314,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
+    this._emitPrecedingErrorNodes(node.symbol.tokenIndex);
     if (node.getText().startsWith(MISSING)) {
       return;
     }

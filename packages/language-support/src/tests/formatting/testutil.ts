@@ -16,6 +16,9 @@ export function verifyFormatting(
     );
   }
   // Idempotency check
-  const formattedTwice = formatQuery(query, formattingOptions).formattedQuery;
+  const formattedTwice = formatQuery(
+    formatted,
+    formattingOptions,
+  ).formattedQuery;
   expect(formattedTwice).toEqual(formatted);
 }
