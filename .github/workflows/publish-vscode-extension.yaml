@@ -6,18 +6,25 @@ on:
     tags:
       - 'neo4j-for-vscode@*.*.*'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: false
+
 env:
-  NODE_OPTIONS: '--max_old_space_size=4096'
+  NODE_OPTIONS: '--max_old_space_size=8192'
 
 jobs:
   publish-vscode-extension:
     name: 'Publish VSCode extension to Marketplace and OpenVSX'
     environment: publish-vscode-extension
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
-      # todo verify caching works well here too
       - name: Setup and build project
         uses: ./.github/actions/setup-and-build
 
