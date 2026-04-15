@@ -1,5 +1,21 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.31
+
+### Patch Changes
+
+- 08f94af: adding auto-completion for :auto
+- 0763d97: Fix bug in formatter when parser performs error recovery
+- 3b2faf5: Rewrite global parserWrapper for instantiated CypherLanguageService objects
+
+  Breaking changes for direct consumers of `@neo4j-cypher/language-support`:
+
+  - Removed export: `parserWrapper`. The same `ParsingResult` as `parserWrapper.parse` would yield can still be received by `createParsingResult` in `CypherLanguageService`. Instances of the new CypherLanguageService class provide helpers for linting/highlighting/completions/signature info where parsing is handled internally.
+  - Renamed exports: `applySyntaxColouring` → `highlightSyntax`, `syntaxColouringLegend` → `syntaxHighlightingLegend`
+  - `autocomplete()`, `lintCypherQuery()`, `highlightSyntax()`, and `getSignatureInfo()` now take an options object as the third parameter instead of positional args
+
+- ca1bba6: Update grammar and semantic analysis to 2026.04
+
 ## 2.0.0-next.30
 
 ### Patch Changes
