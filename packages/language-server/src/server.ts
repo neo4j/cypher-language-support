@@ -16,6 +16,7 @@ import {
   SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
+  SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -81,18 +82,36 @@ class SymbolFetcher {
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
         const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
+        let symbolTables: SymbolTable[] | undefined;
 
-        const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
+        if (
+          (this.linterVersion && this.linterVersion >= '2026.04') ||
+          !this.linterVersion
+        ) {
+          symbolTables = await proxyWorker.getSymbolTables(
+            query,
+            fixedDbSchema,
+          );
+        } else {
+          const semanticResult = (await proxyWorker.lintCypherQuery(
+            query,
+            fixedDbSchema,
+          )) as {
+            diagnostics: SyntaxDiagnostic[];
+            symbolTables?: SymbolTable[];
+          };
+          symbolTables = semanticResult.symbolTables;
+        }
 
         if (
           //if this.nextJob has new doc, our result is no longer valid
-          result.symbolTables &&
+          symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
           languageService.setSymbolsInfo(
             {
               query,
-              symbolTables: result.symbolTables,
+              symbolTables,
             },
             async (symbolTables: SymbolTable[]) =>
               await connection.sendNotification('symbolTableDone', {
@@ -132,10 +151,6 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
-      async (symbolTables: SymbolTable[]) =>
-        await connection.sendNotification('symbolTableDone', {
-          symbolTables: symbolTables,
-        }),
       neo4jSchemaPoller,
     );
   } else {

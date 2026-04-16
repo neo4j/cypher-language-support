@@ -43,10 +43,10 @@ export function testCompletions({
   computeSymbolsInfo?: boolean;
 }) {
   if (computeSymbolsInfo) {
-    const result = languageService.lint(query, dbSchema);
+    const symbolTables = languageService.fetchSymbols(query, dbSchema);
     languageService.setSymbolsInfo({
       query,
-      symbolTables: result.symbolTables,
+      symbolTables: symbolTables,
     });
   }
 
@@ -101,10 +101,10 @@ export function getSymbolCompletions({
   query: string;
   dbSchema: DbSchema;
 }) {
-  const result = languageService.lint(query, dbSchema);
+  const symbolTables = languageService.fetchSymbols(query, dbSchema);
   languageService.setSymbolsInfo({
     query: query,
-    symbolTables: result.symbolTables,
+    symbolTables: symbolTables,
   });
 
   const completions = languageService.autocomplete(query, dbSchema);

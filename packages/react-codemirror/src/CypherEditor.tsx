@@ -322,12 +322,13 @@ class CodemirrorSymbolFetcher {
         const dbSchema = this.nextJob.schema;
         this.nextJob = undefined;
 
-        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+        //Add a similar check here as in SymbolFetcher of language-server when we add per-server linting
+        const symbolTables = await proxyWorker.getSymbolTables(query, dbSchema);
 
-        if (result.symbolTables) {
+        if (symbolTables) {
           this.languageService.setSymbolsInfo({
             query,
-            symbolTables: result.symbolTables,
+            symbolTables,
           });
         }
       } catch (err) {

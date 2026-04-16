@@ -1,5 +1,8 @@
 import { DbSchema } from '../../dbSchema.js';
-import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
+import {
+  getSymbolTables,
+  lintCypherQuery,
+} from '../../syntaxValidation/syntaxValidation.js';
 
 type SyntaxValidationTestArgs = {
   query: string;
@@ -21,5 +24,5 @@ export function getSymbolTablesForQuery({
   query,
   dbSchema = {},
 }: SyntaxValidationTestArgs) {
-  return lintCypherQuery(query, dbSchema).symbolTables;
+  return getSymbolTables(query, dbSchema);
 }
