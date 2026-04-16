@@ -26,6 +26,7 @@ export {
 export type { ParsedCypherToken } from './syntaxHighlighting/syntaxHighlightingHelper.js';
 export {
   lintCypherQuery,
+  getSymbolTables,
   clampUnsafePositions,
 } from './syntaxValidation/syntaxValidation.js';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';

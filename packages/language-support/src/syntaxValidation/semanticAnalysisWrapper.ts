@@ -14,13 +14,16 @@ import {
 } from '../types.js';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
-import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
+import {
+  analyzeQuery,
+  calculateSymbolTable,
+  updateSignatureResolver,
+} from './semanticAnalysis.js';
 import { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];
   notifications: SyntaxDiagnostic[];
-  symbolTable: SymbolTable;
 }
 
 export interface ElementPosition {
@@ -128,6 +131,24 @@ function updateResolverForVersion(
   }
 }
 
+export function wrappedSymbolTableCollection(
+  query: string,
+  dbSchema: DbSchema,
+  parsedVersion?: CypherVersion,
+): SymbolTable {
+  try {
+    const defaultVersion = dbSchema?.defaultLanguage;
+    const cypherVersion = parsedVersion ?? defaultVersion ?? 'CYPHER 5';
+    updateResolverForVersion(dbSchema, cypherVersion);
+    const symbolTable: SymbolTable = calculateSymbolTable(query, cypherVersion);
+
+    return copySymbolTable(symbolTable);
+  } catch {
+    /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
+    return [];
+  }
+}
+
 export function wrappedSemanticAnalysis(
   query: string,
   dbSchema: DbSchema,
@@ -141,7 +162,6 @@ export function wrappedSemanticAnalysis(
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;
-    const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
       errors: copySettingSeverity(errors, DiagnosticSeverity.Error),
@@ -149,10 +169,9 @@ export function wrappedSemanticAnalysis(
         notifications,
         DiagnosticSeverity.Warning,
       ),
-      symbolTable: copySymbolTable(symbolTable),
     };
   } catch {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
-    return { errors: [], notifications: [], symbolTable: [] };
+    return { errors: [], notifications: [] };
   }
 }

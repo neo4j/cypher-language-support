@@ -1,7 +1,4 @@
-import {
-  clampUnsafePositions,
-  SymbolTable,
-} from '@neo4j-cypher/language-support';
+import { clampUnsafePositions } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
@@ -13,7 +10,6 @@ import {
   LinterTask,
   LintWorker,
 } from '@neo4j-cypher/lint-worker';
-import { languageService } from './server';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
@@ -40,7 +36,6 @@ export async function setLintWorker(
 async function rawLintDocument(
   document: TextDocument,
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
-  notifySymbolTableDone: (symbolTable: SymbolTable[]) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
 ) {
   const query = document.getText();
@@ -68,17 +63,6 @@ async function rawLintDocument(
       result.diagnostics,
       document,
     );
-
-    // Pass the computed symbol tables to the parser
-    if (result.symbolTables) {
-      languageService.setSymbolsInfo(
-        {
-          query,
-          symbolTables: result.symbolTables,
-        },
-        notifySymbolTableDone,
-      );
-    }
 
     sendDiagnostics(positionSafeResult);
   } catch (err) {
