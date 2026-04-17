@@ -1,0 +1,1 @@
+create vector index relIndex for ()-[r: REL_TYPE]-() on (r.embedding)

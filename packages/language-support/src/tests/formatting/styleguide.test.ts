@@ -418,4 +418,66 @@ RETURN a, b`;
     const expected = `RETURN VECTOR(1, 2, INT16)`;
     verifyFormatting(query, expected);
   });
+
+  test('vector_distance function formatting', () => {
+    const query = `return vector_distance([1,2,3],[4,5,6],COSINE)`;
+    const expected = `RETURN VECTOR_DISTANCE([1, 2, 3], [4, 5, 6], COSINE)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('vector_norm function formatting', () => {
+    const query = `return vector_norm([1,2,3],euclidean)`;
+    const expected = `RETURN VECTOR_NORM([1, 2, 3], EUCLIDEAN)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('NEXT between queries', () => {
+    const query = `MATCH (n) RETURN n NEXT MATCH (m) RETURN m`;
+    const expected = `MATCH (n)
+RETURN n
+
+NEXT
+
+MATCH (m)
+RETURN m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path pattern prefix: ANY SHORTEST', () => {
+    const query = `MATCH ANY SHORTEST (a)-[*]->(b) RETURN a, b`;
+    const expected = `MATCH ANY SHORTEST (a)-[*]->(b)
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path pattern prefix: ALL SHORTEST WALK', () => {
+    const query = `MATCH ALL SHORTEST WALK (a)-[*]->(b) RETURN a, b`;
+    const expected = `MATCH ALL SHORTEST WALK (a)-[*]->(b)
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
+  test('SEARCH clause in MATCH', () => {
+    const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] LIMIT 10) SCORE AS s RETURN n, s`;
+    const expected = `MATCH (n)
+SEARCH n IN (
+  VECTOR INDEX myIndex
+  FOR [1, 2, 3]
+  LIMIT 10
+) SCORE AS s
+RETURN n, s`;
+    verifyFormatting(query, expected);
+  });
+
+  test('SEARCH clause with WHERE', () => {
+    const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT 10)`;
+    const expected = `MATCH (n)
+SEARCH n IN (
+  VECTOR INDEX myIndex
+  FOR [1, 2, 3]
+  WHERE n.active = true
+  LIMIT 10
+)`;
+    verifyFormatting(query, expected);
+  });
 });

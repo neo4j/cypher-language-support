@@ -8,7 +8,16 @@ import {
 import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   AddPropContext,
+  AllPathContext,
+  AllReduceExpressionValidArgumentsContext,
+  AllShortestPathContext,
+  AlterAuthRuleContext,
+  AlterCommandContext,
+  AlterCurrentGraphTypeContext,
+  AnyPathContext,
+  AnyShortestPathContext,
   ArrowLineContext,
+  AuthRuleSetClauseContext,
   BooleanLiteralContext,
   CallClauseContext,
   CaseAlternativeContext,
@@ -25,11 +34,15 @@ import {
   ConstraintTypedContext,
   CountExpressionContext,
   CountStarContext,
+  CreateAliasContext,
+  CreateAuthRuleContext,
   CreateClauseContext,
   CreateCommandContext,
   CreateConstraintContext,
+  CreateDatabaseContext,
   CreateFulltextIndexContext,
   CreateIndex_Context,
+  CreateVectorIndexContext,
   DeleteClauseContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
@@ -48,6 +61,7 @@ import {
   FilterClauseContext,
   ForeachClauseContext,
   FunctionInvocationContext,
+  GraphTypeSpecificationContext,
   IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
@@ -62,7 +76,12 @@ import {
   ListComprehensionContext,
   ListItemsPredicateContext,
   ListLiteralContext,
+  LocalFunctionDefinitionContext,
+  LocalInputFieldsSignatureContext,
+  LocalOutputFieldsSignatureContext,
+  LocalProcedureDefinitionContext,
   MapContext,
+  MapOrParameterContext,
   MapProjectionContext,
   MapProjectionElementContext,
   MatchClauseContext,
@@ -70,6 +89,7 @@ import {
   MergeClauseContext,
   MultiLabelNodePatternContext,
   NamespaceContext,
+  NextStatementContext,
   NodePatternContext,
   NormalizeFunctionContext,
   NumberLiteralContext,
@@ -85,6 +105,8 @@ import {
   ProcedureNameContext,
   PropertyContext,
   QuantifierContext,
+  QueryBodyContext,
+  QueryWithLocalDefinitionsContext,
   RangePostfixContext,
   ReduceExpressionContext,
   RelationshipPatternContext,
@@ -93,9 +115,11 @@ import {
   ReturnClauseContext,
   ReturnItemContext,
   ReturnItemsContext,
+  SearchClauseContext,
   SetClauseContext,
   SetPropContext,
   SetPropsContext,
+  ShortestGroupContext,
   ShowCommandYieldContext,
   SkipContext,
   StatementsOrCommandsContext,
@@ -106,11 +130,14 @@ import {
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
+  VectorDistanceFunctionContext,
   VectorFunctionContext,
+  VectorNormFunctionContext,
   WhenBranchContext,
   WhenContext,
   WhereClauseContext,
   WithClauseContext,
+  WithPropertiesContext,
 } from '../generated-parser/CypherCmdParser.js';
 import CypherCmdParserVisitor from '../generated-parser/CypherCmdParserVisitor.js';
 import {
@@ -695,7 +722,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ctx:
       | CreateConstraintContext
       | CreateIndex_Context
-      | CreateFulltextIndexContext,
+      | CreateFulltextIndexContext
+      | CreateVectorIndexContext
+      | CreateAuthRuleContext,
   ) => {
     if (ctx.IF()) {
       this.avoidBreakBetween();
@@ -729,12 +758,69 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.REPLACE());
       this.avoidBreakBetween();
     }
+    this._visit(ctx.createAlias());
     this._visit(ctx.createCompositeDatabase());
     this._visit(ctx.createConstraint());
     this._visit(ctx.createDatabase());
     this._visit(ctx.createIndex());
     this._visit(ctx.createRole());
     this._visit(ctx.createUser());
+    this._visit(ctx.createAuthRule());
+  };
+
+  visitCreateDatabase = (ctx: CreateDatabaseContext) => {
+    this.visit(ctx.DATABASE());
+    this.visit(ctx.symbolicAliasNameOrParameter());
+    this._visit(ctx.IF());
+    this._visit(ctx.NOT());
+    this._visit(ctx.EXISTS());
+    this.breakLine();
+    if (ctx.defaultLanguageSpecification()) {
+      this._visit(ctx.SET());
+      this.visit(ctx.defaultLanguageSpecification());
+      this.breakLine();
+    }
+    if (ctx.topology()) {
+      this._visit(ctx.topology());
+      this.breakLine();
+    } else if (ctx.shards()) {
+      this._visit(ctx.shards());
+      this.breakLine();
+    }
+    if (ctx.commandOptions()) {
+      this.visit(ctx.commandOptions());
+      this.breakLine();
+    }
+    this._visit(ctx.waitClause());
+  };
+
+  visitCreateAlias = (ctx: CreateAliasContext) => {
+    this.visit(ctx.ALIAS());
+    this.visit(ctx.aliasName());
+    this._visit(ctx.IF());
+    this._visit(ctx.NOT());
+    this._visit(ctx.EXISTS());
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visit(ctx.DATABASE());
+    this.visit(ctx.aliasTargetName());
+    const mapOrParameters = ctx.mapOrParameter_list();
+    if (ctx.AT()) {
+      this.breakLine();
+      this._visit(ctx.AT());
+      this._visit(ctx.stringOrParameter());
+      this._visit(ctx.remoteTargetConnectionCredentials());
+      if (ctx.DRIVER()) {
+        this._visit(ctx.DRIVER());
+        this._visit(mapOrParameters[0]);
+      }
+      this._visit(ctx.defaultLanguageSpecification());
+    }
+    if (ctx.PROPERTIES() && mapOrParameters.length >= 1) {
+      this.breakLine();
+      this.visit(ctx.PROPERTIES());
+      this.visit(mapOrParameters.at(-1) as MapOrParameterContext);
+    }
   };
 
   visitCreateConstraint = (ctx: CreateConstraintContext) => {
@@ -793,6 +879,103 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.visit(ctx.enclosedPropertyList());
     this.visit(ctx.RBRACKET());
     this._visit(ctx.commandOptions());
+  };
+
+  visitCreateVectorIndex = (ctx: CreateVectorIndexContext) => {
+    this._visit(ctx.commandNameExpression());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this._visit(ctx.multiLabelNodePattern());
+    this._visit(ctx.multiRelTypeRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.propertyList());
+    this._visit(ctx.withProperties());
+    this._visit(ctx.commandOptions());
+  };
+
+  visitWithProperties = (ctx: WithPropertiesContext) => {
+    this.breakLine();
+    this.visit(ctx.WITH());
+    this.avoidBreakBetween();
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.enclosedPropertyList());
+    this._visit(ctx.RBRACKET());
+  };
+
+  visitCreateAuthRule = (ctx: CreateAuthRuleContext) => {
+    this.visit(ctx.AUTH());
+    this.avoidBreakBetween();
+    this.visit(ctx.RULE());
+    this._visit(ctx.commandNameExpression());
+    this._visitCommandIfNotExists(ctx);
+    const n = ctx.authRuleSetClause_list().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.authRuleSetClause(i));
+    }
+  };
+
+  visitAlterAuthRule = (ctx: AlterAuthRuleContext) => {
+    this.visit(ctx.AUTH());
+    this.avoidBreakBetween();
+    this.visit(ctx.RULE());
+    this._visit(ctx.commandNameExpression());
+    if (ctx.IF()) {
+      this.avoidBreakBetween();
+      this.visit(ctx.IF());
+      this.avoidBreakBetween();
+      this.visit(ctx.EXISTS());
+    }
+    const n = ctx.authRuleSetClause_list().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.authRuleSetClause(i));
+    }
+  };
+
+  visitAuthRuleSetClause = (ctx: AuthRuleSetClauseContext) => {
+    this.breakLine();
+    const setClauseIndent = this.addIndentation();
+    this.visitChildren(ctx);
+    this.removeIndentation(setClauseIndent);
+  };
+
+  visitAlterCommand = (ctx: AlterCommandContext) => {
+    this.visit(ctx.ALTER());
+    this.avoidBreakBetween();
+    this._visit(ctx.alterAlias());
+    this._visit(ctx.alterCurrentUser());
+    this._visit(ctx.alterCurrentGraphType());
+    this._visit(ctx.alterDatabase());
+    this._visit(ctx.alterUser());
+    this._visit(ctx.alterServer());
+    this._visit(ctx.alterAuthRule());
+  };
+
+  visitAlterCurrentGraphType = (ctx: AlterCurrentGraphTypeContext) => {
+    this.visit(ctx.CURRENT());
+    this.avoidBreakBetween();
+    this.visit(ctx.GRAPH());
+    this.avoidBreakBetween();
+    this.visit(ctx.TYPE());
+    this._visit(ctx.SET());
+    this._visit(ctx.ADD());
+    this._visit(ctx.ALTER());
+    this._visit(ctx.DROP());
+    this._visit(ctx.graphTypeSpecification());
+    this._visit(ctx.graphTypeDropSpecification());
+  };
+
+  visitGraphTypeSpecification = (ctx: GraphTypeSpecificationContext) => {
+    this._visit(ctx.LCURLY());
+    if (ctx.graphTypeSpecificationBody()) {
+      const bodyIndent = this.addIndentation();
+      this.breakLine();
+      this._visit(ctx.graphTypeSpecificationBody());
+      this.removeIndentation(bodyIndent);
+      this.breakLine();
+    }
+    this._visit(ctx.RCURLY());
   };
 
   visitCommandOptions = (ctx: CommandOptionsContext) => {
@@ -940,6 +1123,34 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.removeIndentation(matchIndent);
     this._visit(ctx.whereClause());
+    this._visit(ctx.searchClause());
+  };
+
+  visitSearchClause = (ctx: SearchClauseContext) => {
+    this.breakLine();
+    this._visit(ctx.SEARCH());
+    this._visit(ctx.variable());
+    this._visit(ctx.IN());
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const innerIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.indexSpecificationClause());
+    this.breakLine();
+    this._visit(ctx.forClause());
+    if (ctx.whereClause()) {
+      this.breakLine();
+      this._visit(ctx.whereClause());
+    }
+    this.breakLine();
+    this._visit(ctx.limit());
+    this.removeIndentation(innerIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visit(ctx.scoreClause());
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
@@ -1168,6 +1379,43 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const expressionGrp = this.startGroup();
     const reduceExprIndent = this.addIndentation();
     this._visit(ctx.expression(2));
+    this.removeIndentation(reduceExprIndent);
+    this.endGroup(expressionGrp);
+    this.endGroup(secondArgumentGrp);
+    this._visit(ctx.RPAREN());
+    this.endGroup(reduceExprGrp);
+    this.removeIndentation(reduceIndent);
+  };
+
+  visitAllReduceExpressionValidArguments = (
+    ctx: AllReduceExpressionValidArgumentsContext,
+  ) => {
+    this._visitTerminalRaw(ctx.ALLREDUCE());
+    this._visit(ctx.LPAREN());
+    this.concatenate();
+    const reduceIndent = this.addIndentation();
+    const reduceExprGrp = this.startGroup();
+    const firstArgumentGrp = this.startGroup();
+    this.avoidSpaceBetween();
+    this._visit(ctx.variable(0));
+    this._visit(ctx.EQ());
+    this._visit(ctx.expression(0));
+    this._visitTerminalRaw(ctx.COMMA(0));
+    this.endGroup(firstArgumentGrp);
+    const secondArgumentGrp = this.startGroup();
+    const inGrp = this.startGroup();
+    this._visit(ctx.variable(1));
+    this._visit(ctx.IN());
+    this.setOneItemProperty();
+    this.endGroup(inGrp);
+    this._visit(ctx.expression(1));
+    this.avoidBreakBetween();
+    this._visit(ctx.BAR());
+    const expressionGrp = this.startGroup();
+    const reduceExprIndent = this.addIndentation();
+    this._visit(ctx.expression(2));
+    this._visitTerminalRaw(ctx.COMMA(1));
+    this._visit(ctx.expression(3));
     this.removeIndentation(reduceExprIndent);
     this.endGroup(expressionGrp);
     this.endGroup(secondArgumentGrp);
@@ -1459,6 +1707,38 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const wrappingGrp = this.startGroup();
     this.visitChildren(ctx);
     this.endGroup(wrappingGrp);
+  };
+
+  // Path pattern prefix alternatives: keep keywords on one line
+  _visitPathPatternPrefixChildren = (ctx: ParserRuleContext) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      this._visit(child as ParserRuleContext);
+      if (i < n - 1) {
+        this.avoidBreakBetween();
+      }
+    }
+  };
+
+  visitAllPath = (ctx: AllPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAnyPath = (ctx: AnyPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAllShortestPath = (ctx: AllShortestPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAnyShortestPath = (ctx: AnyShortestPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitShortestGroup = (ctx: ShortestGroupContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
   };
 
   visitArrowLine = (ctx: ArrowLineContext) => {
@@ -2030,6 +2310,121 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(wholeCaseGrp);
   };
 
+  visitQueryWithLocalDefinitions = (ctx: QueryWithLocalDefinitionsContext) => {
+    const n = ctx.localDefinition_list().length;
+    if (n === 0) {
+      // No DEFINE blocks — fall back to visitChildren to handle
+      // syntax error nodes that may appear in the parse tree
+      this.visitChildren(ctx);
+      return;
+    }
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.DEFINE(i));
+      this.avoidBreakBetween();
+      this._visit(ctx.localDefinition(i));
+      this.breakLine();
+    }
+    this._visit(ctx.nextStatement());
+  };
+
+  visitLocalProcedureDefinition = (ctx: LocalProcedureDefinitionContext) => {
+    this._visit(ctx.procedureName());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.localInputFieldsSignature());
+    if (ctx.typed()) {
+      this._visit(ctx.typed());
+      this._visit(ctx.localOutputFieldsSignature());
+    }
+    this.avoidBreakBetween();
+    this._visit(ctx.LCURLY());
+    const queryIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.queryWithLocalDefinitions());
+    this.removeIndentation(queryIndent);
+    this.breakLine();
+    this._visit(ctx.RCURLY());
+  };
+
+  visitLocalFunctionDefinition = (ctx: LocalFunctionDefinitionContext) => {
+    this._visit(ctx.functionName());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.localInputFieldsSignature());
+    if (ctx.typed()) {
+      this._visit(ctx.typed());
+      this._visit(ctx.type_());
+    }
+    this._visit(ctx.localFunctionBody());
+  };
+
+  visitLocalInputFieldsSignature = (ctx: LocalInputFieldsSignatureContext) => {
+    const sigGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    const n = ctx.localOptionalFieldSignature_list().length;
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+        this.avoidSpaceBetween();
+      }
+      const argGrp = this.startGroup();
+      this._visit(ctx.localOptionalFieldSignature(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+      this.endGroup(argGrp);
+    }
+    if (n > 0) {
+      this.avoidSpaceBetween();
+    }
+    this.removeIndentation(argsIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(sigGrp);
+  };
+
+  visitLocalOutputFieldsSignature = (
+    ctx: LocalOutputFieldsSignatureContext,
+  ) => {
+    const sigGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    const n = ctx.localMandatoryFieldSignature_list().length;
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+        this.avoidSpaceBetween();
+      }
+      const argGrp = this.startGroup();
+      this._visit(ctx.localMandatoryFieldSignature(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+      this.endGroup(argGrp);
+    }
+    if (n > 0) {
+      this.avoidSpaceBetween();
+    }
+    this.removeIndentation(argsIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(sigGrp);
+  };
+
+  visitQueryBody = (ctx: QueryBodyContext) => {
+    this.avoidBreakBetween();
+    this._visit(ctx.LCURLY());
+    const queryIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.queryWithLocalDefinitions());
+    this.removeIndentation(queryIndent);
+    this.breakLine();
+    this._visit(ctx.RCURLY());
+  };
+
   // Handled separately because it wants indentation and line breaks
   visitSubqueryClause = (ctx: SubqueryClauseContext) => {
     this._visit(ctx.OPTIONAL());
@@ -2071,6 +2466,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(subqueryScopeGrp);
+  };
+
+  // Handled separately because NEXT wants line breaks between queries
+  visitNextStatement = (ctx: NextStatementContext) => {
+    this._visit(ctx.regularQuery(0));
+    const n = ctx.regularQuery_list().length - 1;
+    for (let i = 0; i < n; i++) {
+      this.doubleBreakBetween();
+      this._visit(ctx.NEXT(i));
+      this.doubleBreakBetween();
+      this._visit(ctx.regularQuery(i + 1));
+    }
   };
 
   // Handled separately because UNION wants to look a certain way
@@ -2122,6 +2529,48 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.COMMA(1));
     this._visit(ctx.vectorCoordinateType());
     this.removeIndentation(vectorArgsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
+  };
+
+  visitVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
+    const vectorGrp = this.startGroup();
+    this._visitTerminalRaw(ctx.VECTOR_DISTANCE(), { upperCase: true });
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    this.avoidSpaceBetween();
+    this._visit(ctx.expression(0));
+    this._visit(ctx.COMMA(0));
+    this._visit(ctx.expression(1));
+    this._visit(ctx.COMMA(1));
+    this._visit(ctx.vectorDistanceMetric());
+    this.removeIndentation(argsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
+  };
+
+  visitVectorNormFunction = (ctx: VectorNormFunctionContext) => {
+    const vectorGrp = this.startGroup();
+    this._visitTerminalRaw(ctx.VECTOR_NORM(), { upperCase: true });
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    this.avoidSpaceBetween();
+    this._visit(ctx.expression());
+    this._visit(ctx.COMMA());
+    this._visit(ctx.vectorNormDistanceMetric());
+    this.removeIndentation(argsIndent);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RPAREN(), {
       dontConcatenate: true,
@@ -2271,6 +2720,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(setClauseGrp);
     this.removeIndentation(setIndent);
+  };
+
+  visitMapOrParam = (ctx: MapOrParameterContext) => {
+    this._visit(ctx.map());
+    this._visit(ctx.parameter());
   };
 
   // Map has its own formatting rules, see:
