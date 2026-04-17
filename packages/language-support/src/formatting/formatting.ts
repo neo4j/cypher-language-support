@@ -60,6 +60,7 @@ import {
   ExtendedCaseExpressionContext,
   FilterClauseContext,
   ForeachClauseContext,
+  ForListClauseContext,
   FunctionInvocationContext,
   GraphTypeSpecificationContext,
   IndexPostfixContext,
@@ -121,6 +122,7 @@ import {
   SetPropsContext,
   ShortestGroupContext,
   ShowCommandYieldContext,
+  ShowCommandYieldWhereContext,
   SkipContext,
   StatementsOrCommandsContext,
   StringAndListComparisonContext,
@@ -749,6 +751,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitShowCommandYieldWhere = (ctx: ShowCommandYieldWhereContext) => {
+    if (ctx.yieldClause()) {
+      this.breakLine();
+      this.visit(ctx.yieldClause());
+    } else {
+      this.visit(ctx.whereClause());
+    }
+  };
+
   visitCreateCommand = (ctx: CreateCommandContext) => {
     this.visit(ctx.CREATE());
     this.avoidBreakBetween();
@@ -1083,6 +1094,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitClause = (ctx: ClauseContext) => {
     this.breakAndVisitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
+  };
+
+  visitForListClause = (ctx: ForListClauseContext) => {
+    const forListGroup = this.startGroup();
+    this.visitChildren(ctx);
+    this.endGroup(forListGroup);
   };
 
   visitUseClause = (ctx: UseClauseContext) => {

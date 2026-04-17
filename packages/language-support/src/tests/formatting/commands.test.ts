@@ -127,9 +127,11 @@ OPTIONS {
   });
 
   test('show indexes with where and return', () => {
-    const query = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+    const query = `SHOW INDEXES
+YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI" RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
-    const expected = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+    const expected = `SHOW INDEXES
+YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI"
 RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
     verifyFormatting(query, expected);
@@ -184,6 +186,19 @@ describe('tests for auth rule commands', () => {
     const query = `alter auth rule myRule if exists set enabled false`;
     const expected = `ALTER AUTH RULE myRule IF EXISTS
   SET ENABLED FALSE`;
+    verifyFormatting(query, expected);
+  });
+
+  test('rename auth rule', () => {
+    const query = `rename auth rule myRule if exists to yourRule`;
+    const expected = `RENAME AUTH RULE myRule IF EXISTS TO yourRule`;
+    verifyFormatting(query, expected);
+  });
+
+  test('show auth rule', () => {
+    const query = `show auth rule as commands yield name`;
+    const expected = `SHOW AUTH RULE AS COMMANDS
+YIELD name`;
     verifyFormatting(query, expected);
   });
 });

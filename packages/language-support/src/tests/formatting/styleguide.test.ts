@@ -1,6 +1,15 @@
 import { verifyFormatting } from './testutil.js';
 
 describe('styleguide examples', () => {
+  test('FOR as replacement for UNWIND', () => {
+    const query = `MATCH (n:Person) for tag in n.tags WITH tag, count(*) AS cnt RETURN tag, cnt`;
+    const expected = `MATCH (n:Person)
+FOR tag IN n.tags
+WITH tag, count(*) AS cnt
+RETURN tag, cnt`;
+    verifyFormatting(query, expected);
+  });
+
   // NOTE: We do not swap the order of ON MATCH and ON CREATE since
   // we feel that it falls outside the responsbilities of a formatter.
   test('on match indentation example', () => {
