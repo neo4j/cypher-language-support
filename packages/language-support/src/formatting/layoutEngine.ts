@@ -202,6 +202,13 @@ export function chunksToFormattedString(
     updateIndentationState(state, chunk, nextChunk);
     handleComments(state, chunk);
 
+    // If the next chunk is a syntax error, its text already contains the
+    // original whitespace (gap tokens from the hidden channel), so skip
+    // the layout engine's own newline/space insertion.
+    if (nextChunk?.type === 'SYNTAX_ERROR') {
+      continue;
+    }
+
     if (shouldBreak(state, chunk, nextChunk)) {
       processLineBreak(state, chunk, nextChunk);
       continue;
