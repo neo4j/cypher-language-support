@@ -175,15 +175,15 @@ describe('tests for auth rule commands', () => {
   test('create auth rule', () => {
     const query = `create auth rule myRule set condition 1 = 1 set enabled true`;
     const expected = `CREATE AUTH RULE myRule
-SET CONDITION 1 = 1
-SET ENABLED TRUE`;
+  SET CONDITION 1 = 1
+  SET ENABLED TRUE`;
     verifyFormatting(query, expected);
   });
 
   test('alter auth rule', () => {
     const query = `alter auth rule myRule if exists set enabled false`;
     const expected = `ALTER AUTH RULE myRule IF EXISTS
-SET ENABLED FALSE`;
+  SET ENABLED FALSE`;
     verifyFormatting(query, expected);
   });
 });

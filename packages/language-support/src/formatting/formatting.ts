@@ -868,7 +868,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitAuthRuleSetClause = (ctx: AuthRuleSetClauseContext) => {
     this.breakLine();
+    const setClauseIndent = this.addIndentation();
     this.visitChildren(ctx);
+    this.removeIndentation(setClauseIndent);
   };
 
   visitAlterCommand = (ctx: AlterCommandContext) => {
