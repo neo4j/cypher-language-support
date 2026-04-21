@@ -9,6 +9,6 @@
   "*.js": ["oxlint --fix --type-aware --max-warnings 0"],
   "packages/vscode-extension/**/cypher.json": [],
   "*.json": ["oxfmt"],
-  "*.yaml": ["oxfmt"],
+  "!(pnpm-lock).yaml": ["oxfmt"],
   "*.yml": ["oxfmt"]
 }

@@ -81,7 +81,7 @@ suite('Lint switching spec', () => {
     }
   }
 
-  test('Switching the linter to an old one should show different errors', async () => {
+  test('Switching the linter to an old one should show different errors, and switching back should show the old errors', async () => {
     const linterVersion = '5.26';
     const stub = sandbox.stub(
       window,
@@ -106,6 +106,16 @@ suite('Lint switching spec', () => {
           vscode.DiagnosticSeverity.Error,
         ),
       ],
+    });
+
+    const newLinterVersion = '2025.06';
+    stub.resolves(newLinterVersion);
+
+    await commands.executeCommand(CONSTANTS.COMMANDS.SWITCH_LINTER_COMMAND);
+
+    await testSyntaxValidation({
+      docUri: textDocument.uri,
+      expected: [],
     });
   });
 
