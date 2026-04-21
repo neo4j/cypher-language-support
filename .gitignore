@@ -18,5 +18,6 @@ generated
 *.npmrc
 benchmarks.txt
 .idea/
+.claude/
 vite.config.ts.timestamp*
 .wdio-vscode-service
