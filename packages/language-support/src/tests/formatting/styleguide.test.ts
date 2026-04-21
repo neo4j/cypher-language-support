@@ -1,6 +1,17 @@
 import { verifyFormatting } from './testutil.js';
 
 describe('styleguide examples', () => {
+  test('Local callable functions and procedures', () => {
+    const query = `define procedure foo.one() { RETURN 1 AS one } define function foo.two() { RETURN 2 AS two }`;
+    const expected = `DEFINE PROCEDURE foo.one() {
+  RETURN 1 AS one
+}
+DEFINE FUNCTION foo.two() {
+  RETURN 2 AS two
+}`;
+    verifyFormatting(query, expected);
+  });
+
   test('FOR as replacement for UNWIND', () => {
     const query = `MATCH (n:Person) for tag in n.tags WITH tag, count(*) AS cnt RETURN tag, cnt`;
     const expected = `MATCH (n:Person)

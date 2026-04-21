@@ -2328,20 +2328,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitQueryWithLocalDefinitions = (ctx: QueryWithLocalDefinitionsContext) => {
-    const n = ctx.localDefinition_list().length;
-    if (n === 0) {
-      // No DEFINE blocks — fall back to visitChildren to handle
-      // syntax error nodes that may appear in the parse tree
-      this.visitChildren(ctx);
-      return;
-    }
-    for (let i = 0; i < n; i++) {
-      this._visit(ctx.DEFINE(i));
+    for (let i = 0; i < ctx.localDefinition_list().length; i++) {
+      this.visit(ctx.DEFINE(i));
       this.avoidBreakBetween();
-      this._visit(ctx.localDefinition(i));
+      this.visit(ctx.localDefinition(i));
       this.breakLine();
     }
-    this._visit(ctx.nextStatement());
+    this.visit(ctx.nextStatement());
   };
 
   visitLocalProcedureDefinition = (ctx: LocalProcedureDefinitionContext) => {
