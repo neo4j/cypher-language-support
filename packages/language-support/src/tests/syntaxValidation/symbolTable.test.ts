@@ -1,18 +1,11 @@
+import { getSymbolTables } from '../../syntaxValidation/syntaxValidation.js';
 import { testData } from '../testData.js';
-import { getSymbolTablesForQuery } from './helpers.js';
 
 describe('Symbol table spec', () => {
   test('Symbol table works for the happy path', () => {
     const query = 'MATCH (n) RETURN n';
 
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
@@ -31,14 +24,7 @@ describe('Symbol table spec', () => {
   test('Symbol table is exposed correctly for a query with semantic errors', () => {
     const query = 'MATCH (n) RETURN m';
 
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 17,
@@ -67,14 +53,7 @@ describe('Symbol table spec', () => {
   test('Symbol table is exposed independently for different statements', () => {
     const query = 'MATCH (n) RETURN m; MATCH (m) RETURN m';
 
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 17,
@@ -114,14 +93,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains labels and rels from MATCH with WHERE using OR', () => {
     const query = 'MATCH (n:Person) WHERE n:Parsnip OR n:Parish RETURN n';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
@@ -155,14 +127,7 @@ describe('Symbol table spec', () => {
   test('Symbol table contains labels and rels from MATCH with WHERE using OR', () => {
     const query =
       'MATCH (n) WHERE n:Person AND n:Parsnip OR n:Parish AND n:Party  RETURN n';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
@@ -208,14 +173,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains labels and rels from simple MATCH and WHERE', () => {
     const query = 'MATCH (n:Person) MATCH (n:Parish) WHERE n:Parsnip RETURN n';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
@@ -243,14 +201,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains labels and rels from simple WHERE inside node/rel pattern', () => {
     const query = 'MATCH (n WHERE n:Person)-[r WHERE r:KNOWS] RETURN n';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 26,
@@ -287,14 +238,7 @@ describe('Symbol table spec', () => {
   test('Symbol table contains labels and rels from mixed MATCH and WHERE', () => {
     const query =
       'MATCH (n:Person)-[r:KNOWS]->(p:Person) WHERE n:Driver RETURN n';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 18,
@@ -347,14 +291,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains labels and rels for unfinished rel chain', () => {
     const query = 'MATCH (t:Trainer)-[r:';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
@@ -386,14 +323,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains labels and rels for unfinished long rel chain', () => {
     const query = 'MATCH (n:Person)-[r:KNOWS]->()-[:MET]-';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 30,
@@ -443,14 +373,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains anonymous nodes with labels', () => {
     const query = 'MATCH (:Trainer)-[';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 6,
@@ -472,14 +395,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table contains anonymous relationships with labels', () => {
     const query = 'MATCH (:Trainer)-[:KNOWS]->(:';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 16,
@@ -515,26 +431,12 @@ describe('Symbol table spec', () => {
 
   test('Symbol table does not contain anonymous variables when the variable is missing a label', () => {
     const query = 'MATCH ()-[';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([[]]);
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([[]]);
   });
 
   test('Symbol table works with &-syntax', () => {
     const query = 'MATCH (:Trainer & Person)-[';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 6,
@@ -559,14 +461,7 @@ describe('Symbol table spec', () => {
 
   test('Symbol table works with |-syntax', () => {
     const query = 'MATCH (t:Trainer & Person)-[]-(t:Parsnip)';
-    expect(
-      getSymbolTablesForQuery({
-        query,
-        dbSchema: {
-          ...testData.mockSchema,
-        },
-      }),
-    ).toEqual([
+    expect(getSymbolTables(query, testData.mockSchema)).toEqual([
       [
         {
           definitionPosition: 7,
