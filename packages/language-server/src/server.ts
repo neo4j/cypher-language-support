@@ -31,7 +31,11 @@ import {
   Neo4jSettings,
 } from './types';
 import workerpool from 'workerpool';
-import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
+import {
+  compareMajorMinorVersions,
+  convertDbSchema,
+  LintWorker,
+} from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
@@ -42,11 +46,13 @@ export const languageService = new CypherLanguageService({
 
 class SymbolFetcher {
   private processing = false;
-  private nextJob: {
-    query: string;
-    uri: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        uri: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
@@ -81,11 +87,17 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
-        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
+        const fixedDbSchema = this.linterVersion
+          ? convertDbSchema(dbSchema, this.linterVersion)
+          : dbSchema;
         let symbolTables: SymbolTable[] | undefined;
-
+        const versionComparison = compareMajorMinorVersions(
+          this.linterVersion ?? '',
+          '2026.04',
+        );
         if (
-          (this.linterVersion && this.linterVersion >= '2026.04') ||
+          (versionComparison && versionComparison >= 0) ||
+          //In this case, we are on default (latest) linter
           !this.linterVersion
         ) {
           symbolTables = await proxyWorker.getSymbolTables(
@@ -140,7 +152,7 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
   symbolFetcher.queueSymbolJob(
     document.getText(),
     document.uri,
-    neo4jSchemaPoller?.metadata?.dbSchema,
+    neo4jSchemaPoller?.metadata?.dbSchema ?? {},
   );
   if (settings?.features?.linting) {
     return lintDocument(
