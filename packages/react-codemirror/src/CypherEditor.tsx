@@ -324,7 +324,8 @@ class CodemirrorSymbolFetcher {
         const dbSchema = this.nextJob.schema;
         this.nextJob = undefined;
 
-        //Add a similar check here as in SymbolFetcher of language-server when we add per-server linting
+        //Workers 2026.04 and older calculated symbol tables with lintCypherQuery
+        //When introducing linters depending on server version here, we need to account for this
         const symbolTables = await proxyWorker.getSymbolTables(query, dbSchema);
 
         if (symbolTables) {

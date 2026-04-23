@@ -91,9 +91,10 @@ class SymbolFetcher {
           ? convertDbSchema(dbSchema, this.linterVersion)
           : dbSchema;
         let symbolTables: SymbolTable[] | undefined;
+        // The split in symbol table creation / linting was first introduced for 2026.05
         const versionComparison = compareMajorMinorVersions(
           this.linterVersion ?? '',
-          '2026.04',
+          '2026.05',
         );
         if (
           (versionComparison && versionComparison >= 0) ||
