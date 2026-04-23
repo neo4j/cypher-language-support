@@ -134,6 +134,7 @@ class SymbolFetcher {
       } catch {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed');
+        break;
       }
     }
     this.processing = false;

@@ -290,10 +290,12 @@ class CodemirrorSymbolFetcher {
   }
   private languageService: CypherLanguageService;
   private processing = false;
-  private nextJob: {
-    query: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(WorkerURL, {
     minWorkers: 1,
     workerOpts: { type: 'module' },
@@ -334,6 +336,7 @@ class CodemirrorSymbolFetcher {
       } catch (err) {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed ' + String(err));
+        break;
       }
     }
     this.processing = false;
