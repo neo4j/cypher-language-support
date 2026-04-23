@@ -1,5 +1,25 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.32
+
+### Patch Changes
+
+- 3b2faf5: Rewrite global parserWrapper for instantiated CypherLanguageService objects
+
+  Breaking changes for direct consumers of `@neo4j-cypher/language-support`:
+
+  - Removed export: `parserWrapper`. The same `ParsingResult` as `parserWrapper.parse` would yield can still be received by `createParsingResult` in `CypherLanguageService`. Instances of the new CypherLanguageService class provide helpers for linting/highlighting/completions/signature info where parsing is handled internally.
+  - Renamed exports: `applySyntaxColouring` → `highlightSyntax`, `syntaxColouringLegend` → `syntaxHighlightingLegend`
+  - `autocomplete()`, `lintCypherQuery()`, `highlightSyntax()`, and `getSignatureInfo()` now take an options object as the third parameter instead of positional args
+
+- Updated dependencies [08f94af]
+- Updated dependencies [0763d97]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [ca1bba6]
+  - @neo4j-cypher/language-support@2.0.0-next.31
+  - @neo4j-cypher/lint-worker@1.10.1-next.8
+  - @neo4j-cypher/query-tools@2.0.0-next.31
+
 ## 2.0.0-next.31
 
 ### Patch Changes
