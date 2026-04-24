@@ -20,7 +20,10 @@ import {
   createParsingResult,
 } from '../cypherLanguageService.js';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
-import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
+import {
+  wrappedSemanticAnalysis,
+  wrappedSymbolTableCollection,
+} from './semanticAnalysisWrapper.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -330,6 +333,50 @@ function fixSymbolTableOffsets({
   });
 }
 
+export function getSymbolTables(
+  query: string,
+  dbSchema: DbSchema,
+  {
+    consoleCommandsEnabled = true,
+    parsingResult,
+  }: {
+    consoleCommandsEnabled?: boolean;
+    parsingResult?: ParsingResult;
+  } = {},
+): SymbolTable[] {
+  if (query.length > 0) {
+    const resolvedParsingResult =
+      parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+    const statements = resolvedParsingResult.statementsParsing;
+    const symbolTables = statements.map((current) => {
+      const cmd = current.command;
+      if (
+        (cmd.type === 'cypher' || cmd.type === 'auto') &&
+        cmd.statement.length > 0
+      ) {
+        const rawSymbolTable = wrappedSymbolTableCollection(
+          cmd.statement,
+          dbSchema,
+          current.cypherVersion,
+        );
+
+        const symbolTable = fixSymbolTableOffsets({
+          symbolTable: rawSymbolTable,
+          parseResult: current,
+        });
+
+        return symbolTable;
+      }
+      // There could be console command errors
+      return [];
+    });
+
+    return symbolTables;
+  }
+
+  return [];
+}
+
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
@@ -340,7 +387,7 @@ export function lintCypherQuery(
     consoleCommandsEnabled?: boolean;
     parsingResult?: ParsingResult;
   } = {},
-): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
+): { diagnostics: SyntaxDiagnostic[] } {
   if (query.length > 0) {
     const resolvedParsingResult =
       parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
@@ -364,11 +411,7 @@ export function lintCypherQuery(
         const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
         const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
 
-        const {
-          notifications,
-          errors,
-          symbolTable: rawSymbolTable,
-        } = wrappedSemanticAnalysis(
+        const { notifications, errors } = wrappedSemanticAnalysis(
           cmd.statement,
           dbSchema,
           current.cypherVersion,
@@ -393,23 +436,17 @@ export function lintCypherQuery(
           )
           .sort(sortByPositionAndMessage);
 
-        const symbolTable = fixSymbolTableOffsets({
-          symbolTable: rawSymbolTable,
-          parseResult: current,
-        });
-
-        return { diagnostics, symbolTable };
+        return { diagnostics };
       }
       // There could be console command errors
-      return { diagnostics: current.syntaxErrors, symbolTable: [] };
+      return { diagnostics: current.syntaxErrors };
     });
 
     const diagnostics = result.flatMap((d) => d.diagnostics);
-    const symbolTables = result.map((d) => d.symbolTable);
-    return { diagnostics, symbolTables: symbolTables };
+    return { diagnostics };
   }
 
-  return { diagnostics: [], symbolTables: [] };
+  return { diagnostics: [] };
 }
 
 function warningOnDeprecatedProcedure(

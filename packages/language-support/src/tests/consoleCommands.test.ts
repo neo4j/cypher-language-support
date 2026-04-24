@@ -5,10 +5,8 @@ import {
 import { testData } from './testData.js';
 import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../autocompletion/autocompletion.js';
-import {
-  getDiagnosticsForQuery,
-  getSymbolTablesForQuery,
-} from './syntaxValidation/helpers.js';
+import { getDiagnosticsForQuery } from './syntaxValidation/helpers.js';
+import { getSymbolTables } from '../syntaxValidation/syntaxValidation.js';
 
 function expectParsedCommands(
   query: string,
@@ -873,10 +871,11 @@ describe('auto', () => {
   });
 
   test('provides symbol tables with correct positions', () => {
-    const symbolTables = getSymbolTablesForQuery({
-      query: ':auto MATCH (n) RETURN n',
-      consoleCommandsEnabled: true,
-    });
+    const symbolTables = getSymbolTables(
+      ':auto MATCH (n) RETURN n',
+      {},
+      { consoleCommandsEnabled: true },
+    );
     expect(symbolTables).toEqual([
       [
         {

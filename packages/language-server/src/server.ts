@@ -16,6 +16,7 @@ import {
   SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
+  SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -30,7 +31,11 @@ import {
   Neo4jSettings,
 } from './types';
 import workerpool from 'workerpool';
-import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
+import {
+  compareMajorMinorVersions,
+  convertDbSchema,
+  LintWorker,
+} from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
@@ -41,11 +46,13 @@ export const languageService = new CypherLanguageService({
 
 class SymbolFetcher {
   private processing = false;
-  private nextJob: {
-    query: string;
-    uri: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        uri: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
@@ -80,19 +87,44 @@ class SymbolFetcher {
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
-        const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
-
-        const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
+        const fixedDbSchema = this.linterVersion
+          ? convertDbSchema(dbSchema, this.linterVersion)
+          : dbSchema;
+        let symbolTables: SymbolTable[] | undefined;
+        // The split in symbol table creation / linting was first introduced for 2026.05
+        const versionComparison = compareMajorMinorVersions(
+          this.linterVersion ?? '',
+          '2026.05',
+        );
+        if (
+          (versionComparison && versionComparison >= 0) ||
+          //In this case, we are on default (latest) linter
+          !this.linterVersion
+        ) {
+          symbolTables = await proxyWorker.getSymbolTables(
+            query,
+            fixedDbSchema,
+          );
+        } else {
+          const semanticResult = (await proxyWorker.lintCypherQuery(
+            query,
+            fixedDbSchema,
+          )) as {
+            diagnostics: SyntaxDiagnostic[];
+            symbolTables?: SymbolTable[];
+          };
+          symbolTables = semanticResult.symbolTables;
+        }
 
         if (
           //if this.nextJob has new doc, our result is no longer valid
-          result.symbolTables &&
+          symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
           languageService.setSymbolsInfo(
             {
               query,
-              symbolTables: result.symbolTables,
+              symbolTables,
             },
             async (symbolTables: SymbolTable[]) =>
               await connection.sendNotification('symbolTableDone', {
@@ -103,6 +135,7 @@ class SymbolFetcher {
       } catch {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed');
+        break;
       }
     }
     this.processing = false;
@@ -121,7 +154,7 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
   symbolFetcher.queueSymbolJob(
     document.getText(),
     document.uri,
-    neo4jSchemaPoller?.metadata?.dbSchema,
+    neo4jSchemaPoller?.metadata?.dbSchema ?? {},
   );
   if (settings?.features?.linting) {
     return lintDocument(
@@ -132,10 +165,6 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
           diagnostics,
         });
       },
-      async (symbolTables: SymbolTable[]) =>
-        await connection.sendNotification('symbolTableDone', {
-          symbolTables: symbolTables,
-        }),
       neo4jSchemaPoller,
     );
   } else {

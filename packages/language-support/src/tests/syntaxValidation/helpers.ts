@@ -16,10 +16,3 @@ export function getDiagnosticsForQuery({
     consoleCommandsEnabled,
   }).diagnostics;
 }
-
-export function getSymbolTablesForQuery({
-  query,
-  dbSchema = {},
-}: SyntaxValidationTestArgs) {
-  return lintCypherQuery(query, dbSchema).symbolTables;
-}

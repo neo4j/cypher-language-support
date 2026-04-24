@@ -35,6 +35,7 @@ import {
   splitIntoStatements,
 } from './helpers.js';
 import {
+  getSymbolTables,
   lintCypherQuery,
   SyntaxDiagnostic,
 } from './syntaxValidation/syntaxValidation.js';
@@ -867,6 +868,11 @@ export class CypherLanguageService {
     if (_internalFeatureFlags.debugSymbolTable && sendMessage)
       void sendMessage(symbolsInfo.symbolTables);
     this.symbolsInfo = symbolsInfo;
+  }
+
+  fetchSymbols(query: string, dbSchema: DbSchema) {
+    const parsingResult = this.parse(query);
+    return getSymbolTables(query, dbSchema, { parsingResult });
   }
 
   lint(query: string, dbSchema: DbSchema) {

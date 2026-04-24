@@ -290,10 +290,12 @@ class CodemirrorSymbolFetcher {
   }
   private languageService: CypherLanguageService;
   private processing = false;
-  private nextJob: {
-    query: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(WorkerURL, {
     minWorkers: 1,
     workerOpts: { type: 'module' },
@@ -322,17 +324,20 @@ class CodemirrorSymbolFetcher {
         const dbSchema = this.nextJob.schema;
         this.nextJob = undefined;
 
-        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+        //Workers 2026.04 and older calculated symbol tables with lintCypherQuery
+        //When introducing linters depending on server version here, we need to account for this
+        const symbolTables = await proxyWorker.getSymbolTables(query, dbSchema);
 
-        if (result.symbolTables) {
+        if (symbolTables) {
           this.languageService.setSymbolsInfo({
             query,
-            symbolTables: result.symbolTables,
+            symbolTables,
           });
         }
       } catch (err) {
         //eslint-disable-next-line
         console.log('Symbol table calculation failed ' + String(err));
+        break;
       }
     }
     this.processing = false;

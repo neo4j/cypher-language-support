@@ -35,13 +35,6 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
         config.featureFlags ?? {},
       );
 
-      if (result.symbolTables) {
-        config.languageService.setSymbolsInfo({
-          query,
-          symbolTables: result.symbolTables,
-        });
-      }
-
       const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {
         return {
           from: diagnostic.offsets.start,
