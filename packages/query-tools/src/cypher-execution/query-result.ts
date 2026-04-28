@@ -379,9 +379,8 @@ export function deserializeTypeAnnotations(
           typedArray = new Float64Array(values);
           break;
         default:
-          // TODO test and verify
-          // fallback to plain object handling to avoid crashing
-          // if someone were to add a new vector type, we don't want to crash the entire application
+          // TODO: Test and verify this fallback handles all future vector types correctly.
+          // Falls back to plain object handling to avoid crashing if a new vector type is introduced.
           return item;
       }
 
