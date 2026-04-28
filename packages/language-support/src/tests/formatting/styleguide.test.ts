@@ -480,11 +480,11 @@ RETURN a, b`;
   test('SEARCH clause in MATCH', () => {
     const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] LIMIT 10) SCORE AS s RETURN n, s`;
     const expected = `MATCH (n)
-SEARCH n IN (
-  VECTOR INDEX myIndex
-  FOR [1, 2, 3]
-  LIMIT 10
-) SCORE AS s
+  SEARCH n IN (
+    VECTOR INDEX myIndex
+    FOR [1, 2, 3]
+    LIMIT 10
+  ) SCORE AS s
 RETURN n, s`;
     verifyFormatting(query, expected);
   });
@@ -492,12 +492,12 @@ RETURN n, s`;
   test('SEARCH clause with WHERE', () => {
     const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT 10)`;
     const expected = `MATCH (n)
-SEARCH n IN (
-  VECTOR INDEX myIndex
-  FOR [1, 2, 3]
-  WHERE n.active = true
-  LIMIT 10
-)`;
+  SEARCH n IN (
+    VECTOR INDEX myIndex
+    FOR [1, 2, 3]
+    WHERE n.active = true
+    LIMIT 10
+  )`;
     verifyFormatting(query, expected);
   });
 });

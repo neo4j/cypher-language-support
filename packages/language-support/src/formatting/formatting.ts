@@ -1140,11 +1140,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.removeIndentation(matchIndent);
     this._visit(ctx.whereClause());
-    this._visit(ctx.searchClause());
+    if (ctx.searchClause()) {
+      this.breakLine();
+      const searchIndent = this.addIndentation();
+      this.visit(ctx.searchClause());
+      this.removeIndentation(searchIndent);
+    }
   };
 
   visitSearchClause = (ctx: SearchClauseContext) => {
-    this.breakLine();
     this._visit(ctx.SEARCH());
     this._visit(ctx.variable());
     this._visit(ctx.IN());
