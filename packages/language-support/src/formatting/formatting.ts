@@ -9,6 +9,7 @@ import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js
 import {
   AddPropContext,
   AllPathContext,
+  AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
   AllShortestPathContext,
   AlterAuthRuleContext,
@@ -1441,6 +1442,38 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(expressionGrp);
     this.endGroup(secondArgumentGrp);
     this._visit(ctx.RPAREN());
+    this.endGroup(reduceExprGrp);
+    this.removeIndentation(reduceIndent);
+  };
+
+  // This is actually a rule for an invalid syntax - made for semantic analysis
+  // I figure we want this invalid syntax to be formatted as close to the valid syntax as possible
+  visitAllReduceExpressionInvalidArguments = (
+    ctx: AllReduceExpressionInvalidArgumentsContext,
+  ) => {
+    this._visitTerminalRaw(ctx.ALLREDUCE());
+    this._visit(ctx.LPAREN());
+    this.concatenate();
+    const reduceIndent = this.addIndentation();
+    const reduceExprGrp = this.startGroup();
+    const children = ctx?.children ?? [];
+    let argumentGrp: number = -1;
+    if (children && children.length > 2) {
+      this.avoidSpaceBetween();
+      for (let i = 2; i < children.length - 1; i++) {
+        const c = children[i];
+        if (c instanceof ExpressionContext) {
+          argumentGrp = this.startGroup();
+          this.visit(c);
+          //if either COMMA or BAR
+        } else if (c instanceof TerminalNode && argumentGrp !== -1) {
+          this.visit(c);
+          this.endGroup(argumentGrp);
+        }
+      }
+    }
+    this.endGroup(argumentGrp);
+    this.visit(ctx.RPAREN());
     this.endGroup(reduceExprGrp);
     this.removeIndentation(reduceIndent);
   };

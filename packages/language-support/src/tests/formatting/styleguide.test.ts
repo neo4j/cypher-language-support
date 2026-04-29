@@ -500,4 +500,36 @@ RETURN n, s`;
   )`;
     verifyFormatting(query, expected);
   });
+
+  test('allReduce', () => {
+    const query = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(acc = s.age,
+ node IN n | acc + node.age, acc < 230)
+RETURN [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+      reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    const expected = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(acc = s.age, node IN n | acc + node.age, acc < 230)
+RETURN
+  [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+  reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    verifyFormatting(query, expected);
+  });
+
+  test('allReduce with invalid arguments', () => {
+    const query = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(
+ node IN n | acc + node.age, acc < 230)
+RETURN [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+      reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    const expected = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(node IN n | acc + node.age, acc < 230)
+RETURN
+  [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+  reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    verifyFormatting(query, expected);
+  });
 });
