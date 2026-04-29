@@ -1413,6 +1413,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ctx: AllReduceExpressionValidArgumentsContext,
   ) => {
     this._visitTerminalRaw(ctx.ALLREDUCE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
     this.concatenate();
     const reduceIndent = this.addIndentation();
@@ -1441,7 +1443,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation(reduceExprIndent);
     this.endGroup(expressionGrp);
     this.endGroup(secondArgumentGrp);
-    this._visit(ctx.RPAREN());
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
     this.endGroup(reduceExprGrp);
     this.removeIndentation(reduceIndent);
   };
@@ -1452,6 +1458,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ctx: AllReduceExpressionInvalidArgumentsContext,
   ) => {
     this._visitTerminalRaw(ctx.ALLREDUCE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
     this.concatenate();
     const reduceIndent = this.addIndentation();
@@ -1473,7 +1481,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       }
     }
     this.endGroup(argumentGrp);
-    this.visit(ctx.RPAREN());
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
     this.endGroup(reduceExprGrp);
     this.removeIndentation(reduceIndent);
   };
@@ -2586,7 +2598,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
     const vectorGrp = this.startGroup();
-    this._visitTerminalRaw(ctx.VECTOR_DISTANCE(), { upperCase: true });
+    this._visitTerminalRaw(ctx.VECTOR_DISTANCE());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     this._visit(ctx.LPAREN());
@@ -2608,7 +2620,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitVectorNormFunction = (ctx: VectorNormFunctionContext) => {
     const vectorGrp = this.startGroup();
-    this._visitTerminalRaw(ctx.VECTOR_NORM(), { upperCase: true });
+    this._visitTerminalRaw(ctx.VECTOR_NORM());
     this.avoidSpaceBetween();
     this.avoidBreakBetween();
     this._visit(ctx.LPAREN());

@@ -440,14 +440,16 @@ RETURN a, b`;
   });
 
   test('vector_distance function formatting', () => {
-    const query = `return vector_distance([1,2,3],[4,5,6],COSINE)`;
-    const expected = `RETURN VECTOR_DISTANCE([1, 2, 3], [4, 5, 6], COSINE)`;
+    const query = `return vector_distance(
+    [1,2,3],[4,5,6],COSINE)`;
+    const expected = `RETURN vector_distance([1, 2, 3], [4, 5, 6], COSINE)`;
     verifyFormatting(query, expected);
   });
 
   test('vector_norm function formatting', () => {
-    const query = `return vector_norm([1,2,3],euclidean)`;
-    const expected = `RETURN VECTOR_NORM([1, 2, 3], EUCLIDEAN)`;
+    const query = `return vector_norm(
+    [1,2,3],euclidean)`;
+    const expected = `RETURN vector_norm([1, 2, 3], EUCLIDEAN)`;
     verifyFormatting(query, expected);
   });
 
@@ -501,7 +503,13 @@ RETURN n, s`;
     verifyFormatting(query, expected);
   });
 
-  test('allReduce', () => {
+  test('standard function invocation function formatting', () => {
+    const query = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
+    const expected = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
+    verifyFormatting(query, expected);
+  });
+
+  test('allReduce function formatting', () => {
     const query = `MATCH (s) (()-[:KNOWS]-(n)){3}
 WHERE allReduce(acc = s.age,
  node IN n | acc + node.age, acc < 230)
