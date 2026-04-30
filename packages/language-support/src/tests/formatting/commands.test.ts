@@ -143,6 +143,45 @@ RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
 WHERE aaaaaa = "wjL0ojNI"`;
     verifyFormatting(query, expected);
   });
+
+  test('alter graph type - node', () => {
+    const query = `Alter current graph type SET { (:Person => :Resident {name :: STRING NOT NULL}),(:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (:Person => :Resident {name :: STRING NOT NULL}),
+  (:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - node v2', () => {
+    const query = `Alter current graph type SET { (:Person => {name :: STRING NOT NULL}),(a:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (:Person => {name :: STRING NOT NULL}),
+  (a:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - rel', () => {
+    const query = `ALTER CURRENT GRAPH TYPE SET {(a:Resident)-[R:LIVES_IN => { since :: DATE NOT NULL}]->(:City)
+}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (a:Resident)-[R:LIVES_IN => {since :: DATE NOT NULL}]->(:City)
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - constraint', () => {
+    const query = `ALTER CURRENT GRAPH TYPE SET {  CONSTRAINT company_name FOR (c:Company) REQUIRE c.name IS KEY, CONSTRAINT animal_id FOR (a:Animal) REQUIRE a.id IS UNIQUE
+}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  CONSTRAINT company_name FOR (c:Company)
+  REQUIRE c.name IS KEY,
+  CONSTRAINT animal_id FOR (a:Animal)
+  REQUIRE a.id IS UNIQUE
+}`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for vector index commands', () => {

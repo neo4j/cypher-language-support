@@ -17,6 +17,7 @@ import {
   AlterCurrentGraphTypeContext,
   AnyPathContext,
   AnyShortestPathContext,
+  ArcTypePointingRightContext,
   ArrowLineContext,
   AuthRuleSetClauseContext,
   BooleanLiteralContext,
@@ -47,6 +48,7 @@ import {
   DeleteClauseContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
+  EdgeTypeSpecificationContext,
   ElseBranchContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -63,7 +65,11 @@ import {
   ForeachClauseContext,
   ForListClauseContext,
   FunctionInvocationContext,
+  GraphTypeElementContext,
+  GraphTypeSpecificationBodyContext,
   GraphTypeSpecificationContext,
+  ImpliedLabelSetContext,
+  ImpliesContext,
   IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
@@ -72,6 +78,7 @@ import {
   LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
+  LabelTypeContext,
   LetClauseContext,
   LetItemContext,
   LimitContext,
@@ -93,6 +100,8 @@ import {
   NamespaceContext,
   NextStatementContext,
   NodePatternContext,
+  NodeTypeInSituReferenceContext,
+  NodeTypeSpecificationContext,
   NormalizeFunctionContext,
   NumberLiteralContext,
   ParameterContext,
@@ -106,6 +115,8 @@ import {
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
+  PropertyTypeContext,
+  PropertyTypeListContext,
   QuantifierContext,
   QueryBodyContext,
   QueryWithLocalDefinitionsContext,
@@ -117,6 +128,7 @@ import {
   ReturnClauseContext,
   ReturnItemContext,
   ReturnItemsContext,
+  RightArrowContext,
   SearchClauseContext,
   SetClauseContext,
   SetPropContext,
@@ -988,6 +1000,122 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.breakLine();
     }
     this._visit(ctx.RCURLY());
+  };
+
+  visitNodeTypeSpecification = (ctx: NodeTypeSpecificationContext) => {
+    this._visit(ctx.LPAREN());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.identifyingLabel());
+    this._visit(ctx.impliedLabelSet());
+    this._visit(ctx.propertyTypeList());
+    this._visit(ctx.RPAREN());
+    this._visit(ctx.nodeTypeInlineConstraintList());
+  };
+
+  visitEdgeTypeSpecification = (ctx: EdgeTypeSpecificationContext) => {
+    this._visit(ctx.nodeTypeReference(0));
+    this.avoidSpaceBetween();
+    this._visit(ctx.arcTypePointingRight());
+    this.avoidSpaceBetween();
+    this._visit(ctx.nodeTypeReference(1));
+    this._visit(ctx.edgeTypeInlineConstraintList());
+  };
+
+  visitNodeTypeInSituReference = (ctx: NodeTypeInSituReferenceContext) => {
+    this._visit(ctx.LPAREN());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.labelType());
+    this._visit(ctx.RPAREN());
+  };
+
+  visitArcTypePointingRight = (ctx: ArcTypePointingRightContext) => {
+    this._visit(ctx.arrowLine(0));
+    this.avoidSpaceBetween();
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.identifyingRelationship());
+    this._visit(ctx.propertyTypeList());
+    this._visit(ctx.RBRACKET());
+    this.avoidSpaceBetween();
+    this._visit(ctx.arrowLine(1));
+    this.avoidSpaceBetween();
+    this._visit(ctx.rightArrow());
+  };
+
+  visitPropertyTypeList = (ctx: PropertyTypeListContext) => {
+    if (!ctx.children) return;
+    this._visit(ctx.LCURLY());
+    this.avoidSpaceBetween();
+    for (let i = 1; i < ctx.children.length - 1; i++) {
+      const child = ctx.children[i];
+      if (child instanceof PropertyTypeContext) {
+        this._visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminal(child);
+      }
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RCURLY());
+  };
+
+  visitLabelType = (ctx: LabelTypeContext) => {
+    this._visitTerminalRaw(ctx.COLON(), {
+      dontConcatenate: true,
+    });
+    this.avoidSpaceBetween();
+    this._visit(ctx.symbolicNameString());
+  };
+
+  visitImplies = (ctx: ImpliesContext) => {
+    if (ctx.EQ()) {
+      this._visit(ctx.EQ());
+      this.avoidSpaceBetween();
+      this.avoidBreakBetween();
+      this.visitTerminalRightArrow(ctx.rightArrow());
+    } else {
+      this._visit(ctx.IMPLIES());
+    }
+  };
+
+  //To avoid concatenating ">:" in cases like ":Pet => :Resident"
+  visitTerminalRightArrow = (ctx: RightArrowContext) => {
+    this._visitTerminalRaw(ctx.GT(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visitTerminalRaw(ctx.ARROW_RIGHT_HEAD(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+  };
+
+  visitGraphTypeSpecificationBody = (
+    ctx: GraphTypeSpecificationBodyContext,
+  ) => {
+    if (!ctx.children) {
+      return;
+    }
+    for (const c of ctx.children) {
+      if (c instanceof GraphTypeElementContext) {
+        this._visit(c);
+      } else if (c instanceof TerminalNode) {
+        this.visitTerminal(c);
+        this.breakLine();
+      }
+    }
+  };
+
+  visitImpliedLabelSet = (ctx: ImpliedLabelSetContext) => {
+    this._visit(ctx.labelType());
+    for (let i = 0; i < ctx.AMPERSAND_list().length; i++) {
+      this.avoidSpaceBetween();
+      this._visit(ctx.AMPERSAND(i));
+      this.avoidSpaceBetween();
+      this._visit(ctx.symbolicNameString(i));
+    }
   };
 
   visitCommandOptions = (ctx: CommandOptionsContext) => {
