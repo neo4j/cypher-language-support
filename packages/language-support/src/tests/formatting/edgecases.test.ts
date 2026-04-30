@@ -1179,4 +1179,10 @@ RETURN p.name`;
 RETURN p.name`;
     verifyFormatting(query, expected);
   });
+
+  test('RETURN works with ALL syntax', () => {
+    const query = `RETURN ALL 50`;
+    const expected = `RETURN ALL 50`;
+    verifyFormatting(query, expected);
+  });
 });
