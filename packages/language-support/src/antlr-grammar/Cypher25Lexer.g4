@@ -1340,6 +1340,10 @@ TYPES
    : T Y P E S
    ;
 
+UUID
+   : U U I D
+   ;
+
 UNION
    : U N I O N
    ;
