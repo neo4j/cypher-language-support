@@ -19,7 +19,7 @@ const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
 
 let pool = workerpool.pool(defaultWorkerPath, {
   minWorkers: 2,
-  workerTerminateTimeout: 0,
+  workerTerminateTimeout: 1000,
 });
 let linterVersion: string | undefined = undefined;
 let lastSemanticJob: LinterTask | undefined;
@@ -33,7 +33,7 @@ export async function setLintWorker(
   linterVersion = linter;
   pool = workerpool.pool(lintWorkerPath, {
     minWorkers: 2,
-    workerTerminateTimeout: 0,
+    workerTerminateTimeout: 1000,
   });
 }
 
@@ -51,17 +51,42 @@ async function rawLintDocument(
 
   const dbSchema = neo4j.metadata?.dbSchema ?? {};
   try {
+    // Wait for any in-flight cancellation to settle before grabbing a new
+    // worker, otherwise pool.proxy() may return a worker that is being torn
+    // down and the next call rejects with "Worker is terminated".
     if (lastSemanticJob !== undefined && !lastSemanticJob.resolved) {
-      void lastSemanticJob.cancel();
+      lastSemanticJob.cancel();
+      try {
+        await lastSemanticJob;
+      } catch {
+        /* expected CancellationError */
+      }
     }
 
-    const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
-
     const fixedDbSchema = convertDbSchema(dbSchema, linterVersion);
-    lastSemanticJob = proxyWorker.lintCypherQuery(query, fixedDbSchema, {
-      consoleCommands: false,
-    });
-    const result = await lastSemanticJob;
+
+    // Retry once on transient "Worker is terminated" — covers the rare case
+    // where a worker exits between proxy() and the actual call.
+    const runLint = async () => {
+      const proxyWorker = (await pool.proxy()) as unknown as LintWorker;
+      lastSemanticJob = proxyWorker.lintCypherQuery(query, fixedDbSchema, {
+        consoleCommands: false,
+      });
+      return await lastSemanticJob;
+    };
+
+    let result;
+    try {
+      result = await runLint();
+    } catch (err) {
+      if (err instanceof workerpool.Promise.CancellationError) throw err;
+      const msg = err && err.message ? String(err.message) : String(err);
+      if (/worker is terminated/i.test(msg)) {
+        result = await runLint();
+      } else {
+        throw err;
+      }
+    }
 
     //marks the entire text if any position is negative
     const positionSafeResult = clampUnsafePositions(
