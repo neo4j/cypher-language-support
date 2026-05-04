@@ -1150,7 +1150,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
     this.visit(ctx.LPAREN());
     this.visit(ctx.variable());
-    this.concatenate();
+    this.avoidSpaceBetween();
     this.visit(ctx.labelType());
     this.concatenate();
     this.visit(ctx.RPAREN());
