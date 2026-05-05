@@ -205,6 +205,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseableStart: number | undefined;
   firstUnParseableToken: Token | undefined;
   private errorNodesByIndex: Map<number, ErrorNode> = new Map();
+  private visitedErrorNodes: number = 0;
 
   constructor(
     formattingOptions: FormattingOptions,
@@ -230,6 +231,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   format = () => {
     this._visit(this.root);
+    this._emitResidualErrorNodes();
     this.fillInGroupSizes();
     const maxColumn = Math.max(
       0,
@@ -610,6 +612,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   }
 
+  _emitResidualErrorNodes = () => {
+    for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
+      if (tokenIdx > this.visitedErrorNodes) {
+        this.visitErrorNode(errorNode);
+      }
+    }
+  };
+
   /**
    * Emits any ErrorNodes that fall between the last visited token and the given
    * token index. These are tokens consumed by ANTLR error recovery that would
@@ -707,6 +717,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.pendingGroups = [];
 
     this.chunkList.push(chunk);
+    this.visitedErrorNodes++;
   };
 
   breakAndVisitChildren = (ctx: ParserRuleContext) => {
