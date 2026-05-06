@@ -393,6 +393,7 @@ export const lexerKeywords = [
   CypherLexer.USER,
   CypherLexer.USERS,
   CypherLexer.USING,
+  CypherLexer.UUID,
   CypherLexer.VALUE,
   CypherLexer.VECTOR,
   CypherLexer.VECTOR_DISTANCE,
