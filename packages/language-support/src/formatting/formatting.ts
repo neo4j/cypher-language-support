@@ -205,7 +205,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseableStart: number | undefined;
   firstUnParseableToken: Token | undefined;
   private errorNodesByIndex: Map<number, ErrorNode> = new Map();
-  private visitedErrorNodes: number = 0;
+  private lastVisitedErrorNode: number = -1;
 
   constructor(
     formattingOptions: FormattingOptions,
@@ -614,7 +614,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   _emitResidualErrorNodes = () => {
     for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
-      if (tokenIdx > this.visitedErrorNodes) {
+      if (tokenIdx > this.lastVisitedErrorNode) {
         this.visitErrorNode(errorNode);
       }
     }
@@ -717,7 +717,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.pendingGroups = [];
 
     this.chunkList.push(chunk);
-    this.visitedErrorNodes++;
+    this.lastVisitedErrorNode = errorTokenIndex;
   };
 
   breakAndVisitChildren = (ctx: ParserRuleContext) => {
@@ -1608,7 +1608,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const reduceExprGrp = this.startGroup();
     const children = ctx?.children ?? [];
     let argumentGrp: number = -1;
-    if (children && children.length > 2) {
+    if (children.length > 2) {
       this.avoidSpaceBetween();
       for (let i = 2; i < children.length - 1; i++) {
         const c = children[i];
@@ -1922,7 +1922,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const n = ctx.getChildCount();
     for (let i = 0; i < n; i++) {
       const child = ctx.getChild(i);
-      this._visit(child as ParserRuleContext);
+      this._visit(child as ParserRuleContext | TerminalNode);
       if (i < n - 1) {
         this.avoidBreakBetween();
       }
@@ -2921,11 +2921,6 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.endGroup(setClauseGrp);
     this.removeIndentation(setIndent);
-  };
-
-  visitMapOrParam = (ctx: MapOrParameterContext) => {
-    this._visit(ctx.map());
-    this._visit(ctx.parameter());
   };
 
   // Map has its own formatting rules, see:
