@@ -1,5 +1,15 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.35
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- Updated dependencies [cd4ab49]
+- Updated dependencies [0b2d441]
+  - @neo4j-cypher/language-support@2.0.0-next.32
+  - @neo4j-cypher/react-codemirror@2.0.0-next.35
+
 ## 2.0.0-next.34
 
 ### Patch Changes

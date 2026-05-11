@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.32
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- 0b2d441: Expand formatter coverage to cover SEARCH, GRAPH TYPE and more. Fixes bugs, for example SHOW ... YIELD formatting bug, and failing to format full query when parsing only fails at the end
+
 ## 2.0.0-next.31
 
 ### Patch Changes
