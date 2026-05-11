@@ -127,9 +127,11 @@ OPTIONS {
   });
 
   test('show indexes with where and return', () => {
-    const query = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+    const query = `SHOW INDEXES
+YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI" RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
-    const expected = `SHOW INDEXES YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
+    const expected = `SHOW INDEXES
+YIELD aaaaaa, aaaaaa, aaaaaa, aaaaaa, aaaaaa
 WHERE aaaaaa = "wjL0ojNI"
 RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
     verifyFormatting(query, expected);
@@ -139,6 +141,123 @@ RETURN aaaaaa, aaaaaa, aaaaaa, aaaaaa`;
     const query = `SHOW INDEXES WHERE aaaaaa = "wjL0ojNI"`;
     const expected = `SHOW INDEXES
 WHERE aaaaaa = "wjL0ojNI"`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - node', () => {
+    const query = `Alter current graph type SET { (:Person => :Resident {name :: STRING NOT NULL}),(:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (:Person => :Resident {name :: STRING NOT NULL}),
+  (:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - node v2', () => {
+    const query = `Alter current graph type SET { (:Person => {name :: STRING NOT NULL}),(a:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (:Person => {name :: STRING NOT NULL}),
+  (a:Pet => :Resident&Animal {healthCertificate :: STRING, name :: STRING})
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - rel', () => {
+    const query = `ALTER CURRENT GRAPH TYPE SET {(a:Resident)-[R:LIVES_IN => { since :: DATE NOT NULL}]->(:City)
+}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  (a:Resident)-[R:LIVES_IN => {since :: DATE NOT NULL}]->(:City)
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter graph type - constraint', () => {
+    const query = `ALTER CURRENT GRAPH TYPE SET {  CONSTRAINT company_name FOR (c:Company) REQUIRE c.name IS KEY, CONSTRAINT animal_id FOR (a:Animal) REQUIRE a.id IS UNIQUE
+}`;
+    const expected = `ALTER CURRENT GRAPH TYPE SET {
+  CONSTRAINT company_name FOR (c:Company)
+  REQUIRE c.name IS KEY,
+  CONSTRAINT animal_id FOR (a:Animal)
+  REQUIRE a.id IS UNIQUE
+}`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for vector index commands', () => {
+  test('create vector index', () => {
+    const query = `create vector index myIndex for (n: Label) on (n.embedding) options { indexProvider: 'vector-2.0' }`;
+    const expected = `CREATE VECTOR INDEX myIndex
+FOR (n:Label)
+ON (n.embedding)
+OPTIONS {indexProvider: 'vector-2.0'}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create vector index if not exists', () => {
+    const query = `create vector index myIndex if not exists for (n: Label) on (n.embedding)`;
+    const expected = `CREATE VECTOR INDEX myIndex IF NOT EXISTS
+FOR (n:Label)
+ON (n.embedding)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create vector index with options', () => {
+    const query = `create vector index myIndex for (n: Label) on (n.embedding) options { indexProvider: 'vector-2.0' , dimensions: 256 }`;
+    const expected = `CREATE VECTOR INDEX myIndex
+FOR (n:Label)
+ON (n.embedding)
+OPTIONS {indexProvider: 'vector-2.0', dimensions: 256}`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for auth rule commands', () => {
+  test('create auth rule', () => {
+    const query = `create auth rule myRule set condition 1 = 1 set enabled true`;
+    const expected = `CREATE AUTH RULE myRule
+  SET CONDITION 1 = 1
+  SET ENABLED TRUE`;
+    verifyFormatting(query, expected);
+  });
+
+  test('alter auth rule', () => {
+    const query = `alter auth rule myRule if exists set enabled false`;
+    const expected = `ALTER AUTH RULE myRule IF EXISTS
+  SET ENABLED FALSE`;
+    verifyFormatting(query, expected);
+  });
+
+  test('rename auth rule', () => {
+    const query = `rename auth rule myRule if exists to yourRule`;
+    const expected = `RENAME AUTH RULE myRule IF EXISTS TO yourRule`;
+    verifyFormatting(query, expected);
+  });
+
+  test('show auth rule', () => {
+    const query = `show auth rule as commands yield name`;
+    const expected = `SHOW AUTH RULE AS COMMANDS
+YIELD name`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for create alias/create database', () => {
+  test('create alias with additional info', () => {
+    const query = `create  alias \`northwind-2022\` for database \`northwind-graph-2022\` at "neo4j+s://location:7687" properties {newestNorthwind:true,index:3}`;
+    const expected = `CREATE ALIAS \`northwind-2022\`
+FOR DATABASE \`northwind-graph-2022\`
+AT "neo4j+s://location:7687"
+PROPERTIES {newestNorthwind: true, index: 3}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create database with additional info', () => {
+    const query = `create  database neo4j if not exists set default language cypher 25 options {txLogEnrichment:Full} wait 500 sec`;
+    const expected = `CREATE DATABASE neo4j IF NOT EXISTS
+SET DEFAULT LANGUAGE CYPHER 25
+OPTIONS {txLogEnrichment: Full}
+WAIT 500 SEC`;
     verifyFormatting(query, expected);
   });
 });
@@ -173,6 +292,7 @@ REQUIRE a.id IS UNIQUE
 OPTIONS {constraintName: 'Athlete_Id_Unique'}`;
     verifyFormatting(query, expected);
   });
+
   test('OPTION should be able to have nice map print', () => {
     const query =
       "CREATE DATABASE testdb OPTIONS {existingData: 'use', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar'};";
