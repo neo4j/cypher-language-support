@@ -18,9 +18,34 @@ import {
   ParsedStatement,
   ParsingResult,
   createParsingResult,
+  translateTokensToRange,
 } from '../cypherLanguageService.js';
-import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
+import {
+  isLabelLeaf,
+  LabelOrCondition,
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolTable,
+} from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
+import { _internalFeatureFlags } from '../featureFlags.js';
+import {
+  NodePatternContext,
+  PatternElementContext,
+  RelationshipPatternContext,
+  StatementContext,
+} from '../generated-parser/CypherCmdParser.js';
+import { ParserRuleContext } from 'antlr4';
+import {
+  getRelsFromNodesSets,
+  walkCNFTree,
+} from '../autocompletion/schemaBasedCompletions.js';
+import {
+  convertToCNF,
+  isAnyNode,
+  isNotAnyNode,
+  removeInnerAnys,
+} from '../labelTreeRewriting.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -258,6 +283,117 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
+function warnOnPathDirectionalityIssues(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+  symbolTable: SymbolTable,
+): SyntaxDiagnostic[] {
+  const statements = parsingResult.ctx.statementOrCommand_list();
+  return statements.reduce<SyntaxDiagnostic[]>((acc, stmtOrCommand) => {
+    const stmt = stmtOrCommand.preparsedStatement()?.statement();
+    if (!stmt) {
+      return acc;
+    }
+    const pathIssues = findPathIssues(
+      stmt,
+      parsingResult,
+      dbSchema,
+      symbolTable,
+    );
+    return acc.concat(pathIssues);
+  }, []);
+}
+
+function findPathIssues(
+  stmt: StatementContext,
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+  symbolTable: SymbolTable,
+): SyntaxDiagnostic[] {
+  const patternElements: PatternElementContext[] = findPatternElements(
+    stmt,
+    [],
+  );
+  const diagnostics: SyntaxDiagnostic[] = [];
+  for (const pattern of patternElements) {
+    const children = pattern.children ?? [];
+    if (
+      children.length >= 2 &&
+      children[0] instanceof NodePatternContext &&
+      children[1] instanceof RelationshipPatternContext
+    ) {
+      const child = children[0];
+      const nextChild = children[1];
+      if (!nextChild.stop?.stop || !child.stop?.stop) {
+        return [];
+      }
+      const symbol = symbolTable.find((x) =>
+        x.references.some(
+          (ref) => ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
+        ),
+      );
+      const nextSymbolLabels = symbolTable.find((x) =>
+        x.references.some(
+          (ref) =>
+            ref >= nextChild.start.start && ref <= (nextChild.stop?.stop ?? -1),
+        ),
+      )?.labels;
+      if (
+        symbol &&
+        nextSymbolLabels &&
+        parsingResult.command.type === 'cypher'
+      ) {
+        const direction = nextChild.leftArrow()
+          ? 'outgoing'
+          : nextChild.rightArrow()
+            ? 'incoming'
+            : 'bidirectional';
+        const possibleRels = possibleFollowingRelType(
+          direction,
+          dbSchema,
+          symbol.labels,
+        );
+        if (
+          possibleRels &&
+          nextSymbolLabels &&
+          'children' in nextSymbolLabels &&
+          nextSymbolLabels.children.length == 1 &&
+          isLabelLeaf(nextSymbolLabels.children[0])
+        ) {
+          if (
+            !possibleRels
+              .values()
+              .toArray()
+              .includes(nextSymbolLabels.children[0].value)
+          ) {
+            diagnostics.push({
+              message: 'Path segment does not exist on graph.',
+              severity: DiagnosticSeverity.Warning,
+              ...translateTokensToRange(child.start, nextChild.stop),
+            });
+          }
+        }
+      }
+    }
+  }
+  return diagnostics;
+}
+
+function findPatternElements(
+  ctx: ParserRuleContext,
+  acc: PatternElementContext[],
+): PatternElementContext[] {
+  for (const c of ctx.children ?? []) {
+    if (c instanceof PatternElementContext) {
+      acc.push(c);
+    }
+    if (c instanceof ParserRuleContext) {
+      findPatternElements(c, acc);
+    }
+  }
+  return acc;
+}
+
 export function sortByPositionAndMessage(
   a: SyntaxDiagnostic,
   b: SyntaxDiagnostic,
@@ -381,6 +517,20 @@ export function lintCypherQuery(
           parseResult: current,
         });
 
+        const symbolTable = fixSymbolTableOffsets({
+          symbolTable: rawSymbolTable,
+          parseResult: current,
+        });
+
+        let missingPathWarnings: SyntaxDiagnostic[] = [];
+        if (_internalFeatureFlags.lintPatternDirectionalityIssues) {
+          missingPathWarnings = warnOnPathDirectionalityIssues(
+            current,
+            dbSchema,
+            symbolTable,
+          );
+        }
+
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
@@ -389,14 +539,10 @@ export function lintCypherQuery(
             procedureErrors,
             functionWarnings,
             procedureWarnings,
+            missingPathWarnings,
             current.syntaxErrors,
           )
           .sort(sortByPositionAndMessage);
-
-        const symbolTable = fixSymbolTableOffsets({
-          symbolTable: rawSymbolTable,
-          parseResult: current,
-        });
 
         return { diagnostics, symbolTable };
       }
@@ -410,6 +556,49 @@ export function lintCypherQuery(
   }
 
   return { diagnostics: [], symbolTables: [] };
+}
+
+//Returns possible following rel types, or undefined in cases where we should quit
+function possibleFollowingRelType(
+  direction: 'incoming' | 'outgoing' | 'bidirectional',
+  dbSchema: DbSchema,
+  labels: LabelOrCondition,
+): string[] | undefined {
+  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
+    getRelsFromNodesSets(dbSchema);
+
+  let cnfTree: LabelOrCondition;
+  try {
+    const treeWithRewrittenAnys = removeInnerAnys(labels);
+    if (isAnyNode(treeWithRewrittenAnys)) {
+      return undefined;
+    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+      return undefined;
+    }
+    cnfTree = convertToCNF(treeWithRewrittenAnys);
+  } catch {
+    return undefined;
+  }
+  let allIncomingLabels = new Set<string>();
+  relsToNodesSet.forEach((part) => {
+    allIncomingLabels = allIncomingLabels.union(part);
+  });
+  let allOutGoingLabels = new Set<string>();
+  relsFromNodesSet.forEach((part) => {
+    allOutGoingLabels = allOutGoingLabels.union(part);
+  });
+  const { inLabels, outLabels } = walkCNFTree(
+    relsToNodesSet,
+    relsFromNodesSet,
+    cnfTree,
+  );
+  const allRels =
+    direction === 'outgoing'
+      ? outLabels
+      : direction === 'incoming'
+        ? inLabels
+        : inLabels.union(outLabels);
+  return allRels.values().toArray();
 }
 
 function warningOnDeprecatedProcedure(

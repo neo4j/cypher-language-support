@@ -202,7 +202,7 @@ const reltypesToCompletions = (reltypes: string[] = []) =>
 export const allReltypeCompletions = (dbSchema: DbSchema) =>
   reltypesToCompletions(dbSchema.relationshipTypes);
 
-function walkCNFTree(
+export function walkCNFTree(
   incomingLabels: Map<string, Set<string>>,
   outGoingLabels: Map<string, Set<string>>,
   labelTree: LabelOrCondition,
@@ -271,7 +271,7 @@ function walkCNFTree(
   return { inLabels, outLabels };
 }
 
-function getRelsFromNodesSets(dbSchema: DbSchema): {
+export function getRelsFromNodesSets(dbSchema: DbSchema): {
   toNodes: Map<string, Set<string>>;
   fromNodes: Map<string, Set<string>>;
 } {
