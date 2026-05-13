@@ -14,7 +14,14 @@ import {
 } from '../types.js';
 import { findParent } from '../helpers.js';
 import {
+  AnyLabelContext,
+  LabelExpression1Context,
+  LabelExpression2Context,
+  LabelExpression3Context,
+  LabelExpression4Context,
+  LabelNameContext,
   NodePatternContext,
+  ParenthesizedLabelExpressionContext,
   PatternElementContext,
   QuantifierContext,
   RelationshipPatternContext,
@@ -316,6 +323,53 @@ function getNodesFromRelsSet(dbSchema: DbSchema): {
   return undefined;
 }
 
+function labelExpressionToTree(
+  ctx:
+    | LabelExpression1Context
+    | LabelExpression2Context
+    | LabelExpression3Context
+    | LabelExpression4Context,
+): LabelOrCondition | undefined {
+  if (ctx instanceof LabelExpression4Context) {
+    const parts = ctx
+      .labelExpression3_list()
+      .map(labelExpressionToTree)
+      .filter((x): x is LabelOrCondition => x !== undefined);
+    if (parts.length === 0) return undefined;
+    if (parts.length === 1) return parts[0];
+    return { condition: 'or', children: parts };
+  }
+  if (ctx instanceof LabelExpression3Context) {
+    const parts = ctx
+      .labelExpression2_list()
+      .map(labelExpressionToTree)
+      .filter((x): x is LabelOrCondition => x !== undefined);
+    if (parts.length === 0) return undefined;
+    if (parts.length === 1) return parts[0];
+    return { condition: 'and', children: parts };
+  }
+  if (ctx instanceof LabelExpression2Context) {
+    const inner = ctx.labelExpression1();
+    if (!inner) return undefined;
+    const negated = (ctx.EXCLAMATION_MARK_list()?.length ?? 0) % 2 === 1;
+    const base = labelExpressionToTree(inner);
+    if (!base) return undefined;
+    return negated ? { condition: 'not', children: [base] } : base;
+  }
+  if (ctx instanceof LabelNameContext) {
+    const name = ctx.symbolicNameString();
+    return name ? { value: name.getText() } : undefined;
+  }
+  if (ctx instanceof AnyLabelContext) {
+    return { condition: 'any', children: [] };
+  }
+  if (ctx instanceof ParenthesizedLabelExpressionContext) {
+    const inner = ctx.labelExpression4();
+    return inner ? labelExpressionToTree(inner) : undefined;
+  }
+  return undefined;
+}
+
 function findLastVariable(
   lastValidElement: NodePatternContext | RelationshipPatternContext,
   symbolsInfo: SymbolsInfo,
@@ -333,7 +387,33 @@ function findLastVariable(
     : symbolsInfo?.symbolTables
         ?.flat()
         .find((entry) => entry.references.includes(variable.start.start));
-  return foundVariable;
+
+  if (foundVariable !== undefined) {
+    return foundVariable;
+  }
+
+  // Fallback: extract labels directly from the parse tree when symbolsInfo is unavailable
+  const labelExpr = lastValidElement.labelExpression();
+  if (labelExpr) {
+    const expr4 = labelExpr.labelExpression4();
+    if (expr4) {
+      const tree = labelExpressionToTree(expr4);
+      if (tree) {
+        const labels: LabelOrCondition = isLabelLeaf(tree)
+          ? { condition: 'and', children: [tree] }
+          : tree;
+        return {
+          variable: variable?.getText() ?? '',
+          labels,
+          types: [],
+          definitionPosition: lastValidElement.start.start,
+          references: [],
+        };
+      }
+    }
+  }
+
+  return undefined;
 }
 
 export function completeNodeLabel(
@@ -366,14 +446,6 @@ export function completeNodeLabel(
 
     if (lastValidElement instanceof RelationshipPatternContext) {
       const foundVariable = findLastVariable(lastValidElement, symbolsInfo);
-      if (
-        foundVariable === undefined ||
-        isLabelLeaf(foundVariable.labels) ||
-        foundVariable.labels.condition !== 'and' ||
-        foundVariable.labels.children.length === 0
-      ) {
-        return allLabelCompletions(dbSchema);
-      }
 
       const direction = lastValidElement.leftArrow()
         ? 'outgoing'
@@ -381,41 +453,88 @@ export function completeNodeLabel(
           ? 'incoming'
           : 'bidirectional';
 
-      // limitation: not checking node label repetition
-      const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
-        getNodesFromRelsSet(dbSchema);
-      let cnfTree: LabelOrCondition;
-      try {
-        const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
-        if (isAnyNode(treeWithRewrittenAnys)) {
+      const hasRelLabels =
+        foundVariable !== undefined &&
+        !isLabelLeaf(foundVariable.labels) &&
+        foundVariable.labels.condition === 'and' &&
+        foundVariable.labels.children.length > 0;
+
+      if (hasRelLabels) {
+        // Relationship has type labels — use them to filter target nodes
+        // limitation: not checking node label repetition
+        const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+          getNodesFromRelsSet(dbSchema);
+        let cnfTree: LabelOrCondition;
+        try {
+          const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
+          if (isAnyNode(treeWithRewrittenAnys)) {
+            return allLabelCompletions(dbSchema);
+          } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+            return [];
+          }
+          cnfTree = convertToCNF(treeWithRewrittenAnys);
+        } catch {
           return allLabelCompletions(dbSchema);
-        } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-          return [];
         }
-        cnfTree = convertToCNF(treeWithRewrittenAnys);
-      } catch {
-        return allLabelCompletions(dbSchema);
+        let allIncomingLabels = new Set<string>();
+        nodesToRelsSet.forEach((part) => {
+          allIncomingLabels = allIncomingLabels.union(part);
+        });
+        let allOutGoingLabels = new Set<string>();
+        nodesFromRelsSet.forEach((part) => {
+          allOutGoingLabels = allOutGoingLabels.union(part);
+        });
+        const { inLabels, outLabels } = walkCNFTree(
+          nodesToRelsSet,
+          nodesFromRelsSet,
+          cnfTree,
+        );
+        const allNodes =
+          direction === 'outgoing'
+            ? outLabels
+            : direction === 'incoming'
+              ? inLabels
+              : inLabels.union(outLabels);
+        return labelsToCompletions(Array.from(allNodes));
       }
-      let allIncomingLabels = new Set<string>();
-      nodesToRelsSet.forEach((part) => {
-        allIncomingLabels = allIncomingLabels.union(part);
-      });
-      let allOutGoingLabels = new Set<string>();
-      nodesFromRelsSet.forEach((part) => {
-        allOutGoingLabels = allOutGoingLabels.union(part);
-      });
-      const { inLabels, outLabels } = walkCNFTree(
-        nodesToRelsSet,
-        nodesFromRelsSet,
-        cnfTree,
-      );
-      const allNodes =
-        direction === 'outgoing'
-          ? outLabels
-          : direction === 'incoming'
-            ? inLabels
-            : inLabels.union(outLabels);
-      return labelsToCompletions(Array.from(allNodes));
+
+      // Relationship has no type — look at the previous node's labels instead
+      const relIndex = callContext.children.indexOf(lastValidElement);
+      const prevNode =
+        relIndex > 0 ? callContext.children[relIndex - 1] : undefined;
+      if (prevNode instanceof NodePatternContext) {
+        const nodeVar = findLastVariable(prevNode, symbolsInfo);
+        if (
+          nodeVar !== undefined &&
+          !isLabelLeaf(nodeVar.labels) &&
+          nodeVar.labels.children.length > 0
+        ) {
+          const nodeLabels = new Set<string>();
+          const collectLeaves = (tree: LabelOrCondition) => {
+            if (isLabelLeaf(tree)) {
+              nodeLabels.add(tree.value);
+            } else if ('children' in tree) {
+              tree.children.forEach(collectLeaves);
+            }
+          };
+          collectLeaves(nodeVar.labels);
+
+          const targets = new Set<string>();
+          for (const entry of dbSchema.graphSchema) {
+            if (direction === 'incoming' || direction === 'bidirectional') {
+              if (nodeLabels.has(entry.to)) targets.add(entry.from);
+            }
+            if (direction === 'outgoing' || direction === 'bidirectional') {
+              if (nodeLabels.has(entry.from)) targets.add(entry.to);
+            }
+          }
+          if (targets.size > 0) {
+            return labelsToCompletions(Array.from(targets));
+          }
+        }
+      }
+
+      return allLabelCompletions(dbSchema);
     }
   }
 
