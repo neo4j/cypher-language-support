@@ -1,0 +1,4 @@
+worktrees/
+runs/
+.judge-input-seed-*.txt
+human-reference.diff

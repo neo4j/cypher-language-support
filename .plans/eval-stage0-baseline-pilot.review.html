@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>eval-stage0-baseline-pilot — review</title>
+<style>
+  :root { color-scheme: light dark; }
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    max-width: 980px; margin: 2rem auto; padding: 0 1.5rem;
+    line-height: 1.55; color: #1c1c1c; background: #fdfdfd;
+  }
+  @media (prefers-color-scheme: dark) { body { background: #15171a; color: #e6e6e6; } }
+  h1 { border-bottom: 2px solid #888; padding-bottom: .3rem; margin: 0 0 .2rem; font-size: 1.7rem; }
+  h2 { margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: .2rem; font-size: 1.25rem; }
+  h3 { margin-top: 1.4rem; font-size: 1.05rem; }
+  .meta { color: #888; font-size: .9rem; }
+  table { border-collapse: collapse; width: 100%; margin: .6rem 0 1rem; font-size: .92rem; }
+  th, td { border: 1px solid #ccc; padding: .35rem .55rem; text-align: left; vertical-align: top; }
+  @media (prefers-color-scheme: dark) { th, td { border-color: #333; } th { background: #1f2227; } }
+  th { background: #f4f4f4; font-weight: 600; }
+  td.num { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  td.seed { font-weight: 600; }
+  .badge {
+    display: inline-block; padding: 1px 9px; border-radius: 10px;
+    font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: .03em;
+  }
+  .badge.pass    { background: #c7f0d2; color: #0a4d20; }
+  .badge.fail    { background: #f7c8c8; color: #7a1818; }
+  .badge.waived  { background: #e6e6e6; color: #555;  }
+  .badge.partial { background: #fde6b8; color: #6b4a00; }
+  @media (prefers-color-scheme: dark) {
+    .badge.pass    { background: #1c4d2c; color: #b8f0c6; }
+    .badge.fail    { background: #5a1f1f; color: #f0c0c0; }
+    .badge.waived  { background: #2c2f33; color: #aaa;    }
+    .badge.partial { background: #4d3a0c; color: #f0d99c; }
+  }
+  code, .mono { font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .9em; }
+  pre {
+    background: #f6f8fa; border: 1px solid #ddd; border-radius: 6px;
+    padding: .8rem; overflow-x: auto; font-size: .85rem;
+  }
+  @media (prefers-color-scheme: dark) { pre { background: #1c1f24; border-color: #333; } }
+  .summary-card {
+    background: #f8f8fb; border: 1px solid #ddd; border-radius: 8px;
+    padding: 1rem 1.25rem; margin: 1rem 0;
+  }
+  @media (prefers-color-scheme: dark) { .summary-card { background: #1c1f24; border-color: #333; } }
+  ul.criteria { list-style: none; padding-left: 0; margin: .5rem 0; }
+  ul.criteria li { padding: .45rem 0; border-bottom: 1px solid #eee; }
+  @media (prefers-color-scheme: dark) { ul.criteria li { border-color: #2a2d33; } }
+  ul.criteria li .badge { margin-right: .6rem; vertical-align: middle; min-width: 64px; text-align: center; }
+  .dim { color: #888; }
+  details { margin: .6rem 0; }
+  summary { cursor: pointer; font-weight: 600; padding: .25rem 0; }
+  .checklist label { display: block; padding: .25rem 0; }
+  .checklist input { margin-right: .5rem; }
+  .grid-stats {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: .5rem; margin: .5rem 0;
+  }
+  .stat {
+    background: #f6f6f8; padding: .5rem .7rem; border-radius: 6px; border: 1px solid #e0e0e0;
+  }
+  @media (prefers-color-scheme: dark) { .stat { background: #1c1f24; border-color: #2c2f33; } }
+  .stat .label { font-size: .72rem; text-transform: uppercase; color: #888; letter-spacing: .04em; }
+  .stat .value { font-size: 1.05rem; font-weight: 600; font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+
+<h1>eval-stage0-baseline-pilot — review</h1>
+<p class="meta">Single-seed pilot run of the Stage 0 baseline-noise harness against PR <a href="https://github.com/neo4j/cypher-language-support/pull/657">#657</a>. Plan: <code class="mono">.plans/eval-stage0-baseline-pilot.plan.html</code>.</p>
+
+<div class="summary-card">
+<strong>One-paragraph summary.</strong>
+The harness — driver + prompt + Sonnet judge — runs end-to-end on the broken-baseline commit <code class="mono">03456409e9</code>, scores the run on three binary signals plus a supplementary rating, and tears its worktree down cleanly. The plan asked for 3 seeds; we ran 1 at the user's request after observing that a 50-turn budget consistently exhausted itself in investigation without producing any edit — so the value of seeds 2 and 3 (a noise estimate) is deferred. The seed 1 row gives a usable Stage 1 target: <strong>without instructions, Claude can't fix the artifact-bump tests inside 15 turns, and 50 isn't enough either</strong>. The harness itself is the deliverable; the empty-diff outcome is the noise-free baseline answer for this pilot. Read the deviations below for the three environmental fixups that had to happen to get here.
+</div>
+
+<h2>Acceptance criteria</h2>
+<ul class="criteria">
+  <li><span class="badge partial">PARTIAL</span> Driver runs end-to-end and produces result rows. <span class="dim">Produced 1 row, not 3 — user shortened the run to one seed after observing the 50-turn investigation pattern. Re-running for seeds 2-3 is a one-liner: <code>EVAL_SEEDS="2 3" bash .eval/run-stage0.sh</code>.</span></li>
+  <li><span class="badge pass">PASS</span> Per-seed scores file captures 3 binary signals + rating + cost metrics. <span class="dim"><code>.eval/runs/657-seed-1.scores.json</code> has all required keys.</span></li>
+  <li><span class="badge pass">PASS</span> Worktrees isolated and cleaned up. <span class="dim"><code>git worktree list</code> shows no <code>657-seed-*</code> entries after the run.</span></li>
+  <li><span class="badge pass">PASS</span> Results table summarizes the runs. <span class="dim"><code>.plans/eval-stage0/results.md</code> generated.</span></li>
+  <li><span class="badge waived">WAIVED</span> Reproducible from documented commands. <span class="dim">Harness committed; values stochastic by design. Re-run is one command but verification requires re-execution.</span></li>
+</ul>
+
+<h2>Seed 1 result</h2>
+<table>
+  <thead>
+    <tr><th>seed</th><th>build</th><th>test_porting</th><th>anti_cheat</th><th>rating</th><th>tokens (in / out / cache)</th><th>wall</th><th>turns</th><th>diff_loc</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="seed">1</td>
+      <td><span class="badge fail">fail</span></td>
+      <td><span class="badge pass">pass</span></td>
+      <td><span class="badge pass">pass</span></td>
+      <td class="num">1<span class="dim">/10</span></td>
+      <td class="num" style="font-size:.85rem">17 / 6.3k / 409k</td>
+      <td class="num">5m06s</td>
+      <td class="num">16<span class="dim">/15</span></td>
+      <td class="num">0</td>
+    </tr>
+  </tbody>
+</table>
+
+<details open>
+<summary>Judge rationale (Sonnet, supplementary)</summary>
+<blockquote style="margin:.5rem 0; padding:.5rem .8rem; border-left: 3px solid #888; color:#555;">
+"Claude produced an empty diff with zero changes, completely failing to address the build breakage that required updating test expectations for the new semantic analyzer messages, severities, error ordering, and formatting output."
+</blockquote>
+</details>
+
+<details open>
+<summary>What Claude actually did during its 15-turn budget</summary>
+<p>Spent every turn investigating; never reached an edit. Narration trail:</p>
+<ol style="font-size:.92rem;">
+  <li>Listed the repo and read <code>package.json</code>.</li>
+  <li>Ran <code>pnpm build</code> (passed) and <code>pnpm test</code> (4 failing tests in <code>semanticValidation.test.ts</code>).</li>
+  <li>Read the failing tests; ran <code>git log</code> / <code>git diff</code> to understand the artifact bump.</li>
+  <li>Read <code>formatting/formatting.ts</code> and grepped through <code>generated-parser/CypherCmdParser.ts</code> looking for the new <code>showCommandYieldWhere</code> / <code>composableCommandClauses</code> context types.</li>
+  <li>Looked at the <code>yieldClause</code> / <code>whereClause</code> visitor patterns to figure out how the formatter should handle the new rule.</li>
+  <li>Last narrated step before the cap: <em>"Now let me also quickly run lint and format checks."</em> — cap hit during verification.</li>
+</ol>
+<p>An earlier, discarded run with <code>--max-turns 50</code> (kept as an internal data point) showed the same pattern continuing for another 35 turns — also producing an empty diff. <strong>So 50 turns wouldn't have rescued this seed either.</strong> The bottleneck is direction, not budget.</p>
+</details>
+
+<h2>Cost & timing</h2>
+<div class="grid-stats">
+  <div class="stat"><div class="label">claude turns</div><div class="value">16 / 15</div></div>
+  <div class="stat"><div class="label">claude wall</div><div class="value">5m 06s</div></div>
+  <div class="stat"><div class="label">input tokens</div><div class="value">17</div></div>
+  <div class="stat"><div class="label">output tokens</div><div class="value">6.3k</div></div>
+  <div class="stat"><div class="label">cache reads</div><div class="value">409k</div></div>
+  <div class="stat"><div class="label">diff lines</div><div class="value">0</div></div>
+</div>
+
+<p>Roughly: ~3.5 min in Claude turns (dominated by 4-5 <code>pnpm test</code>/<code>pnpm build</code> sub-runs Claude issued for investigation), then ~1.5 min in the harness's own post-Claude build / test / lint / format scoring. Pre-build of the worktree adds ~70 s before the seed timer starts (logged separately).</p>
+
+<p>Stage 1 matrix sizing extrapolation: 30 cells × ~5 min wall + judge ≈ <strong>2.5 hours wall</strong> and ~12M cache-read tokens. If the with-instructions variant actually makes edits and verifies, expect 2-3× more turns and proportional token cost.</p>
+
+<h2>Manual review checklist</h2>
+<div class="checklist">
+  <label><input type="checkbox"> Open <code class="mono">.eval/runs/657-seed-1.diff</code> — confirm it's empty (it is — no changes captured).</label>
+  <label><input type="checkbox"> Skim <code class="mono">.eval/runs/657-seed-1.jsonl</code> for the assistant narration trail to confirm Claude was investigating, not stuck.</label>
+  <label><input type="checkbox"> Decide whether to run seeds 2 and 3 now (one-liner above) or only after a CLAUDE.md variant exists.</label>
+  <label><input type="checkbox"> Decide whether to add a fourth signal "non-empty diff" so the no-op failure mode doesn't trivially pass anti_cheat + test_porting.</label>
+  <label><input type="checkbox"> Confirm the deviation list below is acceptable: antlr4 fixup, <code>acceptEdits</code> permission flag, pre-build step, judge max-turns recovery.</label>
+</div>
+
+<h2>Deviations from plan</h2>
+
+<details open>
+<summary>Ran 1 seed instead of 3</summary>
+<p>The plan's acceptance criterion called for 3 seeds. User shortened to 1 after observing the 50-turn investigation pattern, since the noise estimate is uninteresting if every seed produces the same empty diff. The harness is still in place; seeds 2-3 can be added without changes — <code class="mono">EVAL_SEEDS="2 3" bash .eval/run-stage0.sh</code>.</p>
+</details>
+
+<details open>
+<summary>Reduced <code>--max-turns</code> from 50 to 15</summary>
+<p>The plan suggested 50 turns / 30-min cap per seed. A 50-turn run on seed 1 took 11 min wall and produced an empty diff (full transcript discarded but pattern recorded above). Re-ran at 15 turns; same empty-diff outcome in 5 min. Cost reduction is real and the signal is identical, so 15 is the new default. The driver accepts <code>EVAL_MAX_TURNS=50</code> to restore the original.</p>
+</details>
+
+<details open>
+<summary>Pre-build step added inside each seed before the "baseline broken" check</summary>
+<p>A fresh checkout at <code class="mono">03456409e9</code> can't run <code>pnpm test</code> standalone because <code>vendor/antlr4-c3</code>'s vitest setup needs files emitted by <code>pnpm build</code>. Without a pre-build, the baseline-broken check passes for the wrong reason (missing generated files, not artifact-bump mismatch). The driver now runs <code>pnpm build</code> once first, then verifies <code>pnpm test</code> fails — confirming we're measuring the 4 artifact-bump-induced test failures in <code>semanticValidation.test.ts</code>, not environment issues.</p>
+</details>
+
+<details open>
+<summary>Environment fixup: <code>antlr4</code> CLI install</summary>
+<p>The plan's "Repo build &amp; test commands" list assumed <code>pnpm build</code> would work out of the box, but <code>vendor/antlr4-c3</code>'s <code>generate</code> step needs the <code>antlr4</code> CLI with TypeScript code-gen support (ANTLR &ge; 4.10). The sandbox shipped without it; <code>apt install antlr4</code> got us 4.9.2 which can't emit TypeScript. Resolved by fetching <code>antlr-4.13.2-complete.jar</code> from Maven Central and installing a wrapper at <code>/usr/local/bin/antlr4</code>. Logged so Stage 1 / Stage 2 (GitHub Actions) can pre-install <code>antlr4</code> as part of harness setup.</p>
+</details>
+
+<details open>
+<summary>Permission flag: <code>acceptEdits + --allowedTools</code>, not <code>bypassPermissions</code></summary>
+<p>The plan implied <code>claude -p</code> would run with all permissions; in practice <code>--permission-mode bypassPermissions</code> and <code>--dangerously-skip-permissions</code> are blocked when the CLI runs as root. The driver uses <code>--permission-mode acceptEdits --allowedTools "Bash Read Edit Write Glob Grep TodoWrite NotebookEdit MultiEdit Task"</code>, which gives Claude the tools it needs without prompting. Stage 2 (GitHub Actions) likely won't run as root — flag this in advance so the workflow can pick the right combination.</p>
+</details>
+
+<details open>
+<summary>Judge call needed <code>--max-turns &gt; 1</code> + post-process recovery</summary>
+<p>The Sonnet judge sub-agent produces the expected JSON answer on turn 1 but then immediately wants to look around the repo (<code>git status</code>, <code>find .eval</code>). At <code>--max-turns 3</code> it hits the cap before stopping, leaving the final <code>.result</code> null. Driver currently uses <code>--max-turns 6</code>, and <code>.eval/repair-judge-scores.sh</code> recovers the JSON from the first text content if <code>.result</code> still comes back null.</p>
+</details>
+
+<h2>Suggested next steps</h2>
+<ul>
+  <li><strong>Don't run more seeds yet.</strong> Stage 0's noise estimate is only useful if there's a non-degenerate signal. Right now every seed is going to land on (build=FAIL, test_porting=PASS vacuously, anti_cheat=PASS vacuously, rating≈1). Get a Stage 1 variant in place first.</li>
+  <li><strong>Add a 4th signal: "diff is non-empty"</strong> (or equivalently "diff_loc > 0"). Cheap to compute, would directly catch the failure mode this pilot revealed.</li>
+  <li><strong>Pre-install <code>antlr4</code> in the harness setup</strong> instead of expecting the environment to have it. The fix is a 3-line bootstrap script.</li>
+  <li><strong>Measure judge self-consistency before promoting the rating</strong> to a primary signal. Run the same judge prompt against the same (empty) diff 3-5 times; check the rating spread.</li>
+</ul>
+
+<h2>Entry points for review</h2>
+<ul>
+  <li><strong>Plan:</strong> <code class="mono">.plans/eval-stage0-baseline-pilot.plan.html</code></li>
+  <li><strong>Driver:</strong> <code class="mono">.eval/run-stage0.sh</code></li>
+  <li><strong>Prompts:</strong> <code class="mono">.eval/prompt.txt</code>, <code class="mono">.eval/judge-prompt.txt</code></li>
+  <li><strong>Aggregate table:</strong> <code class="mono">.plans/eval-stage0/results.md</code></li>
+  <li><strong>Per-seed artifacts (gitignored):</strong> <code class="mono">.eval/runs/657-seed-1.{diff,jsonl,scores.json,build.log,baseline-test.log,testport.log,judge.jsonl,install.log,prebuild.log}</code></li>
+  <li><strong>Post-process scripts:</strong> <code class="mono">.eval/build-results.sh</code>, <code class="mono">.eval/build-review-html.sh</code>, <code class="mono">.eval/repair-judge-scores.sh</code></li>
+</ul>
+
+</body>
+</html>
