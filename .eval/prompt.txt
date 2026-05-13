@@ -1,3 +1,41 @@
-The Neo4j Cypher language-support artifacts (semantic analyzer and grammar) were just updated to a new version. As a result the build, tests, lint, and/or formatting checks are now failing. Investigate the failures and make the minimum set of changes needed to get the repo green again. Verify by running pnpm build, pnpm test, pnpm lint, and pnpm format:check. Do not skip, disable, or delete tests to make them pass.
+The Neo4j Cypher language-support artifacts have just been updated to a
+new Neo4j version. The build, tests, lint, and/or format checks may now
+be failing as a result.
 
-The artifact bump touched two large generated files that you should NOT read in full or diff: packages/language-support/src/syntaxValidation/semanticAnalysis.js (~13k lines, TeaVM-transpiled) and packages/vscode-extension/syntaxes/cypher.json (TextMate grammar). Treat them as opaque. If you need to understand what changed, infer from the test failures and the human-readable grammar files in packages/language-support/src/antlr-grammar/ — not from the generated JS or JSON.
+The bot's commit has already updated the generated parser output, the
+transpiled semantic analyzer, the lint-worker version tag, and the
+TextMate grammar. Do not re-do those. Your job is the downstream
+reconciliation: get the repo green by adjusting hand-written code that
+references the changed grammar/analyzer.
+
+Investigate the diff of the `.g4` grammar files (in
+`packages/language-support/src/antlr-grammar/`) to understand what new
+tokens, renamed rules, or restructured productions landed. Then make
+the minimum set of changes needed.
+
+Run `pnpm install && pnpm build` once up front. Final verification:
+`pnpm test`, `pnpm lint`, and `pnpm format:check` from the repo root.
+(See `CLAUDE.md` for the ANTLR prerequisite, the per-package test
+strategy, and the innermost-out iteration approach.)
+
+Constraints:
+
+- Do not skip, disable, or delete tests to make them pass.
+- If a semantic-analyzer error message has changed wording in a test,
+  verify the new wording is *correct* (not just different) by checking
+  the Java source in the sibling `neo4j/` repo before accepting the
+  snapshot.
+- Add a changeset under `.changeset/` describing user-visible effects
+  on public exports.
+
+Stop and summarize before proceeding if any of these are true:
+
+- The fix needs source changes outside the usual touch-points: lexer
+  symbol classification, the formatter, completion logic, the `.g4`
+  files, or test files. (Historically, ~1 in 3 updates needs more —
+  e.g. an analyzer API moved, or a build-tool bug surfaced. These
+  warrant a human decision on scope.)
+- A test failure looks like a real semantic regression rather than a
+  wording change or rule rename.
+- The build itself breaks, not just tests — e.g. a dependency
+  resolution, transpiler, or minifier issue.

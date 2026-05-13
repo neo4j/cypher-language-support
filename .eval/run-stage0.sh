@@ -65,6 +65,11 @@ run_seed() {
 
   rm -rf "$wt/CLAUDE.md" "$wt/.claude" "$wt/AGENTS.md" "$wt/.cursor"
 
+  if [ -f "$EVAL_DIR/CLAUDE.md" ]; then
+    cp "$EVAL_DIR/CLAUDE.md" "$wt/CLAUDE.md"
+    log "seed=$seed: injected $EVAL_DIR/CLAUDE.md into worktree"
+  fi
+
   log "seed=$seed: pnpm install"
   if ! (cd "$wt" && pnpm install --frozen-lockfile > "$RUNS_DIR/657-seed-$seed.install.log" 2>&1); then
     log "seed=$seed: frozen-lockfile install failed, retrying without --frozen-lockfile"
