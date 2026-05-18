@@ -296,7 +296,7 @@ export function getRelsFromNodesSets(dbSchema: DbSchema): {
   return undefined;
 }
 
-function getNodesFromRelsSet(dbSchema: DbSchema): {
+export function getNodesFromRelsSet(dbSchema: DbSchema): {
   toRels: Map<string, Set<string>>;
   fromRels: Map<string, Set<string>>;
 } {
@@ -375,11 +375,12 @@ export function completeNodeLabel(
         return allLabelCompletions(dbSchema);
       }
 
-      const direction = lastValidElement.leftArrow()
-        ? 'outgoing'
-        : lastValidElement.rightArrow()
-          ? 'incoming'
-          : 'bidirectional';
+      const direction =
+        lastValidElement.leftArrow() && !lastValidElement.rightArrow()
+          ? 'outgoing'
+          : !lastValidElement.leftArrow() && lastValidElement.rightArrow()
+            ? 'incoming'
+            : 'bidirectional';
 
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
@@ -455,11 +456,12 @@ export function completeRelationshipType(
     );
     let direction = 'bidirectional';
     if (thisCtx instanceof RelationshipPatternContext) {
-      direction = thisCtx.leftArrow()
-        ? 'outgoing'
-        : thisCtx.rightArrow()
-          ? 'incoming'
-          : 'bidirectional';
+      direction =
+        thisCtx.leftArrow() && !thisCtx.rightArrow()
+          ? 'outgoing'
+          : !thisCtx.leftArrow() && thisCtx.rightArrow()
+            ? 'incoming'
+            : 'bidirectional';
     }
 
     // limitation: bailing out on quantifiers

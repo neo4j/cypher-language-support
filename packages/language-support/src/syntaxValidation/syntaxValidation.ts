@@ -37,6 +37,7 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { ParserRuleContext } from 'antlr4';
 import {
+  getNodesFromRelsSet,
   getRelsFromNodesSets,
   walkCNFTree,
 } from '../autocompletion/schemaBasedCompletions.js';
@@ -294,19 +295,13 @@ function warnOnPathDirectionalityIssues(
     if (!stmt) {
       return acc;
     }
-    const pathIssues = findPathIssues(
-      stmt,
-      parsingResult,
-      dbSchema,
-      symbolTable,
-    );
+    const pathIssues = findPathIssues(stmt, dbSchema, symbolTable);
     return acc.concat(pathIssues);
   }, []);
 }
 
 function findPathIssues(
   stmt: StatementContext,
-  parsingResult: ParsedStatement,
   dbSchema: DbSchema,
   symbolTable: SymbolTable,
 ): SyntaxDiagnostic[] {
@@ -317,63 +312,119 @@ function findPathIssues(
   const diagnostics: SyntaxDiagnostic[] = [];
   for (const pattern of patternElements) {
     const children = pattern.children ?? [];
-    if (
-      children.length >= 2 &&
-      children[0] instanceof NodePatternContext &&
-      children[1] instanceof RelationshipPatternContext
-    ) {
-      const child = children[0];
-      const nextChild = children[1];
-      if (!nextChild.stop?.stop || !child.stop?.stop) {
-        return [];
-      }
-      const symbol = symbolTable.find((x) =>
-        x.references.some(
-          (ref) => ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
-        ),
-      );
-      const nextSymbolLabels = symbolTable.find((x) =>
-        x.references.some(
-          (ref) =>
-            ref >= nextChild.start.start && ref <= (nextChild.stop?.stop ?? -1),
-        ),
-      )?.labels;
+    let n = 0;
+    while (n < children.length - 1) {
+      const child = children[n];
+      const nextChild = children[n + 1];
       if (
-        symbol &&
-        nextSymbolLabels &&
-        parsingResult.command.type === 'cypher'
+        child instanceof NodePatternContext &&
+        nextChild instanceof RelationshipPatternContext
       ) {
-        const direction = nextChild.leftArrow()
-          ? 'outgoing'
-          : nextChild.rightArrow()
-            ? 'incoming'
-            : 'bidirectional';
-        const possibleRels = possibleFollowingRelType(
-          direction,
-          dbSchema,
-          symbol.labels,
+        if (!nextChild.stop?.stop || !child.stop?.stop) {
+          continue;
+        }
+        const symbol = symbolTable.find((x) =>
+          x.references.some(
+            (ref) =>
+              ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
+          ),
         );
-        if (
-          possibleRels &&
-          nextSymbolLabels &&
-          'children' in nextSymbolLabels &&
-          nextSymbolLabels.children.length == 1 &&
-          isLabelLeaf(nextSymbolLabels.children[0])
-        ) {
+        const nextSymbolLabels = symbolTable.find((x) =>
+          x.references.some(
+            (ref) =>
+              ref >= nextChild.start.start &&
+              ref <= (nextChild.stop?.stop ?? -1),
+          ),
+        )?.labels;
+        if (symbol && nextSymbolLabels) {
+          const direction =
+            nextChild.leftArrow() && !nextChild.rightArrow()
+              ? 'outgoing'
+              : !nextChild.leftArrow() && nextChild.rightArrow()
+                ? 'incoming'
+                : 'bidirectional';
+          const possibleRels = possibleFollowingRelType(
+            direction,
+            dbSchema,
+            symbol.labels,
+          );
           if (
-            !possibleRels
-              .values()
-              .toArray()
-              .includes(nextSymbolLabels.children[0].value)
+            possibleRels &&
+            nextSymbolLabels &&
+            'children' in nextSymbolLabels &&
+            nextSymbolLabels.children.length === 1 &&
+            isLabelLeaf(nextSymbolLabels.children[0])
           ) {
-            diagnostics.push({
-              message: 'Path segment does not exist on graph.',
-              severity: DiagnosticSeverity.Warning,
-              ...translateTokensToRange(child.start, nextChild.stop),
-            });
+            if (
+              !possibleRels
+                .values()
+                .toArray()
+                .includes(nextSymbolLabels.children[0].value)
+            ) {
+              diagnostics.push({
+                message: 'Path segment does not exist on graph.',
+                severity: DiagnosticSeverity.Warning,
+                ...translateTokensToRange(child.start, nextChild.stop),
+              });
+            }
           }
         }
       }
+      if (
+        child instanceof RelationshipPatternContext &&
+        nextChild instanceof NodePatternContext
+      ) {
+        if (!nextChild.stop?.stop || !child.stop?.stop) {
+          continue;
+        }
+        const symbol = symbolTable.find((x) =>
+          x.references.some(
+            (ref) =>
+              ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
+          ),
+        );
+        const nextSymbolLabels = symbolTable.find((x) =>
+          x.references.some(
+            (ref) =>
+              ref >= nextChild.start.start &&
+              ref <= (nextChild.stop?.stop ?? -1),
+          ),
+        )?.labels;
+        if (symbol && nextSymbolLabels) {
+          const direction =
+            child.leftArrow() && !child.rightArrow()
+              ? 'outgoing'
+              : !child.leftArrow() && child.rightArrow()
+                ? 'incoming'
+                : 'bidirectional';
+          const possibleRels = possibleFollowingLabels(
+            direction,
+            dbSchema,
+            symbol.labels,
+          );
+          if (
+            possibleRels &&
+            nextSymbolLabels &&
+            'children' in nextSymbolLabels &&
+            nextSymbolLabels.children.length === 1 &&
+            isLabelLeaf(nextSymbolLabels.children[0])
+          ) {
+            if (
+              !possibleRels
+                .values()
+                .toArray()
+                .includes(nextSymbolLabels.children[0].value)
+            ) {
+              diagnostics.push({
+                message: 'Path segment does not exist on graph.',
+                severity: DiagnosticSeverity.Warning,
+                ...translateTokensToRange(child.start, nextChild.stop),
+              });
+            }
+          }
+        }
+      }
+      n++;
     }
   }
   return diagnostics;
@@ -523,7 +574,10 @@ export function lintCypherQuery(
         });
 
         let missingPathWarnings: SyntaxDiagnostic[] = [];
-        if (_internalFeatureFlags.lintPatternDirectionalityIssues) {
+        if (
+          _internalFeatureFlags.lintPatternDirectionalityIssues &&
+          dbSchema.graphSchema
+        ) {
           missingPathWarnings = warnOnPathDirectionalityIssues(
             current,
             dbSchema,
@@ -599,6 +653,48 @@ function possibleFollowingRelType(
         ? inLabels
         : inLabels.union(outLabels);
   return allRels.values().toArray();
+}
+
+//Returns possible following labels, or undefined in cases where we should quit
+function possibleFollowingLabels(
+  direction: 'incoming' | 'outgoing' | 'bidirectional',
+  dbSchema: DbSchema,
+  labels: LabelOrCondition,
+): string[] | undefined {
+  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
+    getNodesFromRelsSet(dbSchema);
+  let cnfTree: LabelOrCondition;
+  try {
+    const treeWithRewrittenAnys = removeInnerAnys(labels);
+    if (isAnyNode(treeWithRewrittenAnys)) {
+      return undefined;
+    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+      return undefined;
+    }
+    cnfTree = convertToCNF(treeWithRewrittenAnys);
+  } catch {
+    return undefined;
+  }
+  let allIncomingLabels = new Set<string>();
+  nodesToRelsSet.forEach((part) => {
+    allIncomingLabels = allIncomingLabels.union(part);
+  });
+  let allOutGoingLabels = new Set<string>();
+  nodesFromRelsSet.forEach((part) => {
+    allOutGoingLabels = allOutGoingLabels.union(part);
+  });
+  const { inLabels, outLabels } = walkCNFTree(
+    nodesToRelsSet,
+    nodesFromRelsSet,
+    cnfTree,
+  );
+  const allNodes =
+    direction === 'outgoing'
+      ? outLabels
+      : direction === 'incoming'
+        ? inLabels
+        : inLabels.union(outLabels);
+  return allNodes.values().toArray();
 }
 
 function warningOnDeprecatedProcedure(
