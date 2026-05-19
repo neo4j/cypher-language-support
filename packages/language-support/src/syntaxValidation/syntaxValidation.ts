@@ -351,7 +351,6 @@ function findPathIssues(
           );
           if (
             possibleRels &&
-            nextSymbolLabels &&
             'children' in nextSymbolLabels &&
             nextSymbolLabels.children.length === 1 &&
             isLabelLeaf(nextSymbolLabels.children[0])
@@ -410,12 +409,7 @@ function findPathIssues(
             nextSymbolLabels.children.length === 1 &&
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
-            if (
-              !possibleRels
-                .values()
-                .toArray()
-                .includes(nextSymbolLabels.children[0].value)
-            ) {
+            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
               diagnostics.push({
                 message: 'Path segment does not exist on graph.',
                 severity: DiagnosticSeverity.Warning,
@@ -617,7 +611,7 @@ function possibleFollowingRelType(
   direction: 'incoming' | 'outgoing' | 'bidirectional',
   dbSchema: DbSchema,
   labels: LabelOrCondition,
-): string[] | undefined {
+): Set<string> | undefined {
   const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
     getRelsFromNodesSets(dbSchema);
   return getFollowingLabels(direction, labels, {
@@ -631,7 +625,7 @@ function possibleFollowingLabels(
   direction: 'incoming' | 'outgoing' | 'bidirectional',
   dbSchema: DbSchema,
   labels: LabelOrCondition,
-): string[] | undefined {
+): Set<string> | undefined {
   const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
     getNodesFromRelsSet(dbSchema);
   return getFollowingLabels(direction, labels, {
@@ -650,7 +644,7 @@ function getFollowingLabels(
     incomingLabels: Map<string, Set<string>>;
     outGoingLabels: Map<string, Set<string>>;
   },
-): string[] | undefined {
+): Set<string> | undefined {
   let cnfTree: LabelOrCondition;
   try {
     const treeWithRewrittenAnys = removeInnerAnys(labels);
@@ -663,14 +657,6 @@ function getFollowingLabels(
   } catch {
     return undefined;
   }
-  let allIncomingLabels = new Set<string>();
-  incomingLabels.forEach((part) => {
-    allIncomingLabels = allIncomingLabels.union(part);
-  });
-  let allOutGoingLabels = new Set<string>();
-  outGoingLabels.forEach((part) => {
-    allOutGoingLabels = allOutGoingLabels.union(part);
-  });
   const { inLabels, outLabels } = walkCNFTree(
     incomingLabels,
     outGoingLabels,
@@ -682,7 +668,7 @@ function getFollowingLabels(
       : direction === 'incoming'
         ? inLabels
         : inLabels.union(outLabels);
-  return allNodes.values().toArray();
+  return allNodes;
 }
 
 function warningOnDeprecatedProcedure(

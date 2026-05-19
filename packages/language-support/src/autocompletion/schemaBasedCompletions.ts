@@ -397,14 +397,6 @@ export function completeNodeLabel(
       } catch {
         return allLabelCompletions(dbSchema);
       }
-      let allIncomingLabels = new Set<string>();
-      nodesToRelsSet.forEach((part) => {
-        allIncomingLabels = allIncomingLabels.union(part);
-      });
-      let allOutGoingLabels = new Set<string>();
-      nodesFromRelsSet.forEach((part) => {
-        allOutGoingLabels = allOutGoingLabels.union(part);
-      });
       const { inLabels, outLabels } = walkCNFTree(
         nodesToRelsSet,
         nodesFromRelsSet,
@@ -495,14 +487,6 @@ export function completeRelationshipType(
       } catch {
         return [];
       }
-      let allIncomingLabels = new Set<string>();
-      relsToNodesSet.forEach((part) => {
-        allIncomingLabels = allIncomingLabels.union(part);
-      });
-      let allOutGoingLabels = new Set<string>();
-      relsFromNodesSet.forEach((part) => {
-        allOutGoingLabels = allOutGoingLabels.union(part);
-      });
       const { inLabels, outLabels } = walkCNFTree(
         relsToNodesSet,
         relsFromNodesSet,

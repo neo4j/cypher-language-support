@@ -42,7 +42,7 @@ const dbSchema = {
   ],
 };
 
-describe('Semantic validation spec', () => {
+describe('Schema based linting spec', () => {
   test('Warns on invalid path segments. Node->Rel', () => {
     const query = 'MATCH (n:Trainer)-[:WEAK_TO]->() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
