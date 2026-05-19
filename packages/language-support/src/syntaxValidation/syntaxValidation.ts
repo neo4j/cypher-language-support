@@ -316,6 +316,7 @@ function findPathIssues(
     while (n < children.length - 1) {
       const child = children[n];
       const nextChild = children[n + 1];
+      n++;
       if (
         child instanceof NodePatternContext &&
         nextChild instanceof RelationshipPatternContext
@@ -424,7 +425,6 @@ function findPathIssues(
           }
         }
       }
-      n++;
     }
   }
   return diagnostics;
@@ -620,39 +620,10 @@ function possibleFollowingRelType(
 ): string[] | undefined {
   const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
     getRelsFromNodesSets(dbSchema);
-
-  let cnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(labels);
-    if (isAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    }
-    cnfTree = convertToCNF(treeWithRewrittenAnys);
-  } catch {
-    return undefined;
-  }
-  let allIncomingLabels = new Set<string>();
-  relsToNodesSet.forEach((part) => {
-    allIncomingLabels = allIncomingLabels.union(part);
+  return getFollowingLabels(direction, labels, {
+    incomingLabels: relsToNodesSet,
+    outGoingLabels: relsFromNodesSet,
   });
-  let allOutGoingLabels = new Set<string>();
-  relsFromNodesSet.forEach((part) => {
-    allOutGoingLabels = allOutGoingLabels.union(part);
-  });
-  const { inLabels, outLabels } = walkCNFTree(
-    relsToNodesSet,
-    relsFromNodesSet,
-    cnfTree,
-  );
-  const allRels =
-    direction === 'outgoing'
-      ? outLabels
-      : direction === 'incoming'
-        ? inLabels
-        : inLabels.union(outLabels);
-  return allRels.values().toArray();
 }
 
 //Returns possible following labels, or undefined in cases where we should quit
@@ -663,6 +634,23 @@ function possibleFollowingLabels(
 ): string[] | undefined {
   const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
     getNodesFromRelsSet(dbSchema);
+  return getFollowingLabels(direction, labels, {
+    incomingLabels: nodesToRelsSet,
+    outGoingLabels: nodesFromRelsSet,
+  });
+}
+
+function getFollowingLabels(
+  direction: 'incoming' | 'outgoing' | 'bidirectional',
+  labels: LabelOrCondition,
+  {
+    incomingLabels,
+    outGoingLabels,
+  }: {
+    incomingLabels: Map<string, Set<string>>;
+    outGoingLabels: Map<string, Set<string>>;
+  },
+): string[] | undefined {
   let cnfTree: LabelOrCondition;
   try {
     const treeWithRewrittenAnys = removeInnerAnys(labels);
@@ -676,16 +664,16 @@ function possibleFollowingLabels(
     return undefined;
   }
   let allIncomingLabels = new Set<string>();
-  nodesToRelsSet.forEach((part) => {
+  incomingLabels.forEach((part) => {
     allIncomingLabels = allIncomingLabels.union(part);
   });
   let allOutGoingLabels = new Set<string>();
-  nodesFromRelsSet.forEach((part) => {
+  outGoingLabels.forEach((part) => {
     allOutGoingLabels = allOutGoingLabels.union(part);
   });
   const { inLabels, outLabels } = walkCNFTree(
-    nodesToRelsSet,
-    nodesFromRelsSet,
+    incomingLabels,
+    outGoingLabels,
     cnfTree,
   );
   const allNodes =

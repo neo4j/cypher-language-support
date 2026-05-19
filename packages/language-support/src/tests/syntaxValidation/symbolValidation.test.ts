@@ -277,4 +277,310 @@ describe('Semantic validation spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
+
+  test('Handles unfinished rel when reltype is defined', () => {
+    const query = 'MATCH (:Gym)-[:WEAK_TO RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 32,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Path segment does not exist on graph.',
+        offsets: {
+          end: 22,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 22,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
+        offsets: {
+          end: 29,
+          start: 23,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Handles unfinished node when label is defined', () => {
+    const query = 'MATCH (:Gym)-[:IS_IN]->(:Pokemon RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 42,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: 'Path segment does not exist on graph.',
+        offsets: {
+          end: 32,
+          start: 12,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 12,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Invalid input 'RETURN': expected a parameter, '&', ')', ':', 'WHERE', '{' or '|'",
+        offsets: {
+          end: 39,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 39,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Should not fail on broken rel', () => {
+    const query = 'MATCH (n:Gym)<-[ :';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 18,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
+        offsets: {
+          end: 18,
+          start: 18,
+        },
+        range: {
+          end: {
+            character: 18,
+            line: 0,
+          },
+          start: {
+            character: 18,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Should not fail on broken rel v2', () => {
+    const query = 'MATCH (n:Gym)<-[';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 16,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
+        offsets: {
+          end: 16,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 16,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Should not fail on broken node', () => {
+    const query = 'MATCH (n)<-[:WEAK_TO]-( ';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 23,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
+        offsets: {
+          end: 23,
+          start: 23,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Should not fail on broken node v2', () => {
+    const query = 'MATCH (n)<-[:WEAK_TO]-(m ';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 24,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
+        offsets: {
+          end: 24,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });
