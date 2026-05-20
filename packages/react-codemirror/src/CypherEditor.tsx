@@ -187,6 +187,7 @@ export interface CypherEditorProps {
   moveFocusOnTab?: boolean;
   /**
    * Render a panel as a block widget inside the editor.
+   * The widget DOM is only rebuilt when `pos` or `placement` change
    */
   inlinePanel?: InlinePanelProps | null;
 }
@@ -596,6 +597,10 @@ export class CypherEditor extends Component<
 
     const pos = Math.max(0, Math.min(props.pos, view.state.doc.length));
     const line = view.state.doc.lineAt(pos);
+    controller.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
+    });
     view.dispatch({
       effects: controller.show({
         pos: props.placement === 'below' ? line.to : line.from,
@@ -603,6 +608,15 @@ export class CypherEditor extends Component<
         onMount: props.onMount,
         onUnmount: props.onUnmount,
       }),
+    });
+  }
+
+  private updateInlinePanel(
+    props: NonNullable<CypherEditorProps['inlinePanel']>,
+  ): void {
+    this.inlinePanelController?.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
     });
   }
 
@@ -702,15 +716,19 @@ export class CypherEditor extends Component<
       });
     }
 
-    if (prevProps.inlinePanel !== this.props.inlinePanel) {
-      // Reference equality: any change tears down the existing panel and
-      // opens a new one (or closes if the new value is nullish). Hosts
-      // should memoize the prop while a panel is open.
-      if (prevProps.inlinePanel) {
+    const prevPanel = prevProps.inlinePanel;
+    const nextPanel = this.props.inlinePanel;
+    if (prevPanel !== nextPanel) {
+      if (!nextPanel) {
         this.closeInlinePanel();
-      }
-      if (this.props.inlinePanel) {
-        this.openInlinePanel(this.props.inlinePanel);
+      } else if (
+        !prevPanel ||
+        prevPanel.pos !== nextPanel.pos ||
+        prevPanel.placement !== nextPanel.placement
+      ) {
+        this.openInlinePanel(nextPanel);
+      } else {
+        this.updateInlinePanel(nextPanel);
       }
     }
 

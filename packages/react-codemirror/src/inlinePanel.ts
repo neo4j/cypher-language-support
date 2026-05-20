@@ -37,10 +37,13 @@ export type InlinePanelController = {
   show: (options: InlinePanelShowOptions) => StateEffect<ShowPayload>;
   /** Build an effect that unmounts the panel. */
   hide: () => StateEffect<ShowPayload>;
+  updateCallbacks: (callbacks: InlinePanelCallbacks) => void;
 };
 
 export function createInlinePanelController(): InlinePanelController {
   const showEffect = StateEffect.define<ShowPayload>();
+
+  let callbacksRef: InlinePanelCallbacks | null = null;
 
   class InlinePanelWidget extends WidgetType {
     private resizeObserver: ResizeObserver | null = null;
@@ -54,18 +57,21 @@ export function createInlinePanelController(): InlinePanelController {
       container.className = 'cm-inline-panel';
       this.resizeObserver = new ResizeObserver(() => view.requestMeasure());
       this.resizeObserver.observe(container);
-      this.options.onMount(container);
+      callbacksRef?.onMount(container);
       return container;
     }
 
     destroy(): void {
       this.resizeObserver?.disconnect();
       this.resizeObserver = null;
-      this.options.onUnmount();
+      callbacksRef?.onUnmount();
     }
 
     eq(other: InlinePanelWidget): boolean {
-      return other.options === this.options;
+      return (
+        other.options.pos === this.options.pos &&
+        other.options.placement === this.options.placement
+      );
     }
 
     ignoreEvent(): boolean {
@@ -107,5 +113,8 @@ export function createInlinePanelController(): InlinePanelController {
     extension: field,
     show: (options) => showEffect.of(options),
     hide: () => showEffect.of(null),
+    updateCallbacks: (callbacks) => {
+      callbacksRef = callbacks;
+    },
   };
 }
