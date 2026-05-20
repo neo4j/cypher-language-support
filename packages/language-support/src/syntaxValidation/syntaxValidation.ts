@@ -37,16 +37,16 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { ParserRuleContext } from 'antlr4';
 import {
-  getNodesFromRelsSet,
-  getRelsFromNodesSets,
-  walkCNFTree,
-} from '../autocompletion/schemaBasedCompletions.js';
-import {
   convertToCNF,
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
 } from '../labelTreeRewriting.js';
+import {
+  getNodesFromRelsSet,
+  getRelsFromNodesSets,
+  walkCNFTree,
+} from '../labelTreeWalking.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

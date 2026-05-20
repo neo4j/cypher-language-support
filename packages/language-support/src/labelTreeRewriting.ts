@@ -134,7 +134,7 @@ export function childAlreadyExists(
   }
 }
 
-function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition) {
+function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition): boolean {
   if (isLabelLeaf(c1)) {
     return isLabelLeaf(c2) && c1.value === c2.value;
   } else if (isLabelLeaf(c2)) {
