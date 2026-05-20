@@ -43,18 +43,24 @@ export function createInlinePanelController(): InlinePanelController {
   const showEffect = StateEffect.define<ShowPayload>();
 
   class InlinePanelWidget extends WidgetType {
+    private resizeObserver: ResizeObserver | null = null;
+
     constructor(readonly options: InlinePanelShowOptions) {
       super();
     }
 
-    toDOM(): HTMLElement {
+    toDOM(view: EditorView): HTMLElement {
       const container = document.createElement('div');
       container.className = 'cm-inline-panel';
+      this.resizeObserver = new ResizeObserver(() => view.requestMeasure());
+      this.resizeObserver.observe(container);
       this.options.onMount(container);
       return container;
     }
 
     destroy(): void {
+      this.resizeObserver?.disconnect();
+      this.resizeObserver = null;
       this.options.onUnmount();
     }
 

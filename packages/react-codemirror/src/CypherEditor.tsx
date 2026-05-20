@@ -383,7 +383,6 @@ export class CypherEditor extends Component<
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
   private inlinePanelController: InlinePanelController | null = null;
-  private inlinePanelResizeObserver: ResizeObserver | null = null;
 
   /**
    * Format Cypher query
@@ -595,24 +594,14 @@ export class CypherEditor extends Component<
       return;
     }
 
+    const pos = Math.max(0, Math.min(props.pos, view.state.doc.length));
+    const line = view.state.doc.lineAt(pos);
     view.dispatch({
       effects: controller.show({
-        pos: view.state.doc.lineAt(props.pos).from,
+        pos: props.placement === 'below' ? line.to : line.from,
         placement: props.placement,
-        onMount: (container) => {
-          this.inlinePanelResizeObserver?.disconnect();
-          const observer = new ResizeObserver(() => {
-            this.editorView.current?.requestMeasure();
-          });
-          observer.observe(container);
-          this.inlinePanelResizeObserver = observer;
-          props.onMount(container);
-        },
-        onUnmount: () => {
-          this.inlinePanelResizeObserver?.disconnect();
-          this.inlinePanelResizeObserver = null;
-          props.onUnmount();
-        },
+        onMount: props.onMount,
+        onUnmount: props.onUnmount,
       }),
     });
   }
@@ -758,8 +747,6 @@ export class CypherEditor extends Component<
   }
 
   componentWillUnmount(): void {
-    this.inlinePanelResizeObserver?.disconnect();
-    this.inlinePanelResizeObserver = null;
     this.editorView.current?.destroy();
     this.symbolFetcher?.terminate();
     cleanupWorkers();
