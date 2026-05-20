@@ -308,10 +308,8 @@ function findPathIssues(
   dbSchema: DbSchema,
   symbolTable: SymbolTable,
 ): SyntaxDiagnostic[] {
-  const patternElements: PatternElementContext[] = findPatternElements(
-    stmt,
-    [],
-  );
+  const patternElements: PatternElementContext[] =
+    findNonCreatingPatternElements(stmt, []);
   const diagnostics: SyntaxDiagnostic[] = [];
   for (const pattern of patternElements) {
     const children = pattern.children ?? [];
@@ -427,7 +425,7 @@ function findPathIssues(
   return diagnostics;
 }
 
-function findPatternElements(
+function findNonCreatingPatternElements(
   ctx: ParserRuleContext,
   acc: PatternElementContext[],
 ): PatternElementContext[] {
@@ -443,7 +441,7 @@ function findPatternElements(
       acc.push(c);
     }
     if (c instanceof ParserRuleContext) {
-      findPatternElements(c, acc);
+      findNonCreatingPatternElements(c, acc);
     }
   }
   return acc;
