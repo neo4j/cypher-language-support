@@ -8,5 +8,5 @@ export const _internalFeatureFlags: FeatureFlags = {
     typeof process === 'undefined'
       ? false
       : process.env.debugSymbolTable == 'true',
-  lintPatternDirectionalityIssues: true,
+  lintPatternDirectionalityIssues: false,
 };
