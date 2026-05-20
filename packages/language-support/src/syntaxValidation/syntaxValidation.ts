@@ -356,12 +356,7 @@ function findPathIssues(
             nextSymbolLabels.children.length === 1 &&
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
-            if (
-              !possibleRels
-                .values()
-                .toArray()
-                .includes(nextSymbolLabels.children[0].value)
-            ) {
+            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
               diagnostics.push({
                 message: 'Path segment does not exist on graph.',
                 severity: DiagnosticSeverity.Warning,
