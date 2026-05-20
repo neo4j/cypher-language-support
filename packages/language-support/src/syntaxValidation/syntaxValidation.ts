@@ -30,6 +30,9 @@ import {
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
 import {
+  CreateClauseContext,
+  InsertClauseContext,
+  MergeClauseContext,
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
@@ -429,6 +432,13 @@ function findPatternElements(
   acc: PatternElementContext[],
 ): PatternElementContext[] {
   for (const c of ctx.children ?? []) {
+    if (
+      c instanceof MergeClauseContext ||
+      c instanceof CreateClauseContext ||
+      c instanceof InsertClauseContext
+    ) {
+      continue;
+    }
     if (c instanceof PatternElementContext) {
       acc.push(c);
     }

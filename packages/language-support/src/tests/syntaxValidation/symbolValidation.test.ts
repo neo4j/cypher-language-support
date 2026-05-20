@@ -583,4 +583,22 @@ describe('Schema based linting spec', () => {
       },
     ]);
   });
+
+  test('Should not warn on CREATE', () => {
+    const query = 'CREATE (n:Person)<-[:WEAK_TO]-()';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Should not warn on INSERT', () => {
+    const query = 'INSERT (n:Person)<-[:WEAK_TO]-()';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Should not warn on MERGE', () => {
+    const query = 'MERGE (n:Type)-[:IS_IN]->()';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
 });
