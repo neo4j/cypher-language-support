@@ -238,6 +238,22 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
+            new vscode.Position(0, 8),
+            new vscode.Position(0, 32),
+          ),
+          'Path segment does not exist on graph.',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 18),
+            new vscode.Position(0, 65),
+          ),
+          'Path segment does not exist on graph.',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
             new vscode.Position(0, 11),
             new vscode.Position(0, 17),
           ),

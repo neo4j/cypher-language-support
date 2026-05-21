@@ -585,6 +585,69 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  test('Warns both on missing label and path segment at once', () => {
+    const query = 'MATCH (n)<-[:MISSED]-(:Archer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message: 'Path segment does not exist on graph.',
+        offsets: {
+          end: 30,
+          start: 9,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 9,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Relationship type MISSED is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 19,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "Label Archer is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 29,
+          start: 23,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 23,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
   test('Should not warn on CREATE', () => {
     const query = 'CREATE (n:Person)<-[:WEAK_TO]-()';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
