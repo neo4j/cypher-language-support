@@ -571,10 +571,7 @@ export function lintCypherQuery(
         });
 
         let missingPathWarnings: SyntaxDiagnostic[] = [];
-        if (
-          _internalFeatureFlags.lintPatternDirectionalityIssues &&
-          dbSchema.graphSchema
-        ) {
+        if (dbSchema.graphSchema) {
           missingPathWarnings = warnOnPathDirectionalityIssues(
             current,
             dbSchema,

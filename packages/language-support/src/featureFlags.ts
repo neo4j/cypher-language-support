@@ -1,6 +1,5 @@
 interface FeatureFlags {
   debugSymbolTable: boolean;
-  lintPatternDirectionalityIssues: boolean;
 }
 
 export const _internalFeatureFlags: FeatureFlags = {
@@ -8,5 +7,4 @@ export const _internalFeatureFlags: FeatureFlags = {
     typeof process === 'undefined'
       ? false
       : process.env.debugSymbolTable == 'true',
-  lintPatternDirectionalityIssues: false,
 };

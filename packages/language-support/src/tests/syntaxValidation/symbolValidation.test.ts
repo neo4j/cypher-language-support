@@ -44,15 +44,6 @@ const dbSchema = {
 };
 
 describe('Schema based linting spec', () => {
-  let flag: boolean;
-  beforeAll(() => {
-    flag = _internalFeatureFlags.lintPatternDirectionalityIssues;
-    _internalFeatureFlags.lintPatternDirectionalityIssues = true;
-  });
-  afterAll(() => {
-    _internalFeatureFlags.lintPatternDirectionalityIssues = flag;
-  });
-
   test('Warns on invalid path segments. Node->Rel', () => {
     const query = 'MATCH (n:Trainer)-[:WEAK_TO]->() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });

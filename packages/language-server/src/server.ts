@@ -246,12 +246,12 @@ connection.onNotification(
   }) => {
     neo4jSchemaPoller.events.once(
       'schemaFetched',
-      // oxlint-disable-next-line typescript-eslint/no-meaningless-void-operator
-      void symbolFetcher.queueSymbolJob(
-        params.query,
-        params.uri,
-        params.schema,
-      ),
+      () =>
+         symbolFetcher.queueSymbolJob(
+          params.query,
+          params.uri,
+          params.schema,
+        ),
     );
   },
 );
