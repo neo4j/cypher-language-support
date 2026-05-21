@@ -246,18 +246,18 @@ suite('Syntax validation spec', () => {
         ),
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 18),
-            new vscode.Position(0, 65),
-          ),
-          'Path segment does not exist on graph.',
-          vscode.DiagnosticSeverity.Warning,
-        ),
-        new vscode.Diagnostic(
-          new vscode.Range(
             new vscode.Position(0, 11),
             new vscode.Position(0, 17),
           ),
           "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 18),
+            new vscode.Position(0, 65),
+          ),
+          'Path segment does not exist on graph.',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
