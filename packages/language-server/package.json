@@ -41,7 +41,7 @@
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/lint-worker": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
-    "axios": "^1.9.0",
+    "axios": "^1.15.2",
     "lodash.debounce": "^4.0.8",
     "neo4j-driver": "catalog:",
     "vscode-languageserver": "^8.1.0",
