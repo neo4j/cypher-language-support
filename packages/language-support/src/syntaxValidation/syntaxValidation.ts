@@ -654,14 +654,9 @@ export function lintCypherQuery(
           parseResult: current,
         });
 
-        let missingPathWarnings: SyntaxDiagnostic[] = [];
-        if (dbSchema.graphSchema) {
-          missingPathWarnings = warnOnPathDirectionalityIssues(
-            current,
-            dbSchema,
-            symbolTable,
-          );
-        }
+        const missingPathWarnings = dbSchema.graphSchema
+          ? warnOnPathDirectionalityIssues(current, dbSchema, symbolTable)
+          : [];
 
         const diagnostics = semanticDiagnostics
           .concat(
