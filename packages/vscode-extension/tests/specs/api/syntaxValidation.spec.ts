@@ -241,7 +241,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 8),
             new vscode.Position(0, 32),
           ),
-          'Path segment does not exist on graph.',
+          '"Relationship with label ACTED_IN has no incoming connection to a node with label(s) Person."',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
@@ -257,7 +257,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 18),
             new vscode.Position(0, 65),
           ),
-          'Path segment does not exist on graph.',
+          '"Node with label Movie has no incoming connection to a relationship with label(s) ACTED_IN."',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(

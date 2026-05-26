@@ -303,6 +303,52 @@ function warnOnPathDirectionalityIssues(
   }, []);
 }
 
+function labelTreeToString(node: LabelOrCondition): string {
+  if (isLabelLeaf(node)) {
+    return node.value;
+  } else if (node.condition === 'any') {
+    return 'ANY';
+  } else if (node.children.length === 1) {
+    return labelTreeToString(node.children[0]);
+  } else {
+    let separator = ' ';
+    switch (node.condition) {
+      case 'and':
+        separator = ' & ';
+        break;
+      case 'or':
+        separator = ' | ';
+        break;
+      case 'not':
+        separator = '!';
+        break;
+    }
+    const childStrings: string[] = node.children.map((c) =>
+      labelTreeToString(c),
+    );
+    return '(' + childStrings.join(separator) + ')';
+  }
+}
+
+function labelsToMessage(
+  firstLabelTree: LabelOrCondition,
+  connectedLabel: string,
+  direction: 'outgoing' | 'incoming' | 'bidirectional',
+  firstVarType: 'node' | 'relationship' | 'variable',
+) {
+  const directionSubString =
+    direction === 'bidirectional' ? '' : direction + ' ';
+  const secondVarType =
+    firstVarType === 'node'
+      ? 'relationship'
+      : firstVarType === 'relationship'
+        ? 'node'
+        : 'variable';
+  const capitalizedSecondVar =
+    secondVarType.at(0)?.toUpperCase() + secondVarType.slice(1);
+  return `${capitalizedSecondVar} with label ${connectedLabel} has no ${directionSubString}connection to a ${firstVarType} with label(s) ${labelTreeToString(firstLabelTree)}.`;
+}
+
 function findPathIssues(
   stmt: StatementContext,
   dbSchema: DbSchema,
@@ -340,7 +386,9 @@ function findPathIssues(
         )?.labels;
         if (symbol && nextSymbolLabels) {
           const direction =
-            nextChild.leftArrow() && !nextChild.rightArrow()
+            nextChild.leftArrow() &&
+            !nextChild.rightArrow() &&
+            nextChild.arrowLine_list()?.length == 2 //check for 2 lines to handle unfinished rel better
               ? 'outgoing'
               : !nextChild.leftArrow() && nextChild.rightArrow()
                 ? 'incoming'
@@ -357,8 +405,25 @@ function findPathIssues(
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
             if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
+              let firstVarType: 'variable' | 'node' | 'relationship' =
+                'variable';
+              if (symbol.types.length === 1) {
+                switch (symbol.types[0]) {
+                  case 'Node':
+                    firstVarType = 'node';
+                    break;
+                  case 'Relationship':
+                    firstVarType = 'relationship';
+                    break;
+                }
+              }
               diagnostics.push({
-                message: 'Path segment does not exist on graph.',
+                message: labelsToMessage(
+                  symbol.labels,
+                  nextSymbolLabels.children[0].value,
+                  direction,
+                  firstVarType,
+                ),
                 severity: DiagnosticSeverity.Warning,
                 ...translateTokensToRange(child.start, nextChild.stop),
               });
@@ -388,7 +453,9 @@ function findPathIssues(
         )?.labels;
         if (symbol && nextSymbolLabels) {
           const direction =
-            child.leftArrow() && !child.rightArrow()
+            child.leftArrow() &&
+            !child.rightArrow() &&
+            child.arrowLine_list()?.length == 2 //check for 2 lines to handle unfinished rel better
               ? 'outgoing'
               : !child.leftArrow() && child.rightArrow()
                 ? 'incoming'
@@ -406,8 +473,25 @@ function findPathIssues(
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
             if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
+              let firstVarType: 'variable' | 'node' | 'relationship' =
+                'variable';
+              if (symbol.types.length === 1) {
+                switch (symbol.types[0]) {
+                  case 'Node':
+                    firstVarType = 'node';
+                    break;
+                  case 'Relationship':
+                    firstVarType = 'relationship';
+                    break;
+                }
+              }
               diagnostics.push({
-                message: 'Path segment does not exist on graph.',
+                message: labelsToMessage(
+                  symbol.labels,
+                  nextSymbolLabels.children[0].value,
+                  direction,
+                  firstVarType,
+                ),
                 severity: DiagnosticSeverity.Warning,
                 ...translateTokensToRange(child.start, nextChild.stop),
               });

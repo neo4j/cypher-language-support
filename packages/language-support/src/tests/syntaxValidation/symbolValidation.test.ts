@@ -49,7 +49,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Relationship with label WEAK_TO has no incoming connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -80,7 +81,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
         offsets: {
           end: 30,
           start: 6,
@@ -111,7 +113,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -142,7 +145,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Gym has no outgoing connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -173,7 +177,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Relationship with label WEAK_TO has no connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -191,7 +196,8 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Gym has no connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 36,
           start: 16,
@@ -222,7 +228,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
         offsets: {
           end: 33,
           start: 6,
@@ -247,7 +254,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Move has no outgoing connection to a relationship with label(s) (WEAK_TO | IS_IN).',
         offsets: {
           end: 42,
           start: 16,
@@ -259,6 +267,33 @@ describe('Schema based linting spec', () => {
           },
           start: {
             character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles multiple labels on first variable in path segment. Extreme case', () => {
+    const query =
+      'MATCH (:(Trainer|Gym) & (Gym | (Trainer & Pokemon)))<-[:WEAK_TO]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
+        offsets: {
+          end: 65,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 65,
+            line: 0,
+          },
+          start: {
+            character: 6,
             line: 0,
           },
         },
@@ -303,7 +338,8 @@ describe('Schema based linting spec', () => {
         severity: 1,
       },
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Relationship with label WEAK_TO has no connection to a node with label(s) Gym.',
         offsets: {
           end: 22,
           start: 6,
@@ -342,6 +378,96 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  test('Assumes bidirectional direction if rel direction is unfinished (expect no path issues when one way of bidirectional could be true) v1', () => {
+    const query = 'MATCH (:Region)-[:IS_IN RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 33,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
+        offsets: {
+          end: 30,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 30,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
+  test('Assumes bidirectional direction if rel direction is unfinished (expect no path issues when one way of bidirectional could be true) v2', () => {
+    const query = 'MATCH (:Pokemon)<-[:WEAK_TO RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 37,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
+        offsets: {
+          end: 34,
+          start: 28,
+        },
+        range: {
+          end: {
+            character: 34,
+            line: 0,
+          },
+          start: {
+            character: 28,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Handles unfinished node when label is defined', () => {
     const query = 'MATCH (:Gym)-[:IS_IN]->(:Pokemon RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
@@ -366,7 +492,8 @@ describe('Schema based linting spec', () => {
         severity: 1,
       },
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
         offsets: {
           end: 32,
           start: 12,
@@ -590,7 +717,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: 'Path segment does not exist on graph.',
+        message:
+          'Node with label Archer has no outgoing connection to a relationship with label(s) MISSED.',
         offsets: {
           end: 30,
           start: 9,
