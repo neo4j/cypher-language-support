@@ -164,7 +164,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
@@ -204,7 +204,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',

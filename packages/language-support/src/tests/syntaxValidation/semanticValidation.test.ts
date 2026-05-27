@@ -108,7 +108,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 77,
-          start: 58,
+          start: 77,
         },
         range: {
           end: {
@@ -116,7 +116,7 @@ describe('Semantic validation spec', () => {
             line: 2,
           },
           start: {
-            character: 3,
+            character: 22,
             line: 2,
           },
         },
@@ -623,7 +623,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 16,
-          start: 7,
+          start: 16,
         },
         range: {
           end: {
@@ -631,7 +631,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 7,
+            character: 16,
             line: 0,
           },
         },
@@ -668,7 +668,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 54,
-          start: 45,
+          start: 54,
         },
         range: {
           end: {
@@ -676,7 +676,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 45,
+            character: 54,
             line: 0,
           },
         },
@@ -713,7 +713,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 53,
-          start: 44,
+          start: 53,
         },
         range: {
           end: {
@@ -721,7 +721,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 44,
+            character: 53,
             line: 0,
           },
         },
@@ -758,7 +758,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 19,
-          start: 10,
+          start: 19,
         },
         range: {
           end: {
@@ -766,7 +766,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 10,
+            character: 19,
             line: 0,
           },
         },
@@ -803,7 +803,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 17,
-          start: 8,
+          start: 17,
         },
         range: {
           end: {
@@ -811,7 +811,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 8,
+            character: 17,
             line: 0,
           },
         },
@@ -895,25 +895,6 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 56,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 56,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
         message: 'Variable `m` not defined',
         offsets: {
           end: 28,
@@ -945,6 +926,25 @@ describe('Semantic validation spec', () => {
           },
           start: {
             character: 49,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 56,
+          start: 56,
+        },
+        range: {
+          end: {
+            character: 56,
+            line: 0,
+          },
+          start: {
+            character: 56,
             line: 0,
           },
         },
@@ -1080,7 +1080,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with WITH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 29,
-          start: 23,
+          start: 29,
         },
         range: {
           end: {
@@ -1088,7 +1088,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 23,
+            character: 29,
             line: 0,
           },
         },
@@ -1234,7 +1234,7 @@ Attempted to access graph other`,
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 26,
-          start: 17,
+          start: 26,
         },
         range: {
           end: {
@@ -1242,7 +1242,7 @@ Attempted to access graph other`,
             line: 0,
           },
           start: {
-            character: 17,
+            character: 26,
             line: 0,
           },
         },

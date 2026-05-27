@@ -52,25 +52,6 @@ describe('Syntactic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 21,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 21,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
           "Invalid input 'WERE': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
         offsets: {
           end: 21,
@@ -83,6 +64,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 21,
             line: 0,
           },
         },
@@ -97,25 +97,6 @@ describe('Syntactic validation spec', () => {
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 21,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 21,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
           "Invalid input 'WERE': expected a graph pattern, ',', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'USING', 'WHERE', 'WITH' or <EOF>",
         offsets: {
           end: 21,
@@ -128,6 +109,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 21,
             line: 0,
           },
         },
@@ -165,25 +165,6 @@ describe('Syntactic validation spec', () => {
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 112,
-          start: 89,
-        },
-        range: {
-          end: {
-            character: 45,
-            line: 2,
-          },
-          start: {
-            character: 22,
-            line: 2,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: n)',
         offsets: {
           end: 97,
@@ -200,6 +181,25 @@ describe('Syntactic validation spec', () => {
           },
         },
         severity: 2,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 112,
+          start: 112,
+        },
+        range: {
+          end: {
+            character: 45,
+            line: 2,
+          },
+          start: {
+            character: 45,
+            line: 2,
+          },
+        },
+        severity: 1,
       },
       {
         message: "Invalid input 'n': expected an expression",
@@ -691,25 +691,6 @@ describe('Syntactic validation spec', () => {
     ).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 19,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 19,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
           "Invalid input ')': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 10,
@@ -722,6 +703,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 9,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 19,
+          start: 19,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 19,
             line: 0,
           },
         },
@@ -1020,25 +1020,6 @@ describe('Syntactic validation spec', () => {
         severity: 2,
       },
       {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 25,
-          start: 7,
-        },
-        range: {
-          end: {
-            character: 25,
-            line: 0,
-          },
-          start: {
-            character: 7,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
         message: "Invalid input '}': expected an expression, '*' or 'DISTINCT'",
         offsets: {
           end: 25,
@@ -1051,6 +1032,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 24,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 25,
+          start: 25,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 25,
             line: 0,
           },
         },
@@ -1326,25 +1326,6 @@ describe('Syntactic validation spec', () => {
       }),
     ).toEqual([
       {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 41,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 41,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
         message: `Invalid input '"foo"': expected '}' or an integer value`,
         offsets: {
           end: 40,
@@ -1362,6 +1343,25 @@ describe('Syntactic validation spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 41,
+          start: 41,
+        },
+        range: {
+          end: {
+            character: 41,
+            line: 0,
+          },
+          start: {
+            character: 41,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -1373,25 +1373,6 @@ describe('Syntactic validation spec', () => {
         query,
       }),
     ).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 19,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 19,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
       {
         message:
           "Invalid input ''Person'': expected a node label/relationship type name, '$', '%' or '('",
@@ -1411,6 +1392,25 @@ describe('Syntactic validation spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 19,
+          start: 19,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 0,
+          },
+          start: {
+            character: 19,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -1422,25 +1422,6 @@ describe('Syntactic validation spec', () => {
         query,
       }),
     ).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 21,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 21,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
       {
         message:
           "Invalid input ''Person'': expected an identifier, '$', '%' or '('",
@@ -1455,6 +1436,25 @@ describe('Syntactic validation spec', () => {
           },
           start: {
             character: 12,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 21,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 21,
+            line: 0,
+          },
+          start: {
+            character: 21,
             line: 0,
           },
         },
@@ -1686,5 +1686,39 @@ describe('Syntactic validation spec', () => {
         },
       }),
     ).toEqual([]);
+  });
+
+  test('No long message on unfinished query', () => {
+    const query = 'CYPHER 25 MATCH (n)-[r]->()<-[u]-(m)--()-[v]->(q)';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 49,
+          start: 49,
+        },
+        range: {
+          end: {
+            character: 49,
+            line: 0,
+          },
+          start: {
+            character: 49,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
   });
 });
