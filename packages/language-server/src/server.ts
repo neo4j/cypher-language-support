@@ -244,14 +244,8 @@ connection.onNotification(
     version: number;
     schema: DbSchema;
   }) => {
-    neo4jSchemaPoller.events.once(
-      'schemaFetched',
-      // oxlint-disable-next-line typescript-eslint/no-meaningless-void-operator
-      void symbolFetcher.queueSymbolJob(
-        params.query,
-        params.uri,
-        params.schema,
-      ),
+    neo4jSchemaPoller.events.once('schemaFetched', () =>
+      symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema),
     );
   },
 );

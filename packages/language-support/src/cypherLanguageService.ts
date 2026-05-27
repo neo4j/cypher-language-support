@@ -802,7 +802,7 @@ function parseToCommand(
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
 }
 
-function translateTokensToRange(
+export function translateTokensToRange(
   start: Token,
   stop: Token,
 ): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
