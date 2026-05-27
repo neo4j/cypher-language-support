@@ -320,25 +320,6 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 32,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 32,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
           'Relationship with label WEAK_TO has no connection to a node with label(s) Gym.',
         offsets: {
           end: 22,
@@ -375,6 +356,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 32,
+          start: 32,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 32,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -382,25 +382,6 @@ describe('Schema based linting spec', () => {
     const query = 'MATCH (:Region)-[:IS_IN RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 33,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 33,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -420,6 +401,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 33,
+          start: 33,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 33,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -427,25 +427,6 @@ describe('Schema based linting spec', () => {
     const query = 'MATCH (:Pokemon)<-[:WEAK_TO RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 37,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 37,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -465,6 +446,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 37,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 37,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -472,25 +472,6 @@ describe('Schema based linting spec', () => {
     const query = 'MATCH (:Gym)-[:IS_IN]->(:Pokemon RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 42,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 42,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
       {
         message:
           'Node with label Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
@@ -529,6 +510,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 42,
+          start: 42,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 42,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -538,10 +538,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 18,
-          start: 0,
+          start: 18,
         },
         range: {
           end: {
@@ -549,7 +549,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 18,
             line: 0,
           },
         },
@@ -557,7 +557,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 18,
           start: 18,
@@ -583,10 +583,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
         offsets: {
           end: 16,
-          start: 0,
+          start: 16,
         },
         range: {
           end: {
@@ -594,7 +594,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 16,
             line: 0,
           },
         },
@@ -602,7 +602,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 16,
           start: 16,
@@ -628,10 +628,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 23,
-          start: 0,
+          start: 23,
         },
         range: {
           end: {
@@ -639,7 +639,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 23,
             line: 0,
           },
         },
@@ -647,7 +647,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 23,
           start: 23,
@@ -673,10 +673,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 24,
-          start: 0,
+          start: 24,
         },
         range: {
           end: {
@@ -684,7 +684,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 24,
             line: 0,
           },
         },
@@ -692,7 +692,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 24,
           start: 24,
