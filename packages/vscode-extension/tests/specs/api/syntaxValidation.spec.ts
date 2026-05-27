@@ -238,10 +238,26 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
+            new vscode.Position(0, 8),
+            new vscode.Position(0, 32),
+          ),
+          'Relationship with label ACTED_IN has no incoming connection to a node with label(s) Person.',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
             new vscode.Position(0, 11),
             new vscode.Position(0, 17),
           ),
           "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 18),
+            new vscode.Position(0, 65),
+          ),
+          'Node with label Movie has no incoming connection to a relationship with label(s) ACTED_IN.',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
