@@ -1,9 +1,36 @@
 import { DbSchema, testData } from '@neo4j-cypher/language-support';
-import { CypherEditor } from '@neo4j-cypher/react-codemirror';
-import { useMemo, useRef, useState } from 'react';
+import {
+  CypherEditor,
+  type InlinePanelProps,
+} from '@neo4j-cypher/react-codemirror';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Tree } from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './treeUtil';
+
+function InlinePanelDemo({ onClose }: { onClose: () => void }) {
+  const [text, setText] = useState('');
+  return (
+    <div className="border w-fit border-blue-400 bg-blue-50 dark:bg-gray-700 dark:border-blue-300 p-3 m-1 rounded flex flex-col gap-2 text-black dark:text-white">
+      <div className="text-sm">Inline panel demo</div>
+      <div className="flex gap-2 items-center text-sm">
+        <input
+          className="border px-2 py-1 text-black rounded flex-1"
+          value={text}
+          onChange={(e) => setText(e.target.value)}
+          placeholder="Type something"
+        />
+        <button
+          className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-1 rounded"
+          onClick={onClose}
+        >
+          Close
+        </button>
+      </div>
+    </div>
+  );
+}
 
 const demos = {
   allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 
@@ -47,6 +74,12 @@ export function App() {
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
+  const [isInlinePanelOpen, setIsInlinePanelOpen] = useState(false);
+  const [inlinePanelContainer, setInlinePanelContainer] =
+    useState<HTMLElement | null>(null);
+
+  const closeInlinePanel = useCallback(() => setIsInlinePanelOpen(false), []);
+
   const extraKeybindings = [
     {
       key: 'Ctrl-Shift-f',
@@ -60,6 +93,15 @@ export function App() {
   ];
 
   const editorRef = useRef<CypherEditor>(null);
+
+  const inlinePanel: InlinePanelProps | null = isInlinePanelOpen
+    ? {
+        pos:
+          editorRef.current?.editorView.current?.state.selection.main.from ?? 0,
+        onMount: setInlinePanelContainer,
+        onUnmount: () => setInlinePanelContainer(null),
+      }
+    : null;
 
   const treeData = useMemo(() => {
     return getDebugTree(value);
@@ -131,18 +173,32 @@ export function App() {
                 consoleCommands: true,
               }}
               ariaLabel="Cypher Editor"
+              inlinePanel={inlinePanel}
             />
-            <p
-              onClick={() => editorRef.current.format()}
-              className="text-blue-500 cursor-pointer hover:text-blue-700"
-              title={
-                window.navigator.userAgent.includes('Mac')
-                  ? 'Shift-Option-F'
-                  : 'Ctrl-Shift-I'
-              }
-            >
-              Format Query
-            </p>
+            {inlinePanelContainer &&
+              createPortal(
+                <InlinePanelDemo onClose={closeInlinePanel} />,
+                inlinePanelContainer,
+              )}
+            <div className="flex gap-4">
+              <p
+                onClick={() => editorRef.current.format()}
+                className="text-blue-500 cursor-pointer hover:text-blue-700"
+                title={
+                  window.navigator.userAgent.includes('Mac')
+                    ? 'Shift-Option-F'
+                    : 'Ctrl-Shift-I'
+                }
+              >
+                Format Query
+              </p>
+              <p
+                onClick={() => setIsInlinePanelOpen((prevState) => !prevState)}
+                className="text-blue-500 cursor-pointer hover:text-blue-700"
+              >
+                {isInlinePanelOpen ? 'Close inline panel' : 'Open inline panel'}
+              </p>
+            </div>
             {commandRanCount > 0 && (
               <span className="text-gray-400">
                 "commands" ran so far: {commandRanCount}
