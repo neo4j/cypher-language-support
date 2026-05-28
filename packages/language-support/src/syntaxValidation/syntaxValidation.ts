@@ -337,7 +337,7 @@ function labelsToMessage(
   firstVarType: 'node' | 'relationship',
 ) {
   const directionSubString =
-    direction === 'bidirectional' ? '' : direction + ' ';
+    direction === 'bidirectional' ? 'incoming/outgoing' : direction;
   const secondVarString =
     firstVarType === 'node'
       ? '[:' + connectedLabel + ']'

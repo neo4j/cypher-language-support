@@ -49,7 +49,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no incoming  (:Trainer)',
+        message: '[:WEAK_TO] has no incoming (:Trainer)',
         offsets: {
           end: 30,
           start: 6,
@@ -80,7 +80,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no outgoing  (:Pokemon)',
+        message: '[:WEAK_TO] has no outgoing (:Pokemon)',
         offsets: {
           end: 30,
           start: 6,
@@ -111,7 +111,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Gym) has no incoming  [:WEAK_TO]',
+        message: '(:Gym) has no incoming [:WEAK_TO]',
         offsets: {
           end: 27,
           start: 8,
@@ -142,7 +142,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Gym) has no outgoing  [:WEAK_TO]',
+        message: '(:Gym) has no outgoing [:WEAK_TO]',
         offsets: {
           end: 27,
           start: 8,
@@ -222,7 +222,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no outgoing  (:(Trainer | Gym))',
+        message: '[:WEAK_TO] has no outgoing (:(Trainer | Gym))',
         offsets: {
           end: 33,
           start: 6,
@@ -247,7 +247,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Move) has no outgoing  [:(WEAK_TO | IS_IN)]',
+        message: '(:Move) has no outgoing [:(WEAK_TO | IS_IN)]',
         offsets: {
           end: 42,
           start: 16,
@@ -274,7 +274,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          '[:WEAK_TO] has no outgoing  (:((Trainer | Gym) & (Gym | (Trainer & Pokemon))))',
+          '[:WEAK_TO] has no outgoing (:((Trainer | Gym) & (Gym | (Trainer & Pokemon))))',
         offsets: {
           end: 65,
           start: 6,
@@ -464,7 +464,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Pokemon) has no incoming  [:IS_IN]',
+        message: '(:Pokemon) has no incoming [:IS_IN]',
         offsets: {
           end: 32,
           start: 12,
@@ -707,7 +707,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Archer) has no outgoing  [:MISSED]',
+        message: '(:Archer) has no outgoing [:MISSED]',
         offsets: {
           end: 30,
           start: 9,
