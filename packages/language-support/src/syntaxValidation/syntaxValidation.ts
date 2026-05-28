@@ -87,6 +87,15 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
+type GenericDiagnostic = { message: string };
+
+export function filterParams<T extends GenericDiagnostic>(
+  diagnostics: T[],
+): T[] {
+  const paramRegex = /Parameter .+ is not defined./;
+  return diagnostics.filter((x) => !x.message.match(paramRegex));
+}
+
 export function clampUnsafePositions(
   diagnostics: SyntaxDiagnostic[],
   document: TextDocument,

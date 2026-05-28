@@ -1,9 +1,12 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   clampUnsafePositions,
+  filterParams,
   SyntaxDiagnostic,
 } from '../syntaxValidation/syntaxValidation.js';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { getDiagnosticsForQuery } from './syntaxValidation/helpers.js';
+import { testData } from './testData.js';
 
 describe('Clean positions', () => {
   test('Cleaning positions should mark the entire document when a position is negative.', () => {
@@ -45,6 +48,26 @@ describe('Clean positions', () => {
     const cleanedError = clampUnsafePositions([error], textDoc)[0];
     expect(cleanedError).toBe(error);
   });
+});
+
+test('Can filter out missing parameter warnings when disconnected using filterParams', () => {
+  const query =
+    'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+
+  expect(
+    filterParams(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+          parameters: {
+            'some param': 21,
+          },
+          databaseNames: [],
+        },
+      }),
+    ),
+  ).toEqual([]);
 });
 
 function testPositionCoversDoc(

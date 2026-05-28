@@ -4,6 +4,7 @@ import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
 import type { LintWorker } from '@neo4j-cypher/lint-worker';
+import { filterParams } from '@neo4j-cypher/language-support';
 
 const WorkerURL = new URL('./lintWorker.mjs', import.meta.url).pathname;
 
@@ -44,8 +45,9 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
 
       const a: Diagnostic[] = result.diagnostics.map((diagnostic) => {
         return {
-          from: diagnostic.offsets.start,
-          to: diagnostic.offsets.end,
+          from: diagnostic.offsets.start >= 0 ? diagnostic.offsets.start : 0,
+          to:
+            diagnostic.offsets.end >= 0 ? diagnostic.offsets.end : query.length,
           severity:
             diagnostic.severity === DiagnosticSeverity.Error
               ? 'error'
@@ -57,6 +59,9 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
             : {}),
         };
       });
+      if (!config.schema?.databaseNames?.length) {
+        return filterParams(a);
+      }
       return a;
     } catch (err) {
       if (!String(err).includes('Worker terminated')) {
