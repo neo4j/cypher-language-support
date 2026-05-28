@@ -93,7 +93,9 @@ export function filterParams<T extends GenericDiagnostic>(
   diagnostics: T[],
 ): T[] {
   const paramRegex = /Parameter .+ is not defined./;
-  return diagnostics.filter((x) => !x.message.match(paramRegex));
+  return diagnostics.filter(
+    (x) => x.message.length > 1000 || !x.message.match(paramRegex),
+  );
 }
 
 export function clampUnsafePositions(
