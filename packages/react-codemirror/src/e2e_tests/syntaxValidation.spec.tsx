@@ -131,8 +131,8 @@ test('Semantic errors are correctly accumulated', async ({ page, mount }) => {
 
   await mount(<CypherEditor value={query} />);
 
-  await editorPage.checkErrorMessage(
-    ')',
+  await editorPage.checkHoverError(
+    0,
     'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
   );
 
@@ -151,8 +151,8 @@ test('Multiline errors are correctly placed', async ({ page, mount }) => {
 
   await mount(<CypherEditor value={query} />);
 
-  await editorPage.checkErrorMessage(
-    ')',
+  await editorPage.checkHoverError(
+    0,
     'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
   );
 
@@ -171,8 +171,8 @@ test('Validation errors are correctly overlapped', async ({ page, mount }) => {
 
   await mount(<CypherEditor value={query} />);
 
-  await editorPage.checkErrorMessage(
-    '1',
+  await editorPage.checkHoverError(
+    0,
     'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
   );
 

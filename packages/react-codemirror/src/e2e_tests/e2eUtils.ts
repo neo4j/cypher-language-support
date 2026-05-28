@@ -69,6 +69,30 @@ export class CypherEditorPage {
     });
   }
 
+  //So we can test errors without needing to match text
+  //especially useful for errors like "Query cannot conclude with..."
+  //that we shorten to a single position
+  async checkHoverError(index: number, expectedMsg: string) {
+    await expect(
+      this.page.locator('.cm-lintRange-error').nth(index),
+    ).toBeVisible({ timeout: 10000 });
+    await this.page.locator('.cm-lintRange-error').nth(index).hover();
+    await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
+      timeout: 10000,
+    });
+    await this.checkHoverMessage(expectedMsg, 'error');
+    /* Return the mouse to the beginning of the query and
+       This is because if for example we have an overlay with a 
+       first interaction that covers the element we want to perform
+       the second interaction on, we won't be able to see that second element
+    */
+    await this.page.mouse.move(0, 0);
+    // Make sure the tooltip closed
+    await expect(
+      this.page.locator('.cm-tooltip-hover').last(),
+    ).not.toBeVisible();
+  }
+
   private async checkNotificationMessage(
     type: 'error' | 'warning',
     queryChunk: string,
