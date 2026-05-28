@@ -173,7 +173,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no  (:Trainer)',
+        message: '[:WEAK_TO] has no incoming/outgoing (:Trainer)',
         offsets: {
           end: 30,
           start: 6,
@@ -191,7 +191,7 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
       {
-        message: '(:Gym) has no  [:WEAK_TO]',
+        message: '(:Gym) has no incoming/outgoing [:WEAK_TO]',
         offsets: {
           end: 36,
           start: 16,
@@ -311,7 +311,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no  (:Gym)',
+        message: '[:WEAK_TO] has no incoming/outgoing (:Gym)',
         offsets: {
           end: 22,
           start: 6,
