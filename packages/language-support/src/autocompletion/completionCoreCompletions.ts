@@ -307,11 +307,11 @@ const parameterCompletions = (
         ? { insertText: `$${backtickedName}` }
         : {};
       // If there is a preceding token and it's not empty, compute the suffix
-      if (previousToken.type !== CypherLexer.SPACE) {
+      if (previousToken && tokens && previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
         const hasDollar =
           previousToken.type === CypherLexer.DOLLAR ||
-          tokens.at(previousToken.tokenIndex - 1).type === CypherLexer.DOLLAR;
+          tokens.at(previousToken.tokenIndex - 1)?.type === CypherLexer.DOLLAR;
         // If the $ symbol is already there, we need to have the insert
         // text without the starting $ in VSCode, otherwise when we have
         // 'RETURN $' and we get offered $param we would complete
