@@ -72,11 +72,11 @@ export class CypherEditorPage {
   //So we can test errors without needing to match text
   //especially useful for errors like "Query cannot conclude with..."
   //that we shorten to a single position
-  async checkHoverError(index: number, expectedMsg: string) {
+  async checkLintPointError(index: number, expectedMsg: string) {
     await expect(
-      this.page.locator('.cm-lintRange-error').nth(index),
+      this.page.locator('.cm-lintPoint-error').nth(index),
     ).toBeVisible({ timeout: 10000 });
-    await this.page.locator('.cm-lintRange-error').nth(index).hover();
+    await this.page.locator('.cm-lintPoint-error').nth(index).hover();
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
       timeout: 10000,
     });
