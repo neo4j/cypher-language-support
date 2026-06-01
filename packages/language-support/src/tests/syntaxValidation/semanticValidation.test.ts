@@ -1612,6 +1612,7 @@ Attempted to access graph other`,
         severity: 1,
       },
     ]);
+    expect(true).toEqual(true);
   });
 
   test('Shows errors for nesting of quantified path patterns', () => {
