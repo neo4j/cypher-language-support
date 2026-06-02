@@ -223,7 +223,7 @@ export async function executeFile(
 
 export async function ensureNotificationsAreDismissed(
   browser: WebdriverIO.Browser,
-): Promise<void> {
+): Promise<boolean> {
   const wb = await browser.getWorkbench();
   return await browser.waitUntil(async () => {
     const notifications = await wb.getNotifications();
