@@ -96,18 +96,18 @@ export async function createNewConnection(containerName: string) {
   if (connectionWebview) {
     await connectionWebview.open();
 
-    const schemeInput = await $('#scheme');
-    const hostInput = await $('#host');
-    const portInput = await $('#port');
-    const userInput = await $('#user');
-    const passwordInput = await $('#password');
+    const schemeInput = $('#scheme');
+    const hostInput = $('#host');
+    const portInput = $('#port');
+    const userInput = $('#user');
+    const passwordInput = $('#password');
     await schemeInput.selectByVisibleText('neo4j://');
     await hostInput.setValue('localhost');
     await portInput.setValue(port);
     await userInput.setValue('neo4j');
     await passwordInput.setValue('password');
 
-    const saveConnectionButton = await $('#save-connection');
+    const saveConnectionButton = $('#save-connection');
     await saveConnectionButton.click();
 
     await connectionWebview.close();
@@ -172,17 +172,17 @@ export async function selectValue(
   value: string,
 ) {
   await webview.open();
-  const element = await $(elem);
+  const element = $(elem);
   await element.selectByVisibleText(value);
   await webview.close();
 }
 
 export async function setText(webview: WebView, elem: string, value: string) {
   await webview.open();
-  await (await $(elem)).clearValue();
+  await $(elem).clearValue();
   await webview.close();
   await webview.open();
-  await (await $(elem)).addValue(value);
+  await $(elem).addValue(value);
   await webview.close();
 }
 

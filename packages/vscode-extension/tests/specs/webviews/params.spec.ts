@@ -16,13 +16,13 @@ import {
 export async function expectSummariesContain(
   expectedSubstrings: (string | undefined)[],
 ) {
-  const queryDetails = await $$('#queryDetails .collapsible');
+  const queryDetails = $$('#queryDetails .collapsible');
   await expect(queryDetails.length).toBe(expectedSubstrings.length);
 
   for (let i = 0; i < expectedSubstrings.length; i++) {
-    const queryDetail = (await $$('#queryDetails .collapsible'))[i];
+    const queryDetail = $$('#queryDetails .collapsible')[i];
     //This matches the expand/collapse button, but we only want to click when collapsed
-    const expandButton = await queryDetail.$('button[aria-label*="statement"]');
+    const expandButton = queryDetail.$('button[aria-label*="statement"]');
     const isCollapsed =
       (await expandButton.getAttribute('aria-expanded')) === 'false';
     if (isCollapsed) {
@@ -41,7 +41,7 @@ export async function expectSummariesContain(
 
 /** Checks that the visualization view contains a table with all the expected items in it's body */
 export async function expectTableContent(expectedItems: string[]) {
-  const tableItems = await $$('.vizWrapper-table-cell.n-code');
+  const tableItems = $$('.vizWrapper-table-cell.n-code');
   await expect(tableItems.length).toBe(expectedItems.length);
   for (let i = 0; i < expectedItems.length; i++) {
     const tableItem = await tableItems[i].getText();
