@@ -18,6 +18,7 @@ import {
   type InlinePanelCallbacks,
   type InlinePanelController,
 } from './inlinePanel';
+import { createDiffExtension, type DiffProps } from './diffView';
 import {
   formatQuery,
   CypherLanguageService,
@@ -190,6 +191,11 @@ export interface CypherEditorProps {
    * The widget DOM is only rebuilt when `pos` or `placement` change
    */
   inlinePanel?: InlinePanelProps | null;
+  /**
+   * Render a unified diff of the current document against `diff.original`.
+   * Deleted lines are shown as uneditable widgets.
+   */
+  diff?: DiffProps | null;
 }
 
 export type InlinePanelProps = {
@@ -291,6 +297,7 @@ const lineNumbersCompartment = new Compartment();
 const readOnlyCompartment = new Compartment();
 const placeholderCompartment = new Compartment();
 const domEventHandlerCompartment = new Compartment();
+const diffCompartment = new Compartment();
 
 const formatLineNumber =
   (prompt?: string) => (a: number, state: EditorState) => {
@@ -563,6 +570,9 @@ export class CypherEditor extends Component<
             })
           : [],
         this.inlinePanelController.extension,
+        diffCompartment.of(
+          this.props.diff ? createDiffExtension(this.props.diff) : [],
+        ),
       ],
       doc: this.props.value,
     });
@@ -729,6 +739,25 @@ export class CypherEditor extends Component<
         this.openInlinePanel(nextPanel);
       } else {
         this.updateInlinePanel(nextPanel);
+      }
+    }
+
+    if (prevProps.diff?.original !== this.props.diff?.original) {
+      this.editorView.current.dispatch({
+        effects: diffCompartment.reconfigure(
+          this.props.diff ? createDiffExtension(this.props.diff) : [],
+        ),
+      });
+
+      // When the diff first appears the inline panel widget may have drifted
+      // to an arbitrary position because of the deleted lines widget.
+      // Re-anchor it now so it sits adjacent to the diff
+      if (
+        prevProps.diff === null &&
+        this.props.diff !== null &&
+        this.props.inlinePanel
+      ) {
+        this.openInlinePanel(this.props.inlinePanel);
       }
     }
 
