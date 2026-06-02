@@ -1,6 +1,6 @@
 import {
   clampUnsafePositions,
-  filterParams,
+  isNotParamError,
   SymbolTable,
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
@@ -96,7 +96,7 @@ function filterLintResult(
   document: TextDocument,
 ) {
   return dontWarnOnParams
-    ? clampUnsafePositions(filterParams(diagnostics), document)
+    ? clampUnsafePositions(diagnostics.filter(isNotParamError), document)
     : clampUnsafePositions(diagnostics, document);
 }
 

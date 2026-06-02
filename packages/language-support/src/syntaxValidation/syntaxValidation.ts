@@ -89,12 +89,12 @@ function detectNonDeclaredLabel(
 
 type GenericDiagnostic = { message: string };
 
-export function filterParams<T extends GenericDiagnostic>(
-  diagnostics: T[],
-): T[] {
-  const paramRegex = /Parameter .+ is not defined./;
-  return diagnostics.filter(
-    (x) => x.message.length > 1000 || !x.message.match(paramRegex),
+export function isNotParamError<T extends GenericDiagnostic>(
+  diagnostic: T,
+): boolean {
+  return (
+    !diagnostic.message.startsWith('Parameter ') ||
+    !diagnostic.message.endsWith(' is not defined.')
   );
 }
 
@@ -812,6 +812,8 @@ function warningOnDeprecatedFunction(
   }
   return warnings;
 }
+
+export const paramMsgStart = 'Parameter ';
 
 function errorOnUndeclaredParameters(
   parsingResult: ParsedStatement,

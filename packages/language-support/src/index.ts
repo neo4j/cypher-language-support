@@ -27,7 +27,7 @@ export type { ParsedCypherToken } from './syntaxHighlighting/syntaxHighlightingH
 export {
   lintCypherQuery,
   clampUnsafePositions,
-  filterParams,
+  isNotParamError,
 } from './syntaxValidation/syntaxValidation.js';
 export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
 export { testData } from './tests/testData.js';
