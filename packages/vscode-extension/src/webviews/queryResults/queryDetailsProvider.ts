@@ -123,7 +123,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       },
     };
 
-    function findDeepestCauseMessage(error: Neo4jError): string {
+    function findDeepestCauseMessage(error: Error): string {
       let current: Error | Neo4jError = error;
       while (current instanceof Neo4jError && current.cause) {
         current = current.cause;
@@ -131,17 +131,11 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       return current.message;
     }
 
-    if (result instanceof Neo4jError) {
+    if (result instanceof Error) {
       message.result = {
         ...message.result,
         type: 'error',
         errorMessage: findDeepestCauseMessage(result),
-      };
-    } else if (result instanceof Error) {
-      message.result = {
-        ...message.result,
-        type: 'error',
-        errorMessage: result.message,
       };
     } else {
       const resultRecords = result.records.map((record) =>
