@@ -17,7 +17,9 @@ runs:
     - name: Setup node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 24
+        # Pinned version below 24.16.0: that release breaks the wdio-vscode webview tests.
+        # See issue we ran into at the same time in playwright https://github.com/microsoft/playwright/issues/40724
+        node-version: 24.15.0
         cache: 'pnpm'
         registry-url: 'https://registry.npmjs.org'
 
