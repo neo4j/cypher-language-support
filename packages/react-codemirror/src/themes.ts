@@ -7,17 +7,17 @@ import {
 import { tokens } from './ndlTokensCopy';
 
 const lightDiffColors: DiffColors = {
-  insertedLine: '#E7FCD7',
-  insertedText: '#BCF194',
-  deletedLine: '#FFE9E7',
-  deletedText: '#FFD7D2',
+  insertedLine: tokens.colors.forest['10'],
+  insertedText: tokens.colors.forest['15'],
+  deletedLine: tokens.colors.hibiscus['10'],
+  deletedText: tokens.colors.hibiscus['15'],
 };
 
 const darkDiffColors: DiffColors = {
-  insertedLine: '#0A4324',
-  insertedText: '#145439',
-  deletedLine: '#4E0900',
-  deletedText: '#730E00',
+  insertedLine: tokens.colors.forest['65'],
+  insertedText: tokens.colors.forest['55'],
+  deletedLine: tokens.colors.hibiscus['65'],
+  deletedText: tokens.colors.hibiscus['55'],
 };
 
 export const lightThemeConstants: ThemeOptions = {

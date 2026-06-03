@@ -236,21 +236,21 @@ export const createCypherTheme = ({
       },
     },
     ...(diffColors && {
-      '.cm-changedLine': {
+      '&.cm-merge-b .cm-changedLine': {
         backgroundColor: diffColors.insertedLine,
       },
-      '.cm-changedText': {
-        background: `${diffColors.insertedText} !important`,
+      '&.cm-merge-b .cm-changedText': {
+        background: diffColors.insertedText,
       },
-      '.cm-deletedChunk': {
+      '&.cm-merge-b .cm-deletedChunk': {
         backgroundColor: diffColors.deletedLine,
       },
-      '.cm-deletedChunk .cm-deletedText': {
-        background: `${diffColors.deletedText} !important`,
+      '&.cm-merge-b .cm-deletedChunk .cm-deletedText': {
+        background: diffColors.deletedText,
       },
       // Hide the empty deletion widget that unifiedMergeView renders
       // when the original document is empty (its only line is an empty <del>).
-      '.cm-deletedChunk:has(> .cm-deletedLine:only-child > del > br:only-child)':
+      '&.cm-merge-b .cm-deletedChunk:has(> .cm-deletedLine:only-child > del > br:only-child)':
         {
           display: 'none',
         },
