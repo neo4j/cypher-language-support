@@ -14,6 +14,11 @@ import {
   ViewUpdate,
 } from '@codemirror/view';
 import {
+  createInlinePanelController,
+  type InlinePanelCallbacks,
+  type InlinePanelController,
+} from './inlinePanel';
+import {
   formatQuery,
   CypherLanguageService,
   type DbSchema,
@@ -180,7 +185,25 @@ export interface CypherEditorProps {
    * @default false
    */
   moveFocusOnTab?: boolean;
+  /**
+   * Render a panel as a block widget inside the editor.
+   * The widget DOM is only rebuilt when `pos` or `placement` change
+   */
+  inlinePanel?: InlinePanelProps | null;
 }
+
+export type InlinePanelProps = {
+  /**
+   * Position the panel anchors to.
+   */
+  pos: number;
+  /**
+   * Whether to render above or below the line
+   *
+   * @default 'above'
+   */
+  placement?: 'above' | 'below';
+} & InlinePanelCallbacks;
 
 const format = (view: EditorView): void => {
   try {
@@ -360,6 +383,7 @@ export class CypherEditor extends Component<
    */
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+  private inlinePanelController: InlinePanelController | null = null;
 
   /**
    * Format Cypher query
@@ -471,6 +495,8 @@ export class CypherEditor extends Component<
       overrideThemeBackgroundColor,
     );
 
+    this.inlinePanelController = createInlinePanelController();
+
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
@@ -536,6 +562,7 @@ export class CypherEditor extends Component<
                 'Press Escape to leave the editor and continue tabbing through the page',
             })
           : [],
+        this.inlinePanelController.extension,
       ],
       doc: this.props.value,
     });
@@ -553,6 +580,53 @@ export class CypherEditor extends Component<
     } else if (this.props.offset) {
       this.updateCursorPosition(this.props.offset);
     }
+
+    if (this.props.inlinePanel) {
+      this.openInlinePanel(this.props.inlinePanel);
+    }
+  }
+
+  private openInlinePanel(
+    props: NonNullable<CypherEditorProps['inlinePanel']>,
+  ): void {
+    const view = this.editorView.current;
+    const controller = this.inlinePanelController;
+    if (!view || !controller) {
+      return;
+    }
+
+    const pos = Math.max(0, Math.min(props.pos, view.state.doc.length));
+    const line = view.state.doc.lineAt(pos);
+    controller.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
+    });
+    view.dispatch({
+      effects: controller.show({
+        pos: props.placement === 'below' ? line.to : line.from,
+        placement: props.placement,
+        onMount: props.onMount,
+        onUnmount: props.onUnmount,
+      }),
+    });
+  }
+
+  private updateInlinePanel(
+    props: NonNullable<CypherEditorProps['inlinePanel']>,
+  ): void {
+    this.inlinePanelController?.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
+    });
+  }
+
+  private closeInlinePanel(): void {
+    const view = this.editorView.current;
+    const controller = this.inlinePanelController;
+    if (!view || !controller) {
+      return;
+    }
+    view.dispatch({ effects: controller.hide() });
   }
 
   componentDidUpdate(prevProps: CypherEditorProps): void {
@@ -640,6 +714,22 @@ export class CypherEditor extends Component<
           ]),
         ),
       });
+    }
+
+    const prevPanel = prevProps.inlinePanel;
+    const nextPanel = this.props.inlinePanel;
+    if (prevPanel !== nextPanel) {
+      if (!nextPanel) {
+        this.closeInlinePanel();
+      } else if (
+        !prevPanel ||
+        prevPanel.pos !== nextPanel.pos ||
+        prevPanel.placement !== nextPanel.placement
+      ) {
+        this.openInlinePanel(nextPanel);
+      } else {
+        this.updateInlinePanel(nextPanel);
+      }
     }
 
     if (prevProps.domEventHandlers !== this.props.domEventHandlers) {
