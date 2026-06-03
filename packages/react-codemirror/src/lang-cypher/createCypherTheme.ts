@@ -51,10 +51,6 @@ export interface ThemeOptions {
   };
   highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
   inheritBgColor?: boolean;
-  /**
-   * Colors used when a unified diff is rendered via the `diff` prop.
-   * When omitted the diff classes are unstyled (transparent background).
-   */
   diffColors?: DiffColors;
 }
 

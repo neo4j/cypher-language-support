@@ -1,6 +1,7 @@
 import { DbSchema, testData } from '@neo4j-cypher/language-support';
 import {
   CypherEditor,
+  type DiffProps,
   type InlinePanelProps,
 } from '@neo4j-cypher/react-codemirror';
 import { useCallback, useMemo, useRef, useState } from 'react';
@@ -58,6 +59,14 @@ RETURN count(*)`,
 
 type DemoName = keyof typeof demos;
 
+const diffExample = {
+  before: demos.allTokenTypes,
+  after: demos.allTokenTypes.replace(
+    'WHERE variable.property = "String"',
+    'WHERE variable.property = "Changed String"',
+  ),
+} as const;
+
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
@@ -79,6 +88,17 @@ export function App() {
     useState<HTMLElement | null>(null);
 
   const closeInlinePanel = useCallback(() => setIsInlinePanelOpen(false), []);
+
+  const [diff, setDiff] = useState<DiffProps | null>(null);
+  const showDiff = useCallback(() => {
+    setValue(diffExample.after);
+    setDiff({ original: diffExample.before });
+  }, []);
+  const acceptDiff = useCallback(() => setDiff(null), []);
+  const rejectDiff = useCallback(() => {
+    setValue(diffExample.before);
+    setDiff(null);
+  }, []);
 
   const extraKeybindings = [
     {
@@ -174,6 +194,7 @@ export function App() {
               }}
               ariaLabel="Cypher Editor"
               inlinePanel={inlinePanel}
+              diff={diff}
             />
             {inlinePanelContainer &&
               createPortal(
@@ -198,6 +219,29 @@ export function App() {
               >
                 {isInlinePanelOpen ? 'Close inline panel' : 'Open inline panel'}
               </p>
+              {diff ? (
+                <>
+                  <p
+                    onClick={acceptDiff}
+                    className="text-green-600 cursor-pointer hover:text-green-800"
+                  >
+                    Accept diff
+                  </p>
+                  <p
+                    onClick={rejectDiff}
+                    className="text-red-600 cursor-pointer hover:text-red-800"
+                  >
+                    Reject diff
+                  </p>
+                </>
+              ) : (
+                <p
+                  onClick={showDiff}
+                  className="text-blue-500 cursor-pointer hover:text-blue-700"
+                >
+                  Show diff
+                </p>
+              )}
             </div>
             {commandRanCount > 0 && (
               <span className="text-gray-400">
