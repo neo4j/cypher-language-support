@@ -1688,7 +1688,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('No long message on unfinished query', () => {
+  test('Unfinished query error covers only end of clause', () => {
     const query = 'CYPHER 25 MATCH (n)-[r]->()<-[u]-(m)--()-[v]->(q)';
 
     expect(
