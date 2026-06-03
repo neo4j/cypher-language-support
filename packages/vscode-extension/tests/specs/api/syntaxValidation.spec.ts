@@ -20,11 +20,13 @@ import {
 type InclusionTestArgs = {
   docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
+  timeoutMs?: number;
 };
 
 export async function testSyntaxValidation({
   docUri,
   expected,
+  timeoutMs,
 }: InclusionTestArgs) {
   await eventually(
     () =>
@@ -66,6 +68,7 @@ export async function testSyntaxValidation({
           reject(e);
         }
       }),
+    timeoutMs,
   );
 }
 
