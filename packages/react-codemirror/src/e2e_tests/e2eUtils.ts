@@ -69,9 +69,8 @@ export class CypherEditorPage {
     });
   }
 
-  //So we can test errors without needing to match text
-  //especially useful for errors like "Query cannot conclude with..."
-  //that we shorten to a single position
+  //So we can test point errors without needing to match text -
+  //useful for errors like "Query cannot conclude with..."
   async checkLintPointError(index: number, expectedMsg: string) {
     await expect(
       this.page.locator('.cm-lintPoint-error').nth(index),
