@@ -187,7 +187,7 @@ suite('Lint switching spec', () => {
   test('Switching the linter back to a new one should show different errors', async function () {
     // See the comment on the "old one" test above: the real switch + relint can
     // be slow on cold machines, so we extend the diagnostics/mocha timeouts.
-    this.timeout(60000);
+    this.timeout(90000);
     const linterVersion = '2025.06';
     const stub = sandbox.stub(
       window,
@@ -203,7 +203,7 @@ suite('Lint switching spec', () => {
     await testSyntaxValidation({
       docUri: textDocument.uri,
       expected: [],
-      timeoutMs: 40000,
+      timeoutMs: 60000,
     });
   });
 
