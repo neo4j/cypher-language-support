@@ -617,15 +617,18 @@ export function lintCypherQuery(
           dbSchema,
           current.cypherVersion,
         );
-        const cleanedErrors = errors.map((x) =>
-          x.message.includes('Query cannot conclude with')
+
+        function moveUnfinishedErrorToEndPoint(e: SyntaxDiagnostic) {
+          return e.message.includes('Query cannot conclude with')
             ? {
-                ...x,
-                offsets: { start: x.offsets.end, end: x.offsets.end },
-                range: { start: x.range.end, end: x.range.end },
+                ...e,
+                offsets: { start: e.offsets.end, end: e.offsets.end },
+                range: { start: e.range.end, end: e.range.end },
               }
-            : x,
-        );
+            : e;
+        }
+
+        const cleanedErrors = errors.map(moveUnfinishedErrorToEndPoint);
 
         // This contains both the syntax and the semantic errors
         const rawSemanticDiagnostics = notifications.concat(cleanedErrors);
