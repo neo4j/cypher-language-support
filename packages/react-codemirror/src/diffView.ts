@@ -19,6 +19,6 @@ export function createDiffExtension({ original }: DiffProps): Extension {
     highlightChanges: true,
     syntaxHighlightDeletions: true,
     mergeControls: false,
-    gutter: false,
+    gutter: true,
   });
 }
