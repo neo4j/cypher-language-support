@@ -29,6 +29,21 @@ suite('Lint switching spec', () => {
   let showErrorMessageSpy: sinon.SinonSpy;
 
   before(async () => {
+    textDocument = await newUntitledFileWithContent(`MATCH (n) RETURN m`);
+    await saveDefaultConnection();
+    await testSyntaxValidation({
+      docUri: textDocument.uri,
+      expected: [
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 17),
+            new vscode.Position(0, 18),
+          ),
+          'Variable `m` not defined',
+          vscode.DiagnosticSeverity.Error,
+        ),
+      ],
+    });
     textDocument = await newUntitledFileWithContent(`
       UNWIND range(1, 100) AS i
       CALL (i) {
@@ -50,7 +65,6 @@ suite('Lint switching spec', () => {
       'switchWorkerOnLanguageServer',
     );
     sendNotificationSpy = sandbox.spy(mockLanguageClient, 'sendNotification');
-    await saveDefaultConnection();
     sandbox.resetHistory();
   });
 
