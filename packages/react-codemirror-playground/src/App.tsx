@@ -59,14 +59,6 @@ RETURN count(*)`,
 
 type DemoName = keyof typeof demos;
 
-const diffExample = {
-  before: demos.allTokenTypes,
-  after: demos.allTokenTypes.replace(
-    'WHERE variable.property = "String"',
-    'WHERE variable.property = "Changed String"',
-  ),
-} as const;
-
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
   const [value, setValue] = useState<string>(demos[selectedDemoName]);
@@ -90,13 +82,15 @@ export function App() {
   const closeInlinePanel = useCallback(() => setIsInlinePanelOpen(false), []);
 
   const [diff, setDiff] = useState<DiffProps | null>(null);
+  let beforeValue: string = '';
   const showDiff = useCallback(() => {
-    setValue(diffExample.after);
-    setDiff({ original: diffExample.before });
+    beforeValue =
+      editorRef.current?.editorView.current?.state.doc.toString() ?? '';
+    setDiff({ original: beforeValue });
   }, []);
   const acceptDiff = useCallback(() => setDiff(null), []);
   const rejectDiff = useCallback(() => {
-    setValue(diffExample.before);
+    setValue(beforeValue);
     setDiff(null);
   }, []);
 
@@ -239,7 +233,7 @@ export function App() {
                   onClick={showDiff}
                   className="text-blue-500 cursor-pointer hover:text-blue-700"
                 >
-                  Show diff
+                  Start diff
                 </p>
               )}
             </div>
