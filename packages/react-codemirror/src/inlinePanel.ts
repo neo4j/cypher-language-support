@@ -113,14 +113,19 @@ export function createInlinePanelController(): InlinePanelController {
         return decorations.map(transaction.changes);
       }
 
-      // Re-anchor manually because CodeMirror's default mapping silently drops block-widget decorations when their anchor line is deleted.
+      // Re-anchor manually because CodeMirror's default mapping silently drops
+      // block-widget decorations when their anchor line is deleted
       const options = readOptions(decorations);
       if (options === null) {
         return decorations.map(transaction.changes);
       }
       const side = options.placement === 'below' ? 1 : -1;
-      const mappedPos = transaction.changes.mapPos(options.pos, side);
-      const line = transaction.newDoc.lineAt(mappedPos);
+      const lineNumber = Math.min(
+        transaction.startState.doc.lineAt(options.pos).number,
+        transaction.newDoc.lines,
+      );
+      const line = transaction.newDoc.line(lineNumber);
+
       return buildDecoration({
         ...options,
         pos: side === 1 ? line.to : line.from,
