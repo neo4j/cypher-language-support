@@ -96,11 +96,6 @@ suite('Lint switching spec', () => {
   }
 
   test('Switching the linter to an old one should show different errors', async function () {
-    // Going through the real SWITCH_LINTER_COMMAND downloads the linter from
-    // npm and spawns a fresh lint worker pool that re-lints the document. On
-    // cold CI machines that whole chain can take well over 10s, so we give the
-    // diagnostics polling (and mocha) plenty of headroom to avoid flaky timeouts.
-    this.timeout(60000);
     const linterVersion = '5.26';
     const stub = sandbox.stub(
       window,
@@ -125,7 +120,6 @@ suite('Lint switching spec', () => {
           vscode.DiagnosticSeverity.Error,
         ),
       ],
-      timeoutMs: 40000,
     });
   });
 
@@ -199,9 +193,6 @@ suite('Lint switching spec', () => {
   });
 
   test('Switching the linter back to a new one should show different errors', async function () {
-    // See the comment on the "old one" test above: the real switch + relint can
-    // be slow on cold machines, so we extend the diagnostics/mocha timeouts.
-    this.timeout(90000);
     const linterVersion = '2025.06';
     const stub = sandbox.stub(
       window,
@@ -217,7 +208,6 @@ suite('Lint switching spec', () => {
     await testSyntaxValidation({
       docUri: textDocument.uri,
       expected: [],
-      timeoutMs: 60000,
     });
   });
 
