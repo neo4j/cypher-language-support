@@ -748,17 +748,6 @@ export class CypherEditor extends Component<
           this.props.diff ? createDiffExtension(this.props.diff) : [],
         ),
       });
-
-      // When the diff first appears the inline panel widget may have drifted
-      // to an arbitrary position because of the deleted lines widget.
-      // Re-anchor it now so it sits adjacent to the diff
-      if (
-        prevProps.diff === null &&
-        this.props.diff !== null &&
-        this.props.inlinePanel
-      ) {
-        this.openInlinePanel(this.props.inlinePanel);
-      }
     }
 
     if (prevProps.domEventHandlers !== this.props.domEventHandlers) {
