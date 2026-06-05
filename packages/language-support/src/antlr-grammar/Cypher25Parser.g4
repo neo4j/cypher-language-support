@@ -136,7 +136,7 @@ returnClause
    ;
 
 returnBody
-   : (DISTINCT | ALL)? returnItems orderBy? skip? limit?
+   : (DISTINCT | ALL)? returnItems groupBy? orderBy? skip? limit?
    ;
 
 returnItem
@@ -145,6 +145,10 @@ returnItem
 
 returnItems
    : (TIMES | returnItem) (COMMA returnItem)*
+   ;
+
+groupBy
+   : GROUP BY (LPAREN RPAREN | ALL | expression (COMMA expression)*)
    ;
 
 orderItem
@@ -239,15 +243,21 @@ matchMode
    ;
 
 hint
-   : USING (((
-      INDEX
-      | TEXT INDEX
-      | RANGE INDEX
-      | POINT INDEX
-   ) SEEK? variable labelOrRelType LPAREN nonEmptyNameList RPAREN)
-   | JOIN ON nonEmptyNameList
-   | SCAN variable labelOrRelType
+   : USING (
+     ((
+        INDEX
+        | TEXT INDEX
+        | RANGE INDEX
+        | POINT INDEX
+     ) SEEK? variable labelOrRelType LPAREN nonEmptyNameList RPAREN)
+     | JOIN ON nonEmptyNameList
+     | SCAN variable labelOrRelType
+     | EXPAND expandHintStep (COMMA expandHintStep)*
    )
+   ;
+
+expandHintStep
+   : (ALL | INTO)? FROM variable TO variable
    ;
 
 mergeClause
@@ -973,6 +983,7 @@ alterCommand
       | alterCurrentGraphType
       | alterDatabase
       | alterUser
+      | alterUsers
       | alterServer
       | alterAuthRule
    )
@@ -1103,7 +1114,7 @@ showConstraintsEnd
    ;
 
 showCurrentGraphTypeCommand
-   : CURRENT GRAPH TYPE showCommandYieldWhere?
+   : CURRENT GRAPH TYPE (AS GRAPH)? showCommandYieldWhere?
    ;
 
 showProcedures
@@ -1411,6 +1422,11 @@ roleToken
    | ROLE
    ;
 
+tagToken
+   : TAG
+   | TAGS
+   ;
+
 authRuleKeywords
     : AUTH (RULE | RULES)
     ;
@@ -1489,6 +1505,7 @@ createUser
       | userStatus
       | homeDatabase
       | setAuthClause
+      | userSetTagsClause
    ))+;
 
 dropUser
@@ -1508,17 +1525,41 @@ alterUser
       HOME DATABASE
       | ALL AUTH (PROVIDER | PROVIDERS)?
       | removeNamedProvider
+      | userRemoveTagsClause
+   ))* (ADD (
+      userAddTagsClause
    ))* (SET (
       password
       | PASSWORD passwordChangeRequired
       | userStatus
       | homeDatabase
       | setAuthClause
+      | userSetTagsClause
    ))*
+   ;
+
+alterUsers
+   : USERS commandNameExpression (COMMA commandNameExpression)* (IF EXISTS)?
+     (REMOVE userRemoveTagsClause)*
+     (ADD userAddTagsClause)*
+     (SET userSetTagsClause)*
    ;
 
 removeNamedProvider
    : AUTH (PROVIDER | PROVIDERS)? (stringLiteral | stringListLiteral | parameter["ANY"])
+   ;
+
+userSetTagsClause
+   : tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
+   ;
+
+userAddTagsClause
+   : tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
+   ;
+
+userRemoveTagsClause
+   : ALL tagToken
+   | tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
    ;
 
 password
@@ -1675,13 +1716,13 @@ loadPrivilege
 showPrivilege
    : SHOW (
       (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER) ON DBMS
+      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER METADATA?) ON DBMS
    )
    ;
 
 setPrivilege
    : SET (
-      (passwordToken | USER (STATUS | HOME DATABASE) | DATABASE (ACCESS | DEFAULT LANGUAGE) | AUTH) ON DBMS
+      (passwordToken | USER (STATUS | HOME DATABASE | METADATA) | DATABASE (ACCESS | DEFAULT LANGUAGE) | AUTH) ON DBMS
       | DATABASE (ACCESS | DEFAULT LANGUAGE) ON databaseScope
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
@@ -1720,7 +1761,7 @@ dbmsPrivilege
    : (
       ALTER (ALIAS | AUTH RULE | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER | AUTH RULE) MANAGEMENT
+      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (AUTH RULE | ROLE | USER)
       | IMPERSONATE userQualifier?
@@ -1912,7 +1953,7 @@ graphShard
    ;
 
 propertyShard
-   : PROPERTY (SHARD | SHARDS) LCURLY COUNT UNSIGNED_DECIMAL_INTEGER (SET? TOPOLOGY uIntOrIntParameter (REPLICA | REPLICAS))? RCURLY
+   : PROPERTY (SHARD | SHARDS) LCURLY COUNT UNSIGNED_DECIMAL_INTEGER (SET? TOPOLOGY uIntOrIntParameter replicaToken)? RCURLY
    ;
 
 topology
@@ -2251,6 +2292,7 @@ unescapedSymbolicNameString_
    | EXIST
    | EXISTENCE
    | EXISTS
+   | EXPAND
    | FAIL
    | FALSE
    | FIELDTERMINATOR
@@ -2295,6 +2337,7 @@ unescapedSymbolicNameString_
    | INTEGER32
    | INTEGER16
    | INTEGER8
+   | INTO
    | IS
    | JOIN
    | KEY
@@ -2314,6 +2357,7 @@ unescapedSymbolicNameString_
    | MANHATTAN
    | MAP
    | MERGE
+   | METADATA
    | NAME
    | NAMES
    | NAN
@@ -2416,6 +2460,8 @@ unescapedSymbolicNameString_
    | STRING
    | SUPPORTED
    | SUSPENDED
+   | TAG
+   | TAGS
    | TARGET
    | TERMINATE
    | TEXT

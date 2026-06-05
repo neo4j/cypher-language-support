@@ -511,6 +511,10 @@ EXISTS
    : E X I S T S
    ;
 
+EXPAND
+   : E X P A N D
+   ;
+
 ERROR
    : E R R O R
    ;
@@ -654,6 +658,10 @@ INSERT
    : I N S E R T
    ;
 
+INTO
+   : I N T O
+   ;
+
 INT
    : I N T
    ;
@@ -790,6 +798,10 @@ MATCH
 
 MERGE
    : M E R G E
+   ;
+
+METADATA
+   : M E T A D A T A
    ;
 
 MINUS
@@ -1258,6 +1270,14 @@ SUPPORTED
 
 SUSPENDED
    : S U S P E N D E D
+   ;
+
+TAG
+   : T A G
+   ;
+
+TAGS
+   : T A G S
    ;
 
 TARGET
