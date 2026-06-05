@@ -34,15 +34,15 @@ function InlinePanelDemo({ onClose }: { onClose: () => void }) {
 }
 
 const demos = {
-  allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->() 
-WHERE variable.property = "String" 
+  allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->()
+WHERE variable.property = "String"
     OR namespaced.function() = false
     // comment
-    OR $parameter > 2 
+    OR $parameter > 2
 RETURN variable;`,
   basic: `MATCH (n:Person)
-WHERE n.name = "Steve" 
-RETURN n 
+WHERE n.name = "Steve"
+RETURN n
 LIMIT 12;`,
   subqueries: `UNWIND range(1,100) as _
 CALL {
@@ -51,13 +51,42 @@ CALL {
   MATCH path = (source)-[*1..10]->(target)
   WITH path, reduce(weight = 0, r IN relationships(path) | weight + r.weight) as Weight
   ORDER BY Weight LIMIT 3
-  RETURN length(path) as l, Weight 
-} 
+  RETURN length(path) as l, Weight
+}
 RETURN count(*)`,
   createDatabase: `CREATE DATABASE testdb OPTIONS {existingData: 'use', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar'};`,
 } as const;
 
 type DemoName = keyof typeof demos;
+
+const diffExamples: Record<DemoName, { before: string; after: string }> = {
+  allTokenTypes: {
+    before: demos.allTokenTypes,
+    after: demos.allTokenTypes.replace(
+      'WHERE variable.property = "String"',
+      'WHERE variable.property = "Changed String"',
+    ),
+  },
+  basic: {
+    before: demos.basic,
+    after: `MATCH (n:Person)
+WHERE n.name = "Steve"
+WITH n
+ORDER BY n.age DESC
+RETURN n
+LIMIT 12;`,
+  },
+  subqueries: {
+    before: demos.subqueries,
+    after: demos.subqueries
+      .replace('[*1..10]', '[*1..5]')
+      .replace('RETURN count(*)', 'RETURN count(*) LIMIT 1000'),
+  },
+  createDatabase: {
+    before: demos.createDatabase,
+    after: `CREATE DATABASE testdb OPTIONS {existingData: 'ignore', seedURI:'s3://bucketpath', seedConfig: 'region=eu-west-1', seedCredentials: 'foo;bar', storeFormat: 'aligned'};`,
+  },
+};
 
 export function App() {
   const [selectedDemoName, setSelectedDemoName] = useState<DemoName>('basic');
@@ -75,11 +104,30 @@ export function App() {
   );
   const [schemaError, setSchemaError] = useState<string | null>(null);
 
-  const [isInlinePanelOpen, setIsInlinePanelOpen] = useState(false);
+  const editorRef = useRef<CypherEditor>(null);
+
+  const [inlinePanel, setInlinePanel] = useState<InlinePanelProps | null>(null);
   const [inlinePanelContainer, setInlinePanelContainer] =
     useState<HTMLElement | null>(null);
 
-  const closeInlinePanel = useCallback(() => setIsInlinePanelOpen(false), []);
+  const openInlinePanel = useCallback(() => {
+    const view = editorRef.current?.editorView.current;
+    if (!view || inlinePanel !== null) return;
+    const stableContainer = document.createElement('div');
+    setInlinePanel({
+      pos: view.state.selection.main.from,
+      onMount: (widgetDiv) => {
+        widgetDiv.appendChild(stableContainer);
+        setInlinePanelContainer(stableContainer);
+      },
+      onUnmount: () => {},
+    });
+  }, [inlinePanel]);
+
+  const closeInlinePanel = useCallback(() => {
+    setInlinePanelContainer(null);
+    setInlinePanel(null);
+  }, []);
 
   const [diff, setDiff] = useState<DiffProps | null>(null);
   let beforeValue: string = '';
@@ -94,28 +142,23 @@ export function App() {
     setDiff(null);
   }, []);
 
+  const loadDemoContent = useCallback(() => {
+    const example = diffExamples[selectedDemoName];
+    setValue(example.after);
+    setDiff({ original: example.before });
+  }, [selectedDemoName]);
+
   const extraKeybindings = [
     {
       key: 'Ctrl-Shift-f',
       mac: 'Alt-Shift-f',
       preventDefault: true,
       run: () => {
-        editorRef.current.format();
+        editorRef.current?.format();
         return true;
       },
     },
   ];
-
-  const editorRef = useRef<CypherEditor>(null);
-
-  const inlinePanel: InlinePanelProps | null = isInlinePanelOpen
-    ? {
-        pos:
-          editorRef.current?.editorView.current?.state.selection.main.from ?? 0,
-        onMount: setInlinePanelContainer,
-        onUnmount: () => setInlinePanelContainer(null),
-      }
-    : null;
 
   const treeData = useMemo(() => {
     return getDebugTree(value);
@@ -155,14 +198,16 @@ export function App() {
               </button>
             </div>
             <div className="flex gap-1">
-              {Object.keys(demos).map((demoName: DemoName) => (
+              {(Object.keys(demos) as DemoName[]).map((demoName) => (
                 <button
                   key={demoName}
-                  className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded 
+                  className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded
                 ${selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'}`}
                   onClick={() => {
                     setSelectedDemoName(demoName);
                     setValue(demos[demoName]);
+                    setDiff(null);
+                    closeInlinePanel();
                   }}
                 >
                   {demoName}
@@ -197,7 +242,7 @@ export function App() {
               )}
             <div className="flex gap-4">
               <p
-                onClick={() => editorRef.current.format()}
+                onClick={() => editorRef.current?.format()}
                 className="text-blue-500 cursor-pointer hover:text-blue-700"
                 title={
                   window.navigator.userAgent.includes('Mac')
@@ -208,10 +253,12 @@ export function App() {
                 Format Query
               </p>
               <p
-                onClick={() => setIsInlinePanelOpen((prevState) => !prevState)}
+                onClick={() =>
+                  inlinePanel ? closeInlinePanel() : openInlinePanel()
+                }
                 className="text-blue-500 cursor-pointer hover:text-blue-700"
               >
-                {isInlinePanelOpen ? 'Close inline panel' : 'Open inline panel'}
+                {inlinePanel ? 'Close inline panel' : 'Open inline panel'}
               </p>
               {diff ? (
                 <>
@@ -229,12 +276,20 @@ export function App() {
                   </p>
                 </>
               ) : (
-                <p
-                  onClick={showDiff}
-                  className="text-blue-500 cursor-pointer hover:text-blue-700"
-                >
-                  Start diff
-                </p>
+                <>
+                  <p
+                    onClick={showDiff}
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                  >
+                    Start diff
+                  </p>
+                  <p
+                    onClick={loadDemoContent}
+                    className="text-blue-500 cursor-pointer hover:text-blue-700"
+                  >
+                    Load demo diff
+                  </p>
+                </>
               )}
             </div>
             {commandRanCount > 0 && (
