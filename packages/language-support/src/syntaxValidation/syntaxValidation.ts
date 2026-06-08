@@ -87,6 +87,17 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
+type GenericDiagnostic = { message: string };
+
+export function isNotParamError<T extends GenericDiagnostic>(
+  diagnostic: T,
+): boolean {
+  return (
+    !diagnostic.message.startsWith('Parameter ') ||
+    !diagnostic.message.endsWith(' is not defined.')
+  );
+}
+
 export function clampUnsafePositions(
   diagnostics: SyntaxDiagnostic[],
   document: TextDocument,
@@ -789,6 +800,8 @@ function warningOnDeprecatedFunction(
   }
   return warnings;
 }
+
+export const paramMsgStart = 'Parameter ';
 
 function errorOnUndeclaredParameters(
   parsingResult: ParsedStatement,

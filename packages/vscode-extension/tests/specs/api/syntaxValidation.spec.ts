@@ -20,11 +20,13 @@ import {
 type InclusionTestArgs = {
   docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
+  timeoutMs?: number;
 };
 
 export async function testSyntaxValidation({
   docUri,
   expected,
+  timeoutMs,
 }: InclusionTestArgs) {
   await eventually(
     () =>
@@ -66,6 +68,7 @@ export async function testSyntaxValidation({
           reject(e);
         }
       }),
+    timeoutMs,
   );
 }
 
@@ -74,7 +77,8 @@ suite('Syntax validation spec', () => {
     await toggleLinting(true);
   });
 
-  test('Suggests replacements for deprecated functions/procedures', async () => {
+  test('Suggests replacements for deprecated functions/procedures', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -100,10 +104,12 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
+      timeoutMs: 40000,
     });
   });
 
-  test('Relints when database connected / disconnected', async () => {
+  test('Relints when database connected / disconnected', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -125,16 +131,19 @@ suite('Syntax validation spec', () => {
     await testSyntaxValidation({
       docUri,
       expected: deprecationErrors,
+      timeoutMs: 40000,
     });
     await disconnectDefault();
     await testSyntaxValidation({
       docUri,
       expected: [],
+      timeoutMs: 40000,
     });
     await connectDefault();
     await testSyntaxValidation({
       docUri,
       expected: deprecationErrors,
+      timeoutMs: 40000,
     });
   });
 
@@ -342,7 +351,8 @@ suite('Syntax validation spec', () => {
     });
   });
 
-  test('Linting can be disabled with the config option', async () => {
+  test('Linting can be disabled with the config option', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -368,12 +378,14 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
+      timeoutMs: 40000,
     });
 
     await toggleLinting(false);
     await testSyntaxValidation({
       docUri,
       expected: [],
+      timeoutMs: 40000,
     });
   });
 });

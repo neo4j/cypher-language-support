@@ -41,11 +41,13 @@ export const languageService = new CypherLanguageService({
 
 class SymbolFetcher {
   private processing = false;
-  private nextJob: {
-    query: string;
-    uri: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        uri: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
@@ -74,12 +76,12 @@ class SymbolFetcher {
     this.processing = true;
     while (this.nextJob) {
       try {
-        const proxyWorker =
-          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
