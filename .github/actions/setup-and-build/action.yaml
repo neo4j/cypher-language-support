@@ -17,7 +17,10 @@ runs:
     - name: Setup node.js
       uses: actions/setup-node@v4
       with:
-        node-version: 24
+        # Pinned below 24.16.0: that release hangs `playwright install` (browser
+        # archive extraction stalls) and breaks the wdio-vscode webview tests.
+        # See https://github.com/microsoft/playwright/issues/40724
+        node-version: 24.15.0
         cache: 'pnpm'
         registry-url: 'https://registry.npmjs.org'
 
