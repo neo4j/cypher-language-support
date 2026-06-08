@@ -1,5 +1,15 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.10
+
+### Patch Changes
+
+- e69ee30: Update grammar and semantic analysis to 2026.06
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/language-support@2.0.0-next.33
+  - @neo4j-cypher/query-tools@2.0.0-next.33
+
 ## 1.10.1-next.9
 
 ### Patch Changes

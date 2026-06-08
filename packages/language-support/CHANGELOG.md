@@ -1,5 +1,12 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.33
+
+### Patch Changes
+
+- 02df611: Hide parameter errors when disconnected
+- e69ee30: Update grammar and semantic analysis to 2026.06
+
 ## 2.0.0-next.32
 
 ### Patch Changes
