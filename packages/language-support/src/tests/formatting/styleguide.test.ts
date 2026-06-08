@@ -540,4 +540,30 @@ RETURN
 ORDER BY aggregatedAges`;
     verifyFormatting(query, expected);
   });
+
+  test('GROUP BY follows cannonical syntax', () => {
+    const query = `Match (p: Person)
+With p.name AS name, p.age AS age
+Return name, age group by name, age`;
+    const expected = `MATCH (p:Person)
+WITH p.name AS name, p.age AS age
+RETURN name, age
+GROUP BY name, age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('GROUP BY follows cannonical syntax, bigger example', () => {
+    const query = `MATCH (p: Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+Group by name, p.age
+Order by name limit 5`;
+    const expected = `MATCH (p:Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+GROUP BY name, p.age
+ORDER BY name
+LIMIT 5`;
+    verifyFormatting(query, expected);
+  });
 });

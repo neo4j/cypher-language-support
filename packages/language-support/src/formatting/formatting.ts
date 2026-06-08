@@ -1377,7 +1377,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
-    if (ctx.orderBy() || ctx.skip()) {
+    if (ctx.orderBy() || ctx.skip() || ctx.groupBy()) {
+      this.breakLine();
+      this._visit(ctx.groupBy());
       this.breakLine();
       this._visit(ctx.orderBy());
       this.breakLine();
