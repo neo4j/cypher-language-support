@@ -1,5 +1,16 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.36
+
+### Patch Changes
+
+- 2d5fa77: Add `inlinePanel` prop to `CypherEditor` for rendering a host-controlled panel as a block widget inside the editor.
+- Updated dependencies [2d5fa77]
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.36
+  - @neo4j-cypher/language-support@2.0.0-next.33
+
 ## 2.0.0-next.35
 
 ### Patch Changes
