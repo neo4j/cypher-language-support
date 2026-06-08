@@ -540,4 +540,67 @@ RETURN
 ORDER BY aggregatedAges`;
     verifyFormatting(query, expected);
   });
+
+  test('GROUP BY', () => {
+    const query = `Match (p: Person)
+With p.name AS name, p.age AS age
+Return name, age group by name, age`;
+    const expected = `MATCH (p:Person)
+WITH p.name AS name, p.age AS age
+RETURN name, age
+GROUP BY name, age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('GROUP BY, bigger example', () => {
+    const query = `MATCH (p: Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+Group by name, p.age
+Order by name limit 5`;
+    const expected = `MATCH (p:Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+GROUP BY name, p.age
+ORDER BY name
+LIMIT 5`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with expand hint', () => {
+    const query = `MATCH
+     (a)<--(b:A)-->(c)
+  USING 
+  EXPAND FROM
+   b TO c, FROM b TO a`;
+    const expected = `MATCH (a)<--(b:A)-->(c)
+USING EXPAND FROM b TO c, FROM b TO a`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with text index hint', () => {
+    const query = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with multiple hints', () => {
+    const query = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+    USING TEXT INDEX i:INVENTED_BY(location)
+ using text INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+USING TEXT INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
 });

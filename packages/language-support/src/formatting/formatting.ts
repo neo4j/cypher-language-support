@@ -68,6 +68,7 @@ import {
   GraphTypeElementContext,
   GraphTypeSpecificationBodyContext,
   GraphTypeSpecificationContext,
+  HintContext,
   ImpliedLabelSetContext,
   ImpliesContext,
   IndexPostfixContext,
@@ -78,6 +79,7 @@ import {
   LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
+  LabelOrRelTypeContext,
   LabelTypeContext,
   LetClauseContext,
   LetItemContext,
@@ -1274,11 +1276,13 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.patternList());
     this.endGroup(patternListGrp);
     this.endGroup(matchClauseGrp);
+    this.removeIndentation(matchIndent);
+    this.breakLine();
     const n = ctx.hint_list().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.hint(i));
+      this.breakLine();
     }
-    this.removeIndentation(matchIndent);
     this._visit(ctx.whereClause());
     if (ctx.searchClause()) {
       this.breakLine();
@@ -1286,6 +1290,44 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.searchClause());
       this.removeIndentation(searchIndent);
     }
+  };
+
+  visitHint = (ctx: HintContext) => {
+    this._visit(ctx.USING());
+    if (ctx.INDEX()) {
+      this._visit(ctx.TEXT());
+      this._visit(ctx.RANGE());
+      this._visit(ctx.POINT());
+      this._visit(ctx.INDEX());
+      this._visit(ctx.SEEK());
+      this._visit(ctx.variable());
+      this._visit(ctx.labelOrRelType());
+      this.avoidSpaceBetween();
+      this._visit(ctx.LPAREN());
+      this._visit(ctx.nonEmptyNameList());
+      this._visit(ctx.RPAREN());
+    } else if (ctx.JOIN()) {
+      this._visit(ctx.JOIN());
+      this._visit(ctx.ON());
+      this._visit(ctx.nonEmptyNameList());
+    } else if (ctx.SCAN()) {
+      this._visit(ctx.SCAN());
+      this._visit(ctx.variable());
+      this._visit(ctx.labelOrRelType());
+    } else if (ctx.EXPAND()) {
+      this._visit(ctx.EXPAND());
+      this._visit(ctx.expandHintStep(0));
+      for (let i = 1; i < ctx.expandHintStep_list().length; i++) {
+        this._visit(ctx.COMMA(i - 1));
+        this._visit(ctx.expandHintStep(i));
+      }
+    }
+  };
+
+  visitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
+    this._visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    this._visit(ctx.symbolicNameString());
   };
 
   visitSearchClause = (ctx: SearchClauseContext) => {
@@ -1377,7 +1419,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
-    if (ctx.orderBy() || ctx.skip()) {
+    if (ctx.orderBy() || ctx.skip() || ctx.groupBy()) {
+      this.breakLine();
+      this._visit(ctx.groupBy());
       this.breakLine();
       this._visit(ctx.orderBy());
       this.breakLine();
