@@ -566,4 +566,41 @@ ORDER BY name
 LIMIT 5`;
     verifyFormatting(query, expected);
   });
+
+  test('MATCH with expand hint', () => {
+    const query = `MATCH
+     (a)<--(b:A)-->(c)
+  USING 
+  EXPAND FROM
+   b TO c, FROM b TO a`;
+    const expected = `MATCH (a)<--(b:A)-->(c)
+USING EXPAND FROM b TO c, FROM b TO a`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with text index hint', () => {
+    const query = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with multiple hints', () => {
+    const query = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+    USING TEXT INDEX i:INVENTED_BY(location)
+ using text INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+USING TEXT INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
 });
