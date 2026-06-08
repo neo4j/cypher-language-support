@@ -541,7 +541,7 @@ ORDER BY aggregatedAges`;
     verifyFormatting(query, expected);
   });
 
-  test('GROUP BY follows cannonical syntax', () => {
+  test('GROUP BY', () => {
     const query = `Match (p: Person)
 With p.name AS name, p.age AS age
 Return name, age group by name, age`;
@@ -552,7 +552,7 @@ GROUP BY name, age`;
     verifyFormatting(query, expected);
   });
 
-  test('GROUP BY follows cannonical syntax, bigger example', () => {
+  test('GROUP BY, bigger example', () => {
     const query = `MATCH (p: Person)
 LET name = p.name
 RETURN name, p.age AS age, sum(p.age) AS totalAge
