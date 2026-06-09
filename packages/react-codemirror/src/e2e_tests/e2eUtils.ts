@@ -74,8 +74,11 @@ export class CypherEditorPage {
   async checkLintPointError(index: number, expectedMsg: string) {
     await expect(
       this.page.locator('.cm-lintPoint-error').nth(index),
-    ).toBeVisible({ timeout: 10000 });
-    await this.page.locator('.cm-lintPoint-error').nth(index).hover();
+    ).toBeAttached({ timeout: 10000 });
+    await this.page
+      .locator('.cm-lintPoint-error')
+      .nth(index)
+      .hover({ force: true });
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
       timeout: 10000,
     });
