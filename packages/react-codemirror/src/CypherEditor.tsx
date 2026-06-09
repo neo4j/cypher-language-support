@@ -320,10 +320,12 @@ class CodemirrorSymbolFetcher {
   }
   private languageService: CypherLanguageService;
   private processing = false;
-  private nextJob: {
-    query: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(WorkerURL, {
     minWorkers: 1,
     workerOpts: { type: 'module' },
@@ -346,11 +348,11 @@ class CodemirrorSymbolFetcher {
     this.processing = true;
     while (this.nextJob) {
       try {
-        const proxyWorker =
-          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         this.nextJob = undefined;
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
 
         const result = await proxyWorker.lintCypherQuery(query, dbSchema);
 

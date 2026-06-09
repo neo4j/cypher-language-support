@@ -1,6 +1,8 @@
 import {
   clampUnsafePositions,
+  isNotParamError,
   SymbolTable,
+  SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
@@ -63,12 +65,6 @@ async function rawLintDocument(
     });
     const result = await lastSemanticJob;
 
-    //marks the entire text if any position is negative
-    const positionSafeResult = clampUnsafePositions(
-      result.diagnostics,
-      document,
-    );
-
     // Pass the computed symbol tables to the parser
     if (result.symbolTables) {
       languageService.setSymbolsInfo(
@@ -80,12 +76,28 @@ async function rawLintDocument(
       );
     }
 
-    sendDiagnostics(positionSafeResult);
+    sendDiagnostics(
+      filterLintResult(
+        result.diagnostics,
+        dbSchema?.databaseNames?.length ? false : true,
+        document,
+      ),
+    );
   } catch (err) {
     if (!(err instanceof workerpool.Promise.CancellationError)) {
       console.error(err);
     }
   }
+}
+
+function filterLintResult(
+  diagnostics: SyntaxDiagnostic[],
+  dontWarnOnParams: boolean,
+  document: TextDocument,
+) {
+  return dontWarnOnParams
+    ? clampUnsafePositions(diagnostics.filter(isNotParamError), document)
+    : clampUnsafePositions(diagnostics, document);
 }
 
 export const lintDocument: typeof rawLintDocument = debounce(
