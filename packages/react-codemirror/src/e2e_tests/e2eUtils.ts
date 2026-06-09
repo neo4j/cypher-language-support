@@ -72,13 +72,28 @@ export class CypherEditorPage {
   //So we can test point errors without needing to match text -
   //useful for errors like "Query cannot conclude with..."
   async checkLintPointError(index: number, expectedMsg: string) {
-    await expect(
-      this.page.locator('.cm-lintPoint-error').nth(index),
-    ).toBeAttached({ timeout: 10000 });
-    await this.page
-      .locator('.cm-lintPoint-error')
-      .nth(index)
-      .hover({ force: true });
+    /* A lint *point* (a diagnostic where start === end) is rendered by
+       CodeMirror as a zero-width widget: a <span class="cm-lintPoint
+       cm-lintPoint-error"> whose only visible/hittable pixels are a small
+       ::after triangle drawn at its bottom-left. Because the span's own box is
+       0px wide, Playwright treats it as "hidden" (so toBeVisible/hover fail),
+       and a centred hover lands on the neighbouring text rather than the
+       widget. CodeMirror only resolves the *exact* offset of a point when the
+       hovered target is the widget span itself (it then uses the widget's
+       posAtStart); otherwise it falls back to a pixel-based lookup that, for a
+       point, practically never matches, so no diagnostic tooltip is shown.
+       So we hover the marker exactly where it renders: the ::after triangle
+       sits at x in [left-2, left+4], y in [bottom-4, bottom] relative to the
+       span's rect (left:-2px, bottom:0, 3px/3px/4px borders), and the whole
+       box - including the transparent border area - hit-tests as the span.
+       Lint *ranges* wrap real text, so they don't need this. */
+    const lintPoint = this.page.locator('.cm-lintPoint-error').nth(index);
+    await expect(lintPoint).toBeAttached({ timeout: 10000 });
+    const { left, bottom } = await lintPoint.evaluate((el) => {
+      const rect = el.getBoundingClientRect();
+      return { left: rect.left, bottom: rect.bottom };
+    });
+    await this.page.mouse.move(left + 1, bottom - 2);
     await expect(this.page.locator('.cm-tooltip-hover').last()).toBeVisible({
       timeout: 10000,
     });
