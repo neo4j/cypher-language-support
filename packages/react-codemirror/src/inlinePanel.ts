@@ -79,32 +79,57 @@ export function createInlinePanelController(): InlinePanelController {
     }
   }
 
+  const buildDecoration = (options: InlinePanelShowOptions): DecorationSet =>
+    Decoration.set([
+      Decoration.widget({
+        widget: new InlinePanelWidget(options),
+        block: true,
+        side: options.placement === 'below' ? 1 : -1,
+      }).range(options.pos),
+    ]);
+
+  const readOptions = (
+    decorations: DecorationSet,
+  ): InlinePanelShowOptions | null => {
+    const widget = decorations.iter().value?.spec?.widget;
+    return widget instanceof InlinePanelWidget ? widget.options : null;
+  };
+
   const field = StateField.define<DecorationSet>({
     create() {
       return Decoration.none;
     },
     update(decorations, transaction) {
-      let next: DecorationSet | null = null;
       for (const effect of transaction.effects) {
         if (effect.is(showEffect)) {
-          if (effect.value === null) {
-            next = Decoration.none;
-          } else {
-            const side = effect.value.placement === 'below' ? 1 : -1;
-            next = Decoration.set([
-              Decoration.widget({
-                widget: new InlinePanelWidget(effect.value),
-                block: true,
-                side,
-              }).range(effect.value.pos),
-            ]);
-          }
+          return effect.value === null
+            ? Decoration.none
+            : buildDecoration(effect.value);
         }
       }
-      if (next !== null) {
-        return next;
+
+      // Nothing to do when the panel is closed, or when the document is unchanged
+      if (decorations.size === 0 || !transaction.docChanged) {
+        return decorations.map(transaction.changes);
       }
-      return decorations.map(transaction.changes);
+
+      // Re-anchor manually because CodeMirror's default mapping silently drops
+      // block-widget decorations when their anchor line is deleted
+      const options = readOptions(decorations);
+      if (options === null) {
+        return decorations.map(transaction.changes);
+      }
+      const side = options.placement === 'below' ? 1 : -1;
+      const lineNumber = Math.min(
+        transaction.startState.doc.lineAt(options.pos).number,
+        transaction.newDoc.lines,
+      );
+      const line = transaction.newDoc.line(lineNumber);
+
+      return buildDecoration({
+        ...options,
+        pos: side === 1 ? line.to : line.from,
+      });
     },
     provide: (f) => EditorView.decorations.from(f),
   });

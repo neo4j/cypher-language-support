@@ -1,12 +1,28 @@
 import { Extension } from '@codemirror/state';
 import {
   createCypherTheme,
+  type DiffColors,
   ThemeOptions,
 } from './lang-cypher/createCypherTheme';
 import { tokens } from './ndlTokensCopy';
 
+const lightDiffColors: DiffColors = {
+  insertedLine: tokens.colors.forest['10'],
+  insertedText: tokens.colors.forest['15'],
+  deletedLine: tokens.colors.hibiscus['10'],
+  deletedText: tokens.colors.hibiscus['15'],
+};
+
+const darkDiffColors: DiffColors = {
+  insertedLine: tokens.colors.forest['65'],
+  insertedText: tokens.colors.forest['55'],
+  deletedLine: tokens.colors.hibiscus['65'],
+  deletedText: tokens.colors.hibiscus['55'],
+};
+
 export const lightThemeConstants: ThemeOptions = {
   dark: false,
+  diffColors: lightDiffColors,
   editorSettings: {
     background: '#FEFEFE',
     foreground: '#545454',
@@ -44,6 +60,7 @@ export const lightThemeConstants: ThemeOptions = {
 
 export const darkThemeConstants: ThemeOptions = {
   dark: true,
+  diffColors: darkDiffColors,
   editorSettings: {
     background: '#242936',
     foreground: '#cccac2',
