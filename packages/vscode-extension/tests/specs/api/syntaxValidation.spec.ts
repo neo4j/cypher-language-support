@@ -173,7 +173,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
@@ -213,7 +213,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
@@ -250,7 +250,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 8),
             new vscode.Position(0, 32),
           ),
-          'Relationship with label ACTED_IN has no incoming connection to a node with label(s) Person.',
+          '[:ACTED_IN] has no incoming (:Person)',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
@@ -266,7 +266,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 18),
             new vscode.Position(0, 65),
           ),
-          'Node with label Movie has no incoming connection to a relationship with label(s) ACTED_IN.',
+          '(:Movie) has no incoming [:ACTED_IN]',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(

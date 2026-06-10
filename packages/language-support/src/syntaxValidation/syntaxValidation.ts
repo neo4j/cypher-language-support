@@ -345,19 +345,19 @@ function labelsToMessage(
   firstLabelTree: LabelOrCondition,
   connectedLabel: string,
   direction: 'outgoing' | 'incoming' | 'bidirectional',
-  firstVarType: 'node' | 'relationship' | 'variable',
+  firstVarType: 'node' | 'relationship',
 ) {
   const directionSubString =
-    direction === 'bidirectional' ? '' : direction + ' ';
-  const secondVarType =
+    direction === 'bidirectional' ? 'incoming/outgoing' : direction;
+  const secondVarString =
     firstVarType === 'node'
-      ? 'relationship'
-      : firstVarType === 'relationship'
-        ? 'node'
-        : 'variable';
-  const capitalizedSecondVar =
-    secondVarType.at(0)?.toUpperCase() + secondVarType.slice(1);
-  return `${capitalizedSecondVar} with label ${connectedLabel} has no ${directionSubString}connection to a ${firstVarType} with label(s) ${labelTreeToString(firstLabelTree)}.`;
+      ? '[:' + connectedLabel + ']'
+      : '(:' + connectedLabel + ')';
+  const firstVarString =
+    firstVarType === 'node'
+      ? '(:' + labelTreeToString(firstLabelTree) + ')'
+      : '[:' + labelTreeToString(firstLabelTree) + ']';
+  return `${secondVarString} has no ${directionSubString} ${firstVarString}`;
 }
 
 function findPathIssues(
@@ -416,24 +416,12 @@ function findPathIssues(
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
             if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              let firstVarType: 'variable' | 'node' | 'relationship' =
-                'variable';
-              if (symbol.types.length === 1) {
-                switch (symbol.types[0]) {
-                  case 'Node':
-                    firstVarType = 'node';
-                    break;
-                  case 'Relationship':
-                    firstVarType = 'relationship';
-                    break;
-                }
-              }
               diagnostics.push({
                 message: labelsToMessage(
                   symbol.labels,
                   nextSymbolLabels.children[0].value,
                   direction,
-                  firstVarType,
+                  'node',
                 ),
                 severity: DiagnosticSeverity.Warning,
                 ...translateTokensToRange(child.start, nextChild.stop),
@@ -484,24 +472,12 @@ function findPathIssues(
             isLabelLeaf(nextSymbolLabels.children[0])
           ) {
             if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              let firstVarType: 'variable' | 'node' | 'relationship' =
-                'variable';
-              if (symbol.types.length === 1) {
-                switch (symbol.types[0]) {
-                  case 'Node':
-                    firstVarType = 'node';
-                    break;
-                  case 'Relationship':
-                    firstVarType = 'relationship';
-                    break;
-                }
-              }
               diagnostics.push({
                 message: labelsToMessage(
                   symbol.labels,
                   nextSymbolLabels.children[0].value,
                   direction,
-                  firstVarType,
+                  'relationship',
                 ),
                 severity: DiagnosticSeverity.Warning,
                 ...translateTokensToRange(child.start, nextChild.stop),
@@ -653,8 +629,20 @@ export function lintCypherQuery(
           current.cypherVersion,
         );
 
+        function moveUnfinishedErrorToEndPoint(e: SyntaxDiagnostic) {
+          return e.message.includes('Query cannot conclude with')
+            ? {
+                ...e,
+                offsets: { start: e.offsets.end, end: e.offsets.end },
+                range: { start: e.range.end, end: e.range.end },
+              }
+            : e;
+        }
+
+        const cleanedErrors = errors.map(moveUnfinishedErrorToEndPoint);
+
         // This contains both the syntax and the semantic errors
-        const rawSemanticDiagnostics = notifications.concat(errors);
+        const rawSemanticDiagnostics = notifications.concat(cleanedErrors);
         const semanticDiagnostics = fixOffsets({
           semanticDiagnostics: rawSemanticDiagnostics,
           parseResult: current,
