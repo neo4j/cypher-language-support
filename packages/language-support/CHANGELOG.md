@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.34
+
+### Patch Changes
+
+- 2f8b52d: Schema-based linting when connected: warn on labels and relationship types missing from the database and on relationship patterns that contradict the graph schema's direction (#681), with improved warning readability (#685)
+
 ## 2.0.0-next.33
 
 ### Patch Changes

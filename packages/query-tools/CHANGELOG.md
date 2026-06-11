@@ -1,5 +1,12 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.34
+
+### Patch Changes
+
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/language-support@2.0.0-next.34
+
 ## 2.0.0-next.33
 
 ### Patch Changes

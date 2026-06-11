@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.37
+
+### Patch Changes
+
+- b616748: Add diff view to the Cypher editor using @codemirror/merge
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/language-support@2.0.0-next.34
+  - @neo4j-cypher/lint-worker@1.10.1-next.11
+
 ## 2.0.0-next.36
 
 ### Patch Changes
