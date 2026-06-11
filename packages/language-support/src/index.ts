@@ -5,7 +5,7 @@ export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema } from './dbSchema.js';
 export { _internalFeatureFlags } from './featureFlags.js';
 export { formatQuery } from './formatting/formatting.js';
-export { antlrUtils } from './helpers.js';
+export { antlrUtils, resolveCypherVersion } from './helpers.js';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols.js';
 export {
   parse,
