@@ -20,12 +20,18 @@ import {
 } from './inlinePanel';
 import { createDiffExtension, type DiffProps } from './diffView';
 import {
+  createEditorActionsController,
+  type EditorActionsCallbacks,
+  type EditorActionsController,
+} from './editorActions';
+import {
   formatQuery,
   CypherLanguageService,
   type DbSchema,
 } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
-import { Component, createRef } from 'react';
+import { Component, createRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { DEBOUNCE_TIME } from './constants';
 import {
   replaceHistory,
@@ -196,6 +202,12 @@ export interface CypherEditorProps {
    * Deleted lines are shown as uneditable widgets.
    */
   diff?: DiffProps | null;
+  /**
+   * React content rendered as a cluster of action buttons (e.g. a context menu
+   * + Run) pinned to the top-right corner of the editor. Omit (or `null`) to
+   * hide it.
+   */
+  editorActions?: ReactNode;
 }
 
 export type InlinePanelProps = {
@@ -308,7 +320,9 @@ const formatLineNumber =
     return a.toString();
   };
 
-type CypherEditorState = { cypherSupportEnabled: boolean };
+type CypherEditorState = {
+  editorActionsContainer: HTMLElement | null;
+};
 
 const ExternalEdit = Annotation.define<boolean>();
 const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
@@ -393,6 +407,17 @@ export class CypherEditor extends Component<
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
   private inlinePanelController: InlinePanelController | null = null;
+  private editorActionsController: EditorActionsController | null = null;
+
+  state: CypherEditorState = {
+    editorActionsContainer: null,
+  };
+
+  private editorActionsCallbacks: EditorActionsCallbacks = {
+    onMount: (container) =>
+      this.setState({ editorActionsContainer: container }),
+    onUnmount: () => this.setState({ editorActionsContainer: null }),
+  };
 
   /**
    * Format Cypher query
@@ -505,6 +530,7 @@ export class CypherEditor extends Component<
     );
 
     this.inlinePanelController = createInlinePanelController();
+    this.editorActionsController = createEditorActionsController();
 
     const changeListener = this.debouncedOnChange
       ? [
@@ -575,6 +601,7 @@ export class CypherEditor extends Component<
         diffCompartment.of(
           this.props.diff ? createDiffExtension(this.props.diff) : [],
         ),
+        this.editorActionsController.extension,
       ],
       doc: this.props.value,
     });
@@ -596,6 +623,22 @@ export class CypherEditor extends Component<
     if (this.props.inlinePanel) {
       this.openInlinePanel(this.props.inlinePanel);
     }
+
+    if (this.props.editorActions != null) {
+      this.setEditorActions(true);
+    }
+  }
+
+  private setEditorActions(active: boolean): void {
+    const view = this.editorView.current;
+    const controller = this.editorActionsController;
+    if (!view || !controller) {
+      return;
+    }
+
+    view.dispatch({
+      effects: controller.set(active ? this.editorActionsCallbacks : null),
+    });
   }
 
   private openInlinePanel(
@@ -752,6 +795,12 @@ export class CypherEditor extends Component<
       });
     }
 
+    const hadActions = prevProps.editorActions != null;
+    const hasActions = this.props.editorActions != null;
+    if (hadActions !== hasActions) {
+      this.setEditorActions(hasActions);
+    }
+
     if (prevProps.domEventHandlers !== this.props.domEventHandlers) {
       this.editorView.current.dispatch({
         effects: domEventHandlerCompartment.reconfigure(
@@ -796,11 +845,16 @@ export class CypherEditor extends Component<
     const themeClass =
       typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
 
+    const { editorActionsContainer } = this.state;
+
     return (
       <div
         ref={this.editorContainer}
         className={`${themeClass}${className ? ` ${className}` : ''}`}
-      />
+      >
+        {editorActionsContainer &&
+          createPortal(this.props.editorActions, editorActionsContainer)}
+      </div>
     );
   }
 }
