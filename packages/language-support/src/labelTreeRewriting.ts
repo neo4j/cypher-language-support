@@ -17,9 +17,55 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
 }
 
 /**
- * Takes a label tree with an AND-root and converts it to Conjunctive Normal Form
+ * Takes a label tree with an AND-root and converts it to Distjunctive Normal Form
+ * also simplifies away redundant conditions
  * @param root - the original label tree
- * @returns a an equivalent CNF tree
+ * @returns a an equivalent DNF tree
+ */
+export function convertToSimplifiedDNF(
+  root: LabelOrCondition,
+): LabelOrCondition {
+  const dnfRoot: LabelOrCondition = convertToDNF(root);
+  return simplifyAndRemoveDNFContradictions(dnfRoot);
+}
+
+/**
+ * Takes a label tree with an AND-root and converts it to Distjunctive Normal Form
+ * Uses a trick with De Morgan's law (ex. !AND(X,Y) = OR(!X, !Y)) to turn CNF to DNF
+ * Like this: !CNF(!Φ) = DNF(Φ). CNF(!Φ) is equiv to !Φ and !CNF(!Φ) is thus equiv to !!Φ = Φ
+ * @param root - the original label tree
+ * @returns a an equivalent DNF tree
+ */
+export function convertToDNF(root: LabelOrCondition): LabelOrCondition {
+  //Because we need an AND-root in my CNF functions, I add AND(NOT(Φ)) - AND with a single child can be simplified away
+  const negatedRoot: ConditionNode = {
+    condition: 'and',
+    children: [{ condition: 'not', children: [root] }],
+  };
+  const negatedRootCNF = convertToCNF(negatedRoot);
+  //Negated CNF -> DNF via De Morgan's law. Double negation (initial + this) -> equivalent to original tree
+  return pushInNots({ condition: 'not', children: [negatedRootCNF] });
+}
+
+/**
+ * Takes a label tree with an AND-root and converts it to Conjunctive Normal Form
+ * also simplifies away redundant conditions
+ * @param root - the original label tree
+ * @returns an equivalent CNF tree, simplified to remove duplication and tautologies
+ */
+export function convertToSimplifiedCNF(
+  root: LabelOrCondition,
+): LabelOrCondition {
+  const cnfRoot: LabelOrCondition = convertToCNF(root);
+  const cleanedCnfTree: LabelOrCondition =
+    simplifyAndRemoveTautologies(cnfRoot);
+  return cleanedCnfTree;
+}
+
+/**
+ * Takes a label tree with an AND-root and converts it to Conjunctive Normal Form, without simplification
+ * @param root - the original label tree
+ * @returns an equivalent CNF tree
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
@@ -37,9 +83,7 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
       addChild(newChildren, newChild, 'and');
     });
     const cnfRoot: ConditionNode = { condition: 'and', children: newChildren };
-    const cleanedCnfTree: LabelOrCondition =
-      simplifyAndRemoveTautologies(cnfRoot);
-    return cleanedCnfTree;
+    return cnfRoot;
   }
 }
 
@@ -253,7 +297,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
 }
 
 /**
- * Takes a CNF-tree and simplifies away redudant conditions and tautologies
+ * Takes a CNF tree and simplifies away redudant conditions and tautologies
  *
  * Tautologies are the conditions that are true for any label, like OR(!A, !B) or OR(!A, A)
  *
@@ -269,68 +313,221 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
 export function simplifyAndRemoveTautologies(
   root: LabelOrCondition,
 ): LabelOrCondition {
+  if (isLabelLeaf(root) || !(root.condition === 'and')) {
+    throw new Error('Misshapen label tree: Root is not an AND-node');
+  }
   const newRoot: LabelOrCondition = copyLabelTree(root);
-  if (isLabelLeaf(newRoot) || newRoot.condition !== 'and') {
+  if (isLabelLeaf(newRoot)) {
     return newRoot;
   } else {
-    for (let i = 0; i < newRoot.children.length; i++) {
-      if (!newRoot.children[i]) {
+    const simplifiedChildren: (LabelOrCondition | undefined)[] = [
+      ...newRoot.children,
+    ];
+    for (let i = 0; i < simplifiedChildren.length; i++) {
+      const currentNode = simplifiedChildren[i];
+      if (!currentNode) {
         continue;
       }
       //Rewriting to CNF we can get nodes like OR(Person,Person)
       //We can also have tautologies like OR(!A, A) or OR(!A, !B) which are always true
       //within the AND, we can also remove ORs fully covered by other ORs or literals
       //Ex. AND(A, OR(A,B), OR(B,C), OR(B,C,D)) = AND(A,OR(B,C))
-      if (isTautology(newRoot.children[i])) {
-        newRoot.children[i] = undefined;
+      if (isTautology(currentNode)) {
+        simplifiedChildren[i] = undefined;
         continue;
       }
       //After removing tautologies we can only have 0 or 1 Not-node inside an OR-condition, without any matching not-NOT node with the same label.
       //These can then be simplified to just the not-condition since ex. OR(!A, B, C)=!A (!A covers B and C too)
-      const currentNode = newRoot.children[i];
       if (!isLabelLeaf(currentNode) && currentNode.condition === 'or') {
         for (const c of currentNode.children) {
           if (!isLabelLeaf(c) && c.condition === 'not') {
-            newRoot.children[i] = c;
+            simplifiedChildren[i] = c;
           }
         }
       }
-      for (let j = i + 1; j < newRoot.children.length; j++) {
-        if (!newRoot.children[j]) {
+
+      //We can also remove conditions where one covers the other
+      //Ex. AND(OR(A,B), OR(A,B,C)) -> if OR(A,B) is true, OR(A,B,C) will always be true too, so since we need both (ANDed) we can check just for OR(A,B)
+      for (let j = i + 1; j < simplifiedChildren.length; j++) {
+        const comparedNode = simplifiedChildren[j];
+        if (!comparedNode) {
           continue;
-        } else if (!newRoot.children[i]) {
-          break;
         }
 
         const stricterCondition = findStricterCondition(
-          newRoot.children[i],
-          newRoot.children[j],
+          currentNode,
+          comparedNode,
         );
-        if (stricterCondition === newRoot.children[i]) {
-          newRoot.children[j] = undefined;
+        if (stricterCondition === simplifiedChildren[i]) {
+          simplifiedChildren[j] = undefined;
           continue;
         }
-        if (stricterCondition === newRoot.children[j]) {
-          newRoot.children[i] = undefined;
+        if (stricterCondition === simplifiedChildren[j]) {
+          simplifiedChildren[i] = undefined;
           break;
         }
 
-        const isDuplicate = checkEquality(
-          newRoot.children[i],
-          newRoot.children[j],
-        );
-        if (isDuplicate) {
-          newRoot.children[i] = undefined;
+        if (
+          simplifiedChildren[i] !== undefined &&
+          simplifiedChildren[j] !== undefined
+        ) {
+          const isDuplicate = checkEquality(currentNode, comparedNode);
+          if (isDuplicate) {
+            simplifiedChildren[i] = undefined;
+            break;
+          }
         }
       }
     }
-    newRoot.children = newRoot.children.filter((x) => x !== undefined);
+
+    //At this stage we have simplified to 3 types of children - A: free label, B: free NOT label, C: OR of labels (not NOTed)
+    //Finally we can also remove NOTs covered by the other conditions
+    //Since we would have removed other conditions covered by NOTs previously, we can remove all free NOTs if we have some non-not child
+    // Ex. AND(A, OR(B,C), !D, !E) = AND(A, OR(B,C))
+    //AND(!A, !B) = AND(!A, !B)
+    const hasNonNegatedLabel = simplifiedChildren.some(
+      (c) => c && (isLabelLeaf(c) || c.condition !== 'not'),
+    );
+    if (hasNonNegatedLabel) {
+      for (let i = 0; i < simplifiedChildren.length; i++) {
+        const c = simplifiedChildren[i];
+        if (c && !isLabelLeaf(c) && c.condition === 'not') {
+          simplifiedChildren[i] = undefined;
+        }
+      }
+    }
+    newRoot.children = simplifiedChildren.filter((x) => x !== undefined);
+
+    return newRoot;
+  }
+}
+//DNF is OR(AND(x,!y), AND(!z,!w), AND(v, u), s, r, !t)
+//if we have OR(AND(x,...), x, ...) we can remove the AND. For the outer OR, we can remove any inner ANDs that are more strict than
+
+//OR -> true IF ANY CONDITION is true -> can simplify away more strict conditions that are true if any of the less strict are true
+//We can obviously also remove duplicate identical conditions
+//Simplifying away NOT conditions:
+// OR(AND(!A, A), ...) <- OR(never, ...) => OR(...)
+// OR(!A, A) <- ANY => ANY
+/**
+ * Takes a DNF tree and simplifies away redudant conditions and tautologies
+ *
+ * Tautologies are the conditions that are true for any label, like OR(!A, !B) or OR(!A, A)
+ *
+ * We can also simplify away conditions covered by another like AND(A, OR(A,B) = AND(A)
+ *
+ * Finally we can also simplify OR(!A, B, C, D) to !A, since this case includes the specific cases B,C,D
+ *
+ * Does some simplifications of the tree to remove redudant conditions. Some of these simplifications
+ * ignore positions, rather than taking the first instance of a rule
+ * @param root
+ * @returns
+ */
+export function simplifyAndRemoveDNFContradictions(
+  root: LabelOrCondition,
+): LabelOrCondition {
+  const newRoot: LabelOrCondition = copyLabelTree(root);
+  if (
+    isLabelLeaf(newRoot) ||
+    newRoot.condition === 'any' ||
+    newRoot.condition === 'not'
+  ) {
+    return newRoot;
+  } else {
+    const simplifiedChildren: (LabelOrCondition | undefined)[] = [
+      ...newRoot.children,
+    ];
+    for (let i = 0; i < simplifiedChildren.length; i++) {
+      let currentNode = simplifiedChildren[i];
+      if (!currentNode) {
+        continue;
+      }
+      //The child-conditions of the DNF tree can be contradictions like AND(!A, A) which is never true
+      //Since it's within an OR we can simplify by removing this condition, we can also remove ANDs that are a subcondition of an existing condition in the OR
+      //Ex. OR(A, AND(A,B), AND(B,C), AND(B,C,D)) = OR(A, AND(B,C))
+      if (isContradiction(currentNode)) {
+        simplifiedChildren[i] = undefined;
+        continue;
+      } else if (!isLabelLeaf(currentNode) && currentNode.condition === 'and') {
+        //for ANDs like AND(A, !B) where we dont have a contradiction, we can remove the !B which becomes true automatically if we must have other labels than B, keeping only non-negated labels
+        //Could not remove it if we have both !B and B, but this would be caught above
+        const newChildren = currentNode.children.filter((c) => isLabelLeaf(c));
+        currentNode =
+          newChildren.length === 1
+            ? newChildren[0]
+            : {
+                condition: 'and',
+                children: currentNode.children.filter((c) => isLabelLeaf(c)),
+              };
+        simplifiedChildren[i] = currentNode;
+      }
+      //After removing contradictions we can only have !A or A, not both for any label A inside an AND-condition.
+      for (let j = i + 1; j < simplifiedChildren.length; j++) {
+        const comparedNode = simplifiedChildren[j];
+        if (!comparedNode) {
+          continue;
+        }
+
+        const stricterCondition = findStricterCondition(
+          currentNode,
+          comparedNode,
+        );
+        //Remove the stricter condition here, since we are inside an OR
+        if (stricterCondition === simplifiedChildren[i]) {
+          simplifiedChildren[i] = undefined;
+          break;
+        }
+        if (stricterCondition === simplifiedChildren[j]) {
+          simplifiedChildren[j] = undefined;
+          continue;
+        }
+
+        const isDuplicate = checkEquality(currentNode, comparedNode);
+        if (isDuplicate) {
+          simplifiedChildren[i] = undefined;
+          break;
+        }
+      }
+    }
+
+    //At this stage we must have no negations inside ANDs, for example
+    //OR(A, !B, AND(C,B))
+    //But if we have an outer !B, this would also pass for all cases that A and AND(C,B) cover, so we can remove those
+    //OR(A, !B, AND(C,B)) = OR(!B)
+
+    //TODO add this simplification too
+
+    // const freeNots = simplifiedChildren.filter(c => c && !isLabelLeaf(c) && c.condition === "not");
+    // //If we have OR(!A, A, ...) - simplify to OR(ANY)
+    // if (freeNots.some(c => {
+    //   if (c && !isLabelLeaf(c) && c.condition === "not") {
+    //     const innerLabel = c.children[0];
+    //     if (isLabelLeaf(innerLabel)) {
+    //       return simplifiedChildren.some(c2 => c2 && isLabelLeaf(c2) && c2.value === innerLabel.value)
+    //     }
+    //   }
+    // }))
+
+    // if (freeNots) {
+    //   simplifiedChildren.map(c => {
+    //     if (c && !isLabelLeaf(c) && c.condition === "and") {
+    //       return undefined;
+    //     } else if (c && isLabelLeaf(c)) {
+    //       return undefined;
+    //     } else {
+    //       return c;
+    //     }
+    //   });
+    // }
+
+    newRoot.children = simplifiedChildren.filter((x) => x !== undefined);
     return newRoot;
   }
 }
 
 /**
- * Takes in two labels/conditions from a CNF-tree and returns the stricter of the two if one covers the other. Otherwise returns undefined to signal that neither rule is redundant
+ * Takes in two labels/conditions and returns the stricter of the two if one covers the other. Otherwise returns undefined to signal that neither rule is redundant
+ * For OR-conditions a smaller condition is stricter (Ex. OR(A,B) over OR(A,B,C)) and the opposite is true for ANDs, (ex. AND(A,B,C) over AND(A,B))
  * @param A
  * @param B
  * @returns A if A is a stricter version of B, in the sense that if A is true, B will always be true as well. Vice versa if B is stricter than A. If neither covers the other, returns undefined
@@ -343,15 +540,15 @@ function findStricterCondition(
   const bIsLabel = isLabelLeaf(B);
   if (aIsLabel && bIsLabel) {
     return undefined;
-  } else if (aIsLabel && !bIsLabel) {
+  } else if (aIsLabel && !bIsLabel && !(B.condition === 'not')) {
     if (B.children.find((x) => isLabelLeaf(x) && x.value === A.value)) {
-      return A;
+      return B.condition === 'or' ? A : B;
     } else {
       return undefined;
     }
-  } else if (bIsLabel && !aIsLabel) {
+  } else if (bIsLabel && !aIsLabel && !(A.condition === 'not')) {
     if (A.children.find((x) => isLabelLeaf(x) && x.value === B.value)) {
-      return B;
+      return A.condition === 'or' ? B : A;
     } else {
       return undefined;
     }
@@ -371,7 +568,7 @@ function findStricterCondition(
             x.children[0].value === A.children[0].value,
         )
       ) {
-        return A;
+        return B.condition === 'or' ? A : B;
       } else {
         return undefined;
       }
@@ -386,7 +583,7 @@ function findStricterCondition(
             x.children[0].value === B.children[0].value,
         )
       ) {
-        return B;
+        return A.condition === 'or' ? B : A;
       } else {
         return undefined;
       }
@@ -409,7 +606,7 @@ function findStricterCondition(
         return undefined;
       }
     }
-    return A;
+    return B.condition === 'or' ? A : B;
   } else {
     for (const cB of B.children) {
       if (
@@ -423,7 +620,49 @@ function findStricterCondition(
         return undefined;
       }
     }
-    return B;
+    return A.condition === 'or' ? B : A;
+  }
+}
+
+//Contradictions we could have...
+//AND(A,B)... no
+//AND(!A,A).. yes
+//AND(!A,B)...no
+//AND(!A,!B)...no
+
+/**
+ * Takes a child-node from a DNF-tree (an AND-node, a NOT-node or a literal) and returns whether it is a contradiction or not
+ * @param node
+ * @returns
+ */
+function isContradiction(node: LabelOrCondition) {
+  if (!node || isLabelLeaf(node) || node.condition === 'not') {
+    return false;
+  }
+  //getting here node must be an AND-condition
+  for (let i = 0; i < node.children.length; i++) {
+    for (let j = i + 1; j < node.children.length; j++) {
+      const nodeI = node.children[i];
+      const nodeJ = node.children[j];
+      //If we have AND(A, !A)
+      if (
+        isLabelLeaf(nodeI) &&
+        !isLabelLeaf(nodeJ) &&
+        nodeJ.condition === 'not' &&
+        isLabelLeaf(nodeJ.children[0]) &&
+        nodeJ.children[0].value === nodeI.value
+      ) {
+        return true;
+      } else if (
+        isLabelLeaf(nodeJ) &&
+        !isLabelLeaf(nodeI) &&
+        nodeI.condition === 'not' &&
+        isLabelLeaf(nodeI.children[0]) &&
+        nodeI.children[0].value === nodeJ.value
+      ) {
+        return true;
+      }
+    }
   }
 }
 
@@ -485,25 +724,23 @@ export function removeDuplicates(
   for (let i = 0; i < newLabelTree.children.length; i++) {
     newLabelTree.children[i] = removeDuplicates(newLabelTree.children[i]);
   }
+  const deduplicatedChildren = [];
   for (let i = 0; i < newLabelTree.children.length; i++) {
+    let foundDuplicate = false;
     for (let j = i + 1; j < newLabelTree.children.length; j++) {
-      if (
-        newLabelTree.children[i] === undefined ||
-        newLabelTree.children[j] === undefined
-      ) {
-        continue;
-      }
-      const foundDuplicate: boolean = checkEquality(
+      foundDuplicate = checkEquality(
         newLabelTree.children[i],
         newLabelTree.children[j],
       );
       if (foundDuplicate) {
-        newLabelTree.children[i] = undefined;
         break;
       }
     }
+    if (!foundDuplicate) {
+      deduplicatedChildren.push(newLabelTree.children[i]);
+    }
   }
-  newLabelTree.children = newLabelTree.children.filter((x) => x !== undefined);
+  newLabelTree.children = deduplicatedChildren;
   return newLabelTree;
 }
 
@@ -529,6 +766,10 @@ function checkEquality(
     isLabelLeaf(labelTree2) ||
     labelTree1.condition !== labelTree2.condition
   ) {
+    return false;
+  }
+
+  if (labelTree1.children.length !== labelTree2.children.length) {
     return false;
   }
 

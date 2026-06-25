@@ -598,9 +598,33 @@ RETURN [(p)-[:`;
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
+    });
+  });
+
+  //Equivalent to !Pokemon | !Trainer, which is true for any label
+  test('Handles &-tautology', () => {
+    const query = 'MATCH (x:!(Pokemon&Trainer))-[r:';
+
+    testCompletions({
+      query,
+      dbSchema,
+      computeSymbolsInfo: true,
+      expected: [
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
+        { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
+        { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
+        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+        { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
+        { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
+        { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [],
     });
   });
 

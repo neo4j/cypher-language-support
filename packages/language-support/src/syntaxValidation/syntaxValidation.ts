@@ -40,7 +40,8 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { ParserRuleContext } from 'antlr4';
 import {
-  convertToCNF,
+  convertToSimplifiedCNF,
+  convertToSimplifiedDNF,
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
@@ -332,7 +333,7 @@ function labelTreeToString(node: LabelOrCondition): string {
 
 function labelsToMessage(
   firstLabelTree: LabelOrCondition,
-  connectedLabel: string,
+  secondLabelTree: LabelOrCondition,
   direction: 'outgoing' | 'incoming' | 'bidirectional',
   firstVarType: 'node' | 'relationship' | 'variable',
 ) {
@@ -346,7 +347,7 @@ function labelsToMessage(
         : 'variable';
   const capitalizedSecondVar =
     secondVarType.at(0)?.toUpperCase() + secondVarType.slice(1);
-  return `${capitalizedSecondVar} with label ${connectedLabel} has no ${directionSubString}connection to a ${firstVarType} with label(s) ${labelTreeToString(firstLabelTree)}.`;
+  return `${capitalizedSecondVar} with label(s) ${labelTreeToString(secondLabelTree)} has no ${directionSubString}connection to a ${firstVarType} with label(s) ${labelTreeToString(firstLabelTree)}.`;
 }
 
 function findPathIssues(
@@ -384,7 +385,14 @@ function findPathIssues(
               ref <= (nextChild.stop?.stop ?? -1),
           ),
         )?.labels;
-        if (symbol && nextSymbolLabels) {
+        if (
+          symbol &&
+          nextSymbolLabels &&
+          !isLabelLeaf(symbol.labels) &&
+          symbol.labels.children.length &&
+          !isLabelLeaf(nextSymbolLabels) &&
+          nextSymbolLabels.children.length
+        ) {
           const direction =
             nextChild.leftArrow() &&
             !nextChild.rightArrow() &&
@@ -393,34 +401,33 @@ function findPathIssues(
               : !nextChild.leftArrow() && nextChild.rightArrow()
                 ? 'incoming'
                 : 'bidirectional';
-          const possibleRels = possibleFollowingRelType(
-            direction,
-            dbSchema,
-            symbol.labels,
-          );
-          if (
-            possibleRels &&
-            'children' in nextSymbolLabels &&
-            nextSymbolLabels.children.length === 1 &&
-            isLabelLeaf(nextSymbolLabels.children[0])
-          ) {
-            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              let firstVarType: 'variable' | 'node' | 'relationship' =
-                'variable';
-              if (symbol.types.length === 1) {
-                switch (symbol.types[0]) {
-                  case 'Node':
-                    firstVarType = 'node';
-                    break;
-                  case 'Relationship':
-                    firstVarType = 'relationship';
-                    break;
+
+          const dnfLabels = convertToSimplifiedDNF(symbol.labels);
+          if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
+            let hasViableLabel = false;
+            for (const c of dnfLabels.children) {
+              const possibleRels = possibleFollowingRelType(
+                direction,
+                dbSchema,
+                { condition: 'and', children: [c] },
+              );
+              if (possibleRels) {
+                const segmentIsPossible = isViableSegment(
+                  possibleRels,
+                  nextSymbolLabels,
+                );
+                if (segmentIsPossible) {
+                  hasViableLabel = true;
+                  break;
                 }
               }
+            }
+            if (!hasViableLabel) {
+              const firstVarType = 'node';
               diagnostics.push({
                 message: labelsToMessage(
                   symbol.labels,
-                  nextSymbolLabels.children[0].value,
+                  nextSymbolLabels,
                   direction,
                   firstVarType,
                 ),
@@ -451,7 +458,14 @@ function findPathIssues(
               ref <= (nextChild.stop?.stop ?? -1),
           ),
         )?.labels;
-        if (symbol && nextSymbolLabels) {
+        if (
+          symbol &&
+          nextSymbolLabels &&
+          !isLabelLeaf(symbol.labels) &&
+          symbol.labels.children.length &&
+          !isLabelLeaf(nextSymbolLabels) &&
+          nextSymbolLabels.children.length
+        ) {
           const direction =
             child.leftArrow() &&
             !child.rightArrow() &&
@@ -460,35 +474,33 @@ function findPathIssues(
               : !child.leftArrow() && child.rightArrow()
                 ? 'incoming'
                 : 'bidirectional';
-          const possibleRels = possibleFollowingLabels(
-            direction,
-            dbSchema,
-            symbol.labels,
-          );
-          if (
-            possibleRels &&
-            nextSymbolLabels &&
-            'children' in nextSymbolLabels &&
-            nextSymbolLabels.children.length === 1 &&
-            isLabelLeaf(nextSymbolLabels.children[0])
-          ) {
-            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              let firstVarType: 'variable' | 'node' | 'relationship' =
-                'variable';
-              if (symbol.types.length === 1) {
-                switch (symbol.types[0]) {
-                  case 'Node':
-                    firstVarType = 'node';
-                    break;
-                  case 'Relationship':
-                    firstVarType = 'relationship';
-                    break;
+
+          const dnfLabels = convertToSimplifiedDNF(symbol.labels);
+          if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
+            let hasViableLabel = false;
+            for (const c of dnfLabels.children) {
+              const possibleNodes = possibleFollowingLabels(
+                direction,
+                dbSchema,
+                { condition: 'and', children: [c] },
+              );
+              if (possibleNodes) {
+                const segmentIsPossible = isViableSegment(
+                  possibleNodes,
+                  nextSymbolLabels,
+                );
+                if (segmentIsPossible) {
+                  hasViableLabel = true;
+                  break;
                 }
               }
+            }
+            if (!hasViableLabel) {
+              const firstVarType = 'relationship';
               diagnostics.push({
                 message: labelsToMessage(
                   symbol.labels,
-                  nextSymbolLabels.children[0].value,
+                  nextSymbolLabels,
                   direction,
                   firstVarType,
                 ),
@@ -502,6 +514,71 @@ function findPathIssues(
     }
   }
   return diagnostics;
+}
+
+//Convert right hand side to Disjunctive normal form (like OR(A, !B, AND(C,!D), ...))
+//If any of the possibilities are viable based off the completions, the path segment is viable
+//Ex. if RHS is OR(A, !B, AND(C,!D)) and completions contain A, the OR could have real matches
+function isViableSegment(
+  completedLabels: Set<string>,
+  endLabels: LabelOrCondition,
+) {
+  let dnfTree: LabelOrCondition;
+  try {
+    const treeWithRewrittenAnys = removeInnerAnys(endLabels);
+    if (isAnyNode(treeWithRewrittenAnys)) {
+      return true;
+    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+      return false;
+    }
+    dnfTree = convertToSimplifiedDNF(treeWithRewrittenAnys);
+    if (!isLabelLeaf(dnfTree) && dnfTree.condition === 'or') {
+      for (const c of dnfTree.children) {
+        if (isLabelLeaf(c)) {
+          if (completedLabels.has(c.value)) {
+            return true;
+          }
+        } else if (c.condition === 'not') {
+          const negated = c.children[0];
+          if (
+            isLabelLeaf(negated) &&
+            completedLabels.difference(new Set(negated.value)).size > 0
+          ) {
+            return true;
+          }
+        } else if (c.condition === 'and') {
+          let isViable = true;
+          for (const c2 of c.children) {
+            if (isLabelLeaf(c2)) {
+              if (!completedLabels.has(c2.value)) {
+                isViable = false;
+                break;
+              }
+            } else if (c2.condition === 'not') {
+              const negated = c2.children[0];
+              if (
+                isLabelLeaf(negated) &&
+                completedLabels.difference(new Set(negated.value)).size === 0
+              ) {
+                isViable = false;
+                break;
+              }
+            }
+          }
+          if (isViable) {
+            return true;
+          }
+        }
+      }
+    } else {
+      //If we have a bug in DNF creation
+      return true;
+    }
+    return false;
+  } catch {
+    //bail
+    return true;
+  }
 }
 
 function findNonCreatingPatternElements(
@@ -732,7 +809,7 @@ function getFollowingLabels(
     } else if (isNotAnyNode(treeWithRewrittenAnys)) {
       return undefined;
     }
-    cnfTree = convertToCNF(treeWithRewrittenAnys);
+    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
   } catch {
     return undefined;
   }

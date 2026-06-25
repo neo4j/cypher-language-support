@@ -15,7 +15,7 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { backtickIfNeeded } from './autocompletionHelpers.js';
 import {
-  convertToCNF,
+  convertToSimplifiedCNF,
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
@@ -55,7 +55,7 @@ export function getShortPathCompletions(
     ) {
       return [];
     }
-    cnfTree = convertToCNF(treeWithRewrittenAnys);
+    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
   } catch {
     return [];
   }
@@ -117,7 +117,7 @@ export function getPathCompletions(
     ) {
       return [];
     }
-    cnfTree = convertToCNF(treeWithRewrittenAnys);
+    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
   } catch {
     return [];
   }
@@ -278,7 +278,7 @@ export function completeNodeLabel(
         } else if (isNotAnyNode(treeWithRewrittenAnys)) {
           return [];
         }
-        cnfTree = convertToCNF(treeWithRewrittenAnys);
+        cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
       } catch {
         return allLabelCompletions(dbSchema);
       }
@@ -371,7 +371,7 @@ export function completeRelationshipType(
         } else if (isNotAnyNode(treeWithRewrittenAnys)) {
           return [];
         }
-        cnfTree = convertToCNF(treeWithRewrittenAnys);
+        cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
       } catch {
         return [];
       }

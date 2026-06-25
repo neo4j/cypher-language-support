@@ -50,7 +50,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -82,7 +82,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
         offsets: {
           end: 30,
           start: 6,
@@ -114,7 +114,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -146,7 +146,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label Gym has no outgoing connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no outgoing connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -178,7 +178,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label WEAK_TO has no connection to a node with label(s) Trainer.',
+          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -197,7 +197,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Node with label Gym has no connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 36,
           start: 16,
@@ -229,7 +229,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
         offsets: {
           end: 33,
           start: 6,
@@ -249,13 +249,32 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Handles multiple labels on first variable in path segment (rel)', () => {
+  test('Handles multiple labels on both variables in path segment', () => {
     const query = 'MATCH (:Trainer)<-[:WEAK_TO|IS_IN]-(:Move) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label Move has no outgoing connection to a relationship with label(s) (WEAK_TO | IS_IN).',
+          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 35,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          'Node with label(s) Move has no outgoing connection to a relationship with label(s) (WEAK_TO | IS_IN).',
         offsets: {
           end: 42,
           start: 16,
@@ -282,7 +301,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
         offsets: {
           end: 65,
           start: 6,
@@ -302,14 +321,124 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Limitation: Bails on multiple labels on second variable in path segment (node)', () => {
+  test('Handles multiple labels on second variable in path segment (node)', () => {
     const query = 'MATCH (:Type)<-[:WEAK_TO]-(:Trainer|Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Trainer | Gym) has no outgoing connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 40,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles multiple labels on second variable in path segment (rel)', () => {
+    const query = 'MATCH (:Gym)<-[:WEAK_TO|IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Gym.',
+        offsets: {
+          end: 31,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  //This should be invalid even though Type and Trainer are both individually possible, this syntax means the node will have both, but there is no single
+  //rel type of the CHALLENGES|STRONG_AGAINST rel that would give both
+  test('Handles more complex labels on both variables in path segment, v1', () => {
+    const query =
+      'MATCH (:Type)<-[:CHALLENGES|STRONG_AGAINST]-(:(Type & Trainer)) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Type & Trainer) has no outgoing connection to a relationship with label(s) (CHALLENGES | STRONG_AGAINST).',
+        offsets: {
+          end: 63,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 63,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles more complex labels on both variables in path segment, v2', () => {
+    const query =
+      'MATCH (:Type & (Pokemon|Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS & BATTLES)]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (BATTLES | (STRONG_AGAINST & KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
+        offsets: {
+          end: 83,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 83,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles more complex labels on both variables in path segment, no false negatives v1', () => {
+    const query =
+      'MATCH (:Type)<-[:CHALLENGES|STRONG_AGAINST]-(:(Pokemon & Trainer)|Type) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
 
-  test('Limitation: Bails on multiple labels on second variable in path segment (rel)', () => {
-    const query = 'MATCH (:Gym)<-[:WEAK_TO|IS_IN]-(:Pokemon) RETURN ""';
+  test('Handles more complex labels on both variables in path segment, no false negatives v2', () => {
+    const query =
+      'MATCH (:Type & (Pokemon|Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS)]-(:Trainer) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
@@ -339,7 +468,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Relationship with label WEAK_TO has no connection to a node with label(s) Gym.',
+          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Gym.',
         offsets: {
           end: 22,
           start: 6,
@@ -493,7 +622,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Node with label Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
+          'Node with label(s) Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
         offsets: {
           end: 32,
           start: 12,
@@ -712,13 +841,20 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  test('Should not warn on unlabeled nodes/rels', () => {
+    const query =
+      'MATCH (n)-[]->()-[R]-(m:Trainer)-[]-(q)-[:IS_IN]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
   test('Warns both on missing label and path segment at once', () => {
     const query = 'MATCH (n)<-[:MISSED]-(:Archer) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label Archer has no outgoing connection to a relationship with label(s) MISSED.',
+          'Node with label(s) Archer has no outgoing connection to a relationship with label(s) MISSED.',
         offsets: {
           end: 30,
           start: 9,

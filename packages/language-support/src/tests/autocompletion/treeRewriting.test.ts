@@ -1,10 +1,11 @@
 import { isLabelLeaf, LabelOrCondition } from '../../types.js';
 import {
   childAlreadyExists,
-  convertToCNF,
+  convertToSimplifiedCNF,
   pushInNots,
   removeInnerAnys,
   removeDuplicates,
+  convertToSimplifiedDNF,
 } from '../../labelTreeRewriting.js';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
 
@@ -36,7 +37,7 @@ describe('rewrite tree', () => {
     const parsing = lintCypherQuery(exampleQueries.singleLabel, {});
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     expect(isLabelLeaf(firstSymbolLabels)).toEqual(false);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual({
       children: [
         {
@@ -68,7 +69,7 @@ describe('rewrite tree', () => {
   test('CNF calculation should not break label tree already on CNF', () => {
     const parsing = lintCypherQuery(exampleQueries.twoDifferentLabels, {});
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual({
       children: [
         {
@@ -87,7 +88,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual(deduplicatedTree);
   });
 
@@ -96,7 +97,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual(deduplicatedTree);
   });
 
@@ -105,7 +106,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual(deduplicatedTree);
   });
 
@@ -117,7 +118,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -156,7 +157,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -214,7 +215,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -259,7 +260,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -287,7 +288,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -315,7 +316,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -337,10 +338,35 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [],
+      condition: 'and',
+    });
+  });
+
+  test('CNF handles ! with |', () => {
+    const parsing = lintCypherQuery('MATCH (n:!A&(B|C)&!D)', {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
+    const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
+    expect(deduplicatedTree).not.toEqual(cnfTree);
+    expect(cnfTree).toEqual({
+      children: [
+        {
+          children: [
+            {
+              value: 'B',
+            },
+            {
+              value: 'C',
+            },
+          ],
+          condition: 'or',
+        },
+      ],
       condition: 'and',
     });
   });
@@ -353,18 +379,10 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
-        {
-          children: [
-            {
-              value: 'A',
-            },
-          ],
-          condition: 'not',
-        },
         {
           children: [
             {
@@ -397,7 +415,7 @@ describe('rewrite tree', () => {
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
     const labelsWithAdjustedNot = pushInNots(firstSymbolLabels);
     const deduplicatedTree = removeDuplicates(labelsWithAdjustedNot);
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).not.toEqual(deduplicatedTree);
     expect(cnfTree).toEqual({
       children: [
@@ -436,7 +454,7 @@ describe('rewrite tree', () => {
     // AND(OR(A,C,E), OR(A,C,F), OR(A,D,E), OR(A,D,F), OR(B,C,E), OR(B,C,F), OR(B,D,E), OR(B,D,F))
     const parsing = lintCypherQuery(exampleQueries.threeInnerAnds, {});
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
-    const cnfTree = convertToCNF(firstSymbolLabels);
+    const cnfTree = convertToSimplifiedCNF(firstSymbolLabels);
     expect(cnfTree).toEqual({
       children: [
         {
@@ -855,7 +873,7 @@ describe('rewrite tree', () => {
     const query = 'MATCH (n:A | % & B))';
     const parsing = lintCypherQuery(query, {});
     const firstSymbolLabels = parsing.symbolTables[0][0].labels;
-    expect(convertToCNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+    expect(convertToSimplifiedCNF(removeInnerAnys(firstSymbolLabels))).toEqual({
       condition: 'and',
       children: [
         { condition: 'or', children: [{ value: 'A' }, { value: 'B' }] },
@@ -904,6 +922,334 @@ describe('rewrite tree', () => {
       children: [
         { value: 'A' },
         { condition: 'or', children: [{ value: 'B' }, { value: 'C' }] },
+      ],
+    });
+  });
+
+  test('Converting DNF to DNF should remain DNF', () => {
+    const query = 'MATCH (n:A | B)';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [{ value: 'A' }, { value: 'B' }],
+    });
+  });
+
+  test('Converting CNF to DNF should work', () => {
+    const query = 'MATCH (n:A & B)';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { condition: 'and', children: [{ value: 'A' }, { value: 'B' }] },
+      ],
+    });
+  });
+
+  test('Converting more complex CNF to DNF should work', () => {
+    const query = 'MATCH (n:A & (B | C))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { condition: 'and', children: [{ value: 'A' }, { value: 'B' }] },
+        { condition: 'and', children: [{ value: 'A' }, { value: 'C' }] },
+      ],
+    });
+  });
+
+  test('Simplifying complex DNF should work in DNF conversion', () => {
+    const query = 'MATCH (n:(A & B)|(B & C)|(B & C & D))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { condition: 'and', children: [{ value: 'A' }, { value: 'B' }] },
+        { condition: 'and', children: [{ value: 'B' }, { value: 'C' }] },
+      ],
+    });
+  });
+
+  test('Can convert big CNF to DNF', () => {
+    const query = 'MATCH (n:(A | B) & (B | C) & (B | C | D))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { condition: 'and', children: [{ value: 'A' }, { value: 'C' }] },
+        { value: 'B' },
+      ],
+    });
+  });
+
+  test('Can convert deep tree to DNF, v1', () => {
+    const query = 'MATCH (n:(A & (B | (C & D))))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { condition: 'and', children: [{ value: 'A' }, { value: 'B' }] },
+        {
+          condition: 'and',
+          children: [{ value: 'A' }, { value: 'C' }, { value: 'D' }],
+        },
+      ],
+    });
+  });
+
+  test('Can convert deep tree to DNF, v2', () => {
+    const query = 'MATCH (n:(A | B | C) & (D | (E & (F | G | H)))))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      children: [
+        {
+          children: [
+            {
+              value: 'A',
+            },
+            {
+              value: 'D',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'A',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'F',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'A',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'G',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'A',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'H',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'B',
+            },
+            {
+              value: 'D',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'B',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'F',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'B',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'G',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'B',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'H',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'C',
+            },
+            {
+              value: 'D',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'C',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'F',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'C',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'G',
+            },
+          ],
+          condition: 'and',
+        },
+        {
+          children: [
+            {
+              value: 'C',
+            },
+            {
+              value: 'E',
+            },
+            {
+              value: 'H',
+            },
+          ],
+          condition: 'and',
+        },
+      ],
+      condition: 'or',
+    });
+  });
+
+  //AND(A, OR(!B, C)) =
+  //OR(AND(A, !B), AND(A, C)) =
+  // OR(AND(A), AND(A,C)) = OR(A) //Extra simplification we can do since !B = A | C | D | ... so AND(!B, A) = A
+  test('Can handle NOTs in DNF conversion, v1', () => {
+    const query = 'MATCH (n:(A & (!B | C)))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { value: 'A' }, //, { condition: 'not', children: [ { value: 'B' }] }] },
+        //{ condition: 'and', children: [{ value: 'A' }, { value: 'C' }] }
+      ],
+    });
+  });
+
+  test('Can handle NOTs in DNF conversion, v2', () => {
+    const query = 'MATCH (n:(A & !B))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { value: 'A' },
+        //{ condition: 'and', children: [{ value: 'A' }, { condition: 'not', children: [ { value: 'B' }] }] }
+      ],
+    });
+  });
+
+  //A | !B = !B
+  test('Can simplify away using NOTs in DNF conversion, v1', () => {
+    const query = 'MATCH (n:(A | !B))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { value: 'A' },
+        { condition: 'not', children: [{ value: 'B' }] },
+      ],
+    });
+  });
+
+  test('Can simplify away using NOTs in DNF conversion, v2', () => {
+    const query = 'MATCH (n:(A | !B | (C | !D)))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { value: 'A' },
+        { condition: 'not', children: [{ value: 'B' }] },
+        { value: 'C' },
+        { condition: 'not', children: [{ value: 'D' }] },
+      ],
+    });
+  }); //!B | (!A & !C)
+
+  test('DNF conversion can handle contradictions', () => {
+    const query = 'MATCH (n:(A & !A))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [],
+    });
+  });
+
+  test('DNF conversion can handle tautologies', () => {
+    const query = 'MATCH (n:(A | !A))';
+    const parsing = lintCypherQuery(query, {});
+    const firstSymbolLabels = parsing.symbolTables[0][0].labels;
+    expect(convertToSimplifiedDNF(removeInnerAnys(firstSymbolLabels))).toEqual({
+      condition: 'or',
+      children: [
+        { value: 'A' },
+        { condition: 'not', children: [{ value: 'A' }] },
       ],
     });
   });
