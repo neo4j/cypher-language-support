@@ -308,7 +308,7 @@ function labelTreeToString(node: LabelOrCondition): string {
   if (isLabelLeaf(node)) {
     return node.value;
   } else if (node.condition === 'any') {
-    return 'ANY';
+    return '%';
   } else if (node.condition === 'not') {
     return '!' + labelTreeToString(node.children[0]);
   } else if (node.children.length === 1) {
@@ -401,7 +401,29 @@ function findPathIssues(
                 ? 'incoming'
                 : 'bidirectional';
 
-          const dnfLabels = convertToSimplifiedDNF(symbol.labels);
+          let dnfLabels: LabelOrCondition;
+          try {
+            const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
+            if (isAnyNode(treeWithRewrittenAnys)) {
+              continue;
+            } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+              const firstVarType = 'node';
+              diagnostics.push({
+                message: labelsToMessage(
+                  symbol.labels,
+                  nextSymbolLabels,
+                  direction,
+                  firstVarType,
+                ),
+                severity: DiagnosticSeverity.Warning,
+                ...translateTokensToRange(child.start, nextChild.stop),
+              });
+              continue;
+            }
+            dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
+          } catch {
+            continue;
+          }
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {
@@ -474,7 +496,29 @@ function findPathIssues(
                 ? 'incoming'
                 : 'bidirectional';
 
-          const dnfLabels = convertToSimplifiedDNF(symbol.labels);
+          let dnfLabels: LabelOrCondition;
+          try {
+            const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
+            if (isAnyNode(treeWithRewrittenAnys)) {
+              continue;
+            } else if (isNotAnyNode(treeWithRewrittenAnys)) {
+              const firstVarType = 'relationship';
+              diagnostics.push({
+                message: labelsToMessage(
+                  symbol.labels,
+                  nextSymbolLabels,
+                  direction,
+                  firstVarType,
+                ),
+                severity: DiagnosticSeverity.Warning,
+                ...translateTokensToRange(child.start, nextChild.stop),
+              });
+              continue;
+            }
+            dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
+          } catch {
+            continue;
+          }
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {

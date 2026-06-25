@@ -1041,6 +1041,347 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  test('Warns on a single (non-ANDed) negated label on the end node. Rel->Node', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:!Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) !Type has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 29,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns on a single negated label on the end node when it is the only target. Rel->Node', () => {
+    const query = 'MATCH ()-[:KNOWS]->(:!Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) !Move has no incoming connection to a relationship with label(s) KNOWS.',
+        offsets: {
+          end: 27,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a single negated label when another target is viable. Rel->Node', () => {
+    const query = 'MATCH ()-[:CHALLENGES]->(:!Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Warns on a single negated relationship type that removes the only valid type', () => {
+    const query = 'MATCH (:Pokemon)-[:!KNOWS]->(:Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Move has no incoming connection to a relationship with label(s) !KNOWS.',
+        offsets: {
+          end: 35,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a negated relationship type when another type is viable', () => {
+    const query = 'MATCH (:Pokemon)-[:!CATCHES]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn on bidirectional rel when one direction is viable', () => {
+    const query = 'MATCH (:Region)-[:IS_IN]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Warns on bidirectional rel when neither direction is viable', () => {
+    const query = 'MATCH (:Region)-[:IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Pokemon has no connection to a relationship with label(s) IS_IN.',
+        offsets: {
+          end: 35,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns only on the invalid segment of a multi-hop path', () => {
+    const query =
+      'MATCH (:Trainer)-[:CATCHES]->(:Pokemon)-[:WEAK_TO]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 58,
+          start: 39,
+        },
+        range: {
+          end: {
+            character: 58,
+            line: 0,
+          },
+          start: {
+            character: 39,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a fully valid multi-hop path', () => {
+    const query =
+      'MATCH (:Trainer)-[:CATCHES]->(:Pokemon)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Resolves labels accumulated across clauses on a repeated variable', () => {
+    const query = 'MATCH (n:Trainer) MATCH (n)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 40,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a self-loop with a viable reltype', () => {
+    const query = 'MATCH (n:Pokemon)-[:CHALLENGES]->(n) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn when the end node label expression is a tautology (any)', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Pokemon|!Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn on an OR of negations when a viable label remains', () => {
+    const query = 'MATCH (:Type)<-[:WEAK_TO]-(:!Pokemon|!Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Limitation: Does not lint variable-length relationships', () => {
+    const query = 'MATCH (:Trainer)-[:WEAK_TO*1..3]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not produce a false positive for an ANY (%) first variable', () => {
+    const query = 'MATCH (:%)-[:WEAK_TO]->() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not produce a false positive for an ANY (%) ANDed with a label on the first variable', () => {
+    const query = 'MATCH (:Pokemon&%)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Only warns on the genuinely invalid segment when the first variable is ANY (%)', () => {
+    const query = 'MATCH (:%)-[:WEAK_TO]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 29,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns on NOT-ANY (!%) first variable. Node->Rel', () => {
+    const query = 'MATCH (:!%)-[:WEAK_TO]->() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) !%.',
+        offsets: {
+          end: 24,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns on NOT-ANY (!%) first variable. Node<-Rel', () => {
+    const query = 'MATCH (:!%)<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) !%.',
+        offsets: {
+          end: 24,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 24,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns on NOT-ANY (!%) on rel ', () => {
+    const query = 'MATCH (n:Trainer)<-[:!%]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) !% has no outgoing connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 25,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 25,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          'Relationship type expression cannot possibly be satisfied. (`!%` can never be satisfied by any relationship. Relationships must have exactly one relationship type.)',
+        offsets: {
+          end: 23,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
   test('Should not warn on CREATE', () => {
     const query = 'CREATE (n:Person)<-[:WEAK_TO]-()';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
