@@ -309,6 +309,8 @@ function labelTreeToString(node: LabelOrCondition): string {
     return node.value;
   } else if (node.condition === 'any') {
     return 'ANY';
+  } else if (node.condition === 'not') {
+    return '!' + labelTreeToString(node.children[0]);
   } else if (node.children.length === 1) {
     return labelTreeToString(node.children[0]);
   } else {
@@ -319,9 +321,6 @@ function labelTreeToString(node: LabelOrCondition): string {
         break;
       case 'or':
         separator = ' | ';
-        break;
-      case 'not':
-        separator = '!';
         break;
     }
     const childStrings: string[] = node.children.map((c) =>
@@ -548,20 +547,27 @@ function isViableSegment(
           }
         } else if (c.condition === 'and') {
           let isViable = true;
-          for (const c2 of c.children) {
-            if (isLabelLeaf(c2)) {
-              if (!completedLabels.has(c2.value)) {
-                isViable = false;
-                break;
-              }
-            } else if (c2.condition === 'not') {
-              const negated = c2.children[0];
-              if (
-                isLabelLeaf(negated) &&
-                completedLabels.difference(new Set(negated.value)).size === 0
-              ) {
-                isViable = false;
-                break;
+          const negatedLabels = c.children
+            .filter((c2) => !isLabelLeaf(c2) && c2.condition === 'not')
+            .map((x) =>
+              !isLabelLeaf(x) && isLabelLeaf(x.children[0])
+                ? x.children[0]
+                : undefined,
+            )
+            .filter((x) => x !== undefined)
+            .map((x) => x.value);
+          const remainingLabels = completedLabels.difference(
+            new Set(negatedLabels),
+          );
+          if (!remainingLabels.size) {
+            continue;
+          } else {
+            for (const c2 of c.children) {
+              if (isLabelLeaf(c2)) {
+                if (!remainingLabels.has(c2.value)) {
+                  isViable = false;
+                  break;
+                }
               }
             }
           }
@@ -571,7 +577,7 @@ function isViableSegment(
         }
       }
     } else {
-      //If we have a bug in DNF creation
+      //If we have a bug - return true here and avoid creating the "invalid segment" warning
       return true;
     }
     return false;

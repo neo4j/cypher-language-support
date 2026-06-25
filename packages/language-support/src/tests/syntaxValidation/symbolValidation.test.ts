@@ -409,7 +409,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (BATTLES | (STRONG_AGAINST & KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
+          'Relationship with label(s) (BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
         offsets: {
           end: 83,
           start: 6,
@@ -429,16 +429,145 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Handles more complex labels on both variables in path segment, no false negatives v1', () => {
+  test('Handles more complex labels on both variables in path segment, no false positives v1', () => {
     const query =
       'MATCH (:Type)<-[:CHALLENGES|STRONG_AGAINST]-(:(Pokemon & Trainer)|Type) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
 
-  test('Handles more complex labels on both variables in path segment, no false negatives v2', () => {
+  test('Handles more complex labels on both variables in path segment, no false positives v2', () => {
     const query =
-      'MATCH (:Type & (Pokemon|Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS)]-(:Trainer) RETURN ""';
+      'MATCH (:Type|(Pokemon & Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS)]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Handles ANDed negations on relationship', () => {
+    const query =
+      'MATCH (:Type)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Trainer has no outgoing connection to a relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN).',
+        offsets: {
+          end: 81,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 81,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on relationship v2', () => {
+    const query =
+      'MATCH (:Trainer)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 74,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 74,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on node, v1', () => {
+    const query =
+      'MATCH (:!Type & !Pokemon & !Gym & !Move)<-[:CATCHES|TRAINS]-(x:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (CATCHES | TRAINS) has no outgoing connection to a node with label(s) (!Type & !Pokemon & !Gym & !Move).',
+        offsets: {
+          end: 60,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 60,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on node, v2', () => {
+    const query =
+      'MATCH (:Pokemon)<-[:CATCHES|TRAINS|IS_IN]-(x:!Type & !Trainer & !Gym & !Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (!Type & !Trainer & !Gym & !Move) has no outgoing connection to a relationship with label(s) (CATCHES | TRAINS | IS_IN).',
+        offsets: {
+          end: 77,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 77,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('No false positives with ANDed negations on relationship', () => {
+    const query =
+      'MATCH (:Type)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('No false positives with ANDed negations on node v1', () => {
+    const query =
+      'MATCH (:!Type & !Trainer & !Gym & !Move)<-[:CATCHES|TRAINS]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('No false positives with ANDed negations on node v2', () => {
+    const query =
+      'MATCH (:Pokemon)<-[:CATCHES|TRAINS]-(:!Type & !Pokemon & !Gym & !Move) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });

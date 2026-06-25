@@ -451,15 +451,18 @@ export function simplifyAndRemoveDNFContradictions(
       } else if (!isLabelLeaf(currentNode) && currentNode.condition === 'and') {
         //for ANDs like AND(A, !B) where we dont have a contradiction, we can remove the !B which becomes true automatically if we must have other labels than B, keeping only non-negated labels
         //Could not remove it if we have both !B and B, but this would be caught above
+        //Can also not remove them if we dont have non-NOTed labels
         const newChildren = currentNode.children.filter((c) => isLabelLeaf(c));
-        currentNode =
-          newChildren.length === 1
-            ? newChildren[0]
-            : {
-                condition: 'and',
-                children: currentNode.children.filter((c) => isLabelLeaf(c)),
-              };
-        simplifiedChildren[i] = currentNode;
+        if (newChildren.length !== 0) {
+          currentNode =
+            newChildren.length === 1
+              ? newChildren[0]
+              : {
+                  condition: 'and',
+                  children: currentNode.children.filter((c) => isLabelLeaf(c)),
+                };
+          simplifiedChildren[i] = currentNode;
+        }
       }
       //After removing contradictions we can only have !A or A, not both for any label A inside an AND-condition.
       for (let j = i + 1; j < simplifiedChildren.length; j++) {
