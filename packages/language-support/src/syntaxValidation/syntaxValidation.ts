@@ -404,20 +404,10 @@ function findPathIssues(
           let dnfLabels: LabelOrCondition;
           try {
             const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
-            if (isAnyNode(treeWithRewrittenAnys)) {
-              continue;
-            } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-              const firstVarType = 'node';
-              diagnostics.push({
-                message: labelsToMessage(
-                  symbol.labels,
-                  nextSymbolLabels,
-                  direction,
-                  firstVarType,
-                ),
-                severity: DiagnosticSeverity.Warning,
-                ...translateTokensToRange(child.start, nextChild.stop),
-              });
+            if (
+              isAnyNode(treeWithRewrittenAnys) ||
+              isNotAnyNode(treeWithRewrittenAnys)
+            ) {
               continue;
             }
             dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
@@ -499,20 +489,10 @@ function findPathIssues(
           let dnfLabels: LabelOrCondition;
           try {
             const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
-            if (isAnyNode(treeWithRewrittenAnys)) {
-              continue;
-            } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-              const firstVarType = 'relationship';
-              diagnostics.push({
-                message: labelsToMessage(
-                  symbol.labels,
-                  nextSymbolLabels,
-                  direction,
-                  firstVarType,
-                ),
-                severity: DiagnosticSeverity.Warning,
-                ...translateTokensToRange(child.start, nextChild.stop),
-              });
+            if (
+              isAnyNode(treeWithRewrittenAnys) ||
+              isNotAnyNode(treeWithRewrittenAnys)
+            ) {
               continue;
             }
             dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
@@ -569,10 +549,11 @@ function isViableSegment(
   let dnfTree: LabelOrCondition;
   try {
     const treeWithRewrittenAnys = removeInnerAnys(endLabels);
-    if (isAnyNode(treeWithRewrittenAnys)) {
+    if (
+      isAnyNode(treeWithRewrittenAnys) ||
+      isNotAnyNode(treeWithRewrittenAnys)
+    ) {
       return true;
-    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-      return false;
     }
     dnfTree = convertToSimplifiedDNF(treeWithRewrittenAnys);
     if (!isLabelLeaf(dnfTree) && dnfTree.condition === 'or') {

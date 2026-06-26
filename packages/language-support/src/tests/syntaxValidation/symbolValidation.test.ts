@@ -1317,46 +1317,35 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Warns on NOT-ANY (!%) first variable. Node->Rel', () => {
+  // A NOT-ANY (!%) node matches only label-less nodes. The label-keyed schema
+  // does not enumerate connections of label-less nodes, so we cannot prove the
+  // segment invalid and must not warn.
+  test('Does not warn on a NOT-ANY (!%) first variable. Node->Rel', () => {
     const query = 'MATCH (:!%)-[:WEAK_TO]->() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
-    expect(diagnostics).toEqual([
-      {
-        message:
-          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) !%.',
-        offsets: {
-          end: 24,
-          start: 6,
-        },
-        range: {
-          end: {
-            character: 24,
-            line: 0,
-          },
-          start: {
-            character: 6,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
-    ]);
+    expect(diagnostics).toEqual([]);
   });
 
-  test('Warns on NOT-ANY (!%) first variable. Node<-Rel', () => {
+  test('Does not warn on a NOT-ANY (!%) first variable. Node<-Rel', () => {
     const query = 'MATCH (:!%)<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Handles case where we have legitimate label and a contradiction, v1', () => {
+    const query = 'MATCH (:Pokemon | (!% & Trainer))<-[:WEAK_TO]-() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) !%.',
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!% & Trainer)).',
         offsets: {
-          end: 24,
+          end: 46,
           start: 6,
         },
         range: {
           end: {
-            character: 24,
+            character: 46,
             line: 0,
           },
           start: {
@@ -1369,29 +1358,53 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Warns on NOT-ANY (!%) on rel ', () => {
+  test('Handles case where we have legitimate label and a contradiction, v2', () => {
+    const query =
+      'MATCH (:Pokemon | (!Trainer & Trainer))<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!Trainer & Trainer)).',
+        offsets: {
+          end: 52,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 52,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Limitation: Does warn on contradictions like (!% & X)', () => {
+    const query = 'MATCH (:!% & Trainer)<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Limitation: Does not warn on (contradiction | contradiction)', () => {
+    const query =
+      'MATCH (:(!% & Pokemon) | (!% & Trainer))<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  // A NOT-ANY (!%) relationship is impossible (relationships always have exactly
+  // one type), so Neo4j emits its own semantic error. The schema path linter
+  // should not pile on a separate connection warning.
+  test('Does not add a path warning for a NOT-ANY (!%) rel (only the semantic error)', () => {
     const query = 'MATCH (n:Trainer)<-[:!%]-() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
-      {
-        message:
-          'Relationship with label(s) !% has no outgoing connection to a node with label(s) Trainer.',
-        offsets: {
-          end: 25,
-          start: 6,
-        },
-        range: {
-          end: {
-            character: 25,
-            line: 0,
-          },
-          start: {
-            character: 6,
-            line: 0,
-          },
-        },
-        severity: 2,
-      },
       {
         message:
           'Relationship type expression cannot possibly be satisfied. (`!%` can never be satisfied by any relationship. Relationships must have exactly one relationship type.)',
