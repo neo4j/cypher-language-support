@@ -22,9 +22,9 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
  * @param root - the original label tree
  * @returns a an equivalent DNF tree
  */
-export function convertToSimplifiedDNF(
-  root: LabelOrCondition,
-): LabelOrCondition {
+// Not exported: callers must go through normalizeLabelTreeForSchemaCheck so the
+// ANY / !% / throw cases are always handled.
+function convertToSimplifiedDNF(root: LabelOrCondition): LabelOrCondition {
   const dnfRoot: LabelOrCondition = convertToDNF(root);
   return simplifyAndRemoveDNFContradictions(dnfRoot);
 }
@@ -53,9 +53,9 @@ export function convertToDNF(root: LabelOrCondition): LabelOrCondition {
  * @param root - the original label tree
  * @returns an equivalent CNF tree, simplified to remove duplication and tautologies
  */
-export function convertToSimplifiedCNF(
-  root: LabelOrCondition,
-): LabelOrCondition {
+// Not exported: callers must go through normalizeLabelTreeForSchemaCheck so the
+// ANY / !% / throw cases are always handled.
+function convertToSimplifiedCNF(root: LabelOrCondition): LabelOrCondition {
   const cnfRoot: LabelOrCondition = convertToCNF(root);
   const cleanedCnfTree: LabelOrCondition =
     simplifyAndRemoveTautologies(cnfRoot);
@@ -897,4 +897,47 @@ export function removeInnerAnys(labelTree: LabelOrCondition): LabelOrCondition {
     }
   }
   return newLabelTree;
+}
+
+export type NormalizedLabelTree =
+  | { kind: 'any' } // % : matches any labelled element
+  | { kind: 'notAny' } // !% : matches only label-less nodes
+  | { kind: 'converted'; tree: LabelOrCondition }
+  | { kind: 'unconvertible' }; // conversion threw on a malformed tree
+
+/**
+ * Shared entry point for reasoning about a label expression against a graph
+ * schema. Strips ANY (%) / NOT-ANY (!%) nodes and converts the remainder to the
+ * requested normal form, catching conversion failures.
+ *
+ * Every consumer (schema-based linting and schema-based completions) MUST funnel
+ * label trees through this before walking them, so the ANY / !% / throw cases
+ * can't be forgotten — past crashes and false positives came from a call site
+ * that open-coded (and skipped part of) this dance.
+ *
+ * `any` (%) and `notAny` (!%) can't be validated against the label-keyed schema
+ * (a label-less node may have connections the schema does not enumerate), and
+ * `unconvertible` means the tree was malformed. Callers decide what each of
+ * those means for them and only walk the tree on `converted`.
+ */
+export function normalizeLabelTreeForSchemaCheck(
+  labels: LabelOrCondition,
+  form: 'dnf' | 'cnf',
+): NormalizedLabelTree {
+  try {
+    const treeWithRewrittenAnys = removeInnerAnys(labels);
+    if (isAnyNode(treeWithRewrittenAnys)) {
+      return { kind: 'any' };
+    }
+    if (isNotAnyNode(treeWithRewrittenAnys)) {
+      return { kind: 'notAny' };
+    }
+    const tree =
+      form === 'dnf'
+        ? convertToSimplifiedDNF(treeWithRewrittenAnys)
+        : convertToSimplifiedCNF(treeWithRewrittenAnys);
+    return { kind: 'converted', tree };
+  } catch {
+    return { kind: 'unconvertible' };
+  }
 }

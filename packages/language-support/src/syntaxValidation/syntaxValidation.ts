@@ -39,13 +39,7 @@ import {
   StatementContext,
 } from '../generated-parser/CypherCmdParser.js';
 import { ParserRuleContext } from 'antlr4';
-import {
-  convertToSimplifiedCNF,
-  convertToSimplifiedDNF,
-  isAnyNode,
-  isNotAnyNode,
-  removeInnerAnys,
-} from '../labelTreeRewriting.js';
+import { normalizeLabelTreeForSchemaCheck } from '../labelTreeRewriting.js';
 import {
   getNodesFromRelsSet,
   getRelsFromNodesSets,
@@ -401,19 +395,16 @@ function findPathIssues(
                 ? 'incoming'
                 : 'bidirectional';
 
-          let dnfLabels: LabelOrCondition;
-          try {
-            const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
-            if (
-              isAnyNode(treeWithRewrittenAnys) ||
-              isNotAnyNode(treeWithRewrittenAnys)
-            ) {
-              continue;
-            }
-            dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
-          } catch {
+          // ANY (%) / NOT-ANY (!%) and unconvertible trees can't be validated
+          // against the label-keyed schema, so skip the segment without warning.
+          const normalizedLabels = normalizeLabelTreeForSchemaCheck(
+            symbol.labels,
+            'dnf',
+          );
+          if (normalizedLabels.kind !== 'converted') {
             continue;
           }
+          const dnfLabels = normalizedLabels.tree;
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {
@@ -486,19 +477,16 @@ function findPathIssues(
                 ? 'incoming'
                 : 'bidirectional';
 
-          let dnfLabels: LabelOrCondition;
-          try {
-            const treeWithRewrittenAnys = removeInnerAnys(symbol.labels);
-            if (
-              isAnyNode(treeWithRewrittenAnys) ||
-              isNotAnyNode(treeWithRewrittenAnys)
-            ) {
-              continue;
-            }
-            dnfLabels = convertToSimplifiedDNF(treeWithRewrittenAnys);
-          } catch {
+          // ANY (%) / NOT-ANY (!%) and unconvertible trees can't be validated
+          // against the label-keyed schema, so skip the segment without warning.
+          const normalizedLabels = normalizeLabelTreeForSchemaCheck(
+            symbol.labels,
+            'dnf',
+          );
+          if (normalizedLabels.kind !== 'converted') {
             continue;
           }
+          const dnfLabels = normalizedLabels.tree;
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {
@@ -546,70 +534,63 @@ function isViableSegment(
   completedLabels: Set<string>,
   endLabels: LabelOrCondition,
 ) {
-  let dnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(endLabels);
-    if (
-      isAnyNode(treeWithRewrittenAnys) ||
-      isNotAnyNode(treeWithRewrittenAnys)
-    ) {
-      return true;
-    }
-    dnfTree = convertToSimplifiedDNF(treeWithRewrittenAnys);
-    if (!isLabelLeaf(dnfTree) && dnfTree.condition === 'or') {
-      for (const c of dnfTree.children) {
-        if (isLabelLeaf(c)) {
-          if (completedLabels.has(c.value)) {
-            return true;
-          }
-        } else if (c.condition === 'not') {
-          const negated = c.children[0];
-          if (
-            isLabelLeaf(negated) &&
-            completedLabels.difference(new Set([negated.value])).size > 0
-          ) {
-            return true;
-          }
-        } else if (c.condition === 'and') {
-          let isViable = true;
-          const negatedLabels = c.children
-            .filter((c2) => !isLabelLeaf(c2) && c2.condition === 'not')
-            .map((x) =>
-              !isLabelLeaf(x) && isLabelLeaf(x.children[0])
-                ? x.children[0]
-                : undefined,
-            )
-            .filter((x) => x !== undefined)
-            .map((x) => x.value);
-          const remainingLabels = completedLabels.difference(
-            new Set(negatedLabels),
-          );
-          if (!remainingLabels.size) {
-            continue;
-          } else {
-            for (const c2 of c.children) {
-              if (isLabelLeaf(c2)) {
-                if (!remainingLabels.has(c2.value)) {
-                  isViable = false;
-                  break;
-                }
+  // ANY (%) / NOT-ANY (!%) endpoints can't be disproven by the schema, and an
+  // unconvertible tree is treated as viable to avoid a spurious warning.
+  const normalized = normalizeLabelTreeForSchemaCheck(endLabels, 'dnf');
+  if (normalized.kind !== 'converted') {
+    return true;
+  }
+  const dnfTree = normalized.tree;
+  if (!isLabelLeaf(dnfTree) && dnfTree.condition === 'or') {
+    for (const c of dnfTree.children) {
+      if (isLabelLeaf(c)) {
+        if (completedLabels.has(c.value)) {
+          return true;
+        }
+      } else if (c.condition === 'not') {
+        const negated = c.children[0];
+        if (
+          isLabelLeaf(negated) &&
+          completedLabels.difference(new Set([negated.value])).size > 0
+        ) {
+          return true;
+        }
+      } else if (c.condition === 'and') {
+        let isViable = true;
+        const negatedLabels = c.children
+          .filter((c2) => !isLabelLeaf(c2) && c2.condition === 'not')
+          .map((x) =>
+            !isLabelLeaf(x) && isLabelLeaf(x.children[0])
+              ? x.children[0]
+              : undefined,
+          )
+          .filter((x) => x !== undefined)
+          .map((x) => x.value);
+        const remainingLabels = completedLabels.difference(
+          new Set(negatedLabels),
+        );
+        if (!remainingLabels.size) {
+          continue;
+        } else {
+          for (const c2 of c.children) {
+            if (isLabelLeaf(c2)) {
+              if (!remainingLabels.has(c2.value)) {
+                isViable = false;
+                break;
               }
             }
           }
-          if (isViable) {
-            return true;
-          }
+        }
+        if (isViable) {
+          return true;
         }
       }
-    } else {
-      //If we have a bug - return true here and avoid creating the "invalid segment" warning
-      return true;
     }
-    return false;
-  } catch {
-    //bail
+  } else {
+    //If we have a bug - return true here and avoid creating the "invalid segment" warning
     return true;
   }
+  return false;
 }
 
 function findNonCreatingPatternElements(
@@ -832,22 +813,16 @@ function getFollowingLabels(
     outGoingLabels: Map<string, Set<string>>;
   },
 ): Set<string> | undefined {
-  let cnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(labels);
-    if (isAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    }
-    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
-  } catch {
+  // ANY (%) / NOT-ANY (!%) and unconvertible trees give no usable set of
+  // following labels, so signal "can't determine" with undefined.
+  const normalized = normalizeLabelTreeForSchemaCheck(labels, 'cnf');
+  if (normalized.kind !== 'converted') {
     return undefined;
   }
   const { inLabels, outLabels } = walkCNFTree(
     incomingLabels,
     outGoingLabels,
-    cnfTree,
+    normalized.tree,
   );
   const allNodes =
     direction === 'outgoing'

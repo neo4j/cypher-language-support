@@ -5,7 +5,7 @@ import {
 } from 'vscode-languageserver-types';
 import { DbSchema } from '../dbSchema.js';
 import { ParsedStatement } from '../cypherLanguageService.js';
-import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types.js';
+import { isLabelLeaf, SymbolsInfo } from '../types.js';
 import { findParent } from '../helpers.js';
 import {
   NodePatternContext,
@@ -14,12 +14,7 @@ import {
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser.js';
 import { backtickIfNeeded } from './autocompletionHelpers.js';
-import {
-  convertToSimplifiedCNF,
-  isAnyNode,
-  isNotAnyNode,
-  removeInnerAnys,
-} from '../labelTreeRewriting.js';
+import { normalizeLabelTreeForSchemaCheck } from '../labelTreeRewriting.js';
 import {
   getNodesFromRelsSet,
   getRelsFromNodesSets,
@@ -46,23 +41,18 @@ export function getShortPathCompletions(
     getNodesFromRelsSet(dbSchema);
   const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
 
-  let cnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
-    if (
-      isAnyNode(treeWithRewrittenAnys) ||
-      isNotAnyNode(treeWithRewrittenAnys)
-    ) {
-      return [];
-    }
-    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
-  } catch {
+  // ANY (%) / NOT-ANY (!%) and unconvertible trees give no usable completions.
+  const normalized = normalizeLabelTreeForSchemaCheck(
+    lastVariable.labels,
+    'cnf',
+  );
+  if (normalized.kind !== 'converted') {
     return [];
   }
   const { inLabels, outLabels } = walkCNFTree(
     nodesToRelsSet,
     nodesFromRelsSet,
-    cnfTree,
+    normalized.tree,
   );
 
   if (assumedDirection === 'outgoing') {
@@ -108,23 +98,18 @@ export function getPathCompletions(
   }
   const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
     getRelsFromNodesSets(dbSchema);
-  let cnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(lastVariable.labels);
-    if (
-      isAnyNode(treeWithRewrittenAnys) ||
-      isNotAnyNode(treeWithRewrittenAnys)
-    ) {
-      return [];
-    }
-    cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
-  } catch {
+  // ANY (%) / NOT-ANY (!%) and unconvertible trees give no usable completions.
+  const normalized = normalizeLabelTreeForSchemaCheck(
+    lastVariable.labels,
+    'cnf',
+  );
+  if (normalized.kind !== 'converted') {
     return [];
   }
   const { inLabels: inRelTypes, outLabels: outRelTypes } = walkCNFTree(
     relsToNodesSet,
     relsFromNodesSet,
-    cnfTree,
+    normalized.tree,
   );
   const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
     getNodesFromRelsSet(dbSchema);
@@ -270,22 +255,22 @@ export function completeNodeLabel(
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
         getNodesFromRelsSet(dbSchema);
-      let cnfTree: LabelOrCondition;
-      try {
-        const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
-        if (isAnyNode(treeWithRewrittenAnys)) {
-          return allLabelCompletions(dbSchema);
-        } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-          return [];
-        }
-        cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
-      } catch {
+      const normalized = normalizeLabelTreeForSchemaCheck(
+        foundVariable.labels,
+        'cnf',
+      );
+      // !% matches only label-less nodes, so the schema yields no labels; for %
+      // or an unconvertible tree we can't narrow, so suggest all labels.
+      if (normalized.kind === 'notAny') {
+        return [];
+      }
+      if (normalized.kind !== 'converted') {
         return allLabelCompletions(dbSchema);
       }
       const { inLabels, outLabels } = walkCNFTree(
         nodesToRelsSet,
         nodesFromRelsSet,
-        cnfTree,
+        normalized.tree,
       );
       const allNodes =
         direction === 'outgoing'
@@ -363,22 +348,21 @@ export function completeRelationshipType(
       const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
         getRelsFromNodesSets(dbSchema);
 
-      let cnfTree: LabelOrCondition;
-      try {
-        const treeWithRewrittenAnys = removeInnerAnys(foundVariable.labels);
-        if (isAnyNode(treeWithRewrittenAnys)) {
-          return allReltypeCompletions(dbSchema);
-        } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-          return [];
-        }
-        cnfTree = convertToSimplifiedCNF(treeWithRewrittenAnys);
-      } catch {
+      const normalized = normalizeLabelTreeForSchemaCheck(
+        foundVariable.labels,
+        'cnf',
+      );
+      // % -> suggest all rel types; !% or an unconvertible tree -> nothing.
+      if (normalized.kind === 'any') {
+        return allReltypeCompletions(dbSchema);
+      }
+      if (normalized.kind !== 'converted') {
         return [];
       }
       const { inLabels, outLabels } = walkCNFTree(
         relsToNodesSet,
         relsFromNodesSet,
-        cnfTree,
+        normalized.tree,
       );
       const allRels =
         direction === 'outgoing'
