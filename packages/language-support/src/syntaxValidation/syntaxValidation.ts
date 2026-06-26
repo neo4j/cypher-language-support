@@ -39,7 +39,10 @@ import {
   StatementContext,
 } from '../generated-parser/CypherCmdParser.js';
 import { ParserRuleContext } from 'antlr4';
-import { normalizeLabelTreeForSchemaCheck } from '../labelTreeRewriting.js';
+import {
+  NormalizedLabelTree,
+  normalizeLabelTreeForSchemaCheck,
+} from '../labelTreeRewriting.js';
 import {
   getNodesFromRelsSet,
   getRelsFromNodesSets,
@@ -288,12 +291,21 @@ function warnOnPathDirectionalityIssues(
   symbolTable: SymbolTable,
 ): SyntaxDiagnostic[] {
   const statements = parsingResult.ctx.statementOrCommand_list();
+  // The schema-derived maps only depend on dbSchema, so build them once here
+  // rather than rebuilding them for every path segment / disjunct.
+  const relsFromNodes = getRelsFromNodesSets(dbSchema);
+  const nodesFromRels = getNodesFromRelsSet(dbSchema);
   return statements.reduce<SyntaxDiagnostic[]>((acc, stmtOrCommand) => {
     const stmt = stmtOrCommand.preparsedStatement()?.statement();
     if (!stmt) {
       return acc;
     }
-    const pathIssues = findPathIssues(stmt, dbSchema, symbolTable);
+    const pathIssues = findPathIssues(
+      stmt,
+      symbolTable,
+      relsFromNodes,
+      nodesFromRels,
+    );
     return acc.concat(pathIssues);
   }, []);
 }
@@ -345,8 +357,9 @@ function labelsToMessage(
 
 function findPathIssues(
   stmt: StatementContext,
-  dbSchema: DbSchema,
   symbolTable: SymbolTable,
+  relsFromNodes: ReturnType<typeof getRelsFromNodesSets>,
+  nodesFromRels: ReturnType<typeof getNodesFromRelsSet>,
 ): SyntaxDiagnostic[] {
   const patternElements: PatternElementContext[] =
     findNonCreatingPatternElements(stmt, []);
@@ -406,17 +419,22 @@ function findPathIssues(
           }
           const dnfLabels = normalizedLabels.tree;
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
+            // The second variable's normal form is loop-invariant — compute once.
+            const endNormalized = normalizeLabelTreeForSchemaCheck(
+              nextSymbolLabels,
+              'dnf',
+            );
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {
               const possibleRels = possibleFollowingRelType(
                 direction,
-                dbSchema,
+                relsFromNodes,
                 { condition: 'and', children: [c] },
               );
               if (possibleRels) {
                 const segmentIsPossible = isViableSegment(
                   possibleRels,
-                  nextSymbolLabels,
+                  endNormalized,
                 );
                 if (segmentIsPossible) {
                   hasViableLabel = true;
@@ -488,17 +506,22 @@ function findPathIssues(
           }
           const dnfLabels = normalizedLabels.tree;
           if (!isLabelLeaf(dnfLabels) && dnfLabels.condition === 'or') {
+            // The second variable's normal form is loop-invariant — compute once.
+            const endNormalized = normalizeLabelTreeForSchemaCheck(
+              nextSymbolLabels,
+              'dnf',
+            );
             let hasViableLabel = false;
             for (const c of dnfLabels.children) {
               const possibleNodes = possibleFollowingLabels(
                 direction,
-                dbSchema,
+                nodesFromRels,
                 { condition: 'and', children: [c] },
               );
               if (possibleNodes) {
                 const segmentIsPossible = isViableSegment(
                   possibleNodes,
-                  nextSymbolLabels,
+                  endNormalized,
                 );
                 if (segmentIsPossible) {
                   hasViableLabel = true;
@@ -532,15 +555,14 @@ function findPathIssues(
 //Ex. if RHS is OR(A, !B, AND(C,!D)) and completions contain A, the OR could have real matches
 function isViableSegment(
   completedLabels: Set<string>,
-  endLabels: LabelOrCondition,
+  endNormalized: NormalizedLabelTree,
 ) {
   // ANY (%) / NOT-ANY (!%) endpoints can't be disproven by the schema, and an
   // unconvertible tree is treated as viable to avoid a spurious warning.
-  const normalized = normalizeLabelTreeForSchemaCheck(endLabels, 'dnf');
-  if (normalized.kind !== 'converted') {
+  if (endNormalized.kind !== 'converted') {
     return true;
   }
-  const dnfTree = normalized.tree;
+  const dnfTree = endNormalized.tree;
   if (!isLabelLeaf(dnfTree) && dnfTree.condition === 'or') {
     for (const c of dnfTree.children) {
       if (isLabelLeaf(c)) {
@@ -777,28 +799,24 @@ export function lintCypherQuery(
 //Returns possible following rel types, or undefined in cases where we should quit
 function possibleFollowingRelType(
   direction: 'incoming' | 'outgoing' | 'bidirectional',
-  dbSchema: DbSchema,
+  relsFromNodes: ReturnType<typeof getRelsFromNodesSets>,
   labels: LabelOrCondition,
 ): Set<string> | undefined {
-  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
-    getRelsFromNodesSets(dbSchema);
   return getFollowingLabels(direction, labels, {
-    incomingLabels: relsToNodesSet,
-    outGoingLabels: relsFromNodesSet,
+    incomingLabels: relsFromNodes.toNodes,
+    outGoingLabels: relsFromNodes.fromNodes,
   });
 }
 
 //Returns possible following labels, or undefined in cases where we should quit
 function possibleFollowingLabels(
   direction: 'incoming' | 'outgoing' | 'bidirectional',
-  dbSchema: DbSchema,
+  nodesFromRels: ReturnType<typeof getNodesFromRelsSet>,
   labels: LabelOrCondition,
 ): Set<string> | undefined {
-  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
-    getNodesFromRelsSet(dbSchema);
   return getFollowingLabels(direction, labels, {
-    incomingLabels: nodesToRelsSet,
-    outGoingLabels: nodesFromRelsSet,
+    incomingLabels: nodesFromRels.toRels,
+    outGoingLabels: nodesFromRels.fromRels,
   });
 }
 
