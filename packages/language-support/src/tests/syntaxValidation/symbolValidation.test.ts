@@ -1241,6 +1241,38 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([]);
   });
 
+  test('Warns on a label-OR-negation end node when negated label is the only viable one', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Gym|!Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Gym | !Type) has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 33,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a label-OR-negation end node when there is viability via negation condition', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Type|!Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
   test('Limitation: Does not lint variable-length relationships', () => {
     const query = 'MATCH (:Trainer)-[:WEAK_TO*1..3]->(:Type) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });

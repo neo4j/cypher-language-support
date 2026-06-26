@@ -585,7 +585,7 @@ function isViableSegment(
           const negated = c.children[0];
           if (
             isLabelLeaf(negated) &&
-            completedLabels.difference(new Set(negated.value)).size > 0
+            completedLabels.difference(new Set([negated.value])).size > 0
           ) {
             return true;
           }
