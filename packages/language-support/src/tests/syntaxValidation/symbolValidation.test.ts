@@ -49,7 +49,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no incoming (:Trainer)',
+        message:
+          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -80,7 +81,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no outgoing (:Pokemon)',
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
         offsets: {
           end: 30,
           start: 6,
@@ -111,7 +113,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Gym) has no incoming [:WEAK_TO]',
+        message:
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -142,7 +145,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Gym) has no outgoing [:WEAK_TO]',
+        message:
+          'Node with label(s) Gym has no outgoing connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -173,7 +177,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no incoming/outgoing (:Trainer)',
+        message:
+          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -191,7 +196,8 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
       {
-        message: '(:Gym) has no incoming/outgoing [:WEAK_TO]',
+        message:
+          'Node with label(s) Gym has no connection to a relationship with label(s) WEAK_TO.',
         offsets: {
           end: 36,
           start: 16,
@@ -222,7 +228,8 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no outgoing (:(Trainer | Gym))',
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
         offsets: {
           end: 33,
           start: 6,
@@ -242,12 +249,32 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Handles multiple labels on first variable in path segment (rel)', () => {
+  test('Handles multiple labels on both variables in path segment', () => {
     const query = 'MATCH (:Trainer)<-[:WEAK_TO|IS_IN]-(:Move) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Move) has no outgoing [:(WEAK_TO | IS_IN)]',
+        message:
+          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 35,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          'Node with label(s) Move has no outgoing connection to a relationship with label(s) (WEAK_TO | IS_IN).',
         offsets: {
           end: 42,
           start: 16,
@@ -274,7 +301,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          '[:WEAK_TO] has no outgoing (:((Trainer | Gym) & (Gym | (Trainer & Pokemon))))',
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
         offsets: {
           end: 65,
           start: 6,
@@ -294,14 +321,253 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Limitation: Bails on multiple labels on second variable in path segment (node)', () => {
+  test('Handles multiple labels on second variable in path segment (node)', () => {
     const query = 'MATCH (:Type)<-[:WEAK_TO]-(:Trainer|Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Trainer | Gym) has no outgoing connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 40,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles multiple labels on second variable in path segment (rel)', () => {
+    const query = 'MATCH (:Gym)<-[:WEAK_TO|IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Gym.',
+        offsets: {
+          end: 31,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 31,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  //This should be invalid even though Type and Trainer are both individually possible, this syntax means the node will have both, but there is no single
+  //rel type of the CHALLENGES|STRONG_AGAINST rel that would give both
+  test('Handles more complex labels on both variables in path segment, v1', () => {
+    const query =
+      'MATCH (:Type)<-[:CHALLENGES|STRONG_AGAINST]-(:(Type & Trainer)) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Type & Trainer) has no outgoing connection to a relationship with label(s) (CHALLENGES | STRONG_AGAINST).',
+        offsets: {
+          end: 63,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 63,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles more complex labels on both variables in path segment, v2', () => {
+    const query =
+      'MATCH (:Type & (Pokemon|Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS & BATTLES)]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
+        offsets: {
+          end: 83,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 83,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles more complex labels on both variables in path segment, no false positives v1', () => {
+    const query =
+      'MATCH (:Type)<-[:CHALLENGES|STRONG_AGAINST]-(:(Pokemon & Trainer)|Type) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
 
-  test('Limitation: Bails on multiple labels on second variable in path segment (rel)', () => {
-    const query = 'MATCH (:Gym)<-[:WEAK_TO|IS_IN]-(:Pokemon) RETURN ""';
+  test('Handles more complex labels on both variables in path segment, no false positives v2', () => {
+    const query =
+      'MATCH (:Type|(Pokemon & Trainer))<-[:BATTLES|(!STRONG_AGAINST & !KNOWS)]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Handles ANDed negations on relationship', () => {
+    const query =
+      'MATCH (:Type)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Trainer has no outgoing connection to a relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN).',
+        offsets: {
+          end: 81,
+          start: 13,
+        },
+        range: {
+          end: {
+            character: 81,
+            line: 0,
+          },
+          start: {
+            character: 13,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on relationship v2', () => {
+    const query =
+      'MATCH (:Trainer)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 74,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 74,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on node, v1', () => {
+    const query =
+      'MATCH (:!Type & !Pokemon & !Gym & !Move)<-[:CATCHES|TRAINS]-(x:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) (CATCHES | TRAINS) has no outgoing connection to a node with label(s) (!Type & !Pokemon & !Gym & !Move).',
+        offsets: {
+          end: 60,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 60,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles ANDed negations on node, v2', () => {
+    const query =
+      'MATCH (:Pokemon)<-[:CATCHES|TRAINS|IS_IN]-(x:!Type & !Trainer & !Gym & !Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (!Type & !Trainer & !Gym & !Move) has no outgoing connection to a relationship with label(s) (CATCHES | TRAINS | IS_IN).',
+        offsets: {
+          end: 77,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 77,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('No false positives with ANDed negations on relationship', () => {
+    const query =
+      'MATCH (:Type)<-[:!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('No false positives with ANDed negations on node v1', () => {
+    const query =
+      'MATCH (:!Type & !Trainer & !Gym & !Move)<-[:CATCHES|TRAINS]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('No false positives with ANDed negations on node v2', () => {
+    const query =
+      'MATCH (:Pokemon)<-[:CATCHES|TRAINS]-(:!Type & !Pokemon & !Gym & !Move) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
@@ -311,7 +577,27 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '[:WEAK_TO] has no incoming/outgoing (:Gym)',
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 32,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Gym.',
         offsets: {
           end: 22,
           start: 6,
@@ -347,25 +633,6 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 32,
-          start: 32,
-        },
-        range: {
-          end: {
-            character: 32,
-            line: 0,
-          },
-          start: {
-            character: 32,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
@@ -373,6 +640,25 @@ describe('Schema based linting spec', () => {
     const query = 'MATCH (:Region)-[:IS_IN RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 33,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -392,25 +678,6 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 33,
-          start: 33,
-        },
-        range: {
-          end: {
-            character: 33,
-            line: 0,
-          },
-          start: {
-            character: 33,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
@@ -418,6 +685,25 @@ describe('Schema based linting spec', () => {
     const query = 'MATCH (:Pokemon)<-[:WEAK_TO RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 37,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -437,25 +723,6 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 37,
-          start: 37,
-        },
-        range: {
-          end: {
-            character: 37,
-            line: 0,
-          },
-          start: {
-            character: 37,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
@@ -464,7 +731,27 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Pokemon) has no incoming [:IS_IN]',
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 42,
+          start: 0,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 0,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Node with label(s) Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
         offsets: {
           end: 32,
           start: 12,
@@ -500,25 +787,6 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-      {
-        message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 42,
-          start: 42,
-        },
-        range: {
-          end: {
-            character: 42,
-            line: 0,
-          },
-          start: {
-            character: 42,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
@@ -528,10 +796,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 18,
-          start: 18,
+          start: 0,
         },
         range: {
           end: {
@@ -539,7 +807,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 18,
+            character: 0,
             line: 0,
           },
         },
@@ -547,7 +815,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 18,
           start: 18,
@@ -573,10 +841,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 16,
-          start: 16,
+          start: 0,
         },
         range: {
           end: {
@@ -584,7 +852,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 16,
+            character: 0,
             line: 0,
           },
         },
@@ -592,7 +860,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
         offsets: {
           end: 16,
           start: 16,
@@ -618,10 +886,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 23,
-          start: 23,
+          start: 0,
         },
         range: {
           end: {
@@ -629,7 +897,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 23,
+            character: 0,
             line: 0,
           },
         },
@@ -637,7 +905,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 23,
           start: 23,
@@ -663,10 +931,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 24,
-          start: 24,
+          start: 0,
         },
         range: {
           end: {
@@ -674,7 +942,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 24,
+            character: 0,
             line: 0,
           },
         },
@@ -682,7 +950,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 24,
           start: 24,
@@ -702,12 +970,20 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  test('Should not warn on unlabeled nodes/rels', () => {
+    const query =
+      'MATCH (n)-[]->()-[R]-(m:Trainer)-[]-(q)-[:IS_IN]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
   test('Warns both on missing label and path segment at once', () => {
     const query = 'MATCH (n)<-[:MISSED]-(:Archer) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message: '(:Archer) has no outgoing [:MISSED]',
+        message:
+          'Node with label(s) Archer has no outgoing connection to a relationship with label(s) MISSED.',
         offsets: {
           end: 30,
           start: 9,
@@ -763,6 +1039,400 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
     ]);
+  });
+
+  test('Warns on a single (non-ANDed) negated label on the end node. Rel->Node', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:!Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) !Type has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 29,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns on a single negated label on the end node when it is the only target. Rel->Node', () => {
+    const query = 'MATCH ()-[:KNOWS]->(:!Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) !Move has no incoming connection to a relationship with label(s) KNOWS.',
+        offsets: {
+          end: 27,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a single negated label when another target is viable. Rel->Node', () => {
+    const query = 'MATCH ()-[:CHALLENGES]->(:!Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Warns on a single negated relationship type that removes the only valid type', () => {
+    const query = 'MATCH (:Pokemon)-[:!KNOWS]->(:Move) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Move has no incoming connection to a relationship with label(s) !KNOWS.',
+        offsets: {
+          end: 35,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a negated relationship type when another type is viable', () => {
+    const query = 'MATCH (:Pokemon)-[:!CATCHES]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn on bidirectional rel when one direction is viable', () => {
+    const query = 'MATCH (:Region)-[:IS_IN]-(:Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Warns on bidirectional rel when neither direction is viable', () => {
+    const query = 'MATCH (:Region)-[:IS_IN]-(:Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Pokemon has no connection to a relationship with label(s) IS_IN.',
+        offsets: {
+          end: 35,
+          start: 15,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 0,
+          },
+          start: {
+            character: 15,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Warns only on the invalid segment of a multi-hop path', () => {
+    const query =
+      'MATCH (:Trainer)-[:CATCHES]->(:Pokemon)-[:WEAK_TO]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 58,
+          start: 39,
+        },
+        range: {
+          end: {
+            character: 58,
+            line: 0,
+          },
+          start: {
+            character: 39,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a fully valid multi-hop path', () => {
+    const query =
+      'MATCH (:Trainer)-[:CATCHES]->(:Pokemon)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Resolves labels accumulated across clauses on a repeated variable', () => {
+    const query = 'MATCH (n:Trainer) MATCH (n)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+        offsets: {
+          end: 40,
+          start: 24,
+        },
+        range: {
+          end: {
+            character: 40,
+            line: 0,
+          },
+          start: {
+            character: 24,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a self-loop with a viable reltype', () => {
+    const query = 'MATCH (n:Pokemon)-[:CHALLENGES]->(n) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn when the end node label expression is a tautology (any)', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Pokemon|!Pokemon) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn on an OR of negations when a viable label remains', () => {
+    const query = 'MATCH (:Type)<-[:WEAK_TO]-(:!Pokemon|!Trainer) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Warns on a label-OR-negation end node when negated label is the only viable one', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Gym|!Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) (Gym | !Type) has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 33,
+          start: 8,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 0,
+          },
+          start: {
+            character: 8,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Does not warn on a label-OR-negation end node when there is viability via negation condition', () => {
+    const query = 'MATCH ()-[:WEAK_TO]->(:Type|!Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Limitation: Does not lint variable-length relationships', () => {
+    const query = 'MATCH (:Trainer)-[:WEAK_TO*1..3]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not produce a false positive for an ANY (%) first variable', () => {
+    const query = 'MATCH (:%)-[:WEAK_TO]->() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not produce a false positive for an ANY (%) ANDed with a label on the first variable', () => {
+    const query = 'MATCH (:Pokemon&%)-[:WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Only warns on the genuinely invalid segment when the first variable is ANY (%)', () => {
+    const query = 'MATCH (:%)-[:WEAK_TO]->(:Gym) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+        offsets: {
+          end: 29,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 29,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  // A NOT-ANY (!%) node matches only label-less nodes. The label-keyed schema
+  // does not enumerate connections of label-less nodes, so we cannot prove the
+  // segment invalid and must not warn.
+  test('Does not warn on a NOT-ANY (!%) first variable. Node->Rel', () => {
+    const query = 'MATCH (:!%)-[:WEAK_TO]->() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Does not warn on a NOT-ANY (!%) first variable. Node<-Rel', () => {
+    const query = 'MATCH (:!%)<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Handles case where we have legitimate label and a contradiction, v1', () => {
+    const query = 'MATCH (:Pokemon | (!% & Trainer))<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!% & Trainer)).',
+        offsets: {
+          end: 46,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 46,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Handles case where we have legitimate label and a contradiction, v2', () => {
+    const query =
+      'MATCH (:Pokemon | (!Trainer & Trainer))<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!Trainer & Trainer)).',
+        offsets: {
+          end: 52,
+          start: 6,
+        },
+        range: {
+          end: {
+            character: 52,
+            line: 0,
+          },
+          start: {
+            character: 6,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Limitation: Does warn on contradictions like (!% & X)', () => {
+    const query = 'MATCH (:!% & Trainer)<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Limitation: Does not warn on (contradiction | contradiction)', () => {
+    const query =
+      'MATCH (:(!% & Pokemon) | (!% & Trainer))<-[:WEAK_TO]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
+  // A NOT-ANY (!%) relationship is impossible (relationships always have exactly
+  // one type), so Neo4j emits its own semantic error. The schema path linter
+  // should not pile on a separate connection warning.
+  test('Does not add a path warning for a NOT-ANY (!%) rel (only the semantic error)', () => {
+    const query = 'MATCH (n:Trainer)<-[:!%]-() RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
+      {
+        message:
+          'Relationship type expression cannot possibly be satisfied. (`!%` can never be satisfied by any relationship. Relationships must have exactly one relationship type.)',
+        offsets: {
+          end: 23,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 23,
+            line: 0,
+          },
+          start: {
+            character: 21,
+            line: 0,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  // (:Trainer)-[:CATCHES] exists, and [:WEAK_TO]->(:Type) exists, but neither of
+  // (:Trainer)-[:CATCHES]->(:Type) nor (:Trainer)-[:WEAK_TO]->(:Type) exist. We could see this from schema and warn
+  test('Limitation: Does not check entire tripples for viability', () => {
+    const query = 'MATCH (n:Trainer)-[:CATCHES | WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
   });
 
   test('Should not warn on CREATE', () => {
