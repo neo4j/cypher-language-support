@@ -1427,6 +1427,14 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
+  // (:Trainer)-[:CATCHES] exists, and [:WEAK_TO]->(:Type) exists, but neither of
+  // (:Trainer)-[:CATCHES]->(:Type) nor (:Trainer)-[:WEAK_TO]->(:Type) exist. We could see this from schema and warn
+  test('Limitation: Does not check entire tripples for viability', () => {
+    const query = 'MATCH (n:Trainer)-[:CATCHES | WEAK_TO]->(:Type) RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
   test('Should not warn on CREATE', () => {
     const query = 'CREATE (n:Person)<-[:WEAK_TO]-()';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });

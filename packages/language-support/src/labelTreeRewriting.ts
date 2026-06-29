@@ -459,7 +459,7 @@ export function simplifyAndRemoveDNFContradictions(
               ? newChildren[0]
               : {
                   condition: 'and',
-                  children: currentNode.children.filter((c) => isLabelLeaf(c)),
+                  children: newChildren,
                 };
           simplifiedChildren[i] = currentNode;
         }
@@ -500,8 +500,10 @@ export function simplifyAndRemoveDNFContradictions(
 
     //TODO add this simplification too
 
-    // const freeNots = simplifiedChildren.filter(c => c && !isLabelLeaf(c) && c.condition === "not");
-    // //If we have OR(!A, A, ...) - simplify to OR(ANY)
+    const freeNots = simplifiedChildren.filter(
+      (c) => c && !isLabelLeaf(c) && c.condition === 'not',
+    );
+    //If we have OR(!A, A, ...) - simplify to OR(ANY)
     // if (freeNots.some(c => {
     //   if (c && !isLabelLeaf(c) && c.condition === "not") {
     //     const innerLabel = c.children[0];
@@ -511,17 +513,17 @@ export function simplifyAndRemoveDNFContradictions(
     //   }
     // }))
 
-    // if (freeNots) {
-    //   simplifiedChildren.map(c => {
-    //     if (c && !isLabelLeaf(c) && c.condition === "and") {
-    //       return undefined;
-    //     } else if (c && isLabelLeaf(c)) {
-    //       return undefined;
-    //     } else {
-    //       return c;
-    //     }
-    //   });
-    // }
+    if (freeNots) {
+      simplifiedChildren.map((c) => {
+        if (c && !isLabelLeaf(c) && c.condition === 'and') {
+          return undefined;
+        } else if (c && isLabelLeaf(c)) {
+          return undefined;
+        } else {
+          return c;
+        }
+      });
+    }
 
     newRoot.children = simplifiedChildren.filter((x) => x !== undefined);
     return newRoot;
@@ -667,6 +669,7 @@ function isContradiction(node: LabelOrCondition) {
       }
     }
   }
+  return false;
 }
 
 /**
