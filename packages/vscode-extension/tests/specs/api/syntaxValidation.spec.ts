@@ -250,7 +250,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 8),
             new vscode.Position(0, 32),
           ),
-          '[:ACTED_IN] has no incoming (:Person)',
+          'Relationship with relationship type(s) ACTED_IN has no incoming connection to a node with label(s) Person.',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(

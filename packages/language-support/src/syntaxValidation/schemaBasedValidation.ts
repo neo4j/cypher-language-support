@@ -279,9 +279,21 @@ function findEntry(
 
 /**
  * Is the cleaned (any-free) node label tree satisfiable by some non-empty set
- * of labels drawn from `candidates`? Labels not mentioned in the tree are
- * interchangeable, so we only enumerate over those that are both mentioned and
- * candidates, plus the option of "some other candidate" (bounded by query size).
+ * of labels that the schema allows on this side (`candidates`)?
+ *
+ * `evalNodeTree` only inspects labels that appear in the tree, so any candidate
+ * NOT named in the tree is interchangeable with every other such candidate. We
+ * therefore only enumerate subsets of the labels that are both named in the
+ * tree and valid candidates (`candInTree`). That keeps the 2^n search bounded by
+ * the number of labels written in the query's label expression, not by the
+ * (potentially schema-sized) candidate set.
+ *
+ * `otherAvailable` records that at least one valid candidate is not named in the
+ * tree. Such a label doesn't change the tree's truth value (the tree never
+ * references it), but it does make the node's label set genuinely non-empty.
+ * That is what lets e.g. `(:!Pokemon)` be satisfied by a `Gym` node when `Gym`
+ * is a valid candidate: the empty `candInTree` subset evaluates the tree as
+ * true, and `otherAvailable` confirms a real (non-empty) node can back it.
  */
 function subsetSatisfiable(
   tree: LabelOrCondition,
@@ -299,6 +311,8 @@ function subsetSatisfiable(
         labelSet.add(candInTree[i]);
       }
     }
+    // The assignment must correspond to a real, non-empty node: it either uses
+    // a named candidate, or relies on some other (unnamed) candidate existing.
     if (evalNodeTree(tree, labelSet) && (labelSet.size > 0 || otherAvailable)) {
       return true;
     }

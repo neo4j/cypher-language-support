@@ -807,12 +807,12 @@ RETURN [(p)-[:`;
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
+        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
+        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
       ],
       excluded: [
         { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
-        { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-        { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
         { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
         { label: 'UNRELATED_RELTYPE', kind: CompletionItemKind.TypeParameter },
       ],
@@ -929,11 +929,11 @@ RETURN [(p)-[:`;
         { label: 'BATTLES', kind: CompletionItemKind.TypeParameter },
         { label: 'CHALLENGES', kind: CompletionItemKind.TypeParameter },
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
         { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
+      ],
+      excluded: [
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
         { label: 'STRONG_AGAINST', kind: CompletionItemKind.TypeParameter },
       ],
@@ -1058,12 +1058,10 @@ RETURN [(p)-[:`;
       expected: [
         { label: 'CATCHES', kind: CompletionItemKind.TypeParameter },
         { label: 'TRAINS', kind: CompletionItemKind.TypeParameter },
-      ],
-      excluded: [
         { label: 'KNOWS', kind: CompletionItemKind.TypeParameter },
         { label: 'WEAK_TO', kind: CompletionItemKind.TypeParameter },
-        { label: 'IS_IN', kind: CompletionItemKind.TypeParameter },
       ],
+      excluded: [{ label: 'IS_IN', kind: CompletionItemKind.TypeParameter }],
     });
   });
 

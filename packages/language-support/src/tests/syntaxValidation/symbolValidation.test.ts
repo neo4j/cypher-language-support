@@ -1385,7 +1385,7 @@ describe('Schema based linting spec', () => {
     ]);
   });
 
-  test('Limitation: Does warn on contradictions like (!% & X)', () => {
+  test('Limitation: Does not warn on contradictions like (!% & X)', () => {
     const query = 'MATCH (:!% & Trainer)<-[:WEAK_TO]-() RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
