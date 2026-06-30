@@ -1026,7 +1026,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles direction-aware completions for nodes with bidirectional rel', () => {
+  test('Handles direction-aware completions for nodes with undirected rel', () => {
     const query = 'MATCH (t:Trainer)-[r:IS_IN]-(:';
     testCompletions({
       query,

@@ -50,7 +50,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+          'Relationship with relationship type(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -82,7 +82,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
+          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
         offsets: {
           end: 30,
           start: 6,
@@ -114,7 +114,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -146,7 +146,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Gym has no outgoing connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no outgoing connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 27,
           start: 8,
@@ -178,7 +178,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Trainer.',
+          'Relationship with relationship type(s) WEAK_TO has no connection to a node with label(s) Trainer.',
         offsets: {
           end: 30,
           start: 6,
@@ -197,7 +197,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Node with label(s) Gym has no connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 36,
           start: 16,
@@ -229,7 +229,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
+          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
         offsets: {
           end: 33,
           start: 6,
@@ -255,7 +255,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+          'Relationship with relationship type(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Trainer.',
         offsets: {
           end: 35,
           start: 6,
@@ -274,7 +274,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          'Node with label(s) Move has no outgoing connection to a relationship with label(s) (WEAK_TO | IS_IN).',
+          'Node with label(s) Move has no outgoing connection to a relationship with relationship type(s) (WEAK_TO | IS_IN).',
         offsets: {
           end: 42,
           start: 16,
@@ -301,7 +301,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
+          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
         offsets: {
           end: 65,
           start: 6,
@@ -327,7 +327,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (Trainer | Gym) has no outgoing connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) (Trainer | Gym) has no outgoing connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 40,
           start: 13,
@@ -353,7 +353,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Gym.',
+          'Relationship with relationship type(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Gym.',
         offsets: {
           end: 31,
           start: 6,
@@ -382,7 +382,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (Type & Trainer) has no outgoing connection to a relationship with label(s) (CHALLENGES | STRONG_AGAINST).',
+          'Node with label(s) (Type & Trainer) has no outgoing connection to a relationship with relationship type(s) (CHALLENGES | STRONG_AGAINST).',
         offsets: {
           end: 63,
           start: 13,
@@ -409,7 +409,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
+          'Relationship with relationship type(s) (BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
         offsets: {
           end: 83,
           start: 6,
@@ -450,7 +450,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Trainer has no outgoing connection to a relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN).',
+          'Node with label(s) Trainer has no outgoing connection to a relationship with relationship type(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN).',
         offsets: {
           end: 81,
           start: 13,
@@ -477,7 +477,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+          'Relationship with relationship type(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN) has no outgoing connection to a node with label(s) Trainer.',
         offsets: {
           end: 74,
           start: 6,
@@ -504,7 +504,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) (CATCHES | TRAINS) has no outgoing connection to a node with label(s) (!Type & !Pokemon & !Gym & !Move).',
+          'Relationship with relationship type(s) (CATCHES | TRAINS) has no outgoing connection to a node with label(s) (!Type & !Pokemon & !Gym & !Move).',
         offsets: {
           end: 60,
           start: 6,
@@ -531,7 +531,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (!Type & !Trainer & !Gym & !Move) has no outgoing connection to a relationship with label(s) (CATCHES | TRAINS | IS_IN).',
+          'Node with label(s) (!Type & !Trainer & !Gym & !Move) has no outgoing connection to a relationship with relationship type(s) (CATCHES | TRAINS | IS_IN).',
         offsets: {
           end: 77,
           start: 16,
@@ -578,26 +578,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 32,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 32,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'Relationship with label(s) WEAK_TO has no connection to a node with label(s) Gym.',
+          'Relationship with relationship type(s) WEAK_TO has no connection to a node with label(s) Gym.',
         offsets: {
           end: 22,
           start: 6,
@@ -633,32 +614,32 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-    ]);
-  });
-
-  test('Assumes bidirectional direction if rel direction is unfinished (expect no path issues when one way of bidirectional could be true) v1', () => {
-    const query = 'MATCH (:Region)-[:IS_IN RETURN ""';
-    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
-    expect(diagnostics).toEqual([
       {
         message:
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
-          end: 33,
-          start: 0,
+          end: 32,
+          start: 32,
         },
         range: {
           end: {
-            character: 33,
+            character: 32,
             line: 0,
           },
           start: {
-            character: 0,
+            character: 32,
             line: 0,
           },
         },
         severity: 1,
       },
+    ]);
+  });
+
+  test('Assumes undirected direction if rel direction is unfinished (expect no path issues when one way of undirected could be true) v1', () => {
+    const query = 'MATCH (:Region)-[:IS_IN RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -678,32 +659,32 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
-    ]);
-  });
-
-  test('Assumes bidirectional direction if rel direction is unfinished (expect no path issues when one way of bidirectional could be true) v2', () => {
-    const query = 'MATCH (:Pokemon)<-[:WEAK_TO RETURN ""';
-    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
-    expect(diagnostics).toEqual([
       {
         message:
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
-          end: 37,
-          start: 0,
+          end: 33,
+          start: 33,
         },
         range: {
           end: {
-            character: 37,
+            character: 33,
             line: 0,
           },
           start: {
-            character: 0,
+            character: 33,
             line: 0,
           },
         },
         severity: 1,
       },
+    ]);
+  });
+
+  test('Assumes undirected direction if rel direction is unfinished (expect no path issues when one way of undirected could be true) v2', () => {
+    const query = 'MATCH (:Pokemon)<-[:WEAK_TO RETURN ""';
+    const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([
       {
         message:
           "Invalid input 'RETURN': expected a parameter, '&', '*', ':', 'WHERE', ']', '{' or '|'",
@@ -723,6 +704,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 37,
+          start: 37,
+        },
+        range: {
+          end: {
+            character: 37,
+            line: 0,
+          },
+          start: {
+            character: 37,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -732,26 +732,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 42,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 42,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'Node with label(s) Pokemon has no incoming connection to a relationship with label(s) IS_IN.',
+          'Node with label(s) Pokemon has no incoming connection to a relationship with relationship type(s) IS_IN.',
         offsets: {
           end: 32,
           start: 12,
@@ -787,6 +768,25 @@ describe('Schema based linting spec', () => {
         },
         severity: 1,
       },
+      {
+        message:
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 42,
+          start: 42,
+        },
+        range: {
+          end: {
+            character: 42,
+            line: 0,
+          },
+          start: {
+            character: 42,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
     ]);
   });
 
@@ -796,10 +796,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
         offsets: {
           end: 18,
-          start: 0,
+          start: 18,
         },
         range: {
           end: {
@@ -807,7 +807,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 18,
             line: 0,
           },
         },
@@ -815,7 +815,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a node label/relationship type name, '$', '%' or '('",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 18,
           start: 18,
@@ -841,10 +841,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
         offsets: {
           end: 16,
-          start: 0,
+          start: 16,
         },
         range: {
           end: {
@@ -852,7 +852,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 16,
             line: 0,
           },
         },
@@ -860,7 +860,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, '*', ':', 'IS', 'WHERE', ']' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 16,
           start: 16,
@@ -886,10 +886,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 23,
-          start: 0,
+          start: 23,
         },
         range: {
           end: {
@@ -897,7 +897,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 23,
             line: 0,
           },
         },
@@ -905,7 +905,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, a variable name, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 23,
           start: 23,
@@ -931,10 +931,10 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
         offsets: {
           end: 24,
-          start: 0,
+          start: 24,
         },
         range: {
           end: {
@@ -942,7 +942,7 @@ describe('Schema based linting spec', () => {
             line: 0,
           },
           start: {
-            character: 0,
+            character: 24,
             line: 0,
           },
         },
@@ -950,7 +950,7 @@ describe('Schema based linting spec', () => {
       },
       {
         message:
-          "Invalid input '': expected a parameter, ')', ':', 'IS', 'WHERE' or '{'",
+          'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 24,
           start: 24,
@@ -983,7 +983,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Archer has no outgoing connection to a relationship with label(s) MISSED.',
+          'Node with label(s) Archer has no outgoing connection to a relationship with relationship type(s) MISSED.',
         offsets: {
           end: 30,
           start: 9,
@@ -1047,7 +1047,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) !Type has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) !Type has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 29,
           start: 8,
@@ -1073,7 +1073,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) !Move has no incoming connection to a relationship with label(s) KNOWS.',
+          'Node with label(s) !Move has no incoming connection to a relationship with relationship type(s) KNOWS.',
         offsets: {
           end: 27,
           start: 8,
@@ -1105,7 +1105,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Move has no incoming connection to a relationship with label(s) !KNOWS.',
+          'Node with label(s) Move has no incoming connection to a relationship with relationship type(s) !KNOWS.',
         offsets: {
           end: 35,
           start: 16,
@@ -1131,19 +1131,19 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([]);
   });
 
-  test('Does not warn on bidirectional rel when one direction is viable', () => {
+  test('Does not warn on undirected rel when one direction is viable', () => {
     const query = 'MATCH (:Region)-[:IS_IN]-(:Trainer) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([]);
   });
 
-  test('Warns on bidirectional rel when neither direction is viable', () => {
+  test('Warns on undirected rel when neither direction is viable', () => {
     const query = 'MATCH (:Region)-[:IS_IN]-(:Pokemon) RETURN ""';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Pokemon has no connection to a relationship with label(s) IS_IN.',
+          'Node with label(s) Pokemon has no connection to a relationship with relationship type(s) IS_IN.',
         offsets: {
           end: 35,
           start: 15,
@@ -1170,7 +1170,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 58,
           start: 39,
@@ -1203,7 +1203,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+          'Relationship with relationship type(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
         offsets: {
           end: 40,
           start: 24,
@@ -1247,7 +1247,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (Gym | !Type) has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) (Gym | !Type) has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 33,
           start: 8,
@@ -1297,7 +1297,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Gym has no incoming connection to a relationship with label(s) WEAK_TO.',
+          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
         offsets: {
           end: 29,
           start: 10,
@@ -1338,7 +1338,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!% & Trainer)).',
+          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!% & Trainer)).',
         offsets: {
           end: 46,
           start: 6,
@@ -1365,7 +1365,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with label(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!Trainer & Trainer)).',
+          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!Trainer & Trainer)).',
         offsets: {
           end: 52,
           start: 6,

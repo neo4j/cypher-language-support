@@ -6,7 +6,7 @@ import {
 import { DbSchema } from '../dbSchema.js';
 import { ParsedStatement } from '../cypherLanguageService.js';
 import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types.js';
-import { findParent } from '../helpers.js';
+import { findParent, getDirection } from '../helpers.js';
 import {
   NodePatternContext,
   PatternElementContext,
@@ -44,7 +44,7 @@ export function getShortPathCompletions(
 
   const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
     getNodesFromRelsSet(dbSchema);
-  const assumedDirection = lastNode.leftArrow() ? 'outgoing' : 'incoming';
+  const assumedDirection = lastNode.leftArrow() ? 'left' : 'right';
 
   let cnfTree: LabelOrCondition;
   try {
@@ -65,7 +65,7 @@ export function getShortPathCompletions(
     cnfTree,
   );
 
-  if (assumedDirection === 'outgoing') {
+  if (assumedDirection === 'left') {
     for (const outLabel of outLabels) {
       snippetCompletions.push({
         label: '-(:' + outLabel + ')',
@@ -260,12 +260,7 @@ export function completeNodeLabel(
         return allLabelCompletions(dbSchema);
       }
 
-      const direction =
-        lastValidElement.leftArrow() && !lastValidElement.rightArrow()
-          ? 'outgoing'
-          : !lastValidElement.leftArrow() && lastValidElement.rightArrow()
-            ? 'incoming'
-            : 'bidirectional';
+      const direction = getDirection(lastValidElement);
 
       // limitation: not checking node label repetition
       const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
@@ -288,9 +283,9 @@ export function completeNodeLabel(
         cnfTree,
       );
       const allNodes =
-        direction === 'outgoing'
+        direction === 'left'
           ? outLabels
-          : direction === 'incoming'
+          : direction === 'right'
             ? inLabels
             : inLabels.union(outLabels);
       return labelsToCompletions(Array.from(allNodes));
@@ -334,14 +329,9 @@ export function completeRelationshipType(
       parsingResult.stopNode,
       (x) => x instanceof RelationshipPatternContext,
     );
-    let direction = 'bidirectional';
+    let direction = 'undirected';
     if (thisCtx instanceof RelationshipPatternContext) {
-      direction =
-        thisCtx.leftArrow() && !thisCtx.rightArrow()
-          ? 'outgoing'
-          : !thisCtx.leftArrow() && thisCtx.rightArrow()
-            ? 'incoming'
-            : 'bidirectional';
+      direction = getDirection(thisCtx);
     }
 
     // limitation: bailing out on quantifiers
@@ -381,9 +371,9 @@ export function completeRelationshipType(
         cnfTree,
       );
       const allRels =
-        direction === 'outgoing'
+        direction === 'left'
           ? outLabels
-          : direction === 'incoming'
+          : direction === 'right'
             ? inLabels
             : inLabels.union(outLabels);
       return reltypesToCompletions(Array.from(allRels));

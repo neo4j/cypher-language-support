@@ -21,6 +21,7 @@ import {
 } from '../cypherLanguageService.js';
 import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
+import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
@@ -410,9 +411,16 @@ export function lintCypherQuery(
           parseResult: current,
         });
 
+        const schemaPathWarnings = warnOnSchemaPathViolations(
+          current,
+          dbSchema,
+          symbolTable,
+        );
+
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
+            schemaPathWarnings,
             parameterErrors,
             functionErrors,
             procedureErrors,
