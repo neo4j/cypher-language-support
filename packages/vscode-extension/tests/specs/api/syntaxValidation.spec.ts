@@ -266,7 +266,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 18),
             new vscode.Position(0, 65),
           ),
-          '(:Movie) has no incoming [:ACTED_IN]',
+          'Node with label(s) Movie has no incoming connection to a relationship with relationship type(s) ACTED_IN.',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
