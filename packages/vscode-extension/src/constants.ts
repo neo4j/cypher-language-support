@@ -61,6 +61,8 @@ export const CONSTANTS = {
   },
   LINKS: {
     REPOSITORY: 'https://github.com/neo4j/cypher-language-support',
+    README:
+      'https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/README.md',
   },
   WALKTHROUGHS: {
     LEARN_NEO4J: 'neo4jLearnNeo4j',

@@ -230,6 +230,10 @@ export class WelcomePanel {
                     <li><strong>Query execution</strong> with results and graph visualization.</li>
                   </ul>
                   <p>
+                    <a href="${CONSTANTS.LINKS.README}">Find more information</a>
+                    about these features.
+                  </p>
+                  <p>
                     <a class="button" href="command:${CONSTANTS.COMMANDS.SHOW_CONNECTIONS_AND_CREATE}">Add connection</a>
                   </p>
                 </section>
