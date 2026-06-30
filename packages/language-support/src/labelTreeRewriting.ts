@@ -19,7 +19,7 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
 /**
  * Takes a label tree with an AND-root and converts it to Conjunctive Normal Form
  * @param root - the original label tree
- * @returns a an equivalent CNF tree
+ * @returns an equivalent CNF tree
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
