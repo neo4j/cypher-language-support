@@ -16,6 +16,9 @@ export const CONSTANTS = {
     DELETE_PARAMETER: 'neo4j.deleteParameter',
     EDIT_PARAMETER: 'neo4j.editParameter',
     CLEAR_PARAMETERS: 'neo4j.clearParameters',
+    SHOW_WELCOME: 'neo4j.showWelcome',
+    ADD_GRAPHACADEMY_MCP: 'neo4j.addGraphAcademyMcpServer',
+    SHOW_CONNECTIONS_AND_CREATE: 'neo4j.showConnectionsAndCreate',
     INTERNAL: {
       EVAL_PARAMETER: 'neo4j.internal.evalParam',
       FORCE_DELETE_PARAMETER: 'neo4j.internal.forceDeleteParam',
@@ -55,5 +58,15 @@ export const CONSTANTS = {
       'You need to be connected to Neo4j to run queries',
     PARAMETER_SET: (key: string) => `Parameter '${key}' set.`,
     PARAMETER_DELETED: (key: string) => `Parameter \`${key}\` deleted.`,
+  },
+  LINKS: {
+    REPOSITORY: 'https://github.com/neo4j/cypher-language-support',
+  },
+  WALKTHROUGHS: {
+    LEARN_NEO4J: 'neo4jLearnNeo4j',
+  },
+  MCP: {
+    GRAPHACADEMY_SERVER_NAME: 'graphacademy',
+    GRAPHACADEMY_SERVER_URL: 'https://mcp.graphacademy.neo4j.com/mcp',
   },
 };

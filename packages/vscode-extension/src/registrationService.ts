@@ -34,6 +34,8 @@ import { Neo4jQueryDetailsProvider } from './webviews/queryResults/queryDetailsP
 import { Neo4jQueryVisualizationProvider } from './webviews/queryResults/queryVisualizationProvider';
 import { linterStatusBarItem } from './extension';
 import { manuallyAdjustLinter } from './commandHandlers/linters';
+import { addGraphAcademyMcpServer } from './commandHandlers/mcp';
+import { WelcomePanel } from './webviews/welcomePanel';
 
 /**
  * Any disposable resources that need to be cleaned up when the extension is deactivated should be registered here.
@@ -178,6 +180,25 @@ export function registerDisposables(): Disposable[] {
     commands.registerCommand(
       CONSTANTS.COMMANDS.INTERNAL.FORCE_CONNECT,
       forceConnect,
+    ),
+    commands.registerCommand(CONSTANTS.COMMANDS.SHOW_WELCOME, () =>
+      WelcomePanel.createOrShow(),
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.ADD_GRAPHACADEMY_MCP,
+      addGraphAcademyMcpServer,
+    ),
+    commands.registerCommand(
+      CONSTANTS.COMMANDS.SHOW_CONNECTIONS_AND_CREATE,
+      async () => {
+        // Reveal the Neo4j activity bar view, then open the add-connection dialog
+        await commands.executeCommand(
+          'workbench.view.extension.neo4j-explorer',
+        );
+        await commands.executeCommand(
+          CONSTANTS.COMMANDS.CREATE_CONNECTION_COMMAND,
+        );
+      },
     ),
   );
 
