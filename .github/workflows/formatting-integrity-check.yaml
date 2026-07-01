@@ -11,12 +11,23 @@ on:
     paths:
       - 'packages/language-support/src/formatting/**'
 
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  NODE_OPTIONS: '--max_old_space_size=8192'
+
 jobs:
   formatting-integrity-check:
     name: Formatter integrity check
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
 
       - name: Setup and build project
         uses: ./.github/actions/setup-and-build
