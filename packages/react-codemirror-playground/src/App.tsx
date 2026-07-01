@@ -33,6 +33,35 @@ function InlinePanelDemo({ onClose }: { onClose: () => void }) {
   );
 }
 
+function EditorActionsDemo() {
+  return (
+    <div style={{ display: 'flex', gap: 4, padding: 4 }}>
+      <button
+        style={{
+          background: '#e5e7eb',
+          borderRadius: 4,
+          padding: '2px 8px',
+          fontSize: 12,
+        }}
+      >
+        …
+      </button>
+      <button
+        onClick={() => {}}
+        style={{
+          background: '#2563eb',
+          color: 'white',
+          borderRadius: 4,
+          padding: '2px 10px',
+          fontSize: 12,
+        }}
+      >
+        Run
+      </button>
+    </div>
+  );
+}
+
 const demos = {
   allTokenTypes: `MATCH (variable :Label)-[:REL_TYPE]->()
 WHERE variable.property = "String"
@@ -202,7 +231,9 @@ export function App() {
                 <button
                   key={demoName}
                   className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded
-                ${selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'}`}
+                ${
+                  selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
+                }`}
                   onClick={() => {
                     setSelectedDemoName(demoName);
                     setValue(demos[demoName]);
@@ -215,7 +246,8 @@ export function App() {
               ))}
             </div>
             <CypherEditor
-              className="border-2 border-gray-100 dark:border-gray-400 text-sm"
+              className="border-2 border-gray-100 dark:border-gray-400 text-sm max-h-[200px]"
+              lineWrap
               value={value}
               ref={editorRef}
               onChange={setValue}
@@ -233,6 +265,7 @@ export function App() {
               }}
               ariaLabel="Cypher Editor"
               inlinePanel={inlinePanel}
+              editorActions={<EditorActionsDemo />}
               diff={diff}
             />
             {inlinePanelContainer &&

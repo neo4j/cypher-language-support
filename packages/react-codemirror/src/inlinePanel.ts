@@ -6,15 +6,10 @@ import {
   WidgetType,
 } from '@codemirror/view';
 
-/**
- * Lifecycle callbacks for an inline panel. The host renders into the
- * provided DOM container (e.g. via React `createPortal`) and is expected
- * to clean up on unmount.
- */
-export type InlinePanelCallbacks = {
-  onMount: (container: HTMLElement) => void;
-  onUnmount: () => void;
-};
+import type { HostPortalCallbacks } from './hostCallbacks';
+
+/** Lifecycle callbacks for an inline panel. See {@link HostPortalCallbacks}. */
+export type InlinePanelCallbacks = HostPortalCallbacks;
 
 export type InlinePanelShowOptions = {
   /** Document position the panel anchors to. */
