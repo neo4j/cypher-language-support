@@ -533,6 +533,12 @@
           ],
           "default": true,
           "description": "Enable linting errors for Cypher queries"
+        },
+        "neo4j.showWelcomeOnStartup": {
+          "scope": "application",
+          "type": "boolean",
+          "default": true,
+          "description": "Show the Neo4j welcome page the first time the extension is activated."
         }
       }
     },

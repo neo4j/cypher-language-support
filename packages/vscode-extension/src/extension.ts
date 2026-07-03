@@ -91,8 +91,15 @@ export async function activate(context: ExtensionContext) {
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
 
-  // Show the welcome page the first time the extension is activated
-  if (!context.globalState.get(WELCOME_SHOWN_KEY, false)) {
+  // Show the welcome page the first time the extension is activated, unless the
+  // user (or the e2e test setup) has opted out via configuration.
+  const showWelcomeOnStartup = workspace
+    .getConfiguration('neo4j.')
+    .get<boolean>('showWelcomeOnStartup', true);
+  if (
+    showWelcomeOnStartup &&
+    !context.globalState.get(WELCOME_SHOWN_KEY, false)
+  ) {
     await context.globalState.update(WELCOME_SHOWN_KEY, true);
     await commands.executeCommand(CONSTANTS.COMMANDS.SHOW_WELCOME);
   }

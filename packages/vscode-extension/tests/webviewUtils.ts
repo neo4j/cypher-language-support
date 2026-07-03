@@ -70,21 +70,6 @@ export async function openFixtureFile(
   );
 }
 
-export async function closeWelcomePanel(browser: WebdriverIO.Browser) {
-  await browser.executeWorkbench(async (vscode) => {
-    for (const group of vscode.window.tabGroups.all) {
-      for (const tab of group.tabs) {
-        if (
-          tab.input instanceof vscode.TabInputWebview &&
-          tab.input.viewType.endsWith('neo4jWelcome')
-        ) {
-          await vscode.window.tabGroups.close(tab);
-        }
-      }
-    }
-  });
-}
-
 export async function createNewConnection(containerName: string) {
   const container = await createAndStartTestContainer({
     containerName: containerName,
@@ -105,12 +90,8 @@ export async function createNewConnection(containerName: string) {
   } catch {
     await workbench.executeCommand('neo4j.createConnection');
   }
-
-  // The Welcome panel opens on first activation and would otherwise show up in
-  // getAllWebviews(), shifting the connection webview off index 0.
-  await closeWelcomePanel(browser);
-
-  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+  const allWebviews = await workbench.getAllWebviews();
+  const connectionWebview = allWebviews.at(0);
 
   if (connectionWebview) {
     await connectionWebview.open();
