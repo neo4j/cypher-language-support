@@ -2120,6 +2120,156 @@ describe('Subqueries highlighting', () => {
       },
     ]);
   });
+
+  test('Correctly colours IN TRANSACTION DISJOINT BY AUTO without conflicting with :auto', () => {
+    const query = /* cypher */ `
+      :AUTO
+      CALL {
+        RETURN ""
+      } IN TRANSACTIONS DISJOINT BY AUTO
+    `;
+
+    expect(highlightSyntax(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 1,
+          startCharacter: 6,
+          startOffset: 7,
+        },
+        token: ':',
+        tokenType: 'consoleCommand',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 1,
+          startCharacter: 7,
+          startOffset: 8,
+        },
+        token: 'AUTO',
+        tokenType: 'consoleCommand',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 2,
+          startCharacter: 6,
+          startOffset: 19,
+        },
+        token: 'CALL',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
+        position: {
+          line: 2,
+          startCharacter: 11,
+          startOffset: 24,
+        },
+        token: '{',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 3,
+          startCharacter: 8,
+          startOffset: 34,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 3,
+          startCharacter: 15,
+          startOffset: 41,
+        },
+        token: '""',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'curly',
+        },
+        length: 1,
+        position: {
+          line: 4,
+          startCharacter: 6,
+          startOffset: 50,
+        },
+        token: '}',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 4,
+          startCharacter: 8,
+          startOffset: 52,
+        },
+        token: 'IN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 12,
+        position: {
+          line: 4,
+          startCharacter: 11,
+          startOffset: 55,
+        },
+        token: 'TRANSACTIONS',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 8,
+        position: {
+          line: 4,
+          startCharacter: 24,
+          startOffset: 68,
+        },
+        token: 'DISJOINT',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 4,
+          startCharacter: 33,
+          startOffset: 77,
+        },
+        token: 'BY',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 4,
+        position: {
+          line: 4,
+          startCharacter: 36,
+          startOffset: 80,
+        },
+        token: 'AUTO',
+        tokenType: 'keyword',
+      },
+    ]);
+  });
 });
 
 describe('CREATE highlighting', () => {
