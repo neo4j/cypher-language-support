@@ -3,7 +3,7 @@ import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 import {
   AccessModeArgsContext,
   ArrowLineContext,
-  AutoCmdContext,
+  AutoCompletionRuleContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
   CypherOptionNameContext,
@@ -277,7 +277,8 @@ class SyntaxHighlighter extends CypherParserListener {
     );
   };
 
-  exitAutoCmd = (ctx: AutoCmdContext) => {
+  // console commands that clash with cypher keywords
+  exitAutoCompletionRule = (ctx: AutoCompletionRuleContext) => {
     const auto = ctx.AUTO();
 
     this.addToken(auto.symbol, CypherTokenType.consoleCommand, auto.getText());

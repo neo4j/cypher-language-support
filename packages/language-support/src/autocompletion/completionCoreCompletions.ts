@@ -525,6 +525,7 @@ export function completionCoreCompletion(
           CypherParser.RULE_serverCompletionRule,
           CypherParser.RULE_readCompletionRule,
           CypherParser.RULE_writeCompletionRule,
+          CypherParser.RULE_autoCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -776,6 +777,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
         return [{ label: 'write', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_autoCompletionRule) {
+        return [{ label: 'auto', kind: CompletionItemKind.Event }];
       }
 
       return [];
