@@ -277,7 +277,6 @@ class SyntaxHighlighter extends CypherParserListener {
     );
   };
 
-  // console commands that clash with cypher keywords
   exitAutoCompletionRule = (ctx: AutoCompletionRuleContext) => {
     const auto = ctx.AUTO();
 

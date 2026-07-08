@@ -2122,7 +2122,7 @@ describe('Subqueries highlighting', () => {
   });
 
   test('Correctly colours IN TRANSACTION DISJOINT BY AUTO without conflicting with :auto', () => {
-    const query = /* cypher */ `
+    const query = `
       :AUTO
       CALL {
         RETURN ""
