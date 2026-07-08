@@ -24,6 +24,7 @@ import {
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
   VariableContext,
+  PropertyKeyNameContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -101,7 +102,9 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
 
   if (parent instanceof ClauseContext) {
     const clause = parent;
-    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+    return Boolean(
+      clause.mergeClause() || clause.createClause() || clause.insertClause(),
+    );
   } else {
     return false;
   }
@@ -119,7 +122,10 @@ export type HasPosition = {
 export type LabelOrRelType = HasPosition & {
   labelType: LabelType;
   labelText: string;
-  couldCreateNewLabel: boolean;
+};
+
+export type PropertyType = HasPosition & {
+  propertyName: string;
 };
 
 export type ParsedParameter = HasPosition & {
@@ -202,6 +208,7 @@ export function createParsingResult(
       const labelsCollector = new LabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
       const variableFinder = new VariableCollector();
+      const propertiesFinder = new PropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(
@@ -242,6 +249,7 @@ export function createParsingResult(
         collectedParameters: parameterFinder.parameters,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        collectedProperties: propertiesFinder.properties,
         cypherVersion: cypherVersionCollector.cypherVersion,
       };
     });
@@ -308,11 +316,14 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // like in the case MATCH (n:) RETURN n
       // RETURN would be incorrectly idenfified as the label
       // If this is the case, the context containing the label would have an error node
-      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+      if (
+        ctx.parentCtx &&
+        !hasErrorNodesUnder(ctx.parentCtx) &&
+        !couldCreateNewLabel(ctx)
+      ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
           column: ctx.start.column,
           offsets: {
@@ -327,12 +338,12 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       if (
         isDefined(symbolicName) &&
         ctx.parentCtx &&
-        !hasErrorNodesUnder(ctx.parentCtx)
+        !hasErrorNodesUnder(ctx.parentCtx) &&
+        !couldCreateNewLabel(ctx)
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: symbolicName.start.line,
           column: symbolicName.start.column,
           offsets: {
@@ -341,6 +352,64 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
           },
         });
       }
+    }
+  }
+}
+
+// This listener collects all labels and relationship types
+class PropertiesCollector extends ParseTreeListener {
+  properties: string[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PropertyKeyNameContext) {
+      // If the parser recovered from an error reading the label
+      // like in the case MATCH (n:) RETURN n
+      // RETURN would be incorrectly idenfified as the label
+      // If this is the case, the context containing the label would have an error node
+      //     if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+      //       this.labelOrRelTypes.push({
+      //         labelType: getLabelType(ctx),
+      //         labelText: ctx.getText(),
+      //         couldCreateNewLabel: couldCreateNewLabel(ctx),
+      //         line: ctx.start.line,
+      //         column: ctx.start.column,
+      //         offsets: {
+      //           start: ctx.start.start,
+      //           end: ctx.stop.stop + 1,
+      //         },
+      //       });
+      //     }
+      //   } else if (ctx instanceof LabelOrRelTypeContext) {
+      //     const symbolicName = ctx.symbolicNameString();
+      //     // Read comment for the label name case
+      //     if (
+      //       isDefined(symbolicName) &&
+      //       ctx.parentCtx &&
+      //       !hasErrorNodesUnder(ctx.parentCtx)
+      //     ) {
+      //       this.labelOrRelTypes.push({
+      //         labelType: getLabelType(ctx),
+      //         labelText: symbolicName.start.text,
+      //         couldCreateNewLabel: couldCreateNewLabel(ctx),
+      //         line: symbolicName.start.line,
+      //         column: symbolicName.start.column,
+      //         offsets: {
+      //           start: symbolicName.start.start,
+      //           end: symbolicName.stop.stop + 1,
+      //         },
+      //       });
+      //     }
+      //   }
     }
   }
 }

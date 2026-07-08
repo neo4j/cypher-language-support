@@ -70,7 +70,7 @@ function detectNonDeclaredLabel(
     (!dbLabels.has(normalizedLabelName) &&
       !dbRelationshipTypes.has(normalizedLabelName));
 
-  if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
+  if (notInDatabase) {
     const message =
       labelOrRelType.labelType +
       ' ' +
@@ -294,6 +294,31 @@ function warnOnUndeclaredLabels(
       if (warning) warnings.push(warning);
     });
   }
+
+  return warnings;
+}
+
+function warnOnUndeclaredProperties(
+  _parsingResult: ParsedStatement,
+  _dbSchema: DbSchema,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+
+  // if (dbSchema.labels && dbSchema.relationshipTypes) {
+  //   const dbLabels = new Set(dbSchema.labels);
+  //   const dbrelationshiptypes = new Set(dbSchema.relationshipTypes);
+  //   const labelsAndRelTypes = parsingResult.collectedLabelOrRelTypes;
+
+  //   labelsAndRelTypes.forEach((labelOrRelType) => {
+  //     const warning = detectNonDeclaredLabel(
+  //       labelOrRelType,
+  //       dbLabels,
+  //       dbRelationshipTypes,
+  //     );
+
+  //     if (warning) warnings.push(warning);
+  //   });
+  // }
 
   return warnings;
 }
@@ -618,6 +643,10 @@ export function lintCypherQuery(
         );
         const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
         const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
+        const propertiesWarnings = warnOnUndeclaredProperties(
+          current,
+          dbSchema,
+        );
 
         const {
           notifications,
@@ -660,6 +689,7 @@ export function lintCypherQuery(
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
+            propertiesWarnings,
             parameterErrors,
             functionErrors,
             procedureErrors,
