@@ -49,8 +49,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+        message: '[:WEAK_TO] has no incoming (:Trainer).',
         offsets: {
           end: 30,
           start: 6,
@@ -81,8 +80,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) Pokemon.',
+        message: '[:WEAK_TO] has no outgoing (:Pokemon).',
         offsets: {
           end: 30,
           start: 6,
@@ -113,8 +111,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:Gym) has no incoming [:WEAK_TO].',
         offsets: {
           end: 27,
           start: 8,
@@ -145,8 +142,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Gym has no outgoing connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:Gym) has no outgoing [:WEAK_TO].',
         offsets: {
           end: 27,
           start: 8,
@@ -177,8 +173,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no connection to a node with label(s) Trainer.',
+        message: '[:WEAK_TO] has no incoming/outgoing (:Trainer).',
         offsets: {
           end: 30,
           start: 6,
@@ -196,8 +191,7 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
       {
-        message:
-          'Node with label(s) Gym has no connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:Gym) has no incoming/outgoing [:WEAK_TO].',
         offsets: {
           end: 36,
           start: 16,
@@ -228,8 +222,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Trainer | Gym).',
+        message: '[:WEAK_TO] has no outgoing (:(Trainer | Gym)).',
         offsets: {
           end: 33,
           start: 6,
@@ -254,8 +247,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+        message: '[:(WEAK_TO | IS_IN)] has no outgoing (:Trainer).',
         offsets: {
           end: 35,
           start: 6,
@@ -273,8 +265,7 @@ describe('Schema based linting spec', () => {
         severity: 2,
       },
       {
-        message:
-          'Node with label(s) Move has no outgoing connection to a relationship with relationship type(s) (WEAK_TO | IS_IN).',
+        message: '(:Move) has no outgoing [:(WEAK_TO | IS_IN)].',
         offsets: {
           end: 42,
           start: 16,
@@ -301,7 +292,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) ((Trainer | Gym) & (Gym | (Trainer & Pokemon))).',
+          '[:WEAK_TO] has no outgoing (:((Trainer | Gym) & (Gym | (Trainer & Pokemon)))).',
         offsets: {
           end: 65,
           start: 6,
@@ -326,8 +317,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) (Trainer | Gym) has no outgoing connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:(Trainer | Gym)) has no outgoing [:WEAK_TO].',
         offsets: {
           end: 40,
           start: 13,
@@ -352,8 +342,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) (WEAK_TO | IS_IN) has no outgoing connection to a node with label(s) Gym.',
+        message: '[:(WEAK_TO | IS_IN)] has no outgoing (:Gym).',
         offsets: {
           end: 31,
           start: 6,
@@ -382,7 +371,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (Type & Trainer) has no outgoing connection to a relationship with relationship type(s) (CHALLENGES | STRONG_AGAINST).',
+          '(:(Type & Trainer)) has no outgoing [:(CHALLENGES | STRONG_AGAINST)].',
         offsets: {
           end: 63,
           start: 13,
@@ -409,7 +398,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with relationship type(s) (BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES)) has no outgoing connection to a node with label(s) (Type & (Pokemon | Trainer)).',
+          '[:(BATTLES | (!STRONG_AGAINST & !KNOWS & BATTLES))] has no outgoing (:(Type & (Pokemon | Trainer))).',
         offsets: {
           end: 83,
           start: 6,
@@ -450,7 +439,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) Trainer has no outgoing connection to a relationship with relationship type(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN).',
+          '(:Trainer) has no outgoing [:(!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN)].',
         offsets: {
           end: 81,
           start: 13,
@@ -477,7 +466,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with relationship type(s) (!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN) has no outgoing connection to a node with label(s) Trainer.',
+          '[:(!CATCHES & !TRAINS & !CHALLENGES & !BATTLES & !IS_IN)] has no outgoing (:Trainer).',
         offsets: {
           end: 74,
           start: 6,
@@ -504,7 +493,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with relationship type(s) (CATCHES | TRAINS) has no outgoing connection to a node with label(s) (!Type & !Pokemon & !Gym & !Move).',
+          '[:(CATCHES | TRAINS)] has no outgoing (:(!Type & !Pokemon & !Gym & !Move)).',
         offsets: {
           end: 60,
           start: 6,
@@ -531,7 +520,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Node with label(s) (!Type & !Trainer & !Gym & !Move) has no outgoing connection to a relationship with relationship type(s) (CATCHES | TRAINS | IS_IN).',
+          '(:(!Type & !Trainer & !Gym & !Move)) has no outgoing [:(CATCHES | TRAINS | IS_IN)].',
         offsets: {
           end: 77,
           start: 16,
@@ -577,8 +566,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no connection to a node with label(s) Gym.',
+        message: '[:WEAK_TO] has no incoming/outgoing (:Gym).',
         offsets: {
           end: 22,
           start: 6,
@@ -731,8 +719,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Pokemon has no incoming connection to a relationship with relationship type(s) IS_IN.',
+        message: '(:Pokemon) has no incoming [:IS_IN].',
         offsets: {
           end: 32,
           start: 12,
@@ -982,8 +969,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Archer has no outgoing connection to a relationship with relationship type(s) MISSED.',
+        message: '(:Archer) has no outgoing [:MISSED].',
         offsets: {
           end: 30,
           start: 9,
@@ -1046,8 +1032,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) !Type has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:!Type) has no incoming [:WEAK_TO].',
         offsets: {
           end: 29,
           start: 8,
@@ -1072,8 +1057,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) !Move has no incoming connection to a relationship with relationship type(s) KNOWS.',
+        message: '(:!Move) has no incoming [:KNOWS].',
         offsets: {
           end: 27,
           start: 8,
@@ -1104,8 +1088,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Move has no incoming connection to a relationship with relationship type(s) !KNOWS.',
+        message: '(:Move) has no incoming [:!KNOWS].',
         offsets: {
           end: 35,
           start: 16,
@@ -1142,8 +1125,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Pokemon has no connection to a relationship with relationship type(s) IS_IN.',
+        message: '(:Pokemon) has no incoming/outgoing [:IS_IN].',
         offsets: {
           end: 35,
           start: 15,
@@ -1169,8 +1151,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:Gym) has no incoming [:WEAK_TO].',
         offsets: {
           end: 58,
           start: 39,
@@ -1202,8 +1183,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no incoming connection to a node with label(s) Trainer.',
+        message: '[:WEAK_TO] has no incoming (:Trainer).',
         offsets: {
           end: 40,
           start: 24,
@@ -1246,8 +1226,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) (Gym | !Type) has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:(Gym | !Type)) has no incoming [:WEAK_TO].',
         offsets: {
           end: 33,
           start: 8,
@@ -1296,8 +1275,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Node with label(s) Gym has no incoming connection to a relationship with relationship type(s) WEAK_TO.',
+        message: '(:Gym) has no incoming [:WEAK_TO].',
         offsets: {
           end: 29,
           start: 10,
@@ -1337,8 +1315,7 @@ describe('Schema based linting spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
     expect(diagnostics).toEqual([
       {
-        message:
-          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!% & Trainer)).',
+        message: '[:WEAK_TO] has no outgoing (:(Pokemon | (!% & Trainer))).',
         offsets: {
           end: 46,
           start: 6,
@@ -1365,7 +1342,7 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([
       {
         message:
-          'Relationship with relationship type(s) WEAK_TO has no outgoing connection to a node with label(s) (Pokemon | (!Trainer & Trainer)).',
+          '[:WEAK_TO] has no outgoing (:(Pokemon | (!Trainer & Trainer))).',
         offsets: {
           end: 52,
           start: 6,

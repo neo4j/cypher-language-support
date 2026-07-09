@@ -250,7 +250,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 8),
             new vscode.Position(0, 32),
           ),
-          'Relationship with relationship type(s) ACTED_IN has no incoming connection to a node with label(s) Person.',
+          '[:ACTED_IN] has no incoming (:Person)',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
@@ -266,7 +266,7 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 18),
             new vscode.Position(0, 65),
           ),
-          'Node with label(s) Movie has no incoming connection to a relationship with relationship type(s) ACTED_IN.',
+          '(:Movie) has no incoming [:ACTED_IN]',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(

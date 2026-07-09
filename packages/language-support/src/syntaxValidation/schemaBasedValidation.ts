@@ -49,7 +49,7 @@ export function warnOnSchemaPathViolations(
   const diagnostics: SyntaxDiagnostic[] = [];
   try {
     const { fromRels, toRels } = getNodesFromRelsSet(dbSchema);
-    const schemaRelTypes = new Set<string>(fromRels.keys());
+    const graphSchemaRelTypes = new Set<string>(fromRels.keys());
 
     for (const patternElement of collectReadPatternElements(parseResult.ctx)) {
       const elements = (patternElement.children ?? []).filter(
@@ -71,7 +71,7 @@ export function warnOnSchemaPathViolations(
             left,
             right,
             symbolTable,
-            schemaRelTypes,
+            graphSchemaRelTypes,
             fromRels,
             toRels,
           ).forEach((d) => diagnostics.push(d));
@@ -222,13 +222,13 @@ function checkAdjacency({
   const nodeStr = renderLabelTree(nodeTree);
   if (position === 'left') {
     return {
-      message: `Relationship with relationship type(s) ${relStr} has no ${qualifier}connection to a node with label(s) ${nodeStr}.`,
+      message: `[:${relStr}] has no ${qualifier}(:${nodeStr}).`,
       ...translateTokensToRange(node.start, rel.stop),
       severity: DiagnosticSeverity.Warning,
     };
   }
   return {
-    message: `Node with label(s) ${nodeStr} has no ${qualifier}connection to a relationship with relationship type(s) ${relStr}.`,
+    message: `(:${nodeStr}) has no ${qualifier}[:${relStr}].`,
     ...translateTokensToRange(rel.start, node.stop),
     severity: DiagnosticSeverity.Warning,
   };
@@ -252,7 +252,7 @@ function qualifierFor(direction: Direction): string {
   if (direction === 'left') {
     return 'outgoing ';
   }
-  return '';
+  return 'incoming/outgoing ';
 }
 
 /**
