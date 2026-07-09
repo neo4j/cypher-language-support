@@ -1,13 +1,8 @@
-import { ParserRuleContext } from 'antlr4';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
 import { DbSchema } from '../dbSchema.js';
 import {
-  CreateClauseContext,
-  InsertClauseContext,
-  MergeClauseContext,
   NodePatternContext,
-  PatternElementContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser.js';
 import {
@@ -50,7 +45,7 @@ export function warnOnSchemaPathViolations(
   const { fromRels, toRels } = getNodesFromRelsSet(dbSchema);
   const graphSchemaRelTypes = new Set<string>(fromRels.keys());
 
-  for (const patternElement of collectReadPatternElements(parseResult.ctx)) {
+  for (const patternElement of parseResult.collectedReadPatternElements) {
     const elements = (patternElement.children ?? []).filter(
       (c): c is NodePatternContext | RelationshipPatternContext =>
         c instanceof NodePatternContext ||
@@ -114,7 +109,7 @@ function collectSegmentWarnings(
   }
 
   const validRelTypes = [...schemaRelTypes].filter((relType) =>
-    evalLabelTree(relTree, new Set(relType)),
+    evalLabelTree(relTree, new Set([relType])),
   );
   const direction = getDirection(rel);
   const relStr = renderLabelTree(relTree);
@@ -346,7 +341,7 @@ function relTypeSatisfiable(
     NON_SCHEMA_RELTYPE,
   ]);
   for (const relType of universe) {
-    if (evalLabelTree(tree, new Set(relType))) {
+    if (evalLabelTree(tree, new Set([relType]))) {
       return true;
     }
   }
@@ -386,30 +381,4 @@ function renderLabelTree(tree: LabelOrCondition): string {
       return '(' + tree.children.map(renderLabelTree).join(separator) + ')';
     }
   }
-}
-
-/** All read-side `PatternElement`s, skipping CREATE/INSERT/MERGE subtrees. */
-function collectReadPatternElements(
-  root: ParserRuleContext,
-): PatternElementContext[] {
-  const result: PatternElementContext[] = [];
-  const visit = (node: ParserRuleContext) => {
-    if (
-      node instanceof CreateClauseContext ||
-      node instanceof MergeClauseContext ||
-      node instanceof InsertClauseContext
-    ) {
-      return;
-    }
-    if (node instanceof PatternElementContext) {
-      result.push(node);
-    }
-    for (const child of node.children ?? []) {
-      if (child instanceof ParserRuleContext) {
-        visit(child);
-      }
-    }
-  };
-  visit(root);
-  return result;
 }

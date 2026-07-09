@@ -24,6 +24,7 @@ import {
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
   VariableContext,
+  PatternElementContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -66,6 +67,7 @@ export interface ParsedStatement {
   collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  collectedReadPatternElements: PatternElementContext[];
   cypherVersion?: CypherVersion;
 }
 
@@ -204,6 +206,7 @@ export function createParsingResult(
       const variableFinder = new VariableCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
+      const readPatternElementsCollector = new ReadPatternElementsCollector();
       const errorListener = new SyntaxErrorsListener(
         tokens,
         settings.consoleCommandsEnabled,
@@ -214,6 +217,7 @@ export function createParsingResult(
         variableFinder,
         methodsFinder,
         cypherVersionCollector,
+        readPatternElementsCollector,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -242,6 +246,8 @@ export function createParsingResult(
         collectedParameters: parameterFinder.parameters,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        collectedReadPatternElements:
+          readPatternElementsCollector.readPatternElements,
         cypherVersion: cypherVersionCollector.cypherVersion,
       };
     });
@@ -418,6 +424,25 @@ class VariableCollector implements ParseTreeListener {
       if (variable) {
         this.variables.push(variable);
       }
+    }
+  }
+}
+
+class ReadPatternElementsCollector implements ParseTreeListener {
+  readPatternElements: PatternElementContext[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PatternElementContext && !couldCreateNewLabel(ctx)) {
+      this.readPatternElements.push(ctx);
     }
   }
 }
