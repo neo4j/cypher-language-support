@@ -199,12 +199,15 @@ function checkAdjacency({
     const from = fromRels.get(relType) ?? new Set<string>();
     const to = toRels.get(relType) ?? new Set<string>();
     if (role === 'from') {
-      return subsetSatisfiable(cleaned, from);
+      return labelTreeSatisfiableBy(cleaned, from);
     }
     if (role === 'to') {
-      return subsetSatisfiable(cleaned, to);
+      return labelTreeSatisfiableBy(cleaned, to);
     }
-    return subsetSatisfiable(cleaned, from) || subsetSatisfiable(cleaned, to);
+    return (
+      labelTreeSatisfiableBy(cleaned, from) ||
+      labelTreeSatisfiableBy(cleaned, to)
+    );
   });
 
   if (supported) {
@@ -287,7 +290,7 @@ function findEntry(
  * is a valid candidate: the empty `candInTree` subset evaluates the tree as
  * true, and `otherAvailable` confirms a real (non-empty) node can back it.
  */
-function subsetSatisfiable(
+function labelTreeSatisfiableBy(
   tree: LabelOrCondition,
   candidates: Set<string>,
 ): boolean {
