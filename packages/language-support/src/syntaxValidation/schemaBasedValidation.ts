@@ -294,18 +294,21 @@ function labelTreeSatisfiableBy(
   const otherAvailable = candidates.size > candInTree.length;
 
   const n = candInTree.length;
+  // Goes through all subsets of candInTrees until it finds one that is valid
+  // Mask in binary is a filter of which of the candidate labels to include -
+  // 1 on position i of the binary number meaning "include the ith label"
   for (let mask = 0; mask < 1 << n; mask++) {
-    const labelSet = new Set<string>();
+    const labelSubSet = new Set<string>();
     for (let i = 0; i < n; i++) {
       if (mask & (1 << i)) {
-        labelSet.add(candInTree[i]);
+        labelSubSet.add(candInTree[i]);
       }
     }
     // The assignment must correspond to a real, non-empty node: it either uses
     // a named candidate, or relies on some other (unnamed) candidate existing.
     if (
-      evalLabelTree(tree, labelSet) &&
-      (labelSet.size > 0 || otherAvailable)
+      evalLabelTree(tree, labelSubSet) &&
+      (labelSubSet.size > 0 || otherAvailable)
     ) {
       return true;
     }
