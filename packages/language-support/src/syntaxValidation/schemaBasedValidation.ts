@@ -113,8 +113,8 @@ function collectSegmentWarnings(
     return [];
   }
 
-  const validRelTypes = [...schemaRelTypes].filter((t) =>
-    relTypeMatches(relTree, t),
+  const validRelTypes = [...schemaRelTypes].filter((relType) =>
+    evalLabelTree(relTree, new Set(relType)),
   );
   const direction = getDirection(rel);
   const relStr = renderLabelTree(relTree);
@@ -296,7 +296,7 @@ function labelTreeSatisfiableBy(
 ): boolean {
   const mentioned = labelsIn(tree);
   const candInTree = [...candidates].filter((c) => mentioned.has(c));
-  const otherAvailable = [...candidates].some((c) => !mentioned.has(c));
+  const otherAvailable = candidates.size > candInTree.length;
 
   const n = candInTree.length;
   for (let mask = 0; mask < 1 << n; mask++) {
@@ -308,44 +308,30 @@ function labelTreeSatisfiableBy(
     }
     // The assignment must correspond to a real, non-empty node: it either uses
     // a named candidate, or relies on some other (unnamed) candidate existing.
-    if (evalNodeTree(tree, labelSet) && (labelSet.size > 0 || otherAvailable)) {
+    if (
+      evalLabelTree(tree, labelSet) &&
+      (labelSet.size > 0 || otherAvailable)
+    ) {
       return true;
     }
   }
   return false;
 }
 
-/** Evaluate a node label tree as a boolean over the node's label set `S`. */
-function evalNodeTree(tree: LabelOrCondition, labelSet: Set<string>): boolean {
+/** Evaluate a label tree as a boolean over the label set `S`. */
+function evalLabelTree(tree: LabelOrCondition, labelSet: Set<string>): boolean {
   if (isLabelLeaf(tree)) {
     return labelSet.has(tree.value);
   }
   switch (tree.condition) {
     case 'and':
-      return tree.children.every((c) => evalNodeTree(c, labelSet));
+      return tree.children.every((c) => evalLabelTree(c, labelSet));
     case 'or':
-      return tree.children.some((c) => evalNodeTree(c, labelSet));
+      return tree.children.some((c) => evalLabelTree(c, labelSet));
     case 'not':
-      return !evalNodeTree(tree.children[0], labelSet);
+      return !evalLabelTree(tree.children[0], labelSet);
     case 'any':
       return labelSet.size > 0;
-  }
-}
-
-/** Whether a relationship of exactly type `t` matches the type expression. */
-function relTypeMatches(tree: LabelOrCondition, t: string): boolean {
-  if (isLabelLeaf(tree)) {
-    return tree.value === t;
-  }
-  switch (tree.condition) {
-    case 'and':
-      return tree.children.every((c) => relTypeMatches(c, t));
-    case 'or':
-      return tree.children.some((c) => relTypeMatches(c, t));
-    case 'not':
-      return !relTypeMatches(tree.children[0], t);
-    case 'any':
-      return true;
   }
 }
 
@@ -359,8 +345,8 @@ function relTypeSatisfiable(
     ...labelsIn(tree),
     NON_SCHEMA_RELTYPE,
   ]);
-  for (const t of universe) {
-    if (relTypeMatches(tree, t)) {
+  for (const relType of universe) {
+    if (evalLabelTree(tree, new Set(relType))) {
       return true;
     }
   }
@@ -379,7 +365,6 @@ function labelsIn(
   return acc;
 }
 
-//TODO: verify that this is how switch-case works (see 'and')
 /** Renders a label/type tree back to its written form (e.g. `(A | !B)`). */
 function renderLabelTree(tree: LabelOrCondition): string {
   if (isLabelLeaf(tree)) {
