@@ -47,41 +47,33 @@ export function warnOnSchemaPathViolations(
   }
 
   const diagnostics: SyntaxDiagnostic[] = [];
-  try {
-    const { fromRels, toRels } = getNodesFromRelsSet(dbSchema);
-    const graphSchemaRelTypes = new Set<string>(fromRels.keys());
+  const { fromRels, toRels } = getNodesFromRelsSet(dbSchema);
+  const graphSchemaRelTypes = new Set<string>(fromRels.keys());
 
-    for (const patternElement of collectReadPatternElements(parseResult.ctx)) {
-      const elements = (patternElement.children ?? []).filter(
-        (c): c is NodePatternContext | RelationshipPatternContext =>
-          c instanceof NodePatternContext ||
-          c instanceof RelationshipPatternContext,
-      );
+  for (const patternElement of collectReadPatternElements(parseResult.ctx)) {
+    const elements = (patternElement.children ?? []).filter(
+      (c): c is NodePatternContext | RelationshipPatternContext =>
+        c instanceof NodePatternContext ||
+        c instanceof RelationshipPatternContext,
+    );
 
-      for (let i = 0; i < elements.length; i++) {
-        const rel = elements[i];
-        if (!(rel instanceof RelationshipPatternContext)) {
-          continue;
-        }
-        try {
-          const left = asNode(elements[i - 1]);
-          const right = asNode(elements[i + 1]);
-          collectSegmentWarnings(
-            rel,
-            left,
-            right,
-            symbolTable,
-            graphSchemaRelTypes,
-            fromRels,
-            toRels,
-          ).forEach((d) => diagnostics.push(d));
-        } catch {
-          // A single broken/partial segment must never break linting.
-        }
+    for (let i = 0; i < elements.length; i++) {
+      const rel = elements[i];
+      if (!(rel instanceof RelationshipPatternContext)) {
+        continue;
       }
+      const left = asNode(elements[i - 1]);
+      const right = asNode(elements[i + 1]);
+      collectSegmentWarnings(
+        rel,
+        left,
+        right,
+        symbolTable,
+        graphSchemaRelTypes,
+        fromRels,
+        toRels,
+      ).forEach((d) => diagnostics.push(d));
     }
-  } catch {
-    return [];
   }
 
   return diagnostics;
