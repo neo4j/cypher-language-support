@@ -222,13 +222,13 @@ function checkAdjacency({
   const nodeStr = renderLabelTree(nodeTree);
   if (position === 'left') {
     return {
-      message: `[:${relStr}] has no ${qualifier}(:${nodeStr}).`,
+      message: `[:${relStr}] has no ${qualifier}(:${nodeStr})`,
       ...translateTokensToRange(node.start, rel.stop),
       severity: DiagnosticSeverity.Warning,
     };
   }
   return {
-    message: `(:${nodeStr}) has no ${qualifier}[:${relStr}].`,
+    message: `(:${nodeStr}) has no ${qualifier}[:${relStr}]`,
     ...translateTokensToRange(rel.start, node.stop),
     severity: DiagnosticSeverity.Warning,
   };
