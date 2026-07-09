@@ -189,21 +189,31 @@ function checkAdjacency({
   if (isAnyNode(cleaned) || isNotAnyNode(cleaned)) {
     return undefined;
   }
-
-  const supported = validRelTypes.some((relType) => {
-    const from = fromRels.get(relType) ?? new Set<string>();
-    const to = toRels.get(relType) ?? new Set<string>();
-    if (role === 'from') {
-      return labelTreeSatisfiableBy(cleaned, from);
+  let supported = true;
+  try {
+    supported = validRelTypes.some((relType) => {
+      const from = fromRels.get(relType) ?? new Set<string>();
+      const to = toRels.get(relType) ?? new Set<string>();
+      if (role === 'from') {
+        return labelTreeSatisfiableBy(cleaned, from);
+      }
+      if (role === 'to') {
+        return labelTreeSatisfiableBy(cleaned, to);
+      }
+      return (
+        labelTreeSatisfiableBy(cleaned, from) ||
+        labelTreeSatisfiableBy(cleaned, to)
+      );
+    });
+  } catch (err) {
+    if (
+      String(err).includes('Bailing schema based linting on large label tree')
+    ) {
+      return undefined;
+    } else {
+      throw err;
     }
-    if (role === 'to') {
-      return labelTreeSatisfiableBy(cleaned, to);
-    }
-    return (
-      labelTreeSatisfiableBy(cleaned, from) ||
-      labelTreeSatisfiableBy(cleaned, to)
-    );
-  });
+  }
 
   if (supported) {
     return undefined;
@@ -284,6 +294,8 @@ function findEntry(
  * That is what lets e.g. `(:!Pokemon)` be satisfied by a `Gym` node when `Gym`
  * is a valid candidate: the empty `candInTree` subset evaluates the tree as
  * true, and `otherAvailable` confirms a real (non-empty) node can back it.
+ *
+ * Bails on too large label trees by throwing an error, caught by the caller
  */
 function labelTreeSatisfiableBy(
   tree: LabelOrCondition,
@@ -294,6 +306,10 @@ function labelTreeSatisfiableBy(
   const otherAvailable = candidates.size > candInTree.length;
 
   const n = candInTree.length;
+
+  if (n > 10) {
+    throw new Error('Bailing schema based linting on large label tree');
+  }
   // Goes through all subsets of candInTrees until it finds one that is valid
   // Mask in binary is a filter of which of the candidate labels to include -
   // 1 on position i of the binary number meaning "include the ith label"

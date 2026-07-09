@@ -1412,6 +1412,32 @@ describe('Schema based linting spec', () => {
     expect(diagnostics).toEqual([]);
   });
 
+  test('Limitation: Bails when more than 10 unique viable labels are used in a tree', () => {
+    //we should warn like in the test "Handles case where we have legitimate label and a contradiction"
+    //But since we have so many labels we bail to avoid possibly slow computation
+    const query =
+      'MATCH (n:(A & B & C & D & E & F & G & H & I & J & K & !K))-[:R]->(:A) RETURN ""';
+    const dbSchema = {
+      labels: ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K'],
+      relationshipTypes: ['R', 'R2'],
+      graphSchema: [
+        { from: 'A', relType: 'R', to: 'A' },
+        { from: 'B', relType: 'R', to: 'A' },
+        { from: 'C', relType: 'R', to: 'A' },
+        { from: 'D', relType: 'R', to: 'A' },
+        { from: 'E', relType: 'R', to: 'A' },
+        { from: 'F', relType: 'R', to: 'A' },
+        { from: 'G', relType: 'R', to: 'A' },
+        { from: 'H', relType: 'R', to: 'A' },
+        { from: 'I', relType: 'R', to: 'A' },
+        { from: 'J', relType: 'R', to: 'A' },
+        { from: 'K', relType: 'R', to: 'B' },
+      ],
+    };
+    let diagnostics = getDiagnosticsForQuery({ query, dbSchema });
+    expect(diagnostics).toEqual([]);
+  });
+
   test('Should not warn on CREATE', () => {
     const query = 'CREATE (n:Person)<-[:WEAK_TO]-()';
     const diagnostics = getDiagnosticsForQuery({ query, dbSchema });
