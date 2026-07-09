@@ -257,7 +257,8 @@ hint
    ;
 
 expandHintStep
-   : (ALL | INTO)? FROM variable TO variable
+   : (ALL | INTO)? FROM from=variable TO to=variable (VIA via=variable)?
+   | (ALL | INTO)? VIA via=variable
    ;
 
 mergeClause
@@ -321,11 +322,21 @@ subqueryScope
    ;
 
 subqueryInTransactionsParameters
-   : IN (expression? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*
+   : IN (expression? CONCURRENT)? TRANSACTIONS (subqueryInTransactionsBatchParameters | subqueryInTransactionsDisjointByParameters | subqueryInTransactionsErrorParameters | subqueryInTransactionsReportParameters)*
    ;
 
 subqueryInTransactionsBatchParameters
    : OF expression (ROW | ROWS)
+   ;
+
+subqueryInTransactionsDisjointByParameters
+   : DISJOINT BY AUTO
+   | DISJOINT BY NONE
+   | DISJOINT BY LPAREN subqueryInTransactionsDisjointByExpressions RPAREN
+   ;
+
+subqueryInTransactionsDisjointByExpressions
+   : expression (COMMA expression)*
    ;
 
 subqueryInTransactionsErrorParameters
@@ -1431,6 +1442,11 @@ authRuleKeywords
     : AUTH (RULE | RULES)
     ;
 
+commandToken
+    : COMMAND
+    | COMMANDS
+    ;
+
 // Server commands
 
 enableServerCommand
@@ -1480,7 +1496,7 @@ renameRole
    ;
 
 showRoles
-   : (ALL | POPULATED)? roleToken (WITH (USER | USERS | authRuleKeywords))? showCommandYield?
+   : (ALL | POPULATED)? roleToken (WITH (USER | USERS | authRuleKeywords))? (AS commandToken)? showCommandYield?
    ;
 
 grantRole
@@ -1626,7 +1642,7 @@ showUserPrivileges
    ;
 
 privilegeAsCommand
-   : AS REVOKE? (COMMAND | COMMANDS)
+   : AS REVOKE? commandToken
    ;
 
 privilegeToken
@@ -1931,7 +1947,7 @@ dropAuthRule
     ;
 
 showAuthRules
-    : authRuleKeywords (AS (COMMAND | COMMANDS))? showCommandYield?
+    : authRuleKeywords (AS commandToken)? showCommandYield?
     ;
 
 // Database commands
@@ -2219,6 +2235,7 @@ unescapedSymbolicNameString_
    | ASSIGN
    | AT
    | AUTH
+   | AUTO
    | BINDINGS
    | BOOL
    | BOOLEAN
@@ -2267,6 +2284,7 @@ unescapedSymbolicNameString_
    | DESTROY
    | DETACH
    | DIFFERENT
+   | DISJOINT
    | DISTINCT
    | DRIVER
    | DOT_METRIC
@@ -2492,6 +2510,7 @@ unescapedSymbolicNameString_
    | USERS
    | USING
    | VALUE
+   | VIA
    | VECTOR
    | VECTOR_DISTANCE
    | VECTOR_NORM

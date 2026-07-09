@@ -3,6 +3,7 @@ import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
 import {
   AccessModeArgsContext,
   ArrowLineContext,
+  AutoCompletionRuleContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
   CypherOptionNameContext,
@@ -274,6 +275,12 @@ class SyntaxHighlighter extends CypherParserListener {
       CypherTokenType.consoleCommand,
       server.getText(),
     );
+  };
+
+  exitAutoCompletionRule = (ctx: AutoCompletionRuleContext) => {
+    const auto = ctx.AUTO();
+
+    this.addToken(auto.symbol, CypherTokenType.consoleCommand, auto.getText());
   };
 
   exitParamsArgs = (ctx: ParamsArgsContext) => {

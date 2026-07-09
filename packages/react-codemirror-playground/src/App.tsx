@@ -357,7 +357,7 @@ export function App() {
                   checked={showAntlrParse}
                   onChange={() => setShowAntlrParse((s) => !s)}
                 />
-                Show antlr parse tree
+                Show antlr parse tree (Cypher 25)
               </label>
               {schemaError && <div className="text-red-500">{schemaError}</div>}
               <textarea
