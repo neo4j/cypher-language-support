@@ -67,6 +67,7 @@ export interface ParsedStatement {
   collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  collectedProperties: PropertyType[];
   cypherVersion?: CypherVersion;
 }
 
@@ -205,10 +206,10 @@ export function createParsingResult(
   const results: ParsedStatement[] =
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
       const { parser, tokens } = statementScaffolding;
-      const labelsCollector = new LabelAndRelTypesCollector();
+      const labelsCollector = new ReadLabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
       const variableFinder = new VariableCollector();
-      const propertiesFinder = new PropertiesCollector();
+      const propertiesFinder = new ReadPropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(
@@ -221,6 +222,7 @@ export function createParsingResult(
         variableFinder,
         methodsFinder,
         cypherVersionCollector,
+        propertiesFinder,
       ];
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
@@ -296,8 +298,8 @@ export function parseParameters(
   return [...new Set(parameters)];
 }
 
-// This listener collects all labels and relationship types
-class LabelAndRelTypesCollector extends ParseTreeListener {
+/** This listener collects all labels and relationship types in read operations */
+class ReadLabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
   enterEveryRule() {
@@ -356,9 +358,9 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
   }
 }
 
-// This listener collects all labels and relationship types
-class PropertiesCollector extends ParseTreeListener {
-  properties: string[] = [];
+// This listener collects all properties in read operations
+class ReadPropertiesCollector extends ParseTreeListener {
+  properties: PropertyType[] = [];
 
   enterEveryRule() {
     /* no-op */
@@ -370,8 +372,32 @@ class PropertiesCollector extends ParseTreeListener {
     /* no-op */
   }
 
+  exitReturn() {}
+
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof PropertyKeyNameContext) {
+      if (
+        ctx.parentCtx &&
+        !hasErrorNodesUnder(ctx.parentCtx) &&
+        !couldCreateNewLabel(ctx)
+      ) {
+        // const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
+        // if (parent instanceof SetClauseContext) {
+        //   console.log(parent.setItem);
+        //   console.log('In set', ctx.getText());
+        //   // console.log('Property to collect:', ctx.getText());
+        // }
+
+        this.properties.push({
+          propertyName: ctx.getText(),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
       // If the parser recovered from an error reading the label
       // like in the case MATCH (n:) RETURN n
       // RETURN would be incorrectly idenfified as the label

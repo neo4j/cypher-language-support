@@ -17,6 +17,7 @@ import {
   ParsedProcedure,
   ParsedStatement,
   ParsingResult,
+  PropertyType,
   createParsingResult,
   translateTokensToRange,
 } from '../cypherLanguageService.js';
@@ -134,7 +135,7 @@ export function clampUnsafePositions(
 
 function generateSyntaxDiagnostic(
   rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter,
+  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter | PropertyType,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
@@ -294,15 +295,25 @@ function warnOnUndeclaredLabels(
       if (warning) warnings.push(warning);
     });
   }
-
   return warnings;
 }
 
 function warnOnUndeclaredProperties(
-  _parsingResult: ParsedStatement,
+  parsingResult: ParsedStatement,
   _dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
+  const properties = parsingResult.collectedProperties;
+  for (const property of properties) {
+    const message = property.propertyName + ' not available';
+    const warning = generateSyntaxDiagnostic(
+      property.propertyName,
+      property,
+      DiagnosticSeverity.Warning,
+      message,
+    );
+    warnings.push(warning);
+  }
 
   // if (dbSchema.labels && dbSchema.relationshipTypes) {
   //   const dbLabels = new Set(dbSchema.labels);
