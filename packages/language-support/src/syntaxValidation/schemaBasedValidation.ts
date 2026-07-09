@@ -62,8 +62,8 @@ export function warnOnSchemaPathViolations(
       if (!(rel instanceof RelationshipPatternContext)) {
         continue;
       }
-      const left = asNode(elements[i - 1]);
-      const right = asNode(elements[i + 1]);
+      const left = nodeOrUndefined(elements[i - 1]);
+      const right = nodeOrUndefined(elements[i + 1]);
       collectSegmentWarnings(
         rel,
         left,
@@ -79,7 +79,7 @@ export function warnOnSchemaPathViolations(
   return diagnostics;
 }
 
-function asNode(
+function nodeOrUndefined(
   element: NodePatternContext | RelationshipPatternContext | undefined,
 ): NodePatternContext | undefined {
   return element instanceof NodePatternContext ? element : undefined;
