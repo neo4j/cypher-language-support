@@ -29,18 +29,15 @@ let viteProc = null;
 if (!url) {
   const port = 5199;
   url = `http://localhost:${port}/`;
+  // detached on unix puts vite in its own process group so stopVite can kill
+  // the whole tree; on Windows taskkill /T does that instead.
   viteProc = spawn(
-    'pnpm',
-    [
-      '--filter',
-      '@neo4j-cypher/react-codemirror-playground',
-      'exec',
-      'vite',
-      '--port',
-      String(port),
-      '--strictPort',
-    ],
-    { shell: true, stdio: ['ignore', 'pipe', 'inherit'] },
+    `pnpm --filter @neo4j-cypher/react-codemirror-playground exec vite --port ${port} --strictPort`,
+    {
+      shell: true,
+      detached: process.platform !== 'win32',
+      stdio: ['ignore', 'pipe', 'inherit'],
+    },
   );
   viteProc.stdout.on('data', () => {});
   const deadline = Date.now() + 60_000;
@@ -61,13 +58,17 @@ if (!url) {
 
 function stopVite() {
   if (!viteProc) return;
-  // shell:true on Windows means viteProc.pid is the shell; kill the whole tree.
+  // shell:true means viteProc.pid is the shell, not vite itself; kill the tree.
   if (process.platform === 'win32') {
     try {
       execSync(`taskkill /pid ${viteProc.pid} /T /F`, { stdio: 'ignore' });
     } catch {}
   } else {
-    viteProc.kill('SIGTERM');
+    try {
+      process.kill(-viteProc.pid, 'SIGTERM'); // negative pid = process group
+    } catch {
+      viteProc.kill('SIGTERM');
+    }
   }
 }
 
@@ -96,18 +97,20 @@ async function launchBrowser() {
     const shells = readdirSync(cache)
       .filter((d) => d.startsWith('chromium_headless_shell-'))
       .sort((a, b) => Number(b.split('-')[1]) - Number(a.split('-')[1]));
-    if (shells.length === 0) throw err;
-    const exe = join(
-      cache,
-      shells[0],
-      process.platform === 'win32'
-        ? 'chrome-headless-shell-win64/chrome-headless-shell.exe'
-        : process.platform === 'darwin'
-          ? 'chrome-headless-shell-mac/chrome-headless-shell'
-          : 'chrome-headless-shell-linux/chrome-headless-shell',
-    );
-    console.log('default browser missing, falling back to ' + exe);
-    return await chromium.launch({ executablePath: exe });
+    // The platform/arch-specific directory layout inside the build varies
+    // (…-win64, …-linux64, …-mac-arm64, …); scan for the binary instead.
+    for (const shell of shells) {
+      const dir = join(cache, shell);
+      const hit = readdirSync(dir, { recursive: true }).find((p) =>
+        /(^|[\\/])chrome-headless-shell(\.exe)?$/.test(String(p)),
+      );
+      if (hit) {
+        const exe = join(dir, String(hit));
+        console.log('default browser missing, falling back to ' + exe);
+        return await chromium.launch({ executablePath: exe });
+      }
+    }
+    throw err;
   }
 }
 
