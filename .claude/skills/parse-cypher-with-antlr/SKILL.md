@@ -5,7 +5,7 @@ description: Inspect how a Cypher query is parsed by the ANTLR grammar — print
 
 # Parse Cypher queries with ANTLR
 
-`antlr4-parse` (from `antlr4-tools`, same prerequisite as the build — see CLAUDE.md) interprets the grammar files in `packages/language-support/src/antlr-grammar/` directly. No build step needed, and it reflects grammar edits instantly. The generated TypeScript parser in `src/generated-parser/` is produced from these same grammars, so the trees match what the library sees.
+`antlr4-parse` (from `antlr4-tools`, same prerequisite as the build — see AGENTS.md) interprets the grammar files in `packages/language-support/src/antlr-grammar/` directly. No build step needed, and it reflects grammar edits instantly. The generated TypeScript parser in `src/generated-parser/` is produced from these same grammars, so the trees match what the library sees.
 
 ## The commands
 

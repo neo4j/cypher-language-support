@@ -75,4 +75,4 @@ Prints the formatted query (`MATCH (n:Person)\nWHERE n.age > 30\nRETURN n`), exi
 pnpm test                 # unit tests across packages (vitest)
 ```
 
-VS Code extension e2e suites need Docker/Rancher and pop windows — ask the user to run those (see CLAUDE.md).
+VS Code extension e2e suites need Docker/Rancher and pop windows — ask the user to run those (see AGENTS.md).
