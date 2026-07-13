@@ -34,6 +34,13 @@ Package-specific test suites:
 - `pnpm --filter neo4j-for-vscode test:webviews` — webview tests (wdio).
 - `pnpm test:formattingIntegrity` — formatter verification over a large query corpus.
 
+## Shell, paths and tooling (Windows dev machine)
+
+- The Bash tool is Git Bash (POSIX) — PowerShell cmdlets (`Select-String`, `Select-Object`, …) do not exist there. In the PowerShell tool, never append `2>&1` to a native command: PowerShell 5.1 wraps stderr in `NativeCommandError` records and hides the real output (stderr is captured for you anyway).
+- The shell working directory persists between calls (even across the Bash and PowerShell tools), so after any `cd` later relative paths silently resolve against the wrong directory. Relative paths work fine from the repo root — just `cd` back (or use absolute paths) rather than assuming you're still there.
+- In Git Bash, unquoted backslash paths lose their backslashes (`C:UsersIsak...`) — quote them or use forward slashes.
+- Repo tools are not on PATH: use `pnpm exec tsc`, `pnpm vitest run ...`, `pnpm format`. The test runner is vitest via pnpm — never jest, and this is a pnpm workspace, so `npm --workspace` does not work.
+
 ## Architecture
 
 Dependency flow: `vscode-extension` bundles `language-server`, which (like `react-codemirror`) is powered by `language-support` and `lint-worker`; `query-tools` supplies the live database schema.
@@ -55,4 +62,7 @@ Dependency flow: `vscode-extension` bundles `language-server`, which (like `reac
 - Relative imports in `language-support`, `query-tools`, `lint-worker`, and `vendor/antlr4-c3` must include the `.js` extension (`from './helpers.js'`). Enforced by `pnpm check-imports` in CI; TypeScript's `nodenext` mode can't be used yet because of antlr4's type declarations.
 - VS Code API tests run against the **bundled** `dist/extension.js` while test files are compiled separately from `src/` — sinon stubs applied to `src/` modules do not affect command handlers invoked via `commands.executeCommand` (two separate module graphs). Call the `src/` function directly if you need stubs to apply.
 - Downloaded lint workers are cached in the real VS Code global storage (`%APPDATA%/Code/User/globalStorage/neo4j-extensions.neo4j-for-vscode`), not in `.vscode-test/user-data`.
-- Husky + lint-staged run oxlint/oxfmt on commit. Releases use changesets.
+- Never Read/Grep build output to understand code: the `dist/` bundles (e.g. `lintWorker.mjs`, ~8 MB), `src/generated-parser/`, and `semanticAnalysis.js` are far too large for tools and are generated anyway — read the package's `src/` instead. To introspect a built package's runtime exports, run `node -e "require('...')"` from inside that package's directory (deps don't resolve from the repo root, and `vscode` never resolves outside the extension host).
+- `pnpm exec tsc` can surface pre-existing type errors unrelated to your change — compare against main before treating them as regressions.
+- Husky + lint-staged run oxlint/oxfmt on commit. Releases use changesets — but do not create changeset files or run any publish step unasked; the maintainer owns those.
+- `.vscode/launch.json` has launch configs for the CodeMirror playground, the extension host (`VSCode Playground`), and debugging both VS Code test suites.
