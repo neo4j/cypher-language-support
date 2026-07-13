@@ -36,7 +36,6 @@ Other useful flags: `-trace` (rule enter/exit + token consumption, very verbose)
 
 - **Don't pipe the query through PowerShell** — PowerShell 5.1 mangles the pipeline encoding (a BOM-like char reaches the parser as `extraneous input '?'` at 1:0). `antlr4-parse` itself works fine from PowerShell; just provide the query as a file argument instead of a pipe, or use the Bash tool.
 - Interactive use (a human typing the query) ends input with **Ctrl+Z then Enter** on Windows, **Ctrl+D** on unix. Agents never need this — piped stdin gets EOF automatically.
-- First-ever run downloads the ANTLR jar (and Java 11 if missing); on this machine everything is already cached.
 - Which grammars are editable: the import chain is `CypherCmd*` → `CypherPre*` → `Cypher25*`. The `CypherCmdLexer/Parser` and `CypherPreLexer/Parser` grammars (console commands, preparser) are owned by this repo and fine to edit. Only `Cypher25Lexer/Parser` (and `semanticAnalysis.js`) are synced monthly from the internal Neo4j monorepo — don't hand-edit those; local experiments with this tool are fine, just don't commit changes to them.
 
 ## See also
