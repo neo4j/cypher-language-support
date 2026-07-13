@@ -41,14 +41,17 @@ proc.stdout.on('data', (chunk) => {
     const header = buffer.subarray(0, headerEnd).toString();
     const length = Number(/Content-Length: (\d+)/i.exec(header)?.[1]);
     if (buffer.length < headerEnd + 4 + length) return;
-    const msg = JSON.parse(buffer.subarray(headerEnd + 4, headerEnd + 4 + length).toString());
+    const msg = JSON.parse(
+      buffer.subarray(headerEnd + 4, headerEnd + 4 + length).toString(),
+    );
     buffer = buffer.subarray(headerEnd + 4 + length);
     if (msg.id !== undefined && pending.has(msg.id)) {
       pending.get(msg.id)(msg.result);
       pending.delete(msg.id);
     } else if (msg.method) {
       notifications.push(msg);
-      if (waitingFor && msg.method === waitingFor.method) waitingFor.resolve(msg.params);
+      if (waitingFor && msg.method === waitingFor.method)
+        waitingFor.resolve(msg.params);
     }
   }
 });
@@ -71,15 +74,15 @@ await send('initialize', {
   rootUri: null,
   capabilities: { textDocument: { publishDiagnostics: {} } },
 });
-send('initialized', {}, true);
+void send('initialized', {}, true);
 // Linting is gated on settings.features.linting (see language-server/src/server.ts);
 // without this notification the server never publishes real diagnostics.
-send(
+void send(
   'workspace/didChangeConfiguration',
   { settings: { neo4j: { features: { linting: true } } } },
   true,
 );
-send(
+void send(
   'textDocument/didOpen',
   { textDocument: { uri, languageId: 'cypher', version: 1, text: query } },
   true,
@@ -101,8 +104,10 @@ async function waitForDiagnostics() {
   }
 }
 const diagnostics = await waitForDiagnostics();
+// eslint-disable-next-line no-console
 console.log('--- diagnostics ---');
 for (const d of diagnostics.diagnostics) {
+  // eslint-disable-next-line no-console
   console.log(
     `[${d.severity === 1 ? 'error' : 'warn'}] ${d.range.start.line}:${d.range.start.character} ${d.message}`,
   );
@@ -112,7 +117,7 @@ for (const d of diagnostics.diagnostics) {
 // (at the end of the broken query above the parser has nothing to offer).
 const completionUri = 'file:///completion.cypher';
 const completionQuery = 'MATCH (n) RETURN ';
-send(
+void send(
   'textDocument/didOpen',
   {
     textDocument: {
@@ -131,8 +136,15 @@ const completions = await send('textDocument/completion', {
   context: { triggerKind: 1 },
 });
 const items = completions?.items ?? completions ?? [];
+// eslint-disable-next-line no-console
 console.log('--- completions (first 10) ---');
-console.log(items.slice(0, 10).map((i) => i.label).join(', '));
+// eslint-disable-next-line no-console
+console.log(
+  items
+    .slice(0, 10)
+    .map((i) => i.label)
+    .join(', '),
+);
 
 clearTimeout(timeout);
 proc.kill();

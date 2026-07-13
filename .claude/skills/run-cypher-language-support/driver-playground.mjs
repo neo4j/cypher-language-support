@@ -74,6 +74,7 @@ function stopVite() {
 
 let failures = 0;
 function check(name, ok, detail = '') {
+  // eslint-disable-next-line no-console
   console.log(`${ok ? 'PASS' : 'FAIL'} ${name}${detail ? ' — ' + detail : ''}`);
   if (!ok) failures++;
 }
@@ -106,6 +107,7 @@ async function launchBrowser() {
       );
       if (hit) {
         const exe = join(dir, String(hit));
+        // eslint-disable-next-line no-console
         console.log('default browser missing, falling back to ' + exe);
         return await chromium.launch({ executablePath: exe });
       }
@@ -117,7 +119,9 @@ async function launchBrowser() {
 let browser;
 try {
   browser = await launchBrowser();
-  const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+  const page = await browser.newPage({
+    viewport: { width: 1280, height: 900 },
+  });
   await page.goto(url);
   const editor = page.locator('.cm-content');
   await editor.waitFor({ timeout: 15_000 });
@@ -139,7 +143,10 @@ try {
   // 2. Autocompletion: ':' triggers label completions from the mock schema.
   await setQuery('MATCH (n:');
   const options = page.locator('.cm-tooltip-autocomplete li');
-  await options.first().waitFor({ timeout: 10_000 }).catch(() => {});
+  await options
+    .first()
+    .waitFor({ timeout: 10_000 })
+    .catch(() => {});
   const labels = await options.allInnerTexts();
   check(
     'label autocompletion appears',
@@ -147,6 +154,7 @@ try {
     labels.slice(0, 5).join(', '),
   );
   await page.screenshot({ path: screenshotPath });
+  // eslint-disable-next-line no-console
   console.log('screenshot saved to ' + screenshotPath);
   await page.keyboard.press('Escape');
 
