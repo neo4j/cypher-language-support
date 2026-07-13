@@ -300,11 +300,22 @@ function warnOnUndeclaredLabels(
 
 function warnOnUndeclaredProperties(
   parsingResult: ParsedStatement,
-  _dbSchema: DbSchema,
+  dbSchema: DbSchema,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
-  const properties = parsingResult.collectedProperties;
-  for (const property of properties) {
+  const propertiesInSchema = dbSchema.propertyKeys;
+
+  if (!propertiesInSchema) {
+    return [];
+  }
+
+  const missingProperties = parsingResult.collectedProperties.filter(
+    (propInCypher) => {
+      return !propertiesInSchema.includes(propInCypher.propertyName);
+    },
+  );
+
+  for (const property of missingProperties) {
     const message = property.propertyName + ' not available';
     const warning = generateSyntaxDiagnostic(
       property.propertyName,
