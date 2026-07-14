@@ -52,7 +52,9 @@
       "name": "Debug VSCode Webview Tests",
       "type": "node",
       "request": "launch",
-      "args": ["${workspaceFolder}/packages/vscode-extension/dist/tests/runWebviewTests.js"],
+      "args": [
+        "${workspaceFolder}/packages/vscode-extension/dist/tests/runWebviewTests.js"
+      ],
       "env": {
         "DEBUG_VSCODE_TESTS": "true"
       },
