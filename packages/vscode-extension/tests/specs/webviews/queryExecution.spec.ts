@@ -3,7 +3,7 @@ import { before } from 'mocha';
 import * as os from 'os';
 import { ViewSection, Workbench } from 'wdio-vscode-service';
 import {
-  checkResultsContent,
+  checkSummary,
   clickOnContextMenuItem,
   executeFile,
   getConnectionSection,
@@ -49,7 +49,7 @@ suite('Query results testing', () => {
 
   test('should manage queries that need implicit transactions', async function () {
     await executeFile(workbench, 'call-in-transactions.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain([
         '6 nodes created, 12 properties set, 6 labels added.',
       ]);
@@ -58,14 +58,14 @@ suite('Query results testing', () => {
 
   test('should correctly execute valid Cypher', async function () {
     await executeFile(workbench, 'valid.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain(['1 nodes created, 1 labels added.']);
     });
   });
 
   test('should correctly execute valid Cypher when highlighting several statements', async function () {
     await executeFile(workbench, 'multiline.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain([
         '1 nodes created, 1 labels added.',
         '2 nodes created, 2 labels added.',
@@ -76,7 +76,7 @@ suite('Query results testing', () => {
 
   test('should error on invalid cypher', async function () {
     await executeFile(workbench, 'invalid.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain(['Variable `n` not defined']);
     });
   });
@@ -90,11 +90,11 @@ suite('Query results testing', () => {
     await clickOnContextMenuItem(connectionSection, 'Connect', 1);
 
     await executeFile(workbench, 'create-for-match.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain(['1 nodes created, 1 labels added.']);
     });
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain(['Started streaming 1 record']);
     });
 
@@ -104,7 +104,7 @@ suite('Query results testing', () => {
     await waitUntilNotification(browser, 'Connected to Neo4j.');
 
     await executeFile(workbench, 'match-for-create.cypher');
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain([undefined]);
     });
     await clickOnContextMenuItem(connectionSection, 'Disconnect', 0);
