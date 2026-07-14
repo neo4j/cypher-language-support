@@ -1955,6 +1955,133 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ]);
   });
 
+  test('Shows errors for returning invalid property', () => {
+    const query = `
+    MATCH (m:Movie)
+    RETURN m.title, m.invalidProp
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "message": "invalidProp not available",
+          "offsets": {
+            "end": 54,
+            "start": 43,
+          },
+          "range": {
+            "end": {
+              "character": 33,
+              "line": 2,
+            },
+            "start": {
+              "character": 22,
+              "line": 2,
+            },
+          },
+          "severity": 2,
+        },
+      ]
+    `);
+  });
+
+  test('Shows errors for mathching and filtering invalid property', () => {
+    const query = `
+    MATCH (m:Movie {invalid: "test"})
+    WHERE m.invalid2 = "another"
+    RETURN m
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "message": "invalid not available",
+          "offsets": {
+            "end": 28,
+            "start": 21,
+          },
+          "range": {
+            "end": {
+              "character": 27,
+              "line": 1,
+            },
+            "start": {
+              "character": 20,
+              "line": 1,
+            },
+          },
+          "severity": 2,
+        },
+        {
+          "message": "invalid2 not available",
+          "offsets": {
+            "end": 59,
+            "start": 51,
+          },
+          "range": {
+            "end": {
+              "character": 20,
+              "line": 2,
+            },
+            "start": {
+              "character": 12,
+              "line": 2,
+            },
+          },
+          "severity": 2,
+        },
+      ]
+    `);
+  });
+
+  test('No errors for match -> set with invalid properties', () => {
+    const query = `
+    MATCH (m:Movie)
+    SET m.invalid = "value"
+    RETURN m.invalid
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('No errors for create and return with invalid properties', () => {
+    const query = `
+      CREATE (m:Movie { invalid: "dsa"})
+      SET m.invalid = "dsa"
+      RETURN m.invalid
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
   test('gives error on console commands when they are disabled', () => {
     expect(
       getDiagnosticsForQuery({
@@ -2223,7 +2350,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
+      'MATCH (n: Person) WHERE n.name = $missingParam and n.born = $myParam RETURN n';
 
     expect(
       getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
@@ -2251,7 +2378,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters correctly with backticked parameters', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.age = $`myParam` RETURN n';
+      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.born = $`myParam` RETURN n';
 
     expect(
       getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
@@ -2279,7 +2406,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters correctly with parameter names containing space', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+      'MATCH (n: Person) WHERE n.name = $`missing param` and n.born = $`some param` RETURN n';
 
     expect(
       getDiagnosticsForQuery({

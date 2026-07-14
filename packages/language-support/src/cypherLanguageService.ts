@@ -127,6 +127,7 @@ export type LabelOrRelType = HasPosition & {
 
 export type PropertyType = HasPosition & {
   propertyName: string;
+  type: 'read' | 'write';
 };
 
 export type ParsedParameter = HasPosition & {
@@ -209,7 +210,7 @@ export function createParsingResult(
       const labelsCollector = new ReadLabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
       const variableFinder = new VariableCollector();
-      const propertiesFinder = new ReadPropertiesCollector();
+      const propertiesFinder = new PropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
       const errorListener = new SyntaxErrorsListener(
@@ -359,7 +360,7 @@ class ReadLabelAndRelTypesCollector extends ParseTreeListener {
 }
 
 // This listener collects all properties in read operations
-class ReadPropertiesCollector extends ParseTreeListener {
+class PropertiesCollector extends ParseTreeListener {
   properties: PropertyType[] = [];
 
   enterEveryRule() {
@@ -376,67 +377,44 @@ class ReadPropertiesCollector extends ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof PropertyKeyNameContext) {
-      if (
-        ctx.parentCtx &&
-        !hasErrorNodesUnder(ctx.parentCtx) &&
-        !couldCreateNewLabel(ctx)
-      ) {
-        // const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
-        // if (parent instanceof SetClauseContext) {
-        //   console.log(parent.setItem);
-        //   console.log('In set', ctx.getText());
-        //   // console.log('Property to collect:', ctx.getText());
-        // }
+      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+        const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
+        if (parent instanceof ClauseContext) {
+          const isRead = this.isReadClause(parent);
+          const isWrite = this.isWriteClause(parent);
 
-        this.properties.push({
-          propertyName: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
-          offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
-          },
-        });
+          if (isRead || isWrite) {
+            this.properties.push({
+              propertyName: ctx.getText(),
+              line: ctx.start.line,
+              column: ctx.start.column,
+              offsets: {
+                start: ctx.start.start,
+                end: ctx.stop.stop + 1,
+              },
+              type: isWrite ? 'write' : 'read',
+            });
+          }
+        }
       }
-      // If the parser recovered from an error reading the label
-      // like in the case MATCH (n:) RETURN n
-      // RETURN would be incorrectly idenfified as the label
-      // If this is the case, the context containing the label would have an error node
-      //     if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
-      //       this.labelOrRelTypes.push({
-      //         labelType: getLabelType(ctx),
-      //         labelText: ctx.getText(),
-      //         couldCreateNewLabel: couldCreateNewLabel(ctx),
-      //         line: ctx.start.line,
-      //         column: ctx.start.column,
-      //         offsets: {
-      //           start: ctx.start.start,
-      //           end: ctx.stop.stop + 1,
-      //         },
-      //       });
-      //     }
-      //   } else if (ctx instanceof LabelOrRelTypeContext) {
-      //     const symbolicName = ctx.symbolicNameString();
-      //     // Read comment for the label name case
-      //     if (
-      //       isDefined(symbolicName) &&
-      //       ctx.parentCtx &&
-      //       !hasErrorNodesUnder(ctx.parentCtx)
-      //     ) {
-      //       this.labelOrRelTypes.push({
-      //         labelType: getLabelType(ctx),
-      //         labelText: symbolicName.start.text,
-      //         couldCreateNewLabel: couldCreateNewLabel(ctx),
-      //         line: symbolicName.start.line,
-      //         column: symbolicName.start.column,
-      //         offsets: {
-      //           start: symbolicName.start.start,
-      //           end: symbolicName.stop.stop + 1,
-      //         },
-      //       });
-      //     }
-      //   }
     }
+  }
+
+  /** Checks if a parent clause is writable for properties */
+  private isWriteClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.mergeClause() ||
+      clause.createClause() ||
+      clause.insertClause() ||
+      clause.setClause() ||
+      clause.removeClause(),
+    );
+  }
+
+  private isReadClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.matchClause() || clause.withClause() || clause.returnClause(),
+    );
   }
 }
 

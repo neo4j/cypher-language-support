@@ -309,8 +309,18 @@ function warnOnUndeclaredProperties(
     return [];
   }
 
+  const writeProperties = new Set(
+    parsingResult.collectedProperties
+      .filter((propInCypher) => propInCypher.type === 'write')
+      .map((p) => p.propertyName),
+  );
+
   const missingProperties = parsingResult.collectedProperties.filter(
     (propInCypher) => {
+      // Ignore all properties that are being modified in the query
+      if (writeProperties.has(propInCypher.propertyName)) {
+        return false;
+      }
       return !propertiesInSchema.includes(propInCypher.propertyName);
     },
   );
@@ -325,22 +335,6 @@ function warnOnUndeclaredProperties(
     );
     warnings.push(warning);
   }
-
-  // if (dbSchema.labels && dbSchema.relationshipTypes) {
-  //   const dbLabels = new Set(dbSchema.labels);
-  //   const dbrelationshiptypes = new Set(dbSchema.relationshipTypes);
-  //   const labelsAndRelTypes = parsingResult.collectedLabelOrRelTypes;
-
-  //   labelsAndRelTypes.forEach((labelOrRelType) => {
-  //     const warning = detectNonDeclaredLabel(
-  //       labelOrRelType,
-  //       dbLabels,
-  //       dbRelationshipTypes,
-  //     );
-
-  //     if (warning) warnings.push(warning);
-  //   });
-  // }
 
   return warnings;
 }
