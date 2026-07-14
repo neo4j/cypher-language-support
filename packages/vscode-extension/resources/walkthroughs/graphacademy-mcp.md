@@ -3,8 +3,7 @@
 An MCP server (Model Context Protocol server) gives an AI coding agent a set of
 callable tools it can use on your behalf.
 
-The GraphAcademy MCP server (`https://mcp.graphacademy.neo4j.com/mcp`) gives your
-coding agent tools for:
+The GraphAcademy MCP server (`https://mcp.graphacademy.neo4j.com/mcp`) gives the VS Code Copilot agent tools for:
 
 - **Learning** — browse GraphAcademy courses, lessons and enrolments
 - **Modeling** — design graph data models for your use case
