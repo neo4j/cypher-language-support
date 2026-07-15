@@ -90,8 +90,8 @@ export async function createNewConnection(containerName: string) {
   } catch {
     await workbench.executeCommand('neo4j.createConnection');
   }
-
-  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+  const allWebviews = await workbench.getAllWebviews();
+  const connectionWebview = allWebviews.at(0);
 
   if (connectionWebview) {
     await connectionWebview.open();
