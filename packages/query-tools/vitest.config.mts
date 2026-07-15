@@ -4,6 +4,6 @@ export default defineConfig({
   test: {
     globals: true,
     hookTimeout: 90000,
-    dir: './src',
+    include: ['src/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
   },
 });

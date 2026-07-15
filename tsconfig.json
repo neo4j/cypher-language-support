@@ -9,7 +9,6 @@
     { "path": "packages/react-codemirror-playground/" },
     { "path": "packages/react-codemirror-playground/tsconfig.node.json" },
     { "path": "packages/language-server/" },
-    { "path": "packages/language-server/tsconfig.node.json" },
     { "path": "packages/vscode-extension/" },
     { "path": "packages/vscode-extension/tsconfig.node.json" },
     { "path": "packages/query-tools/" }
