@@ -123,11 +123,19 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       },
     };
 
+    function findDeepestCauseMessage(error: Error): string {
+      let current: Error | Neo4jError = error;
+      while (current instanceof Neo4jError && current.cause) {
+        current = current.cause;
+      }
+      return current.message;
+    }
+
     if (result instanceof Error) {
       message.result = {
         ...message.result,
         type: 'error',
-        errorMessage: result.message,
+        errorMessage: findDeepestCauseMessage(result),
       };
     } else {
       const resultRecords = result.records.map((record) =>
