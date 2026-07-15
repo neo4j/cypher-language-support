@@ -19,7 +19,7 @@ pnpm check-imports    # verifies relative imports have .js extensions (see conve
 pnpm build-vscode     # build only the VS Code extension and its dependencies
 ```
 
-Run a single test file from the repo root (vitest workspace covers `language-support`, `react-codemirror`, `query-tools`, `vendor/antlr4-c3`):
+Run a single test file from the repo root (vitest workspace covers `language-support`, `lint-worker`, `react-codemirror`, `query-tools`):
 
 ```sh
 pnpm vitest run packages/language-support/src/tests/lexer.test.ts
