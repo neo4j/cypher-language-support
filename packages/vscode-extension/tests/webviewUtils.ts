@@ -70,6 +70,59 @@ export async function openFixtureFile(
   );
 }
 
+/**
+ * Identifying elements for each of our webviews. We look these selectors up
+ * inside a webview's DOM instead of relying on the (unstable) ordering of
+ * workbench.getAllWebviews() — that order shifts whenever another webview
+ * (e.g. the welcome page) is open.
+ */
+export const WEBVIEW_SELECTORS = {
+  connection: '#save-connection',
+  querySummary: '#queryDetails',
+  queryResults: '#queryVisualization',
+} as const;
+
+/**
+ * Finds the webview whose content contains `selector`. Opening a webview
+ * switches the WebDriver context into its iframe, so we probe each one in turn
+ * and always switch back out before moving on. Retries until a match appears,
+ * since a webview's content may not be rendered the instant it's created.
+ */
+export async function findWebview(
+  workbench: Workbench,
+  selector: string,
+): Promise<WebView> {
+  let match: WebView | undefined;
+
+  await browser.waitUntil(
+    async () => {
+      const webviews = await workbench.getAllWebviews();
+      for (const webview of webviews) {
+        try {
+          await webview.open();
+          const found = await $(selector).isExisting();
+          await webview.close();
+          if (found) {
+            match = webview;
+            return true;
+          }
+        } catch {
+          // The webview wasn't ready to be opened (e.g. a hidden editor tab);
+          // make sure we're back in the main context before trying the next.
+          await webview.close();
+        }
+      }
+      return false;
+    },
+    {
+      timeout: 15000,
+      timeoutMsg: `No webview found containing "${selector}"`,
+    },
+  );
+  // waitUntil throws on timeout, so match is guaranteed to be set here.
+  return match as WebView;
+}
+
 export async function createNewConnection(containerName: string) {
   const container = await createAndStartTestContainer({
     containerName: containerName,
@@ -79,8 +132,8 @@ export async function createNewConnection(containerName: string) {
   const workbench = await browser.getWorkbench();
   const activityBar = workbench.getActivityBar();
   const neo4jTile = await activityBar.getViewControl('Neo4j');
-  const connectionPannel = await neo4jTile.openView();
-  const content = connectionPannel.getContent();
+  const connectionPanel = await neo4jTile.openView();
+  const content = connectionPanel.getContent();
   const sections = await content.getSections();
 
   try {
@@ -88,30 +141,32 @@ export async function createNewConnection(containerName: string) {
     const newConnectionButton = await section.button$;
     await newConnectionButton.click();
   } catch {
-    await workbench.executeCommand('neo4j.createConnection');
+    await browser.executeWorkbench(async (vscode) => {
+      await vscode.commands.executeCommand('neo4j.createConnection');
+    });
   }
+  const connectionWebview = await findWebview(
+    workbench,
+    WEBVIEW_SELECTORS.connection,
+  );
 
-  const connectionWebview = (await workbench.getAllWebviews()).at(0);
+  await connectionWebview.open();
 
-  if (connectionWebview) {
-    await connectionWebview.open();
+  const schemeInput = await $('#scheme');
+  const hostInput = await $('#host');
+  const portInput = await $('#port');
+  const userInput = await $('#user');
+  const passwordInput = await $('#password');
+  await schemeInput.selectByVisibleText('neo4j://');
+  await hostInput.setValue('localhost');
+  await portInput.setValue(port);
+  await userInput.setValue('neo4j');
+  await passwordInput.setValue('password');
 
-    const schemeInput = await $('#scheme');
-    const hostInput = await $('#host');
-    const portInput = await $('#port');
-    const userInput = await $('#user');
-    const passwordInput = await $('#password');
-    await schemeInput.selectByVisibleText('neo4j://');
-    await hostInput.setValue('localhost');
-    await portInput.setValue(port);
-    await userInput.setValue('neo4j');
-    await passwordInput.setValue('password');
+  const saveConnectionButton = await $('#save-connection');
+  await saveConnectionButton.click();
 
-    const saveConnectionButton = await $('#save-connection');
-    await saveConnectionButton.click();
-
-    await connectionWebview.close();
-  }
+  await connectionWebview.close();
 
   await waitUntilNotification(browser, 'Connected to Neo4j.');
 }
@@ -196,16 +251,32 @@ export async function closeActiveTab(browser: WebdriverIO.Browser) {
   });
 }
 
-export async function checkResultsContent(
+export async function checkSummary(
   workbench: Workbench,
-  summaryWebView: boolean,
   check: () => Promise<void>,
 ) {
   await browser.pause(1000);
-  const webviews = await workbench.getAllWebviews();
-  await expect(webviews.length).toBe(2);
-  const webviewNbr = summaryWebView ? 0 : 1;
-  const resultsWebview = (await workbench.getAllWebviews()).at(webviewNbr);
+  await browser.executeWorkbench(async (vscode) => {
+    await vscode.commands.executeCommand('neo4jQueryDetails.focus');
+  });
+  const selector = WEBVIEW_SELECTORS.querySummary;
+  const resultsWebview = await findWebview(workbench, selector);
+  await resultsWebview.open();
+  await check();
+  await resultsWebview.close();
+  await workbench.getEditorView().closeAllEditors();
+}
+
+export async function checkResult(
+  workbench: Workbench,
+  check: () => Promise<void>,
+) {
+  await browser.pause(1000);
+  await browser.executeWorkbench(async (vscode) => {
+    await vscode.commands.executeCommand('neo4jQueryVisualization.focus');
+  });
+  const selector = WEBVIEW_SELECTORS.queryResults;
+  const resultsWebview = await findWebview(workbench, selector);
   await resultsWebview.open();
   await check();
   await resultsWebview.close();
