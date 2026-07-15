@@ -68,6 +68,5 @@
   },
   "engines": {
     "node": ">=24.11.1"
-  },
-  "engineStrict": true
+  }
 }

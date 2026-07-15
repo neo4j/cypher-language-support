@@ -4,7 +4,7 @@ This file provides guidance to coding agents (Claude Code, Codex, Cursor, …) w
 
 ## Repository overview
 
-pnpm monorepo (workspaces: `packages/*` and `vendor/*`) implementing Neo4j's Cypher language support: syntax highlighting, autocompletion, linting, and formatting. Requires Node >= 24.11.1 (engineStrict). Generating the parser additionally requires `antlr4-tools` (`pip install antlr4-tools`) and Java.
+pnpm monorepo (workspaces: `packages/*` and `vendor/*`) implementing Neo4j's Cypher language support: syntax highlighting, autocompletion, linting, and formatting. Generating the parser additionally requires `antlr4-tools` (`pip install antlr4-tools`) and Java.
 
 ## Commands
 
