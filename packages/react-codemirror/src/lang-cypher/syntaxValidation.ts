@@ -1,5 +1,5 @@
 import { Diagnostic, linter } from '@codemirror/lint';
-import { Extension } from '@codemirror/state';
+import { Extension, StateEffect } from '@codemirror/state';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';
@@ -14,6 +14,9 @@ const pool = workerpool.pool(WorkerURL, {
   workerTerminateTimeout: 2000,
 });
 
+export const schemaUpdated = StateEffect.define<void>();
+
+let n = 0;
 export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
   linter(async (view) => {
     if (!config.lint) {
@@ -35,6 +38,8 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
         config.schema ?? {},
         config.featureFlags ?? {},
       );
+      console.log("Lint nbr: " + n)
+      n++;
 
       if (result.symbolTables) {
         config.languageService.setSymbolsInfo({
@@ -69,6 +74,11 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       }
     }
     return [];
+  }, {
+    needsRefresh: (update) =>
+      update.transactions.some((tr) =>
+        tr.effects.some((effect) => effect.is(schemaUpdated)),
+      ),
   });
 
 export const cleanupWorkers = () => {

@@ -38,7 +38,10 @@ import {
   replMode as historyNavigation,
 } from './historyNavigation';
 import { cypher, CypherConfig } from './lang-cypher/langCypher';
-import { cleanupWorkers } from './lang-cypher/syntaxValidation';
+import {
+  cleanupWorkers,
+  schemaUpdated,
+} from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
@@ -121,6 +124,12 @@ export interface CypherEditorProps {
   };
   /**
    * The schema to use for autocompletion and linting.
+   *
+   * Compared by reference to decide when open documents need relinting:
+   * pass a new object when the schema changes (e.g. spread the schema
+   * poller's dbSchema on its schemaFetched event) and a stable reference
+   * while it hasn't, rather than mutating the previous object in place
+   * or recreating an identical one on every render.
    *
    * @type {DbSchema}
    */
@@ -831,6 +840,10 @@ export class CypherEditor extends Component<
     this.schemaRef.current.schema = this.props.schema;
     this.schemaRef.current.lint = this.props.lint;
     this.schemaRef.current.featureFlags = this.props.featureFlags;
+
+    if (prevProps.schema !== this.props.schema) {
+      this.editorView.current.dispatch({ effects: schemaUpdated.of() });
+    }
   }
 
   componentWillUnmount(): void {

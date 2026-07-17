@@ -247,6 +247,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   }
 
   public async fetchDbSchema(): Promise<void> {
+    console.log("Refetching schema")
     await Promise.allSettled([
       this.databases.refetch(),
       this.dataSummary.refetch(),
