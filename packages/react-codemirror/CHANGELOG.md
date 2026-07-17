@@ -1,5 +1,15 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.38
+
+### Patch Changes
+
+- 6866132: Update grammar and semantic analysis to 2026.07
+- 9c65003: Declares `react-dom` as a peer dependency, since `CypherEditor` now imports `createPortal` from it to render the editor action buttons overlay
+- Updated dependencies [6866132]
+  - @neo4j-cypher/language-support@2.0.0-next.35
+  - @neo4j-cypher/lint-worker@1.10.1-next.12
+
 ## 2.0.0-next.37
 
 ### Patch Changes
