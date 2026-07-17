@@ -38,10 +38,7 @@ import {
   replMode as historyNavigation,
 } from './historyNavigation';
 import { cypher, CypherConfig } from './lang-cypher/langCypher';
-import {
-  cleanupWorkers,
-  schemaUpdated,
-} from './lang-cypher/syntaxValidation';
+import { cleanupWorkers, schemaUpdated } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
@@ -125,11 +122,9 @@ export interface CypherEditorProps {
   /**
    * The schema to use for autocompletion and linting.
    *
-   * Compared by reference to decide when open documents need relinting:
-   * pass a new object when the schema changes (e.g. spread the schema
-   * poller's dbSchema on its schemaFetched event) and a stable reference
-   * while it hasn't, rather than mutating the previous object in place
-   * or recreating an identical one on every render.
+   * Compared by reference to decide when the document needs relinting:
+   * Avoid passing a new object when nothing changed
+   * as that would relint on every poll for no reason.
    *
    * @type {DbSchema}
    */
