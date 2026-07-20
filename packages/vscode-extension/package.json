@@ -562,67 +562,67 @@
           {
             "id": "neo4jFundamentals",
             "title": "Neo4j Fundamentals",
-            "description": "Learn about graph databases and get started with Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/)",
+            "description": "Learn about graph databases and get started with Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/neo4j-fundamentals.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/courses/neo4j-fundamentals/"
+              "onLink:https://graphacademy.neo4j.com/courses/neo4j-fundamentals/?ref=vscode-learn"
             ]
           },
           {
             "id": "cypherFundamentals",
             "title": "Cypher Fundamentals",
-            "description": "Learn Cypher, the query language for Neo4j, in about an hour.\n[Start course](https://graphacademy.neo4j.com/courses/cypher-fundamentals/)",
+            "description": "Learn Cypher, the query language for Neo4j, in about an hour.\n[Start course](https://graphacademy.neo4j.com/courses/cypher-fundamentals/?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/cypher-fundamentals.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/courses/cypher-fundamentals/"
+              "onLink:https://graphacademy.neo4j.com/courses/cypher-fundamentals/?ref=vscode-learn"
             ]
           },
           {
             "id": "modelingFundamentals",
             "title": "Graph Data Modeling Fundamentals",
-            "description": "Learn how to design a Neo4j graph using best practices.\n[Start course](https://graphacademy.neo4j.com/courses/modeling-fundamentals/)",
+            "description": "Learn how to design a Neo4j graph using best practices.\n[Start course](https://graphacademy.neo4j.com/courses/modeling-fundamentals/?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/modeling-fundamentals.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/courses/modeling-fundamentals/"
+              "onLink:https://graphacademy.neo4j.com/courses/modeling-fundamentals/?ref=vscode-learn"
             ]
           },
           {
             "id": "importingFundamentals",
             "title": "Importing Data Fundamentals",
-            "description": "Learn how to import data into Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/importing-fundamentals/)",
+            "description": "Learn how to import data into Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/importing-fundamentals/?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/importing-fundamentals.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/courses/importing-fundamentals/"
+              "onLink:https://graphacademy.neo4j.com/courses/importing-fundamentals/?ref=vscode-learn"
             ]
           },
           {
             "id": "generativeAiPathway",
             "title": "Generative AI & GraphRAG",
-            "description": "Ready for more? Combine Neo4j with LLMs to build GraphRAG applications.\n[Explore pathway](https://graphacademy.neo4j.com/categories/generative-ai)",
+            "description": "Ready for more? Combine Neo4j with LLMs to build GraphRAG applications.\n[Explore pathway](https://graphacademy.neo4j.com/categories/generative-ai?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/generative-ai.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/categories/generative-ai"
+              "onLink:https://graphacademy.neo4j.com/categories/generative-ai?ref=vscode-learn"
             ]
           },
           {
             "id": "appDevelopmentPathway",
             "title": "Graph Application Development",
-            "description": "Build applications powered by Neo4j using the official drivers.\n[Explore pathway](https://graphacademy.neo4j.com/categories/app-development)",
+            "description": "Build applications powered by Neo4j using the official drivers.\n[Explore pathway](https://graphacademy.neo4j.com/categories/app-development?ref=vscode-learn)",
             "media": {
               "markdown": "resources/walkthroughs/app-development.md"
             },
             "completionEvents": [
-              "onLink:https://graphacademy.neo4j.com/categories/app-development"
+              "onLink:https://graphacademy.neo4j.com/categories/app-development?ref=vscode-learn"
             ]
           }
         ]
