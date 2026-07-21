@@ -1,5 +1,11 @@
 # neo4j-for-vscode
 
+## 1.18.0
+- Add schema based linting for path segments
+- Add a welcome page
+- Remove "parameter missing" warnings when disconnected
+- Fix formatter bugs/improve coverage
+
 ## 1.16.0
 - Add aliases to connections pane
 - Add path segment completions

@@ -59,7 +59,7 @@ accessModeCmd: ACCESSMODE accessModeArgs?;
 
 helpCmd: HELP;
 
-autoCmd: AUTO statement;
+autoCmd: autoCompletionRule statement;
 
 // These rules are needed to distinguish cypher <-> commands, for example `USE` and `:use` in autocompletion
 listCompletionRule: LIST; 
@@ -71,6 +71,8 @@ serverCompletionRule: SERVER;
 readCompletionRule: READ;
 
 writeCompletionRule: WRITE;
+
+autoCompletionRule: AUTO;
 
 // This rule overrides the identifiers adding EXPLAIN, PROFILE, etc
 unescapedSymbolicNameString: 

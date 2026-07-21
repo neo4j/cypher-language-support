@@ -183,6 +183,10 @@ AUTH
    : A U T H
    ;
 
+AUTO
+   : A U T O
+   ;
+
 BAR
    : '|'
    ;
@@ -393,6 +397,10 @@ DIFFERENT
 
 DOLLAR
    : '$'
+   ;
+
+DISJOINT
+   : D I S J O I N T
    ;
 
 DISTINCT
@@ -1406,6 +1414,10 @@ VALUE
 
 VARCHAR
    : V A R C H A R
+   ;
+
+VIA
+   : V I A
    ;
 
 VECTOR

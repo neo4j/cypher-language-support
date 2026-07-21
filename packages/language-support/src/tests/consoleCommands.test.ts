@@ -247,9 +247,9 @@ describe('sanity checks', () => {
 
   test('completes basic console cmds on :', () => {
     expect(autocomplete(':', {})).toEqual([
+      { kind: 23, label: 'auto' },
       { kind: 23, label: 'server' },
       { kind: 23, label: 'use' },
-      { kind: 23, label: 'auto' },
       { kind: 23, label: 'help' },
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
@@ -297,7 +297,7 @@ describe('sanity checks', () => {
   test('handles misspelled or non-existing command', () => {
     expectErrorMessage(
       ':foo',
-      'Expected any of auto, help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, server or use',
+      'Expected any of help, access-mode, play, style, sysinfo, welcome, disconnect, connect, param, history, clear, auto, server or use',
     );
 
     expectErrorMessage(':clea', 'Unexpected token. Did you mean clear?');

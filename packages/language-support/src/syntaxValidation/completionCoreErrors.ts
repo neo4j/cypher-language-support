@@ -53,6 +53,7 @@ export function completionCoreErrormessage(
           [CypherParser.RULE_serverCompletionRule]: 'server',
           [CypherParser.RULE_readCompletionRule]: 'read',
           [CypherParser.RULE_writeCompletionRule]: 'write',
+          [CypherParser.RULE_autoCompletionRule]: 'auto',
         }
       : { [CypherParser.RULE_consoleCommand]: null }),
   };

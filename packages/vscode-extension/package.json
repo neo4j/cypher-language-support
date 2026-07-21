@@ -1,7 +1,7 @@
 {
   "name": "neo4j-for-vscode",
   "displayName": "Neo4j for VS Code",
-  "version": "1.17.24",
+  "version": "1.19.1",
   "private": true,
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "categories": [
@@ -175,6 +175,16 @@
         "title": "Edit parameter",
         "category": "Neo4j",
         "icon": "$(pencil)"
+      },
+      {
+        "command": "neo4j.showWelcome",
+        "title": "Welcome",
+        "category": "Neo4j"
+      },
+      {
+        "command": "neo4j.addGraphAcademyMcpServer",
+        "title": "Add GraphAcademy MCP server",
+        "category": "Neo4j"
       }
     ],
     "keybindings": [
@@ -531,7 +541,93 @@
         "editor.semanticHighlighting.enabled": true,
         "editor.defaultFormatter": "neo4j-extensions.neo4j-for-vscode"
       }
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "neo4jLearnNeo4j",
+        "title": "Learn Neo4j",
+        "description": "New to Neo4j? Get started for free with these fundamentals courses from Neo4j GraphAcademy.",
+        "steps": [
+          {
+            "id": "graphAcademyMcp",
+            "title": "Add the GraphAcademy MCP server",
+            "description": "Give your AI coding agent tools to learn Neo4j, design graph models, and generate Cypher.\n[Add MCP server](command:neo4j.addGraphAcademyMcpServer)",
+            "media": {
+              "markdown": "resources/walkthroughs/graphacademy-mcp.md"
+            },
+            "completionEvents": [
+              "onCommand:neo4j.addGraphAcademyMcpServer"
+            ]
+          },
+          {
+            "id": "neo4jFundamentals",
+            "title": "Neo4j Fundamentals",
+            "description": "Learn about graph databases and get started with Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/)",
+            "media": {
+              "markdown": "resources/walkthroughs/neo4j-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/neo4j-fundamentals/"
+            ]
+          },
+          {
+            "id": "cypherFundamentals",
+            "title": "Cypher Fundamentals",
+            "description": "Learn Cypher, the query language for Neo4j, in about an hour.\n[Start course](https://graphacademy.neo4j.com/courses/cypher-fundamentals/)",
+            "media": {
+              "markdown": "resources/walkthroughs/cypher-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/cypher-fundamentals/"
+            ]
+          },
+          {
+            "id": "modelingFundamentals",
+            "title": "Graph Data Modeling Fundamentals",
+            "description": "Learn how to design a Neo4j graph using best practices.\n[Start course](https://graphacademy.neo4j.com/courses/modeling-fundamentals/)",
+            "media": {
+              "markdown": "resources/walkthroughs/modeling-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/modeling-fundamentals/"
+            ]
+          },
+          {
+            "id": "importingFundamentals",
+            "title": "Importing Data Fundamentals",
+            "description": "Learn how to import data into Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/importing-fundamentals/)",
+            "media": {
+              "markdown": "resources/walkthroughs/importing-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/importing-fundamentals/"
+            ]
+          },
+          {
+            "id": "generativeAiPathway",
+            "title": "Generative AI & GraphRAG",
+            "description": "Ready for more? Combine Neo4j with LLMs to build GraphRAG applications.\n[Explore pathway](https://graphacademy.neo4j.com/categories/generative-ai)",
+            "media": {
+              "markdown": "resources/walkthroughs/generative-ai.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/categories/generative-ai"
+            ]
+          },
+          {
+            "id": "appDevelopmentPathway",
+            "title": "Graph Application Development",
+            "description": "Build applications powered by Neo4j using the official drivers.\n[Explore pathway](https://graphacademy.neo4j.com/categories/app-development)",
+            "media": {
+              "markdown": "resources/walkthroughs/app-development.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/categories/app-development"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "activationEvents": [],
   "icon": "resources/images/logo.png",
@@ -539,6 +635,5 @@
   "engines": {
     "node": ">=24.11.1",
     "vscode": "^1.75.0"
-  },
-  "engineStrict": true
+  }
 }

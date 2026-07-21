@@ -19,39 +19,16 @@ import {
   ParsingResult,
   PropertyType,
   createParsingResult,
-  translateTokensToRange,
 } from '../cypherLanguageService.js';
 import {
-  isLabelLeaf,
-  LabelOrCondition,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
   Symbol,
 } from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
+import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
-import {
-  CreateClauseContext,
-  InsertClauseContext,
-  MergeClauseContext,
-  NodePatternContext,
-  PatternElementContext,
-  RelationshipPatternContext,
-  StatementContext,
-} from '../generated-parser/CypherCmdParser.js';
-import { ParserRuleContext } from 'antlr4';
-import {
-  convertToCNF,
-  isAnyNode,
-  isNotAnyNode,
-  removeInnerAnys,
-} from '../labelTreeRewriting.js';
-import {
-  getNodesFromRelsSet,
-  getRelsFromNodesSets,
-  walkCNFTree,
-} from '../labelTreeWalking.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -371,221 +348,6 @@ function symbolIsNodeOrRel(symbol: Symbol): boolean {
   return res;
 }
 
-function warnOnPathDirectionalityIssues(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-  symbolTable: SymbolTable,
-): SyntaxDiagnostic[] {
-  const statements = parsingResult.ctx.statementOrCommand_list();
-  return statements.reduce<SyntaxDiagnostic[]>((acc, stmtOrCommand) => {
-    const stmt = stmtOrCommand.preparsedStatement()?.statement();
-    if (!stmt) {
-      return acc;
-    }
-    const pathIssues = findPathIssues(stmt, dbSchema, symbolTable);
-    return acc.concat(pathIssues);
-  }, []);
-}
-
-function labelTreeToString(node: LabelOrCondition): string {
-  if (isLabelLeaf(node)) {
-    return node.value;
-  } else if (node.condition === 'any') {
-    return 'ANY';
-  } else if (node.children.length === 1) {
-    return labelTreeToString(node.children[0]);
-  } else {
-    let separator = ' ';
-    switch (node.condition) {
-      case 'and':
-        separator = ' & ';
-        break;
-      case 'or':
-        separator = ' | ';
-        break;
-      case 'not':
-        separator = '!';
-        break;
-    }
-    const childStrings: string[] = node.children.map((c) =>
-      labelTreeToString(c),
-    );
-    return '(' + childStrings.join(separator) + ')';
-  }
-}
-
-function labelsToMessage(
-  firstLabelTree: LabelOrCondition,
-  connectedLabel: string,
-  direction: 'outgoing' | 'incoming' | 'bidirectional',
-  firstVarType: 'node' | 'relationship',
-) {
-  const directionSubString =
-    direction === 'bidirectional' ? 'incoming/outgoing' : direction;
-  const secondVarString =
-    firstVarType === 'node'
-      ? '[:' + connectedLabel + ']'
-      : '(:' + connectedLabel + ')';
-  const firstVarString =
-    firstVarType === 'node'
-      ? '(:' + labelTreeToString(firstLabelTree) + ')'
-      : '[:' + labelTreeToString(firstLabelTree) + ']';
-  return `${secondVarString} has no ${directionSubString} ${firstVarString}`;
-}
-
-function findPathIssues(
-  stmt: StatementContext,
-  dbSchema: DbSchema,
-  symbolTable: SymbolTable,
-): SyntaxDiagnostic[] {
-  const patternElements: PatternElementContext[] =
-    findNonCreatingPatternElements(stmt, []);
-  const diagnostics: SyntaxDiagnostic[] = [];
-  for (const pattern of patternElements) {
-    const children = pattern.children ?? [];
-    let n = 0;
-    while (n < children.length - 1) {
-      const child = children[n];
-      const nextChild = children[n + 1];
-      n++;
-      if (
-        child instanceof NodePatternContext &&
-        nextChild instanceof RelationshipPatternContext
-      ) {
-        if (!nextChild.stop?.stop || !child.stop?.stop) {
-          continue;
-        }
-        const symbol = symbolTable.find((x) =>
-          x.references.some(
-            (ref) =>
-              ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
-          ),
-        );
-        const nextSymbolLabels = symbolTable.find((x) =>
-          x.references.some(
-            (ref) =>
-              ref >= nextChild.start.start &&
-              ref <= (nextChild.stop?.stop ?? -1),
-          ),
-        )?.labels;
-        if (symbol && nextSymbolLabels) {
-          const direction =
-            nextChild.leftArrow() &&
-            !nextChild.rightArrow() &&
-            nextChild.arrowLine_list()?.length == 2 //check for 2 lines to handle unfinished rel better
-              ? 'outgoing'
-              : !nextChild.leftArrow() && nextChild.rightArrow()
-                ? 'incoming'
-                : 'bidirectional';
-          const possibleRels = possibleFollowingRelType(
-            direction,
-            dbSchema,
-            symbol.labels,
-          );
-          if (
-            possibleRels &&
-            'children' in nextSymbolLabels &&
-            nextSymbolLabels.children.length === 1 &&
-            isLabelLeaf(nextSymbolLabels.children[0])
-          ) {
-            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              diagnostics.push({
-                message: labelsToMessage(
-                  symbol.labels,
-                  nextSymbolLabels.children[0].value,
-                  direction,
-                  'node',
-                ),
-                severity: DiagnosticSeverity.Warning,
-                ...translateTokensToRange(child.start, nextChild.stop),
-              });
-            }
-          }
-        }
-      }
-      if (
-        child instanceof RelationshipPatternContext &&
-        nextChild instanceof NodePatternContext
-      ) {
-        if (!nextChild.stop?.stop || !child.stop?.stop) {
-          continue;
-        }
-        const symbol = symbolTable.find((x) =>
-          x.references.some(
-            (ref) =>
-              ref >= child.start.start && ref <= (child.stop?.stop ?? -1),
-          ),
-        );
-        const nextSymbolLabels = symbolTable.find((x) =>
-          x.references.some(
-            (ref) =>
-              ref >= nextChild.start.start &&
-              ref <= (nextChild.stop?.stop ?? -1),
-          ),
-        )?.labels;
-        if (symbol && nextSymbolLabels) {
-          const direction =
-            child.leftArrow() &&
-            !child.rightArrow() &&
-            child.arrowLine_list()?.length == 2 //check for 2 lines to handle unfinished rel better
-              ? 'outgoing'
-              : !child.leftArrow() && child.rightArrow()
-                ? 'incoming'
-                : 'bidirectional';
-          const possibleRels = possibleFollowingLabels(
-            direction,
-            dbSchema,
-            symbol.labels,
-          );
-          if (
-            possibleRels &&
-            nextSymbolLabels &&
-            'children' in nextSymbolLabels &&
-            nextSymbolLabels.children.length === 1 &&
-            isLabelLeaf(nextSymbolLabels.children[0])
-          ) {
-            if (!possibleRels.has(nextSymbolLabels.children[0].value)) {
-              diagnostics.push({
-                message: labelsToMessage(
-                  symbol.labels,
-                  nextSymbolLabels.children[0].value,
-                  direction,
-                  'relationship',
-                ),
-                severity: DiagnosticSeverity.Warning,
-                ...translateTokensToRange(child.start, nextChild.stop),
-              });
-            }
-          }
-        }
-      }
-    }
-  }
-  return diagnostics;
-}
-
-function findNonCreatingPatternElements(
-  ctx: ParserRuleContext,
-  acc: PatternElementContext[],
-): PatternElementContext[] {
-  for (const c of ctx.children ?? []) {
-    if (
-      c instanceof MergeClauseContext ||
-      c instanceof CreateClauseContext ||
-      c instanceof InsertClauseContext
-    ) {
-      continue;
-    }
-    if (c instanceof PatternElementContext) {
-      acc.push(c);
-    }
-    if (c instanceof ParserRuleContext) {
-      findNonCreatingPatternElements(c, acc);
-    }
-  }
-  return acc;
-}
-
 export function sortByPositionAndMessage(
   a: SyntaxDiagnostic,
   b: SyntaxDiagnostic,
@@ -732,20 +494,22 @@ export function lintCypherQuery(
           symbolTable,
         );
 
-        const missingPathWarnings = dbSchema.graphSchema
-          ? warnOnPathDirectionalityIssues(current, dbSchema, symbolTable)
-          : [];
+        const schemaPathWarnings = warnOnSchemaPathViolations(
+          current,
+          dbSchema,
+          symbolTable,
+        );
 
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
             propertiesWarnings,
+            schemaPathWarnings,
             parameterErrors,
             functionErrors,
             procedureErrors,
             functionWarnings,
             procedureWarnings,
-            missingPathWarnings,
             current.syntaxErrors,
           )
           .sort(sortByPositionAndMessage);
@@ -762,71 +526,6 @@ export function lintCypherQuery(
   }
 
   return { diagnostics: [], symbolTables: [] };
-}
-
-//Returns possible following rel types, or undefined in cases where we should quit
-function possibleFollowingRelType(
-  direction: 'incoming' | 'outgoing' | 'bidirectional',
-  dbSchema: DbSchema,
-  labels: LabelOrCondition,
-): Set<string> | undefined {
-  const { toNodes: relsToNodesSet, fromNodes: relsFromNodesSet } =
-    getRelsFromNodesSets(dbSchema);
-  return getFollowingLabels(direction, labels, {
-    incomingLabels: relsToNodesSet,
-    outGoingLabels: relsFromNodesSet,
-  });
-}
-
-//Returns possible following labels, or undefined in cases where we should quit
-function possibleFollowingLabels(
-  direction: 'incoming' | 'outgoing' | 'bidirectional',
-  dbSchema: DbSchema,
-  labels: LabelOrCondition,
-): Set<string> | undefined {
-  const { toRels: nodesToRelsSet, fromRels: nodesFromRelsSet } =
-    getNodesFromRelsSet(dbSchema);
-  return getFollowingLabels(direction, labels, {
-    incomingLabels: nodesToRelsSet,
-    outGoingLabels: nodesFromRelsSet,
-  });
-}
-
-function getFollowingLabels(
-  direction: 'incoming' | 'outgoing' | 'bidirectional',
-  labels: LabelOrCondition,
-  {
-    incomingLabels,
-    outGoingLabels,
-  }: {
-    incomingLabels: Map<string, Set<string>>;
-    outGoingLabels: Map<string, Set<string>>;
-  },
-): Set<string> | undefined {
-  let cnfTree: LabelOrCondition;
-  try {
-    const treeWithRewrittenAnys = removeInnerAnys(labels);
-    if (isAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    } else if (isNotAnyNode(treeWithRewrittenAnys)) {
-      return undefined;
-    }
-    cnfTree = convertToCNF(treeWithRewrittenAnys);
-  } catch {
-    return undefined;
-  }
-  const { inLabels, outLabels } = walkCNFTree(
-    incomingLabels,
-    outGoingLabels,
-    cnfTree,
-  );
-  const allNodes =
-    direction === 'outgoing'
-      ? outLabels
-      : direction === 'incoming'
-        ? inLabels
-        : inLabels.union(outLabels);
-  return allNodes;
 }
 
 function warningOnDeprecatedProcedure(

@@ -23,6 +23,9 @@ import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 import { SymbolTable } from '@neo4j-cypher/language-support';
 import { sendNotificationToLanguageClient } from './languageClientService';
+import { CONSTANTS } from './constants';
+
+const WELCOME_SHOWN_KEY = 'neo4j.welcomeShown';
 
 let client: LanguageClient;
 let symbolTableVersion = 0;
@@ -87,6 +90,12 @@ export async function activate(context: ExtensionContext) {
   // Handle any sequence events for activation
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
+
+  // Show the welcome page the first time the extension is activated
+  if (!context.globalState.get(WELCOME_SHOWN_KEY, false)) {
+    await context.globalState.update(WELCOME_SHOWN_KEY, true);
+    await commands.executeCommand(CONSTANTS.COMMANDS.SHOW_WELCOME);
+  }
 
   // in developement mode, we manually reload the extension.
   if (process.env.watch === 'true') {

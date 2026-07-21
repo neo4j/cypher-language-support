@@ -210,6 +210,23 @@ export function resolveCypherVersion(
   return cypherVersion;
 }
 
+export function getDirection(
+  rel: RelationshipPatternContext,
+): 'right' | 'left' | 'undirected' {
+  // An unfinished relationship (no closing `]`) has an ambiguous direction, so
+  // it is treated as undirected.
+  const complete = Boolean(rel.RBRACKET());
+  const hasLeft = Boolean(rel.leftArrow());
+  const hasRight = Boolean(rel.rightArrow());
+  if (complete && hasRight && !hasLeft) {
+    return 'right';
+  }
+  if (complete && hasLeft && !hasRight) {
+    return 'left';
+  }
+  return 'undirected';
+}
+
 export const rulesDefiningVariables = [
   CypherParser.RULE_returnItem,
   CypherParser.RULE_unwindClause,

@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/react-codemirror-playground",
-  "version": "2.0.0-next.37",
+  "version": "2.0.0-next.38",
   "private": true,
   "bugs": {
     "url": "https://github.com/neo4j/cypher-language-support/issues"
@@ -41,6 +41,5 @@
   },
   "engines": {
     "node": ">=24.11.1"
-  },
-  "engineStrict": true
+  }
 }
