@@ -27,6 +27,7 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
+  Symbol,
 } from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
@@ -301,6 +302,7 @@ function warnOnUndeclaredLabels(
 function warnOnUndeclaredProperties(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
+  symbolTable: SymbolTable,
 ): SyntaxDiagnostic[] {
   const warnings: SyntaxDiagnostic[] = [];
   const propertiesInSchema = dbSchema.propertyKeys;
@@ -317,6 +319,17 @@ function warnOnUndeclaredProperties(
 
   const missingProperties = parsingResult.collectedProperties.filter(
     (propInCypher) => {
+      const variable = propInCypher.variable;
+      if (!variable) {
+        // Ignore properties without variables
+        return false;
+      }
+      const symbol = getSymbol(variable.name, symbolTable);
+
+      // Ignore variables that are not Node or Relationships
+      if (!symbol || !symbolIsNodeOrRel(symbol)) {
+        return false;
+      }
       // Ignore all properties that are being modified in the query
       if (writeProperties.has(propInCypher.propertyName)) {
         return false;
@@ -337,6 +350,25 @@ function warnOnUndeclaredProperties(
   }
 
   return warnings;
+}
+
+function getSymbol(name: string, symbolTable: SymbolTable): Symbol | undefined {
+  return symbolTable.find((symbol) => {
+    return symbol.variable === name;
+  });
+}
+
+/** Checks symbol is node or rel, and nothing else */
+function symbolIsNodeOrRel(symbol: Symbol): boolean {
+  let res = false;
+  for (const type of symbol.types) {
+    if (type !== 'Node' && type !== 'Relationship') {
+      return false;
+    } else {
+      res = true;
+    }
+  }
+  return res;
 }
 
 function warnOnPathDirectionalityIssues(
@@ -659,10 +691,6 @@ export function lintCypherQuery(
         );
         const functionWarnings = warningOnDeprecatedFunction(current, dbSchema);
         const labelWarnings = warnOnUndeclaredLabels(current, dbSchema);
-        const propertiesWarnings = warnOnUndeclaredProperties(
-          current,
-          dbSchema,
-        );
 
         const {
           notifications,
@@ -697,6 +725,12 @@ export function lintCypherQuery(
           symbolTable: rawSymbolTable,
           parseResult: current,
         });
+
+        const propertiesWarnings = warnOnUndeclaredProperties(
+          current,
+          dbSchema,
+          symbolTable,
+        );
 
         const missingPathWarnings = dbSchema.graphSchema
           ? warnOnPathDirectionalityIssues(current, dbSchema, symbolTable)

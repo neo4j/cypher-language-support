@@ -49,7 +49,9 @@ export type CompletionItem = VSCodeCompletionItem & {
   signature?: string;
 };
 
-export type SymbolTable = {
+export type SymbolTable = Symbol[];
+
+export type Symbol = {
   variable: string;
   // Where the variable is initially defined
   definitionPosition: number;
@@ -59,7 +61,7 @@ export type SymbolTable = {
   references: number[];
 
   labels: LabelOrCondition;
-}[];
+};
 
 export type LabelOrCondition = LabelLeaf | ConditionNode;
 

@@ -25,6 +25,7 @@ import {
   SymbolicNameStringContext,
   VariableContext,
   PropertyKeyNameContext,
+  Expression2Context,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -127,6 +128,10 @@ export type LabelOrRelType = HasPosition & {
 
 export type PropertyType = HasPosition & {
   propertyName: string;
+  variable?: {
+    name: string;
+    start: number;
+  };
   type: 'read' | 'write';
 };
 
@@ -384,8 +389,11 @@ class PropertiesCollector extends ParseTreeListener {
           const isWrite = this.isWriteClause(parent);
 
           if (isRead || isWrite) {
+            const variable = this.getPropertyVariable(ctx);
+
             this.properties.push({
               propertyName: ctx.getText(),
+              variable,
               line: ctx.start.line,
               column: ctx.start.column,
               offsets: {
@@ -396,6 +404,21 @@ class PropertiesCollector extends ParseTreeListener {
             });
           }
         }
+      }
+    }
+  }
+
+  private getPropertyVariable(
+    ctx: PropertyKeyNameContext,
+  ): { name: string; start: number } | undefined {
+    const expr = findParent(ctx, (ctx) => ctx instanceof Expression2Context);
+    if (expr instanceof Expression2Context) {
+      const varCtx = expr.expression1().variable();
+      if (varCtx) {
+        return {
+          name: varCtx.getText(),
+          start: varCtx.start.start,
+        };
       }
     }
   }
