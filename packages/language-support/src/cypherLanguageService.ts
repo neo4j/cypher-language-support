@@ -376,25 +376,16 @@ class ReadLabelAndRelTypesCollector extends ParseTreeListener {
 class PropertiesCollector extends ParseTreeListener {
   properties: PropertyType[] = [];
 
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitReturn() {}
-
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof PropertyKeyNameContext) {
       if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
-        const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
-        if (parent instanceof ClauseContext) {
-          const isRead = this.isReadClause(parent);
-          const isWrite = this.isWriteClause(parent);
+        const parentClause = findParent(
+          ctx,
+          (ctx) => ctx instanceof ClauseContext,
+        );
+        if (parentClause instanceof ClauseContext) {
+          const isRead = this.isReadClause(parentClause);
+          const isWrite = this.isWriteClause(parentClause);
 
           if (isRead || isWrite) {
             const variable = this.getPropertyVariable(ctx);
@@ -419,33 +410,44 @@ class PropertiesCollector extends ParseTreeListener {
   private getPropertyVariable(
     ctx: PropertyKeyNameContext,
   ): { name: string; start: number } | undefined {
-    const expr = findParent(ctx, (ctx) => ctx instanceof Expression2Context);
-    if (expr instanceof Expression2Context) {
-      const varCtx = expr.expression1().variable();
-      if (varCtx) {
-        return {
-          name: varCtx.getText(),
-          start: varCtx.start.start,
-        };
-      }
+    const varCtx =
+      this.getVariableFromPatternProperty(ctx) ??
+      this.getVariableFromPropertyAccess(ctx);
+
+    if (varCtx) {
+      return {
+        name: varCtx.getText(),
+        start: varCtx.start.start,
+      };
     }
-    const expr2 = findParent(ctx, (ctx) => {
+  }
+
+  private getVariableFromPatternProperty(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const patternElement = findParent(ctx, (ctx) => {
       return (
         ctx instanceof NodePatternContext ||
         ctx instanceof RelationshipPatternContext
       );
     });
     if (
-      expr2 instanceof NodePatternContext ||
-      expr2 instanceof RelationshipPatternContext
+      patternElement instanceof NodePatternContext ||
+      patternElement instanceof RelationshipPatternContext
     ) {
-      const varCtx = expr2.variable();
-      if (varCtx) {
-        return {
-          name: varCtx.getText(),
-          start: varCtx.start.start,
-        };
-      }
+      return patternElement.variable();
+    }
+  }
+
+  private getVariableFromPropertyAccess(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const propertyAccessExpr = findParent(
+      ctx,
+      (ctx) => ctx instanceof Expression2Context,
+    );
+    if (propertyAccessExpr instanceof Expression2Context) {
+      return propertyAccessExpr.expression1().variable();
     }
   }
 
@@ -460,6 +462,7 @@ class PropertiesCollector extends ParseTreeListener {
     );
   }
 
+  /** Checks if a parent clause is readonly for properties */
   private isReadClause(clause: ClauseContext): boolean {
     return Boolean(
       clause.matchClause() || clause.withClause() || clause.returnClause(),
