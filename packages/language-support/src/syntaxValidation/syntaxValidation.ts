@@ -296,21 +296,16 @@ function warnOnUndeclaredProperties(
 
   const missingProperties = parsingResult.collectedProperties.filter(
     (propInCypher) => {
-      const variable = propInCypher.variable;
-      if (!variable) {
-        // Ignore properties without variables
+      // Ignore properties that are not of Node or Relationship
+      if (!isNodeOrRelationshipProperty(propInCypher, symbolTable)) {
         return false;
       }
-      const symbol = getSymbol(variable.name, symbolTable);
 
-      // Ignore variables that are not Node or Relationships
-      if (!symbol || !symbolIsNodeOrRel(symbol)) {
-        return false;
-      }
       // Ignore all properties that are being modified in the query
       if (writeProperties.has(propInCypher.propertyName)) {
         return false;
       }
+
       return !propertiesInSchema.includes(propInCypher.propertyName);
     },
   );
@@ -329,23 +324,25 @@ function warnOnUndeclaredProperties(
   return warnings;
 }
 
-function getSymbol(name: string, symbolTable: SymbolTable): Symbol | undefined {
-  return symbolTable.find((symbol) => {
-    return symbol.variable === name;
+function isNodeOrRelationshipProperty(
+  property: PropertyType,
+  symbolTable: SymbolTable,
+): boolean {
+  const variable = property.variable;
+  if (!variable) {
+    return false;
+  }
+  const symbol = symbolTable.find((symbol) => {
+    return symbol.variable === variable.name;
   });
+  return symbol && symbolIsNodeOrRel(symbol);
 }
 
-/** Checks symbol is node or rel, and nothing else */
+/** Checks all possible types of a symbol are Node or Relationship */
 function symbolIsNodeOrRel(symbol: Symbol): boolean {
-  let res = false;
-  for (const type of symbol.types) {
-    if (type !== 'Node' && type !== 'Relationship') {
-      return false;
-    } else {
-      res = true;
-    }
-  }
-  return res;
+  return symbol.types.every((type) => {
+    return type === 'Node' || type === 'Relationship';
+  });
 }
 
 export function sortByPositionAndMessage(
