@@ -1992,6 +1992,61 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     `);
   });
 
+  test('Shows errors for mathching and filtering invalid property in a relationship', () => {
+    const query = `
+    MATCH (m:Movie)-[r:ACTED_IN { roles: [], invalid: "test"}]-()
+    WHERE r.invalid2 = "another"
+    RETURN m
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "message": "invalid not available",
+          "offsets": {
+            "end": 53,
+            "start": 46,
+          },
+          "range": {
+            "end": {
+              "character": 52,
+              "line": 1,
+            },
+            "start": {
+              "character": 45,
+              "line": 1,
+            },
+          },
+          "severity": 2,
+        },
+        {
+          "message": "invalid2 not available",
+          "offsets": {
+            "end": 87,
+            "start": 79,
+          },
+          "range": {
+            "end": {
+              "character": 20,
+              "line": 2,
+            },
+            "start": {
+              "character": 12,
+              "line": 2,
+            },
+          },
+          "severity": 2,
+        },
+      ]
+    `);
+  });
   test('Shows errors for mathching and filtering invalid property', () => {
     const query = `
     MATCH (m:Movie {invalid: "test"})

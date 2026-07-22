@@ -27,6 +27,8 @@ import {
   PropertyKeyNameContext,
   Expression2Context,
   PatternElementContext,
+  NodePatternContext,
+  RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -420,6 +422,24 @@ class PropertiesCollector extends ParseTreeListener {
     const expr = findParent(ctx, (ctx) => ctx instanceof Expression2Context);
     if (expr instanceof Expression2Context) {
       const varCtx = expr.expression1().variable();
+      if (varCtx) {
+        return {
+          name: varCtx.getText(),
+          start: varCtx.start.start,
+        };
+      }
+    }
+    const expr2 = findParent(ctx, (ctx) => {
+      return (
+        ctx instanceof NodePatternContext ||
+        ctx instanceof RelationshipPatternContext
+      );
+    });
+    if (
+      expr2 instanceof NodePatternContext ||
+      expr2 instanceof RelationshipPatternContext
+    ) {
+      const varCtx = expr2.variable();
       if (varCtx) {
         return {
           name: varCtx.getText(),
