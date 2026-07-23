@@ -349,6 +349,8 @@ export const lexerKeywords = [
   CypherLexer.SECONDARIES,
   CypherLexer.SECONDARY,
   CypherLexer.SECONDS,
+  CypherLexer.SECRET,
+  CypherLexer.SECRETS,
   CypherLexer.SEEK,
   CypherLexer.SERVER,
   CypherLexer.SERVERS,
