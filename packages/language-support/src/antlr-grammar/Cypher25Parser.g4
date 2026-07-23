@@ -180,15 +180,19 @@ whereClause
    ;
 
 searchClause
-   : SEARCH variable IN LPAREN indexSpecificationClause forClause whereClause? limit RPAREN scoreClause?
+   : SEARCH variable IN LPAREN (FULLTEXT | VECTOR) indexSpecificationClause forClause analyzerClause? whereClause? skip? limit RPAREN scoreClause?
    ;
 
 indexSpecificationClause
-   : VECTOR INDEX commandNameExpression
+   : INDEX commandNameExpression
    ;
 
 forClause
    : FOR expression
+   ;
+
+analyzerClause
+   : WITH ANALYZER expression
    ;
 
 scoreClause
@@ -403,7 +407,7 @@ pathPatternPrefix
    | SHORTEST nonNegativeIntegerSpecification? pathMode? pathToken? groupToken # ShortestGroup
    | SHORTEST nonNegativeIntegerSpecification pathMode? pathToken?             # AnyShortestPath
    ;
-   
+
 nonNegativeIntegerSpecification
    : UNSIGNED_DECIMAL_INTEGER | parameter["INTEGER"]
    ;
@@ -570,7 +574,6 @@ expression8
 
 expression7
    : expression6 comparisonExpression6?
-   | propertyExistsPredicate
    ;
 
 // Making changes here? Consider looking at extendedWhen too.
@@ -651,6 +654,7 @@ expression1
    | vectorDistanceFunction
    | vectorNormFunction
    | trimFunction
+   | propertyExistsPredicate
    | patternExpression
    | shortestPathExpression
    | parenthesizedExpression
@@ -756,7 +760,7 @@ vectorDistanceFunction
 vectorNormFunction
    : VECTOR_NORM LPAREN vectorValue = expression COMMA vectorNormDistanceMetric RPAREN
    ;
-   
+
 vectorDistanceMetric
    : EUCLIDEAN
    | EUCLIDEAN_SQUARED
@@ -765,7 +769,7 @@ vectorDistanceMetric
    | DOT_METRIC
    | HAMMING
    ;
-   
+
 vectorNormDistanceMetric
    : EUCLIDEAN
    | MANHATTAN
@@ -980,6 +984,7 @@ createCommand
       | createCompositeDatabase
       | createConstraint
       | createDatabase
+      | createReplicaDatabase
       | createIndex
       | createRole
       | createUser
@@ -1732,7 +1737,7 @@ loadPrivilege
 showPrivilege
    : SHOW (
       (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER METADATA?) ON DBMS
+      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER METADATA? | SECRETS) ON DBMS
    )
    ;
 
@@ -1777,9 +1782,11 @@ dbmsPrivilege
    : (
       ALTER (ALIAS | AUTH RULE | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE) MANAGEMENT
+      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE | SECRETS) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (AUTH RULE | ROLE | USER)
+      | WRITE SECRETS
+      | READ secretToken secretQualifier
       | IMPERSONATE userQualifier?
    )
    ON DBMS
@@ -1819,6 +1826,16 @@ transactionToken
    : TRANSACTION
    | TRANSACTIONS
    ;
+
+secretToken
+  : SECRET
+  | SECRETS
+  ;
+
+secretQualifier
+  : TIMES
+  | stringOrParameterExpression
+  ;
 
 userQualifier
    : LPAREN (TIMES | userNames) RPAREN
@@ -1958,6 +1975,10 @@ createCompositeDatabase
 
 createDatabase
    : DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? (topology | shards)? commandOptions? waitClause?
+   ;
+
+createReplicaDatabase
+   : REPLICA DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? topology? commandOptions? waitClause?
    ;
 
 shards
@@ -2226,6 +2247,7 @@ unescapedSymbolicNameString_
    | ALL
    | ALLREDUCE
    | ALTER
+   | ANALYZER
    | AND
    | ANY
    | ARRAY
@@ -2420,6 +2442,7 @@ unescapedSymbolicNameString_
    | PROCEDURES
    | PROPERTIES
    | PROPERTY
+   | PROPERTY_EXISTS
    | PROVIDER
    | PROVIDERS
    | RANGE
@@ -2456,6 +2479,8 @@ unescapedSymbolicNameString_
    | SEC
    | SECOND
    | SECONDS
+   | SECRET
+   | SECRETS
    | SEEK
    | SERVER
    | SERVERS

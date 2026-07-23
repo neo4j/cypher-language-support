@@ -147,6 +147,10 @@ ALTER
    : A L T E R
    ;
 
+ANALYZER
+   : A N A L Y Z E R
+   ;
+
 AND
    : A N D
    ;
@@ -1190,6 +1194,14 @@ SECONDARIES
 
 SECONDS
    : S E C O N D S
+   ;
+
+SECRET
+   : S E C R E T
+   ;
+
+SECRETS
+   : S E C R E T S
    ;
 
 SEEK
