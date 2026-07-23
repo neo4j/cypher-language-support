@@ -366,6 +366,26 @@ describe('Semantic validation spec', () => {
     ]);
   });
 
+  test('Does not warn on GROUP BY in Cypher 25', () => {
+    const query =
+      'CYPHER 25 MATCH(m) RETURN m.name as name, count(*) as nodes GROUP BY name';
+    const diagnostics = getDiagnosticsForQuery({
+      query,
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
+    });
+
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Shows GROUP BY error in Cypher 5', () => {
+    const query =
+      'CYPHER 5 MATCH(m) RETURN m.name as name, count(*) as nodes GROUP BY name';
+    const diagnostics = getDiagnosticsForQuery({ query });
+
+    expect(diagnostics).toHaveLength(1);
+    expect(diagnostics[0].message).toContain("Invalid input 'GROUP'");
+  });
+
   test('In-query version takes priority for semantic analysis even if defaultLanguage is defined', () => {
     const query1 = 'CYPHER 5 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics1 = getDiagnosticsForQuery({
