@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.36
+
+### Patch Changes
+
+- 50f061e: Fix Group By linting
+
 ## 2.0.0-next.35
 
 ### Patch Changes
