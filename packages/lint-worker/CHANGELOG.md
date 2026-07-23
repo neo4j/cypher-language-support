@@ -1,5 +1,14 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.13
+
+### Patch Changes
+
+- 50f061e: Fix Group By linting
+- Updated dependencies [50f061e]
+  - @neo4j-cypher/language-support@2.0.0-next.36
+  - @neo4j-cypher/query-tools@2.0.0-next.36
+
 ## 1.10.1-next.12
 
 ### Patch Changes
