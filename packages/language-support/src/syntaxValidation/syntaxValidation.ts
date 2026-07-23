@@ -17,9 +17,15 @@ import {
   ParsedProcedure,
   ParsedStatement,
   ParsingResult,
+  PropertyType,
   createParsingResult,
 } from '../cypherLanguageService.js';
-import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types.js';
+import {
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolTable,
+  Symbol,
+} from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
@@ -43,7 +49,7 @@ function detectNonDeclaredLabel(
     (!dbLabels.has(normalizedLabelName) &&
       !dbRelationshipTypes.has(normalizedLabelName));
 
-  if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
+  if (notInDatabase) {
     const message =
       labelOrRelType.labelType +
       ' ' +
@@ -107,7 +113,7 @@ export function clampUnsafePositions(
 
 function generateSyntaxDiagnostic(
   rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter,
+  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter | PropertyType,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
@@ -267,8 +273,76 @@ function warnOnUndeclaredLabels(
       if (warning) warnings.push(warning);
     });
   }
+  return warnings;
+}
+
+function warnOnUndeclaredProperties(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+  symbolTable: SymbolTable,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  const propertiesInSchema = dbSchema.propertyKeys;
+
+  if (!propertiesInSchema) {
+    return [];
+  }
+
+  const writeProperties = new Set(
+    parsingResult.collectedProperties
+      .filter((propInCypher) => propInCypher.type === 'write')
+      .map((p) => p.propertyName),
+  );
+
+  const missingProperties = parsingResult.collectedProperties.filter(
+    (propInCypher) => {
+      // Ignore properties that are not of Node or Relationship
+      if (!isNodeOrRelationshipProperty(propInCypher, symbolTable)) {
+        return false;
+      }
+
+      // Ignore all properties that are being modified in the query
+      if (writeProperties.has(propInCypher.propertyName)) {
+        return false;
+      }
+
+      return !propertiesInSchema.includes(propInCypher.propertyName);
+    },
+  );
+
+  for (const property of missingProperties) {
+    const message = property.propertyName + ' not available';
+    const warning = generateSyntaxDiagnostic(
+      property.propertyName,
+      property,
+      DiagnosticSeverity.Warning,
+      message,
+    );
+    warnings.push(warning);
+  }
 
   return warnings;
+}
+
+function isNodeOrRelationshipProperty(
+  property: PropertyType,
+  symbolTable: SymbolTable,
+): boolean {
+  const variable = property.variable;
+  if (!variable) {
+    return false;
+  }
+  const symbol = symbolTable.find((symbol) => {
+    return symbol.variable === variable.name;
+  });
+  return symbol && symbolIsNodeOrRel(symbol);
+}
+
+/** Checks all possible types of a symbol are Node or Relationship */
+function symbolIsNodeOrRel(symbol: Symbol): boolean {
+  return symbol.types.every((type) => {
+    return type === 'Node' || type === 'Relationship';
+  });
 }
 
 export function sortByPositionAndMessage(
@@ -411,6 +485,12 @@ export function lintCypherQuery(
           parseResult: current,
         });
 
+        const propertiesWarnings = warnOnUndeclaredProperties(
+          current,
+          dbSchema,
+          symbolTable,
+        );
+
         const schemaPathWarnings = warnOnSchemaPathViolations(
           current,
           dbSchema,
@@ -420,6 +500,7 @@ export function lintCypherQuery(
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
+            propertiesWarnings,
             schemaPathWarnings,
             parameterErrors,
             functionErrors,

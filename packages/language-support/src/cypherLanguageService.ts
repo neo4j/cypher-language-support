@@ -24,7 +24,11 @@ import {
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
   VariableContext,
+  PropertyKeyNameContext,
+  Expression2Context,
   PatternElementContext,
+  NodePatternContext,
+  RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -67,6 +71,7 @@ export interface ParsedStatement {
   collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  collectedProperties: PropertyType[];
   collectedReadPatternElements: PatternElementContext[];
   cypherVersion?: CypherVersion;
 }
@@ -103,7 +108,9 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
 
   if (parent instanceof ClauseContext) {
     const clause = parent;
-    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+    return Boolean(
+      clause.mergeClause() || clause.createClause() || clause.insertClause(),
+    );
   } else {
     return false;
   }
@@ -121,7 +128,15 @@ export type HasPosition = {
 export type LabelOrRelType = HasPosition & {
   labelType: LabelType;
   labelText: string;
-  couldCreateNewLabel: boolean;
+};
+
+export type PropertyType = HasPosition & {
+  propertyName: string;
+  variable?: {
+    name: string;
+    start: number;
+  };
+  type: 'read' | 'write';
 };
 
 export type ParsedParameter = HasPosition & {
@@ -201,9 +216,10 @@ export function createParsingResult(
   const results: ParsedStatement[] =
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
       const { parser, tokens } = statementScaffolding;
-      const labelsCollector = new LabelAndRelTypesCollector();
+      const labelsCollector = new ReadLabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
       const variableFinder = new VariableCollector();
+      const propertiesFinder = new PropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
       const readPatternElementsCollector = new ReadPatternElementsCollector();
@@ -217,6 +233,7 @@ export function createParsingResult(
         variableFinder,
         methodsFinder,
         cypherVersionCollector,
+        propertiesFinder,
         readPatternElementsCollector,
       ];
       parser.addErrorListener(errorListener);
@@ -246,6 +263,7 @@ export function createParsingResult(
         collectedParameters: parameterFinder.parameters,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        collectedProperties: propertiesFinder.properties,
         collectedReadPatternElements:
           readPatternElementsCollector.readPatternElements,
         cypherVersion: cypherVersionCollector.cypherVersion,
@@ -294,8 +312,8 @@ export function parseParameters(
   return [...new Set(parameters)];
 }
 
-// This listener collects all labels and relationship types
-class LabelAndRelTypesCollector extends ParseTreeListener {
+/** This listener collects all labels and relationship types in read operations */
+class ReadLabelAndRelTypesCollector extends ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
   enterEveryRule() {
@@ -314,11 +332,14 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // like in the case MATCH (n:) RETURN n
       // RETURN would be incorrectly idenfified as the label
       // If this is the case, the context containing the label would have an error node
-      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+      if (
+        ctx.parentCtx &&
+        !hasErrorNodesUnder(ctx.parentCtx) &&
+        !couldCreateNewLabel(ctx)
+      ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
           column: ctx.start.column,
           offsets: {
@@ -333,12 +354,12 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       if (
         isDefined(symbolicName) &&
         ctx.parentCtx &&
-        !hasErrorNodesUnder(ctx.parentCtx)
+        !hasErrorNodesUnder(ctx.parentCtx) &&
+        !couldCreateNewLabel(ctx)
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: symbolicName.start.line,
           column: symbolicName.start.column,
           offsets: {
@@ -348,6 +369,104 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         });
       }
     }
+  }
+}
+
+// This listener collects all properties in read operations
+class PropertiesCollector extends ParseTreeListener {
+  properties: PropertyType[] = [];
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PropertyKeyNameContext) {
+      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+        const parentClause = findParent(
+          ctx,
+          (ctx) => ctx instanceof ClauseContext,
+        );
+        if (parentClause instanceof ClauseContext) {
+          const isRead = this.isReadClause(parentClause);
+          const isWrite = this.isWriteClause(parentClause);
+
+          if (isRead || isWrite) {
+            const variable = this.getPropertyVariable(ctx);
+
+            this.properties.push({
+              propertyName: ctx.getText(),
+              variable,
+              line: ctx.start.line,
+              column: ctx.start.column,
+              offsets: {
+                start: ctx.start.start,
+                end: ctx.stop.stop + 1,
+              },
+              type: isWrite ? 'write' : 'read',
+            });
+          }
+        }
+      }
+    }
+  }
+
+  private getPropertyVariable(
+    ctx: PropertyKeyNameContext,
+  ): { name: string; start: number } | undefined {
+    const varCtx =
+      this.getVariableFromPatternProperty(ctx) ??
+      this.getVariableFromPropertyAccess(ctx);
+
+    if (varCtx) {
+      return {
+        name: varCtx.getText(),
+        start: varCtx.start.start,
+      };
+    }
+  }
+
+  private getVariableFromPatternProperty(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const patternElement = findParent(ctx, (ctx) => {
+      return (
+        ctx instanceof NodePatternContext ||
+        ctx instanceof RelationshipPatternContext
+      );
+    });
+    if (
+      patternElement instanceof NodePatternContext ||
+      patternElement instanceof RelationshipPatternContext
+    ) {
+      return patternElement.variable();
+    }
+  }
+
+  private getVariableFromPropertyAccess(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const propertyAccessExpr = findParent(
+      ctx,
+      (ctx) => ctx instanceof Expression2Context,
+    );
+    if (propertyAccessExpr instanceof Expression2Context) {
+      return propertyAccessExpr.expression1().variable();
+    }
+  }
+
+  /** Checks if a parent clause is writable for properties */
+  private isWriteClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.mergeClause() ||
+      clause.createClause() ||
+      clause.insertClause() ||
+      clause.setClause() ||
+      clause.removeClause(),
+    );
+  }
+
+  /** Checks if a parent clause is readonly for properties */
+  private isReadClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.matchClause() || clause.withClause() || clause.returnClause(),
+    );
   }
 }
 
