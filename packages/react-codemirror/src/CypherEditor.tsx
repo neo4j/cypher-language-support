@@ -46,6 +46,19 @@ import { LintWorker } from '@neo4j-cypher/lint-worker';
 import workerpool from 'workerpool';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
+
+/**
+ * Normalize CRLF line endings to LF, which is what CodeMirror expects.
+ * CodeMirror collapses `\r\n` into a single line break, so a raw `value`
+ * string with CRLF endings is longer than the resulting document. Normalizing
+ * up front keeps the document length in sync with the value length used for
+ * cursor placement, and avoids "Selection points outside of document" errors.
+ * https://codemirror.net/docs/ref/#state.EditorState^lineSeparator
+ */
+function normalizeLineEndings<T extends string | undefined>(value: T): T {
+  return value?.replace(/\r\n/g, '\n') as T;
+}
+
 export interface CypherEditorProps {
   /**
    * The prompt to show on single line editors
@@ -438,8 +451,17 @@ export class CypherEditor extends Component<
    * For example, to move the cursor to the end of the editor, use `value.length`
    */
   updateCursorPosition(position: number) {
-    this.editorView.current?.dispatch({
-      selection: { anchor: position, head: position },
+    const view = this.editorView.current;
+    if (!view) {
+      return;
+    }
+
+    // Clamp to the doc length; `position` may come from a raw value longer than
+    // the doc (e.g. CRLF endings), which would throw "Selection points outside
+    // of document".
+    const clamped = Math.max(0, Math.min(position, view.state.doc.length));
+    view.dispatch({
+      selection: { anchor: clamped, head: clamped },
     });
   }
 
@@ -448,10 +470,7 @@ export class CypherEditor extends Component<
    */
   setValueAndFocus(value = '') {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
-    // Normalize line endings to LF that CM expects.
-    // Prevents issues with inserted values that contain CRLF line endings.
-    // https://codemirror.net/docs/ref/?utm_source=chatgpt.com#state.EditorState^lineSeparator
-    const normalizedValue = value.replace(/\r\n/g, '\n');
+    const normalizedValue = normalizeLineEndings(value);
     this.editorView.current.dispatch({
       changes: {
         from: 0,
@@ -603,7 +622,7 @@ export class CypherEditor extends Component<
         ),
         this.editorActionsController.extension,
       ],
-      doc: this.props.value,
+      doc: normalizeLineEndings(this.props.value),
     });
 
     this.editorView.current = new EditorView({
@@ -701,7 +720,7 @@ export class CypherEditor extends Component<
         changes: {
           from: 0,
           to: currentCmValue.length,
-          insert: this.props.value ?? '',
+          insert: normalizeLineEndings(this.props.value) ?? '',
         },
         annotations: [ExternalEdit.of(true)],
       });
