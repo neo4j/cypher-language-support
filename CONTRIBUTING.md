@@ -41,7 +41,6 @@ pnpm test
 End to end tests:
 
 ```
-cd packages/react-codemirror
 pnpm exec playwright install // Only the first time that you need to run these
 pnpm test:e2e
 ```

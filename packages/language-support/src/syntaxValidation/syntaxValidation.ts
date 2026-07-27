@@ -340,6 +340,10 @@ function isNodeOrRelationshipProperty(
 
 /** Checks all possible types of a symbol are Node or Relationship */
 function symbolIsNodeOrRel(symbol: Symbol): boolean {
+  if (symbol.types.length === 0) {
+    return false;
+  }
+
   return symbol.types.every((type) => {
     return type === 'Node' || type === 'Relationship';
   });
