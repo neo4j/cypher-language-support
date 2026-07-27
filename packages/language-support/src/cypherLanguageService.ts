@@ -390,8 +390,10 @@ class PropertiesCollector extends ParseTreeListener {
           if (isRead || isWrite) {
             const variable = this.getPropertyVariable(ctx);
 
+            const propertyName = ctx.getText().replace(/^`|`$/g, '');
+
             this.properties.push({
-              propertyName: ctx.getText(),
+              propertyName,
               variable,
               line: ctx.start.line,
               column: ctx.start.column,

@@ -2012,6 +2012,43 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     `);
   });
 
+  test('Shows errors for returning invalid escaped property', () => {
+    const query = `
+    MATCH (m:Movie)
+    RETURN m.\`title\`, m.\`invalidProp\`
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toMatchInlineSnapshot(`
+      [
+        {
+          "message": "invalidProp not available",
+          "offsets": {
+            "end": 58,
+            "start": 45,
+          },
+          "range": {
+            "end": {
+              "character": 35,
+              "line": 2,
+            },
+            "start": {
+              "character": 24,
+              "line": 2,
+            },
+          },
+          "severity": 2,
+        },
+      ]
+    `);
+  });
+
   test('Shows errors for mathching and filtering invalid property in a relationship', () => {
     const query = `
     MATCH (m:Movie)-[r:ACTED_IN { roles: [], invalid: "test"}]-()
