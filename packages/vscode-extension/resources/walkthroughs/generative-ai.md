@@ -9,4 +9,4 @@ This GraphAcademy pathway covers:
 - Building GraphRAG pipelines
 - Using Neo4j with popular GenAI frameworks
 
-[Explore the pathway on GraphAcademy →](https://graphacademy.neo4j.com/categories/generative-ai)
+[Explore the pathway on GraphAcademy →](https://graphacademy.neo4j.com/categories/generative-ai?ref=vscode-learn)

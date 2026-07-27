@@ -10,4 +10,4 @@ In this free, hands-on GraphAcademy course you will:
 
 ⏱️ 1 hour · Free
 
-[Start the course on GraphAcademy →](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/)
+[Start the course on GraphAcademy →](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/?ref=vscode-learn)

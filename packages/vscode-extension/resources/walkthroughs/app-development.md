@@ -8,4 +8,4 @@ This GraphAcademy pathway covers:
 - Building full-stack applications backed by a graph
 - Best practices for production Neo4j applications
 
-[Explore the pathway on GraphAcademy →](https://graphacademy.neo4j.com/categories/app-development)
+[Explore the pathway on GraphAcademy →](https://graphacademy.neo4j.com/categories/app-development?ref=vscode-learn)

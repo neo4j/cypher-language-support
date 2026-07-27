@@ -12,4 +12,4 @@ Everything you learn here you can try out directly in your `.cypher` files with 
 
 ⏱️ 1 hour · Free
 
-[Start the course on GraphAcademy →](https://graphacademy.neo4j.com/courses/cypher-fundamentals/)
+[Start the course on GraphAcademy →](https://graphacademy.neo4j.com/courses/cypher-fundamentals/?ref=vscode-learn)
