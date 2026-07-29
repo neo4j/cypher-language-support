@@ -55,8 +55,8 @@ type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
  * cursor placement, and avoids "Selection points outside of document" errors.
  * https://codemirror.net/docs/ref/#state.EditorState^lineSeparator
  */
-function normalizeLineEndings<T extends string | undefined>(value: T): T {
-  return value?.replace(/\r\n/g, '\n') as T;
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n/g, '\n');
 }
 
 export interface CypherEditorProps {
@@ -622,7 +622,7 @@ export class CypherEditor extends Component<
         ),
         this.editorActionsController.extension,
       ],
-      doc: normalizeLineEndings(this.props.value),
+      doc: normalizeLineEndings(this.props.value ?? ''),
     });
 
     this.editorView.current = new EditorView({
@@ -720,7 +720,7 @@ export class CypherEditor extends Component<
         changes: {
           from: 0,
           to: currentCmValue.length,
-          insert: normalizeLineEndings(this.props.value) ?? '',
+          insert: normalizeLineEndings(this.props.value ?? ''),
         },
         annotations: [ExternalEdit.of(true)],
       });
