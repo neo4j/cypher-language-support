@@ -57,6 +57,7 @@ export function findStopNode(root: StatementsOrCommandsContext) {
   return current;
 }
 
+/** Find the first parent recursively in the tree matching the condition */
 export function findParent(
   leaf: EnrichedParseTree | undefined,
   condition: (node: EnrichedParseTree) => boolean,
