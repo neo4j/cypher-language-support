@@ -251,6 +251,7 @@ export function App() {
               value={value}
               ref={editorRef}
               onChange={setValue}
+              placeholder="Type your Cypher query here"
               prompt="neo4j$"
               onExecute={() => {
                 setCommandRanCount((c) => c + 1);
