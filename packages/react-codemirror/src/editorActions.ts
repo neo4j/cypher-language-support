@@ -82,7 +82,7 @@ export function createEditorActionsController(): EditorActionsController {
   const spacer = EditorView.decorations.compute(
     ['doc', activeField],
     (state) => {
-      if (!state.field(activeField) || state.doc.length === 0) {
+      if (!state.field(activeField)) {
         return Decoration.none;
       }
       return Decoration.set([
@@ -229,6 +229,9 @@ export function createEditorActionsController(): EditorActionsController {
       userSelect: 'none',
       WebkitUserSelect: 'none',
       pointerEvents: 'none',
+    },
+    '.cm-placeholder': {
+      display: 'inline',
     },
     '.cm-editor-actions': {
       position: 'absolute',
