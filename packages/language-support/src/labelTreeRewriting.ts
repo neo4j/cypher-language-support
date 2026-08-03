@@ -266,7 +266,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
  * @param root
  * @returns
  */
-export function simplifyAndRemoveTautologies(
+function simplifyAndRemoveTautologies(
   root: LabelOrCondition,
 ): LabelOrCondition {
   const newRoot: LabelOrCondition = copyLabelTree(root);

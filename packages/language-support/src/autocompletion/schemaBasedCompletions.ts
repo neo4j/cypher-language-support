@@ -165,7 +165,7 @@ export function getPathCompletions(
   return snippetCompletions;
 }
 
-export const labelsToCompletions = (labelNames: string[] = []) =>
+const labelsToCompletions = (labelNames: string[] = []) =>
   labelNames.map((labelName) => {
     const backtickedName = backtickIfNeeded(labelName, 'label');
     const maybeInsertText = backtickedName

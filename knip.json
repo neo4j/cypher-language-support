@@ -1,0 +1,68 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreExportsUsedInFile": {
+    "interface": false,
+    "type": false
+  },
+  "tags": ["-lintignore"],
+  "workspaces": {
+    ".": {
+      "entry": [
+        "package.json",
+        ".github/workflows/*.{yml,yaml}",
+        ".github/actions/*/action.{yml,yaml}"
+      ]
+    },
+    "packages/language-support": {
+      "entry": ["src/tests/benchmarks/*.benchmark.ts"],
+      "project": ["src/**/*.ts", "!src/generated-parser/**"],
+      "ignoreBinaries": ["antlr4"]
+    },
+    "packages/language-server": {
+      "entry": ["src/server.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/lint-worker": {
+      "entry": ["src/index.ts", "src/lintWorker.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/query-tools": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/react-codemirror": {
+      "entry": [
+        "src/index.ts",
+        "playwright-ct.config.ts",
+        "src/**/*.test.{ts,tsx}",
+        "src/**/*.spec.{ts,tsx}"
+      ],
+      "project": ["src/**/*.{ts,tsx}", "*.ts"]
+    },
+    "packages/react-codemirror-playground": {
+      "entry": ["src/index.tsx", "vite.config.ts"],
+      "project": ["src/**/*.{ts,tsx}", "*.ts"]
+    },
+    "packages/vscode-extension": {
+      "entry": [
+        "src/extension.ts",
+        "esbuild-extension.mts",
+        "src/webviews/controllers/*.{ts,tsx}",
+        "tests/runApiAndUnitTests.ts",
+        "tests/runWebviewTests.ts",
+        "tests/testRunner.ts",
+        "tests/testRunnerDebug.ts",
+        "tests/specs/**/*.spec.ts",
+        "test/**/*.test.ts"
+      ],
+      "project": ["src/**/*.{ts,tsx,mts}", "tests/**/*.ts", "test/**/*.ts"],
+      "ignore": ["tests/fixtures/**"],
+      "ignoreBinaries": ["copy-lint-worker"]
+    },
+    "vendor/antlr4-c3": {
+      "entry": ["index.ts", "tests/**/*.ts"],
+      "project": ["src/**/*.ts", "tests/**/*.ts", "index.ts"]
+    }
+  },
+  "ignoreBinaries": ["package", "dev"]
+}

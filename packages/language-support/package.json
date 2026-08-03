@@ -63,7 +63,6 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
-    "@types/semver": "^7.7.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "engines": {
