@@ -221,17 +221,6 @@ export async function clickOnContextMenuItem(
   }
 }
 
-export async function selectValue(
-  webview: WebView,
-  elem: string,
-  value: string,
-) {
-  await webview.open();
-  const element = await $(elem);
-  await element.selectByVisibleText(value);
-  await webview.close();
-}
-
 export async function setText(webview: WebView, elem: string, value: string) {
   await webview.open();
   await (await $(elem)).clearValue();

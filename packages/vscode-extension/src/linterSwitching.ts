@@ -16,7 +16,7 @@ import {
 } from './linterService';
 
 //checking metadata of file, just to see if the file is there
-export async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
+async function fileExists(fileUri: vscode.Uri): Promise<boolean> {
   try {
     await vscode.workspace.fs.stat(fileUri);
     return true;
@@ -105,9 +105,7 @@ export async function switchToLinter(
   }
 }
 
-export async function switchToLocalLinter(
-  linterVersion: string,
-): Promise<void> {
+async function switchToLocalLinter(linterVersion: string): Promise<void> {
   const fileNames = await getFilesInExtensionStorage();
   const downloadedLinterVersions: Record<string, string> = Object.fromEntries(
     fileNames

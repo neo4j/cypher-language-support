@@ -20,7 +20,7 @@ function cleanTypes(result: Neo4jFunction): Neo4jFunction {
   };
 }
 
-export const functionSchema: JSONSchemaType<Neo4jFunction> = {
+const functionSchema: JSONSchemaType<Neo4jFunction> = {
   type: 'object',
   properties: {
     aggregating: { type: 'boolean' },

@@ -19,7 +19,7 @@ export type Parameters = {
   [key: string]: Parameter | null;
 };
 
-export const PARAMETERS_KEY = 'neo4j.parameters';
+const PARAMETERS_KEY = 'neo4j.parameters';
 
 /**
  * Gets all Parameters from the global state.
