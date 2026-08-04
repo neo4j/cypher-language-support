@@ -369,6 +369,9 @@ importers:
       '@wdio/types':
         specifier: 8.41.0
         version: 8.41.0
+      expect-webdriverio:
+        specifier: 4.15.4
+        version: 4.15.4
       glob:
         specifier: 11.0.1
         version: 11.0.1

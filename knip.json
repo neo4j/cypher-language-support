@@ -42,6 +42,7 @@
         "tests/specs/**/*.spec.ts",
         "test/**/*.test.ts"
       ],
+      "ignoreUnresolved": ["./src/webviews/controllers/*"],
       "project": ["src/**/*.{ts,tsx,mts}", "tests/**/*.ts", "test/**/*.ts"],
       "ignore": ["tests/fixtures/**"],
       "ignoreBinaries": ["copy-lint-worker"],
@@ -50,7 +51,8 @@
         "@wdio/mocha-framework",
         "@wdio/spec-reporter",
         "ovsx",
-        "wdio-wait-for"
+        "wdio-wait-for",
+        "expect-webdriverio"
       ]
     }
   },
