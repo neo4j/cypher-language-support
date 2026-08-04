@@ -44,9 +44,17 @@
       ],
       "project": ["src/**/*.{ts,tsx,mts}", "tests/**/*.ts", "test/**/*.ts"],
       "ignore": ["tests/fixtures/**"],
-      "ignoreBinaries": ["copy-lint-worker"]
+      "ignoreBinaries": ["copy-lint-worker"],
+      "ignoreDependencies": [
+        "@wdio/local-runner",
+        "@wdio/mocha-framework",
+        "@wdio/spec-reporter",
+        "ovsx",
+        "wdio-wait-for"
+      ]
     }
   },
   "ignore": ["vendor/**/*"],
-  "ignoreBinaries": ["package", "dev"]
+  "ignoreBinaries": ["package", "dev", "vsce", "ovsx"],
+  "ignoreDependencies": ["ts-node"]
 }
