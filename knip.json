@@ -16,6 +16,7 @@
     "packages/language-support": {
       "entry": ["src/tests/benchmarks/*.benchmark.ts"],
       "project": ["src/**/*.ts", "!src/generated-parser/**"],
+      "ignoreUnresolved": ["./src/tests/benchmarks/benchmark.ts"],
       "ignoreBinaries": ["antlr4"]
     },
     "packages/language-server": {},
