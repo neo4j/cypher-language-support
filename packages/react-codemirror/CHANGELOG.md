@@ -1,5 +1,12 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.40
+
+### Minor Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- 9266800: normalize CRLF line endings
+
 ## 2.0.0-next.39
 
 ### Patch Changes

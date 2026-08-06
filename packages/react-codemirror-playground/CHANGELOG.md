@@ -1,5 +1,14 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- Updated dependencies [0ddd727]
+- Updated dependencies [9266800]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.40
+
 ## 2.0.0-next.39
 
 ### Patch Changes
