@@ -51,6 +51,9 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: knip
+        run: pnpm knip
+
   unit-test:
     name: Unit tests
     needs: build

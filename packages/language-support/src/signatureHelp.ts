@@ -23,7 +23,7 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
-export enum MethodType {
+enum MethodType {
   function = 'function',
   procedure = 'procedure',
 }

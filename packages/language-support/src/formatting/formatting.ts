@@ -187,7 +187,7 @@ interface RawTerminalOptions {
 
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
-export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
+class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   formattingOptions: FormattingOptions;
   root: StatementsOrCommandsContext;
   query: string;

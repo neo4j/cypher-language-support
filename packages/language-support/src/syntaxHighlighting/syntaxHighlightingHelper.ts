@@ -1,5 +1,3 @@
-import { SemanticTokenTypes } from 'vscode-languageserver-types';
-
 import { Token } from 'antlr4';
 
 import CypherLexer from '../generated-parser/CypherCmdLexer.js';
@@ -28,7 +26,7 @@ export interface ParsedCypherToken {
   bracketInfo?: BracketInfo;
 }
 
-export interface BracketInfo {
+interface BracketInfo {
   bracketType: BracketType;
   bracketLevel: number;
 }
@@ -37,13 +35,6 @@ export enum BracketType {
   bracket = 'bracket',
   parenthesis = 'parenthesis',
   curly = 'curly',
-}
-
-export interface ColouredToken {
-  position: TokenPosition;
-  length: number;
-  tokenColour: SemanticTokenTypes;
-  token: string;
 }
 
 export function getTokenPosition(token: Token): TokenPosition {

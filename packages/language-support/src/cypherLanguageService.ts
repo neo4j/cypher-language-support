@@ -76,12 +76,12 @@ export interface ParsingResult {
   statementsParsing: ParsedStatement[];
 }
 
-export interface ParsingScaffolding {
+interface ParsingScaffolding {
   query: string;
   statementsScaffolding: StatementParsingScaffolding[];
 }
 
-export interface StatementParsingScaffolding {
+interface StatementParsingScaffolding {
   parser: CypherParser;
   tokens: Token[];
 }
@@ -109,7 +109,7 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
   }
 }
 
-export type HasPosition = {
+type HasPosition = {
   line: number;
   column: number;
   offsets: {
@@ -136,7 +136,7 @@ export type ParsedFunction = HasPosition & {
 
 export type ParsedProcedure = ParsedFunction;
 
-export function createParsingScaffolding(query: string): ParsingScaffolding {
+function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStreams.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
@@ -572,13 +572,11 @@ class CypherVersionCollector extends ParseTreeListener {
   }
 }
 
-type CypherCmd = { type: 'cypher'; query: string };
 type RuleTokens = {
   start: Token;
   stop: Token;
 };
 
-export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
   | { type: 'cypher'; statement: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
@@ -602,7 +600,7 @@ export type ParsedCommandNoPosition =
   | { type: 'help' }
   | { type: 'auto'; statement?: string };
 
-export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
+type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmts: StatementsOrCommandsContext,

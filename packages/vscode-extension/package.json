@@ -74,7 +74,6 @@
     "@wdio/mocha-framework": "8.40.3",
     "@wdio/spec-reporter": "8.40.3",
     "@wdio/types": "8.41.0",
-    "dotenv": "16.4.5",
     "expect-webdriverio": "4.15.4",
     "glob": "11.0.1",
     "mocha": "10.7.3",

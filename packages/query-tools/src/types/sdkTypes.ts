@@ -18,13 +18,7 @@ export type QueryType =
   // Query that has been derived from the user input.
   | 'user-transpiled';
 
-export type CypherTransactionMetadata = {
-  app: 'neo4j-sdk';
-  type: QueryType;
-  version?: string;
-};
-
-export type ExtendedQueryConfig<T> = QueryConfig<T> &
+type ExtendedQueryConfig<T> = QueryConfig<T> &
   Required<Pick<QueryConfig<T>, 'routing' | 'resultTransformer'>>;
 
 type Result<T> = T & { summary: ResultSummary };

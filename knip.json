@@ -1,0 +1,63 @@
+{
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "ignoreExportsUsedInFile": {
+    "interface": false,
+    "type": false
+  },
+  "tags": ["-lintignore"],
+  "workspaces": {
+    ".": {
+      "entry": [
+        "package.json",
+        ".github/workflows/*.{yml,yaml}",
+        ".github/actions/*/action.{yml,yaml}"
+      ]
+    },
+    "packages/language-support": {
+      "entry": ["src/tests/benchmarks/*.benchmark.ts"],
+      "project": ["src/**/*.ts", "!src/generated-parser/**"],
+      "ignoreUnresolved": ["./src/tests/benchmarks/benchmark.ts"],
+      "ignoreBinaries": ["antlr4"]
+    },
+    "packages/language-server": {},
+    "packages/lint-worker": {
+      "project": ["src/**/*.ts"]
+    },
+    "packages/query-tools": {
+      "entry": ["src/index.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/react-codemirror": {
+      "entry": ["src/**/*.test.{ts,tsx}", "src/**/*.spec.{ts,tsx}"],
+      "project": ["src/**/*.{ts,tsx}", "*.ts"]
+    },
+    "packages/react-codemirror-playground": {},
+    "packages/vscode-extension": {
+      "entry": [
+        "src/extension.ts",
+        "src/webviews/controllers/*.{ts,tsx}",
+        "tests/runApiAndUnitTests.ts",
+        "tests/runWebviewTests.ts",
+        "tests/testRunner.ts",
+        "tests/testRunnerDebug.ts",
+        "tests/specs/**/*.spec.ts",
+        "test/**/*.test.ts"
+      ],
+      "ignoreUnresolved": ["./src/webviews/controllers/*"],
+      "project": ["src/**/*.{ts,tsx,mts}", "tests/**/*.ts", "test/**/*.ts"],
+      "ignore": ["tests/fixtures/**"],
+      "ignoreBinaries": ["copy-lint-worker"],
+      "ignoreDependencies": [
+        "@wdio/local-runner",
+        "@wdio/mocha-framework",
+        "@wdio/spec-reporter",
+        "ovsx",
+        "wdio-wait-for",
+        "expect-webdriverio"
+      ]
+    }
+  },
+  "ignore": ["vendor/**/*"],
+  "ignoreBinaries": ["package", "dev", "vsce", "ovsx"],
+  "ignoreDependencies": ["ts-node"]
+}

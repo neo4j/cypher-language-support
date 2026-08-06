@@ -44,7 +44,7 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   settingValue: NodeType.define({ id: 30, name: 'settingValue' }),
 });
 
-export type PrismSpecificTokenType =
+type PrismSpecificTokenType =
   | 'class-name'
   | 'identifier'
   | 'string'

@@ -16,7 +16,7 @@ import {
  *
  * See {@link DeduplicatedNodesAndRels} for the type of the nodes and relationships.
  */
-export type GraphResult = DeduplicatedNodesAndRels & {
+type GraphResult = DeduplicatedNodesAndRels & {
   /** Original Neo4j records returned by the query */
   records: Record[];
   summary: ResultSummary<Integer>;

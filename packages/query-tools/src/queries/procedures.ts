@@ -9,7 +9,7 @@ type ListProcedureArgs = {
   cypherVersion?: CypherVersion;
 };
 
-export const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
+const procedureSchema: JSONSchemaType<Neo4jProcedure> = {
   type: 'object',
   properties: {
     admin: { type: 'boolean' },

@@ -271,10 +271,7 @@ function warnOnUndeclaredLabels(
   return warnings;
 }
 
-export function sortByPositionAndMessage(
-  a: SyntaxDiagnostic,
-  b: SyntaxDiagnostic,
-) {
+function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
@@ -495,8 +492,6 @@ function warningOnDeprecatedFunction(
   }
   return warnings;
 }
-
-export const paramMsgStart = 'Parameter ';
 
 function errorOnUndeclaredParameters(
   parsingResult: ParsedStatement,

@@ -6,7 +6,7 @@ export const views = {
   visualizationView: undefined as vscode.WebviewView | undefined,
 };
 
-export type QueryResultViews = keyof typeof views;
+type QueryResultViews = keyof typeof views;
 
 export type ResultRows = Record<string, unknown>[];
 

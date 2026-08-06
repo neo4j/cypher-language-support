@@ -27,13 +27,13 @@ export enum CypherTokenType {
   setting = 'setting',
 }
 
-export const lexerSettingValues = [
+const lexerSettingValues = [
   CypherLexer.ACYCLIC,
   CypherLexer.TRAIL,
   CypherLexer.WALK,
 ];
 
-export const lexerOperators = [
+const lexerOperators = [
   CypherLexer.AMPERSAND,
   CypherLexer.BAR,
   CypherLexer.COLON,
@@ -61,7 +61,7 @@ export const lexerOperators = [
   CypherLexer.TIMES,
 ];
 
-export const lexerBrackets = [
+const lexerBrackets = [
   CypherLexer.LBRACKET,
   CypherLexer.LCURLY,
   CypherLexer.LPAREN,
@@ -69,39 +69,39 @@ export const lexerBrackets = [
   CypherLexer.RCURLY,
   CypherLexer.RPAREN,
 ];
-export const lexerPunctuation = [CypherLexer.SEMICOLON];
-export const lexerSeparators = [
+const lexerPunctuation = [CypherLexer.SEMICOLON];
+const lexerSeparators = [
   CypherLexer.COMMA,
   CypherLexer.ARROW_LINE,
   CypherLexer.ARROW_LEFT_HEAD,
   CypherLexer.ARROW_RIGHT_HEAD,
 ];
-export const lexerNumberLiterals = [
+const lexerNumberLiterals = [
   CypherLexer.DECIMAL_DOUBLE,
   CypherLexer.UNSIGNED_DECIMAL_INTEGER,
   CypherLexer.UNSIGNED_HEX_INTEGER,
   CypherLexer.UNSIGNED_OCTAL_INTEGER,
 ];
 
-export const lexerStringLiteral = [
+const lexerStringLiteral = [
   CypherLexer.STRING_LITERAL1,
   CypherLexer.STRING_LITERAL2,
   CypherLexer.OBFUSCATION,
 ];
 
-export const lexerGarbage = [
+const lexerGarbage = [
   CypherLexer.ErrorChar,
   CypherLexer.EOF,
   CypherLexer.SPACE,
 ];
 
-export const identifier = [
+const identifier = [
   CypherLexer.IDENTIFIER,
   CypherLexer.ESCAPED_SYMBOLIC_NAME,
   CypherLexer.EXTENDED_IDENTIFIER,
 ];
 
-export const lexerComment = [
+const lexerComment = [
   CypherLexer.MULTI_LINE_COMMENT,
   CypherLexer.SINGLE_LINE_COMMENT,
 ];
@@ -425,7 +425,7 @@ export const lexerKeywords = [
   CypherLexer.CYPHER,
 ];
 
-export const lexerConsoleCmds = [
+const lexerConsoleCmds = [
   CypherLexer.HISTORY,
   CypherLexer.PARAM,
   CypherLexer.CLEAR,
@@ -462,7 +462,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
 };
 
-export const hasIncorrectSymbolicName: Record<number, string> = {
+const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.ALL_SHORTEST_PATHS]: 'allShortestPaths',
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',
