@@ -27,6 +27,7 @@ import {
   PatternElementContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
+  findCaret,
   findParent,
   findStopNode,
   inNodeLabel,
@@ -48,7 +49,7 @@ import {
   SymbolTable,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
-import { getSignatureInfo } from './signatureHelp.js';
+import { getSignatureInfo, SignatureHelper } from './signatureHelp.js';
 import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from './autocompletion/autocompletion.js';
 
@@ -855,6 +856,10 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
     );
 }
 
+export type HoverInfo = {
+  signature: string;
+};
+
 export class CypherLanguageService {
   private parsingResult?: ParsingResult;
   private symbolsInfo?: SymbolsInfo;
@@ -902,6 +907,43 @@ export class CypherLanguageService {
   highlightSyntax(query: string) {
     const parsingResult = this.parse(query);
     return highlightSyntax(query, { parsingResult });
+  }
+
+  hoverInfo(
+    query: string,
+    { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
+  ): HoverInfo | undefined {
+    const parsingResult = this.parse(query);
+    const result = findCaret(parsingResult, caretPosition);
+    if (!result) {
+      return undefined;
+    }
+
+    const statement = result.statement;
+    const signatureHelper = new SignatureHelper(statement.tokens, result.token);
+    const cypherVersion = statement.cypherVersion ?? dbSchema.defaultLanguage;
+    if (!cypherVersion) {
+      return undefined;
+    }
+    ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+    const method = signatureHelper.result;
+    if (!method) {
+      return undefined;
+    }
+
+    if (method.methodType === 'function') {
+      const methodName = method.methodName;
+      if (!dbSchema.functions) {
+        return undefined;
+      }
+      const fn = dbSchema.functions?.[cypherVersion]?.[methodName];
+      if (!fn) {
+        return undefined;
+      }
+      return {
+        signature: fn?.signature,
+      };
+    }
   }
 
   getSignatureHelp(
