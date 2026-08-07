@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 lexer grammar Cypher25Lexer;
-
 SPACE
    : ( '\u0009'
       | '\n' //can't parse this in unicode
@@ -89,8 +88,6 @@ STRING_LITERAL2
    : '"' (~["\\] | EscapeSequence)* '"'
    ;
 
-// In Cypher it is allowed to have any character following a backslash.
-// In the cases it is an actual escape code it is handled in the AST builder.
 fragment EscapeSequence
    : '\\' .
    ;
@@ -145,6 +142,10 @@ ALLREDUCE
 
 ALTER
    : A L T E R
+   ;
+
+ANALYZER
+   : A N A L Y Z E R
    ;
 
 AND
@@ -315,6 +316,10 @@ CREDENTIAL
    : C R E D E N T I A L
    ;
 
+CREDENTIALS
+   : C R E D E N T I A L S
+   ;
+
 CSV
    : C S V
    ;
@@ -478,11 +483,11 @@ ENABLED
 ENCRYPTED
    : E N C R Y P T E D
    ;
-   
+
 EUCLIDEAN
     : E U C L I D E A N
     ;
-   
+
 EUCLIDEAN_SQUARED
     : E U C L I D E A N UNDERSCORE S Q U A R E D
     ;
@@ -745,7 +750,7 @@ LBRACKET
    ;
 
 LCURLY
-   : '{'
+   : '{' -> pushMode(DEFAULT_MODE)
    ;
 
 LE
@@ -1049,7 +1054,7 @@ RBRACKET
    ;
 
 RCURLY
-   : '}'
+   : '}' { if (!_modeStack.isEmpty()) popMode(); }
    ;
 
 READ
@@ -1497,6 +1502,15 @@ EXTENDED_IDENTIFIER
    : PART_LETTER+
    ;
 
+INTERPOLATED_START_SINGLE
+   : [sS] '\'' -> pushMode(TEXT_SINGLE)
+   ;
+
+INTERPOLATED_START_DOUBLE
+   : [sS] '"'  -> pushMode(TEXT_DOUBLE)
+   ;
+
+
 ARROW_LINE
    : [\-\u00AD‐‑‒–—―﹘﹣－]
    ;
@@ -1663,12 +1677,48 @@ fragment EIGHT
 fragment NINE
    : [9]
    ;
-   
-fragment UNDERSCORE 
-       : [\u005F]
-       ;
+
+fragment UNDERSCORE
+   : [\u005F]
+   ;
 
 // Should always be last in the file before modes
 ErrorChar
     : .
     ;
+
+mode TEXT_SINGLE;
+
+INTERPOLATED_EXPR_START_SINGLE
+   : [{] -> pushMode(DEFAULT_MODE)
+   ;
+
+INTERPOLATED_END_SINGLE
+   : '\'' -> popMode
+   ;
+
+INTERPOLATED_TEXT_SINGLE
+   : (~['{}\\] | EscapeSequence)+
+   ;
+
+INTERPOLATED_UNEXPECTED_RCURLY_SINGLE
+   : [}]
+   ;
+
+mode TEXT_DOUBLE;
+
+INTERPOLATED_EXPR_START_DOUBLE
+   : [{] -> pushMode(DEFAULT_MODE)
+   ;
+
+INTERPOLATED_END_DOUBLE
+   : '"'  -> popMode
+   ;
+
+INTERPOLATED_TEXT_DOUBLE
+   : (~["{}\\] | EscapeSequence)+
+   ;
+
+INTERPOLATED_UNEXPECTED_RCURLY_DOUBLE
+   : [}]
+   ;
