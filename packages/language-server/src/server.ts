@@ -5,6 +5,7 @@ import {
   Hover,
   HoverParams,
   InitializeResult,
+  MarkupKind,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
@@ -255,10 +256,24 @@ connection.onHover((params: HoverParams): Hover | null => {
     return null;
   }
 
+  const parameters = hoverInfo.params.map((param) => {
+    return `- \`${param.name}\` - ${param.description}`;
+  });
+
   return {
     contents: {
-      kind: 'plaintext',
-      value: hoverInfo.signature,
+      kind: MarkupKind.Markdown,
+      value: [
+        '```cypher',
+        hoverInfo.signature,
+        '```',
+        hoverInfo.description,
+        '',
+        '**Parameters**',
+        ...parameters,
+        '',
+        `**Returns:** \`${hoverInfo.returnDescription}\``,
+      ].join('\n'),
     },
   };
 });

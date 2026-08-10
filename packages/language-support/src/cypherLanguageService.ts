@@ -858,6 +858,15 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 
 export type HoverInfo = {
   signature: string;
+  description: string;
+  returnDescription: string;
+  isDeprecated: boolean;
+  params: Array<{
+    name: string;
+    description: string;
+    isDeprecated: boolean;
+    type: string;
+  }>;
 };
 
 export class CypherLanguageService {
@@ -940,8 +949,20 @@ export class CypherLanguageService {
       if (!fn) {
         return undefined;
       }
+
       return {
-        signature: fn?.signature,
+        signature: fn.signature,
+        description: fn.description,
+        returnDescription: fn.returnDescription,
+        isDeprecated: fn.isDeprecated,
+        params: fn.argumentDescription.map((arg) => {
+          return {
+            name: arg.name,
+            description: arg.description,
+            isDeprecated: arg.isDeprecated,
+            type: arg.type,
+          };
+        }),
       };
     }
   }
