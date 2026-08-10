@@ -859,7 +859,14 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
 export type HoverInfo = {
   signature: string;
   description: string;
-  returnDescription: string;
+  returnDescription:
+    | string
+    | Array<{
+        name: string;
+        description: string;
+        isDeprecated: boolean;
+        type: string;
+      }>;
   isDeprecated: boolean;
   params: Array<{
     name: string;
@@ -940,6 +947,39 @@ export class CypherLanguageService {
       return undefined;
     }
 
+    if (method.methodType === 'procedure') {
+      const methodName = method.methodName;
+      if (!dbSchema.functions) {
+        return undefined;
+      }
+      const fn = dbSchema.procedures?.[cypherVersion]?.[methodName];
+      if (!fn) {
+        return undefined;
+      }
+
+      return {
+        signature: fn.signature,
+        description: fn.description,
+        returnDescription: fn.returnDescription.map((value) => {
+          return {
+            name: value.name,
+            description: value.description,
+            isDeprecated: value.isDeprecated,
+            type: value.type,
+          };
+        }),
+        isDeprecated: fn.option.deprecated,
+        params: fn.argumentDescription.map((arg) => {
+          return {
+            name: arg.name,
+            description: arg.description,
+            isDeprecated: arg.isDeprecated,
+            type: arg.type,
+          };
+        }),
+      };
+    }
+
     if (method.methodType === 'function') {
       const methodName = method.methodName;
       if (!dbSchema.functions) {
@@ -953,7 +993,7 @@ export class CypherLanguageService {
       return {
         signature: fn.signature,
         description: fn.description,
-        returnDescription: fn.returnDescription,
+        return: fn.returnDescription,
         isDeprecated: fn.isDeprecated,
         params: fn.argumentDescription.map((arg) => {
           return {

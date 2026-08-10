@@ -35,6 +35,10 @@ import {
 import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
+import {
+  createParametersHoverString,
+  createReturnHoverString,
+} from './hoverInfo';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -256,10 +260,6 @@ connection.onHover((params: HoverParams): Hover | null => {
     return null;
   }
 
-  const parameters = hoverInfo.params.map((param) => {
-    return `- \`${param.name}\` - ${param.description}`;
-  });
-
   return {
     contents: {
       kind: MarkupKind.Markdown,
@@ -269,10 +269,9 @@ connection.onHover((params: HoverParams): Hover | null => {
         '```',
         hoverInfo.description,
         '',
-        '**Parameters**',
-        ...parameters,
+        ...createParametersHoverString(hoverInfo.params),
         '',
-        `**Returns:** \`${hoverInfo.returnDescription}\``,
+        ...createReturnHoverString(hoverInfo.returnDescription),
       ].join('\n'),
     },
   };
