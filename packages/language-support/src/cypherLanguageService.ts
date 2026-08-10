@@ -949,7 +949,7 @@ export class CypherLanguageService {
 
     if (method.methodType === 'procedure') {
       const methodName = method.methodName;
-      if (!dbSchema.functions) {
+      if (!dbSchema.procedures) {
         return undefined;
       }
       const fn = dbSchema.procedures?.[cypherVersion]?.[methodName];
@@ -993,7 +993,7 @@ export class CypherLanguageService {
       return {
         signature: fn.signature,
         description: fn.description,
-        return: fn.returnDescription,
+        returnDescription: fn.returnDescription,
         isDeprecated: fn.isDeprecated,
         params: fn.argumentDescription.map((arg) => {
           return {
