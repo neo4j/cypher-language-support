@@ -311,7 +311,9 @@ function warnOnUndeclaredProperties(
   );
 
   for (const property of missingProperties) {
-    const message = property.propertyName + ' not available';
+    const message =
+      property.propertyName +
+      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
     const warning = generateSyntaxDiagnostic(
       property.propertyName,
       property,

@@ -1991,7 +1991,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toMatchInlineSnapshot(`
       [
         {
-          "message": "invalidProp not available",
+          "message": "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 54,
             "start": 43,
@@ -2028,7 +2028,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toMatchInlineSnapshot(`
       [
         {
-          "message": "invalidProp not available",
+          "message": "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 58,
             "start": 45,
@@ -2066,7 +2066,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toMatchInlineSnapshot(`
       [
         {
-          "message": "invalid not available",
+          "message": "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 53,
             "start": 46,
@@ -2084,7 +2084,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           "severity": 2,
         },
         {
-          "message": "invalid2 not available",
+          "message": "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 87,
             "start": 79,
@@ -2121,7 +2121,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ).toMatchInlineSnapshot(`
       [
         {
-          "message": "invalid not available",
+          "message": "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 28,
             "start": 21,
@@ -2139,7 +2139,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           "severity": 2,
         },
         {
-          "message": "invalid2 not available",
+          "message": "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           "offsets": {
             "end": 59,
             "start": 51,
