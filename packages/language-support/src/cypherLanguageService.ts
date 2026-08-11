@@ -27,7 +27,6 @@ import {
   PatternElementContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
-  findCaret,
   findParent,
   findStopNode,
   inNodeLabel,
@@ -49,9 +48,10 @@ import {
   SymbolTable,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
-import { getSignatureInfo, SignatureHelper } from './signatureHelp.js';
+import { getSignatureInfo } from './signatureHelp.js';
 import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from './autocompletion/autocompletion.js';
+import { getHoverInfo } from './hover.js';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -930,81 +930,11 @@ export class CypherLanguageService {
     { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
   ): HoverInfo | undefined {
     const parsingResult = this.parse(query);
-    const result = findCaret(parsingResult, caretPosition);
-    if (!result) {
-      return undefined;
-    }
-
-    const statement = result.statement;
-    const signatureHelper = new SignatureHelper(statement.tokens, result.token);
-    const cypherVersion = statement.cypherVersion ?? dbSchema.defaultLanguage;
-    if (!cypherVersion) {
-      return undefined;
-    }
-    ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-    const method = signatureHelper.result;
-    if (!method) {
-      return undefined;
-    }
-
-    if (method.methodType === 'procedure') {
-      const methodName = method.methodName;
-      if (!dbSchema.procedures) {
-        return undefined;
-      }
-      const fn = dbSchema.procedures?.[cypherVersion]?.[methodName];
-      if (!fn) {
-        return undefined;
-      }
-
-      return {
-        signature: fn.signature,
-        description: fn.description,
-        returnDescription: fn.returnDescription.map((value) => {
-          return {
-            name: value.name,
-            description: value.description,
-            isDeprecated: value.isDeprecated,
-            type: value.type,
-          };
-        }),
-        isDeprecated: fn.option.deprecated,
-        params: fn.argumentDescription.map((arg) => {
-          return {
-            name: arg.name,
-            description: arg.description,
-            isDeprecated: arg.isDeprecated,
-            type: arg.type,
-          };
-        }),
-      };
-    }
-
-    if (method.methodType === 'function') {
-      const methodName = method.methodName;
-      if (!dbSchema.functions) {
-        return undefined;
-      }
-      const fn = dbSchema.functions?.[cypherVersion]?.[methodName];
-      if (!fn) {
-        return undefined;
-      }
-
-      return {
-        signature: fn.signature,
-        description: fn.description,
-        returnDescription: fn.returnDescription,
-        isDeprecated: fn.isDeprecated,
-        params: fn.argumentDescription.map((arg) => {
-          return {
-            name: arg.name,
-            description: arg.description,
-            isDeprecated: arg.isDeprecated,
-            type: arg.type,
-          };
-        }),
-      };
-    }
+    return getHoverInfo({
+      caretPosition,
+      dbSchema,
+      parsingResult,
+    });
   }
 
   getSignatureHelp(
