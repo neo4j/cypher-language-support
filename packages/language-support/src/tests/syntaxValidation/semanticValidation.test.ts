@@ -1988,28 +1988,27 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           ...testData.mockSchema,
         },
       }),
-    ).toMatchInlineSnapshot(`
-      [
-        {
-          "message": "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 54,
-            "start": 43,
-          },
-          "range": {
-            "end": {
-              "character": 33,
-              "line": 2,
-            },
-            "start": {
-              "character": 22,
-              "line": 2,
-            },
-          },
-          "severity": 2,
+    ).toEqual([
+      {
+        message:
+          "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 54,
+          start: 43,
         },
-      ]
-    `);
+        range: {
+          end: {
+            character: 33,
+            line: 2,
+          },
+          start: {
+            character: 22,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 
   test('Shows errors for returning invalid escaped property', () => {
@@ -2025,28 +2024,27 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           ...testData.mockSchema,
         },
       }),
-    ).toMatchInlineSnapshot(`
-      [
-        {
-          "message": "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 58,
-            "start": 45,
-          },
-          "range": {
-            "end": {
-              "character": 35,
-              "line": 2,
-            },
-            "start": {
-              "character": 24,
-              "line": 2,
-            },
-          },
-          "severity": 2,
+    ).toEqual([
+      {
+        message:
+          "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 58,
+          start: 45,
         },
-      ]
-    `);
+        range: {
+          end: {
+            character: 35,
+            line: 2,
+          },
+          start: {
+            character: 24,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 
   test('Shows errors for mathching and filtering invalid property in a relationship', () => {
@@ -2063,46 +2061,46 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           ...testData.mockSchema,
         },
       }),
-    ).toMatchInlineSnapshot(`
-      [
-        {
-          "message": "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 53,
-            "start": 46,
-          },
-          "range": {
-            "end": {
-              "character": 52,
-              "line": 1,
-            },
-            "start": {
-              "character": 45,
-              "line": 1,
-            },
-          },
-          "severity": 2,
+    ).toEqual([
+      {
+        message:
+          "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 53,
+          start: 46,
         },
-        {
-          "message": "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 87,
-            "start": 79,
+        range: {
+          end: {
+            character: 52,
+            line: 1,
           },
-          "range": {
-            "end": {
-              "character": 20,
-              "line": 2,
-            },
-            "start": {
-              "character": 12,
-              "line": 2,
-            },
+          start: {
+            character: 45,
+            line: 1,
           },
-          "severity": 2,
         },
-      ]
-    `);
+        severity: 2,
+      },
+      {
+        message:
+          "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 87,
+          start: 79,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 2,
+          },
+          start: {
+            character: 12,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
   test('Shows errors for mathching and filtering invalid property', () => {
     const query = `
@@ -2118,46 +2116,46 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
           ...testData.mockSchema,
         },
       }),
-    ).toMatchInlineSnapshot(`
-      [
-        {
-          "message": "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 28,
-            "start": 21,
-          },
-          "range": {
-            "end": {
-              "character": 27,
-              "line": 1,
-            },
-            "start": {
-              "character": 20,
-              "line": 1,
-            },
-          },
-          "severity": 2,
+    ).toEqual([
+      {
+        message:
+          "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 28,
+          start: 21,
         },
-        {
-          "message": "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
-          "offsets": {
-            "end": 59,
-            "start": 51,
+        range: {
+          end: {
+            character: 27,
+            line: 1,
           },
-          "range": {
-            "end": {
-              "character": 20,
-              "line": 2,
-            },
-            "start": {
-              "character": 12,
-              "line": 2,
-            },
+          start: {
+            character: 20,
+            line: 1,
           },
-          "severity": 2,
         },
-      ]
-    `);
+        severity: 2,
+      },
+      {
+        message:
+          "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 59,
+          start: 51,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 2,
+          },
+          start: {
+            character: 12,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
   });
 
   test('No errors for match -> set with invalid properties', () => {
