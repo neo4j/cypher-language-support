@@ -46,6 +46,7 @@ import {
   allCypherVersions,
   SymbolsInfo,
   SymbolTable,
+  HoverInfo,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
 import { getSignatureInfo } from './signatureHelp.js';
@@ -855,26 +856,6 @@ function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
       }),
     );
 }
-
-export type HoverInfo = {
-  signature: string;
-  description: string;
-  returnDescription:
-    | string
-    | Array<{
-        name: string;
-        description: string;
-        isDeprecated: boolean;
-        type: string;
-      }>;
-  isDeprecated: boolean;
-  params: Array<{
-    name: string;
-    description: string;
-    isDeprecated: boolean;
-    type: string;
-  }>;
-};
 
 export class CypherLanguageService {
   private parsingResult?: ParsingResult;

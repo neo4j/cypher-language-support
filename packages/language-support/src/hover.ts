@@ -1,9 +1,9 @@
 import { ParseTreeWalker } from 'antlr4';
-import { HoverInfo, ParsingResult } from './cypherLanguageService.js';
+import { ParsingResult } from './cypherLanguageService.js';
 import { DbSchema } from './dbSchema.js';
 import { SignatureHelper } from './signatureHelp.js';
 import { findCaret } from './helpers.js';
-import { Neo4jFunction, Neo4jProcedure } from './types.js';
+import { HoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export function getHoverInfo({
   caretPosition,

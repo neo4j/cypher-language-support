@@ -90,3 +90,23 @@ export type SymbolsInfo = {
   query: string;
   symbolTables: SymbolTable[];
 };
+
+export type HoverInfo = {
+  signature: string;
+  description: string;
+  returnDescription:
+    | string
+    | Array<{
+        name: string;
+        description: string;
+        isDeprecated: boolean;
+        type: string;
+      }>;
+  isDeprecated: boolean;
+  params: Array<{
+    name: string;
+    description: string;
+    isDeprecated: boolean;
+    type: string;
+  }>;
+};

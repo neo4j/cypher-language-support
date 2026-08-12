@@ -1,4 +1,4 @@
-import { HoverInfo } from '@neo4j-cypher/language-support/dist/esm/project/language-support/src/cypherLanguageService';
+import { HoverInfo } from '@neo4j-cypher/language-support';
 
 export function createParametersHoverString(
   params: HoverInfo['params'],
