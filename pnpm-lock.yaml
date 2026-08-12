@@ -53,6 +53,9 @@ importers:
       semver:
         specifier: ^7.6.1
         version: 7.7.1
+      ts-node:
+        specifier: 10.9.1
+        version: 10.9.1(@types/node@24.10.1)(typescript@5.8.3)
       tsx:
         specifier: ^4.19.4
         version: 4.19.4
