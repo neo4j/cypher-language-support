@@ -58,6 +58,5 @@
     }
   },
   "ignore": ["vendor/**/*"],
-  "ignoreBinaries": ["package", "dev", "vsce", "ovsx"],
-  "ignoreDependencies": ["ts-node"]
+  "ignoreBinaries": ["package", "dev", "vsce", "ovsx"]
 }

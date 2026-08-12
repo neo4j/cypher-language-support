@@ -51,7 +51,7 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
-      - name: knip
+      - name: Detect unused exports and dependencies
         run: pnpm knip
 
   unit-test:
