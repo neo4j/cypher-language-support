@@ -82,6 +82,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.punctuation]: SemanticTokenTypes.operator,
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
+    [CypherTokenType.interpolationDelimiter]: SemanticTokenTypes.namespace,
     [CypherTokenType.property]: SemanticTokenTypes.property,
     [CypherTokenType.setting]: SemanticTokenTypes.enum,
     [CypherTokenType.settingValue]: SemanticTokenTypes.enumMember,
@@ -126,13 +127,13 @@ class SyntaxHighlighter extends CypherParserListener {
       const lCurly = ctx.INTERPOLATED_EXPR_START_SINGLE();
       this.addToken(
         lCurly.symbol,
-        CypherTokenType.paramDollar,
+        CypherTokenType.interpolationDelimiter,
         lCurly.getText(),
       );
       const rCurly = ctx.RCURLY();
       this.addToken(
         rCurly.symbol,
-        CypherTokenType.paramDollar,
+        CypherTokenType.interpolationDelimiter,
         rCurly.getText(),
       );
     } else {
@@ -145,13 +146,13 @@ class SyntaxHighlighter extends CypherParserListener {
       const lCurly = ctx.INTERPOLATED_EXPR_START_DOUBLE();
       this.addToken(
         lCurly.symbol,
-        CypherTokenType.paramDollar,
+        CypherTokenType.interpolationDelimiter,
         lCurly.getText(),
       );
       const rCurly = ctx.RCURLY();
       this.addToken(
         rCurly.symbol,
-        CypherTokenType.paramDollar,
+        CypherTokenType.interpolationDelimiter,
         rCurly.getText(),
       );
     } else {

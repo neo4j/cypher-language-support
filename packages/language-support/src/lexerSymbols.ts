@@ -10,6 +10,7 @@ export enum CypherTokenType {
   variable = 'variable',
   paramDollar = 'paramDollar',
   paramValue = 'paramValue',
+  interpolationDelimiter = 'interpolationDelimiter',
   symbolicName = 'symbolicName',
   operator = 'operator',
   stringLiteral = 'stringLiteral',

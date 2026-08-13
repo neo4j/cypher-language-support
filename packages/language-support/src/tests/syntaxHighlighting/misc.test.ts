@@ -353,7 +353,7 @@ describe('String interpolation', () => {
           startOffset: 32,
         },
         token: '{',
-        tokenType: 'paramDollar',
+        tokenType: 'interpolationDelimiter',
       },
       {
         bracketInfo: undefined,
@@ -397,7 +397,7 @@ describe('String interpolation', () => {
           startOffset: 42,
         },
         token: '}',
-        tokenType: 'paramDollar',
+        tokenType: 'interpolationDelimiter',
       },
       {
         bracketInfo: undefined,
@@ -509,7 +509,7 @@ describe('String interpolation', () => {
           startOffset: 42,
         },
         token: '{',
-        tokenType: 'paramDollar',
+        tokenType: 'interpolationDelimiter',
       },
       {
         bracketInfo: undefined,
@@ -586,7 +586,7 @@ describe('String interpolation', () => {
           startOffset: 60,
         },
         token: '}',
-        tokenType: 'paramDollar',
+        tokenType: 'interpolationDelimiter',
       },
       {
         bracketInfo: undefined,
