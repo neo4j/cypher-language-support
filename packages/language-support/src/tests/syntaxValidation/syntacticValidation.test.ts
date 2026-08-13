@@ -1721,4 +1721,70 @@ describe('Syntactic validation spec', () => {
       },
     ]);
   });
+
+  test('Does not give errors on valid interpolated string', () => {
+    const query = 'CYPHER 25 RETURN s"This is a string with an { 50+2 } in it"';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Lints on string interpolation in cypher 5 ', () => {
+    const query = 'CYPHER 5 RETURN s"This is a string with an { 50+2 } in it"';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          labels: [],
+          relationshipTypes: [],
+        },
+      }),
+    ).toEqual([
+      {
+        message: 'Variable `s` not defined',
+        offsets: {
+          end: 17,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          "Invalid input '\"This is a string with an { 50+2 } in it\"': expected an expression, ',', 'AS', 'ORDER BY', 'CALL', 'CREATE', 'LOAD CSV', 'DELETE', 'DETACH', 'FINISH', 'FOREACH', 'INSERT', 'LIMIT', 'MATCH', 'MERGE', 'NODETACH', 'OFFSET', 'OPTIONAL', 'REMOVE', 'RETURN', 'SET', 'SKIP', 'UNION', 'UNWIND', 'USE', 'WITH' or <EOF>",
+        offsets: {
+          end: 58,
+          start: 17,
+        },
+        range: {
+          end: {
+            character: 58,
+            line: 0,
+          },
+          start: {
+            character: 17,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
 });

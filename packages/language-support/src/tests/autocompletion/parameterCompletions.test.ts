@@ -452,4 +452,35 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
     expect(actualCompletionList.length).toBe(1);
   });
+
+  test('Suggests parameter in string interpolation', () => {
+    const query = 'MATCH (n) RETURN s"My param: { $';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: '$mapParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'mapParam',
+        },
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'stringParam',
+        },
+        {
+          label: '$intParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'intParam',
+        },
+        {
+          label: '$some param',
+          kind: CompletionItemKind.Variable,
+          insertText: '`some param`',
+        },
+      ],
+      excluded: [],
+    });
+  });
 });
