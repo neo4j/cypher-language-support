@@ -10,6 +10,7 @@ export enum CypherTokenType {
   variable = 'variable',
   paramDollar = 'paramDollar',
   paramValue = 'paramValue',
+  interpolationDelimiter = 'interpolationDelimiter',
   symbolicName = 'symbolicName',
   operator = 'operator',
   stringLiteral = 'stringLiteral',
@@ -67,6 +68,8 @@ const lexerBrackets = [
   CypherLexer.LPAREN,
   CypherLexer.RBRACKET,
   CypherLexer.RCURLY,
+  CypherLexer.INTERPOLATED_EXPR_START_DOUBLE,
+  CypherLexer.INTERPOLATED_EXPR_START_SINGLE,
   CypherLexer.RPAREN,
 ];
 const lexerPunctuation = [CypherLexer.SEMICOLON];
@@ -87,6 +90,14 @@ const lexerStringLiteral = [
   CypherLexer.STRING_LITERAL1,
   CypherLexer.STRING_LITERAL2,
   CypherLexer.OBFUSCATION,
+  CypherLexer.INTERPOLATED_START_SINGLE,
+  CypherLexer.INTERPOLATED_END_SINGLE,
+  CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_SINGLE,
+  CypherLexer.INTERPOLATED_TEXT_SINGLE,
+  CypherLexer.INTERPOLATED_START_DOUBLE,
+  CypherLexer.INTERPOLATED_END_DOUBLE,
+  CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_DOUBLE,
+  CypherLexer.INTERPOLATED_TEXT_DOUBLE,
 ];
 
 const lexerGarbage = [
@@ -118,6 +129,7 @@ export const lexerKeywords = [
   CypherLexer.ALL,
   CypherLexer.ALLREDUCE,
   CypherLexer.ALTER,
+  CypherLexer.ANALYZER,
   CypherLexer.AND,
   CypherLexer.ANY,
   CypherLexer.ARRAY,
@@ -156,6 +168,7 @@ export const lexerKeywords = [
   CypherLexer.COUNT,
   CypherLexer.CREATE,
   CypherLexer.CREDENTIAL,
+  CypherLexer.CREDENTIALS,
   CypherLexer.CSV,
   CypherLexer.CURRENT,
   CypherLexer.DATA,

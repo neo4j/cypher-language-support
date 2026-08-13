@@ -180,15 +180,19 @@ whereClause
    ;
 
 searchClause
-   : SEARCH variable IN LPAREN indexSpecificationClause forClause whereClause? limit RPAREN scoreClause?
+   : SEARCH variable IN LPAREN (FULLTEXT | VECTOR) indexSpecificationClause forClause analyzerClause? whereClause? skip? limit RPAREN scoreClause?
    ;
 
 indexSpecificationClause
-   : VECTOR INDEX commandNameExpression
+   : INDEX commandNameExpression
    ;
 
 forClause
    : FOR expression
+   ;
+
+analyzerClause
+   : WITH ANALYZER expression
    ;
 
 scoreClause
@@ -570,7 +574,6 @@ expression8
 
 expression7
    : expression6 comparisonExpression6?
-   | propertyExistsPredicate
    ;
 
 // Making changes here? Consider looking at extendedWhen too.
@@ -651,10 +654,12 @@ expression1
    | vectorDistanceFunction
    | vectorNormFunction
    | trimFunction
+   | propertyExistsPredicate
    | patternExpression
    | shortestPathExpression
    | parenthesizedExpression
    | functionInvocation
+   | interpolatedStringLiteral
    | variable
    | obfuscatedLiteral
    ;
@@ -1617,7 +1622,7 @@ userAuthAttribute
    ;
 
 showUsers
-   : (USER | USERS) (WITH AUTH)? showCommandYield?
+   : (USER | USERS) (WITH AUTH)? (AS commandToken)? showCommandYield?
    ;
 
 showCurrentUser
@@ -1733,7 +1738,7 @@ loadPrivilege
 showPrivilege
    : SHOW (
       (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER METADATA? | SECRETS) ON DBMS
+      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER (CREDENTIALS | METADATA)? | SECRETS) ON DBMS
    )
    ;
 
@@ -1830,7 +1835,7 @@ secretToken
 
 secretQualifier
   : TIMES
-  | stringOrParameter
+  | stringOrParameterExpression
   ;
 
 userQualifier
@@ -2172,6 +2177,29 @@ stringLiteral
    : STRING_LITERAL1
    | STRING_LITERAL2
    ;
+   
+interpolatedStringLiteral
+   : interpolatedStringLiteralSingle
+   | interpolatedStringLiteralDouble
+   ;
+
+interpolatedStringLiteralSingle
+   : INTERPOLATED_START_SINGLE interpolatedElementSingle* INTERPOLATED_END_SINGLE
+   ;
+
+interpolatedStringLiteralDouble
+   : INTERPOLATED_START_DOUBLE interpolatedElementDouble* INTERPOLATED_END_DOUBLE
+   ;
+
+interpolatedElementSingle
+   : INTERPOLATED_TEXT_SINGLE
+   | INTERPOLATED_EXPR_START_SINGLE expression RCURLY
+   ;
+
+interpolatedElementDouble
+   : INTERPOLATED_TEXT_DOUBLE
+   | INTERPOLATED_EXPR_START_DOUBLE expression RCURLY
+   ;
 
 // Should return an Expression
 stringOrParameterExpression
@@ -2243,6 +2271,7 @@ unescapedSymbolicNameString_
    | ALL
    | ALLREDUCE
    | ALTER
+   | ANALYZER
    | AND
    | ANY
    | ARRAY
@@ -2281,6 +2310,7 @@ unescapedSymbolicNameString_
    | COUNT
    | CREATE
    | CREDENTIAL
+   | CREDENTIALS
    | CSV
    | CURRENT
    | CYPHER
@@ -2437,6 +2467,7 @@ unescapedSymbolicNameString_
    | PROCEDURES
    | PROPERTIES
    | PROPERTY
+   | PROPERTY_EXISTS
    | PROVIDER
    | PROVIDERS
    | RANGE

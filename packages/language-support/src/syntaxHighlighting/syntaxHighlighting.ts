@@ -9,6 +9,8 @@ import {
   CypherOptionNameContext,
   CypherOptionValueContext,
   FunctionNameContext,
+  InterpolatedElementDoubleContext,
+  InterpolatedElementSingleContext,
   KeywordLiteralContext,
   LabelNameContext,
   LabelOrRelTypeContext,
@@ -80,6 +82,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.punctuation]: SemanticTokenTypes.operator,
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
+    [CypherTokenType.interpolationDelimiter]: SemanticTokenTypes.namespace,
     [CypherTokenType.property]: SemanticTokenTypes.property,
     [CypherTokenType.setting]: SemanticTokenTypes.enum,
     [CypherTokenType.settingValue]: SemanticTokenTypes.enumMember,
@@ -118,6 +121,44 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     }
   }
+
+  exitInterpolatedElementSingle = (ctx: InterpolatedElementSingleContext) => {
+    if (ctx.INTERPOLATED_EXPR_START_SINGLE() && ctx.RCURLY()) {
+      const lCurly = ctx.INTERPOLATED_EXPR_START_SINGLE();
+      this.addToken(
+        lCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        lCurly.getText(),
+      );
+      const rCurly = ctx.RCURLY();
+      this.addToken(
+        rCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        rCurly.getText(),
+      );
+    } else {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
+  };
+
+  exitInterpolatedElementDouble = (ctx: InterpolatedElementDoubleContext) => {
+    if (ctx.INTERPOLATED_EXPR_START_DOUBLE() && ctx.RCURLY()) {
+      const lCurly = ctx.INTERPOLATED_EXPR_START_DOUBLE();
+      this.addToken(
+        lCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        lCurly.getText(),
+      );
+      const rCurly = ctx.RCURLY();
+      this.addToken(
+        rCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        rCurly.getText(),
+      );
+    } else {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
+  };
 
   exitCypherOptionValue = (ctx: CypherOptionValueContext) => {
     this.addToken(ctx.start, CypherTokenType.settingValue, ctx.getText());

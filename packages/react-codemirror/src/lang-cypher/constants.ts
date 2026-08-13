@@ -42,6 +42,10 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   number: NodeType.define({ id: 28, name: 'numberLiteral' }),
   setting: NodeType.define({ id: 29, name: 'setting' }),
   settingValue: NodeType.define({ id: 30, name: 'settingValue' }),
+  interpolationDelimiter: NodeType.define({
+    id: 31,
+    name: 'interpolationDelimiter',
+  }),
 });
 
 type PrismSpecificTokenType =
@@ -68,6 +72,7 @@ export const tokenTypeToStyleTag: Record<HighlightedCypherTokenTypes, Tag> = {
   variable: tags.variableName,
   paramDollar: tags.atom,
   paramValue: tags.atom,
+  interpolationDelimiter: tags.atom,
   symbolicName: tags.variableName,
   operator: tags.operator,
   stringLiteral: tags.string,
