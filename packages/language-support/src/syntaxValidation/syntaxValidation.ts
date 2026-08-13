@@ -337,7 +337,7 @@ function isNodeOrRelationshipProperty(
   const symbol = symbolTable.find((symbol) => {
     return symbol.variable === variable.name;
   });
-  return symbol && symbolIsNodeOrRel(symbol);
+  return Boolean(symbol && symbolIsNodeOrRel(symbol));
 }
 
 /** Checks all possible types of a symbol are Node or Relationship */
@@ -351,10 +351,7 @@ function symbolIsNodeOrRel(symbol: Symbol): boolean {
   });
 }
 
-export function sortByPositionAndMessage(
-  a: SyntaxDiagnostic,
-  b: SyntaxDiagnostic,
-) {
+function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
@@ -582,8 +579,6 @@ function warningOnDeprecatedFunction(
   }
   return warnings;
 }
-
-export const paramMsgStart = 'Parameter ';
 
 function errorOnUndeclaredParameters(
   parsingResult: ParsedStatement,

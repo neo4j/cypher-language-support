@@ -11,7 +11,7 @@ import type { HostPortalCallbacks } from './hostCallbacks';
 /** Lifecycle callbacks for an inline panel. See {@link HostPortalCallbacks}. */
 export type InlinePanelCallbacks = HostPortalCallbacks;
 
-export type InlinePanelShowOptions = {
+type InlinePanelShowOptions = {
   /** Document position the panel anchors to. */
   pos: number;
   /**

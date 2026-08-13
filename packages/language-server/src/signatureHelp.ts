@@ -8,7 +8,7 @@ import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import { languageService } from './server';
 
-export const emptyResult: SignatureHelp = {
+const emptyResult: SignatureHelp = {
   signatures: [],
   activeSignature: undefined,
   activeParameter: undefined,

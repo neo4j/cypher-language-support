@@ -97,11 +97,11 @@ export const darkThemeConstants: ThemeOptions = {
 };
 
 type ExtraThemeOptions = { inheritBgColor?: boolean };
-export const ayuLightTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
+const ayuLightTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
   return createCypherTheme({ ...lightThemeConstants, inheritBgColor });
 };
 
-export const ayuDarkTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
+const ayuDarkTheme = ({ inheritBgColor }: ExtraThemeOptions) => {
   return createCypherTheme({ ...darkThemeConstants, inheritBgColor });
 };
 

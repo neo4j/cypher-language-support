@@ -2,7 +2,7 @@ import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
 import { ExecuteQueryArgs, DbType } from '../types/sdkTypes.js';
 
-export type DatabaseStatus =
+type DatabaseStatus =
   | 'online'
   | 'offline'
   | 'starting'
@@ -111,7 +111,7 @@ export function listDatabases(): ExecuteQueryArgs<{
  * @input instances - a record of database instances
  * @output a record of logical databases
  */
-export function getLogicalDatabases(
+function getLogicalDatabases(
   instances: Record<string, Database>,
 ): Record<string, Database> {
   // Two databases with the same name but different properties will be merged into one
@@ -145,7 +145,7 @@ export function getLogicalDatabases(
   );
 }
 
-export function sortDatabases(databases: Database[]) {
+function sortDatabases(databases: Database[]) {
   function databaseComparator(a: Database, b: Database) {
     // disable eslint to make code more readable
     /* eslint-disable curly */

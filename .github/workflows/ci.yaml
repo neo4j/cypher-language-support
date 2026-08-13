@@ -51,6 +51,9 @@ jobs:
       - name: Check formatting
         run: pnpm format:check
 
+      - name: Detect unused exports and dependencies
+        run: pnpm knip
+
   unit-test:
     name: Unit tests
     needs: build

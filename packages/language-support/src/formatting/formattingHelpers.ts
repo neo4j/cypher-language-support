@@ -29,7 +29,7 @@ export interface Group {
   dbgText: string;
 }
 
-export interface BaseChunk {
+interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
@@ -227,27 +227,4 @@ export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
     }
   }
   return true;
-}
-
-export function getActiveGroups(
-  activeGroups: Group[],
-  groupsEnding: Set<number>,
-  chunk: Chunk,
-) {
-  for (const group of chunk.groupsStarting) {
-    activeGroups.push(group);
-  }
-  const newActiveGroups: Group[] = [];
-  for (const group of activeGroups) {
-    if (!groupsEnding.has(group.id)) {
-      newActiveGroups.push(group);
-    } else {
-      // Trim trailling spaces from groups that are ending
-      if (group.dbgText.at(-1) === ' ') {
-        group.size--;
-        group.dbgText = group.dbgText.slice(0, -1);
-      }
-    }
-  }
-  return newActiveGroups;
 }

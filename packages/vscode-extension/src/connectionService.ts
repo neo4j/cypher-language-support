@@ -22,7 +22,7 @@ export type Scheme =
   | 'bolt+s'
   | 'bolt+ssc';
 
-export type State = 'inactive' | 'activating' | 'active' | 'error';
+type State = 'inactive' | 'activating' | 'active' | 'error';
 
 /**
  * A Connection object that represents a connection to a Neo4j database.
@@ -231,7 +231,7 @@ export function getDatabaseConnectionString(
  * @param password The password for the Connection.
  * @returns The database connection settings.
  */
-export function getDatabaseConnectionSettings(
+function getDatabaseConnectionSettings(
   connection: Connection,
   password: string,
 ): Neo4jConnectionSettings {

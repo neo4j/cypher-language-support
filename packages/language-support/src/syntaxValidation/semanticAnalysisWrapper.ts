@@ -23,13 +23,13 @@ export interface SemanticAnalysisResult {
   symbolTable: SymbolTable;
 }
 
-export interface ElementPosition {
+interface ElementPosition {
   offset: number;
   line: number;
   column: number;
 }
 
-export interface SemanticAnalysisElement {
+interface SemanticAnalysisElement {
   message: string;
   startPosition: ElementPosition;
   endPosition: ElementPosition;
