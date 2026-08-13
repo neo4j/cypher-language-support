@@ -305,3 +305,300 @@ describe('Unfinished tokens', () => {
     ]);
   });
 });
+
+describe('String interpolation', () => {
+  test('Correctly colours curly braces in string interpolation', () => {
+    const query = `RETURN s"Contains string interp { 50 + 20 }"`;
+
+    expect(highlightSyntax(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 's"',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 23,
+        position: {
+          line: 0,
+          startCharacter: 9,
+          startOffset: 9,
+        },
+        token: 'Contains string interp ',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 32,
+          startOffset: 32,
+        },
+        token: '{',
+        tokenType: 'paramDollar',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        token: '50',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 37,
+          startOffset: 37,
+        },
+        token: '+',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 39,
+          startOffset: 39,
+        },
+        token: '20',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        token: '}',
+        tokenType: 'paramDollar',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 43,
+          startOffset: 43,
+        },
+        token: '"',
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
+
+  test('Correctly colours curly braces in string interpolation', () => {
+    const query = `MATCH (n) RETURN s'Contains string interp { n.Age - $offset }'`;
+
+    expect(highlightSyntax(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 5,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'MATCH',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: 'n',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 8,
+          startOffset: 8,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 10,
+          startOffset: 10,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 17,
+          startOffset: 17,
+        },
+        token: "s'",
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 23,
+        position: {
+          line: 0,
+          startCharacter: 19,
+          startOffset: 19,
+        },
+        token: 'Contains string interp ',
+        tokenType: 'stringLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        token: '{',
+        tokenType: 'paramDollar',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 44,
+          startOffset: 44,
+        },
+        token: 'n',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 45,
+          startOffset: 45,
+        },
+        token: '.',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 3,
+        position: {
+          line: 0,
+          startCharacter: 46,
+          startOffset: 46,
+        },
+        token: 'Age',
+        tokenType: 'property',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 50,
+          startOffset: 50,
+        },
+        token: '-',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 52,
+          startOffset: 52,
+        },
+        token: '$',
+        tokenType: 'paramDollar',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 53,
+          startOffset: 53,
+        },
+        token: 'offset',
+        tokenType: 'paramValue',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 60,
+          startOffset: 60,
+        },
+        token: '}',
+        tokenType: 'paramDollar',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 61,
+          startOffset: 61,
+        },
+        token: "'",
+        tokenType: 'stringLiteral',
+      },
+    ]);
+  });
+});

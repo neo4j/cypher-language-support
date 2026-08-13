@@ -67,6 +67,8 @@ export const lexerBrackets = [
   CypherLexer.LPAREN,
   CypherLexer.RBRACKET,
   CypherLexer.RCURLY,
+  CypherLexer.INTERPOLATED_EXPR_START_DOUBLE,
+  CypherLexer.INTERPOLATED_EXPR_START_SINGLE,
   CypherLexer.RPAREN,
 ];
 export const lexerPunctuation = [CypherLexer.SEMICOLON];
@@ -88,13 +90,11 @@ export const lexerStringLiteral = [
   CypherLexer.STRING_LITERAL2,
   CypherLexer.OBFUSCATION,
   CypherLexer.INTERPOLATED_START_SINGLE,
-  CypherLexer.INTERPOLATED_EXPR_START_SINGLE,
   CypherLexer.INTERPOLATED_END_SINGLE,
   CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_SINGLE,
   CypherLexer.INTERPOLATED_TEXT_SINGLE,
   CypherLexer.INTERPOLATED_START_DOUBLE,
   CypherLexer.INTERPOLATED_END_DOUBLE,
-  CypherLexer.INTERPOLATED_EXPR_START_DOUBLE,
   CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_DOUBLE,
   CypherLexer.INTERPOLATED_TEXT_DOUBLE,
 ];
