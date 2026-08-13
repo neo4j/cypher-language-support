@@ -23,7 +23,7 @@ export function createReturnHoverString(
   }
 
   if (typeof returnDescription === 'string') {
-    return [`**Returns:** ${returnDescription}`];
+    return [`**Returns:** \`${returnDescription}\``];
   }
   if (returnDescription.length === 0) {
     return [];

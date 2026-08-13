@@ -29,7 +29,7 @@ suite('Hover spec', () => {
           '**Parameters**',
           `- \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].description}`,
           '',
-          `**Returns:** ${absFunction.returnDescription}`,
+          `**Returns:** \`${absFunction.returnDescription}\``,
         ].join('\n'),
       );
     });
