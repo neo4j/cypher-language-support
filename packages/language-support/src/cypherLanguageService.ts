@@ -50,11 +50,13 @@ import {
   allCypherVersions,
   SymbolsInfo,
   SymbolTable,
+  HoverInfo,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
 import { getSignatureInfo } from './signatureHelp.js';
 import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from './autocompletion/autocompletion.js';
+import { getHoverInfo } from './hover.js';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -1021,6 +1023,18 @@ export class CypherLanguageService {
   highlightSyntax(query: string) {
     const parsingResult = this.parse(query);
     return highlightSyntax(query, { parsingResult });
+  }
+
+  hoverInfo(
+    query: string,
+    { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
+  ): HoverInfo | undefined {
+    const parsingResult = this.parse(query);
+    return getHoverInfo({
+      caretPosition,
+      dbSchema,
+      parsingResult,
+    });
   }
 
   getSignatureHelp(

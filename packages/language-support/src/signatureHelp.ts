@@ -84,7 +84,7 @@ function toSignatureHelp(
   return signatureHelp;
 }
 
-class SignatureHelper extends CypherCmdParserListener {
+export class SignatureHelper extends CypherCmdParserListener {
   result: ParsedMethod;
   constructor(
     private tokens: Token[],
