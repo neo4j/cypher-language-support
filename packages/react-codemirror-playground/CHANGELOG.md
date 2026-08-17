@@ -1,5 +1,18 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [0ddd727]
+- Updated dependencies [ce3820b]
+- Updated dependencies [9266800]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.40
+  - @neo4j-cypher/language-support@2.0.0-next.37
+
 ## 2.0.0-next.39
 
 ### Patch Changes

@@ -1,5 +1,15 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.37
+
+### Minor Changes
+
+- 6c863cd: Warning on missing property in the database schema
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+
 ## 2.0.0-next.36
 
 ### Patch Changes
