@@ -1,0 +1,69 @@
+{
+  $schema: 'https://docs.renovatebot.com/renovate-schema.json',
+  extends: [
+    // Sensible defaults, dependency dashboard issue, and automatic grouping of
+    // known lockstep-released monorepos (@codemirror/*, playwright, vitest, ...).
+    // Not config:js-app: this repo publishes libraries, so dependency ranges
+    // should stay as ranges instead of being pinned.
+    'config:recommended',
+    // Already part of config:recommended, but listed explicitly because its
+    // **/vendor/** ignore is what keeps Renovate out of the vendored fork in
+    // vendor/antlr4-c3 — this must survive even if the preset above changes.
+    ':ignoreModulesAndTests',
+    // Pin GitHub Actions to commit digests (tags are mutable and a known
+    // supply-chain attack vector); Renovate then updates the digests.
+    'helpers:pinGitHubActionDigests',
+    'schedule:weekly',
+  ],
+
+  // The repo does not use conventional commits; don't let autodetection guess.
+  semanticCommits: 'disabled',
+
+  // Only propose versions released at least 2 weeks ago. Applies to all
+  // managers (npm and github-actions alike); vulnerability-driven PRs bypass
+  // this. Complements the 3-day install-time cooldown already configured via
+  // pnpm's minimumReleaseAge in pnpm-workspace.yaml.
+  minimumReleaseAge: '2 weeks',
+
+  // Only rebase open PRs when they become conflicted, instead of on every
+  // push to main — keeps CI churn down.
+  rebaseWhen: 'conflicted',
+
+  packageRules: [
+    {
+      description: 'The antlr4 runtime must stay in lockstep with the codegen tool version (ANTLR4_TOOLS_ANTLR_VERSION in language-support gen-parser), so a bump is a coordinated manual change, not a lone dependency PR (upstream has been inactive for years anyway)',
+      matchDepNames: ['antlr4'],
+      enabled: false,
+    },
+    {
+      description: 'lint-worker deliberately pins older published language-support versions (npm aliases like languageSupport-next.13) to lint against older Neo4j versions',
+      matchDepNames: ['/^languageSupport-/'],
+      enabled: false,
+    },
+    {
+      description: '@types/vscode is pinned to match engines.vscode in the extension',
+      matchDepNames: ['@types/vscode'],
+      enabled: false,
+    },
+    {
+      description: 'Internal Neo4j UI packages already enforce a release age upstream (mirrors the minimumReleaseAgeExclude list in pnpm-workspace.yaml), so skip the 2-week wait',
+      matchPackageNames: ['/^@neo4j-ndl//', '/^@neo4j-nvl//'],
+      minimumReleaseAge: null,
+    },
+    {
+      groupName: 'neo4j design library',
+      groupSlug: 'neo4j-ndl',
+      matchPackageNames: ['/^@neo4j-ndl//'],
+    },
+    {
+      groupName: 'oxc toolchain',
+      groupSlug: 'oxc',
+      matchPackageNames: ['oxlint', 'oxlint-tsgolint', 'oxfmt'],
+    },
+    {
+      matchManagers: ['github-actions'],
+      groupName: 'all GitHub actions',
+      groupSlug: 'all-gha',
+    },
+  ],
+}
