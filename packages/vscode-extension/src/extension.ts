@@ -15,8 +15,11 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import {
+  Connections,
   disconnectDatabaseConnectionOnExtensionDeactivation,
+  getConnections,
   reconnectDatabaseConnectionOnExtensionActivation,
+  Scheme,
 } from './connectionService';
 import { getSchemaPoller, setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
@@ -42,6 +45,14 @@ export async function activate(context: ExtensionContext) {
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
+  // key: string;
+  //   scheme: Scheme;
+  //   name?: string;
+  //   host: string;
+  //   port?: string;
+  //   user: string;
+  //   database?: string;
+  //   state: State;
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
@@ -141,6 +152,42 @@ export async function activate(context: ExtensionContext) {
       });
     }
   });
+  const oldConnections: Connections = getConnections();
+  const connections:
+    | {
+        key: string;
+        scheme: Scheme;
+        name: string;
+        host: string;
+        port: string;
+        user: string;
+        password: string;
+      }[]
+    | undefined = workspace
+    .getConfiguration('neo4j.connections')
+    .get('entries');
+  if (connections) {
+    await Promise.allSettled(
+      connections.map((connection) => {
+        if (oldConnections[connection.key]) {
+          return;
+        }
+        commands.executeCommand(
+          CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+          {
+            key: connection.key,
+            scheme: connection.scheme,
+            name: connection.name,
+            host: connection.host,
+            port: connection.port,
+            user: connection.user,
+            state: 'inactive',
+          },
+          connection.password,
+        );
+      }),
+    );
+  }
 }
 
 function stringifySymbolTables(symbolTables: SymbolTable[]): string {

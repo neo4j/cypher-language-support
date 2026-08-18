@@ -512,6 +512,17 @@
     "configuration": {
       "title": "Neo4j for VS Code",
       "properties": {
+        "neo4j.connections": {
+          "entries": [
+            {
+              "name": "Local dev",
+              "scheme": "neo4j",
+              "host": "localhost",
+              "port": 7687,
+              "user": "neo4j",
+              "password": "neo4j123"
+            }
+        ]},
         "neo4j.trace.server": {
           "scope": "window",
           "type": "string",
