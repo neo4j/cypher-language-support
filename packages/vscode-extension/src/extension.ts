@@ -15,6 +15,7 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import {
+  Connection,
   Connections,
   disconnectDatabaseConnectionOnExtensionDeactivation,
   getConnections,
@@ -27,6 +28,7 @@ import { registerDisposables } from './registrationService';
 import { SymbolTable } from '@neo4j-cypher/language-support';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { CONSTANTS } from './constants';
+import { displayConfirmSettingConnectionPrompt } from './uiUtils.js';
 
 const WELCOME_SHOWN_KEY = 'neo4j.welcomeShown';
 
@@ -168,23 +170,28 @@ export async function activate(context: ExtensionContext) {
     .get('entries');
   if (connections) {
     await Promise.allSettled(
-      connections.map((connection) => {
-        if (oldConnections[connection.key]) {
+      connections.map(async (cfgConnection) => {
+        if (oldConnections[cfgConnection.key]) {
           return;
         }
-        commands.executeCommand(
-          CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
-          {
-            key: connection.key,
-            scheme: connection.scheme,
-            name: connection.name,
-            host: connection.host,
-            port: connection.port,
-            user: connection.user,
-            state: 'inactive',
-          },
-          connection.password,
-        );
+        const connection: Connection = {
+          key: cfgConnection.key,
+          scheme: cfgConnection.scheme,
+          name: cfgConnection.name,
+          host: cfgConnection.host,
+          port: cfgConnection.port,
+          user: cfgConnection.user,
+          state: 'inactive',
+        };
+        const confirmed =
+          await displayConfirmSettingConnectionPrompt(connection);
+        if (confirmed) {
+          await commands.executeCommand(
+            CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
+            connection,
+            cfgConnection.password,
+          );
+        }
       }),
     );
   }
