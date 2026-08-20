@@ -7,8 +7,8 @@ import {
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DbSchema } from '../dbSchema';
-import { resolveCypherVersion } from '../helpers';
+import { DbSchema } from '../dbSchema.js';
+import { resolveCypherVersion } from '../helpers.js';
 import {
   LabelOrRelType,
   LabelType,
@@ -16,10 +16,19 @@ import {
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
-  parserWrapper,
-} from '../parserWrapper';
-import { Neo4jFunction, Neo4jProcedure, SymbolTable } from '../types';
-import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper';
+  ParsingResult,
+  PropertyType,
+  createParsingResult,
+} from '../cypherLanguageService.js';
+import {
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolTable,
+  Symbol,
+} from '../types.js';
+import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
+import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
+import { _internalFeatureFlags } from '../featureFlags.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -40,7 +49,7 @@ function detectNonDeclaredLabel(
     (!dbLabels.has(normalizedLabelName) &&
       !dbRelationshipTypes.has(normalizedLabelName));
 
-  if (notInDatabase && !labelOrRelType.couldCreateNewLabel) {
+  if (notInDatabase) {
     const message =
       labelOrRelType.labelType +
       ' ' +
@@ -55,6 +64,17 @@ function detectNonDeclaredLabel(
   }
 
   return undefined;
+}
+
+type GenericDiagnostic = { message: string };
+
+export function isNotParamError<T extends GenericDiagnostic>(
+  diagnostic: T,
+): boolean {
+  return (
+    !diagnostic.message.startsWith('Parameter ') ||
+    !diagnostic.message.endsWith(' is not defined.')
+  );
 }
 
 export function clampUnsafePositions(
@@ -93,7 +113,7 @@ export function clampUnsafePositions(
 
 function generateSyntaxDiagnostic(
   rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter,
+  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter | PropertyType,
   severity: DiagnosticSeverity,
   message: string,
   deprecation: boolean = false,
@@ -253,14 +273,85 @@ function warnOnUndeclaredLabels(
       if (warning) warnings.push(warning);
     });
   }
+  return warnings;
+}
+
+function warnOnUndeclaredProperties(
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+  symbolTable: SymbolTable,
+): SyntaxDiagnostic[] {
+  const warnings: SyntaxDiagnostic[] = [];
+  const propertiesInSchema = dbSchema.propertyKeys;
+
+  if (!propertiesInSchema) {
+    return [];
+  }
+
+  const writeProperties = new Set(
+    parsingResult.collectedProperties
+      .filter((propInCypher) => propInCypher.type === 'write')
+      .map((p) => p.propertyName),
+  );
+
+  const missingProperties = parsingResult.collectedProperties.filter(
+    (propInCypher) => {
+      // Ignore properties that are not of Node or Relationship
+      if (!isNodeOrRelationshipProperty(propInCypher, symbolTable)) {
+        return false;
+      }
+
+      // Ignore all properties that are being modified in the query
+      if (writeProperties.has(propInCypher.propertyName)) {
+        return false;
+      }
+
+      return !propertiesInSchema.includes(propInCypher.propertyName);
+    },
+  );
+
+  for (const property of missingProperties) {
+    const message =
+      property.propertyName +
+      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
+    const warning = generateSyntaxDiagnostic(
+      property.propertyName,
+      property,
+      DiagnosticSeverity.Warning,
+      message,
+    );
+    warnings.push(warning);
+  }
 
   return warnings;
 }
 
-export function sortByPositionAndMessage(
-  a: SyntaxDiagnostic,
-  b: SyntaxDiagnostic,
-) {
+function isNodeOrRelationshipProperty(
+  property: PropertyType,
+  symbolTable: SymbolTable,
+): boolean {
+  const variable = property.variable;
+  if (!variable) {
+    return false;
+  }
+  const symbol = symbolTable.find((symbol) => {
+    return symbol.variable === variable.name;
+  });
+  return Boolean(symbol && symbolIsNodeOrRel(symbol));
+}
+
+/** Checks all possible types of a symbol are Node or Relationship */
+function symbolIsNodeOrRel(symbol: Symbol): boolean {
+  if (symbol.types.length === 0) {
+    return false;
+  }
+
+  return symbol.types.every((type) => {
+    return type === 'Node' || type === 'Relationship';
+  });
+}
+
+function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
   const lineDiff = a.range.start.line - b.range.start.line;
   if (lineDiff !== 0) return lineDiff;
 
@@ -332,14 +423,24 @@ function fixSymbolTableOffsets({
 export function lintCypherQuery(
   query: string,
   dbSchema: DbSchema,
-  consoleCommandsEnabled?: boolean,
+  {
+    consoleCommandsEnabled = true,
+    parsingResult,
+  }: {
+    consoleCommandsEnabled?: boolean;
+    parsingResult?: ParsingResult;
+  } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
-    const cachedParse = parserWrapper.parse(query, consoleCommandsEnabled);
-    const statements = cachedParse.statementsParsing;
+    const resolvedParsingResult =
+      parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+    const statements = resolvedParsingResult.statementsParsing;
     const result = statements.map((current) => {
       const cmd = current.command;
-      if (cmd.type === 'cypher' && cmd.statement.length > 0) {
+      if (
+        (cmd.type === 'cypher' || cmd.type === 'auto') &&
+        cmd.statement.length > 0
+      ) {
         if (current.cypherVersionError)
           return { diagnostics: [current.cypherVersionError], symbolTable: [] };
 
@@ -363,16 +464,47 @@ export function lintCypherQuery(
           current.cypherVersion,
         );
 
+        function moveUnfinishedErrorToEndPoint(e: SyntaxDiagnostic) {
+          return e.message.includes('Query cannot conclude with')
+            ? {
+                ...e,
+                offsets: { start: e.offsets.end, end: e.offsets.end },
+                range: { start: e.range.end, end: e.range.end },
+              }
+            : e;
+        }
+
+        const cleanedErrors = errors.map(moveUnfinishedErrorToEndPoint);
+
         // This contains both the syntax and the semantic errors
-        const rawSemanticDiagnostics = notifications.concat(errors);
+        const rawSemanticDiagnostics = notifications.concat(cleanedErrors);
         const semanticDiagnostics = fixOffsets({
           semanticDiagnostics: rawSemanticDiagnostics,
           parseResult: current,
         });
 
+        const symbolTable = fixSymbolTableOffsets({
+          symbolTable: rawSymbolTable,
+          parseResult: current,
+        });
+
+        const propertiesWarnings = warnOnUndeclaredProperties(
+          current,
+          dbSchema,
+          symbolTable,
+        );
+
+        const schemaPathWarnings = warnOnSchemaPathViolations(
+          current,
+          dbSchema,
+          symbolTable,
+        );
+
         const diagnostics = semanticDiagnostics
           .concat(
             labelWarnings,
+            propertiesWarnings,
+            schemaPathWarnings,
             parameterErrors,
             functionErrors,
             procedureErrors,
@@ -381,11 +513,6 @@ export function lintCypherQuery(
             current.syntaxErrors,
           )
           .sort(sortByPositionAndMessage);
-
-        const symbolTable = fixSymbolTableOffsets({
-          symbolTable: rawSymbolTable,
-          parseResult: current,
-        });
 
         return { diagnostics, symbolTable };
       }

@@ -3,7 +3,7 @@ import {
   ConditionNode,
   isLabelLeaf,
   LabelOrCondition,
-} from './types';
+} from './types.js';
 
 function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(labelTree)) {
@@ -19,7 +19,7 @@ function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
 /**
  * Takes a label tree with an AND-root and converts it to Conjunctive Normal Form
  * @param root - the original label tree
- * @returns a an equivalent CNF tree
+ * @returns an equivalent CNF tree
  */
 export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(root) || !(root.condition === 'and')) {
@@ -134,7 +134,7 @@ export function childAlreadyExists(
   }
 }
 
-function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition) {
+function equalConditions(c1: LabelOrCondition, c2: LabelOrCondition): boolean {
   if (isLabelLeaf(c1)) {
     return isLabelLeaf(c2) && c1.value === c2.value;
   } else if (isLabelLeaf(c2)) {
@@ -266,7 +266,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
  * @param root
  * @returns
  */
-export function simplifyAndRemoveTautologies(
+function simplifyAndRemoveTautologies(
   root: LabelOrCondition,
 ): LabelOrCondition {
   const newRoot: LabelOrCondition = copyLabelTree(root);
@@ -595,9 +595,12 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
 }
 
 export const isAnyNode = (n: LabelOrCondition) =>
-  !isLabelLeaf(n) && n.condition === 'any';
+  !isLabelLeaf(n) && n.condition === 'any' && n.children.length === 0;
 export const isNotAnyNode = (n: LabelOrCondition) =>
-  !isLabelLeaf(n) && n.condition === 'not' && isAnyNode(n.children[0]);
+  !isLabelLeaf(n) &&
+  n.condition === 'not' &&
+  n.children.length === 1 &&
+  isAnyNode(n.children[0]);
 
 /**
  * Converts a label tree with ANYs to one without ANYs by simplifying like

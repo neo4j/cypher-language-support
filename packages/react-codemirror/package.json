@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/react-codemirror",
-  "version": "2.0.0-next.32",
+  "version": "2.0.0-next.40",
   "keywords": [
     "codemirror",
     "codemirror 6",
@@ -44,6 +44,7 @@
     "@codemirror/commands": "^6.8.1",
     "@codemirror/language": "^6.11.2",
     "@codemirror/lint": "^6.8.5",
+    "@codemirror/merge": "^6.12.1",
     "@codemirror/search": "^6.5.11",
     "@codemirror/state": "^6.5.2",
     "@codemirror/view": "^6.38.1",
@@ -52,8 +53,6 @@
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/lint-worker": "workspace:*",
     "@types/prismjs": "^1.26.3",
-    "@types/workerpool": "^6.4.7",
-    "fastest-levenshtein": "^1.0.16",
     "lodash.debounce": "^4.0.8",
     "prismjs": "^1.29.0",
     "style-mod": "^4.1.2",
@@ -62,25 +61,24 @@
   },
   "devDependencies": {
     "@neo4j-ndl/base": "^3.2.10",
-    "@playwright/experimental-ct-react": "^1.54.2",
-    "@playwright/test": "^1.54.2",
+    "@playwright/experimental-ct-react": "^1.55.1",
+    "@playwright/test": "^1.55.1",
     "@types/lodash.debounce": "^4.0.9",
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "@vitejs/plugin-react": "^4.3.1",
     "copyfiles": "^2.4.1",
     "jsdom": "^24.1.1",
-    "lodash": "^4.17.21",
-    "playwright": "^1.54.2",
+    "playwright": "^1.55.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "vite": "^4.5.10"
   },
   "peerDependencies": {
-    "react": "^16.8.0 || ^17.0.0 || ^18.0.0"
+    "react": "^16.8.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.8.0 || ^17.0.0 || ^18.0.0"
   },
   "engines": {
     "node": ">=24.11.1"
-  },
-  "engineStrict": true
+  }
 }

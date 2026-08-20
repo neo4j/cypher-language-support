@@ -1,7 +1,7 @@
 {
   "name": "neo4j-for-vscode",
   "displayName": "Neo4j for VS Code",
-  "version": "1.14.0",
+  "version": "1.19.15",
   "private": true,
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "categories": [
@@ -52,11 +52,11 @@
     "@neo4j-cypher/query-tools": "workspace:*",
     "@neo4j-ndl/base": "3.7.7",
     "@neo4j-ndl/react": "3.8.13",
-    "axios": "1.9.0",
+    "axios": "1.15.2",
     "neo4j-driver": "catalog:",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "tar": "7.5.9",
+    "tar": "7.5.11",
     "vscode-languageclient": "8.1.0"
   },
   "devDependencies": {
@@ -74,7 +74,6 @@
     "@wdio/mocha-framework": "8.40.3",
     "@wdio/spec-reporter": "8.40.3",
     "@wdio/types": "8.41.0",
-    "dotenv": "16.4.5",
     "expect-webdriverio": "4.15.4",
     "glob": "11.0.1",
     "mocha": "10.7.3",
@@ -175,6 +174,16 @@
         "title": "Edit parameter",
         "category": "Neo4j",
         "icon": "$(pencil)"
+      },
+      {
+        "command": "neo4j.showWelcome",
+        "title": "Welcome",
+        "category": "Neo4j"
+      },
+      {
+        "command": "neo4j.addGraphAcademyMcpServer",
+        "title": "Add GraphAcademy MCP server",
+        "category": "Neo4j"
       }
     ],
     "keybindings": [
@@ -531,7 +540,93 @@
         "editor.semanticHighlighting.enabled": true,
         "editor.defaultFormatter": "neo4j-extensions.neo4j-for-vscode"
       }
-    }
+    },
+    "walkthroughs": [
+      {
+        "id": "neo4jLearnNeo4j",
+        "title": "Learn Neo4j",
+        "description": "New to Neo4j? Get started for free with these fundamentals courses from Neo4j GraphAcademy.",
+        "steps": [
+          {
+            "id": "graphAcademyMcp",
+            "title": "Add the GraphAcademy MCP server",
+            "description": "Give your AI coding agent tools to learn Neo4j, design graph models, and generate Cypher.\n[Add MCP server](command:neo4j.addGraphAcademyMcpServer)",
+            "media": {
+              "markdown": "resources/walkthroughs/graphacademy-mcp.md"
+            },
+            "completionEvents": [
+              "onCommand:neo4j.addGraphAcademyMcpServer"
+            ]
+          },
+          {
+            "id": "neo4jFundamentals",
+            "title": "Neo4j Fundamentals",
+            "description": "Learn about graph databases and get started with Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/neo4j-fundamentals/?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/neo4j-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/neo4j-fundamentals/?ref=vscode-learn"
+            ]
+          },
+          {
+            "id": "cypherFundamentals",
+            "title": "Cypher Fundamentals",
+            "description": "Learn Cypher, the query language for Neo4j, in about an hour.\n[Start course](https://graphacademy.neo4j.com/courses/cypher-fundamentals/?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/cypher-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/cypher-fundamentals/?ref=vscode-learn"
+            ]
+          },
+          {
+            "id": "modelingFundamentals",
+            "title": "Graph Data Modeling Fundamentals",
+            "description": "Learn how to design a Neo4j graph using best practices.\n[Start course](https://graphacademy.neo4j.com/courses/modeling-fundamentals/?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/modeling-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/modeling-fundamentals/?ref=vscode-learn"
+            ]
+          },
+          {
+            "id": "importingFundamentals",
+            "title": "Importing Data Fundamentals",
+            "description": "Learn how to import data into Neo4j.\n[Start course](https://graphacademy.neo4j.com/courses/importing-fundamentals/?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/importing-fundamentals.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/courses/importing-fundamentals/?ref=vscode-learn"
+            ]
+          },
+          {
+            "id": "generativeAiPathway",
+            "title": "Generative AI & GraphRAG",
+            "description": "Ready for more? Combine Neo4j with LLMs to build GraphRAG applications.\n[Explore pathway](https://graphacademy.neo4j.com/categories/generative-ai?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/generative-ai.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/categories/generative-ai?ref=vscode-learn"
+            ]
+          },
+          {
+            "id": "appDevelopmentPathway",
+            "title": "Graph Application Development",
+            "description": "Build applications powered by Neo4j using the official drivers.\n[Explore pathway](https://graphacademy.neo4j.com/categories/app-development?ref=vscode-learn)",
+            "media": {
+              "markdown": "resources/walkthroughs/app-development.md"
+            },
+            "completionEvents": [
+              "onLink:https://graphacademy.neo4j.com/categories/app-development?ref=vscode-learn"
+            ]
+          }
+        ]
+      }
+    ]
   },
   "activationEvents": [],
   "icon": "resources/images/logo.png",
@@ -539,6 +634,5 @@
   "engines": {
     "node": ">=24.11.1",
     "vscode": "^1.75.0"
-  },
-  "engineStrict": true
+  }
 }

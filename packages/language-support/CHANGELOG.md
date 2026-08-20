@@ -1,5 +1,71 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.37
+
+### Minor Changes
+
+- 6c863cd: Warning on missing property in the database schema
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+
+## 2.0.0-next.36
+
+### Patch Changes
+
+- 50f061e: Fix Group By linting
+
+## 2.0.0-next.35
+
+### Patch Changes
+
+- 6866132: Update grammar and semantic analysis to 2026.07
+
+## 2.0.0-next.34
+
+### Patch Changes
+
+- 2f8b52d: Schema-based linting when connected: warn on labels and relationship types missing from the database and on relationship patterns that contradict the graph schema's direction (#681), with improved warning readability (#685)
+
+## 2.0.0-next.33
+
+### Patch Changes
+
+- 02df611: Hide parameter errors when disconnected
+- e69ee30: Update grammar and semantic analysis to 2026.06
+
+## 2.0.0-next.32
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- 0b2d441: Expand formatter coverage to cover SEARCH, GRAPH TYPE and more. Fixes bugs, for example SHOW ... YIELD formatting bug, and failing to format full query when parsing only fails at the end
+
+## 2.0.0-next.31
+
+### Patch Changes
+
+- 08f94af: adding auto-completion for :auto
+- 0763d97: Fix bug in formatter when parser performs error recovery
+- 3b2faf5: Rewrite global parserWrapper for instantiated CypherLanguageService objects
+
+  Breaking changes for direct consumers of `@neo4j-cypher/language-support`:
+
+  - Removed export: `parserWrapper`. The same `ParsingResult` as `parserWrapper.parse` would yield can still be received by `createParsingResult` in `CypherLanguageService`. Instances of the new CypherLanguageService class provide helpers for linting/highlighting/completions/signature info where parsing is handled internally.
+  - Renamed exports: `applySyntaxColouring` → `highlightSyntax`, `syntaxColouringLegend` → `syntaxHighlightingLegend`
+  - `autocomplete()`, `lintCypherQuery()`, `highlightSyntax()`, and `getSignatureInfo()` now take an options object as the third parameter instead of positional args
+
+- ca1bba6: Update grammar and semantic analysis to 2026.04
+
+## 2.0.0-next.30
+
+### Patch Changes
+
+- 0e457d6: Updates grammar and semantic analysis to 2026.03
+- b0170f9: Increase path segment completion triggering
+- 25fad16: Fix linting of :play command
+
 ## 2.0.0-next.29
 
 ### Patch Changes

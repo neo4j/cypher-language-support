@@ -1,5 +1,5 @@
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs } from '../types/sdkTypes';
+import { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
 /**
  * Get dbms version

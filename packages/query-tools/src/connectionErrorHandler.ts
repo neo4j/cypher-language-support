@@ -26,7 +26,7 @@ export function isRetriableNeo4jError(error: unknown): boolean {
   return isNeo4jError(error) ? error.retriable : true;
 }
 
-export function isNeo4jError(error: unknown): error is Neo4jError {
+function isNeo4jError(error: unknown): error is Neo4jError {
   return (
     error instanceof Error &&
     (error as Neo4jError).code !== undefined &&

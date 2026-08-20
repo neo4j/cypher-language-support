@@ -21,7 +21,7 @@ jobs:
     name: Setup and build project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
       - name: Check the TextMate grammar is up to date
         run: |
@@ -32,21 +32,34 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
 
       - name: Check there are no linting errors
         run: pnpm lint
 
+      - name: Check relative imports have .js extensions
+        # Ideally we'd use moduleResolution: "nodenext" which enforces .js extensions at the
+        # TypeScript level, but antlr4@4.13.2's type declarations (.d.cts) use extensionless
+        # imports that break nodenext resolution. Once we switch to depending on antlr4-ng,
+        # both directly and in our (currently vendored) antlr4-c3 dependency, we can switch
+        # to nodenext and remove this grep-based check.
+        # We also can't use oxlint's import/extensions rule because it doesn't support
+        # TypeScript's .js-in-source convention: https://github.com/oxc-project/oxc/issues/19431
+        run: pnpm check-imports
+
       - name: Check formatting
         run: pnpm format:check
+
+      - name: Detect unused exports and dependencies
+        run: pnpm knip
 
   unit-test:
     name: Unit tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
@@ -57,7 +70,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
@@ -70,7 +83,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
@@ -82,7 +95,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
@@ -94,7 +107,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
 
       - name: Run e2e test
@@ -107,7 +120,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests

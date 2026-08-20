@@ -1,5 +1,72 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.37
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [ce3820b]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/language-support@2.0.0-next.37
+
+## 2.0.0-next.36
+
+### Patch Changes
+
+- Updated dependencies [50f061e]
+  - @neo4j-cypher/language-support@2.0.0-next.36
+
+## 2.0.0-next.35
+
+### Patch Changes
+
+- Updated dependencies [6866132]
+  - @neo4j-cypher/language-support@2.0.0-next.35
+
+## 2.0.0-next.34
+
+### Patch Changes
+
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/language-support@2.0.0-next.34
+
+## 2.0.0-next.33
+
+### Patch Changes
+
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/language-support@2.0.0-next.33
+
+## 2.0.0-next.32
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- Updated dependencies [cd4ab49]
+- Updated dependencies [0b2d441]
+  - @neo4j-cypher/language-support@2.0.0-next.32
+
+## 2.0.0-next.31
+
+### Patch Changes
+
+- Updated dependencies [08f94af]
+- Updated dependencies [0763d97]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [ca1bba6]
+  - @neo4j-cypher/language-support@2.0.0-next.31
+
+## 2.0.0-next.30
+
+### Patch Changes
+
+- 82f0c39: Workaround bug: Running db.schema.visualization on db with too large schema can crash db
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/language-support@2.0.0-next.30
+
 ## 2.0.0-next.29
 
 ### Patch Changes

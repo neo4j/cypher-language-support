@@ -3,7 +3,8 @@ import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
 import {
-  checkResultsContent,
+  checkResult,
+  checkSummary,
   clickOnContextMenuItem,
   ensureNotificationsAreDismissed,
   executeFile,
@@ -137,7 +138,7 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
 
-    await checkResultsContent(workbench, false, async () => {
+    await checkResult(workbench, async () => {
       await expectTableContent([
         'charmander',
         'caterpie',
@@ -153,7 +154,7 @@ suite('Params panel testing', () => {
 
     await escapeModal(4);
 
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain([
         'Expected parameter(s): a, b, some param, some-param',
       ]);
@@ -195,7 +196,7 @@ suite('Params panel testing', () => {
     await forceAddParam('some-param', '"bulbasaur"');
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, false, async () => {
+    await checkResult(workbench, async () => {
       await expectTableContent([
         'charmander',
         'caterpie',
@@ -208,7 +209,7 @@ suite('Params panel testing', () => {
     await forceModifyParam('a', '"abra"');
 
     await executeFile(workbench, 'params.cypher');
-    await checkResultsContent(workbench, false, async () => {
+    await checkResult(workbench, async () => {
       await expectTableContent([
         'abra',
         'caterpie',
@@ -227,7 +228,7 @@ suite('Params panel testing', () => {
 
     await executeFile(workbench, 'params.cypher');
 
-    await checkResultsContent(workbench, false, async () => {
+    await checkResult(workbench, async () => {
       await expectTableContent([
         'charmander',
         'caterpie',
@@ -244,7 +245,7 @@ suite('Params panel testing', () => {
 
     await escapeModal(2);
 
-    await checkResultsContent(workbench, true, async () => {
+    await checkSummary(workbench, async () => {
       await expectSummariesContain(['Expected parameter(s): a, b']);
     });
   });
@@ -266,7 +267,7 @@ suite('Params panel testing', () => {
     await browser.pause(1000);
     await browser.keys(['5', Key.Enter]);
 
-    await checkResultsContent(workbench, false, async () => {
+    await checkResult(workbench, async () => {
       await expectTableContent(['1998', '12', 'false', '5', '2010']);
     });
   });

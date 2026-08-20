@@ -5,5 +5,5 @@
  * See LICENSE file for more info.
  */
 
-export * from "./src/CodeCompletionCore";
-export * from "./src/antlr4";
+export * from "./src/CodeCompletionCore.js";
+export * from "./src/antlr4.js";

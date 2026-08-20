@@ -6,11 +6,13 @@ import { CONSTANTS } from '../../../src/constants';
 import {
   clickOnContextMenuItem,
   closeActiveTab,
+  findWebview,
   getConnectionSection,
   openFixtureFile,
   selectConnectionItem,
   setText,
   waitUntilNotification,
+  WEBVIEW_SELECTORS,
 } from '../../webviewUtils';
 
 suite('Connection testing', () => {
@@ -74,9 +76,12 @@ suite('Connection testing', () => {
     await waitUntilNotification(browser, 'Connected to Neo4j.');
   });
 
-  test('should not lose connection form details when going into another tab', async function () {
+  test('should not lose connection from details when going into another tab', async function () {
     await workbench.executeCommand(CONSTANTS.COMMANDS.EDIT_CONNECTION_COMMAND);
-    const connectionWebview = (await workbench.getAllWebviews()).at(0);
+    const connectionWebview = await findWebview(
+      workbench,
+      WEBVIEW_SELECTORS.connection,
+    );
     await setText(connectionWebview, '#host', 'Badabadum');
 
     // Opens a new tab, then closes it

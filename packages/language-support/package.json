@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/language-support",
-  "version": "2.0.0-next.29",
+  "version": "2.0.0-next.37",
   "description": "Cypher language support",
   "keywords": [
     "autocompletion",
@@ -63,11 +63,9 @@
     "vscode-languageserver-types": "^3.17.3"
   },
   "devDependencies": {
-    "@types/semver": "^7.7.0",
     "vscode-languageserver-textdocument": "^1.0.8"
   },
   "engines": {
     "node": ">=24.11.1"
-  },
-  "engineStrict": true
+  }
 }

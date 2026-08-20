@@ -1,4 +1,4 @@
-import { keywordNames, operatorSymbols } from './lexerSymbols';
+import { keywordNames, operatorSymbols } from './lexerSymbols.js';
 
 const keywordRegex = new Array(...keywordNames.values()).join('|');
 const operatorsRegex = new Array(...operatorSymbols.values())

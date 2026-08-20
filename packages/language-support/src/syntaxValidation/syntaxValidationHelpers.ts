@@ -6,15 +6,15 @@ import {
 } from 'antlr4ng';
 import type { ATNSimulator } from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
   ConsoleCommandContext,
   PreparserOptionContext,
-} from '../generated-parser/CypherCmdParser';
-import { findParent, isCommentOpener } from '../helpers';
-import { completionCoreErrormessage } from './completionCoreErrors';
-import { SyntaxDiagnostic } from './syntaxValidation';
+} from '../generated-parser/CypherCmdParser.js';
+import { findParent, isCommentOpener } from '../helpers.js';
+import { completionCoreErrormessage } from './completionCoreErrors.js';
+import { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export class SyntaxErrorsListener implements ANTLRErrorListener {
   errors: SyntaxDiagnostic[];

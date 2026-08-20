@@ -5,10 +5,21 @@ import {
   TerminalNode,
   Token,
 } from 'antlr4ng';
-import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
+import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   AddPropContext,
+  AllPathContext,
+  AllReduceExpressionInvalidArgumentsContext,
+  AllReduceExpressionValidArgumentsContext,
+  AllShortestPathContext,
+  AlterAuthRuleContext,
+  AlterCommandContext,
+  AlterCurrentGraphTypeContext,
+  AnyPathContext,
+  AnyShortestPathContext,
+  ArcTypePointingRightContext,
   ArrowLineContext,
+  AuthRuleSetClauseContext,
   BooleanLiteralContext,
   CallClauseContext,
   CaseAlternativeContext,
@@ -25,14 +36,19 @@ import {
   ConstraintTypedContext,
   CountExpressionContext,
   CountStarContext,
+  CreateAliasContext,
+  CreateAuthRuleContext,
   CreateClauseContext,
   CreateCommandContext,
   CreateConstraintContext,
+  CreateDatabaseContext,
   CreateFulltextIndexContext,
   CreateIndex_Context,
+  CreateVectorIndexContext,
   DeleteClauseContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
+  EdgeTypeSpecificationContext,
   ElseBranchContext,
   ExistsExpressionContext,
   Expression10Context,
@@ -47,21 +63,36 @@ import {
   ExtendedCaseExpressionContext,
   FilterClauseContext,
   ForeachClauseContext,
+  ForListClauseContext,
   FunctionInvocationContext,
+  GraphTypeElementContext,
+  GraphTypeSpecificationBodyContext,
+  GraphTypeSpecificationContext,
+  HintContext,
+  ImpliedLabelSetContext,
+  ImpliesContext,
   IndexPostfixContext,
   InsertClauseContext,
   KeywordLiteralContext,
+  LabelComparisonContext,
   LabelExpression2Context,
   LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
+  LabelOrRelTypeContext,
+  LabelTypeContext,
   LetClauseContext,
   LetItemContext,
   LimitContext,
   ListComprehensionContext,
   ListItemsPredicateContext,
   ListLiteralContext,
+  LocalFunctionDefinitionContext,
+  LocalInputFieldsSignatureContext,
+  LocalOutputFieldsSignatureContext,
+  LocalProcedureDefinitionContext,
   MapContext,
+  MapOrParameterContext,
   MapProjectionContext,
   MapProjectionElementContext,
   MatchClauseContext,
@@ -69,7 +100,10 @@ import {
   MergeClauseContext,
   MultiLabelNodePatternContext,
   NamespaceContext,
+  NextStatementContext,
   NodePatternContext,
+  NodeTypeInSituReferenceContext,
+  NodeTypeSpecificationContext,
   NormalizeFunctionContext,
   NumberLiteralContext,
   ParameterContext,
@@ -83,7 +117,11 @@ import {
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
+  PropertyTypeContext,
+  PropertyTypeListContext,
   QuantifierContext,
+  QueryBodyContext,
+  QueryWithLocalDefinitionsContext,
   RangePostfixContext,
   ReduceExpressionContext,
   RelationshipPatternContext,
@@ -92,10 +130,14 @@ import {
   ReturnClauseContext,
   ReturnItemContext,
   ReturnItemsContext,
+  RightArrowContext,
+  SearchClauseContext,
   SetClauseContext,
   SetPropContext,
   SetPropsContext,
+  ShortestGroupContext,
   ShowCommandYieldContext,
+  ShowCommandYieldWhereContext,
   SkipContext,
   StatementsOrCommandsContext,
   StringAndListComparisonContext,
@@ -105,13 +147,16 @@ import {
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
+  VectorDistanceFunctionContext,
   VectorFunctionContext,
+  VectorNormFunctionContext,
   WhenBranchContext,
   WhenContext,
   WhereClauseContext,
   WithClauseContext,
-} from '../generated-parser/CypherCmdParser';
-import { CypherCmdParserVisitor } from '../generated-parser/CypherCmdParserVisitor';
+  WithPropertiesContext,
+} from '../generated-parser/CypherCmdParser.js';
+import { CypherCmdParserVisitor } from '../generated-parser/CypherCmdParserVisitor.js';
 import {
   Chunk,
   CommentChunk,
@@ -128,8 +173,8 @@ import {
   verifyGroupSizes,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
-} from './formattingHelpers';
-import { chunksToFormattedString } from './layoutEngine';
+} from './formattingHelpers.js';
+import { chunksToFormattedString } from './layoutEngine.js';
 
 const MISSING = '<missing';
 
@@ -142,7 +187,7 @@ interface RawTerminalOptions {
 
 type SpacingChoice = 'SPACE_AFTER' | 'EXTRA_SPACE';
 
-export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
+class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   formattingOptions: FormattingOptions;
   root: StatementsOrCommandsContext;
   query: string;
@@ -161,6 +206,8 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseable: string = '';
   unParseableStart: number | undefined;
   firstUnParseableToken: Token | undefined;
+  private errorNodesByIndex: Map<number, ErrorNode> = new Map();
+  private lastVisitedErrorNode: number = -1;
 
   constructor(
     formattingOptions: FormattingOptions,
@@ -181,10 +228,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.firstUnParseableToken = firstUnParseableToken;
       this.unParseableStart = firstUnParseableToken.tokenIndex;
     }
+    this._collectErrorNodes(this.root);
   }
 
   format = () => {
     this._visit(this.root);
+    this._emitResidualErrorNodes();
     this.fillInGroupSizes();
     const maxColumn = Math.max(
       0,
@@ -548,6 +597,65 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  private _collectErrorNodes(node: ParserRuleContext | TerminalNode): void {
+    if (node instanceof TerminalNode) {
+      // @ts-expect-error isErrorNode exists on ErrorNode at runtime but not in TerminalNode types
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
+      if (node.isErrorNode && node.isErrorNode()) {
+        const tokenIdx = node.symbol.tokenIndex;
+        if (tokenIdx >= 0) {
+          this.errorNodesByIndex.set(tokenIdx, node as ErrorNode);
+        }
+      }
+    } else if (node instanceof ParserRuleContext) {
+      for (const child of node.children ?? []) {
+        this._collectErrorNodes(child as ParserRuleContext | TerminalNode);
+      }
+    }
+  }
+
+  _emitResidualErrorNodes = () => {
+    for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
+      if (tokenIdx > this.lastVisitedErrorNode) {
+        this.visitErrorNode(errorNode);
+      }
+    }
+  };
+
+  /**
+   * Emits any ErrorNodes that fall between the last visited token and the given
+   * token index. These are tokens consumed by ANTLR error recovery that would
+   * otherwise be silently dropped by explicit visitor methods.
+   */
+  _emitPrecedingErrorNodes = (upToTokenIdx: number) => {
+    let emittedAny = false;
+    for (const [tokenIdx, errorNode] of this.errorNodesByIndex) {
+      if (tokenIdx > this.previousTokenIndex && tokenIdx < upToTokenIdx) {
+        this.visitErrorNode(errorNode);
+        emittedAny = true;
+      }
+    }
+    // After emitting error nodes, capture any remaining gap tokens (whitespace
+    // on the hidden channel, etc.) between the last emitted error node and the
+    // upcoming terminal so they are not silently dropped.
+    if (emittedAny && this.previousTokenIndex < upToTokenIdx - 1) {
+      const trailingTokens = this.tokenStream.tokens.slice(
+        this.previousTokenIndex + 1,
+        upToTokenIdx,
+      );
+      const trailingText = trailingTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
+      if (trailingText.length > 0) {
+        const lastChunk = this.lastInChunkList();
+        if (lastChunk && lastChunk.type === 'SYNTAX_ERROR') {
+          lastChunk.text += trailingText;
+        }
+      }
+    }
+  };
+
   _visitTerminalRaw = (ctx: TerminalNode, options?: RawTerminalOptions) => {
     if (!ctx) {
       return;
@@ -565,6 +673,14 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // So to restore all the syntactically incorrect parts, we keep track of the last valid
   // token, and grab everything between it and the error node
   visitErrorNode = (node: ErrorNode) => {
+    // Skip missing tokens (tokenIndex = -1) and already-emitted nodes
+    // (prevents double-emission when also reached via visitChildren).
+    if (
+      node.symbol.tokenIndex < 0 ||
+      node.symbol.tokenIndex <= this.previousTokenIndex
+    ) {
+      return;
+    }
     if (
       this.unParseableStart &&
       node.symbol.tokenIndex >= this.unParseableStart
@@ -579,7 +695,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       const skippedTokens = this.tokenStream
         .getTokens()
         .slice(this.previousTokenIndex + 1, errorTokenIndex);
-      gapText = skippedTokens.map((t) => t.text).join('');
+      // Normalize \r\n to \n so the layout engine (which uses \n) works
+      // consistently across platforms.
+      gapText = skippedTokens
+        .map((t) => t.text)
+        .join('')
+        .replace(/\r\n/g, '\n');
     }
 
     const errorText = token.text.startsWith(MISSING) ? '' : token.text;
@@ -597,6 +718,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.pendingGroups = [];
 
     this.chunkList.push(chunk);
+    this.lastVisitedErrorNode = errorTokenIndex;
   };
 
   breakAndVisitChildren = (ctx: ParserRuleContext) => {
@@ -627,7 +749,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     ctx:
       | CreateConstraintContext
       | CreateIndex_Context
-      | CreateFulltextIndexContext,
+      | CreateFulltextIndexContext
+      | CreateVectorIndexContext
+      | CreateAuthRuleContext,
   ) => {
     if (ctx.IF()) {
       this.avoidBreakBetween();
@@ -652,6 +776,15 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
   };
 
+  visitShowCommandYieldWhere = (ctx: ShowCommandYieldWhereContext) => {
+    if (ctx.yieldClause()) {
+      this.breakLine();
+      this.visit(ctx.yieldClause());
+    } else {
+      this.visit(ctx.whereClause());
+    }
+  };
+
   visitCreateCommand = (ctx: CreateCommandContext) => {
     this.visit(ctx.CREATE());
     this.avoidBreakBetween();
@@ -661,12 +794,69 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       this.visit(ctx.REPLACE());
       this.avoidBreakBetween();
     }
+    this._visit(ctx.createAlias());
     this._visit(ctx.createCompositeDatabase());
     this._visit(ctx.createConstraint());
     this._visit(ctx.createDatabase());
     this._visit(ctx.createIndex());
     this._visit(ctx.createRole());
     this._visit(ctx.createUser());
+    this._visit(ctx.createAuthRule());
+  };
+
+  visitCreateDatabase = (ctx: CreateDatabaseContext) => {
+    this.visit(ctx.DATABASE());
+    this.visit(ctx.symbolicAliasNameOrParameter());
+    this._visit(ctx.IF());
+    this._visit(ctx.NOT());
+    this._visit(ctx.EXISTS());
+    this.breakLine();
+    if (ctx.defaultLanguageSpecification()) {
+      this._visit(ctx.SET());
+      this.visit(ctx.defaultLanguageSpecification());
+      this.breakLine();
+    }
+    if (ctx.topology()) {
+      this._visit(ctx.topology());
+      this.breakLine();
+    } else if (ctx.shards()) {
+      this._visit(ctx.shards());
+      this.breakLine();
+    }
+    if (ctx.commandOptions()) {
+      this.visit(ctx.commandOptions());
+      this.breakLine();
+    }
+    this._visit(ctx.waitClause());
+  };
+
+  visitCreateAlias = (ctx: CreateAliasContext) => {
+    this.visit(ctx.ALIAS());
+    this.visit(ctx.aliasName());
+    this._visit(ctx.IF());
+    this._visit(ctx.NOT());
+    this._visit(ctx.EXISTS());
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this.visit(ctx.DATABASE());
+    this.visit(ctx.aliasTargetName());
+    const mapOrParameters = ctx.mapOrParameter();
+    if (ctx.AT()) {
+      this.breakLine();
+      this._visit(ctx.AT());
+      this._visit(ctx.stringOrParameter());
+      this._visit(ctx.remoteTargetConnectionCredentials());
+      if (ctx.DRIVER()) {
+        this._visit(ctx.DRIVER());
+        this._visit(mapOrParameters[0]);
+      }
+      this._visit(ctx.defaultLanguageSpecification());
+    }
+    if (ctx.PROPERTIES() && mapOrParameters.length >= 1) {
+      this.breakLine();
+      this.visit(ctx.PROPERTIES());
+      this.visit(mapOrParameters.at(-1) as MapOrParameterContext);
+    }
   };
 
   visitCreateConstraint = (ctx: CreateConstraintContext) => {
@@ -727,6 +917,219 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.commandOptions());
   };
 
+  visitCreateVectorIndex = (ctx: CreateVectorIndexContext) => {
+    this._visit(ctx.commandNameExpression());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.FOR());
+    this._visit(ctx.multiLabelNodePattern());
+    this._visit(ctx.multiRelTypeRelPattern());
+    this.breakLine();
+    this.visit(ctx.ON());
+    this.visit(ctx.propertyList());
+    this._visit(ctx.withProperties());
+    this._visit(ctx.commandOptions());
+  };
+
+  visitWithProperties = (ctx: WithPropertiesContext) => {
+    this.breakLine();
+    this.visit(ctx.WITH());
+    this.avoidBreakBetween();
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.enclosedPropertyList());
+    this._visit(ctx.RBRACKET());
+  };
+
+  visitCreateAuthRule = (ctx: CreateAuthRuleContext) => {
+    this.visit(ctx.AUTH());
+    this.avoidBreakBetween();
+    this.visit(ctx.RULE());
+    this._visit(ctx.commandNameExpression());
+    this._visitCommandIfNotExists(ctx);
+    const n = ctx.authRuleSetClause().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.authRuleSetClause(i));
+    }
+  };
+
+  visitAlterAuthRule = (ctx: AlterAuthRuleContext) => {
+    this.visit(ctx.AUTH());
+    this.avoidBreakBetween();
+    this.visit(ctx.RULE());
+    this._visit(ctx.commandNameExpression());
+    if (ctx.IF()) {
+      this.avoidBreakBetween();
+      this.visit(ctx.IF());
+      this.avoidBreakBetween();
+      this.visit(ctx.EXISTS());
+    }
+    const n = ctx.authRuleSetClause().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.authRuleSetClause(i));
+    }
+  };
+
+  visitAuthRuleSetClause = (ctx: AuthRuleSetClauseContext) => {
+    this.breakLine();
+    const setClauseIndent = this.addIndentation();
+    this.visitChildren(ctx);
+    this.removeIndentation(setClauseIndent);
+  };
+
+  visitAlterCommand = (ctx: AlterCommandContext) => {
+    this.visit(ctx.ALTER());
+    this.avoidBreakBetween();
+    this._visit(ctx.alterAlias());
+    this._visit(ctx.alterCurrentUser());
+    this._visit(ctx.alterCurrentGraphType());
+    this._visit(ctx.alterDatabase());
+    this._visit(ctx.alterUser());
+    this._visit(ctx.alterServer());
+    this._visit(ctx.alterAuthRule());
+  };
+
+  visitAlterCurrentGraphType = (ctx: AlterCurrentGraphTypeContext) => {
+    this.visit(ctx.CURRENT());
+    this.avoidBreakBetween();
+    this.visit(ctx.GRAPH());
+    this.avoidBreakBetween();
+    this.visit(ctx.TYPE());
+    this._visit(ctx.SET());
+    this._visit(ctx.ADD());
+    this._visit(ctx.ALTER());
+    this._visit(ctx.DROP());
+    this._visit(ctx.graphTypeSpecification());
+    this._visit(ctx.graphTypeDropSpecification());
+  };
+
+  visitGraphTypeSpecification = (ctx: GraphTypeSpecificationContext) => {
+    this._visit(ctx.LCURLY());
+    if (ctx.graphTypeSpecificationBody()) {
+      const bodyIndent = this.addIndentation();
+      this.breakLine();
+      this._visit(ctx.graphTypeSpecificationBody());
+      this.removeIndentation(bodyIndent);
+      this.breakLine();
+    }
+    this._visit(ctx.RCURLY());
+  };
+
+  visitNodeTypeSpecification = (ctx: NodeTypeSpecificationContext) => {
+    this._visit(ctx.LPAREN());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.identifyingLabel());
+    this._visit(ctx.impliedLabelSet());
+    this._visit(ctx.propertyTypeList());
+    this._visit(ctx.RPAREN());
+    this._visit(ctx.nodeTypeInlineConstraintList());
+  };
+
+  visitEdgeTypeSpecification = (ctx: EdgeTypeSpecificationContext) => {
+    this._visit(ctx.nodeTypeReference(0));
+    this.avoidSpaceBetween();
+    this._visit(ctx.arcTypePointingRight());
+    this.avoidSpaceBetween();
+    this._visit(ctx.nodeTypeReference(1));
+    this._visit(ctx.edgeTypeInlineConstraintList());
+  };
+
+  visitNodeTypeInSituReference = (ctx: NodeTypeInSituReferenceContext) => {
+    this._visit(ctx.LPAREN());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.labelType());
+    this._visit(ctx.RPAREN());
+  };
+
+  visitArcTypePointingRight = (ctx: ArcTypePointingRightContext) => {
+    this._visit(ctx.arrowLine(0));
+    this.avoidSpaceBetween();
+    this._visit(ctx.LBRACKET());
+    this._visit(ctx.variable());
+    this.avoidSpaceBetween();
+    this._visit(ctx.identifyingRelationship());
+    this._visit(ctx.propertyTypeList());
+    this._visit(ctx.RBRACKET());
+    this.avoidSpaceBetween();
+    this._visit(ctx.arrowLine(1));
+    this.avoidSpaceBetween();
+    this._visit(ctx.rightArrow());
+  };
+
+  visitPropertyTypeList = (ctx: PropertyTypeListContext) => {
+    if (!ctx.children) return;
+    this._visit(ctx.LCURLY());
+    this.avoidSpaceBetween();
+    for (let i = 1; i < ctx.children.length - 1; i++) {
+      const child = ctx.children[i];
+      if (child instanceof PropertyTypeContext) {
+        this._visit(child);
+      } else if (child instanceof TerminalNode) {
+        this.visitTerminal(child);
+      }
+    }
+    this.avoidSpaceBetween();
+    this._visit(ctx.RCURLY());
+  };
+
+  visitLabelType = (ctx: LabelTypeContext) => {
+    this._visitTerminalRaw(ctx.COLON(), {
+      dontConcatenate: true,
+    });
+    this.avoidSpaceBetween();
+    this._visit(ctx.symbolicNameString());
+  };
+
+  visitImplies = (ctx: ImpliesContext) => {
+    if (ctx.EQ()) {
+      this._visit(ctx.EQ());
+      this.avoidSpaceBetween();
+      this.avoidBreakBetween();
+      this.visitTerminalRightArrow(ctx.rightArrow());
+    } else {
+      this._visit(ctx.IMPLIES());
+    }
+  };
+
+  //To avoid concatenating ">:" in cases like ":Pet => :Resident"
+  visitTerminalRightArrow = (ctx: RightArrowContext) => {
+    this._visitTerminalRaw(ctx.GT(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visitTerminalRaw(ctx.ARROW_RIGHT_HEAD(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+  };
+
+  visitGraphTypeSpecificationBody = (
+    ctx: GraphTypeSpecificationBodyContext,
+  ) => {
+    if (!ctx.children) {
+      return;
+    }
+    for (const c of ctx.children) {
+      if (c instanceof GraphTypeElementContext) {
+        this._visit(c);
+      } else if (c instanceof TerminalNode) {
+        this.visitTerminal(c);
+        this.breakLine();
+      }
+    }
+  };
+
+  visitImpliedLabelSet = (ctx: ImpliedLabelSetContext) => {
+    this._visit(ctx.labelType());
+    for (let i = 0; i < ctx.AMPERSAND().length; i++) {
+      this.avoidSpaceBetween();
+      this._visit(ctx.AMPERSAND(i));
+      this.avoidSpaceBetween();
+      this._visit(ctx.symbolicNameString(i));
+    }
+  };
+
   visitCommandOptions = (ctx: CommandOptionsContext) => {
     this.breakLine();
     const optionsGrp = this.startGroup();
@@ -759,7 +1162,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCommandNodePattern = (ctx: CommandNodePatternContext) => {
     this.visit(ctx.LPAREN());
     this.visit(ctx.variable());
-    this.concatenate();
+    this.avoidSpaceBetween();
     this.visit(ctx.labelType());
     this.concatenate();
     this.visit(ctx.RPAREN());
@@ -834,6 +1237,12 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.preserveExplicitNewlineAfter(ctx);
   };
 
+  visitForListClause = (ctx: ForListClauseContext) => {
+    const forListGroup = this.startGroup();
+    this.visitChildren(ctx);
+    this.endGroup(forListGroup);
+  };
+
   visitUseClause = (ctx: UseClauseContext) => {
     const useGrp = this.startGroup();
     this._visit(ctx.USE());
@@ -866,12 +1275,94 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.patternList());
     this.endGroup(patternListGrp);
     this.endGroup(matchClauseGrp);
+    this.removeIndentation(matchIndent);
+    this.breakLine();
     const n = ctx.hint().length;
     for (let i = 0; i < n; i++) {
       this._visit(ctx.hint(i));
+      this.breakLine();
     }
-    this.removeIndentation(matchIndent);
     this._visit(ctx.whereClause());
+    if (ctx.searchClause()) {
+      this.breakLine();
+      const searchIndent = this.addIndentation();
+      this.visit(ctx.searchClause());
+      this.removeIndentation(searchIndent);
+    }
+  };
+
+  visitHint = (ctx: HintContext) => {
+    this._visit(ctx.USING());
+    if (ctx.INDEX()) {
+      this._visit(ctx.TEXT());
+      this._visit(ctx.RANGE());
+      this._visit(ctx.POINT());
+      this._visit(ctx.INDEX());
+      this._visit(ctx.SEEK());
+      this._visit(ctx.variable());
+      this._visit(ctx.labelOrRelType());
+      this.avoidSpaceBetween();
+      this._visit(ctx.LPAREN());
+      this._visit(ctx.nonEmptyNameList());
+      this._visit(ctx.RPAREN());
+    } else if (ctx.JOIN()) {
+      this._visit(ctx.JOIN());
+      this._visit(ctx.ON());
+      this._visit(ctx.nonEmptyNameList());
+    } else if (ctx.SCAN()) {
+      this._visit(ctx.SCAN());
+      this._visit(ctx.variable());
+      this._visit(ctx.labelOrRelType());
+    } else if (ctx.EXPAND()) {
+      this._visit(ctx.EXPAND());
+      this._visit(ctx.expandHintStep(0));
+      for (let i = 1; i < ctx.expandHintStep().length; i++) {
+        this._visit(ctx.COMMA(i - 1));
+        this._visit(ctx.expandHintStep(i));
+      }
+    }
+  };
+
+  visitLabelOrRelType = (ctx: LabelOrRelTypeContext) => {
+    this._visit(ctx.COLON());
+    this.avoidSpaceBetween();
+    this._visit(ctx.symbolicNameString());
+  };
+
+  visitSearchClause = (ctx: SearchClauseContext) => {
+    this._visit(ctx.SEARCH());
+    this._visit(ctx.variable());
+    this._visit(ctx.IN());
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const innerIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.FULLTEXT());
+    this._visit(ctx.VECTOR());
+    this._visit(ctx.indexSpecificationClause());
+    this.breakLine();
+    this._visit(ctx.forClause());
+    if (ctx.analyzerClause()) {
+      this.breakLine();
+      this._visit(ctx.analyzerClause());
+    }
+    if (ctx.whereClause()) {
+      this.breakLine();
+      this._visit(ctx.whereClause());
+    }
+    if (ctx.skip()) {
+      this.breakLine();
+      this._visit(ctx.skip());
+    }
+    this.breakLine();
+    this._visit(ctx.limit());
+    this.removeIndentation(innerIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visit(ctx.scoreClause());
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
@@ -927,6 +1418,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.DISTINCT()) {
       this.avoidBreakBetween();
       this._visit(ctx.DISTINCT());
+    } else if (ctx.ALL()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.ALL());
     }
     const returnItemsIndent = this.addIndentation();
     this._visit(ctx.returnItems());
@@ -934,7 +1428,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   _visitReturnBodyNotItems = (ctx: ReturnBodyContext) => {
-    if (ctx.orderBy() || ctx.skip()) {
+    if (ctx.orderBy() || ctx.skip() || ctx.groupBy()) {
+      this.breakLine();
+      this._visit(ctx.groupBy());
       this.breakLine();
       this._visit(ctx.orderBy());
       this.breakLine();
@@ -1108,6 +1604,87 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation(reduceIndent);
   };
 
+  visitAllReduceExpressionValidArguments = (
+    ctx: AllReduceExpressionValidArgumentsContext,
+  ) => {
+    this._visitTerminalRaw(ctx.ALLREDUCE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    this.concatenate();
+    const reduceIndent = this.addIndentation();
+    const reduceExprGrp = this.startGroup();
+    const firstArgumentGrp = this.startGroup();
+    this.avoidSpaceBetween();
+    this._visit(ctx.variable(0));
+    this._visit(ctx.EQ());
+    this._visit(ctx.expression(0));
+    this._visitTerminalRaw(ctx.COMMA(0));
+    this.endGroup(firstArgumentGrp);
+    const secondArgumentGrp = this.startGroup();
+    const inGrp = this.startGroup();
+    this._visit(ctx.variable(1));
+    this._visit(ctx.IN());
+    this.setOneItemProperty();
+    this.endGroup(inGrp);
+    this._visit(ctx.expression(1));
+    this.avoidBreakBetween();
+    this._visit(ctx.BAR());
+    const expressionGrp = this.startGroup();
+    const reduceExprIndent = this.addIndentation();
+    this._visit(ctx.expression(2));
+    this._visitTerminalRaw(ctx.COMMA(1));
+    this._visit(ctx.expression(3));
+    this.removeIndentation(reduceExprIndent);
+    this.endGroup(expressionGrp);
+    this.endGroup(secondArgumentGrp);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(reduceExprGrp);
+    this.removeIndentation(reduceIndent);
+  };
+
+  // This is actually a rule for an invalid syntax - made for semantic analysis
+  // I figure we want this invalid syntax to be formatted as close to the valid syntax as possible
+  visitAllReduceExpressionInvalidArguments = (
+    ctx: AllReduceExpressionInvalidArgumentsContext,
+  ) => {
+    this._visitTerminalRaw(ctx.ALLREDUCE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    this.concatenate();
+    const reduceIndent = this.addIndentation();
+    const reduceExprGrp = this.startGroup();
+    const children = ctx?.children ?? [];
+    let argumentGrp: number = -1;
+    if (children.length > 2) {
+      this.avoidSpaceBetween();
+      for (let i = 2; i < children.length - 1; i++) {
+        const c = children[i];
+        if (c instanceof ExpressionContext) {
+          argumentGrp = this.startGroup();
+          this.visit(c);
+          //if either COMMA or BAR
+        } else if (c instanceof TerminalNode && argumentGrp !== -1) {
+          this.visit(c);
+          this.endGroup(argumentGrp);
+        }
+      }
+    }
+    this.endGroup(argumentGrp);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(reduceExprGrp);
+    this.removeIndentation(reduceIndent);
+  };
+
   // Handled separately to avoid spaces between a minus and a number
   visitNumberLiteral = (ctx: NumberLiteralContext) => {
     this._visitTerminalRaw(ctx.MINUS());
@@ -1123,6 +1700,23 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     if (ctx.IS()) {
       this._visit(ctx.IS());
+    } else {
+      this.avoidSpaceBetween();
+    }
+    this._visit(ctx.labelExpression4());
+  };
+
+  visitLabelComparison = (ctx: LabelComparisonContext) => {
+    this._visitTerminalRaw(ctx.COLON());
+    this.avoidBreakBetween();
+    if (ctx.IS()) {
+      this._visit(ctx.IS());
+      if (ctx.NOT()) {
+        this._visit(ctx.NOT());
+      }
+      if (ctx.LABELED()) {
+        this._visit(ctx.LABELED());
+      }
     } else {
       this.avoidSpaceBetween();
     }
@@ -1187,6 +1781,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTerminal = (node: TerminalNode) => {
+    this._emitPrecedingErrorNodes(node.symbol.tokenIndex);
     if (node.getText().startsWith(MISSING)) {
       return;
     }
@@ -1228,6 +1823,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // prop
   // the comment doesn't disappear
   visitTerminalRaw = (node: TerminalNode, options?: RawTerminalOptions) => {
+    this._emitPrecedingErrorNodes(node.symbol.tokenIndex);
     if (node.getText().startsWith(MISSING)) {
       return;
     }
@@ -1372,6 +1968,38 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const wrappingGrp = this.startGroup();
     this.visitChildren(ctx);
     this.endGroup(wrappingGrp);
+  };
+
+  // Path pattern prefix alternatives: keep keywords on one line
+  _visitPathPatternPrefixChildren = (ctx: ParserRuleContext) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      const child = ctx.getChild(i);
+      this._visit(child as ParserRuleContext | TerminalNode);
+      if (i < n - 1) {
+        this.avoidBreakBetween();
+      }
+    }
+  };
+
+  visitAllPath = (ctx: AllPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAnyPath = (ctx: AnyPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAllShortestPath = (ctx: AllShortestPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitAnyShortestPath = (ctx: AnyShortestPathContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
+  };
+
+  visitShortestGroup = (ctx: ShortestGroupContext) => {
+    this._visitPathPatternPrefixChildren(ctx);
   };
 
   visitArrowLine = (ctx: ArrowLineContext) => {
@@ -1943,6 +2571,114 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.endGroup(wholeCaseGrp);
   };
 
+  visitQueryWithLocalDefinitions = (ctx: QueryWithLocalDefinitionsContext) => {
+    for (let i = 0; i < ctx.localDefinition().length; i++) {
+      this.visit(ctx.DEFINE(i));
+      this.avoidBreakBetween();
+      this.visit(ctx.localDefinition(i));
+      this.breakLine();
+    }
+    this.visit(ctx.nextStatement());
+  };
+
+  visitLocalProcedureDefinition = (ctx: LocalProcedureDefinitionContext) => {
+    this._visit(ctx.procedureName());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.localInputFieldsSignature());
+    if (ctx.typed()) {
+      this._visit(ctx.typed());
+      this._visit(ctx.localOutputFieldsSignature());
+    }
+    this.avoidBreakBetween();
+    this._visit(ctx.LCURLY());
+    const queryIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.queryWithLocalDefinitions());
+    this.removeIndentation(queryIndent);
+    this.breakLine();
+    this._visit(ctx.RCURLY());
+  };
+
+  visitLocalFunctionDefinition = (ctx: LocalFunctionDefinitionContext) => {
+    this._visit(ctx.functionName());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.localInputFieldsSignature());
+    if (ctx.typed()) {
+      this._visit(ctx.typed());
+      this._visit(ctx.type_());
+    }
+    this._visit(ctx.localFunctionBody());
+  };
+
+  visitLocalInputFieldsSignature = (ctx: LocalInputFieldsSignatureContext) => {
+    const sigGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    const n = ctx.localOptionalFieldSignature().length;
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+        this.avoidSpaceBetween();
+      }
+      const argGrp = this.startGroup();
+      this._visit(ctx.localOptionalFieldSignature(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+      this.endGroup(argGrp);
+    }
+    if (n > 0) {
+      this.avoidSpaceBetween();
+    }
+    this.removeIndentation(argsIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(sigGrp);
+  };
+
+  visitLocalOutputFieldsSignature = (
+    ctx: LocalOutputFieldsSignatureContext,
+  ) => {
+    const sigGrp = this.startGroup();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    const n = ctx.localMandatoryFieldSignature().length;
+    for (let i = 0; i < n; i++) {
+      if (i === 0) {
+        this.avoidSpaceBetween();
+      }
+      const argGrp = this.startGroup();
+      this._visit(ctx.localMandatoryFieldSignature(i));
+      if (i < n - 1) {
+        this._visit(ctx.COMMA(i));
+      }
+      this.endGroup(argGrp);
+    }
+    if (n > 0) {
+      this.avoidSpaceBetween();
+    }
+    this.removeIndentation(argsIndent);
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(sigGrp);
+  };
+
+  visitQueryBody = (ctx: QueryBodyContext) => {
+    this.avoidBreakBetween();
+    this._visit(ctx.LCURLY());
+    const queryIndent = this.addIndentation();
+    this.breakLine();
+    this._visit(ctx.queryWithLocalDefinitions());
+    this.removeIndentation(queryIndent);
+    this.breakLine();
+    this._visit(ctx.RCURLY());
+  };
+
   // Handled separately because it wants indentation and line breaks
   visitSubqueryClause = (ctx: SubqueryClauseContext) => {
     this._visit(ctx.OPTIONAL());
@@ -1984,6 +2720,18 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(subqueryScopeGrp);
+  };
+
+  // Handled separately because NEXT wants line breaks between queries
+  visitNextStatement = (ctx: NextStatementContext) => {
+    this._visit(ctx.regularQuery(0));
+    const n = ctx.regularQuery().length - 1;
+    for (let i = 0; i < n; i++) {
+      this.doubleBreakBetween();
+      this._visit(ctx.NEXT(i));
+      this.doubleBreakBetween();
+      this._visit(ctx.regularQuery(i + 1));
+    }
   };
 
   // Handled separately because UNION wants to look a certain way
@@ -2035,6 +2783,48 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.COMMA(1));
     this._visit(ctx.vectorCoordinateType());
     this.removeIndentation(vectorArgsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
+  };
+
+  visitVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
+    const vectorGrp = this.startGroup();
+    this._visitTerminalRaw(ctx.VECTOR_DISTANCE());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    this.avoidSpaceBetween();
+    this._visit(ctx.expression(0));
+    this._visit(ctx.COMMA(0));
+    this._visit(ctx.expression(1));
+    this._visit(ctx.COMMA(1));
+    this._visit(ctx.vectorDistanceMetric());
+    this.removeIndentation(argsIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(vectorGrp);
+  };
+
+  visitVectorNormFunction = (ctx: VectorNormFunctionContext) => {
+    const vectorGrp = this.startGroup();
+    this._visitTerminalRaw(ctx.VECTOR_NORM());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.LPAREN());
+    const argsIndent = this.addIndentation();
+    this.avoidSpaceBetween();
+    this._visit(ctx.expression());
+    this._visit(ctx.COMMA());
+    this._visit(ctx.vectorNormDistanceMetric());
+    this.removeIndentation(argsIndent);
     this.avoidSpaceBetween();
     this._visitTerminalRaw(ctx.RPAREN(), {
       dontConcatenate: true,

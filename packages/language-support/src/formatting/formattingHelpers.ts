@@ -1,13 +1,13 @@
 import { CharStream, CommonTokenStream, TerminalNode, Token } from 'antlr4ng';
-import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer';
+import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser,
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
-} from '../generated-parser/CypherCmdParser';
-import { ErrorTrackingListener } from '../errorTrackingListener';
-import { lexerKeywords } from '../lexerSymbols';
-import { EnrichedParseTree, findParent, getStreamTokens } from '../helpers';
+} from '../generated-parser/CypherCmdParser.js';
+import { ErrorTrackingListener } from '../errorTrackingListener.js';
+import { lexerKeywords } from '../lexerSymbols.js';
+import { EnrichedParseTree, findParent, getStreamTokens } from '../helpers.js';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -31,7 +31,7 @@ export interface Group {
   dbgText: string;
 }
 
-export interface BaseChunk {
+interface BaseChunk {
   isCursor?: boolean;
   doubleBreak?: true;
   text: string;
@@ -232,27 +232,4 @@ export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
     }
   }
   return true;
-}
-
-export function getActiveGroups(
-  activeGroups: Group[],
-  groupsEnding: Set<number>,
-  chunk: Chunk,
-) {
-  for (const group of chunk.groupsStarting) {
-    activeGroups.push(group);
-  }
-  const newActiveGroups: Group[] = [];
-  for (const group of activeGroups) {
-    if (!groupsEnding.has(group.id)) {
-      newActiveGroups.push(group);
-    } else {
-      // Trim trailling spaces from groups that are ending
-      if (group.dbgText.at(-1) === ' ') {
-        group.size--;
-        group.dbgText = group.dbgText.slice(0, -1);
-      }
-    }
-  }
-  return newActiveGroups;
 }

@@ -1,7 +1,7 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { autocomplete } from '../../autocompletion/autocompletion';
-import { DbSchema } from '../../dbSchema';
-import { testCompletions } from './completionAssertionHelpers';
+import { DbSchema } from '../../dbSchema.js';
+import { testCompletions } from './completionAssertionHelpers.js';
+import { autocomplete } from '../../autocompletion/autocompletion.js';
 
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
@@ -446,12 +446,41 @@ describe('Completes parameters outside of databases, roles, user names', () => {
 
   test('Does not suggest duplicated parameters', () => {
     const query = 'CREATE ALIAS alias FOR DATABASE ';
-    const actualCompletionList = autocomplete(
-      query,
-      dbSchema,
-      query.length,
-    ).filter((v) => v.label.startsWith('$stringParam'));
+    const actualCompletionList = autocomplete(query, dbSchema).filter((v) =>
+      v.label.startsWith('$stringParam'),
+    );
 
     expect(actualCompletionList.length).toBe(1);
+  });
+
+  test('Suggests parameter in string interpolation', () => {
+    const query = 'MATCH (n) RETURN s"My param: { $';
+    testCompletions({
+      query,
+      dbSchema,
+      expected: [
+        {
+          label: '$mapParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'mapParam',
+        },
+        {
+          label: '$stringParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'stringParam',
+        },
+        {
+          label: '$intParam',
+          kind: CompletionItemKind.Variable,
+          insertText: 'intParam',
+        },
+        {
+          label: '$some param',
+          kind: CompletionItemKind.Variable,
+          insertText: '`some param`',
+        },
+      ],
+      excluded: [],
+    });
   });
 });

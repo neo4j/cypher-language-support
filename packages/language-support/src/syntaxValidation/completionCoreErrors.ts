@@ -1,14 +1,14 @@
 import { Token } from 'antlr4ng';
 import { distance } from 'fastest-levenshtein';
 import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
-import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
-import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
 import {
   CypherTokenType,
   keywordNames,
   lexerSymbols,
   tokenNames,
-} from '../lexerSymbols';
+} from '../lexerSymbols.js';
 
 /*
 We ask for 0.7 similarity (number between 0 and 1) for 
@@ -53,6 +53,7 @@ export function completionCoreErrormessage(
           [CypherParser.RULE_serverCompletionRule]: 'server',
           [CypherParser.RULE_readCompletionRule]: 'read',
           [CypherParser.RULE_writeCompletionRule]: 'write',
+          [CypherParser.RULE_autoCompletionRule]: 'auto',
         }
       : { [CypherParser.RULE_consoleCommand]: null }),
   };
@@ -69,6 +70,8 @@ export function completionCoreErrormessage(
 
   // If we can complete only a statement, we don't want to suggest that
   // We want to be using the database errors stack instead
+  // Exception: inside console commands (e.g. :auto) we do want to report
+  // statement-level errors since there's no database error stack for those
   if (
     ruleCandidates.length === 1 &&
     ruleCandidates[0] === CypherParser.RULE_statement

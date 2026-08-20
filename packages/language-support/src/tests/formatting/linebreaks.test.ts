@@ -1,6 +1,6 @@
-import { formatQuery } from '../../formatting/formatting';
-import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers';
-import { verifyFormatting } from './testutil';
+import { formatQuery } from '../../formatting/formatting.js';
+import { DEFAULT_MAX_COL } from '../../formatting/formattingHelpers.js';
+import { verifyFormatting } from './testutil.js';
 
 describe('tests for line breaks', () => {
   const q0 = `

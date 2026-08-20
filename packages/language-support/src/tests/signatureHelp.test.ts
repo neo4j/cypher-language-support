@@ -1,11 +1,11 @@
 import { SignatureHelp } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
+import { DbSchema } from '../dbSchema.js';
 import {
   emptyResult,
-  signatureHelp,
+  getSignatureInfo,
   toSignatureInformation,
-} from '../signatureHelp';
-import { testData } from './testData';
+} from '../signatureHelp.js';
+import { testData } from './testData.js';
 
 export function testSignatureHelp(
   fileText: string,
@@ -13,7 +13,9 @@ export function testSignatureHelp(
   expected: SignatureHelp,
   offset: number = fileText.length,
 ) {
-  const actualSignatureHelp = signatureHelp(fileText, dbSchema, offset);
+  const actualSignatureHelp = getSignatureInfo(fileText, dbSchema, {
+    caretPosition: offset,
+  });
 
   expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
   expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);

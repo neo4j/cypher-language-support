@@ -13,9 +13,25 @@ import {
   placeholder,
   ViewUpdate,
 } from '@codemirror/view';
-import { formatQuery, type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  createInlinePanelController,
+  type InlinePanelCallbacks,
+  type InlinePanelController,
+} from './inlinePanel';
+import { createDiffExtension, type DiffProps } from './diffView';
+import {
+  createEditorActionsController,
+  type EditorActionsCallbacks,
+  type EditorActionsController,
+} from './editorActions';
+import {
+  formatQuery,
+  CypherLanguageService,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
-import { Component, createRef } from 'react';
+import { Component, createRef, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { DEBOUNCE_TIME } from './constants';
 import {
   replaceHistory,
@@ -26,8 +42,23 @@ import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
+import { LintWorker } from '@neo4j-cypher/lint-worker';
+import workerpool from 'workerpool';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
+
+/**
+ * Normalize CRLF line endings to LF, which is what CodeMirror expects.
+ * CodeMirror collapses `\r\n` into a single line break, so a raw `value`
+ * string with CRLF endings is longer than the resulting document. Normalizing
+ * up front keeps the document length in sync with the value length used for
+ * cursor placement, and avoids "Selection points outside of document" errors.
+ * https://codemirror.net/docs/ref/#state.EditorState^lineSeparator
+ */
+function normalizeLineEndings(value: string): string {
+  return value.replace(/\r\n/g, '\n');
+}
+
 export interface CypherEditorProps {
   /**
    * The prompt to show on single line editors
@@ -174,7 +205,36 @@ export interface CypherEditorProps {
    * @default false
    */
   moveFocusOnTab?: boolean;
+  /**
+   * Render a panel as a block widget inside the editor.
+   * The widget DOM is only rebuilt when `pos` or `placement` change
+   */
+  inlinePanel?: InlinePanelProps | null;
+  /**
+   * Render a unified diff of the current document against `diff.original`.
+   * Deleted lines are shown as uneditable widgets.
+   */
+  diff?: DiffProps | null;
+  /**
+   * React content rendered as a cluster of action buttons (e.g. a context menu
+   * + Run) pinned to the top-right corner of the editor. Omit (or `null`) to
+   * hide it.
+   */
+  editorActions?: ReactNode;
 }
+
+export type InlinePanelProps = {
+  /**
+   * Position the panel anchors to.
+   */
+  pos: number;
+  /**
+   * Whether to render above or below the line
+   *
+   * @default 'above'
+   */
+  placement?: 'above' | 'below';
+} & InlinePanelCallbacks;
 
 const format = (view: EditorView): void => {
   try {
@@ -262,6 +322,7 @@ const lineNumbersCompartment = new Compartment();
 const readOnlyCompartment = new Compartment();
 const placeholderCompartment = new Compartment();
 const domEventHandlerCompartment = new Compartment();
+const diffCompartment = new Compartment();
 
 const formatLineNumber =
   (prompt?: string) => (a: number, state: EditorState) => {
@@ -272,14 +333,79 @@ const formatLineNumber =
     return a.toString();
   };
 
-type CypherEditorState = { cypherSupportEnabled: boolean };
+type CypherEditorState = {
+  editorActionsContainer: HTMLElement | null;
+};
 
 const ExternalEdit = Annotation.define<boolean>();
+const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
+  .pathname;
+
+class CodemirrorSymbolFetcher {
+  constructor(languageService: CypherLanguageService) {
+    this.languageService = languageService;
+  }
+  private languageService: CypherLanguageService;
+  private processing = false;
+  private nextJob:
+    | {
+        query: string;
+        schema: DbSchema;
+      }
+    | undefined;
+  private symbolTablePool = workerpool.pool(WorkerURL, {
+    minWorkers: 1,
+    workerOpts: { type: 'module' },
+    workerTerminateTimeout: 2000,
+  });
+
+  public queueSymbolJob(query: string, schema: DbSchema) {
+    this.nextJob = { query, schema };
+    if (!this.processing) {
+      void this.processJobQueue();
+    }
+  }
+
+  public terminate() {
+    this.nextJob = undefined;
+    void this.symbolTablePool.terminate();
+  }
+
+  private async processJobQueue() {
+    this.processing = true;
+    while (this.nextJob) {
+      try {
+        const query = this.nextJob.query;
+        const dbSchema = this.nextJob.schema;
+        this.nextJob = undefined;
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
+
+        const result = await proxyWorker.lintCypherQuery(query, dbSchema);
+
+        if (result.symbolTables) {
+          this.languageService.setSymbolsInfo({
+            query,
+            symbolTables: result.symbolTables,
+          });
+        }
+      } catch (err) {
+        //eslint-disable-next-line
+        console.log('Symbol table calculation failed ' + String(err));
+      }
+    }
+    this.processing = false;
+  }
+}
 
 export class CypherEditor extends Component<
   CypherEditorProps,
   CypherEditorState
 > {
+  /**
+   * The symbol fetcher object used to fetch the current symbol table on document changes
+   */
+  symbolFetcher: CodemirrorSymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -293,6 +419,18 @@ export class CypherEditor extends Component<
    */
   editorView: React.MutableRefObject<EditorView> = createRef();
   private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+  private inlinePanelController: InlinePanelController | null = null;
+  private editorActionsController: EditorActionsController | null = null;
+
+  state: CypherEditorState = {
+    editorActionsContainer: null,
+  };
+
+  private editorActionsCallbacks: EditorActionsCallbacks = {
+    onMount: (container) =>
+      this.setState({ editorActionsContainer: container }),
+    onUnmount: () => this.setState({ editorActionsContainer: null }),
+  };
 
   /**
    * Format Cypher query
@@ -313,8 +451,17 @@ export class CypherEditor extends Component<
    * For example, to move the cursor to the end of the editor, use `value.length`
    */
   updateCursorPosition(position: number) {
-    this.editorView.current?.dispatch({
-      selection: { anchor: position, head: position },
+    const view = this.editorView.current;
+    if (!view) {
+      return;
+    }
+
+    // Clamp to the doc length; `position` may come from a raw value longer than
+    // the doc (e.g. CRLF endings), which would throw "Selection points outside
+    // of document".
+    const clamped = Math.max(0, Math.min(position, view.state.doc.length));
+    view.dispatch({
+      selection: { anchor: clamped, head: clamped },
     });
   }
 
@@ -323,10 +470,7 @@ export class CypherEditor extends Component<
    */
   setValueAndFocus(value = '') {
     const currentCmValue = this.editorView.current.state?.doc.toString() ?? '';
-    // Normalize line endings to LF that CM expects.
-    // Prevents issues with inserted values that contain CRLF line endings.
-    // https://codemirror.net/docs/ref/?utm_source=chatgpt.com#state.EditorState^lineSeparator
-    const normalizedValue = value.replace(/\r\n/g, '\n');
+    const normalizedValue = normalizeLineEndings(value);
     this.editorView.current.dispatch({
       changes: {
         from: 0,
@@ -379,6 +523,7 @@ export class CypherEditor extends Component<
     } = this.props;
 
     this.schemaRef.current = {
+      languageService: new CypherLanguageService(),
       schema,
       lint,
       showSignatureTooltipBelow,
@@ -394,14 +539,27 @@ export class CypherEditor extends Component<
       },
     };
 
+    this.symbolFetcher = new CodemirrorSymbolFetcher(
+      this.schemaRef.current.languageService,
+    );
+
     const themeExtension = getThemeExtension(
       theme,
       overrideThemeBackgroundColor,
     );
 
+    this.inlinePanelController = createInlinePanelController();
+    this.editorActionsController = createEditorActionsController();
+
     const changeListener = this.debouncedOnChange
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
+            if (upt.docChanged) {
+              this.symbolFetcher.queueSymbolJob(
+                upt.state.doc.toString(),
+                this.schemaRef.current.schema,
+              );
+            }
             const wasUserEdit = !upt.transactions.some((tr) =>
               tr.annotation(ExternalEdit),
             );
@@ -452,8 +610,19 @@ export class CypherEditor extends Component<
               'aria-label': this.props.ariaLabel,
             })
           : [],
+        !this.props.moveFocusOnTab
+          ? EditorView.contentAttributes.of({
+              'aria-description':
+                'Press Escape to leave the editor and continue tabbing through the page',
+            })
+          : [],
+        this.inlinePanelController.extension,
+        diffCompartment.of(
+          this.props.diff ? createDiffExtension(this.props.diff) : [],
+        ),
+        this.editorActionsController.extension,
       ],
-      doc: this.props.value,
+      doc: normalizeLineEndings(this.props.value ?? ''),
     });
 
     this.editorView.current = new EditorView({
@@ -469,6 +638,69 @@ export class CypherEditor extends Component<
     } else if (this.props.offset) {
       this.updateCursorPosition(this.props.offset);
     }
+
+    if (this.props.inlinePanel) {
+      this.openInlinePanel(this.props.inlinePanel);
+    }
+
+    if (this.props.editorActions != null) {
+      this.setEditorActions(true);
+    }
+  }
+
+  private setEditorActions(active: boolean): void {
+    const view = this.editorView.current;
+    const controller = this.editorActionsController;
+    if (!view || !controller) {
+      return;
+    }
+
+    view.dispatch({
+      effects: controller.set(active ? this.editorActionsCallbacks : null),
+    });
+  }
+
+  private openInlinePanel(
+    props: NonNullable<CypherEditorProps['inlinePanel']>,
+  ): void {
+    const view = this.editorView.current;
+    const controller = this.inlinePanelController;
+    if (!view || !controller) {
+      return;
+    }
+
+    const pos = Math.max(0, Math.min(props.pos, view.state.doc.length));
+    const line = view.state.doc.lineAt(pos);
+    controller.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
+    });
+    view.dispatch({
+      effects: controller.show({
+        pos: props.placement === 'below' ? line.to : line.from,
+        placement: props.placement,
+        onMount: props.onMount,
+        onUnmount: props.onUnmount,
+      }),
+    });
+  }
+
+  private updateInlinePanel(
+    props: NonNullable<CypherEditorProps['inlinePanel']>,
+  ): void {
+    this.inlinePanelController?.updateCallbacks({
+      onMount: props.onMount,
+      onUnmount: props.onUnmount,
+    });
+  }
+
+  private closeInlinePanel(): void {
+    const view = this.editorView.current;
+    const controller = this.inlinePanelController;
+    if (!view || !controller) {
+      return;
+    }
+    view.dispatch({ effects: controller.hide() });
   }
 
   componentDidUpdate(prevProps: CypherEditorProps): void {
@@ -488,7 +720,7 @@ export class CypherEditor extends Component<
         changes: {
           from: 0,
           to: currentCmValue.length,
-          insert: this.props.value ?? '',
+          insert: normalizeLineEndings(this.props.value ?? ''),
         },
         annotations: [ExternalEdit.of(true)],
       });
@@ -558,6 +790,36 @@ export class CypherEditor extends Component<
       });
     }
 
+    const prevPanel = prevProps.inlinePanel;
+    const nextPanel = this.props.inlinePanel;
+    if (prevPanel !== nextPanel) {
+      if (!nextPanel) {
+        this.closeInlinePanel();
+      } else if (
+        !prevPanel ||
+        prevPanel.pos !== nextPanel.pos ||
+        prevPanel.placement !== nextPanel.placement
+      ) {
+        this.openInlinePanel(nextPanel);
+      } else {
+        this.updateInlinePanel(nextPanel);
+      }
+    }
+
+    if (prevProps.diff?.original !== this.props.diff?.original) {
+      this.editorView.current.dispatch({
+        effects: diffCompartment.reconfigure(
+          this.props.diff ? createDiffExtension(this.props.diff) : [],
+        ),
+      });
+    }
+
+    const hadActions = prevProps.editorActions != null;
+    const hasActions = this.props.editorActions != null;
+    if (hadActions !== hasActions) {
+      this.setEditorActions(hasActions);
+    }
+
     if (prevProps.domEventHandlers !== this.props.domEventHandlers) {
       this.editorView.current.dispatch({
         effects: domEventHandlerCompartment.reconfigure(
@@ -592,6 +854,7 @@ export class CypherEditor extends Component<
 
   componentWillUnmount(): void {
     this.editorView.current?.destroy();
+    this.symbolFetcher?.terminate();
     cleanupWorkers();
   }
 
@@ -601,11 +864,16 @@ export class CypherEditor extends Component<
     const themeClass =
       typeof theme === 'string' ? `cm-theme-${theme}` : 'cm-theme';
 
+    const { editorActionsContainer } = this.state;
+
     return (
       <div
         ref={this.editorContainer}
         className={`${themeClass}${className ? ` ${className}` : ''}`}
-      />
+      >
+        {editorActionsContainer &&
+          createPortal(this.props.editorActions, editorActionsContainer)}
+      </div>
     );
   }
 }

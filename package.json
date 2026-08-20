@@ -22,6 +22,7 @@
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
     "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
+    "check-imports": "! grep -rn --include='*.ts' --exclude-dir=node_modules --exclude-dir=generated-parser --exclude-dir=generated \"from '\\./\\|from '\\.\\./\" packages/language-support/src packages/query-tools/src packages/lint-worker/src vendor/antlr4-c3/src vendor/antlr4-c3/index.ts vendor/antlr4-c3/tests | grep -v \"\\.js'\" | grep -v \"\\.json'\" | grep -v \"\\.mjs'\" && echo 'All relative imports have file extensions.'",
     "lint": "oxlint --type-aware --max-warnings 0",
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",
@@ -36,6 +37,7 @@
     "cross-env": "^7.0.3",
     "esbuild": "^0.27.1",
     "husky": "^8.0.0",
+    "knip": "^6.30.0",
     "lint-staged": "^16.1.2",
     "oxfmt": "^0.35.0",
     "oxlint": "^1.50.0",
@@ -51,6 +53,5 @@
     "node": ">=24.11.1",
     "vscode": "^1.22.0"
   },
-  "engineStrict": true,
   "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"
 }

@@ -20,11 +20,13 @@ import {
 type InclusionTestArgs = {
   docUri: vscode.Uri;
   expected: vscode.Diagnostic[];
+  timeoutMs?: number;
 };
 
 export async function testSyntaxValidation({
   docUri,
   expected,
+  timeoutMs,
 }: InclusionTestArgs) {
   await eventually(
     () =>
@@ -66,6 +68,7 @@ export async function testSyntaxValidation({
           reject(e);
         }
       }),
+    timeoutMs,
   );
 }
 
@@ -74,7 +77,8 @@ suite('Syntax validation spec', () => {
     await toggleLinting(true);
   });
 
-  test('Suggests replacements for deprecated functions/procedures', async () => {
+  test('Suggests replacements for deprecated functions/procedures', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -100,10 +104,12 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
+      timeoutMs: 40000,
     });
   });
 
-  test('Relints when database connected / disconnected', async () => {
+  test('Relints when database connected / disconnected', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -125,16 +131,19 @@ suite('Syntax validation spec', () => {
     await testSyntaxValidation({
       docUri,
       expected: deprecationErrors,
+      timeoutMs: 40000,
     });
     await disconnectDefault();
     await testSyntaxValidation({
       docUri,
       expected: [],
+      timeoutMs: 40000,
     });
     await connectDefault();
     await testSyntaxValidation({
       docUri,
       expected: deprecationErrors,
+      timeoutMs: 40000,
     });
   });
 
@@ -164,7 +173,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
@@ -204,7 +213,7 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
-            new vscode.Position(0, 0),
+            new vscode.Position(0, 9),
             new vscode.Position(0, 9),
           ),
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
@@ -238,10 +247,26 @@ suite('Syntax validation spec', () => {
       expected: [
         new vscode.Diagnostic(
           new vscode.Range(
+            new vscode.Position(0, 8),
+            new vscode.Position(0, 32),
+          ),
+          '[:ACTED_IN] has no incoming (:Person)',
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
             new vscode.Position(0, 11),
             new vscode.Position(0, 17),
           ),
           "Label Person is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 18),
+            new vscode.Position(0, 65),
+          ),
+          '(:Movie) has no incoming [:ACTED_IN]',
           vscode.DiagnosticSeverity.Warning,
         ),
         new vscode.Diagnostic(
@@ -258,6 +283,14 @@ suite('Syntax validation spec', () => {
             new vscode.Position(0, 40),
           ),
           "Label Movie is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 43),
+            new vscode.Position(0, 48),
+          ),
+          "title is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
@@ -326,7 +359,8 @@ suite('Syntax validation spec', () => {
     });
   });
 
-  test('Linting can be disabled with the config option', async () => {
+  test('Linting can be disabled with the config option', async function () {
+    this.timeout(60000);
     const textFile = 'deprecated-by.cypher';
     const docUri = getDocumentUri(textFile);
 
@@ -352,12 +386,14 @@ suite('Syntax validation spec', () => {
           vscode.DiagnosticSeverity.Warning,
         ),
       ],
+      timeoutMs: 40000,
     });
 
     await toggleLinting(false);
     await testSyntaxValidation({
       docUri,
       expected: [],
+      timeoutMs: 40000,
     });
   });
 });

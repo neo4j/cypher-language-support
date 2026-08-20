@@ -33,7 +33,7 @@ jobs:
     needs: check-day-of-month
     if: ${{ needs.check-day-of-month.outputs.skip == 'false' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
 
       - name: Set Up Git User
         run: |
@@ -41,7 +41,7 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
       - name: Configure AWS CLI
-        uses: aws-actions/configure-aws-credentials@v2
+        uses: aws-actions/configure-aws-credentials@254c19bd240aabef8777f48595e9d2d7b972184b # v6.2.1
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_USERNAME }}
           aws-secret-access-key: ${{ secrets.AWS_ACCESS_PASSWORD }}
@@ -116,7 +116,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.git-check.outputs.modified == 'true'
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@5f6978faf089d4d20b00c7766989d076bb2fc7f1 # v8.1.1
         with:
           token: ${{ secrets.BROWSER_BOT_PAT }}
           branch: ${{ env.BRANCH_NAME }}

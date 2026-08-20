@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/lint-worker",
-  "version": "1.10.1-next.6",
+  "version": "1.10.1-next.14",
   "description": "Cypher Lint Worker",
   "keywords": [
     "cypher",
@@ -47,19 +47,15 @@
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
-    "@neo4j-cypher/query-tools": "workspace:*",
-    "axios": "^1.9.0",
+    "axios": "^1.15.2",
     "languageSupport-next.13": "npm:@neo4j-cypher/language-support@2.0.0-next.13",
-    "vscode-languageserver": "^8.1.0",
     "vscode-languageserver-types": "^3.17.3",
     "workerpool": "^9.3.3"
   },
   "devDependencies": {
-    "@types/lodash.debounce": "^4.0.9",
     "@types/semver": "^7.7.0"
   },
   "engines": {
     "node": ">=24.11.1"
-  },
-  "engineStrict": true
+  }
 }

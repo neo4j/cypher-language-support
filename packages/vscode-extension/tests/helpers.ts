@@ -44,6 +44,12 @@ export async function eventually(
   timeoutMs = 15000,
   backoffMs = 100,
 ) {
+  // Cap the backoff so the retry interval stays small. Without a cap the
+  // exponential growth means we both poll very rarely near the end (a correct
+  // state can appear and not be noticed for tens of seconds) and overshoot
+  // `timeoutMs` in wall-clock time by ~2x, so mocha's own timeout fires first
+  // and hides the real assertion error.
+  const maxBackoffMs = 5000;
   let totalWait = 0;
   let wait = backoffMs;
   let succeeded = false;
@@ -53,16 +59,15 @@ export async function eventually(
       await assertion();
       succeeded = true;
     } catch (e) {
-      totalWait += wait;
       if (totalWait > timeoutMs) {
         throw new Error(
           // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           `Timeout of ${timeoutMs} exceeded for test with last error: ${e}`,
         );
-      } else {
-        wait *= 2;
-        await sleep(wait);
       }
+      await sleep(wait);
+      totalWait += wait;
+      wait = Math.min(wait * 2, maxBackoffMs);
     }
   }
 }

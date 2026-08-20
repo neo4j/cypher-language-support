@@ -13,16 +13,16 @@ import {
 import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   DbSchema,
-  parserWrapper,
   SymbolTable,
-  syntaxColouringLegend,
+  syntaxHighlightingLegend,
+  CypherLanguageService,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
 import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
-import { applySyntaxColouringForDocument } from './syntaxColouring';
+import { highlightSyntaxForDocument } from './syntaxHighlighting';
 import {
   LintWorkerSettings,
   Neo4jConnectionSettings,
@@ -35,14 +35,19 @@ import { join } from 'path';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
+export const languageService = new CypherLanguageService({
+  consoleCommandsEnabled: false,
+});
 
 class SymbolFetcher {
   private processing = false;
-  private nextJob: {
-    query: string;
-    uri: string;
-    schema: DbSchema;
-  };
+  private nextJob:
+    | {
+        query: string;
+        uri: string;
+        schema: DbSchema;
+      }
+    | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
     maxWorkers: 1,
     workerTerminateTimeout: 0,
@@ -71,12 +76,12 @@ class SymbolFetcher {
     this.processing = true;
     while (this.nextJob) {
       try {
-        const proxyWorker =
-          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const query = this.nextJob.query;
         const dbSchema = this.nextJob.schema;
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
+        const proxyWorker =
+          (await this.symbolTablePool.proxy()) as unknown as LintWorker;
         const fixedDbSchema = convertDbSchema(dbSchema, this.linterVersion);
 
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
@@ -86,7 +91,7 @@ class SymbolFetcher {
           result.symbolTables &&
           !(this.nextJob && this.nextJob.uri != docUri)
         ) {
-          parserWrapper.setSymbolsInfo(
+          languageService.setSymbolsInfo(
             {
               query,
               symbolTables: result.symbolTables,
@@ -158,7 +163,7 @@ connection.onInitialize(() => {
       },
       semanticTokensProvider: {
         documentSelector: [{ language: 'cypher' }],
-        legend: syntaxColouringLegend,
+        legend: syntaxHighlightingLegend,
         range: false,
         full: {
           delta: false,
@@ -181,7 +186,7 @@ connection.onInitialized(() => {
 
   const registrationOptions: SemanticTokensRegistrationOptions = {
     documentSelector: [{ language: 'cypher' }],
-    legend: syntaxColouringLegend,
+    legend: syntaxHighlightingLegend,
     range: false,
     full: {
       delta: false,
@@ -201,10 +206,8 @@ connection.onDidChangeConfiguration((params) => {
 
 documents.onDidChangeContent((change) => lintSingleDocument(change.document));
 
-// Trigger the syntax colouring
-connection.languages.semanticTokens.on(
-  applySyntaxColouringForDocument(documents),
-);
+// Trigger the syntax highlighting
+connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
 
 // Trigger the signature help, providing info about functions / procedures
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
@@ -243,14 +246,8 @@ connection.onNotification(
     version: number;
     schema: DbSchema;
   }) => {
-    neo4jSchemaPoller.events.once(
-      'schemaFetched',
-      // oxlint-disable-next-line typescript-eslint/no-meaningless-void-operator
-      void symbolFetcher.queueSymbolJob(
-        params.query,
-        params.uri,
-        params.schema,
-      ),
+    neo4jSchemaPoller.events.once('schemaFetched', () =>
+      symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema),
     );
   },
 );

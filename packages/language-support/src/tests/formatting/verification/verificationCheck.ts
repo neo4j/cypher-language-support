@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { formatQuery } from '../../../formatting/formatting';
-import { standardizeQuery } from '../../../formatting/standardizer';
+import { formatQuery } from '../../../formatting/formatting.js';
+import { standardizeQuery } from '../../../formatting/standardizer.js';
 
 function throwError(message: string, query: string, formatted: string): never {
   throw new Error(`${message},

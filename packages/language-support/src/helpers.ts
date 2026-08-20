@@ -6,16 +6,16 @@ import {
   Token,
   Trees,
 } from 'antlr4ng';
-import { DbSchema } from './dbSchema';
-import { CypherCmdLexer } from './generated-parser/CypherCmdLexer';
+import { DbSchema } from './dbSchema.js';
+import { CypherCmdLexer } from './generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsOrCommandsContext,
-} from './generated-parser/CypherCmdParser';
-import { ParsedStatement, ParsingResult } from './parserWrapper';
-import { CypherVersion } from './types';
+} from './generated-parser/CypherCmdParser.js';
+import { ParsedStatement, ParsingResult } from './cypherLanguageService.js';
+import { CypherVersion } from './types.js';
 
 /* In antlr we have
 
@@ -58,6 +58,7 @@ export function findStopNode(root: StatementsOrCommandsContext) {
   return current;
 }
 
+/** Find the first parent recursively in the tree matching the condition */
 export function findParent(
   leaf: EnrichedParseTree | undefined,
   condition: (node: EnrichedParseTree) => boolean,
@@ -230,6 +231,23 @@ export function resolveCypherVersion(
     parsedVersion ?? dbSchema.defaultLanguage ?? 'CYPHER 5';
 
   return cypherVersion;
+}
+
+export function getDirection(
+  rel: RelationshipPatternContext,
+): 'right' | 'left' | 'undirected' {
+  // An unfinished relationship (no closing `]`) has an ambiguous direction, so
+  // it is treated as undirected.
+  const complete = Boolean(rel.RBRACKET());
+  const hasLeft = Boolean(rel.leftArrow());
+  const hasRight = Boolean(rel.rightArrow());
+  if (complete && hasRight && !hasLeft) {
+    return 'right';
+  }
+  if (complete && hasLeft && !hasRight) {
+    return 'left';
+  }
+  return 'undirected';
 }
 
 export const rulesDefiningVariables = [

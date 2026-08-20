@@ -10,7 +10,52 @@ Try it out in our [demo](https://neo4j.github.io/cypher-language-support/) or in
 
 ## Project Overview
 
-![](./imgs/repo-overview.png)
+```mermaid
+---
+config:
+  theme: 'base'
+  themeVariables:
+    primaryColor: '#EDF0FD'
+    primaryTextColor: '#0A0F25'
+    secondaryTextColor: '#0A0F25'
+    primaryBorderColor: '#0D32B2'
+    lineColor: '#0D32B2'
+    secondaryColor: '#E3E9FD'
+    tertiaryColor: '#E3E9FD'
+    tertiaryBorderColor: '#0D32B2'
+---
+flowchart TD
+    subgraph CLS[Cypher Language Support]
+    direction TD
+    VSE(vscode-extension)
+    RCP(react-codemirror-playground)
+    RCM(react-codemirror)
+    LS(language-server)
+    POLLER(schema-poller)
+    
+    subgraph LT[language tooling]
+    LSUPPORT(language-support)
+    LINTWORKER(lint-worker)
+    end
+
+
+
+    subgraph Neo4j [Neo4j Mono Repo]
+    direction TD
+    GRAMMAR(ANTLR4 Grammar)
+    SA(SemanticAnalysis)
+    end
+
+    RCP -->|used to demo| RCM
+    VSE -->|bundles and launches|LS
+    LS -->|powered by|LT
+    RCM -->|powered by|LT
+    LS -->|used to manage neo4j connection|POLLER
+
+
+    LSUPPORT -->|Import ANTLR4 cypher grammar & semantic analysis compiled to js|Neo4j
+    end
+```
 
 The project comprises several packages:
 

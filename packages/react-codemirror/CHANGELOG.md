@@ -1,5 +1,90 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.40
+
+### Minor Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- 9266800: normalize CRLF line endings
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [ce3820b]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/language-support@2.0.0-next.37
+  - @neo4j-cypher/lint-worker@1.10.1-next.14
+
+## 2.0.0-next.39
+
+### Patch Changes
+
+- Updated dependencies [50f061e]
+  - @neo4j-cypher/language-support@2.0.0-next.36
+  - @neo4j-cypher/lint-worker@1.10.1-next.13
+
+## 2.0.0-next.38
+
+### Patch Changes
+
+- 6866132: Update grammar and semantic analysis to 2026.07
+- 9c65003: Declares `react-dom` as a peer dependency, since `CypherEditor` now imports `createPortal` from it to render the editor action buttons overlay
+- Updated dependencies [6866132]
+  - @neo4j-cypher/language-support@2.0.0-next.35
+  - @neo4j-cypher/lint-worker@1.10.1-next.12
+
+## 2.0.0-next.37
+
+### Patch Changes
+
+- b616748: Add diff view to the Cypher editor using @codemirror/merge
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/language-support@2.0.0-next.34
+  - @neo4j-cypher/lint-worker@1.10.1-next.11
+
+## 2.0.0-next.36
+
+### Patch Changes
+
+- 2d5fa77: Add `inlinePanel` prop to `CypherEditor` for rendering a host-controlled panel as a block widget inside the editor.
+- 02df611: Hide parameter errors when disconnected
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/language-support@2.0.0-next.33
+  - @neo4j-cypher/lint-worker@1.10.1-next.10
+
+## 2.0.0-next.35
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- Updated dependencies [cd4ab49]
+- Updated dependencies [0b2d441]
+  - @neo4j-cypher/language-support@2.0.0-next.32
+  - @neo4j-cypher/lint-worker@1.10.1-next.9
+
+## 2.0.0-next.34
+
+### Patch Changes
+
+- 3b2faf5: Rewrite global parserWrapper to instantiated languageService and add symbol fetching to react-codemirror
+- Updated dependencies [08f94af]
+- Updated dependencies [0763d97]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [ca1bba6]
+  - @neo4j-cypher/language-support@2.0.0-next.31
+  - @neo4j-cypher/lint-worker@1.10.1-next.8
+
+## 2.0.0-next.33
+
+### Patch Changes
+
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/language-support@2.0.0-next.30
+  - @neo4j-cypher/lint-worker@1.10.1-next.7
+
 ## 2.0.0-next.32
 
 ### Patch Changes

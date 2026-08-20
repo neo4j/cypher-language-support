@@ -15,7 +15,6 @@
  * limitations under the License.
  */
 lexer grammar Cypher25Lexer;
-
 SPACE
    : ( '\u0009'
       | '\n' //can't parse this in unicode
@@ -89,8 +88,6 @@ STRING_LITERAL2
    : '"' (~["\\] | EscapeSequence)* '"'
    ;
 
-// In Cypher it is allowed to have any character following a backslash.
-// In the cases it is an actual escape code it is handled in the AST builder.
 fragment EscapeSequence
    : '\\' .
    ;
@@ -147,6 +144,10 @@ ALTER
    : A L T E R
    ;
 
+ANALYZER
+   : A N A L Y Z E R
+   ;
+
 AND
    : A N D
    ;
@@ -181,6 +182,10 @@ AT
 
 AUTH
    : A U T H
+   ;
+
+AUTO
+   : A U T O
    ;
 
 BAR
@@ -311,6 +316,10 @@ CREDENTIAL
    : C R E D E N T I A L
    ;
 
+CREDENTIALS
+   : C R E D E N T I A L S
+   ;
+
 CSV
    : C S V
    ;
@@ -395,6 +404,10 @@ DOLLAR
    : '$'
    ;
 
+DISJOINT
+   : D I S J O I N T
+   ;
+
 DISTINCT
    : D I S T I N C T
    ;
@@ -470,11 +483,11 @@ ENABLED
 ENCRYPTED
    : E N C R Y P T E D
    ;
-   
+
 EUCLIDEAN
     : E U C L I D E A N
     ;
-   
+
 EUCLIDEAN_SQUARED
     : E U C L I D E A N UNDERSCORE S Q U A R E D
     ;
@@ -509,6 +522,10 @@ EXISTENCE
 
 EXISTS
    : E X I S T S
+   ;
+
+EXPAND
+   : E X P A N D
    ;
 
 ERROR
@@ -654,6 +671,10 @@ INSERT
    : I N S E R T
    ;
 
+INTO
+   : I N T O
+   ;
+
 INT
    : I N T
    ;
@@ -704,6 +725,10 @@ LABEL
    : L A B E L
    ;
 
+LABELED
+   : L A B E L E D
+   ;
+
 LABELS
    : L A B E L S
    ;
@@ -725,7 +750,7 @@ LBRACKET
    ;
 
 LCURLY
-   : '{'
+   : '{' -> pushMode(DEFAULT_MODE)
    ;
 
 LE
@@ -786,6 +811,10 @@ MATCH
 
 MERGE
    : M E R G E
+   ;
+
+METADATA
+   : M E T A D A T A
    ;
 
 MINUS
@@ -996,6 +1025,10 @@ PROPERTIES
    : P R O P E R T I E S
    ;
 
+PROPERTY_EXISTS
+   : P R O P E R T Y '_' E X I S T S
+   ;
+
 PROPERTY
    : P R O P E R T Y
    ;
@@ -1021,7 +1054,7 @@ RBRACKET
    ;
 
 RCURLY
-   : '}'
+   : '}' { if (!_modeStack.isEmpty()) popMode(); }
    ;
 
 READ
@@ -1164,6 +1197,14 @@ SECONDS
    : S E C O N D S
    ;
 
+SECRET
+   : S E C R E T
+   ;
+
+SECRETS
+   : S E C R E T S
+   ;
+
 SEEK
    : S E E K
    ;
@@ -1252,6 +1293,14 @@ SUSPENDED
    : S U S P E N D E D
    ;
 
+TAG
+   : T A G
+   ;
+
+TAGS
+   : T A G S
+   ;
+
 TARGET
    : T A R G E T
    ;
@@ -1332,6 +1381,10 @@ TYPES
    : T Y P E S
    ;
 
+UUID
+   : U U I D
+   ;
+
 UNION
    : U N I O N
    ;
@@ -1374,6 +1427,10 @@ VALUE
 
 VARCHAR
    : V A R C H A R
+   ;
+
+VIA
+   : V I A
    ;
 
 VECTOR
@@ -1444,6 +1501,15 @@ IDENTIFIER
 EXTENDED_IDENTIFIER
    : PART_LETTER+
    ;
+
+INTERPOLATED_START_SINGLE
+   : [sS] '\'' -> pushMode(TEXT_SINGLE)
+   ;
+
+INTERPOLATED_START_DOUBLE
+   : [sS] '"'  -> pushMode(TEXT_DOUBLE)
+   ;
+
 
 ARROW_LINE
    : [\-\u00AD‐‑‒–—―﹘﹣－]
@@ -1611,12 +1677,48 @@ fragment EIGHT
 fragment NINE
    : [9]
    ;
-   
-fragment UNDERSCORE 
-       : [\u005F]
-       ;
+
+fragment UNDERSCORE
+   : [\u005F]
+   ;
 
 // Should always be last in the file before modes
 ErrorChar
     : .
     ;
+
+mode TEXT_SINGLE;
+
+INTERPOLATED_EXPR_START_SINGLE
+   : [{] -> pushMode(DEFAULT_MODE)
+   ;
+
+INTERPOLATED_END_SINGLE
+   : '\'' -> popMode
+   ;
+
+INTERPOLATED_TEXT_SINGLE
+   : (~['{}\\] | EscapeSequence)+
+   ;
+
+INTERPOLATED_UNEXPECTED_RCURLY_SINGLE
+   : [}]
+   ;
+
+mode TEXT_DOUBLE;
+
+INTERPOLATED_EXPR_START_DOUBLE
+   : [{] -> pushMode(DEFAULT_MODE)
+   ;
+
+INTERPOLATED_END_DOUBLE
+   : '"'  -> popMode
+   ;
+
+INTERPOLATED_TEXT_DOUBLE
+   : (~["{}\\] | EscapeSequence)+
+   ;
+
+INTERPOLATED_UNEXPECTED_RCURLY_DOUBLE
+   : [}]
+   ;

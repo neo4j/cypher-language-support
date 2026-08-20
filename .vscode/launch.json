@@ -52,13 +52,15 @@
       "name": "Debug VSCode Webview Tests",
       "type": "node",
       "request": "launch",
-      "args": ["./packages/vscode-extension/dist/tests/runWebviewTests.js"],
+      "args": [
+        "${workspaceFolder}/packages/vscode-extension/dist/tests/runWebviewTests.js"
+      ],
       "env": {
         "DEBUG_VSCODE_TESTS": "true"
       },
       "cwd": "${workspaceFolder}",
       "autoAttachChildProcesses": true,
-      "program": "${workspaceRoot}/node_modules/@wdio/cli/bin/wdio.js",
+      "program": "${workspaceRoot}/packages/vscode-extension/node_modules/@wdio/cli/bin/wdio.js",
       "console": "integratedTerminal",
       "skipFiles": [
         "${workspaceFolder}/node_modules/**/*.js",

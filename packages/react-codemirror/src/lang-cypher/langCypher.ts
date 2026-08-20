@@ -4,7 +4,10 @@ import {
   Language,
   LanguageSupport,
 } from '@codemirror/language';
-import { type DbSchema } from '@neo4j-cypher/language-support';
+import {
+  CypherLanguageService,
+  type DbSchema,
+} from '@neo4j-cypher/language-support';
 import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signatureHelp';
@@ -16,6 +19,7 @@ const facet = defineLanguageFacet({
 });
 
 export type CypherConfig = {
+  languageService: CypherLanguageService;
   lint?: boolean;
   showSignatureTooltipBelow?: boolean;
   featureFlags?: {

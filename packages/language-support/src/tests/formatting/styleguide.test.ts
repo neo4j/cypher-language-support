@@ -1,6 +1,26 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('styleguide examples', () => {
+  test('Local callable functions and procedures', () => {
+    const query = `define procedure foo.one() { RETURN 1 AS one } define function foo.two() { RETURN 2 AS two }`;
+    const expected = `DEFINE PROCEDURE foo.one() {
+  RETURN 1 AS one
+}
+DEFINE FUNCTION foo.two() {
+  RETURN 2 AS two
+}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('FOR as replacement for UNWIND', () => {
+    const query = `MATCH (n:Person) for tag in n.tags WITH tag, count(*) AS cnt RETURN tag, cnt`;
+    const expected = `MATCH (n:Person)
+FOR tag IN n.tags
+WITH tag, count(*) AS cnt
+RETURN tag, cnt`;
+    verifyFormatting(query, expected);
+  });
+
   // NOTE: We do not swap the order of ON MATCH and ON CREATE since
   // we feel that it falls outside the responsbilities of a formatter.
   test('on match indentation example', () => {
@@ -416,6 +436,171 @@ RETURN a, b`;
   test('basic vector function formatting', () => {
     const query = `return VECTOR(1,2,INT16)`;
     const expected = `RETURN VECTOR(1, 2, INT16)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('vector_distance function formatting', () => {
+    const query = `return vector_distance(
+    [1,2,3],[4,5,6],COSINE)`;
+    const expected = `RETURN vector_distance([1, 2, 3], [4, 5, 6], COSINE)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('vector_norm function formatting', () => {
+    const query = `return vector_norm(
+    [1,2,3],euclidean)`;
+    const expected = `RETURN vector_norm([1, 2, 3], EUCLIDEAN)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('NEXT between queries', () => {
+    const query = `MATCH (n) RETURN n NEXT MATCH (m) RETURN m`;
+    const expected = `MATCH (n)
+RETURN n
+
+NEXT
+
+MATCH (m)
+RETURN m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path pattern prefix: ANY SHORTEST', () => {
+    const query = `MATCH ANY SHORTEST (a)-[*]->(b) RETURN a, b`;
+    const expected = `MATCH ANY SHORTEST (a)-[*]->(b)
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
+  test('path pattern prefix: ALL SHORTEST WALK', () => {
+    const query = `MATCH ALL SHORTEST WALK (a)-[*]->(b) RETURN a, b`;
+    const expected = `MATCH ALL SHORTEST WALK (a)-[*]->(b)
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
+  test('SEARCH clause in MATCH', () => {
+    const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] LIMIT 10) SCORE AS s RETURN n, s`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    VECTOR INDEX myIndex
+    FOR [1, 2, 3]
+    LIMIT 10
+  ) SCORE AS s
+RETURN n, s`;
+    verifyFormatting(query, expected);
+  });
+
+  test('SEARCH clause with WHERE', () => {
+    const query = `MATCH (n) SEARCH n IN (VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT 10)`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    VECTOR INDEX myIndex
+    FOR [1, 2, 3]
+    WHERE n.active = true
+    LIMIT 10
+  )`;
+    verifyFormatting(query, expected);
+  });
+
+  test('standard function invocation function formatting', () => {
+    const query = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
+    const expected = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
+    verifyFormatting(query, expected);
+  });
+
+  test('allReduce function formatting', () => {
+    const query = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(acc = s.age,
+ node IN n | acc + node.age, acc < 230)
+RETURN [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+      reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    const expected = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(acc = s.age, node IN n | acc + node.age, acc < 230)
+RETURN
+  [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+  reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    verifyFormatting(query, expected);
+  });
+
+  test('allReduce with invalid arguments', () => {
+    const query = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(
+ node IN n | acc + node.age, acc < 230)
+RETURN [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+      reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    const expected = `MATCH (s) (()-[:KNOWS]-(n)){3}
+WHERE allReduce(node IN n | acc + node.age, acc < 230)
+RETURN
+  [i IN [s] + n | i.name || " (" + toString(i.age) || ")"] AS ageSequence,
+  reduce(acc = 0, node IN [s] + n | acc + node.age) AS aggregatedAges
+ORDER BY aggregatedAges`;
+    verifyFormatting(query, expected);
+  });
+
+  test('GROUP BY', () => {
+    const query = `Match (p: Person)
+With p.name AS name, p.age AS age
+Return name, age group by name, age`;
+    const expected = `MATCH (p:Person)
+WITH p.name AS name, p.age AS age
+RETURN name, age
+GROUP BY name, age`;
+    verifyFormatting(query, expected);
+  });
+
+  test('GROUP BY, bigger example', () => {
+    const query = `MATCH (p: Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+Group by name, p.age
+Order by name limit 5`;
+    const expected = `MATCH (p:Person)
+LET name = p.name
+RETURN name, p.age AS age, sum(p.age) AS totalAge
+GROUP BY name, p.age
+ORDER BY name
+LIMIT 5`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with expand hint', () => {
+    const query = `MATCH
+     (a)<--(b:A)-->(c)
+  USING 
+  EXPAND FROM
+   b TO c, FROM b TO a`;
+    const expected = `MATCH (a)<--(b:A)-->(c)
+USING EXPAND FROM b TO c, FROM b TO a`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with text index hint', () => {
+    const query = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    verifyFormatting(query, expected);
+  });
+
+  test('MATCH with multiple hints', () => {
+    const query = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+    USING TEXT INDEX i:INVENTED_BY(location)
+ using text INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
+    const expected = `MATCH ()-[i:INVENTED_BY|KNOWN_BY]->()
+USING TEXT INDEX i:INVENTED_BY(location)
+USING TEXT INDEX i:KNOWN_BY(location)
+WHERE i.location = 'Location7'
+RETURN *`;
     verifyFormatting(query, expected);
   });
 });

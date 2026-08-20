@@ -1,5 +1,98 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.38
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [ce3820b]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/language-support@2.0.0-next.37
+  - @neo4j-cypher/lint-worker@1.10.1-next.14
+  - @neo4j-cypher/query-tools@2.0.0-next.37
+
+## 2.0.0-next.37
+
+### Patch Changes
+
+- Updated dependencies [50f061e]
+  - @neo4j-cypher/language-support@2.0.0-next.36
+  - @neo4j-cypher/lint-worker@1.10.1-next.13
+  - @neo4j-cypher/query-tools@2.0.0-next.36
+
+## 2.0.0-next.36
+
+### Patch Changes
+
+- Updated dependencies [6866132]
+  - @neo4j-cypher/language-support@2.0.0-next.35
+  - @neo4j-cypher/lint-worker@1.10.1-next.12
+  - @neo4j-cypher/query-tools@2.0.0-next.35
+
+## 2.0.0-next.35
+
+### Patch Changes
+
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/language-support@2.0.0-next.34
+  - @neo4j-cypher/lint-worker@1.10.1-next.11
+  - @neo4j-cypher/query-tools@2.0.0-next.34
+
+## 2.0.0-next.34
+
+### Patch Changes
+
+- 02df611: Hide parameter errors when disconnected
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/language-support@2.0.0-next.33
+  - @neo4j-cypher/lint-worker@1.10.1-next.10
+  - @neo4j-cypher/query-tools@2.0.0-next.33
+
+## 2.0.0-next.33
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- Updated dependencies [cd4ab49]
+- Updated dependencies [0b2d441]
+  - @neo4j-cypher/language-support@2.0.0-next.32
+  - @neo4j-cypher/lint-worker@1.10.1-next.9
+  - @neo4j-cypher/query-tools@2.0.0-next.32
+
+## 2.0.0-next.32
+
+### Patch Changes
+
+- 3b2faf5: Rewrite global parserWrapper for instantiated CypherLanguageService objects
+
+  Breaking changes for direct consumers of `@neo4j-cypher/language-support`:
+
+  - Removed export: `parserWrapper`. The same `ParsingResult` as `parserWrapper.parse` would yield can still be received by `createParsingResult` in `CypherLanguageService`. Instances of the new CypherLanguageService class provide helpers for linting/highlighting/completions/signature info where parsing is handled internally.
+  - Renamed exports: `applySyntaxColouring` → `highlightSyntax`, `syntaxColouringLegend` → `syntaxHighlightingLegend`
+  - `autocomplete()`, `lintCypherQuery()`, `highlightSyntax()`, and `getSignatureInfo()` now take an options object as the third parameter instead of positional args
+
+- Updated dependencies [08f94af]
+- Updated dependencies [0763d97]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [ca1bba6]
+  - @neo4j-cypher/language-support@2.0.0-next.31
+  - @neo4j-cypher/lint-worker@1.10.1-next.8
+  - @neo4j-cypher/query-tools@2.0.0-next.31
+
+## 2.0.0-next.31
+
+### Patch Changes
+
+- b0170f9: Increase path segment completion triggering
+- Updated dependencies [82f0c39]
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/query-tools@2.0.0-next.30
+  - @neo4j-cypher/language-support@2.0.0-next.30
+  - @neo4j-cypher/lint-worker@1.10.1-next.7
+
 ## 2.0.0-next.30
 
 ### Patch Changes

@@ -2,8 +2,8 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema';
-import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer';
+import { DbSchema } from '../dbSchema.js';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
   CallClauseContext,
@@ -11,21 +11,21 @@ import {
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser';
+} from '../generated-parser/CypherCmdParser.js';
 import {
   findParent,
   findPreviousNonSpace,
   resolveCypherVersion,
   rulesDefiningVariables,
-} from '../helpers';
+} from '../helpers.js';
 import {
   CypherTokenType,
   lexerKeywords,
   lexerSymbols,
   tokenNames,
-} from '../lexerSymbols';
+} from '../lexerSymbols.js';
 
-import { getMethodName, ParsedStatement } from '../parserWrapper';
+import { getMethodName, ParsedStatement } from '../cypherLanguageService.js';
 
 import type { CandidateRule } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
 import {
@@ -33,7 +33,6 @@ import {
   CodeCompletionCore,
   Token,
 } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
-import { _internalFeatureFlags } from '../featureFlags';
 import {
   CompletionItem,
   CypherVersion,
@@ -42,7 +41,7 @@ import {
   Neo4jProcedure,
   SymbolTable,
   SymbolsInfo,
-} from '../types';
+} from '../types.js';
 import {
   completeRelationshipType,
   allLabelCompletions,
@@ -50,8 +49,8 @@ import {
   getPathCompletions,
   getShortPathCompletions,
   allReltypeCompletions,
-} from './schemaBasedCompletions';
-import { backtickIfNeeded, uniq } from './autocompletionHelpers';
+} from './schemaBasedCompletions.js';
+import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
@@ -309,11 +308,11 @@ const parameterCompletions = (
         ? { insertText: `$${backtickedName}` }
         : {};
       // If there is a preceding token and it's not empty, compute the suffix
-      if (previousToken.type !== CypherLexer.SPACE) {
+      if (previousToken && tokens && previousToken.type !== CypherLexer.SPACE) {
         const param = maybeInsertText.insertText ?? `$${paramName}`;
         const hasDollar =
           previousToken.type === CypherLexer.DOLLAR ||
-          tokens.at(previousToken.tokenIndex - 1).type === CypherLexer.DOLLAR;
+          tokens.at(previousToken.tokenIndex - 1)?.type === CypherLexer.DOLLAR;
         // If the $ symbol is already there, we need to have the insert
         // text without the starting $ in VSCode, otherwise when we have
         // 'RETURN $' and we get offered $param we would complete
@@ -464,6 +463,7 @@ export function completionCoreCompletion(
   caretToken: Token,
   symbolsInfo: SymbolsInfo | undefined,
   manualTrigger = false,
+  consoleCommandsEnabled = true,
 ): CompletionItem[] {
   const cypherVersion = resolveCypherVersion(
     parsingResult.cypherVersion,
@@ -519,13 +519,14 @@ export function completionCoreCompletion(
     CypherParser.RULE_relType,
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
-    ...(_internalFeatureFlags.consoleCommands
+    ...(consoleCommandsEnabled
       ? [
           CypherParser.RULE_useCompletionRule,
           CypherParser.RULE_listCompletionRule,
           CypherParser.RULE_serverCompletionRule,
           CypherParser.RULE_readCompletionRule,
           CypherParser.RULE_writeCompletionRule,
+          CypherParser.RULE_autoCompletionRule,
         ]
       : [CypherParser.RULE_consoleCommand]),
 
@@ -727,6 +728,20 @@ export function completionCoreCompletion(
         const topExprParent = candidateRule.ruleList[topExprIndex - 1];
 
         if (topExprParent === undefined) {
+          //Changes to the grammar have added a case where we want to complete a labelExpression1 outside of a labelExpression (in comparisonExpression6)
+          const patternExprIndex = candidateRule.ruleList.indexOf(
+            CypherParser.RULE_labelExpression4,
+          );
+          const labelExpressionParent =
+            candidateRule.ruleList[patternExprIndex - 1];
+          if (
+            labelExpressionParent === CypherParser.RULE_comparisonExpression6
+          ) {
+            return [
+              ...allLabelCompletions(dbSchema),
+              ...allReltypeCompletions(dbSchema),
+            ];
+          }
           return [];
         }
 
@@ -763,6 +778,10 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_writeCompletionRule) {
         return [{ label: 'write', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_autoCompletionRule) {
+        return [{ label: 'auto', kind: CompletionItemKind.Event }];
       }
 
       return [];

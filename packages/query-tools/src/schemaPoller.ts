@@ -5,15 +5,15 @@ import {
   FRIENDLY_ERROR_MESSAGES,
   getConnectionError,
   isRetriableNeo4jError,
-} from './connectionErrorHandler';
+} from './connectionErrorHandler.js';
 import {
   ConnectedMetadataPoller,
   DisconnectedMetadataPoller,
   MetadataPoller,
-} from './metadataPoller';
-import { Neo4jConnection } from './neo4jConnection';
+} from './metadataPoller.js';
+import { Neo4jConnection } from './neo4jConnection.js';
 import { listDatabases } from './queries/databases.js';
-import { getVersion } from './queries/version';
+import { getVersion } from './queries/version.js';
 
 export type ConnnectionResult = {
   success: boolean;

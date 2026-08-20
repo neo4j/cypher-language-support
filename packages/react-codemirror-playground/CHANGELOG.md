@@ -1,5 +1,96 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [0ddd727]
+- Updated dependencies [ce3820b]
+- Updated dependencies [9266800]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.40
+  - @neo4j-cypher/language-support@2.0.0-next.37
+
+## 2.0.0-next.39
+
+### Patch Changes
+
+- Updated dependencies [50f061e]
+  - @neo4j-cypher/language-support@2.0.0-next.36
+  - @neo4j-cypher/react-codemirror@2.0.0-next.39
+
+## 2.0.0-next.38
+
+### Patch Changes
+
+- Updated dependencies [6866132]
+- Updated dependencies [9c65003]
+  - @neo4j-cypher/language-support@2.0.0-next.35
+  - @neo4j-cypher/react-codemirror@2.0.0-next.38
+
+## 2.0.0-next.37
+
+### Patch Changes
+
+- b616748: Add diff view to the Cypher editor using @codemirror/merge
+- Updated dependencies [b616748]
+- Updated dependencies [2f8b52d]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.37
+  - @neo4j-cypher/language-support@2.0.0-next.34
+
+## 2.0.0-next.36
+
+### Patch Changes
+
+- 2d5fa77: Add `inlinePanel` prop to `CypherEditor` for rendering a host-controlled panel as a block widget inside the editor.
+- Updated dependencies [2d5fa77]
+- Updated dependencies [02df611]
+- Updated dependencies [e69ee30]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.36
+  - @neo4j-cypher/language-support@2.0.0-next.33
+
+## 2.0.0-next.35
+
+### Patch Changes
+
+- cd4ab49: Update grammar and semantic analysis to 2026.05
+- Updated dependencies [cd4ab49]
+- Updated dependencies [0b2d441]
+  - @neo4j-cypher/language-support@2.0.0-next.32
+  - @neo4j-cypher/react-codemirror@2.0.0-next.35
+
+## 2.0.0-next.34
+
+### Patch Changes
+
+- 3b2faf5: Rewrite global parserWrapper for instantiated CypherLanguageService objects
+
+  Breaking changes for direct consumers of `@neo4j-cypher/language-support`:
+
+  - Removed export: `parserWrapper`. The same `ParsingResult` as `parserWrapper.parse` would yield can still be received by `createParsingResult` in `CypherLanguageService`. Instances of the new CypherLanguageService class provide helpers for linting/highlighting/completions/signature info where parsing is handled internally.
+  - Renamed exports: `applySyntaxColouring` → `highlightSyntax`, `syntaxColouringLegend` → `syntaxHighlightingLegend`
+  - `autocomplete()`, `lintCypherQuery()`, `highlightSyntax()`, and `getSignatureInfo()` now take an options object as the third parameter instead of positional args
+
+- Updated dependencies [08f94af]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [0763d97]
+- Updated dependencies [3b2faf5]
+- Updated dependencies [ca1bba6]
+  - @neo4j-cypher/language-support@2.0.0-next.31
+  - @neo4j-cypher/react-codemirror@2.0.0-next.34
+
+## 2.0.0-next.33
+
+### Patch Changes
+
+- Updated dependencies [0e457d6]
+- Updated dependencies [b0170f9]
+- Updated dependencies [25fad16]
+  - @neo4j-cypher/language-support@2.0.0-next.30
+  - @neo4j-cypher/react-codemirror@2.0.0-next.33
+
 ## 2.0.0-next.32
 
 ### Patch Changes

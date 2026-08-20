@@ -42,6 +42,29 @@ test('the editor can report changes to the text ', async ({ mount, page }) => {
   }).toPass({ intervals: [300, 300, 1000] });
 });
 
+test('can mount an autofocused editor with CRLF line endings without crashing', async ({
+  mount,
+}) => {
+  const value = 'MATCH (n)\r\nRETURN n;';
+
+  const component = await mount(<CypherEditor value={value} autofocus />);
+
+  await expect(component).toContainText('MATCH (n)');
+  await expect(component).toContainText('RETURN n;');
+});
+
+test('can externally update to a value with CRLF line endings without crashing', async ({
+  mount,
+}) => {
+  const component = await mount(<CypherEditor value="MATCH (n)" autofocus />);
+
+  await component.update(
+    <CypherEditor value={'MATCH (n)\r\nRETURN n;'} autofocus />,
+  );
+
+  await expect(component).toContainText('RETURN n;');
+});
+
 test('can complete RETURN', async ({ page, mount }) => {
   await mount(<CypherEditor />);
   const textField = page.getByRole('textbox');

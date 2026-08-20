@@ -1,6 +1,6 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema';
-import { testCompletions } from './completionAssertionHelpers';
+import { DbSchema } from '../../dbSchema.js';
+import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('Can complete user names', () => {
   const dbSchema: DbSchema = {

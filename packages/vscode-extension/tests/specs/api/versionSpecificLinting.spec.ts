@@ -32,7 +32,7 @@ suite('Neo4j version specific linting spec', () => {
     await connectDefault({ version: 'neo4j 2025' });
   });
 
-  async function testNeo4jSpecificLinting() {
+  async function testNeo4jSpecificLinting(timeoutMs?: number) {
     const textFile = 'cypher-versioned.cypher';
     const docUri = getDocumentUri(textFile);
     await openDocument(docUri);
@@ -49,6 +49,7 @@ suite('Neo4j version specific linting spec', () => {
           vscode.DiagnosticSeverity.Error,
         ),
       ],
+      timeoutMs,
     });
 
     await connectDefault({ version: 'neo4j 5' });
@@ -64,15 +65,17 @@ suite('Neo4j version specific linting spec', () => {
           vscode.DiagnosticSeverity.Error,
         ),
       ],
+      timeoutMs,
     });
 
     await connectDefault({ version: 'neo4j 2025' });
   }
 
-  test('Linting depends on the specific neo4j version and works when having to download new linters', async () => {
+  test('Linting depends on the specific neo4j version and works when having to download new linters', async function () {
+    this.timeout(60000);
     const lintersFolder = getExtensionStoragePath();
     rmSync(lintersFolder, { force: true, recursive: true });
-    await testNeo4jSpecificLinting();
+    await testNeo4jSpecificLinting(40000);
   });
 
   test('Linting depends on the specific neo4j version and works when linters are already present', async () => {

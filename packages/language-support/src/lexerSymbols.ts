@@ -1,4 +1,4 @@
-import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 
 export enum CypherTokenType {
   comment = 'comment',
@@ -10,6 +10,7 @@ export enum CypherTokenType {
   variable = 'variable',
   paramDollar = 'paramDollar',
   paramValue = 'paramValue',
+  interpolationDelimiter = 'interpolationDelimiter',
   symbolicName = 'symbolicName',
   operator = 'operator',
   stringLiteral = 'stringLiteral',
@@ -27,13 +28,13 @@ export enum CypherTokenType {
   setting = 'setting',
 }
 
-export const lexerSettingValues = [
+const lexerSettingValues = [
   CypherLexer.ACYCLIC,
   CypherLexer.TRAIL,
   CypherLexer.WALK,
 ];
 
-export const lexerOperators = [
+const lexerOperators = [
   CypherLexer.AMPERSAND,
   CypherLexer.BAR,
   CypherLexer.COLON,
@@ -61,47 +62,57 @@ export const lexerOperators = [
   CypherLexer.TIMES,
 ];
 
-export const lexerBrackets = [
+const lexerBrackets = [
   CypherLexer.LBRACKET,
   CypherLexer.LCURLY,
   CypherLexer.LPAREN,
   CypherLexer.RBRACKET,
   CypherLexer.RCURLY,
+  CypherLexer.INTERPOLATED_EXPR_START_DOUBLE,
+  CypherLexer.INTERPOLATED_EXPR_START_SINGLE,
   CypherLexer.RPAREN,
 ];
-export const lexerPunctuation = [CypherLexer.SEMICOLON];
-export const lexerSeparators = [
+const lexerPunctuation = [CypherLexer.SEMICOLON];
+const lexerSeparators = [
   CypherLexer.COMMA,
   CypherLexer.ARROW_LINE,
   CypherLexer.ARROW_LEFT_HEAD,
   CypherLexer.ARROW_RIGHT_HEAD,
 ];
-export const lexerNumberLiterals = [
+const lexerNumberLiterals = [
   CypherLexer.DECIMAL_DOUBLE,
   CypherLexer.UNSIGNED_DECIMAL_INTEGER,
   CypherLexer.UNSIGNED_HEX_INTEGER,
   CypherLexer.UNSIGNED_OCTAL_INTEGER,
 ];
 
-export const lexerStringLiteral = [
+const lexerStringLiteral = [
   CypherLexer.STRING_LITERAL1,
   CypherLexer.STRING_LITERAL2,
   CypherLexer.OBFUSCATION,
+  CypherLexer.INTERPOLATED_START_SINGLE,
+  CypherLexer.INTERPOLATED_END_SINGLE,
+  CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_SINGLE,
+  CypherLexer.INTERPOLATED_TEXT_SINGLE,
+  CypherLexer.INTERPOLATED_START_DOUBLE,
+  CypherLexer.INTERPOLATED_END_DOUBLE,
+  CypherLexer.INTERPOLATED_UNEXPECTED_RCURLY_DOUBLE,
+  CypherLexer.INTERPOLATED_TEXT_DOUBLE,
 ];
 
-export const lexerGarbage = [
+const lexerGarbage = [
   CypherLexer.ErrorChar,
   CypherLexer.EOF,
   CypherLexer.SPACE,
 ];
 
-export const identifier = [
+const identifier = [
   CypherLexer.IDENTIFIER,
   CypherLexer.ESCAPED_SYMBOLIC_NAME,
   CypherLexer.EXTENDED_IDENTIFIER,
 ];
 
-export const lexerComment = [
+const lexerComment = [
   CypherLexer.MULTI_LINE_COMMENT,
   CypherLexer.SINGLE_LINE_COMMENT,
 ];
@@ -114,10 +125,11 @@ export const lexerKeywords = [
   CypherLexer.ADMINISTRATOR,
   CypherLexer.ALIAS,
   CypherLexer.ALIASES,
+  CypherLexer.ALL_SHORTEST_PATHS,
   CypherLexer.ALL,
   CypherLexer.ALLREDUCE,
-  CypherLexer.ALL_SHORTEST_PATHS,
   CypherLexer.ALTER,
+  CypherLexer.ANALYZER,
   CypherLexer.AND,
   CypherLexer.ANY,
   CypherLexer.ARRAY,
@@ -127,6 +139,7 @@ export const lexerKeywords = [
   CypherLexer.ASSIGN,
   CypherLexer.AT,
   CypherLexer.AUTH,
+  CypherLexer.AUTO,
   CypherLexer.BINDINGS,
   CypherLexer.BOOL,
   CypherLexer.BOOLEAN,
@@ -138,12 +151,13 @@ export const lexerKeywords = [
   CypherLexer.CALL,
   CypherLexer.CASCADE,
   CypherLexer.CASE,
-  CypherLexer.CIDR,
   CypherLexer.CHANGE,
+  CypherLexer.CIDR,
   CypherLexer.COLLECT,
   CypherLexer.COMMAND,
   CypherLexer.COMMANDS,
   CypherLexer.COMPOSITE,
+  CypherLexer.CONCURRENT,
   CypherLexer.CONDITION,
   CypherLexer.CONSTRAINT,
   CypherLexer.CONSTRAINTS,
@@ -154,8 +168,8 @@ export const lexerKeywords = [
   CypherLexer.COUNT,
   CypherLexer.CREATE,
   CypherLexer.CREDENTIAL,
+  CypherLexer.CREDENTIALS,
   CypherLexer.CSV,
-  CypherLexer.CONCURRENT,
   CypherLexer.CURRENT,
   CypherLexer.DATA,
   CypherLexer.DATABASE,
@@ -174,6 +188,7 @@ export const lexerKeywords = [
   CypherLexer.DESTROY,
   CypherLexer.DETACH,
   CypherLexer.DIFFERENT,
+  CypherLexer.DISJOINT,
   CypherLexer.DISTINCT,
   CypherLexer.DOT_METRIC,
   CypherLexer.DRIVER,
@@ -192,13 +207,14 @@ export const lexerKeywords = [
   CypherLexer.END,
   CypherLexer.ENDS,
   CypherLexer.ERROR,
-  CypherLexer.EUCLIDEAN,
   CypherLexer.EUCLIDEAN_SQUARED,
+  CypherLexer.EUCLIDEAN,
   CypherLexer.EXECUTABLE,
   CypherLexer.EXECUTE,
   CypherLexer.EXIST,
   CypherLexer.EXISTENCE,
   CypherLexer.EXISTS,
+  CypherLexer.EXPAND,
   CypherLexer.EXTENDED_IDENTIFIER,
   CypherLexer.FAIL,
   CypherLexer.FALSE,
@@ -235,19 +251,21 @@ export const lexerKeywords = [
   CypherLexer.INFINITY,
   CypherLexer.INSERT,
   CypherLexer.INT,
-  CypherLexer.INT8,
   CypherLexer.INT16,
   CypherLexer.INT32,
   CypherLexer.INT64,
+  CypherLexer.INT8,
   CypherLexer.INTEGER,
-  CypherLexer.INTEGER8,
   CypherLexer.INTEGER16,
   CypherLexer.INTEGER32,
   CypherLexer.INTEGER64,
+  CypherLexer.INTEGER8,
+  CypherLexer.INTO,
   CypherLexer.IS,
   CypherLexer.JOIN,
   CypherLexer.KEY,
   CypherLexer.LABEL,
+  CypherLexer.LABELED,
   CypherLexer.LABELS,
   CypherLexer.LANGUAGE,
   CypherLexer.LEADING,
@@ -262,6 +280,7 @@ export const lexerKeywords = [
   CypherLexer.MAP,
   CypherLexer.MATCH,
   CypherLexer.MERGE,
+  CypherLexer.METADATA,
   CypherLexer.NAME,
   CypherLexer.NAMES,
   CypherLexer.NAN,
@@ -272,8 +291,8 @@ export const lexerKeywords = [
   CypherLexer.NFKC,
   CypherLexer.NFKD,
   CypherLexer.NODE,
-  CypherLexer.NODETACH,
   CypherLexer.NODES,
+  CypherLexer.NODETACH,
   CypherLexer.NONE,
   CypherLexer.NORMALIZE,
   CypherLexer.NORMALIZED,
@@ -298,13 +317,14 @@ export const lexerKeywords = [
   CypherLexer.PLAINTEXT,
   CypherLexer.POINT,
   CypherLexer.POPULATED,
-  CypherLexer.PRIMARY,
   CypherLexer.PRIMARIES,
+  CypherLexer.PRIMARY,
   CypherLexer.PRIVILEGE,
   CypherLexer.PRIVILEGES,
   CypherLexer.PROCEDURE,
   CypherLexer.PROCEDURES,
   CypherLexer.PROPERTIES,
+  CypherLexer.PROPERTY_EXISTS,
   CypherLexer.PROPERTY,
   CypherLexer.PROVIDER,
   CypherLexer.PROVIDERS,
@@ -337,11 +357,13 @@ export const lexerKeywords = [
   CypherLexer.SCAN,
   CypherLexer.SCORE,
   CypherLexer.SEARCH,
-  CypherLexer.SECONDARY,
-  CypherLexer.SECONDARIES,
   CypherLexer.SEC,
   CypherLexer.SECOND,
+  CypherLexer.SECONDARIES,
+  CypherLexer.SECONDARY,
   CypherLexer.SECONDS,
+  CypherLexer.SECRET,
+  CypherLexer.SECRETS,
   CypherLexer.SEEK,
   CypherLexer.SERVER,
   CypherLexer.SERVERS,
@@ -350,8 +372,8 @@ export const lexerKeywords = [
   CypherLexer.SETTINGS,
   CypherLexer.SHARD,
   CypherLexer.SHARDS,
-  CypherLexer.SHORTEST,
   CypherLexer.SHORTEST_PATH,
+  CypherLexer.SHORTEST,
   CypherLexer.SHOW,
   CypherLexer.SIGNED,
   CypherLexer.SINGLE,
@@ -360,10 +382,11 @@ export const lexerKeywords = [
   CypherLexer.STARTS,
   CypherLexer.STATUS,
   CypherLexer.STOP,
-  CypherLexer.VARCHAR,
   CypherLexer.STRING,
   CypherLexer.SUPPORTED,
   CypherLexer.SUSPENDED,
+  CypherLexer.TAG,
+  CypherLexer.TAGS,
   CypherLexer.TARGET,
   CypherLexer.TERMINATE,
   CypherLexer.TEXT,
@@ -391,11 +414,14 @@ export const lexerKeywords = [
   CypherLexer.USER,
   CypherLexer.USERS,
   CypherLexer.USING,
+  CypherLexer.UUID,
   CypherLexer.VALUE,
-  CypherLexer.VECTOR,
+  CypherLexer.VARCHAR,
   CypherLexer.VECTOR_DISTANCE,
   CypherLexer.VECTOR_NORM,
+  CypherLexer.VECTOR,
   CypherLexer.VERTEX,
+  CypherLexer.VIA,
   CypherLexer.WAIT,
   CypherLexer.WHEN,
   CypherLexer.WHERE,
@@ -412,7 +438,7 @@ export const lexerKeywords = [
   CypherLexer.CYPHER,
 ];
 
-export const lexerConsoleCmds = [
+const lexerConsoleCmds = [
   CypherLexer.HISTORY,
   CypherLexer.PARAM,
   CypherLexer.CLEAR,
@@ -449,7 +475,7 @@ export const lexerSymbols: Record<number, CypherTokenType> = {
   ...toTokentypeObject(lexerConsoleCmds, CypherTokenType.consoleCommand),
 };
 
-export const hasIncorrectSymbolicName: Record<number, string> = {
+const hasIncorrectSymbolicName: Record<number, string> = {
   [CypherLexer.ALL_SHORTEST_PATHS]: 'allShortestPaths',
   [CypherLexer.SHORTEST_PATH]: 'shortestPath',
   [CypherLexer.LIMITROWS]: 'LIMIT',

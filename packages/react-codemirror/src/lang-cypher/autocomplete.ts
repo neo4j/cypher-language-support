@@ -3,10 +3,7 @@ import {
   CompletionSource,
   snippet,
 } from '@codemirror/autocomplete';
-import {
-  autocomplete,
-  shouldAutoCompleteYield,
-} from '@neo4j-cypher/language-support';
+import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,
@@ -81,11 +78,13 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
       return null;
     }
 
-    const options = autocomplete(
+    const options = config.languageService.autocomplete(
       documentText,
       config.schema ?? {},
-      offset,
-      context.explicit,
+      {
+        caretPosition: offset,
+        manual: context.explicit,
+      },
     );
 
     return {

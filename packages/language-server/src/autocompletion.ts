@@ -6,12 +6,10 @@ import {
 } from 'vscode-languageserver/node';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
-import {
-  autocomplete,
-  shouldAutoCompleteYield,
-} from '@neo4j-cypher/language-support';
+import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import { languageService } from './server';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
@@ -30,11 +28,15 @@ export function doAutoCompletion(
     const manualOrCharacterOrInwordTriggered =
       completionParams.context?.triggerCharacter !== ' ';
     if (yieldTriggered || manualOrCharacterOrInwordTriggered) {
-      const completions: CompletionItem[] = autocomplete(
+      const completions: CompletionItem[] = languageService.autocomplete(
         textDocument.getText(),
         neo4j.metadata?.dbSchema ?? {},
-        offset,
-        completionParams.context.triggerKind === CompletionTriggerKind.Invoked,
+        {
+          caretPosition: offset,
+          manual:
+            completionParams.context.triggerKind ===
+            CompletionTriggerKind.Invoked,
+        },
       );
 
       const result = completions.map((item) => {

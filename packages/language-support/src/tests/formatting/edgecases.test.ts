@@ -1,4 +1,4 @@
-import { verifyFormatting } from './testutil';
+import { verifyFormatting } from './testutil.js';
 
 describe('various edgecases', () => {
   test('Should be space in between', () => {
@@ -1177,6 +1177,18 @@ RETURN p.name`;
     const query = `MATCH (p:$  ( ["Actor", "Director"]) {birthYear: 1983}) RETURN p.name`;
     const expected = `MATCH (p:$(["Actor", "Director"]) {birthYear: 1983})
 RETURN p.name`;
+    verifyFormatting(query, expected);
+  });
+
+  test('RETURN works with ALL syntax', () => {
+    const query = `RETURN ALL 50`;
+    const expected = `RETURN ALL 50`;
+    verifyFormatting(query, expected);
+  });
+
+  test("Query ending in error node doesn't throw", () => {
+    const query = `return ALL 501010 qqq`;
+    const expected = `RETURN ALL 501010 qqq`;
     verifyFormatting(query, expected);
   });
 });

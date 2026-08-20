@@ -1,6 +1,5 @@
-import { _internalFeatureFlags } from '../../featureFlags';
-import { testData } from '../testData';
-import { getDiagnosticsForQuery } from './helpers';
+import { testData } from '../testData.js';
+import { getDiagnosticsForQuery } from './helpers.js';
 
 describe('Semantic validation spec', () => {
   test('SyntaxChecker-exceptions work', () => {
@@ -109,7 +108,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 77,
-          start: 58,
+          start: 77,
         },
         range: {
           end: {
@@ -117,7 +116,7 @@ describe('Semantic validation spec', () => {
             line: 2,
           },
           start: {
-            character: 3,
+            character: 22,
             line: 2,
           },
         },
@@ -365,6 +364,26 @@ describe('Semantic validation spec', () => {
         severity: 1,
       },
     ]);
+  });
+
+  test('Does not warn on GROUP BY in Cypher 25', () => {
+    const query =
+      'CYPHER 25 MATCH(m) RETURN m.name as name, count(*) as nodes GROUP BY name';
+    const diagnostics = getDiagnosticsForQuery({
+      query,
+      dbSchema: { defaultLanguage: 'CYPHER 25' },
+    });
+
+    expect(diagnostics).toEqual([]);
+  });
+
+  test('Shows GROUP BY error in Cypher 5', () => {
+    const query =
+      'CYPHER 5 MATCH(m) RETURN m.name as name, count(*) as nodes GROUP BY name';
+    const diagnostics = getDiagnosticsForQuery({ query });
+
+    expect(diagnostics).toHaveLength(1);
+    expect(diagnostics[0].message).toContain("Invalid input 'GROUP'");
   });
 
   test('In-query version takes priority for semantic analysis even if defaultLanguage is defined', () => {
@@ -624,7 +643,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 16,
-          start: 7,
+          start: 16,
         },
         range: {
           end: {
@@ -632,7 +651,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 7,
+            character: 16,
             line: 0,
           },
         },
@@ -669,7 +688,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 54,
-          start: 45,
+          start: 54,
         },
         range: {
           end: {
@@ -677,7 +696,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 45,
+            character: 54,
             line: 0,
           },
         },
@@ -714,7 +733,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 53,
-          start: 44,
+          start: 53,
         },
         range: {
           end: {
@@ -722,7 +741,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 44,
+            character: 53,
             line: 0,
           },
         },
@@ -759,7 +778,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 19,
-          start: 10,
+          start: 19,
         },
         range: {
           end: {
@@ -767,7 +786,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 10,
+            character: 19,
             line: 0,
           },
         },
@@ -804,7 +823,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 17,
-          start: 8,
+          start: 17,
         },
         range: {
           end: {
@@ -812,7 +831,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 8,
+            character: 17,
             line: 0,
           },
         },
@@ -896,25 +915,6 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
-        message:
-          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
-        offsets: {
-          end: 56,
-          start: 0,
-        },
-        range: {
-          end: {
-            character: 56,
-            line: 0,
-          },
-          start: {
-            character: 0,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
         message: 'Variable `m` not defined',
         offsets: {
           end: 28,
@@ -946,6 +946,25 @@ describe('Semantic validation spec', () => {
           },
           start: {
             character: 49,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message:
+          'Query cannot conclude with CALL (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 56,
+          start: 56,
+        },
+        range: {
+          end: {
+            character: 56,
+            line: 0,
+          },
+          start: {
+            character: 56,
             line: 0,
           },
         },
@@ -1014,6 +1033,24 @@ describe('Semantic validation spec', () => {
 
     expect(getDiagnosticsForQuery({ query })).toEqual([
       {
+        message: 'Variable `i` already declared in outer scope',
+        offsets: {
+          end: 47,
+          start: 46,
+        },
+        range: {
+          end: {
+            character: 19,
+            line: 2,
+          },
+          start: {
+            character: 18,
+            line: 2,
+          },
+        },
+        severity: 1,
+      },
+      {
         message:
           'Variable in subquery is shadowing a variable with the same name from the outer scope. If you want to use that variable instead, it must be imported into the subquery using a variable scope clause. (the shadowing variable is: i)',
         offsets: {
@@ -1031,24 +1068,6 @@ describe('Semantic validation spec', () => {
           },
         },
         severity: 2,
-      },
-      {
-        message: 'Variable `i` already declared in outer scope',
-        offsets: {
-          end: 64,
-          start: 56,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 3,
-          },
-          start: {
-            character: 8,
-            line: 3,
-          },
-        },
-        severity: 1,
       },
       {
         message:
@@ -1069,24 +1088,6 @@ describe('Semantic validation spec', () => {
         },
         severity: 2,
       },
-      {
-        message: 'Variable `i` already declared in outer scope',
-        offsets: {
-          end: 117,
-          start: 109,
-        },
-        range: {
-          end: {
-            character: 16,
-            line: 6,
-          },
-          start: {
-            character: 8,
-            line: 6,
-          },
-        },
-        severity: 1,
-      },
     ]);
   });
 
@@ -1099,7 +1100,7 @@ describe('Semantic validation spec', () => {
           'Query cannot conclude with WITH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 29,
-          start: 23,
+          start: 29,
         },
         range: {
           end: {
@@ -1107,7 +1108,7 @@ describe('Semantic validation spec', () => {
             line: 0,
           },
           start: {
-            character: 23,
+            character: 29,
             line: 0,
           },
         },
@@ -1253,7 +1254,7 @@ Attempted to access graph other`,
           'Query cannot conclude with MATCH (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
         offsets: {
           end: 26,
-          start: 17,
+          start: 26,
         },
         range: {
           end: {
@@ -1261,7 +1262,7 @@ Attempted to access graph other`,
             line: 0,
           },
           start: {
-            character: 17,
+            character: 26,
             line: 0,
           },
         },
@@ -1372,6 +1373,25 @@ Attempted to access graph other`,
     const result = getDiagnosticsForQuery({ query });
 
     expect(result).toEqual([
+      {
+        message:
+          'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
+        offsets: {
+          end: 120,
+          start: 102,
+        },
+        range: {
+          end: {
+            character: 32,
+            line: 4,
+          },
+          start: {
+            character: 14,
+            line: 4,
+          },
+        },
+        severity: 1,
+      },
       {
         message:
           'The variable `y` is shadowing a variable with the same name from the outer scope and needs to be renamed',
@@ -1514,18 +1534,18 @@ Attempted to access graph other`,
       },
       {
         message:
-          'The variable `p` occurs in multiple quantified path patterns and needs to be renamed.',
+          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
-          end: 19,
-          start: 7,
+          end: 35,
+          start: 23,
         },
         range: {
           end: {
-            character: 19,
+            character: 35,
             line: 0,
           },
           start: {
-            character: 7,
+            character: 23,
             line: 0,
           },
         },
@@ -1533,25 +1553,6 @@ Attempted to access graph other`,
       },
       {
         message: 'Variable `p` already declared',
-        offsets: {
-          end: 37,
-          start: 22,
-        },
-        range: {
-          end: {
-            character: 37,
-            line: 0,
-          },
-          start: {
-            character: 22,
-            line: 0,
-          },
-        },
-        severity: 1,
-      },
-      {
-        message:
-          'Assigning a path in a quantified path pattern is not yet supported.',
         offsets: {
           end: 35,
           start: 23,
@@ -1974,11 +1975,229 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
     ]);
   });
 
-  test('gives error on console commands when they are disabled', () => {
-    _internalFeatureFlags.consoleCommands = true;
+  test('Shows errors for returning invalid property', () => {
+    const query = `
+    MATCH (m:Movie)
+    RETURN m.title, m.invalidProp
+    `;
 
     expect(
-      getDiagnosticsForQuery({ query: 'RETURN a;:clear; RETURN b;:history;' }),
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 54,
+          start: 43,
+        },
+        range: {
+          end: {
+            character: 33,
+            line: 2,
+          },
+          start: {
+            character: 22,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Shows errors for returning invalid escaped property', () => {
+    const query = `
+    MATCH (m:Movie)
+    RETURN m.\`title\`, m.\`invalidProp\`
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "invalidProp is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 58,
+          start: 45,
+        },
+        range: {
+          end: {
+            character: 35,
+            line: 2,
+          },
+          start: {
+            character: 24,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('Shows errors for mathching and filtering invalid property in a relationship', () => {
+    const query = `
+    MATCH (m:Movie)-[r:ACTED_IN { roles: [], invalid: "test"}]-()
+    WHERE r.invalid2 = "another"
+    RETURN m
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 53,
+          start: 46,
+        },
+        range: {
+          end: {
+            character: 52,
+            line: 1,
+          },
+          start: {
+            character: 45,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 87,
+          start: 79,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 2,
+          },
+          start: {
+            character: 12,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+  test('Shows errors for mathching and filtering invalid property', () => {
+    const query = `
+    MATCH (m:Movie {invalid: "test"})
+    WHERE m.invalid2 = "another"
+    RETURN m
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([
+      {
+        message:
+          "invalid is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 28,
+          start: 21,
+        },
+        range: {
+          end: {
+            character: 27,
+            line: 1,
+          },
+          start: {
+            character: 20,
+            line: 1,
+          },
+        },
+        severity: 2,
+      },
+      {
+        message:
+          "invalid2 is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+        offsets: {
+          end: 59,
+          start: 51,
+        },
+        range: {
+          end: {
+            character: 20,
+            line: 2,
+          },
+          start: {
+            character: 12,
+            line: 2,
+          },
+        },
+        severity: 2,
+      },
+    ]);
+  });
+
+  test('No errors for match -> set with invalid properties', () => {
+    const query = `
+    MATCH (m:Movie)
+    SET m.invalid = "value"
+    RETURN m.invalid
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('No errors for create and return with invalid properties', () => {
+    const query = `
+      CREATE (m:Movie { invalid: "dsa"})
+      SET m.invalid = "dsa"
+      RETURN m.invalid
+    `;
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('gives error on console commands when they are disabled', () => {
+    expect(
+      getDiagnosticsForQuery({
+        query: 'RETURN a;:clear; RETURN b;:history;',
+        consoleCommandsEnabled: true,
+      }),
     ).toEqual([
       {
         message: 'Variable `a` not defined',
@@ -2017,12 +2236,15 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles multiple cypher statements in a single query', () => {
-    _internalFeatureFlags.consoleCommands = true;
-    expect(getDiagnosticsForQuery({ query: 'RETURN a; RETURN b;' })).toEqual([
+    expect(
+      getDiagnosticsForQuery({
+        query: 'RETURN a; RETURN b;',
+        consoleCommandsEnabled: true,
+      }),
+    ).toEqual([
       {
         message: 'Variable `a` not defined',
         offsets: {
@@ -2060,14 +2282,13 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with client commands', () => {
-    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
         query: ':clear;RETURN a;:clear; RETURN b;:history;',
+        consoleCommandsEnabled: true,
       }),
     ).toEqual([
       {
@@ -2107,13 +2328,12 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Handles cypher mixed with complex client command', () => {
-    _internalFeatureFlags.consoleCommands = true;
     expect(
       getDiagnosticsForQuery({
+        consoleCommandsEnabled: true,
         query: `
       :param {
 
@@ -2142,7 +2362,6 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         severity: 1,
       },
     ]);
-    _internalFeatureFlags.consoleCommands = false;
   });
 
   test('Does not error on SHORTEST k', () => {
@@ -2241,7 +2460,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $missingParam and n.age = $myParam RETURN n';
+      'MATCH (n: Person) WHERE n.name = $missingParam and n.born = $myParam RETURN n';
 
     expect(
       getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
@@ -2269,7 +2488,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters correctly with backticked parameters', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.age = $`myParam` RETURN n';
+      'MATCH (n: Person) WHERE n.name = $`missingParam` and n.born = $`myParam` RETURN n';
 
     expect(
       getDiagnosticsForQuery({ query, dbSchema: testData.mockSchema }),
@@ -2297,7 +2516,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Shows errors for missing parameters correctly with parameter names containing space', () => {
     const query =
-      'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+      'MATCH (n: Person) WHERE n.name = $`missing param` and n.born = $`some param` RETURN n';
 
     expect(
       getDiagnosticsForQuery({
@@ -2333,6 +2552,24 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
 
   test('Semantic analysis should not error on using cypher 25', () => {
     const query = 'ALTER DATABASE neo4j SET DEFAULT LANGUAGE CYPHER 25';
+
+    expect(
+      getDiagnosticsForQuery({
+        query,
+        dbSchema: {
+          ...testData.mockSchema,
+        },
+      }),
+    ).toEqual([]);
+  });
+
+  test('Semantic analysis should not error on correct usage of graph type', () => {
+    const query = `CYPHER 25 ALTER CURRENT GRAPH TYPE SET {
+(c:Customer => :LegalEntity {
+  customerId::STRING,
+  firstName::STRING
+}) REQUIRE c.customerId IS KEY
+}`;
 
     expect(
       getDiagnosticsForQuery({

@@ -1,0 +1,1065 @@
+import type { ParserRuleContext, Token } from 'antlr4ng';
+import {
+  ParseTreeWalker,
+  CharStream,
+  CommonTokenStream,
+  ParseTreeListener,
+} from 'antlr4ng';
+
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
+
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { ErrorTrackingListener } from './errorTrackingListener.js';
+import { _internalFeatureFlags } from './featureFlags.js';
+import {
+  ClauseContext,
+  CypherVersionContext,
+  CypherCmdParser as CypherParser,
+  FunctionNameContext,
+  LabelNameContext,
+  LabelOrRelTypeContext,
+  ParameterContext,
+  ProcedureNameContext,
+  ProcedureResultItemContext,
+  StatementOrCommandContext,
+  StatementsOrCommandsContext,
+  SymbolicNameStringContext,
+  VariableContext,
+  PropertyKeyNameContext,
+  Expression2Context,
+  PatternElementContext,
+  NodePatternContext,
+  RelationshipPatternContext,
+} from './generated-parser/CypherCmdParser.js';
+import {
+  findParent,
+  findStopNode,
+  getStreamTokens,
+  inNodeLabel,
+  inRelationshipType,
+  isDefined,
+  rulesDefiningOrUsingVariables,
+  splitIntoStatements,
+} from './helpers.js';
+import {
+  lintCypherQuery,
+  SyntaxDiagnostic,
+} from './syntaxValidation/syntaxValidation.js';
+import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
+import {
+  CypherVersion,
+  cypherVersionNumbers,
+  allCypherVersions,
+  SymbolsInfo,
+  SymbolTable,
+} from './types.js';
+import { DbSchema } from './dbSchema.js';
+import { getSignatureInfo } from './signatureHelp.js';
+import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
+import { autocomplete } from './autocompletion/autocompletion.js';
+
+export interface ParsedStatement {
+  command: ParsedCommand;
+  parser: CypherParser;
+  tokens: Token[];
+  // A statement needs to be parsed with the .statements() rule because
+  // it's the one that tries to parse until the EOF
+  ctx: StatementsOrCommandsContext;
+  syntaxErrors: SyntaxDiagnostic[];
+  cypherVersionError: SyntaxDiagnostic | undefined;
+  stopNode: ParserRuleContext;
+  collectedLabelOrRelTypes: LabelOrRelType[];
+  collectedVariables: string[];
+  collectedParameters: ParsedParameter[];
+  collectedFunctions: ParsedFunction[];
+  collectedProcedures: ParsedProcedure[];
+  collectedProperties: PropertyType[];
+  collectedReadPatternElements: PatternElementContext[];
+  cypherVersion?: CypherVersion;
+  errorTracker: ErrorTrackingListener;
+}
+
+export interface ParsingResult {
+  query: string;
+  statementsParsing: ParsedStatement[];
+}
+
+interface ParsingScaffolding {
+  query: string;
+  statementsScaffolding: StatementParsingScaffolding[];
+}
+
+interface StatementParsingScaffolding {
+  parser: CypherParser;
+  tokens: Token[];
+}
+
+export enum LabelType {
+  nodeLabelType = 'Label',
+  relLabelType = 'Relationship type',
+  unknown = 'Label or relationship type',
+}
+
+function getLabelType(ctx: ParserRuleContext): LabelType {
+  if (inNodeLabel(ctx)) return LabelType.nodeLabelType;
+  else if (inRelationshipType(ctx)) return LabelType.relLabelType;
+  else return LabelType.unknown;
+}
+
+function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
+  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
+
+  if (parent instanceof ClauseContext) {
+    const clause = parent;
+    return Boolean(
+      clause.mergeClause() || clause.createClause() || clause.insertClause(),
+    );
+  } else {
+    return false;
+  }
+}
+
+type HasPosition = {
+  line: number;
+  column: number;
+  offsets: {
+    start: number;
+    end: number;
+  };
+};
+
+export type LabelOrRelType = HasPosition & {
+  labelType: LabelType;
+  labelText: string;
+};
+
+export type PropertyType = HasPosition & {
+  propertyName: string;
+  variable?: {
+    name: string;
+    start: number;
+  };
+  type: 'read' | 'write';
+};
+
+export type ParsedParameter = HasPosition & {
+  name: string;
+  rawText: string;
+};
+
+export type ParsedFunction = HasPosition & {
+  name: string;
+  rawText: string;
+};
+
+export type ParsedProcedure = ParsedFunction;
+
+function createParsingScaffolding(query: string): ParsingScaffolding {
+  const inputStream = CharStream.fromString(query);
+  const lexer = new CypherLexer(inputStream);
+  const tokenStream = new CommonTokenStream(lexer);
+  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
+
+  const statementsScaffolding: StatementParsingScaffolding[] =
+    stmTokenStreams.map((t) => {
+      const tokens = [...getStreamTokens(t)];
+      const parser = new CypherParser(t);
+      parser.removeErrorListeners();
+
+      return {
+        parser: parser,
+        tokens: tokens,
+      };
+    });
+
+  return {
+    query: query,
+    statementsScaffolding: statementsScaffolding,
+  };
+}
+
+export function parseStatementsStrs(query: string): string[] {
+  const scaffolding = createParsingScaffolding(query);
+  const result: string[] = [];
+
+  for (const statement of scaffolding.statementsScaffolding) {
+    const tokenStream = statement.parser?.tokenStream;
+    const tokens = tokenStream
+      ? getStreamTokens(tokenStream as CommonTokenStream)
+      : [];
+    const statementStr = tokens
+      .filter((token) => token.type !== CypherLexer.EOF)
+      .map((token) => token.text)
+      .join('');
+
+    // Do not return empty statements
+    if (statementStr.trimStart().length != 0) {
+      result.push(statementStr);
+    }
+  }
+
+  return result;
+}
+
+/* Parses a query without storing it in the cache */
+export function parse(query: string): StatementOrCommandContext[] {
+  const statementScaffolding =
+    createParsingScaffolding(query).statementsScaffolding;
+  const result = statementScaffolding.map((statement) =>
+    statement.parser.statementOrCommand(),
+  );
+
+  return result;
+}
+
+export function createParsingResult(
+  query: string,
+  settings: { consoleCommandsEnabled: boolean },
+): ParsingResult {
+  const parsingScaffolding = createParsingScaffolding(query);
+
+  const results: ParsedStatement[] =
+    parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
+      const { parser, tokens } = statementScaffolding;
+      const labelsCollector = new ReadLabelAndRelTypesCollector();
+      const parameterFinder = new ParameterCollector();
+      const variableFinder = new VariableCollector(
+        parser.tokenStream as CommonTokenStream,
+      );
+      const propertiesFinder = new PropertiesCollector();
+      const methodsFinder = new MethodsCollector(tokens);
+      const cypherVersionCollector = new CypherVersionCollector();
+      const readPatternElementsCollector = new ReadPatternElementsCollector();
+      const errorListener = new SyntaxErrorsListener(
+        tokens,
+        settings.consoleCommandsEnabled,
+      );
+      const errorTracker = new ErrorTrackingListener();
+      parser.removeParseListeners();
+      parser.addParseListener(labelsCollector);
+      parser.addParseListener(parameterFinder);
+      parser.addParseListener(variableFinder);
+      parser.addParseListener(methodsFinder);
+      parser.addParseListener(cypherVersionCollector);
+      parser.addParseListener(propertiesFinder);
+      parser.addParseListener(readPatternElementsCollector);
+      parser.addErrorListener(errorListener);
+      parser.addErrorListener(errorTracker);
+      const ctx = parser.statementsOrCommands();
+      // The statement is empty if we cannot find anything that is not EOF or a space
+      const isEmptyStatement =
+        tokens.find(
+          (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
+        ) === undefined;
+      const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
+      const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
+
+      if (!settings.consoleCommandsEnabled) {
+        syntaxErrors.push(...errorOnNonCypherCommands(collectedCommand));
+      }
+
+      return {
+        command: collectedCommand,
+        parser: parser,
+        tokens: tokens,
+        syntaxErrors: syntaxErrors,
+        cypherVersionError: cypherVersionCollector.invalidVersionError,
+        ctx: ctx,
+        stopNode: findStopNode(ctx),
+        collectedLabelOrRelTypes: labelsCollector.labelOrRelTypes,
+        collectedVariables: variableFinder.variables,
+        collectedParameters: parameterFinder.parameters,
+        collectedFunctions: methodsFinder.functions,
+        collectedProcedures: methodsFinder.procedures,
+        collectedProperties: propertiesFinder.properties,
+        collectedReadPatternElements:
+          readPatternElementsCollector.readPatternElements,
+        cypherVersion: cypherVersionCollector.cypherVersion,
+        errorTracker: errorTracker,
+      };
+    });
+
+  const parsingResult: ParsingResult = {
+    query: query,
+    statementsParsing: results,
+  };
+
+  return parsingResult;
+}
+
+const getClearParamName = (name: string): string => {
+  if (name.startsWith('`') && name.endsWith('`')) {
+    return name.slice(1, -1);
+  }
+  return name;
+};
+
+function hasErrorNodesUnder(ctx: ParserRuleContext): boolean {
+  let found: boolean = false;
+  ParseTreeWalker.DEFAULT.walk(
+    {
+      visitTerminal() {},
+      visitErrorNode() {
+        found = true;
+      },
+      enterEveryRule() {},
+      exitEveryRule() {},
+    },
+    ctx,
+  );
+  return found;
+}
+
+export function parseParameters(
+  query: string,
+  consoleCommandsEnabled: boolean,
+): string[] {
+  const parsingResult = createParsingResult(query, { consoleCommandsEnabled });
+  const parameters = parsingResult.statementsParsing.flatMap((statement) =>
+    statement.collectedParameters.map((param) => getClearParamName(param.name)),
+  );
+  return [...new Set(parameters)];
+}
+
+/** This listener collects all labels and relationship types in read operations */
+class ReadLabelAndRelTypesCollector implements ParseTreeListener {
+  labelOrRelTypes: LabelOrRelType[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof LabelNameContext) {
+      // If the parser recovered from an error reading the label
+      // like in the case MATCH (n:) RETURN n
+      // RETURN would be incorrectly idenfified as the label
+      // If this is the case, the context containing the label would have an error node
+      if (
+        ctx.parent &&
+        !hasErrorNodesUnder(ctx.parent) &&
+        !couldCreateNewLabel(ctx)
+      ) {
+        this.labelOrRelTypes.push({
+          labelType: getLabelType(ctx),
+          labelText: ctx.getText(),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
+    } else if (ctx instanceof LabelOrRelTypeContext) {
+      const symbolicName = ctx.symbolicNameString();
+      // Read comment for the label name case
+      if (
+        isDefined(symbolicName) &&
+        ctx.parent &&
+        !hasErrorNodesUnder(ctx.parent) &&
+        !couldCreateNewLabel(ctx)
+      ) {
+        this.labelOrRelTypes.push({
+          labelType: getLabelType(ctx),
+          labelText: symbolicName.start.text,
+          line: symbolicName.start.line,
+          column: symbolicName.start.column,
+          offsets: {
+            start: symbolicName.start.start,
+            end: symbolicName.stop.stop + 1,
+          },
+        });
+      }
+    }
+  }
+}
+
+// This listener collects all properties in read operations
+class PropertiesCollector implements ParseTreeListener {
+  properties: PropertyType[] = [];
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PropertyKeyNameContext) {
+      if (ctx.parent && !hasErrorNodesUnder(ctx.parent)) {
+        const parentClause = findParent(
+          ctx,
+          (ctx) => ctx instanceof ClauseContext,
+        );
+        if (parentClause instanceof ClauseContext) {
+          const isRead = this.isReadClause(parentClause);
+          const isWrite = this.isWriteClause(parentClause);
+
+          if (isRead || isWrite) {
+            const variable = this.getPropertyVariable(ctx);
+
+            const propertyName = ctx.getText().replace(/^`|`$/g, '');
+
+            this.properties.push({
+              propertyName,
+              variable,
+              line: ctx.start.line,
+              column: ctx.start.column,
+              offsets: {
+                start: ctx.start.start,
+                end: ctx.stop.stop + 1,
+              },
+              type: isWrite ? 'write' : 'read',
+            });
+          }
+        }
+      }
+    }
+  }
+
+  private getPropertyVariable(
+    ctx: PropertyKeyNameContext,
+  ): { name: string; start: number } | undefined {
+    const varCtx =
+      this.getVariableFromPatternProperty(ctx) ??
+      this.getVariableFromPropertyAccess(ctx);
+
+    if (varCtx) {
+      return {
+        name: varCtx.getText(),
+        start: varCtx.start.start,
+      };
+    }
+  }
+
+  private getVariableFromPatternProperty(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const patternElement = findParent(ctx, (ctx) => {
+      return (
+        ctx instanceof NodePatternContext ||
+        ctx instanceof RelationshipPatternContext
+      );
+    });
+    if (
+      patternElement instanceof NodePatternContext ||
+      patternElement instanceof RelationshipPatternContext
+    ) {
+      return patternElement.variable();
+    }
+  }
+
+  private getVariableFromPropertyAccess(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const propertyAccessExpr = findParent(
+      ctx,
+      (ctx) => ctx instanceof Expression2Context,
+    );
+    if (propertyAccessExpr instanceof Expression2Context) {
+      return propertyAccessExpr.expression1().variable();
+    }
+  }
+
+  /** Checks if a parent clause is writable for properties */
+  private isWriteClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.mergeClause() ||
+      clause.createClause() ||
+      clause.insertClause() ||
+      clause.setClause() ||
+      clause.removeClause(),
+    );
+  }
+
+  /** Checks if a parent clause is readonly for properties */
+  private isReadClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.matchClause() || clause.withClause() || clause.returnClause(),
+    );
+  }
+}
+
+class ParameterCollector implements ParseTreeListener {
+  parameters: ParsedParameter[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof ParameterContext) {
+      const parameterName = ctx.parameterName().getText();
+      if (parameterName) {
+        this.parameters.push({
+          name: parameterName,
+          rawText: ctx.getText(),
+          line: ctx.start.line,
+          column: ctx.start.column,
+          offsets: {
+            start: ctx.start.start,
+            end: ctx.stop.stop + 1,
+          },
+        });
+      }
+    }
+  }
+}
+
+// This class is collects all variables detected by the parser which means
+// it does include variable scope nor differentiate between variable use and definition
+// we use it when the semantic anaylsis result is not available
+class VariableCollector implements ParseTreeListener {
+  variables: string[] = [];
+  private tokenStream: CommonTokenStream;
+
+  constructor(tokenStream: CommonTokenStream) {
+    this.tokenStream = tokenStream;
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof VariableContext) {
+      const variable = ctx.symbolicVariableNameString().getText();
+      // To avoid suggesting the variable that is currently being typed
+      // For example RETURN a| <- we don't want to suggest "a" as a variable
+      // We check if the variable is in the end of the statement
+      const nextTokenIndex = ctx.stop?.tokenIndex;
+
+      const nextTokenIsEOF =
+        nextTokenIndex !== undefined &&
+        this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
+
+      const definesVariable = rulesDefiningOrUsingVariables.includes(
+        ctx.parent?.ruleIndex as number,
+      );
+
+      if (variable && !nextTokenIsEOF && definesVariable) {
+        this.variables.push(variable);
+      }
+    }
+    if (ctx instanceof ProcedureResultItemContext) {
+      const variable = ctx.getText();
+      if (variable) {
+        this.variables.push(variable);
+      }
+    }
+  }
+}
+
+class ReadPatternElementsCollector implements ParseTreeListener {
+  readPatternElements: PatternElementContext[] = [];
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PatternElementContext && !couldCreateNewLabel(ctx)) {
+      this.readPatternElements.push(ctx);
+    }
+  }
+}
+
+export function getMethodName(
+  ctx: ProcedureNameContext | FunctionNameContext,
+): string {
+  const namespaces = ctx.namespace().symbolicNameString();
+  const methodName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, methodName]
+    .map((symbolicName) => {
+      return getNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
+}
+
+// This listener collects all functions and procedures
+class MethodsCollector implements ParseTreeListener {
+  public procedures: ParsedProcedure[] = [];
+  public functions: ParsedFunction[] = [];
+  private tokens: Token[];
+
+  constructor(tokens: Token[]) {
+    this.tokens = tokens;
+  }
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (
+      ctx instanceof FunctionNameContext ||
+      ctx instanceof ProcedureNameContext
+    ) {
+      const methodName = getMethodName(ctx);
+
+      const startTokenIndex = ctx.start.tokenIndex;
+      const stopTokenIndex = ctx.stop.tokenIndex;
+
+      const rawText = this.tokens
+        .slice(startTokenIndex, stopTokenIndex + 1)
+        .map((token) => {
+          return token.text;
+        })
+        .join('');
+
+      const result = {
+        name: methodName,
+        rawText: rawText,
+        line: ctx.start.line,
+        column: ctx.start.column,
+        offsets: {
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
+        },
+      };
+
+      if (ctx instanceof FunctionNameContext) {
+        this.functions.push(result);
+      } else {
+        this.procedures.push(result);
+      }
+    }
+  }
+}
+
+class CypherVersionCollector implements ParseTreeListener {
+  public cypherVersion: CypherVersion;
+  public invalidVersionError: SyntaxDiagnostic;
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof CypherVersionContext) {
+      const parsedVersion = 'CYPHER ' + ctx.getText();
+      allCypherVersions.forEach((validVersion) => {
+        if (parsedVersion === validVersion) {
+          this.cypherVersion = parsedVersion;
+        }
+      });
+      if (!this.cypherVersion) {
+        this.invalidVersionError = {
+          message:
+            ctx.getText() +
+            ' is not a valid option for cypher version. Valid options are: ' +
+            cypherVersionNumbers.join(', '),
+          severity: DiagnosticSeverity.Error,
+          ...translateTokensToRange(ctx.start, ctx.stop),
+        };
+      }
+    }
+  }
+}
+
+type RuleTokens = {
+  start: Token;
+  stop: Token;
+};
+
+export type ParsedCommandNoPosition =
+  | { type: 'cypher'; statement: string }
+  | { type: 'use'; database?: string /* missing implies default db */ }
+  | { type: 'clear' }
+  | { type: 'history' }
+  | {
+      type: 'set-parameters';
+      parameters: { name: string; expression: string }[];
+    }
+  | { type: 'list-parameters' }
+  | { type: 'clear-parameters' }
+  | { type: 'connect' }
+  | { type: 'disconnect' }
+  | { type: 'server'; operation: string }
+  | { type: 'welcome' }
+  | { type: 'parse-error' }
+  | { type: 'sysinfo' }
+  | { type: 'style'; operation?: 'reset' }
+  | { type: 'play'; guide?: string }
+  | { type: 'access-mode'; operation?: string }
+  | { type: 'help' }
+  | { type: 'auto'; statement?: string };
+
+type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
+
+function parseToCommand(
+  stmts: StatementsOrCommandsContext,
+  tokens: Token[],
+  isEmptyStatement: boolean,
+): ParsedCommand {
+  const stmt = stmts.statementOrCommand().at(0);
+
+  if (stmt) {
+    const start = stmts.start;
+    let stop = stmts.stop;
+
+    if (stop && stop.type === CypherLexer.SEMICOLON) {
+      stop = tokens[stop.tokenIndex - 1];
+    }
+    const inputstream = start.inputStream;
+    const cypherStmt = stmt.preparsedStatement()?.statement();
+    if (cypherStmt) {
+      // we get the original text input to preserve whitespace
+      // stripping the preparser part of it
+      const stmtStart = cypherStmt.start;
+      const statement = inputstream.getTextFromRange(
+        stmtStart.start,
+        stop.stop,
+      );
+
+      return { type: 'cypher', statement, start: stmtStart, stop: stop };
+    }
+
+    if (isEmptyStatement) {
+      const { start } = stmts;
+      return { type: 'cypher', statement: '', start: start, stop: start };
+    }
+
+    const consoleCmd = stmt.consoleCommand();
+    if (consoleCmd) {
+      const useCmd = consoleCmd.useCmd();
+      if (useCmd) {
+        return {
+          type: 'use',
+          database: useCmd.symbolicAliasName()?.getText(),
+          start,
+          stop,
+        };
+      }
+
+      const clearCmd = consoleCmd.clearCmd();
+      if (clearCmd) {
+        return { type: 'clear', start, stop };
+      }
+
+      const historyCmd = consoleCmd.historyCmd();
+      if (historyCmd) {
+        return { type: 'history', start, stop };
+      }
+
+      const param = consoleCmd.paramsCmd();
+      const paramArgs = param?.paramsArgs();
+
+      if (param && !paramArgs) {
+        // no argument provided -> list parameters
+        return { type: 'list-parameters', start, stop };
+      }
+
+      if (paramArgs) {
+        const cypherMap = paramArgs.map();
+        if (cypherMap) {
+          const names = cypherMap
+            ?.propertyKeyName()
+            .map((name) => name.getText());
+          const expressions = cypherMap
+            ?.expression()
+            .map((expr) => expr.getText());
+
+          if (names && expressions && names.length === expressions.length) {
+            return {
+              type: 'set-parameters',
+              parameters: names.map((name, index) => ({
+                name,
+                expression: expressions[index],
+              })),
+              start,
+              stop,
+            };
+          }
+        }
+
+        const lambda = paramArgs.lambda();
+        const name = lambda?.parameterName()?.getText();
+        const expression = lambda?.expression()?.getText();
+        if (name && expression) {
+          return {
+            type: 'set-parameters',
+            parameters: [{ name, expression }],
+            start,
+            stop,
+          };
+        }
+
+        const clear = paramArgs.CLEAR();
+        if (clear) {
+          return { type: 'clear-parameters', start, stop };
+        }
+
+        const list = paramArgs.listCompletionRule()?.LIST();
+        if (list) {
+          return { type: 'list-parameters', start, stop };
+        }
+      }
+
+      const connectCmd = consoleCmd.connectCmd();
+      if (connectCmd) {
+        return { type: 'connect', start, stop };
+      }
+
+      const disconnectCmd = consoleCmd.disconnectCmd();
+      if (disconnectCmd) {
+        return { type: 'disconnect', start, stop };
+      }
+
+      const serverCmd = consoleCmd.serverCmd();
+      const serverArgs = serverCmd?.serverArgs();
+      if (serverCmd && serverArgs) {
+        const connect = serverArgs.CONNECT();
+        if (connect) {
+          return { type: 'server', operation: 'connect', start, stop };
+        }
+
+        const disconnect = serverArgs.DISCONNECT();
+        if (disconnect) {
+          return { type: 'server', operation: 'disconnect', start, stop };
+        }
+      }
+
+      const welcomeCmd = consoleCmd.welcomeCmd();
+      if (welcomeCmd) {
+        return { type: 'welcome', start, stop };
+      }
+
+      const sysInfoCmd = consoleCmd.sysInfoCmd();
+      if (sysInfoCmd) {
+        return { type: 'sysinfo', start, stop };
+      }
+
+      const styleCmd = consoleCmd.styleCmd();
+      if (styleCmd) {
+        return {
+          type: 'style',
+          start,
+          stop,
+          operation: styleCmd.RESET() ? 'reset' : undefined,
+        };
+      }
+
+      const playCmd = consoleCmd.playCmd();
+      if (playCmd) {
+        return {
+          type: 'play',
+          guide: playCmd.symbolicNameString()?.getText(),
+          start,
+          stop,
+        };
+      }
+
+      const accessModeCmd = consoleCmd.accessModeCmd();
+      const accessModeArgs = accessModeCmd?.accessModeArgs();
+
+      if (accessModeCmd && !accessModeArgs) {
+        return {
+          type: 'access-mode',
+          operation: undefined,
+          start,
+          stop,
+        };
+      }
+
+      if (accessModeArgs) {
+        const read = accessModeArgs.readCompletionRule()?.READ();
+        if (read) {
+          return {
+            type: 'access-mode',
+            operation: 'read',
+            start,
+            stop,
+          };
+        }
+
+        const write = accessModeArgs.writeCompletionRule()?.WRITE();
+        if (write) {
+          return {
+            type: 'access-mode',
+            operation: 'write',
+            start,
+            stop,
+          };
+        }
+      }
+
+      const helpCmd = consoleCmd.helpCmd();
+      if (helpCmd) {
+        return { type: 'help', start, stop };
+      }
+
+      const autoCmd = consoleCmd.autoCmd();
+      if (autoCmd) {
+        const autoStmt = autoCmd.statement();
+        if (autoStmt && autoStmt.start && autoStmt.stop) {
+          //we want autoStmt.start so we skip :auto when calling semantic analysis
+          //but regular stop, so we include trailing error nodes not parsed as statement
+          const statement = inputstream.getTextFromRange(
+            autoStmt.start.start,
+            stop.stop,
+          );
+          return { type: 'auto', statement, start: autoStmt.start, stop };
+        }
+        return { type: 'auto', start, stop };
+      }
+
+      return { type: 'parse-error', start, stop };
+    }
+    const stopToken = stop ?? tokens.at(-1);
+    const statement = inputstream.getTextFromRange(start.start, stopToken.stop);
+    return { type: 'cypher', statement, start: start, stop: stopToken };
+  }
+  return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
+}
+
+export function translateTokensToRange(
+  start: Token,
+  stop: Token,
+): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
+  return {
+    range: {
+      start: Position.create(start.line - 1, start.column),
+      end: Position.create(stop.line - 1, stop.column + stop.text.length),
+    },
+    offsets: {
+      start: start.start,
+      end: stop.stop + 1,
+    },
+  };
+}
+
+function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
+  return [command]
+    .filter((cmd) => cmd.type !== 'cypher')
+    .map(
+      ({ start, stop }): SyntaxDiagnostic => ({
+        message: 'Console commands are unsupported in this environment.',
+        severity: DiagnosticSeverity.Error,
+        ...translateTokensToRange(start, stop),
+      }),
+    );
+}
+
+export class CypherLanguageService {
+  private parsingResult?: ParsingResult;
+  private symbolsInfo?: SymbolsInfo;
+  private consoleCommandsEnabled: boolean;
+
+  constructor({
+    consoleCommandsEnabled = true,
+  }: { consoleCommandsEnabled?: boolean } = {}) {
+    this.consoleCommandsEnabled = consoleCommandsEnabled;
+  }
+
+  parse(query: string): ParsingResult {
+    if (
+      this.parsingResult !== undefined &&
+      this.parsingResult.query === query
+    ) {
+      return this.parsingResult;
+    } else {
+      const parsingResult = createParsingResult(query, {
+        consoleCommandsEnabled: this.consoleCommandsEnabled,
+      });
+      return parsingResult;
+    }
+  }
+
+  clearCache() {
+    this.parsingResult = undefined;
+    this.symbolsInfo = undefined;
+  }
+
+  setSymbolsInfo(
+    symbolsInfo: SymbolsInfo,
+    sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>,
+  ) {
+    if (_internalFeatureFlags.debugSymbolTable && sendMessage)
+      void sendMessage(symbolsInfo.symbolTables);
+    this.symbolsInfo = symbolsInfo;
+  }
+
+  lint(query: string, dbSchema: DbSchema) {
+    const parsingResult = this.parse(query);
+    return lintCypherQuery(query, dbSchema, { parsingResult });
+  }
+
+  highlightSyntax(query: string) {
+    const parsingResult = this.parse(query);
+    return highlightSyntax(query, { parsingResult });
+  }
+
+  getSignatureHelp(
+    query: string,
+    dbSchema: DbSchema,
+    { caretPosition = query.length }: { caretPosition?: number } = {},
+  ) {
+    const parsingResult = this.parse(query);
+    return getSignatureInfo(query, dbSchema, { caretPosition, parsingResult });
+  }
+
+  autocomplete(
+    query: string,
+    dbSchema: DbSchema,
+    {
+      caretPosition = query.length,
+      manual = false,
+    }: { caretPosition?: number; manual?: boolean } = {},
+  ) {
+    // TODO This is a temporary hack because completions are not working well
+    query = query.slice(0, caretPosition);
+    const parsingResult = this.parse(query);
+    return autocomplete(query, dbSchema, {
+      consoleCommandsEnabled: this.consoleCommandsEnabled,
+      caretPosition,
+      manual,
+      symbolsInfo: this.symbolsInfo,
+      parsingResult,
+    });
+  }
+}

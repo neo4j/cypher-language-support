@@ -18,6 +18,17 @@ import {
   upArrowSvg,
 } from './themeIcons';
 
+export interface DiffColors {
+  /** Background fill for the whole inserted/changed line. */
+  insertedLine: string;
+  /** Highlight for the exact inserted text within a changed line. */
+  insertedText: string;
+  /** Background fill for the whole deleted line widget. */
+  deletedLine: string;
+  /** Highlight for the exact deleted text within a deleted chunk. */
+  deletedText: string;
+}
+
 export interface ThemeOptions {
   dark: boolean;
   editorSettings: {
@@ -40,6 +51,7 @@ export interface ThemeOptions {
   };
   highlightStyles: Partial<Record<HighlightedCypherTokenTypes, string>>;
   inheritBgColor?: boolean;
+  diffColors?: DiffColors;
 }
 
 export const createCypherTheme = ({
@@ -47,6 +59,7 @@ export const createCypherTheme = ({
   editorSettings: settings,
   highlightStyles,
   inheritBgColor,
+  diffColors,
 }: ThemeOptions): Extension => {
   const themeOptions: Record<string, StyleSpec> = {
     '&': {
@@ -218,6 +231,26 @@ export const createCypherTheme = ({
         },
       },
     },
+    ...(diffColors && {
+      '&.cm-merge-b .cm-changedLine': {
+        backgroundColor: diffColors.insertedLine,
+      },
+      '&.cm-merge-b .cm-changedText': {
+        background: diffColors.insertedText,
+      },
+      '&.cm-merge-b .cm-deletedChunk': {
+        backgroundColor: diffColors.deletedLine,
+      },
+      '&.cm-merge-b .cm-deletedChunk .cm-deletedText': {
+        background: diffColors.deletedText,
+      },
+      // Hide the empty deletion widget that unifiedMergeView renders
+      // when the original document is empty (its only line is an empty <del>).
+      '&.cm-merge-b .cm-deletedChunk:has(> .cm-deletedLine:only-child > del > br:only-child)':
+        {
+          display: 'none',
+        },
+    }),
   };
 
   const themeExtension = EditorView.theme(themeOptions, { dark });
