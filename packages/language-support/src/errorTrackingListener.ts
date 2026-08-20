@@ -1,5 +1,6 @@
 import {
   ANTLRErrorListener,
+  ParseTree,
   ParserRuleContext,
   RecognitionException,
   Token,
@@ -37,6 +38,17 @@ export class ErrorTrackingListener implements ANTLRErrorListener {
 
   hasError(ctx: ParserRuleContext): boolean {
     return this.errorContexts.has(ctx);
+  }
+
+  hasErrorInSubtree(ctx: ParserRuleContext): boolean {
+    if (this.errorContexts.has(ctx)) return true;
+    for (let i = 0; i < ctx.getChildCount(); i++) {
+      const child: ParseTree = ctx.getChild(i);
+      if (child instanceof ParserRuleContext && this.hasErrorInSubtree(child)) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // eslint-disable-next-line @typescript-eslint/no-empty-function

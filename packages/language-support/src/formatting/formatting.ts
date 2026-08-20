@@ -161,6 +161,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   unParseable: string = '';
   unParseableStart: number | undefined;
   firstUnParseableToken: Token | undefined;
+  firstSyntaxErrorToken: Token | undefined;
 
   constructor(
     formattingOptions: FormattingOptions,
@@ -169,6 +170,7 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     query: string,
     unParseable: string | undefined,
     firstUnParseableToken: Token | undefined,
+    firstSyntaxErrorToken: Token | undefined,
   ) {
     super();
     this.formattingOptions = formattingOptions;
@@ -180,6 +182,9 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (firstUnParseableToken) {
       this.firstUnParseableToken = firstUnParseableToken;
       this.unParseableStart = firstUnParseableToken.tokenIndex;
+    }
+    if (firstSyntaxErrorToken) {
+      this.firstSyntaxErrorToken = firstSyntaxErrorToken;
     }
   }
 
@@ -201,9 +206,11 @@ export class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // it should raise an internal error. If there is a syntax error, we do not guarantee
     // we can format the query.
     if (originalNonWhitespaceCount !== formattedNonWhitespaceCount) {
-      if (this.unParseable && this.firstUnParseableToken) {
+      const errorToken =
+        this.firstUnParseableToken ?? this.firstSyntaxErrorToken;
+      if (errorToken) {
         throw new Error(
-          `Unable to format query due to syntax error near ${this.firstUnParseableToken?.text} at line ${this.firstUnParseableToken?.line}`,
+          `Unable to format query due to syntax error near ${errorToken.text} at line ${errorToken.line}`,
         );
       }
       throw new Error(INTERNAL_FORMAT_ERROR_MESSAGE);
@@ -2489,8 +2496,13 @@ export function formatQuery(
   query: string,
   formattingOptions?: FormattingOptions,
 ): FormattingResult {
-  const { tree, tokens, unParseable, firstUnParseableToken } =
-    getParseTreeAndTokens(query);
+  const {
+    tree,
+    tokens,
+    unParseable,
+    firstUnParseableToken,
+    firstSyntaxErrorToken,
+  } = getParseTreeAndTokens(query);
 
   tokens.fill();
   const visitor = new TreePrintVisitor(
@@ -2500,6 +2512,7 @@ export function formatQuery(
     query,
     unParseable,
     firstUnParseableToken,
+    firstSyntaxErrorToken,
   );
   if (!formattingOptions) return { formattedQuery: visitor.format() };
 

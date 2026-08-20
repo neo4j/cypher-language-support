@@ -50,6 +50,7 @@ import {
   getPathCompletions,
   getShortPathCompletions,
   allReltypeCompletions,
+  isRealContext,
 } from './schemaBasedCompletions';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers';
 
@@ -824,12 +825,20 @@ function getSnippetCompletions(
     )?.parent;
 
     const lastNode: RelationshipPatternContext | NodePatternContext =
-      parent?.children.findLast(
-        (x) =>
-          (x instanceof RelationshipPatternContext ||
-            x instanceof NodePatternContext) &&
-          !parsingResult.errorTracker.hasError(x),
-      ) as RelationshipPatternContext | NodePatternContext;
+      parent?.children.findLast((x) => {
+        if (x instanceof NodePatternContext) {
+          return isRealContext(x) && !parsingResult.errorTracker.hasError(x);
+        }
+        if (x instanceof RelationshipPatternContext) {
+          return (
+            isRealContext(x) &&
+            !parsingResult.errorTracker.hasError(x) &&
+            (x.stop?.type === CypherParser.RBRACKET ||
+              !parsingResult.errorTracker.hasErrorInSubtree(x))
+          );
+        }
+        return false;
+      }) as RelationshipPatternContext | NodePatternContext;
     const finalNonEofToken = tokens.at(-2);
 
     if (

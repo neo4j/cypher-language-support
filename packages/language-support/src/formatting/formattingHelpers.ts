@@ -135,8 +135,13 @@ export function getParseTreeAndTokens(query: string) {
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
-  if (errorListener.firstOffendingToken) {
-    const idx = errorListener.firstOffendingToken.tokenIndex;
+  // Only split into parseable/unparseable when the ROOT context itself had an
+  // unrecovered error (replicating the old tree.exception behavior from antlr4).
+  // For recovered sub-rule errors, the formatter visits the full error-recovered
+  // tree and the character count check handles validation.
+  const rootException = errorListener.errorContexts.get(tree);
+  if (rootException?.offendingToken) {
+    const idx = rootException.offendingToken.tokenIndex;
     const allTokens = getStreamTokens(tokens);
     const errorTokens = allTokens.slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
@@ -148,9 +153,18 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    firstUnParseableToken = errorListener.firstOffendingToken;
+    firstUnParseableToken = rootException.offendingToken as Token;
   }
-  return { tree, tokens, unParseable, firstUnParseableToken };
+  // firstSyntaxErrorToken tracks the first error for use in error messages even
+  // when it occurred in a sub-rule and didn't prevent root-level parsing.
+  const firstSyntaxErrorToken = errorListener.firstOffendingToken ?? undefined;
+  return {
+    tree,
+    tokens,
+    unParseable,
+    firstUnParseableToken,
+    firstSyntaxErrorToken,
+  };
 }
 
 export function findTargetToken(

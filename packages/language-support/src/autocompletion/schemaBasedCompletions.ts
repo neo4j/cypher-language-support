@@ -19,6 +19,7 @@ import {
   QuantifierContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser';
+import { ParserRuleContext } from 'antlr4ng';
 import { backtickIfNeeded } from './autocompletionHelpers';
 import {
   convertToCNF,
@@ -26,6 +27,12 @@ import {
   isNotAnyNode,
   removeInnerAnys,
 } from '../labelTreeRewriting';
+
+export function isRealContext(ctx: ParserRuleContext): boolean {
+  return (
+    ctx.start != null && ctx.stop != null && ctx.start.start <= ctx.stop.stop
+  );
+}
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
@@ -353,7 +360,10 @@ export function completeNodeLabel(
   if (callContext instanceof PatternElementContext) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
       if (child instanceof RelationshipPatternContext) {
-        if (!parsingResult.errorTracker.hasError(child)) {
+        if (
+          isRealContext(child) &&
+          !parsingResult.errorTracker.hasErrorInSubtree(child)
+        ) {
           return true;
         }
       }
@@ -443,7 +453,10 @@ export function completeRelationshipType(
       .toReversed()
       .find((child) => {
         if (child instanceof NodePatternContext) {
-          if (!parsingResult.errorTracker.hasError(child)) {
+          if (
+            isRealContext(child) &&
+            !parsingResult.errorTracker.hasErrorInSubtree(child)
+          ) {
             return true;
           }
         }

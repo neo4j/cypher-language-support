@@ -4,6 +4,7 @@ import {
   CharStream,
   CommonTokenStream,
   ParseTreeListener,
+  IntStream,
 } from 'antlr4ng';
 
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer';
@@ -590,6 +591,12 @@ function parseToCommand(
     const start = stmts.start;
     let stop = stmts.stop;
 
+    // In antlr4ng the grammar rule ends with EOF, so stmts.stop may be the
+    // fetched EOF token. Walk back past EOF and SEMICOLON to the last meaningful token.
+    if (stop?.type === IntStream.EOF) {
+      const prevIdx = stop.tokenIndex - 1;
+      stop = (prevIdx >= 0 ? tokens[prevIdx] : null) ?? stop;
+    }
     if (stop && stop.type === CypherLexer.SEMICOLON) {
       stop = tokens[stop.tokenIndex - 1];
     }

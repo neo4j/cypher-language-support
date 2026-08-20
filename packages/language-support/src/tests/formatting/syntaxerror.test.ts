@@ -31,21 +31,13 @@ merge (a:Article {v.article_number})
 on create set a += v {.content_text, .published_date, .title, .url }
 merge (s:Source {name: v.source})
 merge (a)-[:PUBLISHED_IN]->(s)
-with a, v where trim(v.authors) <> '' 
+with a, v where trim(v.authors) <> ''
 unwind split(v.authors,',') as name
 merge (author:Author {name:name})
 merge (a)-[:WRITTEN_BY]->(author)`;
-    const expected = `CALL apoc.load.json(url) YIELD value AS v
-MERGE (a:Article {v.article_number})
-  ON CREATE SET a += v {.content_text, .published_date, .title, .url}
-MERGE (s:Source {name: v.source})
-MERGE (a)-[:PUBLISHED_IN]->(s)
-WITH a, v
-WHERE trim(v.authors) <> ''
-UNWIND split(v.authors, ',') AS name
-MERGE (author:Author {name: name})
-MERGE (a)-[:WRITTEN_BY]->(author)`;
-    verifyFormatting(query, expected);
+    expect(() => formatQuery(query)).toThrowError(
+      'Unable to format query due to syntax error near . at line 2',
+    );
   });
 
   test('does not add extra spaces to this query', () => {
@@ -132,9 +124,9 @@ RETURN n`;
 
   test('map that uses dot instead of colon', () => {
     const query = `match (n:Person {age. 5}) return n`;
-    const expected = `MATCH (n:Person {age. 5})
-RETURN n`;
-    verifyFormatting(query, expected);
+    expect(() => formatQuery(query)).toThrowError(
+      'Unable to format query due to syntax error near . at line 1',
+    );
   });
 
   test('incomplete MERGE clause', () => {
@@ -197,20 +189,12 @@ merge (a:Article {v.article_number})
 on create set a +=+ v {.content_text .published_date, .title, .url }
 merge (s:Source {name: v.source})
 merge (a)-[:PUBLISHED_IN]->(s)
-with a, v where trim(v.authors) <> '' 
+with a, v where trim(v.authors) <> ''
 unwind split(v.authors,',' as name
 merge (author:Author {name:name})
 merge (a)-[:WRITTEN_BY]->(author)`;
-    const expected = `CALL apoc.load.json(url) YIELD value AS v
-MERGE (a:Article {v.article_number})
-  ON CREATE SET a += + v {.content_text.published_date, .title, .url }
-MERGE (s:Source {name: v.source})
-MERGE (a)-[:PUBLISHED_IN]->(s)
-WITH a, v
-WHERE trim(v.authors) <> ''
-UNWIND split(v.authors, ','AS name
-MERGE (author:Author {name: name})
-MERGE (a)-[:WRITTEN_BY]->(author)`;
-    verifyFormatting(query, expected);
+    expect(() => formatQuery(query)).toThrowError(
+      'Unable to format query due to syntax error near . at line 2',
+    );
   });
 });
