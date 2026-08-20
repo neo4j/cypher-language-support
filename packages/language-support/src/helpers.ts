@@ -157,7 +157,7 @@ export function getStreamTokens(tokenStream: CommonTokenStream): Token[] {
 /**
  * Helper to set the internal tokens array on a CommonTokenStream.
  */
-export function setStreamTokens(
+function setStreamTokens(
   tokenStream: CommonTokenStream,
   tokens: Token[],
 ): void {

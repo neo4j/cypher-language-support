@@ -9,7 +9,7 @@ import {
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { ErrorTrackingListener } from './errorTrackingListener.js';
+import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
 import { _internalFeatureFlags } from './featureFlags.js';
 import {
   ClauseContext,
@@ -76,7 +76,7 @@ export interface ParsedStatement {
   collectedProperties: PropertyType[];
   collectedReadPatternElements: PatternElementContext[];
   cypherVersion?: CypherVersion;
-  errorTracker: ErrorTrackingListener;
+  errorTracker: ErrorTrackingStrategy;
 }
 
 export interface ParsingResult {
@@ -234,7 +234,8 @@ export function createParsingResult(
         tokens,
         settings.consoleCommandsEnabled,
       );
-      const errorTracker = new ErrorTrackingListener();
+      const errorTracker = new ErrorTrackingStrategy();
+      parser.errorHandler = errorTracker;
       parser.removeParseListeners();
       parser.addParseListener(labelsCollector);
       parser.addParseListener(parameterFinder);
@@ -244,7 +245,6 @@ export function createParsingResult(
       parser.addParseListener(propertiesFinder);
       parser.addParseListener(readPatternElementsCollector);
       parser.addErrorListener(errorListener);
-      parser.addErrorListener(errorTracker);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
@@ -384,6 +384,16 @@ class ReadLabelAndRelTypesCollector implements ParseTreeListener {
 // This listener collects all properties in read operations
 class PropertiesCollector implements ParseTreeListener {
   properties: PropertyType[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
 
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof PropertyKeyNameContext) {
@@ -742,6 +752,17 @@ function parseToCommand(
     const start = stmts.start;
     let stop = stmts.stop;
 
+    // In antlr4ng, matching EOF sets the rule's stop to the EOF token itself
+    // (whose offsets point at the end of the whole input), so step back to the
+    // last non-hidden token of this statement, mirroring the old runtime's
+    // LT(-1) semantics.
+    if (stop && stop.type === CypherLexer.EOF) {
+      let idx = stop.tokenIndex - 1;
+      while (idx >= 0 && tokens[idx].channel !== 0) {
+        idx--;
+      }
+      stop = tokens[idx] ?? stop;
+    }
     if (stop && stop.type === CypherLexer.SEMICOLON) {
       stop = tokens[stop.tokenIndex - 1];
     }

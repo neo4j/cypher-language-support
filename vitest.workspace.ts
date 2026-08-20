@@ -3,5 +3,4 @@ export default [
   'packages/lint-worker',
   'packages/react-codemirror',
   'packages/query-tools',
-  'vendor/antlr4-c3',
 ];

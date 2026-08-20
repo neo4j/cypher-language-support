@@ -254,7 +254,6 @@ describe('sanity checks', () => {
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
-      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },

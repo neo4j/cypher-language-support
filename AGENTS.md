@@ -4,7 +4,7 @@ This file provides guidance to coding agents (Claude Code, Codex, Cursor, …) w
 
 ## Repository overview
 
-pnpm monorepo (workspaces: `packages/*` and `vendor/*`) implementing Neo4j's Cypher language support: syntax highlighting, autocompletion, linting, and formatting. Generating the parser additionally requires `antlr4-tools` (`pip install antlr4-tools`) and Java.
+pnpm monorepo (workspaces: `packages/*`) implementing Neo4j's Cypher language support: syntax highlighting, autocompletion, linting, and formatting. The parser is generated with `antlr-ng` (no Java required) and runs on the `antlr4ng` runtime.
 
 ## Commands
 
@@ -47,19 +47,18 @@ Dependency flow: `vscode-extension` bundles `language-server`, which (like `reac
 
 - **`packages/language-support`** — the core library. Everything else wraps it.
   - The parser is generated from the ANTLR4 grammar in `src/antlr-grammar/` into `src/generated-parser/` at build time (`pnpm gen-parser`). The grammar and `src/syntaxValidation/semanticAnalysis.js` (Neo4j's real semantic analysis, compiled to JS) originate in the internal Neo4j monorepo and are bumped monthly by an automated PR — do not hand-edit them.
-  - Feature areas: `autocompletion/` (built on the vendored `vendor/antlr4-c3` completion core), `syntaxValidation/` (lexer/parser errors + semantic analysis + schema-based validation), `formatting/` (see `src/formatting/overview.md`), `syntaxHighlighting/`, `signatureHelp.ts`.
+  - Feature areas: `autocompletion/` (built on the `antlr4-c3` completion core), `syntaxValidation/` (lexer/parser errors + semantic analysis + schema-based validation), `formatting/` (see `src/formatting/overview.md`), `syntaxHighlighting/`, `signatureHelp.ts`.
   - Most features take a `DbSchema` (labels, procedures, databases, …) to give schema-aware results.
 - **`packages/lint-worker`** — wraps linting in a `workerpool` worker so it runs off-thread. Built both as CJS (`lintWorker.cjs`, for the language server / VS Code) and ESM (`lintWorker.mjs`, for react-codemirror); consumers copy the bundle into their own dist at build time. Also pins an older published `@neo4j-cypher/language-support` for linting against older Neo4j versions (the extension's "Select Cypher linter version" command downloads other versions at runtime).
 - **`packages/query-tools`** — Neo4j connection management and schema polling (`schemaPoller.ts`, `metadataPoller.ts`) that keeps the `DbSchema` up to date.
 - **`packages/language-server`** — thin LSP wrapper; esbuild-bundles everything into a single `dist/cypher-language-server.js`.
 - **`packages/vscode-extension`** — bundles the language server and lint worker into its `dist/`. Connection UI is React webviews under `src/webviews/`. Not published to npm (packaged with `vsce`).
 - **`packages/react-codemirror`** (+ `react-codemirror-playground`) — CodeMirror 6 plugins and React wrapper, using `language-support` directly in the browser.
-- **`vendor/antlr4-c3`** — vendored fork of the antlr4-c3 code-completion library; part of the workspace and built as part of `language-support`'s build. To be replaced soon by a true dependency, do not edit it.
 
 ## Conventions and gotchas
 
 - `packages/vscode-extension/syntaxes/cypher.json` (TextMate grammar) is **generated** by `pnpm gen-textmate` (runs during build) from `language-support`'s `textMateGrammar.ts`, but is committed. CI fails if it is stale — after a build changes it, commit the updated file. Never edit it by hand.
-- Relative imports in `language-support`, `query-tools`, `lint-worker`, and `vendor/antlr4-c3` must include the `.js` extension (`from './helpers.js'`). Enforced by `pnpm check-imports` in CI; TypeScript's `nodenext` mode can't be used yet because of antlr4's type declarations.
+- Relative imports in `language-support`, `query-tools`, and `lint-worker` must include the `.js` extension (`from './helpers.js'`). Enforced by `pnpm check-imports` in CI.
 - VS Code API tests run against the **bundled** `dist/extension.js` while test files are compiled separately from `src/` — sinon stubs applied to `src/` modules do not affect command handlers invoked via `commands.executeCommand` (two separate module graphs). Call the `src/` function directly if you need stubs to apply.
 - Downloaded lint workers are cached in the real VS Code global storage (`%APPDATA%/Code/User/globalStorage/neo4j-extensions.neo4j-for-vscode`), not in `.vscode-test/user-data`.
 - Never Read/Grep build output to understand code: the `dist/` bundles (e.g. `lintWorker.mjs`, ~8 MB), `src/generated-parser/`, and `semanticAnalysis.js` are far too large for tools and are generated anyway — read the package's `src/` instead. To introspect a built package's runtime exports, run `node -e "require('...')"` from inside that package's directory (deps don't resolve from the repo root, and `vscode` never resolves outside the extension host).

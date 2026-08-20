@@ -29,5 +29,5 @@ HELP: H E L P;
 // (that grammar is generated for the Java target in the Neo4j monorepo).
 // This is the equivalent action for the TypeScript runtime.
 RCURLY
-   : '}' { if (this.getModeStack().length > 0) this.popMode(); }
+   : '}' { if (this.modeStack.length > 0) this.popMode(); }
    ;

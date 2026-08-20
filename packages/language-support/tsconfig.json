@@ -1,6 +1,6 @@
 {
   "extends": "../../tsconfig.base.json",
-  "include": ["src", "../../vendor/antlr4-c3/dist/esm"],
+  "include": ["src"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
     "outDir": "dist",

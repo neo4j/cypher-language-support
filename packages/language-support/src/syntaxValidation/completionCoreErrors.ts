@@ -1,6 +1,6 @@
 import { Token } from 'antlr4ng';
 import { distance } from 'fastest-levenshtein';
-import { CodeCompletionCore } from '../../../../vendor/antlr4-c3/dist/esm/index.js';
+import { CodeCompletionCore } from 'antlr4-c3';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
 import {

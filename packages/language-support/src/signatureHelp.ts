@@ -11,7 +11,7 @@ import {
   FunctionInvocationContext,
 } from './generated-parser/CypherCmdParser.js';
 
-import { Token } from '../../../vendor/antlr4-c3/dist/esm/index.js';
+import { Token } from 'antlr4ng';
 import { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';

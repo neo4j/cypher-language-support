@@ -599,12 +599,10 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   private _collectErrorNodes(node: ParserRuleContext | TerminalNode): void {
     if (node instanceof TerminalNode) {
-      // @ts-expect-error isErrorNode exists on ErrorNode at runtime but not in TerminalNode types
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-      if (node.isErrorNode && node.isErrorNode()) {
+      if (node instanceof ErrorNode) {
         const tokenIdx = node.symbol.tokenIndex;
         if (tokenIdx >= 0) {
-          this.errorNodesByIndex.set(tokenIdx, node as ErrorNode);
+          this.errorNodesByIndex.set(tokenIdx, node);
         }
       }
     } else if (node instanceof ParserRuleContext) {
@@ -639,10 +637,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // on the hidden channel, etc.) between the last emitted error node and the
     // upcoming terminal so they are not silently dropped.
     if (emittedAny && this.previousTokenIndex < upToTokenIdx - 1) {
-      const trailingTokens = this.tokenStream.tokens.slice(
-        this.previousTokenIndex + 1,
-        upToTokenIdx,
-      );
+      const trailingTokens = this.tokenStream
+        .getTokens()
+        .slice(this.previousTokenIndex + 1, upToTokenIdx);
       const trailingText = trailingTokens
         .map((t) => t.text)
         .join('')
@@ -660,9 +657,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (!ctx) {
       return;
     }
-    // @ts-expect-error ctx can be ErrorNode but can't really check it.
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
-    if (ctx.isErrorNode && ctx.isErrorNode()) {
+    if (ctx instanceof ErrorNode) {
       this.visit(ctx);
       return;
     }
@@ -2607,7 +2602,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.localInputFieldsSignature());
     if (ctx.typed()) {
       this._visit(ctx.typed());
-      this._visit(ctx.type_());
+      this._visit(ctx.type());
     }
     this._visit(ctx.localFunctionBody());
   };
