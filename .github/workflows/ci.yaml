@@ -39,11 +39,14 @@ jobs:
         run: pnpm lint
 
       - name: Check relative imports have .js extensions
-        # Ideally we'd use moduleResolution: "nodenext" which enforces .js extensions at the
-        # TypeScript level, but the legacy language-support version pinned in lint-worker still
-        # pulls in antlr4@4.13.2 whose type declarations (.d.cts) use extensionless imports that
-        # break nodenext resolution. Once that legacy pin is removed, we can switch to nodenext
-        # and drop this grep-based check.
+        # language-support enforces .js extensions at the TypeScript level instead
+        # (moduleResolution: "nodenext" — the antlr-ng migration removed antlr4 from our own
+        # type surface, and skipLibCheck covers the antlr4 .d.cts files still reachable through
+        # lint-worker's legacy language-support pin, so nodenext type-checks clean).
+        # This grep-based check remains for query-tools and lint-worker: they are not
+        # "type": "module" packages, so nodenext would detect their files as CJS and not
+        # enforce extensions (lint-worker also only ships esbuild bundles, where source
+        # import specifiers don't survive into the output).
         # We also can't use oxlint's import/extensions rule because it doesn't support
         # TypeScript's .js-in-source convention: https://github.com/oxc-project/oxc/issues/19431
         run: pnpm check-imports
