@@ -40,10 +40,14 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
     // If we've found an unfinished comment, string or escaped identifier, we
     // throw an error from the start of those until the end of the file, so we
     // need to assume any other errors we find are false positives.
-    if (!this.unfinishedToken && offendingSymbol) {
+    if (
+      !this.unfinishedToken &&
+      offendingSymbol &&
+      recognizer instanceof CypherParser
+    ) {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
-      const parser = recognizer as unknown as CypherParser;
+      const parser = recognizer;
       const ctx: ParserRuleContext = parser.context;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
