@@ -16,8 +16,6 @@ Pre-requisites:
 
 - Node.js LTS (24.x)
 - [pnpm](https://pnpm.io/installation#using-corepack)
-- [antlr4-tools](https://github.com/antlr/antlr4-tools) easiest to install with `pip install antlr4-tools` (python3 required)
-- Java (e.g. `brew install java` on macOS)
 
 In the root folder of the project run:
 

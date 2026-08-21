@@ -27,7 +27,8 @@ ACCESSMODE: A C C E S S '-' M O D E;
 HELP: H E L P;
 // Overrides RCURLY from Cypher25Lexer, whose embedded action is Java
 // (that grammar is generated for the Java target in the Neo4j monorepo).
-// This is the equivalent action for the TypeScript runtime.
+// This is the equivalent action for the antlr4ng TypeScript runtime
+// (`modeStack` is an antlr4ng getter; there is no `getModeStack()`).
 RCURLY
-   : '}' { if (this.getModeStack().length > 0) this.popMode(); }
+   : '}' { if (this.modeStack.length > 0) this.popMode(); }
    ;

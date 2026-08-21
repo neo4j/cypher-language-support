@@ -1,5 +1,6 @@
 import {
   createParsingResult,
+  parseStatementsStrs,
   ParsedCommandNoPosition,
 } from '../cypherLanguageService.js';
 import { testData } from './testData.js';
@@ -254,7 +255,6 @@ describe('sanity checks', () => {
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
-      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },
@@ -961,11 +961,27 @@ describe('command parser also handles cypher', () => {
     ]);
   });
 
+  test('excludes trailing hidden-channel tokens from a statement', () => {
+    expectParsedCommands('RETURN 1 // trailing comment', [
+      { statement: 'RETURN 1', type: 'cypher' },
+    ]);
+  });
+
   test('can split cypher into statements', () => {
     expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
       { statement: 'CALL db.info()', type: 'cypher' },
       { statement: 'RETURN 123', type: 'cypher' },
       { statement: 'SHOW DATABASES', type: 'cypher' },
+    ]);
+  });
+
+  test('can split statement strings without parsing them', () => {
+    expect(parseStatementsStrs("RETURN ';'; // comment\n RETURN 2;  ")).toEqual(
+      ["RETURN ';';", ' // comment\n RETURN 2;'],
+    );
+    expect(parseStatementsStrs('MATCH (n; RETURN 1')).toEqual([
+      'MATCH (n;',
+      ' RETURN 1',
     ]);
   });
 

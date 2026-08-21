@@ -1,6 +1,6 @@
-import { Token } from 'antlr4';
+import { Token } from 'antlr4ng';
 
-import CypherLexer from '../generated-parser/CypherCmdLexer.js';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 
 import { isCommentOpener } from '../helpers.js';
 import { CypherTokenType, lexerSymbols } from '../lexerSymbols.js';

@@ -6,10 +6,6 @@
     // Not config:js-app: this repo publishes libraries, so dependency ranges
     // should stay as ranges instead of being pinned.
     'config:recommended',
-    // Already part of config:recommended, but listed explicitly because its
-    // **/vendor/** ignore is what keeps Renovate out of the vendored fork in
-    // vendor/antlr4-c3 — this must survive even if the preset above changes.
-    ':ignoreModulesAndTests',
     // Pin GitHub Actions to commit digests (tags are mutable and a known
     // supply-chain attack vector); Renovate then updates the digests.
     'helpers:pinGitHubActionDigests',
@@ -31,8 +27,8 @@
 
   packageRules: [
     {
-      description: 'The antlr4 runtime must stay in lockstep with the codegen tool version (ANTLR4_TOOLS_ANTLR_VERSION in language-support gen-parser), so a bump is a coordinated manual change, not a lone dependency PR (upstream has been inactive for years anyway)',
-      matchDepNames: ['antlr4'],
+      description: 'antlr4ng must stay in lockstep with the exact antlr4ng pin inside antlr4-c3 (two copies of the runtime would break instanceof checks), so bump them together as a coordinated manual change',
+      matchDepNames: ['antlr4ng', 'antlr4-c3', 'antlr-ng'],
       enabled: false,
     },
     {

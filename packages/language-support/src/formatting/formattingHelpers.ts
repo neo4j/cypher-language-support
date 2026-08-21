@@ -1,11 +1,13 @@
-import { CharStreams, CommonTokenStream, TerminalNode, Token } from 'antlr4';
-import { default as CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
-import CypherCmdParser, {
+import { CharStream, CommonTokenStream, TerminalNode, Token } from 'antlr4ng';
+import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
+import {
+  CypherCmdParser,
   EscapedSymbolicNameStringContext,
   UnescapedSymbolicNameStringContext,
 } from '../generated-parser/CypherCmdParser.js';
+import { ErrorTrackingStrategy } from '../errorTrackingStrategy.js';
 import { lexerKeywords } from '../lexerSymbols.js';
-import { findParent } from '../helpers.js';
+import { EnrichedParseTree, findParent } from '../helpers.js';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -108,11 +110,11 @@ export const isInlineComment = (chunk: Chunk) =>
 // treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
   const unescapedSymbolicNameStringParent = findParent(
-    node,
+    node as unknown as EnrichedParseTree,
     (x) => x instanceof UnescapedSymbolicNameStringContext,
   );
   const escapedSymbolicNameStringParent = findParent(
-    node,
+    node as unknown as EnrichedParseTree,
     (x) => x instanceof EscapedSymbolicNameStringContext,
   );
   return !(
@@ -122,18 +124,22 @@ function isSymbolicName(node: TerminalNode): boolean {
 }
 
 export function getParseTreeAndTokens(query: string) {
-  const inputStream = CharStreams.fromString(query);
+  const inputStream = CharStream.fromString(query);
   const lexer = new CypherCmdLexer(inputStream);
   const tokens = new CommonTokenStream(lexer);
   const parser = new CypherCmdParser(tokens);
   parser.removeErrorListeners();
+  const errorTracker = new ErrorTrackingStrategy();
+  parser.errorHandler = errorTracker;
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
   let firstUnParseableToken: Token | undefined;
-  if (tree.exception) {
-    const idx = tree.exception.offendingToken.tokenIndex;
-    const errorTokens = tokens.tokens.slice(idx);
+  const rootOffendingToken = errorTracker.offendingTokenAt(tree);
+  if (rootOffendingToken) {
+    const idx = rootOffendingToken.tokenIndex;
+    const allTokens = tokens.getTokens();
+    const errorTokens = allTokens.slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
       .map((t) => t.text)
       .join('');
@@ -143,7 +149,7 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    firstUnParseableToken = tree.exception.offendingToken;
+    firstUnParseableToken = rootOffendingToken;
   }
   return { tree, tokens, unParseable, firstUnParseableToken };
 }

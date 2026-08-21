@@ -16,8 +16,7 @@
     "packages/language-support": {
       "entry": ["src/tests/benchmarks/*.benchmark.ts"],
       "project": ["src/**/*.ts", "!src/generated-parser/**"],
-      "ignoreUnresolved": ["./src/tests/benchmarks/benchmark.ts"],
-      "ignoreBinaries": ["antlr4"]
+      "ignoreUnresolved": ["./src/tests/benchmarks/benchmark.ts"]
     },
     "packages/language-server": {},
     "packages/lint-worker": {
@@ -57,7 +56,6 @@
       ]
     }
   },
-  "ignore": ["vendor/**/*"],
   "ignoreBinaries": ["package", "dev", "vsce", "ovsx"],
   "ignoreDependencies": ["ts-node"]
 }

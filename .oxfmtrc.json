@@ -7,7 +7,6 @@
     "**/*.html",
     "out/",
     "packages/language-support/src/generated-parser/*",
-    "vendor/*",
     "packages/vscode-extension/tests/fixtures/textmate/*",
     "packages/vscode-extension/syntaxes/cypher.json",
     "packages/vscode-extension/resources/styles/ndl.css",
