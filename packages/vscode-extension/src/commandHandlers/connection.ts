@@ -1,12 +1,14 @@
 import { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import { commands, Selection, window, workspace } from 'vscode';
 import {
+  approveConfigConnection,
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
   getConnections,
   getPasswordForConnection,
+  isConfigConnectionApproved,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
@@ -16,6 +18,7 @@ import { getExtensionContext, getQueryRunner } from '../contextService';
 import { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
 import {
   displayConfirmConnectionDeletionPrompt,
+  displayConfirmSettingConnectionPrompt,
   displayMessageForConnectionResult,
   displayMessageForSwitchDatabaseResult,
   displaySaveConnectionAnywayPrompt,
@@ -124,6 +127,8 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
  * Handler for CONNECT_COMMAND and DISCONNECT_COMMAND (neo4j.connect and neo4j.disconnect)
  * This may only be triggered from the Connection tree view.
  * Toggles the connect flag and state of a Connection and updates the database connection.
+ * Connecting to a config connection for the first time (or after its settings
+ * entry has changed) requires the user to confirm they trust the connection.
  * The result of the connection attempt is displayed to the user.
  * @param connectionItem The Connecion to toggle.
  * @returns A promise that resolves when the handler has completed.
@@ -132,6 +137,20 @@ export async function toggleConnectionItemsConnectionState(
   connectionItem: ConnectionItem,
 ): Promise<void> {
   const connectionToToggle = getConnectionByKey(connectionItem.key);
+
+  if (
+    connectionToToggle?.source === 'config' &&
+    connectionToToggle.state === 'inactive' &&
+    !isConfigConnectionApproved(connectionToToggle.key)
+  ) {
+    const answer =
+      await displayConfirmSettingConnectionPrompt(connectionToToggle);
+    if (answer !== 'Yes') {
+      return;
+    }
+    await approveConfigConnection(connectionToToggle.key);
+  }
+
   const { result, connection } =
     await toggleConnectionAndUpdateDatabaseConnection(connectionToToggle);
   displayMessageForConnectionResult(connection, result);

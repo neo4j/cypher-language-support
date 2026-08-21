@@ -64,11 +64,23 @@ export async function displayConfirmConnectionDeletionPrompt(
   );
 }
 
+/**
+ * Utility function to prompt the user to confirm connecting to a server
+ * defined in the neo4j.connections setting for the first time. The approval
+ * covers the server address, so the user is not asked again for other
+ * connections to the same server.
+ * @param connection The config Connection whose server to confirm.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or undefined).
+ */
 export async function displayConfirmSettingConnectionPrompt(
   connection: Connection,
 ): Promise<string | undefined> {
+  const address = connection.port
+    ? `${connection.scheme}://${connection.host}:${connection.port}`
+    : `${connection.scheme}://${connection.host}`;
+
   return await window.showInformationMessage<string>(
-    `Neo4j: Current setting.json has connection setup. Do you trust ${connection.user}@${connection.scheme}://${connection.host}:${connection.port} and want to add the connection?`,
+    `Your settings (neo4j.connections) define the connection to the server ${address}. Your credentials will be sent to this server when connecting. Do you trust it and want to connect?`,
     { modal: true },
     'Yes',
   );

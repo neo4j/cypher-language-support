@@ -15,12 +15,9 @@ import {
   TransportKind,
 } from 'vscode-languageclient/node';
 import {
-  Connection,
-  Connections,
   disconnectDatabaseConnectionOnExtensionDeactivation,
-  getConnections,
+  handleConfigConnectionsChange,
   reconnectDatabaseConnectionOnExtensionActivation,
-  Scheme,
 } from './connectionService';
 import { getSchemaPoller, setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
@@ -28,7 +25,6 @@ import { registerDisposables } from './registrationService';
 import { SymbolTable } from '@neo4j-cypher/language-support';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { CONSTANTS } from './constants';
-import { displayConfirmSettingConnectionPrompt } from './uiUtils.js';
 
 const WELCOME_SHOWN_KEY = 'neo4j.welcomeShown';
 
@@ -47,14 +43,6 @@ export async function activate(context: ExtensionContext) {
   const debugServer = context.asAbsolutePath(
     path.join('..', 'language-server', 'dist', 'server.js'),
   );
-  // key: string;
-  //   scheme: Scheme;
-  //   name?: string;
-  //   host: string;
-  //   port?: string;
-  //   user: string;
-  //   database?: string;
-  //   state: State;
 
   // If the extension is launched in debug mode then the debug server options are used
   // Otherwise the run options are used
@@ -97,10 +85,23 @@ export async function activate(context: ExtensionContext) {
   // Command handlers and view registrations
   context.subscriptions.push(...registerDisposables());
 
+  // Keep the connections view in sync with connections defined in the
+  // neo4j.connections setting
+  context.subscriptions.push(
+    workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('neo4j.connections')) {
+        void handleConfigConnectionsChange();
+      }
+    }),
+  );
+
   // Start the client. This will also launch the server
   await client.start();
 
   // Handle any sequence events for activation
+  // Reconcile config connection state first, in case the neo4j.connections
+  // setting changed while the extension was not running
+  await handleConfigConnectionsChange();
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
 
@@ -154,47 +155,6 @@ export async function activate(context: ExtensionContext) {
       });
     }
   });
-  const oldConnections: Connections = getConnections();
-  const connections:
-    | {
-        key: string;
-        scheme: Scheme;
-        name: string;
-        host: string;
-        port: string;
-        user: string;
-        password: string;
-      }[]
-    | undefined = workspace
-    .getConfiguration('neo4j.connections')
-    .get('entries');
-  if (connections) {
-    await Promise.allSettled(
-      connections.map(async (cfgConnection) => {
-        if (oldConnections[cfgConnection.key]) {
-          return;
-        }
-        const connection: Connection = {
-          key: cfgConnection.key,
-          scheme: cfgConnection.scheme,
-          name: cfgConnection.name,
-          host: cfgConnection.host,
-          port: cfgConnection.port,
-          user: cfgConnection.user,
-          state: 'inactive',
-        };
-        const confirmed =
-          await displayConfirmSettingConnectionPrompt(connection);
-        if (confirmed) {
-          await commands.executeCommand(
-            CONSTANTS.COMMANDS.SAVE_CONNECTION_COMMAND,
-            connection,
-            cfgConnection.password,
-          );
-        }
-      }),
-    );
-  }
 }
 
 function stringifySymbolTables(symbolTables: SymbolTable[]): string {
