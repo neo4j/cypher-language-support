@@ -113,24 +113,18 @@
     fork's patch, upstream's test suite, and grammar fixtures) is deleted; the completion engine is now a normal
     dependency. The build no longer pre-builds the vendor package or copies its dist into
     <code>dist/esm/vendor/</code>.</p>
-    <p><span class="lbl">Historical context:</span> the fork predates the extra completion feature — ncordon
-    vendored it for reasons tied to the old mainline <code>antlr4</code> runtime (a long story in its own
-    right), and the optionals feature was added later simply because having a fork made it easy. ncordon has
-    since moved on, and the ecosystem has evolved: upstream antlr4-c3 is now actively maintained on antlr4ng,
-    which is what made this migration and the unvendoring possible at all.</p>
+    <p><span class="lbl">Why it can go now:</span> the fork addressed compatibility with the old
+    <code>antlr4</code> runtime and later gained an optional follow-up completion feature. Upstream antlr4-c3 now
+    targets antlr4ng directly, removing the original reason to vendor it.</p>
     <p><span class="lbl">What the fork added:</span> it computed follow-up token chains for every
     completion candidate and marked them <em>optional</em>, letting the completer offer both <code>style</code>
     and <code>style reset</code> at <code>:</code>. Upstream only attaches follow-ups when the caret's follow set
     is a single token (<code>hasTokenSequence</code>), so with 14 console-command candidates at <code>:</code>,
     <code>style</code> now gets an empty follow-up list.</p>
-    <p><span class="lbl">Measured impact:</span> the only product-facing loss observed in the suite is the combined
-    <code>style reset</code> entry (the one removed expectation in <code>consoleCommands.test.ts</code>). The command
-    still parses, highlights, and completes in two steps (<code>:style </code> → <code>reset</code>). A probe over
-    ~7,300 completion positions found other multi-token pairs main merged (<code>USE GRAPH</code>,
-    <code>DENY IMMUTABLE</code>, <code>TRANSACTION MANAGEMENT</code>, …) — in every case the bare keyword is still
-    offered and remains a legal continuation; nothing valid vanishes. The feature was also questionable on its own
-    merits: in long keyword chains (e.g. <code>SET PASSWORD FOR USER</code>) the merged entry stops partway
-    instead of going to the end of the chain, which behaves oddly.</p>
+    <p><span class="lbl">Measured impact:</span> the only product-facing loss in the suite is the combined
+    <code>style reset</code> entry. The command still parses, highlights, and completes in two steps
+    (<code>:style </code> → <code>reset</code>). A probe over ~7,300 completion positions found other merged keyword
+    pairs, but their bare keyword remains offered and valid; no legal continuation disappears.</p>
     <div class="alt">
       <p><span class="lbl">Decision (oskar):</span> drop the extra feature — two-step completion is the accepted
       behavior going forward, not an open question. The alternatives were considered and set aside:</p>
@@ -168,45 +162,21 @@
 
   <div class="card">
     <h3>2.1 ErrorTrackingStrategy replaces <code>ctx.exception</code></h3>
-    <p><span class="lbl">What we lost:</span> the old <code>antlr4@4.13.2</code> runtime attached every parser
-    exception to the rule context that caught it — each of the ~465 generated catch blocks did this:</p>
+    <p><span class="lbl">What changed:</span> the old runtime attached each parser exception to the rule context
+    that caught it:</p>
     <pre><code>catch (re) {
     if (re instanceof RecognitionException) {
-        _localctx.exception = re;               // ← unconditional record
+        _localctx.exception = re;
         this._errHandler.reportError(this, re);
         this._errHandler.recover(this, re);
     } else { throw re; }
 }</code></pre>
-    <p>So <code>ctx.exception</code> was set <em>even for errors the strategy later suppressed</em> during
-    recovery. antlr4ng 3.x removed that property entirely — there is no per-context error state anymore.</p>
-
-    <p><span class="lbl">Why the replacement hooks <code>reportError</code> and not the error listener:</span>
-    the obvious-looking alternative — recording in our existing <code>SyntaxErrorsListener</code> — sees only a
-    subset of the errors, because antlr4ng's <code>DefaultErrorStrategy</code> suppresses reports while in
-    recovery mode:</p>
-    <pre><code>// antlr4ng dist, DefaultErrorStrategy
-reportError(recognizer, e) {
-    if (this.inErrorRecoveryMode(recognizer)) {
-        return;   // ← suppressed: listeners never hear about it
-    }
-    ...
-    recognizer.notifyErrorListeners(...);
-}</code></pre>
-    <p>But the generated catch blocks still call <code>errorHandler.reportError(this, re)</code> <em>before</em>
-    that suppression check, with the parser's <code>context</code> pointing at the erroring rule. So
-    <code>ErrorTrackingStrategy</code> overrides <code>reportError</code>, records
-    <code>recognizer.context → exception</code> in a Map first, then delegates to <code>super</code>:</p>
-    <pre><code>catch block ──→ errorHandler.reportError(this, re)
-                     │  └─ we record context → exception (unconditional)
-                     └─→ super.reportError ──→ may suppress ──→ listeners</code></pre>
-    <p>That reproduces the old unconditional semantics through a supported extension point, while recovery itself
-    (<code>recover</code>, <code>sync</code>, single-token insertion/deletion) is entirely inherited — parsing
-    behavior is untouched.</p>
-
-    <p><span class="lbl">Why <code>recognizer.context</code> is exact here:</span> in grammars with left-recursive
-    rules, <code>_ctx</code> can alias a parent context mid-rewrite, blurring this mapping. Our generated parser
-    contains zero <code>enterRecursionRule</code> calls — Cypher's grammar doesn't use that feature — so the
-    recorded context is always the erroring rule's own localctx. Verified against the generated parser.</p>
+    <p>antlr4ng removed <code>ctx.exception</code>. Recording in <code>SyntaxErrorsListener</code> is not equivalent:
+    <code>DefaultErrorStrategy</code> suppresses listener notifications while recovering, whereas generated catch
+    blocks always call <code>reportError</code>. <code>ErrorTrackingStrategy</code> therefore overrides that public
+    hook, records <code>recognizer.context → exception</code>, then delegates to the default strategy. Recovery
+    behavior remains inherited and unchanged. Cypher has no left-recursive generated rules, so
+    <code>recognizer.context</code> is the context whose catch block fired.</p>
 
     <p><span class="lbl">Who consumes it:</span> four old sites, in two shapes:</p>
     <ul>
@@ -218,8 +188,8 @@ reportError(recognizer, e) {
       <code>tree.exception.offendingToken</code> to locate unparsable input and format around it; now
       <code>errorTracker.offendingTokenAt(tree)</code>.</li>
     </ul>
-    <p>The tracker is created fresh per statement parse and rides along on the new
-    <code>ParsedStatement.errorTracker</code> field; formatting creates its own. No cross-statement leakage.</p>
+    <p>The tracker is fresh per statement parse and is exposed on <code>ParsedStatement.errorTracker</code>;
+    formatting creates its own.</p>
 
     <p><span class="lbl">Nuances &amp; impact:</span></p>
     <ul>
@@ -228,10 +198,8 @@ reportError(recognizer, e) {
       insert-if-absent, so we keep the <em>first</em>. Irrelevant for the boolean checks; for formatting's
       offending-token lookup, "first error on the root context" is arguably the better answer to "where does the
       broken region start" — and the 11,933-query formatting corpus shows no divergence either way.</li>
-      <li><strong>Cost:</strong> one Map insert per caught error, only on error paths; the happy path pays
-      nothing beyond the subclassed strategy object.</li>
-      <li><strong>API:</strong> additive — <code>ParsedStatement</code> gained a required field; nothing
-      downstream constructs that interface by hand (tsc is clean across the workspace).</li>
+      <li><strong>Cost and API:</strong> one Map insert per caught error; <code>ParsedStatement</code> gains a
+      required field, but no downstream code constructs it manually.</li>
     </ul>
 
     <div class="alt">
@@ -239,8 +207,6 @@ reportError(recognizer, e) {
       <ul>
         <li><strong>Post-hoc tree walk for ErrorNode children</strong> — different semantics: an error node under
         a context is not the same as "this rule's catch fired", and it would force every consumer to re-walk.</li>
-        <li><strong>Record in the existing SyntaxErrorsListener</strong> — misses exactly the reports suppressed
-        during recovery, per the runtime snippet above.</li>
         <li><strong>Match old last-wins semantics</strong> — a one-word change (drop the insert-if-absent guard)
         if we ever want bit-exact fidelity; first-wins reads better for the formatting use case.</li>
       </ul>
@@ -249,39 +215,25 @@ reportError(recognizer, e) {
   </div>
 
   <div class="card">
-    <h3>2.2 parseToCommand EOF walk-back</h3>
-    <p><span class="lbl">What:</span> <code>parseToCommand</code> extracts each statement's original text with
-    <code>inputStream.getTextFromRange(stmtStart.start, stop.stop)</code>, where <code>stop</code> is the rule
-    context's stop token. Under antlr4ng, a rule that ends by matching EOF gets the <em>EOF token itself</em> as
-    its stop — and the EOF token's offsets point at the end of the <em>entire input</em>, so the statement text
-    would over-read to end of file. The fix (<code>cypherLanguageService.ts</code>, ~line 750) walks back from
-    EOF to the last non-hidden-channel token, then keeps the pre-existing SEMICOLON step-back after it.</p>
+    <h3>2.2 parseToCommand: EOF stop via CommonTokenStream.LB</h3>
+    <p><span class="lbl">Before this PR:</span> <code>parseToCommand</code> extracts each statement's original text
+    with <code>inputStream.getTextFromRange(stmtStart.start, stop.stop)</code>, where <code>stop</code> came from the
+    root rule context. The old <code>antlr4@4.13.2</code> JS runtime always assigned <code>LT(-1)</code> when leaving
+    a rule, so after matching EOF the context happened to stop on the last real default-channel token. The
+    extraction code relied on that behavior without needing to say so.</p>
 
-    <p><span class="lbl">Runtime archaeology (verified against both runtimes):</span> this isn't an antlr4ng
-    quirk — it's mainline ANTLR behavior that the old TypeScript-target runtime never implemented. Mainline
-    Java's <code>Parser.exitRule</code>:</p>
-    <pre><code>public void exitRule() {
-    if ( matchedEOF ) {
-        // if we have matched EOF, it cannot consume past EOF so we use LT(1) here
-        _ctx.stop = _input.LT(1); // LT(1) will be end of file
-    }
-    else {
-        _ctx.stop = _input.LT(-1); // stop node is what we just matched
-    }</code></pre>
-    <p>antlr4ng 3.x implements the same branch (<code>if (this.matchedEOF) … stop = LT(1)</code>). The old
-    <code>antlr4@4.13.2</code> JS runtime was the outlier — its exitRule was an unconditional look-back:</p>
-    <pre><code>exitRule(){ this._ctx.stop = this._input.LT(-1), … }   // antlr4@4.13.2 dist</code></pre>
-    <p>So our code had unknowingly depended on the outlier: with the old runtime, <code>stop</code> after matching
-    EOF was the last real token (LT(-1) from the EOF position), which is exactly what the extraction code
-    assumed. The migration surfaced a latent dependency, not a regression in antlr4ng.</p>
+    <p><span class="lbl">After this PR:</span> antlr4ng follows mainline ANTLR and records the matched EOF token as
+    the root context's stop. After the rule returns, the <code>CommonTokenStream</code> cursor is still positioned
+    on EOF, so <code>tokenStream.LB(1)</code> retrieves the preceding on-channel token through antlr4ng's public
+    API. <code>CommonTokenStream</code> defines <code>LB</code> as channel-aware, meaning whitespace and comments on
+    the hidden channel are skipped automatically. Empty input returns <code>null</code> and retains EOF; a
+    semicolon result continues through the pre-existing semicolon adjustment.</p>
 
-    <p><span class="lbl">Why the walk-back skips <code>channel !== 0</code>:</span> whitespace and comments ride
-    the HIDDEN channel (<code>Cypher25Lexer.g4:36</code>). Walking back to the last <em>default-channel</em>
-    token excludes trailing comments/spaces from the extracted statement — e.g. <code>RETURN 1 -- note</code>
-    extracts as <code>RETURN 1</code>, not <code>RETURN 1 -- note</code>. One subtlety that makes this work:
-    <code>splitIntoStatements</code> clones tokens with adjusted <code>tokenIndex</code> but original
-    <em>character</em> offsets, so the cloned EOF still points at end-of-input and the walk-back lands on tokens
-    whose offsets are correct for the original text.</p>
+    <p>This matches the Java runtime's <code>Parser.exitRule</code>; the old JS runtime was the outlier. The
+    migration makes that dependency explicit using the new runtime's intended token-stream API. For example,
+    <code>RETURN 1 // note</code> still extracts as <code>RETURN 1</code>, because <code>LB(1)</code> skips the
+    hidden space and comment. The same call works for both the real final EOF and the per-statement EOF fabricated
+    by <code>ListTokenSource</code>.</p>
 
     <p><span class="lbl">Who feels it:</span> the extracted <code>cmd.statement</code> is what
     <code>wrappedSemanticAnalysis</code> receives per statement (<code>syntaxValidation.ts:462</code>) — an
@@ -291,11 +243,6 @@ reportError(recognizer, e) {
     console-commands suite (multi-statement, trailing-comment, and empty-input cases) and the semantic-validation
     suite.</p>
 
-    <div class="alt">
-      <p><span class="lbl">Alternative:</span> stop trusting <code>ctx.stop</code> altogether and compute
-      statement extents from the token stream directly. Equivalent result, but touches more call sites for no
-      gain.</p>
-    </div>
     <p class="files">cypherLanguageService.ts</p>
   </div>
 
@@ -305,7 +252,7 @@ reportError(recognizer, e) {
     whole file once (<code>tokenStream.fill()</code>), splits the token array at SEMICOLON/EOF boundaries, and
     clones each token through antlr4ng's public <code>CommonToken.fromToken</code> factory. Each clone gets a
     statement-local index while preserving its original character offsets and input source — the property 2.2's
-    walk-back relies on.</p>
+    text extraction relies on.</p>
     <p><span class="lbl">What:</span> in the old runtime the stream's <code>tokens</code> field was public; antlr4ng
     makes it <em>protected</em> and offers no setter. The replacement is fully public API: antlr4ng ships
     <code>ListTokenSource</code>, a <code>TokenSource</code> wrapper around a token array, so each chunk simply gets
@@ -317,10 +264,11 @@ reportError(recognizer, e) {
     separate from parser construction and avoids carrying a stream and its backing array as duplicate state.</p>
     <p><span class="lbl">One behavioral nuance:</span> for a semicolon-terminated (non-final) statement the parser
     previously over-read into the shared lexer's whole-file EOF; it now gets an EOF fabricated by
-    <code>ListTokenSource</code>, positioned at the end of the chunk. 2.2's walk-back never uses the EOF's own
-    offsets, so statement extraction is identical; error diagnostics for a broken mid-file statement now point at
-    the statement's end (e.g. the <code>;</code> in <code>MATCH (n; RETURN 1</code>) rather than at end of input —
-    arguably the better position. Covered by the console-commands and semantic-validation suites.</p>
+    <code>ListTokenSource</code>, positioned at the end of the chunk. The <code>LB(1)</code> lookup in 2.2 returns
+    the token before either kind of EOF, so statement extraction is identical; error diagnostics for a broken
+    mid-file statement now point at the statement's end (e.g. the <code>;</code> in
+    <code>MATCH (n; RETURN 1</code>) rather than at end of input — arguably the better position. Covered by the
+    console-commands and semantic-validation suites.</p>
     <div class="alt">
       <p><span class="lbl">Alternatives considered:</span></p>
       <ul>
@@ -473,9 +421,6 @@ reportError(recognizer, e) {
     deleted; the only expectation change in
     <code>packages/</code> is the <code>style reset</code> entry (1.3) plus pure API renames in
     <code>lexer.test.ts</code>.</p>
-    <p><span class="lbl">Side note:</span> <code>keywordCompletion.test.ts</code> has a test named "completes
-    UNION and UNION ALL" that only ever asserted <code>UNION</code> — the combined entry never existed on either
-    side of the migration. Aspirational name, not a regression.</p>
   </div>
 
   <div class="card">
@@ -497,33 +442,22 @@ reportError(recognizer, e) {
 
   <div class="card">
     <h3>4.3 language-support moves to moduleResolution nodenext</h3>
-    <p><span class="lbl">What:</span> <code>moduleResolution: "nodenext"</code> (which enforces <code>.js</code>
-    extensions at the TypeScript level) was long believed blocked by antlr4@4.13.2's extensionless
-    <code>.d.cts</code> imports, still reachable via lint-worker's legacy language-support pin. That no longer
-    holds: tsc passes under <code>module/moduleResolution: "nodenext"</code> for language-support, query-tools
-    <em>and</em> lint-worker. The original blocker was our own source importing antlr4's types; post-migration,
-    antlr4 is only reachable through the legacy package's <code>.d.ts</code> (lint-worker uses just
-    <code>DbSchema</code> from it), and <code>skipLibCheck</code> covers the rest.</p>
-    <p><span class="lbl">So language-support switched:</span> tsconfig to <code>module/moduleResolution:
-    "nodenext"</code>, and the <code>--module esnext</code> overrides in <code>build-esm-and-types</code>/<code>dev</code>
-    dropped (they conflict with nodenext). The package is <code>"type": "module"</code>, so files stay
-    ESM-detected and the emitted <code>dist/esm</code> is byte-identical apart from the intended source edits
-    (verified by diffing a rebuild against the pre-switch output). Relative-import extensions in language-support
-    are now enforced by tsc itself, so <code>check-imports</code> no longer scans it.</p>
-    <p><span class="lbl">Why query-tools and lint-worker keep the grep check:</span> nodenext only enforces
-    extensions in ESM-detected files, and neither of those packages is <code>"type": "module"</code> — switching
-    them would tangle with their dual CJS+ESM emit layout (query-tools) for no real gain (lint-worker ships only
-    esbuild bundles, where source import specifiers don't survive into the output). The CI comment and AGENTS.md
-    now say so.</p>
+    <p><span class="lbl">What:</span> language-support now uses <code>module/moduleResolution: "nodenext"</code>,
+    so TypeScript enforces <code>.js</code> on relative imports. The apparent blocker was not antlr4's legacy
+    declarations but our own direct antlr4 type imports; after migration, the remaining legacy dependency is
+    covered by <code>skipLibCheck</code>. The conflicting <code>--module esnext</code> build overrides were removed,
+    and a rebuild verified unchanged ESM output apart from intended source edits.</p>
+    <p><span class="lbl">Scope:</span> <code>check-imports</code> no longer scans language-support. Query-tools and
+    lint-worker retain it because they are not <code>"type": "module"</code> and have different CJS/ESM bundling
+    constraints.</p>
     <p class="files">packages/language-support/tsconfig.json · packages/language-support/package.json · package.json · .github/workflows/ci.yaml · AGENTS.md</p>
   </div>
 
   <p class="sub">Generated from a full read of <code>git diff main</code> on branch
   <code>finish-antlr-ng-migration</code>.
-  Verification status: unit suite green (1,113 language-support tests, 1,134 across the vitest workspace — the
-  only red is the testcontainers polling suite, which needs Docker), formatting integrity corpus green,
-  type-aware oxlint / oxfmt / knip / check-imports clean, language-support rebuilt under nodenext with
-  byte-identical <code>dist/esm</code> modulo the source edits above.</p>
+  Verification status: 1,115 language-support tests and the formatting integrity corpus are green;
+  type-aware oxlint, oxfmt, knip, and check-imports are clean; language-support rebuilt under nodenext with
+  byte-identical ESM output apart from the source edits above.</p>
 </main>
 </body>
 </html>

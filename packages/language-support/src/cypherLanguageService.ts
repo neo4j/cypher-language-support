@@ -1,10 +1,11 @@
-import type { ParserRuleContext, Token } from 'antlr4ng';
+import type { ParserRuleContext } from 'antlr4ng';
 import {
   ParseTreeWalker,
   CharStream,
   CommonTokenStream,
   ListTokenSource,
   ParseTreeListener,
+  Token,
 } from 'antlr4ng';
 
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
@@ -91,6 +92,7 @@ interface ParsingScaffolding {
 
 interface StatementParsingScaffolding {
   parser: CypherParser;
+  tokenStream: CommonTokenStream;
   tokens: Token[];
 }
 
@@ -175,6 +177,7 @@ function createParsingScaffolding(query: string): ParsingScaffolding {
 
       return {
         parser: parser,
+        tokenStream: statementStream,
         tokens: tokens,
       };
     });
@@ -223,12 +226,10 @@ export function createParsingResult(
 
   const results: ParsedStatement[] =
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
-      const { parser, tokens } = statementScaffolding;
+      const { parser, tokenStream, tokens } = statementScaffolding;
       const labelsCollector = new ReadLabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
-      const variableFinder = new VariableCollector(
-        parser.tokenStream as CommonTokenStream,
-      );
+      const variableFinder = new VariableCollector(tokenStream);
       const propertiesFinder = new PropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
@@ -254,7 +255,12 @@ export function createParsingResult(
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
+      const collectedCommand = parseToCommand(
+        ctx,
+        tokenStream,
+        tokens,
+        isEmptyStatement,
+      );
       const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
       if (!settings.consoleCommandsEnabled) {
@@ -746,6 +752,7 @@ type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmts: StatementsOrCommandsContext,
+  tokenStream: CommonTokenStream,
   tokens: Token[],
   isEmptyStatement: boolean,
 ): ParsedCommand {
@@ -755,16 +762,10 @@ function parseToCommand(
     const start = stmts.start;
     let stop = stmts.stop;
 
-    // In antlr4ng, matching EOF sets the rule's stop to the EOF token itself
-    // (whose offsets point at the end of the whole input), so step back to the
-    // last non-hidden token of this statement, mirroring the old runtime's
-    // LT(-1) semantics.
-    if (stop && stop.type === CypherLexer.EOF) {
-      let idx = stop.tokenIndex - 1;
-      while (idx >= 0 && tokens[idx].channel !== 0) {
-        idx--;
-      }
-      stop = tokens[idx] ?? stop;
+    // Matching EOF sets the context stop to EOF. CommonTokenStream.LB() is
+    // channel-aware, so this recovers the preceding default-channel token.
+    if (stop && stop.type === Token.EOF) {
+      stop = tokenStream.LB(1) ?? stop;
     }
     if (stop && stop.type === CypherLexer.SEMICOLON) {
       stop = tokens[stop.tokenIndex - 1];
