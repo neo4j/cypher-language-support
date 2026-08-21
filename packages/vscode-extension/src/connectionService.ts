@@ -4,7 +4,7 @@ import {
   ConnnectionResult,
   Database,
 } from '@neo4j-cypher/query-tools';
-import { commands } from 'vscode';
+import { commands, workspace } from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext, getSchemaPoller } from './contextService';
 import { sendNotificationToLanguageClient } from './languageClientService';
@@ -26,6 +26,8 @@ type State = 'inactive' | 'activating' | 'active' | 'error';
 
 /**
  * A Connection object that represents a connection to a Neo4j database.
+ * Connections with source 'config' are defined in the neo4j.connections
+ * setting and are never persisted to the global state.
  */
 export type Connection = {
   key: string;
@@ -36,6 +38,7 @@ export type Connection = {
   user: string;
   database?: string;
   state: State;
+  source?: 'config';
 };
 
 /**
@@ -46,6 +49,30 @@ export type Connections = {
 };
 
 const CONNECTIONS_KEY: string = 'connections';
+const APPROVED_CONFIG_SERVERS_KEY: string = 'approvedConfigServers';
+const CONFIG_CONNECTION_STATES_KEY: string = 'configConnectionStates';
+const CONFIG_CONNECTIONS_SECTION = 'neo4j';
+const CONFIG_CONNECTIONS_SETTING = 'connections';
+
+/**
+ * The shape of an entry in the neo4j.connections setting.
+ */
+type ConfigConnectionEntry = {
+  name?: string;
+  scheme: Scheme;
+  host: string;
+  port?: string | number;
+  user: string;
+  password?: string;
+  database?: string;
+};
+
+/**
+ * The state (connection state and selected database) of a config connection.
+ * Config connections live in settings.json, which cannot hold their state, so
+ * it is kept in the global state keyed by the connection's derived key.
+ */
+type ConfigConnectionState = { state: State; database?: string };
 
 /**
  * Deletes a Connection and its password if it exists, and disconnects from the database.
@@ -101,7 +128,9 @@ export async function saveConnectionAndUpdateDatabaseConnection(
 
   if (result.success || forceSave) {
     await saveConnection(connection);
-    await savePasswordByKey(connection.key, password);
+    if (connection.source !== 'config') {
+      await savePasswordByKey(connection.key, password);
+    }
     return await updateDatabaseConnectionAndNotifyLanguageClient(connection);
   }
 
@@ -151,11 +180,26 @@ export async function toggleConnectionAndUpdateDatabaseConnection(
 
 /**
  * Saves a connection in the global state.
+ * For config connections only their state is saved, the connection itself
+ * stays defined by the neo4j.connections setting.
  * @param connection The connection to save.
  * @returns A promise that resolves when the connection has been saved.
  */
 export async function saveConnection(connection: Connection): Promise<void> {
   if (!connection) {
+    return;
+  }
+
+  if (connection.source === 'config') {
+    const states = getConfigConnectionStates();
+    states[connection.key] = {
+      state: connection.state,
+      database: connection.database,
+    };
+    await saveConfigConnectionStates(states);
+    await commands.executeCommand(
+      CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND,
+    );
     return;
   }
 
@@ -166,13 +210,20 @@ export async function saveConnection(connection: Connection): Promise<void> {
 }
 
 /**
- * Gets a password from the secrets store for a given Connection, if one exists.
+ * Gets the password for a given Connection, if one exists.
+ * Passwords for config connections are read from the settings entry, all
+ * others from the secrets store.
  * @param key The key of the Connection to get the password for.
  * @returns A promise that resolves with the password, or null if no password exists.
  */
 export async function getPasswordForConnection(
   key: string,
 ): Promise<string | null> {
+  const configEntry = getConfigConnectionEntryByKey(key);
+  if (configEntry) {
+    return configEntry.password ?? null;
+  }
+
   const context = getExtensionContext();
   return (await context.secrets.get(key)) ?? null;
 }
@@ -183,29 +234,36 @@ export async function getPasswordForConnection(
  */
 export function getActiveConnection(): Connection | null {
   return (
-    Object.values(getConnections()).find(
-      (connection) => connection.state !== 'inactive',
-    ) ?? null
+    getAllConnections().find((connection) => connection.state !== 'inactive') ??
+    null
   );
 }
 
 /**
- * Gets all Connections from the global state as an array of Connection objects.
+ * Gets all Connections, both from the global state and from the
+ * neo4j.connections setting, as an array of Connection objects.
  * @returns An array of all Connection objects.
  */
 export function getAllConnections(): Connection[] {
-  const connections = Object.values(getConnections());
-  return connections.length ? connections : [];
+  const connections = Object.values(getConnections()).filter(
+    (connection): connection is Connection => !!connection,
+  );
+  return [...connections, ...getConfigConnections()];
 }
 
 /**
- * Gets a Connection from the global state by its key.
+ * Gets a Connection by its key, from the global state or from the
+ * neo4j.connections setting.
  * @param key The key of the Connection to get.
  * @returns The Connection, or null if no Connection with the given key exists.
  */
 export function getConnectionByKey(key: string): Connection | null {
   const connections = getConnections();
-  return connections[key] ?? null;
+  return (
+    connections[key] ??
+    getConfigConnections().find((connection) => connection.key === key) ??
+    null
+  );
 }
 
 /**
@@ -519,6 +577,17 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
     }
   }
 
+  const states = getConfigConnectionStates();
+  for (const key in states) {
+    if (states[key].state !== 'inactive') {
+      states[key] = { ...states[key], state: 'inactive' };
+
+      void sendNotificationToLanguageClient('connectionDisconnected');
+      disconnectFromSchemaPoller();
+    }
+  }
+  await saveConfigConnectionStates(states);
+
   await saveConnections(connections);
 }
 
@@ -529,6 +598,290 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
 export function getConnections(): Connections {
   const context = getExtensionContext();
   return context.globalState.get(CONNECTIONS_KEY, {});
+}
+
+/**
+ * Gets the states of all config connections from the global state.
+ * @returns A map of config connection keys to their states.
+ */
+function getConfigConnectionStates(): Record<string, ConfigConnectionState> {
+  const context = getExtensionContext();
+  return context.globalState.get(CONFIG_CONNECTION_STATES_KEY, {});
+}
+
+/**
+ * Saves the states of all config connections in the global state.
+ * @param states A map of config connection keys to their states.
+ * @returns A promise that resolves when the states have been saved.
+ */
+async function saveConfigConnectionStates(
+  states: Record<string, ConfigConnectionState>,
+): Promise<void> {
+  const context = getExtensionContext();
+  await context.globalState.update(CONFIG_CONNECTION_STATES_KEY, states);
+}
+
+/**
+ * Guard function to validate a value is a Scheme.
+ * @param scheme The value to validate as a Scheme.
+ * @returns True if the value is a valid Scheme, false otherwise.
+ */
+function isValidScheme(scheme: unknown): scheme is Scheme {
+  return (
+    typeof scheme === 'string' &&
+    ['neo4j', 'neo4j+s', 'neo4j+ssc', 'bolt', 'bolt+s', 'bolt+ssc'].includes(
+      scheme,
+    )
+  );
+}
+
+/**
+ * Substitutes ${env:VAR} references in a string with the value of the
+ * environment variable VAR. Note that process.env is a copy of the
+ * environment VS Code was launched with, so changes to environment variables
+ * require a full restart of VS Code to be picked up.
+ * References to unset variables are left as-is, so they are visible in the
+ * connections view rather than silently becoming empty strings.
+ * @param value The string to substitute environment variable references in.
+ * @returns The string with environment variable references substituted.
+ */
+function substituteEnvVariables(value: string): string {
+  return value.replace(
+    /\$\{env:([^}]+)\}/g,
+    (reference, variableName: string) => process.env[variableName] ?? reference,
+  );
+}
+
+/**
+ * Substitutes ${env:VAR} references in all string fields of a config
+ * connection entry, except the scheme (which is validated against a fixed
+ * set of values before substitution).
+ * @param entry The config connection entry to substitute in.
+ * @returns The entry with environment variable references substituted.
+ */
+function substituteEnvVariablesInEntry(
+  entry: ConfigConnectionEntry,
+): ConfigConnectionEntry {
+  return {
+    ...entry,
+    name:
+      typeof entry.name === 'string'
+        ? substituteEnvVariables(entry.name)
+        : entry.name,
+    host: substituteEnvVariables(entry.host),
+    port:
+      typeof entry.port === 'string'
+        ? substituteEnvVariables(entry.port)
+        : entry.port,
+    user: substituteEnvVariables(entry.user),
+    password:
+      typeof entry.password === 'string'
+        ? substituteEnvVariables(entry.password)
+        : entry.password,
+    database:
+      typeof entry.database === 'string'
+        ? substituteEnvVariables(entry.database)
+        : entry.database,
+  };
+}
+
+/**
+ * Reads the connection entries from the neo4j.connections setting,
+ * discarding malformed entries. Values may reference environment variables
+ * with ${env:VAR}, which are substituted from the environment VS Code was
+ * launched with.
+ * @returns An array of config connection entries.
+ */
+function getConfigConnectionEntries(): ConfigConnectionEntry[] {
+  const entries = workspace
+    .getConfiguration(CONFIG_CONNECTIONS_SECTION)
+    .get<ConfigConnectionEntry[]>(CONFIG_CONNECTIONS_SETTING, []);
+
+  if (!Array.isArray(entries)) {
+    return [];
+  }
+
+  return entries
+    .filter(
+      (entry) =>
+        entry &&
+        typeof entry.host === 'string' &&
+        typeof entry.user === 'string' &&
+        isValidScheme(entry.scheme),
+    )
+    .map(substituteEnvVariablesInEntry);
+}
+
+/**
+ * Derives a deterministic key for a config connection entry, so its state
+ * survives settings reloads. The name is part of the key, so entries that
+ * share an address but carry e.g. different credentials (multiple DBMSs
+ * served on the same local address) can coexist under different names.
+ * @param entry The config connection entry to derive a key for.
+ * @returns The key for the entry.
+ */
+function getConfigConnectionKey(entry: ConfigConnectionEntry): string {
+  const port = entry.port !== undefined ? `:${entry.port}` : '';
+  const database = entry.database ? `/${entry.database}` : '';
+  return `${entry.name ?? ''}|${entry.user}@${entry.scheme}://${entry.host}${port}${database}`;
+}
+
+/**
+ * Gets a config connection entry from the settings by its derived key.
+ * @param key The key of the config connection entry to get.
+ * @returns The config connection entry, or null if none matches the key.
+ */
+function getConfigConnectionEntryByKey(
+  key: string,
+): ConfigConnectionEntry | null {
+  return (
+    getConfigConnectionEntries().find(
+      (entry) => getConfigConnectionKey(entry) === key,
+    ) ?? null
+  );
+}
+
+/**
+ * Gets all connections defined in the neo4j.connections setting as
+ * Connection objects, overlaying any runtime state they have accumulated.
+ * @returns An array of config Connection objects.
+ */
+function getConfigConnections(): Connection[] {
+  const connections: Connection[] = [];
+  const seenKeys = new Set<string>();
+  const states = getConfigConnectionStates();
+
+  for (const entry of getConfigConnectionEntries()) {
+    const key = getConfigConnectionKey(entry);
+    if (seenKeys.has(key)) {
+      continue;
+    }
+    seenKeys.add(key);
+
+    const connectionState = states[key];
+    connections.push({
+      key: key,
+      scheme: entry.scheme,
+      name: entry.name,
+      host: entry.host,
+      port: entry.port !== undefined ? String(entry.port) : undefined,
+      user: entry.user,
+      database: connectionState?.database ?? entry.database,
+      state: connectionState?.state ?? 'inactive',
+      source: 'config',
+    });
+  }
+
+  return connections;
+}
+
+/**
+ * Gets the server address (scheme, host and port) of a config connection
+ * entry. Trust approvals are tracked per server address: the danger of a
+ * malicious settings.json lies in which server credentials are sent to, not
+ * in the entry's name, user or database.
+ * @param entry The config connection entry to get the server address for.
+ * @returns The server address of the entry.
+ */
+function getConfigServerAddress(entry: ConfigConnectionEntry): string {
+  const port = entry.port !== undefined ? `:${entry.port}` : '';
+  return `${entry.scheme}://${entry.host}${port}`;
+}
+
+/**
+ * Gets the set of approved config connection server addresses from the global state.
+ * @returns A map of approved server addresses.
+ */
+function getApprovedConfigServers(): Record<string, boolean> {
+  const context = getExtensionContext();
+  return context.globalState.get(APPROVED_CONFIG_SERVERS_KEY, {});
+}
+
+/**
+ * Saves the set of approved config connection server addresses in the global state.
+ * @param approvedServers A map of approved server addresses.
+ * @returns A promise that resolves when the approvals have been saved.
+ */
+async function saveApprovedConfigServers(
+  approvedServers: Record<string, boolean>,
+): Promise<void> {
+  const context = getExtensionContext();
+  await context.globalState.update(
+    APPROVED_CONFIG_SERVERS_KEY,
+    approvedServers,
+  );
+}
+
+/**
+ * Checks whether the user has approved the server address a config connection
+ * points at. The approval is shared by all config connections with the same
+ * server address.
+ * @param key The key of the config connection to check.
+ * @returns True if the connection's server address has been approved.
+ */
+export function isConfigConnectionApproved(key: string): boolean {
+  const entry = getConfigConnectionEntryByKey(key);
+  if (!entry) {
+    return false;
+  }
+
+  return !!getApprovedConfigServers()[getConfigServerAddress(entry)];
+}
+
+/**
+ * Records the user's approval of a config connection's server address in the
+ * global state, so they are not prompted again for connections to that server.
+ * @param key The key of the config connection to approve.
+ * @returns A promise that resolves when the approval has been saved.
+ */
+export async function approveConfigConnection(key: string): Promise<void> {
+  const entry = getConfigConnectionEntryByKey(key);
+  if (!entry) {
+    return;
+  }
+
+  const approvedServers = getApprovedConfigServers();
+  approvedServers[getConfigServerAddress(entry)] = true;
+  await saveApprovedConfigServers(approvedServers);
+}
+
+/**
+ * Handler for changes to the neo4j.connections setting.
+ * Drops the state of entries that no longer exist (disconnecting if one of
+ * them was the active connection), removes approvals of server addresses that
+ * no entry points at anymore, and refreshes the connections view.
+ * Also run on activation, in case the settings changed while the extension
+ * was not running.
+ * @returns A promise that resolves when the handler has completed.
+ */
+export async function handleConfigConnectionsChange(): Promise<void> {
+  const configKeys = new Set(
+    getConfigConnections().map((connection) => connection.key),
+  );
+  const states = getConfigConnectionStates();
+
+  for (const key in states) {
+    if (!configKeys.has(key)) {
+      if (states[key].state !== 'inactive') {
+        await disconnectFromDatabaseAndNotifyLanguageClient();
+      }
+      delete states[key];
+    }
+  }
+
+  const configAddresses = new Set(
+    getConfigConnectionEntries().map(getConfigServerAddress),
+  );
+  const approvedServers = getApprovedConfigServers();
+  for (const address in approvedServers) {
+    if (!configAddresses.has(address)) {
+      delete approvedServers[address];
+    }
+  }
+
+  await saveConfigConnectionStates(states);
+  await saveApprovedConfigServers(approvedServers);
+  await commands.executeCommand(CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
 }
 
 /**

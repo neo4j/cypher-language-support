@@ -307,12 +307,12 @@
       "view/item/context": [
         {
           "command": "neo4j.connect",
-          "when": "view == neo4jConnections && viewItem == connection",
+          "when": "view == neo4jConnections && (viewItem == connection || viewItem == connection-config)",
           "group": "00_connection@1"
         },
         {
           "command": "neo4j.disconnect",
-          "when": "view == neo4jConnections && viewItem == activeConnection",
+          "when": "view == neo4jConnections && (viewItem == activeConnection || viewItem == activeConnection-config)",
           "group": "00_connection@1"
         },
         {
@@ -512,6 +512,60 @@
     "configuration": {
       "title": "Neo4j for VS Code",
       "properties": {
+        "neo4j.connections": {
+          "type": "array",
+          "default": [],
+          "markdownDescription": "Connections to Neo4j databases. Connections defined here appear in the Connections view alongside connections created via the UI, but are managed entirely through this setting. You will be asked to confirm that you trust a server the first time you connect to it. All values except the scheme may reference environment variables with `${env:VAR}`, resolved from the environment VS Code was launched with (a full restart of VS Code is needed to pick up changes). Note that literal passwords are stored in plain text in your settings file — reference an environment variable, or prefer connections created via the UI, for sensitive credentials.",
+          "items": {
+            "type": "object",
+            "required": [
+              "scheme",
+              "host",
+              "user"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Display name for the connection."
+              },
+              "scheme": {
+                "type": "string",
+                "enum": [
+                  "neo4j",
+                  "neo4j+s",
+                  "neo4j+ssc",
+                  "bolt",
+                  "bolt+s",
+                  "bolt+ssc"
+                ],
+                "description": "Connection scheme."
+              },
+              "host": {
+                "type": "string",
+                "description": "Host of the Neo4j instance."
+              },
+              "port": {
+                "type": [
+                  "string",
+                  "number"
+                ],
+                "description": "Bolt port of the Neo4j instance."
+              },
+              "user": {
+                "type": "string",
+                "description": "User to connect as."
+              },
+              "password": {
+                "type": "string",
+                "markdownDescription": "Password for the user. Literal values are stored in plain text in the settings file — consider referencing an environment variable instead, e.g. `${env:NEO4J_PASSWORD}`."
+              },
+              "database": {
+                "type": "string",
+                "description": "Database to connect to. Defaults to the instance's default database."
+              }
+            }
+          }
+        },
         "neo4j.trace.server": {
           "scope": "window",
           "type": "string",
