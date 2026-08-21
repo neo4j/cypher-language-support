@@ -1,6 +1,7 @@
 import {
   CommonToken,
   CommonTokenStream,
+  ListTokenSource,
   ParserRuleContext,
   ParseTree,
   Token,
@@ -145,34 +146,14 @@ export function findCaret(
   return result;
 }
 
-/**
- * Helper to access the internal tokens array from a CommonTokenStream.
- * In antlr4ng, the tokens property is protected, but we need direct access
- * for performance and compatibility with existing patterns.
- */
-export function getStreamTokens(tokenStream: CommonTokenStream): Token[] {
-  return (tokenStream as unknown as { tokens: Token[] }).tokens;
-}
-
-/**
- * Helper to set the internal tokens array on a CommonTokenStream.
- */
-function setStreamTokens(
-  tokenStream: CommonTokenStream,
-  tokens: Token[],
-): void {
-  (tokenStream as unknown as { tokens: Token[] }).tokens = tokens;
-}
-
 export function splitIntoStatements(
   tokenStream: CommonTokenStream,
-  lexer: CypherCmdLexer,
-): CommonTokenStream[] {
+): { tokenStream: CommonTokenStream; tokens: Token[] }[] {
   tokenStream.fill();
-  const tokens = getStreamTokens(tokenStream);
+  const tokens = tokenStream.getTokens();
 
   let i = 0;
-  const result: CommonTokenStream[] = [];
+  const result: { tokenStream: CommonTokenStream; tokens: Token[] }[] = [];
   let chunk: Token[] = [];
   let offset = 0;
 
@@ -186,10 +167,12 @@ export function splitIntoStatements(
       current.type === CypherCmdLexer.SEMICOLON ||
       current.type === CypherCmdLexer.EOF
     ) {
-      // This does not relex since we are not calling fill on the token stream
-      const tokenStream = new CommonTokenStream(lexer);
-      setStreamTokens(tokenStream, chunk);
-      result.push(tokenStream);
+      // Wrapping the chunk in a ListTokenSource means the statement is
+      // parsed from the pre-lexed tokens: no lexer involved, no relexing
+      result.push({
+        tokenStream: new CommonTokenStream(new ListTokenSource(chunk)),
+        tokens: chunk,
+      });
       offset = i + 1;
       chunk = [];
     }

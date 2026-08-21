@@ -34,7 +34,6 @@ import {
 import {
   findParent,
   findStopNode,
-  getStreamTokens,
   inNodeLabel,
   inRelationshipType,
   isDefined,
@@ -158,12 +157,11 @@ function createParsingScaffolding(query: string): ParsingScaffolding {
   const inputStream = CharStream.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
+  const statementChunks = splitIntoStatements(tokenStream);
 
   const statementsScaffolding: StatementParsingScaffolding[] =
-    stmTokenStreams.map((t) => {
-      const tokens = [...getStreamTokens(t)];
-      const parser = new CypherParser(t);
+    statementChunks.map(({ tokenStream: statementStream, tokens }) => {
+      const parser = new CypherParser(statementStream);
       parser.removeErrorListeners();
 
       return {
@@ -183,11 +181,7 @@ export function parseStatementsStrs(query: string): string[] {
   const result: string[] = [];
 
   for (const statement of scaffolding.statementsScaffolding) {
-    const tokenStream = statement.parser?.tokenStream;
-    const tokens = tokenStream
-      ? getStreamTokens(tokenStream as CommonTokenStream)
-      : [];
-    const statementStr = tokens
+    const statementStr = statement.tokens
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
       .join('');

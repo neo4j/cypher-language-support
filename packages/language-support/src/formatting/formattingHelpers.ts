@@ -7,7 +7,7 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { ErrorTrackingStrategy } from '../errorTrackingStrategy.js';
 import { lexerKeywords } from '../lexerSymbols.js';
-import { EnrichedParseTree, findParent, getStreamTokens } from '../helpers.js';
+import { EnrichedParseTree, findParent } from '../helpers.js';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -138,7 +138,7 @@ export function getParseTreeAndTokens(query: string) {
   const rootOffendingToken = errorTracker.offendingTokenAt(tree);
   if (rootOffendingToken) {
     const idx = rootOffendingToken.tokenIndex;
-    const allTokens = getStreamTokens(tokens);
+    const allTokens = tokens.getTokens();
     const errorTokens = allTokens.slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
       .map((t) => t.text)

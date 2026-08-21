@@ -4,7 +4,7 @@ import {
   RecognitionException,
   Token,
 } from 'antlr4ng';
-import type { ATNSimulator } from 'antlr4ng';
+import type { ATNSimulator, Recognizer } from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
@@ -30,7 +30,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
   }
 
   public syntaxError<S extends Token, T extends ATNSimulator>(
-    recognizer: import('antlr4ng').Recognizer<T>,
+    recognizer: Recognizer<T>,
     offendingSymbol: S | null,
     line: number,
     charPositionInLine: number,
