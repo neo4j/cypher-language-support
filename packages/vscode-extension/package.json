@@ -515,7 +515,7 @@
         "neo4j.connections": {
           "type": "array",
           "default": [],
-          "markdownDescription": "Connections to Neo4j databases. Connections defined here appear in the Connections view alongside connections created via the UI, but are managed entirely through this setting. You will be asked to confirm that you trust a connection the first time you connect to it. Note that passwords are stored in plain text in your settings file — prefer connections created via the UI for sensitive credentials.",
+          "markdownDescription": "Connections to Neo4j databases. Connections defined here appear in the Connections view alongside connections created via the UI, but are managed entirely through this setting. You will be asked to confirm that you trust a server the first time you connect to it. All values except the scheme may reference environment variables with `${env:VAR}`, resolved from the environment VS Code was launched with (a full restart of VS Code is needed to pick up changes). Note that literal passwords are stored in plain text in your settings file — reference an environment variable, or prefer connections created via the UI, for sensitive credentials.",
           "items": {
             "type": "object",
             "required": [
@@ -557,7 +557,7 @@
               },
               "password": {
                 "type": "string",
-                "description": "Password for the user. Stored in plain text in the settings file."
+                "markdownDescription": "Password for the user. Literal values are stored in plain text in the settings file — consider referencing an environment variable instead, e.g. `${env:NEO4J_PASSWORD}`."
               },
               "database": {
                 "type": "string",
