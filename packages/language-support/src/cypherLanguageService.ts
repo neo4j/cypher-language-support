@@ -3,6 +3,7 @@ import {
   ParseTreeWalker,
   CharStream,
   CommonTokenStream,
+  ListTokenSource,
   ParseTreeListener,
 } from 'antlr4ng';
 
@@ -153,14 +154,22 @@ export type ParsedFunction = HasPosition & {
 
 export type ParsedProcedure = ParsedFunction;
 
-function createParsingScaffolding(query: string): ParsingScaffolding {
+function getStatementTokenChunks(query: string): Token[][] {
   const inputStream = CharStream.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const statementChunks = splitIntoStatements(tokenStream);
+
+  return splitIntoStatements(tokenStream);
+}
+
+function createParsingScaffolding(query: string): ParsingScaffolding {
+  const statementChunks = getStatementTokenChunks(query);
 
   const statementsScaffolding: StatementParsingScaffolding[] =
-    statementChunks.map(({ tokenStream: statementStream, tokens }) => {
+    statementChunks.map((tokens) => {
+      const statementStream = new CommonTokenStream(
+        new ListTokenSource(tokens),
+      );
       const parser = new CypherParser(statementStream);
       parser.removeErrorListeners();
 
@@ -177,11 +186,11 @@ function createParsingScaffolding(query: string): ParsingScaffolding {
 }
 
 export function parseStatementsStrs(query: string): string[] {
-  const scaffolding = createParsingScaffolding(query);
+  const statementChunks = getStatementTokenChunks(query);
   const result: string[] = [];
 
-  for (const statement of scaffolding.statementsScaffolding) {
-    const statementStr = statement.tokens
+  for (const tokens of statementChunks) {
+    const statementStr = tokens
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
       .join('');

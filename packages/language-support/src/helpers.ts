@@ -1,11 +1,9 @@
 import {
   CommonToken,
   CommonTokenStream,
-  ListTokenSource,
   ParserRuleContext,
   ParseTree,
   Token,
-  Trees,
 } from 'antlr4ng';
 import { DbSchema } from './dbSchema.js';
 import { CypherCmdLexer } from './generated-parser/CypherCmdLexer.js';
@@ -77,23 +75,6 @@ export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
 
-export const antlrUtils = {
-  tree: {
-    Trees: {
-      getNodeText(
-        node: ParserRuleContext,
-        s: string[],
-        _c: typeof CypherCmdParser,
-      ): string | undefined {
-        return Trees.getNodeText(node, s);
-      },
-      getChildren(node: ParserRuleContext): ParseTree[] {
-        return Trees.getChildren(node);
-      },
-    },
-  },
-};
-
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,
@@ -146,20 +127,17 @@ export function findCaret(
   return result;
 }
 
-export function splitIntoStatements(
-  tokenStream: CommonTokenStream,
-): { tokenStream: CommonTokenStream; tokens: Token[] }[] {
+export function splitIntoStatements(tokenStream: CommonTokenStream): Token[][] {
   tokenStream.fill();
   const tokens = tokenStream.getTokens();
 
   let i = 0;
-  const result: { tokenStream: CommonTokenStream; tokens: Token[] }[] = [];
+  const result: Token[][] = [];
   let chunk: Token[] = [];
-  let offset = 0;
 
   while (i < tokens.length) {
-    const current = (tokens[i] as CommonToken).clone();
-    current.tokenIndex -= offset;
+    const current = CommonToken.fromToken(tokens[i]);
+    current.tokenIndex = chunk.length;
 
     chunk.push(current);
 
@@ -167,13 +145,7 @@ export function splitIntoStatements(
       current.type === CypherCmdLexer.SEMICOLON ||
       current.type === CypherCmdLexer.EOF
     ) {
-      // Wrapping the chunk in a ListTokenSource means the statement is
-      // parsed from the pre-lexed tokens: no lexer involved, no relexing
-      result.push({
-        tokenStream: new CommonTokenStream(new ListTokenSource(chunk)),
-        tokens: chunk,
-      });
-      offset = i + 1;
+      result.push(chunk);
       chunk = [];
     }
 
