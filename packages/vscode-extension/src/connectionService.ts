@@ -636,8 +636,60 @@ function isValidScheme(scheme: unknown): scheme is Scheme {
 }
 
 /**
+ * Substitutes ${env:VAR} references in a string with the value of the
+ * environment variable VAR. Note that process.env is a copy of the
+ * environment VS Code was launched with, so changes to environment variables
+ * require a full restart of VS Code to be picked up.
+ * References to unset variables are left as-is, so they are visible in the
+ * connections view rather than silently becoming empty strings.
+ * @param value The string to substitute environment variable references in.
+ * @returns The string with environment variable references substituted.
+ */
+function substituteEnvVariables(value: string): string {
+  return value.replace(
+    /\$\{env:([^}]+)\}/g,
+    (reference, variableName: string) => process.env[variableName] ?? reference,
+  );
+}
+
+/**
+ * Substitutes ${env:VAR} references in all string fields of a config
+ * connection entry, except the scheme (which is validated against a fixed
+ * set of values before substitution).
+ * @param entry The config connection entry to substitute in.
+ * @returns The entry with environment variable references substituted.
+ */
+function substituteEnvVariablesInEntry(
+  entry: ConfigConnectionEntry,
+): ConfigConnectionEntry {
+  return {
+    ...entry,
+    name:
+      typeof entry.name === 'string'
+        ? substituteEnvVariables(entry.name)
+        : entry.name,
+    host: substituteEnvVariables(entry.host),
+    port:
+      typeof entry.port === 'string'
+        ? substituteEnvVariables(entry.port)
+        : entry.port,
+    user: substituteEnvVariables(entry.user),
+    password:
+      typeof entry.password === 'string'
+        ? substituteEnvVariables(entry.password)
+        : entry.password,
+    database:
+      typeof entry.database === 'string'
+        ? substituteEnvVariables(entry.database)
+        : entry.database,
+  };
+}
+
+/**
  * Reads the connection entries from the neo4j.connections setting,
- * discarding malformed entries.
+ * discarding malformed entries. Values may reference environment variables
+ * with ${env:VAR}, which are substituted from the environment VS Code was
+ * launched with.
  * @returns An array of config connection entries.
  */
 function getConfigConnectionEntries(): ConfigConnectionEntry[] {
@@ -649,13 +701,15 @@ function getConfigConnectionEntries(): ConfigConnectionEntry[] {
     return [];
   }
 
-  return entries.filter(
-    (entry) =>
-      entry &&
-      typeof entry.host === 'string' &&
-      typeof entry.user === 'string' &&
-      isValidScheme(entry.scheme),
-  );
+  return entries
+    .filter(
+      (entry) =>
+        entry &&
+        typeof entry.host === 'string' &&
+        typeof entry.user === 'string' &&
+        isValidScheme(entry.scheme),
+    )
+    .map(substituteEnvVariablesInEntry);
 }
 
 /**
