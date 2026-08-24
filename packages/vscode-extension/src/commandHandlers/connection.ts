@@ -127,9 +127,8 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
  * Handler for CONNECT_COMMAND and DISCONNECT_COMMAND (neo4j.connect and neo4j.disconnect)
  * This may only be triggered from the Connection tree view.
  * Toggles the connect flag and state of a Connection and updates the database connection.
- * Connecting to a config connection for the first time (or after its settings
- * entry has changed) requires the user to confirm they trust the connection.
- * The result of the connection attempt is displayed to the user.
+ * Connecting to a new server address (scheme+host+port) via config connection for the first time requires
+ * the user to confirm they trust the connection. The result of the connection attempt is displayed to the user.
  * @param connectionItem The Connecion to toggle.
  * @returns A promise that resolves when the handler has completed.
  */

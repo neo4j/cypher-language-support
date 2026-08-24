@@ -66,9 +66,7 @@ export async function displayConfirmConnectionDeletionPrompt(
 
 /**
  * Utility function to prompt the user to confirm connecting to a server
- * defined in the neo4j.connections setting for the first time. The approval
- * covers the server address, so the user is not asked again for other
- * connections to the same server.
+ * defined in the neo4j.connections setting for the first time.
  * @param connection The config Connection whose server to confirm.
  * @returns A promise that resolves with the result of the prompt ("Yes" or undefined).
  */
