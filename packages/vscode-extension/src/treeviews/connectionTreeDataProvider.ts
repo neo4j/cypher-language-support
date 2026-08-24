@@ -68,10 +68,10 @@ class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
             break;
         }
 
-        const isConfigConnection = connection.source === 'config';
+        const isSettingConnection = connection.source === 'setting';
         const isActive = connection.state === 'active';
 
-        if (isConfigConnection) {
+        if (isSettingConnection) {
           description = description
             ? `${description} (settings.json)`
             : 'settings.json';
@@ -86,7 +86,7 @@ class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
               ? TreeItemCollapsibleState.Expanded
               : TreeItemCollapsibleState.None,
             connection.key,
-            isConfigConnection,
+            isSettingConnection,
           ),
         );
       }
@@ -179,8 +179,8 @@ export const connectionTreeDataProvider = new ConnectionTreeDataProvider();
  * @param state The state of the connection, used to set the description.
  * @param label The label of the connection, used to set the label and tooltip.
  * @param collapsibleState The collapsible state of the connection.
- * @param isConfigConnection Whether the connection comes from the neo4j.connections setting.
- * Config connections get a '-config' suffix on their context value, hiding the
+ * @param isSettingConnection Whether the connection comes from the neo4j.connections setting.
+ * Setting connections get a '-setting' suffix on their context value, hiding the
  * edit/delete menu items since those connections are managed in settings.json.
  */
 export class ConnectionItem extends TreeItem {
@@ -190,11 +190,13 @@ export class ConnectionItem extends TreeItem {
     readonly description: string,
     readonly collapsibleState: TreeItemCollapsibleState,
     readonly key?: string,
-    readonly isConfigConnection?: boolean,
+    readonly isSettingConnection?: boolean,
   ) {
     super(label, collapsibleState);
     this.tooltip = label;
-    this.contextValue = isConfigConnection ? `${this.type}-config` : this.type;
+    this.contextValue = isSettingConnection
+      ? `${this.type}-setting`
+      : this.type;
 
     switch (type) {
       case 'activeConnection':

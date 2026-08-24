@@ -1,14 +1,14 @@
 import { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import { commands, Selection, window, workspace } from 'vscode';
 import {
-  approveConfigConnection,
+  approveSettingConnection,
   Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
   getConnections,
   getPasswordForConnection,
-  isConfigConnectionApproved,
+  isSettingConnectionApproved,
   saveConnectionAndUpdateDatabaseConnection,
   switchDatabase,
   toggleConnectionAndUpdateDatabaseConnection,
@@ -128,7 +128,7 @@ export async function promptUserToDeleteConnectionAndDisplayConnectionResult(
  * Handler for CONNECT_COMMAND and DISCONNECT_COMMAND (neo4j.connect and neo4j.disconnect)
  * This may only be triggered from the Connection tree view.
  * Toggles the connect flag and state of a Connection and updates the database connection.
- * Connecting to a new server address (scheme+host+port) via config connection for the first time requires
+ * Connecting to a new server address (scheme+host+port) via setting connection for the first time requires
  * the user to confirm they trust the connection. The result of the connection attempt is displayed to the user.
  * @param connectionItem The Connecion to toggle.
  * @returns A promise that resolves when the handler has completed.
@@ -139,16 +139,16 @@ export async function toggleConnectionItemsConnectionState(
   const connectionToToggle = getConnectionByKey(connectionItem.key);
 
   if (
-    connectionToToggle?.source === 'config' &&
+    connectionToToggle?.source === 'setting' &&
     connectionToToggle.state === 'inactive' &&
-    !isConfigConnectionApproved(connectionToToggle.key)
+    !isSettingConnectionApproved(connectionToToggle.key)
   ) {
     const answer =
       await displayConfirmSettingConnectionPrompt(connectionToToggle);
     if (answer !== confirmSettingApproval) {
       return;
     }
-    await approveConfigConnection(connectionToToggle.key);
+    await approveSettingConnection(connectionToToggle.key);
   }
 
   const { result, connection } =

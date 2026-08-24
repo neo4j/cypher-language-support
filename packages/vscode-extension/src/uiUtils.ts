@@ -68,7 +68,7 @@ export const confirmSettingApproval = 'Yes';
 /**
  * Utility function to prompt the user to confirm connecting to a server
  * defined in the neo4j.connections setting for the first time.
- * @param connection The config Connection whose server to confirm.
+ * @param connection The setting Connection whose server to confirm.
  * @returns A promise that resolves with the result of the prompt ("Yes" or undefined).
  */
 export async function displayConfirmSettingConnectionPrompt(

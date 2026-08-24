@@ -290,7 +290,7 @@ suite('Connection service spec', () => {
       sandbox.assert.calledWithExactly(updateGlobalStateSpy, 'connections', {});
       sandbox.assert.calledWithExactly(
         updateGlobalStateSpy,
-        'configConnectionStates',
+        'settingConnectionStates',
         {},
       );
       sandbox.assert.notCalled(storeSecretsSpy);

@@ -307,12 +307,12 @@
       "view/item/context": [
         {
           "command": "neo4j.connect",
-          "when": "view == neo4jConnections && (viewItem == connection || viewItem == connection-config)",
+          "when": "view == neo4jConnections && (viewItem == connection || viewItem == connection-setting)",
           "group": "00_connection@1"
         },
         {
           "command": "neo4j.disconnect",
-          "when": "view == neo4jConnections && (viewItem == activeConnection || viewItem == activeConnection-config)",
+          "when": "view == neo4jConnections && (viewItem == activeConnection || viewItem == activeConnection-setting)",
           "group": "00_connection@1"
         },
         {
