@@ -17,6 +17,7 @@ import { CONSTANTS } from '../constants';
 import { getExtensionContext, getQueryRunner } from '../contextService';
 import { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
 import {
+  confirmSettingApproval,
   displayConfirmConnectionDeletionPrompt,
   displayConfirmSettingConnectionPrompt,
   displayMessageForConnectionResult,
@@ -144,7 +145,7 @@ export async function toggleConnectionItemsConnectionState(
   ) {
     const answer =
       await displayConfirmSettingConnectionPrompt(connectionToToggle);
-    if (answer !== 'Yes') {
+    if (answer !== confirmSettingApproval) {
       return;
     }
     await approveConfigConnection(connectionToToggle.key);

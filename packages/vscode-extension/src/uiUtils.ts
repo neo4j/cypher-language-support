@@ -64,6 +64,7 @@ export async function displayConfirmConnectionDeletionPrompt(
   );
 }
 
+export const confirmSettingApproval = 'Yes';
 /**
  * Utility function to prompt the user to confirm connecting to a server
  * defined in the neo4j.connections setting for the first time.
@@ -81,7 +82,7 @@ export async function displayConfirmSettingConnectionPrompt(
   return await window.showInformationMessage<string>(
     `Your settings (neo4j.connections) define the connection to the server ${address}. Your credentials will be sent to this server when connecting. Do you trust it and want to connect?`,
     { modal: true },
-    'Yes',
+    confirmSettingApproval,
   );
 }
 
