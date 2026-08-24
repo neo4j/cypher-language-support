@@ -90,6 +90,11 @@ Once a connection is added, and a connection to your Neo4j instance is establish
 
 You can store connections to different Neo4j instances.
 
+Connections can also be added via the vscode settings.json. This is done by adding the neo4j.connections setting and adding a new entry.
+![demo-connect-setting](https://github.com/neo4j/cypher-language-support/blob/main/packages/vscode-extension/resources/images/demo-connect-setting.png?raw=true)
+
+These connections appear in the Connections view alongside connections created via the UI, but are managed entirely through the setting. You will be asked to confirm that you trust a server the first time you connect to it. All values except the scheme may reference environment variables with `${env:VAR}`, resolved from the environment VS Code was launched with (a full restart of VS Code is needed to pick up changes). Note that literal passwords are stored in plain text in your settings file — reference an environment variable, or prefer connections created via the UI, for sensitive credentials.
+
 ## Managing parameters
 
 To add a new parameter, you can use the `Neo4j: Add parameter` command from the Command Palette or use the `+` on the Neo4j parameters pane:
