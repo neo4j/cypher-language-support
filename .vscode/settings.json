@@ -11,24 +11,5 @@
   },
   "playwright.env": {
     "NODE_OPTIONS": "--max_old_space_size=8192"
-  },
-  "neo4j.connections": 
-        [
-        {
-            "name": "Local dev",
-            "scheme": "neo4j",
-            "host": "localhost",
-            "port": 7687,
-            "user": "${env:NEO4J_USER}",
-            "password": "${env:NEO4J_PASSWORD}"
-        },
-        {
-            "name": "Local APOC dev",
-            "scheme": "neo4j",
-            "host": "localhost",
-            "port": 7687,
-            "user": "${env:NEO4J_USER_APOC}",
-            "password": "${env:NEO4J_PASSWORD_APOC}"
-        }
-    ],
+  }
 }
