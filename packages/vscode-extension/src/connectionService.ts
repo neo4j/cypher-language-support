@@ -44,9 +44,7 @@ export type Connection = {
 /**
  * A map of Connection keys to Connection objects.
  */
-export type Connections = {
-  [key: string]: Connection | null;
-};
+export type Connections = Record<string, Connection>;
 
 const CONNECTIONS_KEY = 'connections';
 const APPROVED_SETTING_SERVERS_KEY = 'approvedSettingServers';
@@ -245,10 +243,10 @@ export function getActiveConnection(): Connection | null {
  * @returns An array of all Connection objects.
  */
 export function getAllConnections(): Connection[] {
-  const connections = Object.values(getConnections()).filter(
-    (connection): connection is Connection => !!connection,
-  );
-  return [...connections, ...getSettingConnections()];
+  return [
+    ...Object.values(getConnections()),
+    ...Object.values(getSettingConnections()),
+  ];
 }
 
 /**
@@ -258,12 +256,7 @@ export function getAllConnections(): Connection[] {
  * @returns The Connection, or null if no Connection with the given key exists.
  */
 export function getConnectionByKey(key: string): Connection | null {
-  const connections = getConnections();
-  return (
-    connections[key] ??
-    getSettingConnections().find((connection) => connection.key === key) ??
-    null
-  );
+  return getConnections()[key] ?? getSettingConnections()[key] ?? null;
 }
 
 /**
@@ -644,10 +637,11 @@ function isValidScheme(scheme: unknown): scheme is Scheme {
  * require a full restart of VS Code to be picked up.
  * References to unset variables are left as-is, so they are visible in the
  * connections view rather than silently becoming empty strings.
+ * Only exported for testing purposes.
  * @param value The string to substitute environment variable references in.
  * @returns The string with environment variable references substituted.
  */
-function substituteEnvVariables(value: string): string {
+export function substituteEnvVariables(value: string): string {
   return value.replace(
     /\$\{env:([^}]+)\}/g,
     (reference, variableName: string) => process.env[variableName] ?? reference,
@@ -746,22 +740,20 @@ function getSettingConnectionEntryByKey(
 /**
  * Gets all connections defined in the neo4j.connections setting as
  * Connection objects, overlaying any runtime state they have accumulated.
- * @returns An array of setting Connection objects.
+ * @returns A map of setting Connection objects keyed by their derived keys.
  */
-function getSettingConnections(): Connection[] {
-  const connections: Connection[] = [];
-  const seenKeys = new Set<string>();
+function getSettingConnections(): Connections {
+  const connections: Connections = {};
   const states = getSettingConnectionStates();
 
   for (const entry of getSettingConnectionEntries()) {
     const key = getSettingConnectionKey(entry);
-    if (seenKeys.has(key)) {
+    if (connections[key]) {
       continue;
     }
-    seenKeys.add(key);
 
     const connectionState = states[key];
-    connections.push({
+    connections[key] = {
       key: key,
       scheme: entry.scheme,
       name: entry.name,
@@ -771,7 +763,7 @@ function getSettingConnections(): Connection[] {
       database: connectionState?.database ?? entry.database,
       state: connectionState?.state ?? 'inactive',
       source: 'setting',
-    });
+    };
   }
 
   return connections;
@@ -857,9 +849,7 @@ export async function approveSettingConnection(key: string): Promise<void> {
  * @returns A promise that resolves when the handler has completed.
  */
 export async function handleSettingConnectionsChange(): Promise<void> {
-  const settingKeys = new Set(
-    getSettingConnections().map((connection) => connection.key),
-  );
+  const settingKeys = new Set(Object.keys(getSettingConnections()));
   const states = getSettingConnectionStates();
 
   for (const key in states) {
