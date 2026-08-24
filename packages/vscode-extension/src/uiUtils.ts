@@ -73,9 +73,10 @@ export async function displayConfirmConnectionDeletionPrompt(
 export async function displayConfirmSettingConnectionPrompt(
   connection: Connection,
 ): Promise<string | undefined> {
+  const partialAddress = `${connection.scheme}://${connection.host}`;
   const address = connection.port
-    ? `${connection.scheme}://${connection.host}:${connection.port}`
-    : `${connection.scheme}://${connection.host}`;
+    ? `${partialAddress}:${connection.port}`
+    : partialAddress;
 
   return await window.showInformationMessage<string>(
     `Your settings (neo4j.connections) define the connection to the server ${address}. Your credentials will be sent to this server when connecting. Do you trust it and want to connect?`,
