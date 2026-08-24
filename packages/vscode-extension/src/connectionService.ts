@@ -92,7 +92,7 @@ export async function deleteConnectionAndUpdateDatabaseConnection(
   const isActiveConnection = activeConnection && activeConnection.key === key;
 
   delete connections[key];
-  await saveConnections(connections);
+  await saveConnectionsAndRefresh(connections);
   await deletePasswordByKey(key);
 
   if (isActiveConnection) {
@@ -206,7 +206,7 @@ export async function saveConnection(connection: Connection): Promise<void> {
   const connections = getConnections();
   connections[connection.key] = connection;
 
-  await saveConnections(connections);
+  await saveConnectionsAndRefresh(connections);
 }
 
 /**
@@ -529,7 +529,9 @@ async function disconnectFromDatabaseAndNotifyLanguageClient(): Promise<Connnect
  * @param connections The Connections object to save.
  * @returns A promise that resolves when the Connections object has been saved.
  */
-async function saveConnections(connections: Connections): Promise<void> {
+async function saveConnectionsAndRefresh(
+  connections: Connections,
+): Promise<void> {
   const context = getExtensionContext();
   await context.globalState.update(CONNECTIONS_KEY, connections);
   await commands.executeCommand(CONSTANTS.COMMANDS.REFRESH_CONNECTIONS_COMMAND);
@@ -588,7 +590,7 @@ async function disconnectAllDatabaseConnections(): Promise<void> {
   }
   await saveSettingConnectionStates(states);
 
-  await saveConnections(connections);
+  await saveConnectionsAndRefresh(connections);
 }
 
 /**
