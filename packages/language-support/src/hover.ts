@@ -1,8 +1,6 @@
-import { ParseTreeWalker } from 'antlr4';
 import { ParsingResult } from './cypherLanguageService.js';
 import { DbSchema } from './dbSchema.js';
-import { SignatureHelper } from './signatureHelp.js';
-import { findCaret } from './helpers.js';
+import { getMethodSignature } from './signatureHelp.js';
 import { SignatureHoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export function getHoverInfo({
@@ -14,52 +12,22 @@ export function getHoverInfo({
   dbSchema: DbSchema;
   parsingResult: ParsingResult;
 }): SignatureHoverInfo | undefined {
-  const result = findCaret(parsingResult, caretPosition);
-  if (!result) {
-    return undefined;
+  const methodSignatureInfo = getMethodSignature({
+    query: parsingResult,
+    caretPosition,
+    dbSchema,
+    consoleCommandsEnabled: false,
+  });
+  if (!methodSignatureInfo) {
+    return;
   }
 
-  const statement = result.statement;
-  const signatureHelper = new SignatureHelper(statement.tokens, result.token);
-  const cypherVersion = statement.cypherVersion ?? dbSchema.defaultLanguage;
-  if (!cypherVersion) {
-    return undefined;
-  }
-  ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-  const method = signatureHelper.result;
-  if (!method) {
-    return undefined;
+  const { signature } = methodSignatureInfo;
+  if (!signature) {
+    return;
   }
 
-  const methodName = method.methodName;
-
-  if (method.methodType === 'procedure') {
-    if (!dbSchema.procedures) {
-      return undefined;
-    }
-    const fn = dbSchema.procedures?.[cypherVersion]?.[methodName];
-    if (!fn) {
-      return undefined;
-    }
-
-    const isDeprecated = fn.option.deprecated;
-
-    return createHoverInfoObject(fn, isDeprecated);
-  }
-
-  if (method.methodType === 'function') {
-    if (!dbSchema.functions) {
-      return undefined;
-    }
-    const fn = dbSchema.functions?.[cypherVersion]?.[methodName];
-    if (!fn) {
-      return undefined;
-    }
-
-    const isDeprecated = fn.isDeprecated;
-
-    return createHoverInfoObject(fn, isDeprecated);
-  }
+  return createHoverInfoObject(signature, false);
 }
 
 function createHoverInfoObject(

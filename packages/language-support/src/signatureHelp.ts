@@ -69,11 +69,11 @@ export function toSignatureInformation(
 }
 
 function toSignatureHelp(
-  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure> = {},
+  method: Neo4jFunction | Neo4jProcedure | undefined,
   parsedMethod: ParsedMethod,
 ): SignatureHelp {
-  const methodName = parsedMethod.methodName;
-  const method = methodSignatures[methodName];
+  // const methodName = parsedMethod.methodName;
+  // const method = methodSignatures[methodName];
   const signatures = method ? [toSignatureInformation(method)] : [];
 
   const signatureHelp: SignatureHelp = {
@@ -172,23 +172,27 @@ export class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
-export function getSignatureInfo(
-  query: string,
-  dbSchema: DbSchema,
-  {
-    caretPosition = query.length,
-    parsingResult,
-    consoleCommandsEnabled = true,
-  }: {
-    caretPosition?: number;
-    parsingResult?: ParsingResult;
-    consoleCommandsEnabled?: boolean;
-  } = {},
-): SignatureHelp {
+export function getMethodSignature({
+  query,
+  dbSchema,
+  caretPosition,
+  consoleCommandsEnabled = true,
+}: {
+  query: string | ParsingResult;
+  dbSchema: DbSchema;
+  caretPosition: number;
+  consoleCommandsEnabled?: boolean;
+}):
+  | {
+      parsedMethod: ParsedMethod;
+      signature: Neo4jFunction | Neo4jProcedure | undefined;
+    }
+  | undefined {
   const resolvedParsingResult =
-    parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+    typeof query === 'string'
+      ? createParsingResult(query, { consoleCommandsEnabled })
+      : query;
 
-  let result: SignatureHelp = emptyResult;
   /* We need the token immediately before the caret
 
       CALL something(
@@ -211,25 +215,56 @@ export function getSignatureInfo(
 
       ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
       const method = signatureHelper.result;
-
-      if (method !== undefined) {
-        const cypherVersion = resolveCypherVersion(
-          statement.cypherVersion,
-          dbSchema,
-        );
-        if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(
-            dbSchema.functions?.[cypherVersion] ?? {},
-            method,
-          );
-        } else {
-          result = toSignatureHelp(
-            dbSchema.procedures?.[cypherVersion] ?? {},
-            method,
-          );
-        }
+      if (!method) {
+        return undefined;
       }
+      const cypherVersion = resolveCypherVersion(
+        statement.cypherVersion,
+        dbSchema,
+      );
+
+      let signatures: Record<string, Neo4jFunction | Neo4jProcedure> = {};
+      if (method.methodType === MethodType.function) {
+        signatures = dbSchema.functions?.[cypherVersion] ?? {};
+      } else {
+        signatures = dbSchema.procedures?.[cypherVersion] ?? {};
+      }
+      const methodName = method.methodName;
+
+      return {
+        parsedMethod: signatureHelper.result,
+        signature: signatures[methodName],
+      };
     }
   }
-  return result;
+}
+
+export function getSignatureInfo(
+  query: string,
+  dbSchema: DbSchema,
+  {
+    caretPosition = query.length,
+    parsingResult,
+    consoleCommandsEnabled = true,
+  }: {
+    caretPosition?: number;
+    parsingResult?: ParsingResult;
+    consoleCommandsEnabled?: boolean;
+  } = {},
+): SignatureHelp {
+  const methodSignatureInfo = getMethodSignature({
+    query: parsingResult ?? query,
+    caretPosition,
+    dbSchema,
+    consoleCommandsEnabled,
+  });
+
+  if (!methodSignatureInfo) {
+    return emptyResult;
+  }
+
+  return toSignatureHelp(
+    methodSignatureInfo.signature,
+    methodSignatureInfo.parsedMethod,
+  );
 }
