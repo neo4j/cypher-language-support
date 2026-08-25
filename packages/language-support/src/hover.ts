@@ -3,7 +3,7 @@ import { ParsingResult } from './cypherLanguageService.js';
 import { DbSchema } from './dbSchema.js';
 import { SignatureHelper } from './signatureHelp.js';
 import { findCaret } from './helpers.js';
-import { HoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
+import { SignatureHoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export function getHoverInfo({
   caretPosition,
@@ -13,7 +13,7 @@ export function getHoverInfo({
   caretPosition: number;
   dbSchema: DbSchema;
   parsingResult: ParsingResult;
-}): HoverInfo | undefined {
+}): SignatureHoverInfo | undefined {
   const result = findCaret(parsingResult, caretPosition);
   if (!result) {
     return undefined;
@@ -65,7 +65,7 @@ export function getHoverInfo({
 function createHoverInfoObject(
   fn: Neo4jFunction | Neo4jProcedure,
   isDeprecated: boolean,
-): HoverInfo {
+): SignatureHoverInfo {
   return {
     signature: fn.signature,
     description: fn.description,

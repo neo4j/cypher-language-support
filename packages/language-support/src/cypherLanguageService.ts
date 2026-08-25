@@ -46,7 +46,7 @@ import {
   allCypherVersions,
   SymbolsInfo,
   SymbolTable,
-  HoverInfo,
+  SignatureHoverInfo,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
 import { getSignatureInfo } from './signatureHelp.js';
@@ -909,7 +909,7 @@ export class CypherLanguageService {
   hoverInfo(
     query: string,
     { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
-  ): HoverInfo | undefined {
+  ): SignatureHoverInfo | undefined {
     const parsingResult = this.parse(query);
     return getHoverInfo({
       caretPosition,

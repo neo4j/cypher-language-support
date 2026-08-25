@@ -39,7 +39,7 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
-  HoverInfo,
+  SignatureHoverInfo,
 } from './types.js';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 

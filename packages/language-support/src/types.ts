@@ -91,22 +91,10 @@ export type SymbolsInfo = {
   symbolTables: SymbolTable[];
 };
 
-export type HoverInfo = {
+export type SignatureHoverInfo = {
   signature: string;
   description: string;
-  returnDescription:
-    | string
-    | Array<{
-        name: string;
-        description: string;
-        isDeprecated: boolean;
-        type: string;
-      }>;
+  returnDescription: string | ReturnDescription[];
   isDeprecated: boolean;
-  params: Array<{
-    name: string;
-    description: string;
-    isDeprecated: boolean;
-    type: string;
-  }>;
+  params: ArgumentDescription[];
 };

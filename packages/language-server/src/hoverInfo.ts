@@ -1,7 +1,7 @@
-import { HoverInfo } from '@neo4j-cypher/language-support';
+import { SignatureHoverInfo } from '@neo4j-cypher/language-support';
 
 export function createParametersHoverString(
-  params: HoverInfo['params'],
+  params: SignatureHoverInfo['params'],
 ): string[] {
   if (params.length === 0) {
     return [];
@@ -16,7 +16,7 @@ export function createParametersHoverString(
 }
 
 export function createReturnHoverString(
-  returnDescription: HoverInfo['returnDescription'],
+  returnDescription: SignatureHoverInfo['returnDescription'],
 ): string[] {
   if (!returnDescription) {
     return [];
