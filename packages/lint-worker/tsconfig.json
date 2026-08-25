@@ -6,8 +6,8 @@
     "outDir": "./dist",
     "declaration": true,
     "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "types": ["vitest/globals"]
   }
 }

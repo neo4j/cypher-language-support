@@ -15,7 +15,6 @@ pnpm test             # unit tests (vitest) across all packages
 pnpm test:e2e         # e2e tests (run `pnpm exec playwright install` once first). Ask user to run these, they requires container manager and pop up windows on execution
 pnpm lint             # oxlint (not eslint); pnpm lint-fix to autofix 
 pnpm format           # oxfmt (not prettier); pnpm format:check to verify without autofix
-pnpm check-imports    # verifies relative imports have .js extensions (see conventions)
 pnpm build-vscode     # build only the VS Code extension and its dependencies
 ```
 
@@ -58,7 +57,7 @@ Dependency flow: `vscode-extension` bundles `language-server`, which (like `reac
 ## Conventions and gotchas
 
 - `packages/vscode-extension/syntaxes/cypher.json` (TextMate grammar) is **generated** by `pnpm gen-textmate` (runs during build) from `language-support`'s `textMateGrammar.ts`, but is committed. CI fails if it is stale — after a build changes it, commit the updated file. Never edit it by hand.
-- Relative imports in `language-support`, `query-tools`, and `lint-worker` must include the `.js` extension (`from './helpers.js'`). For `language-support` this is enforced by TypeScript itself (`moduleResolution: "nodenext"` in its tsconfig); for `query-tools` and `lint-worker` by `pnpm check-imports` in CI.
+- Relative imports in `language-support`, `query-tools`, and `lint-worker` must include the `.js` extension (`from './helpers.js'`), enforced by TypeScript itself (`moduleResolution: "nodenext"` + `"type": "module"` in those packages).
 - VS Code API tests run against the **bundled** `dist/extension.js` while test files are compiled separately from `src/` — sinon stubs applied to `src/` modules do not affect command handlers invoked via `commands.executeCommand` (two separate module graphs). Call the `src/` function directly if you need stubs to apply.
 - Downloaded lint workers are cached in the real VS Code global storage (`%APPDATA%/Code/User/globalStorage/neo4j-extensions.neo4j-for-vscode`), not in `.vscode-test/user-data`.
 - Never Read/Grep build output to understand code: the `dist/` bundles (e.g. `lintWorker.mjs`, ~8 MB), `src/generated-parser/`, and `semanticAnalysis.js` are far too large for tools and are generated anyway — read the package's `src/` instead. To introspect a built package's runtime exports, run `node -e "require('...')"` from inside that package's directory (deps don't resolve from the repo root, and `vscode` never resolves outside the extension host).
