@@ -16,6 +16,7 @@ import {
 } from 'vscode-languageclient/node';
 import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
+  handleSettingConnectionsChange,
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
 import { getSchemaPoller, setContext } from './contextService';
@@ -84,10 +85,23 @@ export async function activate(context: ExtensionContext) {
   // Command handlers and view registrations
   context.subscriptions.push(...registerDisposables());
 
+  // Keep the connections view in sync with connections defined in the
+  // neo4j.connections setting
+  context.subscriptions.push(
+    workspace.onDidChangeConfiguration((event) => {
+      if (event.affectsConfiguration('neo4j.connections')) {
+        void handleSettingConnectionsChange();
+      }
+    }),
+  );
+
   // Start the client. This will also launch the server
   await client.start();
 
   // Handle any sequence events for activation
+  // Reconcile setting connection state first, in case the neo4j.connections
+  // setting changed while the extension was not running
+  await handleSettingConnectionsChange();
   await reconnectDatabaseConnectionOnExtensionActivation();
   await sendParametersToLanguageServer();
 

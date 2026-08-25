@@ -286,9 +286,11 @@ suite('Connection service spec', () => {
         mockConnection.key,
       );
 
-      sandbox.assert.calledOnceWithExactly(
+      sandbox.assert.calledTwice(updateGlobalStateSpy);
+      sandbox.assert.calledWithExactly(updateGlobalStateSpy, 'connections', {});
+      sandbox.assert.calledWithExactly(
         updateGlobalStateSpy,
-        'connections',
+        'settingConnectionStates',
         {},
       );
       sandbox.assert.notCalled(storeSecretsSpy);

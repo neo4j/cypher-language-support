@@ -68,15 +68,25 @@ class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
             break;
         }
 
+        const isSettingConnection = connection.source === 'setting';
+        const isActive = connection.state === 'active';
+
+        if (isSettingConnection) {
+          description = description
+            ? `${description} (settings.json)`
+            : 'settings.json';
+        }
+
         connectionItems.push(
           new ConnectionItem(
-            connection.state === 'active' ? 'activeConnection' : 'connection',
+            isActive ? 'activeConnection' : 'connection',
             this.getConnectionName(connection),
             description,
-            connection.state === 'active'
+            isActive
               ? TreeItemCollapsibleState.Expanded
               : TreeItemCollapsibleState.None,
             connection.key,
+            isSettingConnection,
           ),
         );
       }
@@ -169,6 +179,9 @@ export const connectionTreeDataProvider = new ConnectionTreeDataProvider();
  * @param state The state of the connection, used to set the description.
  * @param label The label of the connection, used to set the label and tooltip.
  * @param collapsibleState The collapsible state of the connection.
+ * @param isSettingConnection Whether the connection comes from the neo4j.connections setting.
+ * Setting connections get a '-setting' suffix on their context value, hiding the
+ * edit/delete menu items since those connections are managed in settings.json.
  */
 export class ConnectionItem extends TreeItem {
   constructor(
@@ -177,10 +190,13 @@ export class ConnectionItem extends TreeItem {
     readonly description: string,
     readonly collapsibleState: TreeItemCollapsibleState,
     readonly key?: string,
+    readonly isSettingConnection?: boolean,
   ) {
     super(label, collapsibleState);
     this.tooltip = label;
-    this.contextValue = this.type;
+    this.contextValue = isSettingConnection
+      ? `${this.type}-setting`
+      : this.type;
 
     switch (type) {
       case 'activeConnection':
