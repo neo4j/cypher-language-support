@@ -11,21 +11,22 @@
     "type": "git",
     "url": "git://github.com/neo4j/cypher-language-support.git"
   },
-  "main": "./dist/cjs/src/index.js",
+  "type": "module",
+  "main": "./dist/cjs/index.cjs",
   "module": "./dist/esm/src/index.js",
   "types": "./dist/types/src/index.d.ts",
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "require": "./dist/cjs/src/index.js",
+      "types": "./dist/types/src/index.d.ts",
+      "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/src/index.js",
-      "default": "./dist/cjs/src/index.js"
+      "default": "./dist/cjs/index.cjs"
     }
   },
   "scripts": {
     "build": "concurrently 'npm:build-esm' 'npm:build-commonjs' 'npm:build-types'",
-    "build-esm": "tsc --module esnext --outDir dist/esm",
-    "build-commonjs": "tsc --module commonjs --moduleResolution node --outDir dist/cjs",
+    "build-esm": "tsc --outDir dist/esm",
+    "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
