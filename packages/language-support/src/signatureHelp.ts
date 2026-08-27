@@ -6,9 +6,15 @@ import {
 import { ParseTreeWalker } from 'antlr4ng';
 import {
   CypherCmdParser as CypherParser,
+  AllReduceExpressionInvalidArgumentsContext,
+  AllReduceExpressionValidArgumentsContext,
   CallClauseContext,
+  ExistsExpressionContext,
   ExpressionContext,
   FunctionInvocationContext,
+  ListItemsPredicateContext,
+  PropertyExistsPredicateContext,
+  ReduceExpressionContext,
 } from './generated-parser/CypherCmdParser.js';
 
 import { Token } from 'antlr4ng';
@@ -84,13 +90,132 @@ function toSignatureHelp(
 }
 
 class SignatureHelper extends CypherCmdParserListener {
-  result: ParsedMethod;
+  result?: ParsedMethod;
   constructor(
     private tokens: Token[],
     private caretToken: Token,
   ) {
     super();
   }
+
+  handleAllReduce = (
+    ctx:
+      | AllReduceExpressionInvalidArgumentsContext
+      | AllReduceExpressionValidArgumentsContext,
+  ) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.ALLREDUCE().getText();
+      const previousArguments = ctx.COMMA_list().filter((arg) => {
+        return arg.symbol.stop <= this.caretToken.start;
+      });
+
+      this.result = {
+        methodName: methodName,
+        activeParameter: previousArguments.length,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterPropertyExistsPredicate = (ctx: PropertyExistsPredicateContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.PROPERTY_EXISTS().getText();
+      const activeParameter =
+        ctx.COMMA().symbol.stop <= this.caretToken.start ? 1 : 0;
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterExistsExpression = (ctx: ExistsExpressionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left curly bracer
+      // and we won't offer the signature help on just the name
+      ctx.LCURLY()
+    ) {
+      const methodName = ctx.EXISTS().getText();
+
+      const activeParameter = 0;
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterReduceExpression = (ctx: ReduceExpressionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.REDUCE().getText();
+
+      let activeParameter = 0;
+      if (ctx.COMMA() && ctx.COMMA().symbol.stop <= this.caretToken.start) {
+        activeParameter = 1;
+      }
+
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterAllReduceExpressionInvalidArguments = (
+    ctx: AllReduceExpressionInvalidArgumentsContext,
+  ) => {
+    this.handleAllReduce(ctx);
+  };
+
+  enterAllReduceExpressionValidArguments = (
+    ctx: AllReduceExpressionValidArgumentsContext,
+  ) => {
+    this.handleAllReduce(ctx);
+  };
+
+  enterListItemsPredicate = (ctx: ListItemsPredicateContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.start.text;
+      let activeParameter = 0;
+      if (ctx.IN() && ctx.IN().symbol.stop <= this.caretToken.start) {
+        activeParameter = 1;
+      }
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
 
   enterExpression = (ctx: ExpressionContext) => {
     // If the caret is at (
