@@ -10,15 +10,13 @@ import {
  * Error strategy that tracks which parser rule contexts caught a
  * RecognitionException during parsing.
  *
- * In antlr4ng 3.x, ParserRuleContext.exception was removed. In the old
- * antlr4 runtime, the generated parser's per-rule catch blocks attached the
- * exception to that rule's context (`_localctx.exception = re`). Those catch
- * blocks call `errorHandler.reportError(this, re)` before recovering, so
- * overriding reportError captures exactly the same contexts — including
- * reports the default strategy suppresses while in error recovery mode.
+ * Generated per-rule catch blocks call `reportError` while the recognizer's
+ * current context is the context that caught the error. Recording before
+ * delegating also retains reports that the default strategy suppresses while
+ * in error recovery mode.
  */
 export class ErrorTrackingStrategy extends DefaultErrorStrategy {
-  /** First exception caught per rule context, in catch order. */
+  /** Most recently reported exception per rule context. */
   readonly caughtExceptions = new Map<
     ParserRuleContext,
     RecognitionException
@@ -26,18 +24,18 @@ export class ErrorTrackingStrategy extends DefaultErrorStrategy {
 
   override reportError(recognizer: Parser, e: RecognitionException): void {
     const ctx = recognizer.context;
-    if (ctx && !this.caughtExceptions.has(ctx)) {
+    if (ctx) {
       this.caughtExceptions.set(ctx, e);
     }
     super.reportError(recognizer, e);
   }
 
-  /** Old `ctx.exception != null` semantics: did rule ctx catch an error? */
+  /** Whether the rule context caught a recognition error. */
   hasError(ctx: ParserRuleContext): boolean {
     return this.caughtExceptions.has(ctx);
   }
 
-  /** Old `ctx.exception?.offendingToken` semantics. */
+  /** The offending token for the error caught by the rule context. */
   offendingTokenAt(ctx: ParserRuleContext): Token | undefined {
     return this.caughtExceptions.get(ctx)?.offendingToken ?? undefined;
   }

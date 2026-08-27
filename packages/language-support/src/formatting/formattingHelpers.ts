@@ -7,7 +7,7 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { ErrorTrackingStrategy } from '../errorTrackingStrategy.js';
 import { lexerKeywords } from '../lexerSymbols.js';
-import { EnrichedParseTree, findParent } from '../helpers.js';
+import { findParent } from '../helpers.js';
 
 export const INTERNAL_FORMAT_ERROR_MESSAGE = `
 Internal formatting error: An unexpected issue occurred while formatting.
@@ -110,11 +110,11 @@ export const isInlineComment = (chunk: Chunk) =>
 // treated as keywords
 function isSymbolicName(node: TerminalNode): boolean {
   const unescapedSymbolicNameStringParent = findParent(
-    node as unknown as EnrichedParseTree,
+    node,
     (x) => x instanceof UnescapedSymbolicNameStringContext,
   );
   const escapedSymbolicNameStringParent = findParent(
-    node as unknown as EnrichedParseTree,
+    node,
     (x) => x instanceof EscapedSymbolicNameStringContext,
   );
   return !(
@@ -134,12 +134,10 @@ export function getParseTreeAndTokens(query: string) {
   parser.buildParseTrees = true;
   const tree = parser.statementsOrCommands();
   let unParseable: string | undefined;
-  let firstUnParseableToken: Token | undefined;
-  const rootOffendingToken = errorTracker.offendingTokenAt(tree);
-  if (rootOffendingToken) {
-    const idx = rootOffendingToken.tokenIndex;
-    const allTokens = tokens.getTokens();
-    const errorTokens = allTokens.slice(idx);
+  const firstUnParseableToken = errorTracker.offendingTokenAt(tree);
+  if (firstUnParseableToken) {
+    const idx = firstUnParseableToken.tokenIndex;
+    const errorTokens = tokens.getTokens().slice(idx);
     const hiddenBefore = (tokens.getHiddenTokensToLeft(idx) || [])
       .map((t) => t.text)
       .join('');
@@ -149,7 +147,6 @@ export function getParseTreeAndTokens(query: string) {
         .slice(0, -1)
         .map((t) => t.text)
         .join('');
-    firstUnParseableToken = rootOffendingToken;
   }
   return { tree, tokens, unParseable, firstUnParseableToken };
 }

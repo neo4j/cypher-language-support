@@ -235,7 +235,7 @@ function getTokenCompletions(
   const tokenEntries = candidates.tokens.entries();
 
   const completions = Array.from(tokenEntries).flatMap((value) => {
-    const [tokenNumber, followUpList] = value;
+    const [tokenNumber, followUpIndexes] = value;
 
     if (!ignoredTokens.has(tokenNumber)) {
       const isConsoleCommand =
@@ -249,7 +249,6 @@ function getTokenCompletions(
         ? tokenNames[tokenNumber].toLowerCase()
         : tokenNames[tokenNumber];
 
-      const followUpIndexes = followUpList;
       const firstIgnoredToken = followUpIndexes.findIndex((t) =>
         ignoredTokens.has(t),
       );
@@ -480,7 +479,8 @@ export function completionCoreCompletion(
   // If the previous token is an identifier, we don't count it as "finished" so we move the caret back one token
   // The identifier is finished when the last token is a SPACE or dot etc. etc.
   // this allows us to give completions that replace the current text => for example `RET` <- it's parsed as an identifier
-  // The need for this caret movement is outlined in the documentation of antlr4-c3 in the section about caret position
+  // See antlr4-c3's caret-position documentation for why this adjustment is needed:
+  // https://github.com/mike-lischke/antlr4-c3/blob/067385d50b8870d5fb139b0af38b7fa53dc1816b/readme.md#selecting-the-right-caret-position
   // When an identifier overlaps with a keyword, it's no longer treats as an identifier (although it's a valid identifier)
   // So we need to move the caret back for keywords as well
   const previousToken = tokens[caretIndex - 1];
@@ -832,13 +832,15 @@ function getSnippetCompletions(
       (x) => x.parent instanceof PatternElementContext,
     )?.parent;
 
-    const lastNode: RelationshipPatternContext | NodePatternContext =
-      parent?.children.findLast(
-        (x) =>
-          (x instanceof RelationshipPatternContext ||
-            x instanceof NodePatternContext) &&
-          !parsingResult.errorTracker.hasError(x),
-      ) as RelationshipPatternContext | NodePatternContext;
+    const lastNode =
+      parent instanceof PatternElementContext
+        ? parent.children.findLast(
+            (x) =>
+              (x instanceof RelationshipPatternContext ||
+                x instanceof NodePatternContext) &&
+              !parsingResult.errorTracker.hasError(x),
+          )
+        : undefined;
     const finalNonEofToken = tokens.at(-2);
 
     if (

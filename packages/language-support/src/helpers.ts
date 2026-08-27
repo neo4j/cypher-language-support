@@ -6,32 +6,15 @@ import {
   Token,
 } from 'antlr4ng';
 import { DbSchema } from './dbSchema.js';
-import { CypherCmdLexer } from './generated-parser/CypherCmdLexer.js';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 import {
-  CypherCmdParser,
+  CypherCmdParser as CypherParser,
   NodePatternContext,
   RelationshipPatternContext,
   StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser.js';
 import { ParsedStatement, ParsingResult } from './cypherLanguageService.js';
 import { CypherVersion } from './types.js';
-
-/* In antlr we have
-
-        ParseTree
-           / \
-          /   \
- TerminalNode   RuleContext
-                \
-                ParserRuleContext
-
-Both TerminalNode and RuleContext have parent, but ParseTree doesn't
-This type fixes that because it's what we need to traverse the tree most
-of the time
-*/
-export type EnrichedParseTree = ParseTree & {
-  parent: ParserRuleContext | undefined;
-};
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
@@ -59,10 +42,10 @@ export function findStopNode(root: StatementsOrCommandsContext) {
 
 /** Find the first parent recursively in the tree matching the condition */
 export function findParent(
-  leaf: EnrichedParseTree | undefined,
-  condition: (node: EnrichedParseTree) => boolean,
-): EnrichedParseTree | null {
-  let current: EnrichedParseTree | null = leaf;
+  leaf: ParseTree | null | undefined,
+  condition: (node: ParseTree) => boolean,
+): ParseTree | null {
+  let current: ParseTree | null = leaf ?? null;
 
   while (current && !condition(current)) {
     current = current.parent;
@@ -142,8 +125,8 @@ export function splitIntoStatements(tokenStream: CommonTokenStream): Token[][] {
     chunk.push(current);
 
     if (
-      current.type === CypherCmdLexer.SEMICOLON ||
-      current.type === CypherCmdLexer.EOF
+      current.type === CypherLexer.SEMICOLON ||
+      current.type === CypherLexer.EOF
     ) {
       result.push(chunk);
       chunk = [];
@@ -163,7 +146,7 @@ export function findPreviousNonSpace(
   while (i > 0) {
     const token = tokens[--i];
 
-    if (token.type !== CypherCmdParser.SPACE) {
+    if (token.type !== CypherParser.SPACE) {
       return token;
     }
   }
@@ -206,20 +189,20 @@ export function getDirection(
 }
 
 export const rulesDefiningVariables = [
-  CypherCmdParser.RULE_returnItem,
-  CypherCmdParser.RULE_unwindClause,
-  CypherCmdParser.RULE_subqueryInTransactionsReportParameters,
-  CypherCmdParser.RULE_procedureResultItem,
-  CypherCmdParser.RULE_foreachClause,
-  CypherCmdParser.RULE_loadCSVClause,
-  CypherCmdParser.RULE_reduceExpression,
-  CypherCmdParser.RULE_listItemsPredicate,
-  CypherCmdParser.RULE_listComprehension,
+  CypherParser.RULE_returnItem,
+  CypherParser.RULE_unwindClause,
+  CypherParser.RULE_subqueryInTransactionsReportParameters,
+  CypherParser.RULE_procedureResultItem,
+  CypherParser.RULE_foreachClause,
+  CypherParser.RULE_loadCSVClause,
+  CypherParser.RULE_reduceExpression,
+  CypherParser.RULE_listItemsPredicate,
+  CypherParser.RULE_listComprehension,
 ];
 
 export const rulesDefiningOrUsingVariables = [
   ...rulesDefiningVariables,
-  CypherCmdParser.RULE_pattern,
-  CypherCmdParser.RULE_nodePattern,
-  CypherCmdParser.RULE_relationshipPattern,
+  CypherParser.RULE_pattern,
+  CypherParser.RULE_nodePattern,
+  CypherParser.RULE_relationshipPattern,
 ];

@@ -240,7 +240,6 @@ export function createParsingResult(
       );
       const errorTracker = new ErrorTrackingStrategy();
       parser.errorHandler = errorTracker;
-      parser.removeParseListeners();
       parser.addParseListener(labelsCollector);
       parser.addParseListener(parameterFinder);
       parser.addParseListener(variableFinder);
