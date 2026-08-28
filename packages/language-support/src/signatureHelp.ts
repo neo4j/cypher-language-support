@@ -13,8 +13,13 @@ import {
   ExpressionContext,
   FunctionInvocationContext,
   ListItemsPredicateContext,
+  NormalizeFunctionContext,
   PropertyExistsPredicateContext,
   ReduceExpressionContext,
+  TrimFunctionContext,
+  VectorDistanceFunctionContext,
+  VectorFunctionContext,
+  VectorNormFunctionContext,
 } from './generated-parser/CypherCmdParser.js';
 
 import { Token } from 'antlr4ng';
@@ -123,6 +128,123 @@ class SignatureHelper extends CypherCmdParserListener {
     }
   };
 
+  enterVectorNormFunction = (ctx: VectorNormFunctionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.VECTOR_NORM().getText();
+      const activeParameter =
+        ctx.COMMA().symbol.stop < this.caretToken.stop ? 1 : 0;
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.VECTOR_DISTANCE().getText();
+      const previousArguments = ctx.COMMA_list().filter((arg) => {
+        return arg.symbol.stop <= this.caretToken.start;
+      });
+      this.result = {
+        methodName,
+        activeParameter: previousArguments.length,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterVectorFunction = (ctx: VectorFunctionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.VECTOR().getText();
+      const previousArguments = ctx.COMMA_list().filter((arg) => {
+        return arg.symbol.stop <= this.caretToken.start;
+      });
+      this.result = {
+        methodName,
+        activeParameter: previousArguments.length,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterNormalizeFunction = (ctx: NormalizeFunctionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.NORMALIZE().getText();
+      const activeParameter =
+        ctx.COMMA().symbol.stop < this.caretToken.stop ? 1 : 0;
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterTrimFunction = (ctx: TrimFunctionContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.TRIM().getText();
+      let activeParameter = 0;
+      if (ctx.expression_list.length === 2) {
+        const trimSource = ctx.expression(1);
+        const trimCharacterString = ctx.expression(0);
+        if (
+          trimSource &&
+          trimSource.start?.start &&
+          trimSource.start?.start <= this.caretToken.stop
+        ) {
+          activeParameter = 2;
+        } else if (
+          trimCharacterString &&
+          trimCharacterString.start?.stop &&
+          trimCharacterString.start?.start <= this.caretToken.stop
+        ) {
+          activeParameter = 1;
+        } else {
+          activeParameter = 0;
+        }
+      } else {
+        activeParameter = 2;
+      }
+      this.result = {
+        methodName,
+        activeParameter,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
   enterPropertyExistsPredicate = (ctx: PropertyExistsPredicateContext) => {
     if (
       ctx.start.start <= this.caretToken.start &&
@@ -171,10 +293,8 @@ class SignatureHelper extends CypherCmdParserListener {
     ) {
       const methodName = ctx.REDUCE().getText();
 
-      let activeParameter = 0;
-      if (ctx.COMMA() && ctx.COMMA().symbol.stop <= this.caretToken.start) {
-        activeParameter = 1;
-      }
+      const activeParameter =
+        ctx.COMMA().symbol.stop <= this.caretToken.start ? 1 : 0;
 
       this.result = {
         methodName,
