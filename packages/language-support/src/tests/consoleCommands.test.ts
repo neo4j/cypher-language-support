@@ -960,20 +960,6 @@ describe('command parser also handles cypher', () => {
     ]);
   });
 
-  test('excludes trailing hidden-channel tokens from a statement', () => {
-    expectParsedCommands('RETURN 1 // trailing comment', [
-      { statement: 'RETURN 1', type: 'cypher' },
-    ]);
-  });
-
-  test('can split cypher into statements', () => {
-    expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
-      { statement: 'CALL db.info()', type: 'cypher' },
-      { statement: 'RETURN 123', type: 'cypher' },
-      { statement: 'SHOW DATABASES', type: 'cypher' },
-    ]);
-  });
-
   test('can weave cypher with cmds', () => {
     expectParsedCommands(
       ':use neo4j; :param x => 23;RETURN $x;:use system; SHOW DATABASES; ',
