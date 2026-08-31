@@ -8,6 +8,11 @@ on:
   schedule:
     - cron: '10 4 * * FRI'
   workflow_dispatch:
+    inputs:
+      neo4j_version_base:
+        description: 'Neo4j version base to fetch, e.g. 2026.07.0. Leave empty to fetch latest.'
+        required: false
+        type: string
 
 jobs:
   check-day-of-month:
@@ -52,23 +57,29 @@ jobs:
           echo "::add-mask::$CODEARTIFACT_TOKEN"
           echo "CODEARTIFACT_TOKEN=$CODEARTIFACT_TOKEN" >> "$GITHUB_ENV"
 
-      - name: Determine latest neo4j CI version
+      - name: Determine neo4j CI version
+        env:
+          PINNED_NEO4J_VERSION_BASE: ${{ github.event.inputs.neo4j_version_base }}
         run: |
-          neo4j_version_base=`aws --no-cli-pager codeartifact list-package-versions --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --repository ci-live --format generic --namespace com.neo4j.buildservice --package neo4j-community-tarball --sort-by PUBLISHED_TIME --status Published --query "versions[?starts_with(version, '$neo4j_version_base')].version" --output text | tr '\t' '\n' | sed 's/-.*//' | grep '\.0$' | head -n 1`
+          if [[ -n "$PINNED_NEO4J_VERSION_BASE" ]]; then
+            neo4j_version_base="$PINNED_NEO4J_VERSION_BASE"
+          else
+            neo4j_version_base=`aws --no-cli-pager codeartifact list-package-versions --domain build-service-live --domain-owner ${{ secrets.AWS_ACCOUNT_ID }} --repository ci-live --format generic --namespace com.neo4j.buildservice --package neo4j-community-tarball --sort-by PUBLISHED_TIME --status Published --query "versions[?starts_with(version, '$neo4j_version_base')].version" --output text | tr '\t' '\n' | sed 's/-.*//' | grep '\.0$' | head -n 1`
+          fi
           echo "neo4j_version_base=$neo4j_version_base" >> $GITHUB_ENV
           echo "Found neo4j_version_base=$neo4j_version_base"
 
-      - name: Store latest neo4j version in repo
+      - name: Store neo4j version in repo
         run: |
           export NEO4J_VERSION=`echo "${neo4j_version_base}" | grep -oE '^[0-9]+\.[0-9]+'`
           echo "neo4j-${NEO4J_VERSION}" > ./packages/lint-worker/server-version-tag.txt
 
-      - name: fetch parser artifacts from latest neo4j CI
+      - name: fetch parser artifacts from neo4j CI
         run: |
           grammar_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `grammar.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
           aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace org.neo4j --package cypher-v25-antlr-parser --package-version $neo4j_version_base-SNAPSHOT --asset $grammar_asset grammar.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
 
-      - name: fetch semantic analysis artifacts from latest neo4j CI
+      - name: fetch semantic analysis artifacts from neo4j CI
         run: |
           semantic_asset=$(aws --no-cli-pager codeartifact list-package-version-assets --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --query 'assets[?ends_with(name, `artifacts.zip`)].name | [0]' --output text --domain-owner ${{ secrets.AWS_ACCOUNT_ID }})
           aws --no-cli-pager codeartifact get-package-version-asset --domain build-service-live --repository ci-live --format maven --namespace com.neo4j --package semantic-analysis-js --package-version $neo4j_version_base-SNAPSHOT --asset $semantic_asset semantic-analysis-js.zip --domain-owner ${{ secrets.AWS_ACCOUNT_ID }}
@@ -111,7 +122,7 @@ jobs:
           git add ./packages/language-support/src/syntaxValidation
           git add ./packages/vscode-extension/syntaxes/cypher.json
           git add ./packages/lint-worker/server-version-tag.txt
-          git commit -m "Updates artifacts to those from latest dev snapshot ${{ env.neo4j_version_base }}"
+          git commit -m "Updates artifacts to those from dev snapshot ${{ env.neo4j_version_base }}"
           git push origin HEAD:${{ env.BRANCH_NAME }}
 
       - name: Create Pull Request
