@@ -1167,4 +1167,594 @@ WHERE allReduce(
       },
     ]);
   });
+
+  test('Correctly colours grammar-definef function "shortestPath()"', () => {
+    const query = `MATCH p=shortestPath((:Trainer)-[*0..10]->(:Pokemon))`;
+
+    expect(highlightSyntax(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 5,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'MATCH',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        token: 'p',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 12,
+        position: {
+          line: 0,
+          startCharacter: 8,
+          startOffset: 8,
+        },
+        token: 'shortestPath',
+        tokenType: 'function',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 20,
+          startOffset: 20,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 21,
+          startOffset: 21,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 22,
+          startOffset: 22,
+        },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 23,
+          startOffset: 23,
+        },
+        token: 'Trainer',
+        tokenType: 'label',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 30,
+          startOffset: 30,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 31,
+          startOffset: 31,
+        },
+        token: '-',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'bracket',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 32,
+          startOffset: 32,
+        },
+        token: '[',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 33,
+          startOffset: 33,
+        },
+        token: '*',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        token: '0',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 35,
+          startOffset: 35,
+        },
+        token: '..',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 37,
+          startOffset: 37,
+        },
+        token: '10',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'bracket',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 39,
+          startOffset: 39,
+        },
+        token: ']',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 40,
+          startOffset: 40,
+        },
+        token: '-',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 41,
+          startOffset: 41,
+        },
+        token: '>',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 43,
+          startOffset: 43,
+        },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 44,
+          startOffset: 44,
+        },
+        token: 'Pokemon',
+        tokenType: 'label',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 51,
+          startOffset: 51,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 52,
+          startOffset: 52,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+    ]);
+  });
+
+  test('Correctly colours grammar-defined function "allShortestPaths"', () => {
+    const query = `MATCH p=allShortestPaths((:Trainer)-[*0..4]->(:Region)) RETURN p`;
+
+    expect(highlightSyntax(query)).toEqual([
+      {
+        bracketInfo: undefined,
+        length: 5,
+        position: {
+          line: 0,
+          startCharacter: 0,
+          startOffset: 0,
+        },
+        token: 'MATCH',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 6,
+          startOffset: 6,
+        },
+        token: 'p',
+        tokenType: 'variable',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 7,
+          startOffset: 7,
+        },
+        token: '=',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 16,
+        position: {
+          line: 0,
+          startCharacter: 8,
+          startOffset: 8,
+        },
+        token: 'allShortestPaths',
+        tokenType: 'function',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 24,
+          startOffset: 24,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 25,
+          startOffset: 25,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 26,
+          startOffset: 26,
+        },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 7,
+        position: {
+          line: 0,
+          startCharacter: 27,
+          startOffset: 27,
+        },
+        token: 'Trainer',
+        tokenType: 'label',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 34,
+          startOffset: 34,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 35,
+          startOffset: 35,
+        },
+        token: '-',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'bracket',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 36,
+          startOffset: 36,
+        },
+        token: '[',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 37,
+          startOffset: 37,
+        },
+        token: '*',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 38,
+          startOffset: 38,
+        },
+        token: '0',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: undefined,
+        length: 2,
+        position: {
+          line: 0,
+          startCharacter: 39,
+          startOffset: 39,
+        },
+        token: '..',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 41,
+          startOffset: 41,
+        },
+        token: '4',
+        tokenType: 'numberLiteral',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'bracket',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 42,
+          startOffset: 42,
+        },
+        token: ']',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 43,
+          startOffset: 43,
+        },
+        token: '-',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 44,
+          startOffset: 44,
+        },
+        token: '>',
+        tokenType: 'separator',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 45,
+          startOffset: 45,
+        },
+        token: '(',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 46,
+          startOffset: 46,
+        },
+        token: ':',
+        tokenType: 'operator',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 47,
+          startOffset: 47,
+        },
+        token: 'Region',
+        tokenType: 'label',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 1,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 53,
+          startOffset: 53,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: {
+          bracketLevel: 0,
+          bracketType: 'parenthesis',
+        },
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 54,
+          startOffset: 54,
+        },
+        token: ')',
+        tokenType: 'bracket',
+      },
+      {
+        bracketInfo: undefined,
+        length: 6,
+        position: {
+          line: 0,
+          startCharacter: 56,
+          startOffset: 56,
+        },
+        token: 'RETURN',
+        tokenType: 'keyword',
+      },
+      {
+        bracketInfo: undefined,
+        length: 1,
+        position: {
+          line: 0,
+          startCharacter: 63,
+          startOffset: 63,
+        },
+        token: 'p',
+        tokenType: 'variable',
+      },
+    ]);
+  });
 });

@@ -32,6 +32,7 @@ import {
   ReduceExpressionContext,
   RightArrowContext,
   ServerCompletionRuleContext,
+  ShortestPathPatternContext,
   StringLiteralContext,
   StringsLiteralContext,
   SymbolicNameStringContext,
@@ -207,6 +208,13 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitRightArrow = (ctx: RightArrowContext) => {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
+  };
+
+  exitShortestPathPattern = (ctx: ShortestPathPatternContext) => {
+    const shortestFunction = ctx.SHORTEST_PATH()
+      ? ctx.SHORTEST_PATH()
+      : ctx.ALL_SHORTEST_PATHS();
+    this.colourFunction(shortestFunction);
   };
 
   exitAllReduceExpressionValidArguments = (

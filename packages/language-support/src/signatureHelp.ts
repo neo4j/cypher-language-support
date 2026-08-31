@@ -16,6 +16,7 @@ import {
   NormalizeFunctionContext,
   PropertyExistsPredicateContext,
   ReduceExpressionContext,
+  ShortestPathPatternContext,
   TrimFunctionContext,
   VectorDistanceFunctionContext,
   VectorFunctionContext,
@@ -123,6 +124,26 @@ class SignatureHelper extends CypherCmdParserListener {
       this.result = {
         methodName: methodName,
         activeParameter: previousArguments.length,
+        methodType: MethodType.function,
+      };
+    }
+  };
+
+  enterShortestPathPattern = (ctx: ShortestPathPatternContext) => {
+    if (
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      // We need to check we have opened the left parenthesis
+      // and we won't offer the signature help on just the name
+      ctx.LPAREN()
+    ) {
+      const methodName = ctx.SHORTEST_PATH()
+        ? ctx.SHORTEST_PATH().getText()
+        : ctx.ALL_SHORTEST_PATHS().getText();
+      const activeParameter = 0;
+      this.result = {
+        methodName,
+        activeParameter,
         methodType: MethodType.function,
       };
     }
