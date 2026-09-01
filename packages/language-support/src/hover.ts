@@ -1,6 +1,6 @@
 import { ParsingResult } from './cypherLanguageService.js';
 import { DbSchema } from './dbSchema.js';
-import { getMethodSignature } from './signatureHelp.js';
+import { getMethodSignature, MethodType } from './signatureHelp.js';
 import { SignatureHoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export function getHoverInfo({
@@ -22,12 +22,15 @@ export function getHoverInfo({
     return;
   }
 
-  const { signature } = methodSignatureInfo;
-  if (!signature) {
+  const { schemaMethod, parsedMethod } = methodSignatureInfo;
+  if (!schemaMethod) {
     return;
   }
 
-  return createHoverInfoObject(signature, false);
+  return createHoverInfoObject(
+    schemaMethod,
+    isDeprecated(schemaMethod, parsedMethod.methodType),
+  );
 }
 
 function createHoverInfoObject(
@@ -48,4 +51,16 @@ function createHoverInfoObject(
       };
     }),
   };
+}
+
+function isDeprecated(
+  method: Neo4jFunction | Neo4jProcedure,
+  type: MethodType,
+): boolean {
+  if (type === MethodType.function) {
+    return (method as Neo4jFunction).isDeprecated;
+  }
+  if (type === MethodType.procedure) {
+    return (method as Neo4jProcedure).option.deprecated;
+  }
 }

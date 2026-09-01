@@ -183,7 +183,7 @@ export function getMethodSignature({
 }):
   | {
       parsedMethod: ParsedMethod;
-      signature: Neo4jFunction | Neo4jProcedure | undefined;
+      schemaMethod: Neo4jFunction | Neo4jProcedure | undefined;
     }
   | undefined {
   const resolvedParsingResult =
@@ -212,8 +212,8 @@ export function getMethodSignature({
       );
 
       ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-      const method = signatureHelper.result;
-      if (!method) {
+      const parsedMethod = signatureHelper.result;
+      if (!parsedMethod) {
         return undefined;
       }
       const cypherVersion = resolveCypherVersion(
@@ -221,17 +221,17 @@ export function getMethodSignature({
         dbSchema,
       );
 
-      let signatures: Record<string, Neo4jFunction | Neo4jProcedure> = {};
-      if (method.methodType === MethodType.function) {
-        signatures = dbSchema.functions?.[cypherVersion] ?? {};
+      let schemaMethods: Record<string, Neo4jFunction | Neo4jProcedure> = {};
+      if (parsedMethod.methodType === MethodType.function) {
+        schemaMethods = dbSchema.functions?.[cypherVersion] ?? {};
       } else {
-        signatures = dbSchema.procedures?.[cypherVersion] ?? {};
+        schemaMethods = dbSchema.procedures?.[cypherVersion] ?? {};
       }
-      const methodName = method.methodName;
+      const methodName = parsedMethod.methodName;
 
       return {
-        parsedMethod: signatureHelper.result,
-        signature: signatures[methodName],
+        parsedMethod,
+        schemaMethod: schemaMethods[methodName],
       };
     }
   }
@@ -262,7 +262,7 @@ export function getSignatureInfo(
   }
 
   return toSignatureHelp(
-    methodSignatureInfo.signature,
+    methodSignatureInfo.schemaMethod,
     methodSignatureInfo.parsedMethod,
   );
 }
