@@ -72,8 +72,6 @@ function toSignatureHelp(
   method: Neo4jFunction | Neo4jProcedure | undefined,
   parsedMethod: ParsedMethod,
 ): SignatureHelp {
-  // const methodName = parsedMethod.methodName;
-  // const method = methodSignatures[methodName];
   const signatures = method ? [toSignatureInformation(method)] : [];
 
   const signatureHelp: SignatureHelp = {
