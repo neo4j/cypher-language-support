@@ -3,5 +3,5 @@
     "allowJs": true,
     "noEmit": true
   },
-  "include": ["vitest.workspace.ts"]
+  "include": ["vitest.config.mts"]
 }
