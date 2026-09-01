@@ -1,6 +1,5 @@
-/// <reference types="vitest" />
 import react from '@vitejs/plugin-react';
-import { defineConfig } from 'vite';
+import { configDefaults, defineConfig } from 'vitest/config';
 
 export default defineConfig({
   plugins: [react()],
@@ -8,13 +7,12 @@ export default defineConfig({
   build: { lib: { entry: 'src/index.ts', formats: ['es'] } },
   test: {
     exclude: [
-      '**/node_modules/**',
+      ...configDefaults.exclude,
+      '**/.{idea,cache,output,temp}/**',
       '**/dist/**',
-      '**/.{idea,git,cache,output,temp}/**',
       '**/e2e_tests/**',
     ],
     // Fix for error in pipeline, see https://github.com/vitest-dev/vitest/discussions/6131
-    minWorkers: 1,
     maxWorkers: 1,
   },
 });
