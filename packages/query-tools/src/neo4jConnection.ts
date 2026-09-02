@@ -6,13 +6,13 @@ import {
   Result,
   Session,
 } from 'neo4j-driver';
-import { version } from '../package.json';
+import packageJson from '../package.json' with { type: 'json' };
 import { Database } from './queries/databases.js';
 import { ExecuteQueryArgs, QueryType } from './types/sdkTypes.js';
 
 const METADATA_BASE = {
   app: 'neo4j-sdk',
-  version: version,
+  version: packageJson.version,
 };
 const RECORD_LIMIT = 5000;
 
