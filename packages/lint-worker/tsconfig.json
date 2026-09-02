@@ -8,6 +8,6 @@
     "esModuleInterop": true,
     "module": "esnext",
     "moduleResolution": "node",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   }
 }
