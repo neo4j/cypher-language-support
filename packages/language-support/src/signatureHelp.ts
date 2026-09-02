@@ -175,7 +175,7 @@ export function getMethodSignature({
   dbSchema,
   caretPosition,
 }: {
-  parsingResult: ParsingResult; // rename to parsingResult
+  parsingResult: ParsingResult;
   dbSchema: DbSchema;
   caretPosition: number;
 }):
