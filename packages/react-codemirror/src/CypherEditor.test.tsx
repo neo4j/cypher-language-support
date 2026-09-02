@@ -1,9 +1,8 @@
 // @vitest-environment jsdom
 
 import { EditorView } from '@codemirror/view';
-import { createRef } from 'react';
+import { act, createRef } from 'react';
 import { createRoot } from 'react-dom/client';
-import { act } from 'react-dom/test-utils';
 import { afterEach, beforeEach, expect, test, vi } from 'vitest';
 import { DEBOUNCE_TIME } from './constants';
 import { CypherEditor } from './CypherEditor';
