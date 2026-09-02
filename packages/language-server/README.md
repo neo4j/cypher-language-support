@@ -184,17 +184,11 @@ As of Emacs 29, `eglot` is built in. In `eglot`, a language server needs to be a
 
 ##### With [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig)
 
-There is built-in support for the `cypher-language-server` in the plugin ([cypher_ls](https://github.com/neovim/nvim-lspconfig/blob/master/doc/server_configurations.md#cypher_ls)).
+There is built-in support for the `cypher-language-server` in the lspconfig plugin ([cypher_ls](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#cypher_ls)).
 
 Activate the language server support in your config file.
 ```lua
-require('lspconfig').cypher_ls.setup{}
+vim.lsp.enable('cypher_ls')
 ```
 
-The language server is registered for _cypher_ files.
-To make neovim aware of this type, add a file to your _neovim-configuration-path/ftdetect_ (if it does not exist, create one) folder, e.g. _cypher.vim_, defining the file suffix and file type.
-
-```vim
-au BufRead,BufNewFile *.cypher                set filetype=cypher
-```
-
+The language server is registered for _cypher_ files, which are auto-discovered by (neo)vim.
