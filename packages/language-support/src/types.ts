@@ -1,6 +1,6 @@
 import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
 
-export type ReturnDescription = {
+type ReturnDescription = {
   name: string;
   description: string;
   type: Neo4jStringType;
@@ -12,8 +12,8 @@ export const cypherVersionNumbers: string[] = ['5', '25'];
 export type CypherVersion = (typeof allCypherVersions)[number];
 
 // we could parse this string for better types in the future
-export type Neo4jStringType = string;
-export type ArgumentDescription = ReturnDescription & { default?: string };
+type Neo4jStringType = string;
+type ArgumentDescription = ReturnDescription & { default?: string };
 
 type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE' | 'DEFAULT';
 
@@ -49,7 +49,9 @@ export type CompletionItem = VSCodeCompletionItem & {
   signature?: string;
 };
 
-export type SymbolTable = {
+export type SymbolTable = Symbol[];
+
+export type Symbol = {
   variable: string;
   // Where the variable is initially defined
   definitionPosition: number;
@@ -59,7 +61,7 @@ export type SymbolTable = {
   references: number[];
 
   labels: LabelOrCondition;
-}[];
+};
 
 export type LabelOrCondition = LabelLeaf | ConditionNode;
 

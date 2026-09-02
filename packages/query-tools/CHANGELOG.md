@@ -1,5 +1,14 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.37
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [ce3820b]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/language-support@2.0.0-next.37
+
 ## 2.0.0-next.36
 
 ### Patch Changes

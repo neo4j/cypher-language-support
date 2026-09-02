@@ -3,10 +3,8 @@ import * as vscode from 'vscode';
 import { CONSTANTS } from '../src/constants';
 import { getNeo4j2025Configuration, getNeo4j5Configuration } from './helpers';
 
-export const testDatabaseKey = 'default-test-connection';
-
 export const neo4j2025ConnectionKey = 'neo4j-2025-connection-key';
-export const neo4j5ConnectionKey = 'neo4j-5-connection-key';
+const neo4j5ConnectionKey = 'neo4j-5-connection-key';
 
 type Neo4jVersion = 'neo4j 5' | 'neo4j 2025';
 

@@ -1,4 +1,4 @@
-import { ParseTreeWalker, TerminalNode, Token } from 'antlr4';
+import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
 
 import {
   AccessModeArgsContext,
@@ -9,6 +9,8 @@ import {
   CypherOptionNameContext,
   CypherOptionValueContext,
   FunctionNameContext,
+  InterpolatedElementDoubleContext,
+  InterpolatedElementSingleContext,
   KeywordLiteralContext,
   LabelNameContext,
   LabelOrRelTypeContext,
@@ -36,8 +38,8 @@ import {
   SemanticTokensLegend,
   SemanticTokenTypes,
 } from 'vscode-languageserver-types';
-import CypherLexer from '../generated-parser/CypherCmdLexer.js';
-import CypherParserListener from '../generated-parser/CypherCmdParserListener.js';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
+import { CypherCmdParserListener as CypherParserListener } from '../generated-parser/CypherCmdParserListener.js';
 import { CypherTokenType } from '../lexerSymbols.js';
 import {
   createParsingResult,
@@ -80,6 +82,7 @@ export function mapCypherToSemanticTokenIndex(
     [CypherTokenType.punctuation]: SemanticTokenTypes.operator,
     [CypherTokenType.paramDollar]: SemanticTokenTypes.namespace,
     [CypherTokenType.paramValue]: SemanticTokenTypes.parameter,
+    [CypherTokenType.interpolationDelimiter]: SemanticTokenTypes.namespace,
     [CypherTokenType.property]: SemanticTokenTypes.property,
     [CypherTokenType.setting]: SemanticTokenTypes.enum,
     [CypherTokenType.settingValue]: SemanticTokenTypes.enumMember,
@@ -118,6 +121,44 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     }
   }
+
+  exitInterpolatedElementSingle = (ctx: InterpolatedElementSingleContext) => {
+    if (ctx.INTERPOLATED_EXPR_START_SINGLE() && ctx.RCURLY()) {
+      const lCurly = ctx.INTERPOLATED_EXPR_START_SINGLE();
+      this.addToken(
+        lCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        lCurly.getText(),
+      );
+      const rCurly = ctx.RCURLY();
+      this.addToken(
+        rCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        rCurly.getText(),
+      );
+    } else {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
+  };
+
+  exitInterpolatedElementDouble = (ctx: InterpolatedElementDoubleContext) => {
+    if (ctx.INTERPOLATED_EXPR_START_DOUBLE() && ctx.RCURLY()) {
+      const lCurly = ctx.INTERPOLATED_EXPR_START_DOUBLE();
+      this.addToken(
+        lCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        lCurly.getText(),
+      );
+      const rCurly = ctx.RCURLY();
+      this.addToken(
+        rCurly.symbol,
+        CypherTokenType.interpolationDelimiter,
+        rCurly.getText(),
+      );
+    } else {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
+  };
 
   exitCypherOptionValue = (ctx: CypherOptionValueContext) => {
     this.addToken(ctx.start, CypherTokenType.settingValue, ctx.getText());
@@ -173,7 +214,7 @@ class SyntaxHighlighter extends CypherParserListener {
   ) {
     const namespace = ctx.namespace();
 
-    namespace.symbolicNameString_list().forEach((namespaceName) => {
+    namespace.symbolicNameString().forEach((namespaceName) => {
       this.addToken(namespaceName.start, tokenType, namespaceName.getText());
     });
 

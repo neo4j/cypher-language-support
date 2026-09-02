@@ -285,6 +285,14 @@ suite('Syntax validation spec', () => {
           "Label Movie is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
           vscode.DiagnosticSeverity.Warning,
         ),
+        new vscode.Diagnostic(
+          new vscode.Range(
+            new vscode.Position(0, 43),
+            new vscode.Position(0, 48),
+          ),
+          "title is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application",
+          vscode.DiagnosticSeverity.Warning,
+        ),
       ],
     });
 

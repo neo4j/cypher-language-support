@@ -254,7 +254,6 @@ describe('sanity checks', () => {
       { kind: 23, label: 'access-mode' },
       { kind: 23, label: 'play' },
       { kind: 23, label: 'style' },
-      { kind: 23, label: 'style reset' },
       { kind: 23, label: 'sysinfo' },
       { kind: 23, label: 'welcome' },
       { kind: 23, label: 'disconnect' },
@@ -958,14 +957,6 @@ describe('command parser also handles cypher', () => {
   test('preserves original whitespace', () => {
     expectParsedCommands('MATCH\n(n)\nRETURN n', [
       { statement: 'MATCH\n(n)\nRETURN n', type: 'cypher' },
-    ]);
-  });
-
-  test('can split cypher into statements', () => {
-    expectParsedCommands('CALL db.info(); RETURN 123; SHOW DATABASES', [
-      { statement: 'CALL db.info()', type: 'cypher' },
-      { statement: 'RETURN 123', type: 'cypher' },
-      { statement: 'SHOW DATABASES', type: 'cypher' },
     ]);
   });
 

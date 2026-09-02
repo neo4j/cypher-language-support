@@ -1,6 +1,6 @@
 {
   "name": "@neo4j-cypher/react-codemirror-playground",
-  "version": "2.0.0-next.39",
+  "version": "2.0.0-next.40",
   "private": true,
   "bugs": {
     "url": "https://github.com/neo4j/cypher-language-support/issues"
@@ -17,18 +17,11 @@
     "clean": "rm -rf {dist,tsconfig.tsbuildinfo}"
   },
   "dependencies": {
-    "@codemirror/autocomplete": "^6.18.6",
-    "@codemirror/commands": "^6.8.1",
-    "@codemirror/language": "^6.11.2",
-    "@lezer/common": "^1.0.2",
-    "@lezer/highlight": "^1.1.3",
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/react-codemirror": "workspace:*",
     "react": "^18.2.0",
     "react-d3-tree": "^3.6.1",
-    "react-dom": "^18.2.0",
-    "vite-plugin-node-stdlib-browser": "^0.2.1",
-    "vscode-languageserver-types": "^3.17.3"
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@types/react": "^18.0.28",

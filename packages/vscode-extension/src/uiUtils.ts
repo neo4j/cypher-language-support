@@ -38,7 +38,7 @@ export function displayMessageForConnectionResult(
  */
 export async function displaySaveConnectionAnywayPrompt(
   detail?: string,
-): Promise<string | null> {
+): Promise<string | undefined> {
   return await window.showWarningMessage<string>(
     'Unable to connect to Neo4j. Would you like to save the connection anyway?',
     {
@@ -56,11 +56,33 @@ export async function displaySaveConnectionAnywayPrompt(
  */
 export async function displayConfirmConnectionDeletionPrompt(
   connectionItem: ConnectionItem,
-): Promise<string | null> {
+): Promise<string | undefined> {
   return await window.showWarningMessage<string>(
     `Are you sure you want to delete connection ${connectionItem.label}?`,
     { modal: true },
     'Yes',
+  );
+}
+
+export const confirmSettingApproval = 'Yes';
+/**
+ * Utility function to prompt the user to confirm connecting to a server
+ * defined in the neo4j.connections setting for the first time.
+ * @param connection The setting Connection whose server to confirm.
+ * @returns A promise that resolves with the result of the prompt ("Yes" or undefined).
+ */
+export async function displayConfirmSettingConnectionPrompt(
+  connection: Connection,
+): Promise<string | undefined> {
+  const partialAddress = `${connection.scheme}://${connection.host}`;
+  const address = connection.port
+    ? `${partialAddress}:${connection.port}`
+    : partialAddress;
+
+  return await window.showInformationMessage<string>(
+    `Your settings (neo4j.connections) define the connection to the server ${address}. Your credentials will be sent to this server when connecting. Do you trust it and want to connect?`,
+    { modal: true },
+    confirmSettingApproval,
   );
 }
 

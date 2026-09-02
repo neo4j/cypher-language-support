@@ -1,11 +1,12 @@
-export type { ParserRuleContext } from 'antlr4';
+export { Trees } from 'antlr4ng';
+export type { ParseTree, ParserRuleContext } from 'antlr4ng';
 export { autocomplete } from './autocompletion/autocompletion.js';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema } from './dbSchema.js';
 export { _internalFeatureFlags } from './featureFlags.js';
 export { formatQuery } from './formatting/formatting.js';
-export { antlrUtils, resolveCypherVersion } from './helpers.js';
+export { resolveCypherVersion } from './helpers.js';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols.js';
 export {
   parse,
@@ -43,10 +44,10 @@ export type {
 } from './types.js';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
-import CypherLexer from './generated-parser/CypherCmdLexer.js';
-import CypherParser from './generated-parser/CypherCmdParser.js';
-import CypherParserListener from './generated-parser/CypherCmdParserListener.js';
-import CypherParserVisitor from './generated-parser/CypherCmdParserVisitor.js';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
+import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser.js';
+import { CypherCmdParserListener as CypherParserListener } from './generated-parser/CypherCmdParserListener.js';
+import { CypherCmdParserVisitor as CypherParserVisitor } from './generated-parser/CypherCmdParserVisitor.js';
 
 export * from './generated-parser/CypherCmdLexer.js';
 export * from './generated-parser/CypherCmdParser.js';

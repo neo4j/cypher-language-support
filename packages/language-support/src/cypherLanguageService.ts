@@ -1,19 +1,22 @@
-import type { ParserRuleContext, Token } from 'antlr4';
+import type { ParserRuleContext } from 'antlr4ng';
 import {
   ParseTreeWalker,
-  CharStreams,
+  CharStream,
   CommonTokenStream,
+  ListTokenSource,
   ParseTreeListener,
-} from 'antlr4';
+  Token,
+} from 'antlr4ng';
 
-import CypherLexer from './generated-parser/CypherCmdLexer.js';
+import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
+import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
 import { _internalFeatureFlags } from './featureFlags.js';
 import {
   ClauseContext,
   CypherVersionContext,
-  default as CypherParser,
+  CypherCmdParser as CypherParser,
   FunctionNameContext,
   LabelNameContext,
   LabelOrRelTypeContext,
@@ -24,7 +27,11 @@ import {
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
   VariableContext,
+  PropertyKeyNameContext,
+  Expression2Context,
   PatternElementContext,
+  NodePatternContext,
+  RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -69,8 +76,10 @@ export interface ParsedStatement {
   collectedParameters: ParsedParameter[];
   collectedFunctions: ParsedFunction[];
   collectedProcedures: ParsedProcedure[];
+  collectedProperties: PropertyType[];
   collectedReadPatternElements: PatternElementContext[];
   cypherVersion?: CypherVersion;
+  errorTracker: ErrorTrackingStrategy;
 }
 
 export interface ParsingResult {
@@ -78,13 +87,14 @@ export interface ParsingResult {
   statementsParsing: ParsedStatement[];
 }
 
-export interface ParsingScaffolding {
+interface ParsingScaffolding {
   query: string;
   statementsScaffolding: StatementParsingScaffolding[];
 }
 
-export interface StatementParsingScaffolding {
+interface StatementParsingScaffolding {
   parser: CypherParser;
+  tokenStream: CommonTokenStream;
   tokens: Token[];
 }
 
@@ -105,13 +115,15 @@ function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
 
   if (parent instanceof ClauseContext) {
     const clause = parent;
-    return isDefined(clause.mergeClause()) || isDefined(clause.createClause());
+    return Boolean(
+      clause.mergeClause() || clause.createClause() || clause.insertClause(),
+    );
   } else {
     return false;
   }
 }
 
-export type HasPosition = {
+type HasPosition = {
   line: number;
   column: number;
   offsets: {
@@ -123,7 +135,15 @@ export type HasPosition = {
 export type LabelOrRelType = HasPosition & {
   labelType: LabelType;
   labelText: string;
-  couldCreateNewLabel: boolean;
+};
+
+export type PropertyType = HasPosition & {
+  propertyName: string;
+  variable?: {
+    name: string;
+    start: number;
+  };
+  type: 'read' | 'write';
 };
 
 export type ParsedParameter = HasPosition & {
@@ -138,20 +158,28 @@ export type ParsedFunction = HasPosition & {
 
 export type ParsedProcedure = ParsedFunction;
 
-export function createParsingScaffolding(query: string): ParsingScaffolding {
-  const inputStream = CharStreams.fromString(query);
+function getStatementTokenChunks(query: string): Token[][] {
+  const inputStream = CharStream.fromString(query);
   const lexer = new CypherLexer(inputStream);
   const tokenStream = new CommonTokenStream(lexer);
-  const stmTokenStreams = splitIntoStatements(tokenStream, lexer);
+
+  return splitIntoStatements(tokenStream);
+}
+
+function createParsingScaffolding(query: string): ParsingScaffolding {
+  const statementChunks = getStatementTokenChunks(query);
 
   const statementsScaffolding: StatementParsingScaffolding[] =
-    stmTokenStreams.map((t) => {
-      const tokens = [...t.tokens];
-      const parser = new CypherParser(t);
+    statementChunks.map((tokens) => {
+      const statementStream = new CommonTokenStream(
+        new ListTokenSource(tokens),
+      );
+      const parser = new CypherParser(statementStream);
       parser.removeErrorListeners();
 
       return {
         parser: parser,
+        tokenStream: statementStream,
         tokens: tokens,
       };
     });
@@ -163,12 +191,10 @@ export function createParsingScaffolding(query: string): ParsingScaffolding {
 }
 
 export function parseStatementsStrs(query: string): string[] {
-  const statements = parse(query);
+  const statementChunks = getStatementTokenChunks(query);
   const result: string[] = [];
 
-  for (const statement of statements) {
-    const tokenStream = statement.parser?.getTokenStream() ?? [];
-    const tokens = (tokenStream as CommonTokenStream).tokens;
+  for (const tokens of statementChunks) {
     const statementStr = tokens
       .filter((token) => token.type !== CypherLexer.EOF)
       .map((token) => token.text)
@@ -202,10 +228,11 @@ export function createParsingResult(
 
   const results: ParsedStatement[] =
     parsingScaffolding.statementsScaffolding.map((statementScaffolding) => {
-      const { parser, tokens } = statementScaffolding;
-      const labelsCollector = new LabelAndRelTypesCollector();
+      const { parser, tokenStream, tokens } = statementScaffolding;
+      const labelsCollector = new ReadLabelAndRelTypesCollector();
       const parameterFinder = new ParameterCollector();
-      const variableFinder = new VariableCollector();
+      const variableFinder = new VariableCollector(tokenStream);
+      const propertiesFinder = new PropertiesCollector();
       const methodsFinder = new MethodsCollector(tokens);
       const cypherVersionCollector = new CypherVersionCollector();
       const readPatternElementsCollector = new ReadPatternElementsCollector();
@@ -213,14 +240,15 @@ export function createParsingResult(
         tokens,
         settings.consoleCommandsEnabled,
       );
-      parser._parseListeners = [
-        labelsCollector,
-        parameterFinder,
-        variableFinder,
-        methodsFinder,
-        cypherVersionCollector,
-        readPatternElementsCollector,
-      ];
+      const errorTracker = new ErrorTrackingStrategy();
+      parser.errorHandler = errorTracker;
+      parser.addParseListener(labelsCollector);
+      parser.addParseListener(parameterFinder);
+      parser.addParseListener(variableFinder);
+      parser.addParseListener(methodsFinder);
+      parser.addParseListener(cypherVersionCollector);
+      parser.addParseListener(propertiesFinder);
+      parser.addParseListener(readPatternElementsCollector);
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
       // The statement is empty if we cannot find anything that is not EOF or a space
@@ -228,7 +256,12 @@ export function createParsingResult(
         tokens.find(
           (t) => t.text !== '<EOF>' && t.type !== CypherLexer.SPACE,
         ) === undefined;
-      const collectedCommand = parseToCommand(ctx, tokens, isEmptyStatement);
+      const collectedCommand = parseToCommand(
+        ctx,
+        tokenStream,
+        tokens,
+        isEmptyStatement,
+      );
       const syntaxErrors = !isEmptyStatement ? errorListener.errors : [];
 
       if (!settings.consoleCommandsEnabled) {
@@ -248,9 +281,11 @@ export function createParsingResult(
         collectedParameters: parameterFinder.parameters,
         collectedFunctions: methodsFinder.functions,
         collectedProcedures: methodsFinder.procedures,
+        collectedProperties: propertiesFinder.properties,
         collectedReadPatternElements:
           readPatternElementsCollector.readPatternElements,
         cypherVersion: cypherVersionCollector.cypherVersion,
+        errorTracker: errorTracker,
       };
     });
 
@@ -296,8 +331,8 @@ export function parseParameters(
   return [...new Set(parameters)];
 }
 
-// This listener collects all labels and relationship types
-class LabelAndRelTypesCollector extends ParseTreeListener {
+/** This listener collects all labels and relationship types in read operations */
+class ReadLabelAndRelTypesCollector implements ParseTreeListener {
   labelOrRelTypes: LabelOrRelType[] = [];
 
   enterEveryRule() {
@@ -316,11 +351,14 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // like in the case MATCH (n:) RETURN n
       // RETURN would be incorrectly idenfified as the label
       // If this is the case, the context containing the label would have an error node
-      if (ctx.parentCtx && !hasErrorNodesUnder(ctx.parentCtx)) {
+      if (
+        ctx.parent &&
+        !hasErrorNodesUnder(ctx.parent) &&
+        !couldCreateNewLabel(ctx)
+      ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: ctx.start.line,
           column: ctx.start.column,
           offsets: {
@@ -334,13 +372,13 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
       // Read comment for the label name case
       if (
         isDefined(symbolicName) &&
-        ctx.parentCtx &&
-        !hasErrorNodesUnder(ctx.parentCtx)
+        ctx.parent &&
+        !hasErrorNodesUnder(ctx.parent) &&
+        !couldCreateNewLabel(ctx)
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: symbolicName.start.text,
-          couldCreateNewLabel: couldCreateNewLabel(ctx),
           line: symbolicName.start.line,
           column: symbolicName.start.column,
           offsets: {
@@ -350,6 +388,116 @@ class LabelAndRelTypesCollector extends ParseTreeListener {
         });
       }
     }
+  }
+}
+
+// This listener collects all properties in read operations
+class PropertiesCollector implements ParseTreeListener {
+  properties: PropertyType[] = [];
+
+  enterEveryRule() {
+    /* no-op */
+  }
+  visitTerminal() {
+    /* no-op */
+  }
+  visitErrorNode() {
+    /* no-op */
+  }
+
+  exitEveryRule(ctx: unknown) {
+    if (ctx instanceof PropertyKeyNameContext) {
+      if (ctx.parent && !hasErrorNodesUnder(ctx.parent)) {
+        const parentClause = findParent(
+          ctx,
+          (ctx) => ctx instanceof ClauseContext,
+        );
+        if (parentClause instanceof ClauseContext) {
+          const isRead = this.isReadClause(parentClause);
+          const isWrite = this.isWriteClause(parentClause);
+
+          if (isRead || isWrite) {
+            const variable = this.getPropertyVariable(ctx);
+
+            const propertyName = ctx.getText().replace(/^`|`$/g, '');
+
+            this.properties.push({
+              propertyName,
+              variable,
+              line: ctx.start.line,
+              column: ctx.start.column,
+              offsets: {
+                start: ctx.start.start,
+                end: ctx.stop.stop + 1,
+              },
+              type: isWrite ? 'write' : 'read',
+            });
+          }
+        }
+      }
+    }
+  }
+
+  private getPropertyVariable(
+    ctx: PropertyKeyNameContext,
+  ): { name: string; start: number } | undefined {
+    const varCtx =
+      this.getVariableFromPatternProperty(ctx) ??
+      this.getVariableFromPropertyAccess(ctx);
+
+    if (varCtx) {
+      return {
+        name: varCtx.getText(),
+        start: varCtx.start.start,
+      };
+    }
+  }
+
+  private getVariableFromPatternProperty(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const patternElement = findParent(ctx, (ctx) => {
+      return (
+        ctx instanceof NodePatternContext ||
+        ctx instanceof RelationshipPatternContext
+      );
+    });
+    if (
+      patternElement instanceof NodePatternContext ||
+      patternElement instanceof RelationshipPatternContext
+    ) {
+      return patternElement.variable();
+    }
+  }
+
+  private getVariableFromPropertyAccess(
+    ctx: PropertyKeyNameContext,
+  ): VariableContext | undefined {
+    const propertyAccessExpr = findParent(
+      ctx,
+      (ctx) => ctx instanceof Expression2Context,
+    );
+    if (propertyAccessExpr instanceof Expression2Context) {
+      return propertyAccessExpr.expression1().variable();
+    }
+  }
+
+  /** Checks if a parent clause is writable for properties */
+  private isWriteClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.mergeClause() ||
+      clause.createClause() ||
+      clause.insertClause() ||
+      clause.setClause() ||
+      clause.removeClause(),
+    );
+  }
+
+  /** Checks if a parent clause is readonly for properties */
+  private isReadClause(clause: ClauseContext): boolean {
+    return Boolean(
+      clause.matchClause() || clause.withClause() || clause.returnClause(),
+    );
   }
 }
 
@@ -389,6 +537,12 @@ class ParameterCollector implements ParseTreeListener {
 // we use it when the semantic anaylsis result is not available
 class VariableCollector implements ParseTreeListener {
   variables: string[] = [];
+  private tokenStream: CommonTokenStream;
+
+  constructor(tokenStream: CommonTokenStream) {
+    this.tokenStream = tokenStream;
+  }
+
   enterEveryRule() {
     /* no-op */
   }
@@ -409,12 +563,10 @@ class VariableCollector implements ParseTreeListener {
 
       const nextTokenIsEOF =
         nextTokenIndex !== undefined &&
-        ctx.parser?.getTokenStream().get(nextTokenIndex + 1)?.type ===
-          CypherParser.EOF;
+        this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
-        // @ts-expect-error the antlr4 types don't include ruleIndex but it is there, fix as the official types are improved
-        ctx.parentCtx?.ruleIndex as unknown as number,
+        ctx.parent?.ruleIndex as number,
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {
@@ -452,7 +604,7 @@ class ReadPatternElementsCollector implements ParseTreeListener {
 export function getMethodName(
   ctx: ProcedureNameContext | FunctionNameContext,
 ): string {
-  const namespaces = ctx.namespace().symbolicNameString_list();
+  const namespaces = ctx.namespace().symbolicNameString();
   const methodName = ctx.symbolicNameString();
 
   const normalizedName = [...namespaces, methodName]
@@ -477,13 +629,12 @@ function getNamespaceString(ctx: SymbolicNameStringContext): string {
 }
 
 // This listener collects all functions and procedures
-class MethodsCollector extends ParseTreeListener {
+class MethodsCollector implements ParseTreeListener {
   public procedures: ParsedProcedure[] = [];
   public functions: ParsedFunction[] = [];
   private tokens: Token[];
 
   constructor(tokens: Token[]) {
-    super();
     this.tokens = tokens;
   }
 
@@ -534,13 +685,9 @@ class MethodsCollector extends ParseTreeListener {
   }
 }
 
-class CypherVersionCollector extends ParseTreeListener {
+class CypherVersionCollector implements ParseTreeListener {
   public cypherVersion: CypherVersion;
   public invalidVersionError: SyntaxDiagnostic;
-
-  constructor() {
-    super();
-  }
 
   enterEveryRule() {
     /* no-op */
@@ -574,13 +721,11 @@ class CypherVersionCollector extends ParseTreeListener {
   }
 }
 
-type CypherCmd = { type: 'cypher'; query: string };
 type RuleTokens = {
   start: Token;
   stop: Token;
 };
 
-export type ParsedCypherCmd = CypherCmd & RuleTokens;
 export type ParsedCommandNoPosition =
   | { type: 'cypher'; statement: string }
   | { type: 'use'; database?: string /* missing implies default db */ }
@@ -604,29 +749,38 @@ export type ParsedCommandNoPosition =
   | { type: 'help' }
   | { type: 'auto'; statement?: string };
 
-export type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
+type ParsedCommand = ParsedCommandNoPosition & RuleTokens;
 
 function parseToCommand(
   stmts: StatementsOrCommandsContext,
+  tokenStream: CommonTokenStream,
   tokens: Token[],
   isEmptyStatement: boolean,
 ): ParsedCommand {
-  const stmt = stmts.statementOrCommand_list().at(0);
+  const stmt = stmts.statementOrCommand().at(0);
 
   if (stmt) {
     const start = stmts.start;
     let stop = stmts.stop;
 
+    // Matching EOF sets the context stop to EOF. CommonTokenStream.LB() is
+    // channel-aware, so this recovers the preceding default-channel token.
+    if (stop && stop.type === Token.EOF) {
+      stop = tokenStream.LB(1) ?? stop;
+    }
     if (stop && stop.type === CypherLexer.SEMICOLON) {
       stop = tokens[stop.tokenIndex - 1];
     }
-    const inputstream = start.getInputStream();
+    const inputstream = start.inputStream;
     const cypherStmt = stmt.preparsedStatement()?.statement();
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       // stripping the preparser part of it
       const stmtStart = cypherStmt.start;
-      const statement = inputstream.getText(stmtStart.start, stop.stop);
+      const statement = inputstream.getTextFromRange(
+        stmtStart.start,
+        stop.stop,
+      );
 
       return { type: 'cypher', statement, start: stmtStart, stop: stop };
     }
@@ -670,10 +824,10 @@ function parseToCommand(
         const cypherMap = paramArgs.map();
         if (cypherMap) {
           const names = cypherMap
-            ?.propertyKeyName_list()
+            ?.propertyKeyName()
             .map((name) => name.getText());
           const expressions = cypherMap
-            ?.expression_list()
+            ?.expression()
             .map((expr) => expr.getText());
 
           if (names && expressions && names.length === expressions.length) {
@@ -811,7 +965,7 @@ function parseToCommand(
         if (autoStmt && autoStmt.start && autoStmt.stop) {
           //we want autoStmt.start so we skip :auto when calling semantic analysis
           //but regular stop, so we include trailing error nodes not parsed as statement
-          const statement = inputstream.getText(
+          const statement = inputstream.getTextFromRange(
             autoStmt.start.start,
             stop.stop,
           );
@@ -823,7 +977,7 @@ function parseToCommand(
       return { type: 'parse-error', start, stop };
     }
     const stopToken = stop ?? tokens.at(-1);
-    const statement = inputstream.getText(start.start, stopToken.stop);
+    const statement = inputstream.getTextFromRange(start.start, stopToken.stop);
     return { type: 'cypher', statement, start: start, stop: stopToken };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };

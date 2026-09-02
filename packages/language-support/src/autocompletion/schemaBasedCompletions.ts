@@ -165,7 +165,7 @@ export function getPathCompletions(
   return snippetCompletions;
 }
 
-export const labelsToCompletions = (labelNames: string[] = []) =>
+const labelsToCompletions = (labelNames: string[] = []) =>
   labelNames.map((labelName) => {
     const backtickedName = backtickIfNeeded(labelName, 'label');
     const maybeInsertText = backtickedName
@@ -231,14 +231,14 @@ export function completeNodeLabel(
   }
 
   const callContext = findParent(
-    parsingResult.stopNode.parentCtx,
+    parsingResult.stopNode.parent,
     (x) => x instanceof PatternElementContext,
   );
 
   if (callContext instanceof PatternElementContext && callContext.children) {
     const lastValidElement = callContext.children.toReversed().find((child) => {
       if (child instanceof RelationshipPatternContext) {
-        if (child.exception === null) {
+        if (!parsingResult.errorTracker.hasError(child)) {
           return true;
         }
       }
@@ -307,7 +307,7 @@ export function completeRelationshipType(
   // limitation: not checking PathPatternNonEmptyContext
   // limitation: not handling parenthesized paths
   const patternContext = findParent(
-    parsingResult.stopNode.parentCtx,
+    parsingResult.stopNode.parent,
     (x) => x instanceof PatternElementContext,
   );
 
@@ -319,7 +319,7 @@ export function completeRelationshipType(
       .toReversed()
       .find((child) => {
         if (child instanceof NodePatternContext) {
-          if (child.exception === null) {
+          if (!parsingResult.errorTracker.hasError(child)) {
             return true;
           }
         }

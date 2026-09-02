@@ -52,7 +52,7 @@ describe('Clean positions', () => {
 
 test('Can filter out missing parameter warnings when disconnected using isNotParamError', () => {
   const query =
-    'MATCH (n: Person) WHERE n.name = $`missing param` and n.age = $`some param` RETURN n';
+    'MATCH (n: Person) WHERE n.name = $`missing param` and n.born = $`some param` RETURN n';
 
   expect(
     getDiagnosticsForQuery({

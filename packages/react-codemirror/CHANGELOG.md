@@ -1,5 +1,20 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.40
+
+### Minor Changes
+
+- 0ddd727: wrap placeholder around editor actions
+- 9266800: normalize CRLF line endings
+
+### Patch Changes
+
+- ce3820b: Update grammar and semantic analysis to 2026.08
+- Updated dependencies [ce3820b]
+- Updated dependencies [6c863cd]
+  - @neo4j-cypher/language-support@2.0.0-next.37
+  - @neo4j-cypher/lint-worker@1.10.1-next.14
+
 ## 2.0.0-next.39
 
 ### Patch Changes
