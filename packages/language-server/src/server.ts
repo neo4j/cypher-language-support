@@ -267,7 +267,7 @@ connection.onHover((params: HoverParams): Hover | null => {
         '```cypher',
         hoverInfo.signature,
         '```',
-        hoverInfo.description,
+        `${hoverInfo.isDeprecated ? '(_deprecated_) ' : ''}${hoverInfo.description}`,
         '',
         ...createParametersHoverString(hoverInfo.params),
         '',

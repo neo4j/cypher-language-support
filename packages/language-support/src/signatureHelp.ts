@@ -171,26 +171,19 @@ class SignatureHelper extends CypherCmdParserListener {
 }
 
 export function getMethodSignature({
-  query,
+  parsingResult,
   dbSchema,
   caretPosition,
-  consoleCommandsEnabled = true,
 }: {
-  query: string | ParsingResult;
+  parsingResult: ParsingResult; // rename to parsingResult
   dbSchema: DbSchema;
   caretPosition: number;
-  consoleCommandsEnabled?: boolean;
 }):
   | {
       parsedMethod: ParsedMethod;
       schemaMethod: Neo4jFunction | Neo4jProcedure | undefined;
     }
   | undefined {
-  const resolvedParsingResult =
-    typeof query === 'string'
-      ? createParsingResult(query, { consoleCommandsEnabled })
-      : query;
-
   /* We need the token immediately before the caret
 
       CALL something(
@@ -201,7 +194,7 @@ export function getMethodSignature({
   const prevCaretPosition = caretPosition - 1;
 
   if (prevCaretPosition > 0) {
-    const caret = findCaret(resolvedParsingResult, prevCaretPosition);
+    const caret = findCaret(parsingResult, prevCaretPosition);
 
     if (caret) {
       const statement = caret.statement;
@@ -250,11 +243,15 @@ export function getSignatureInfo(
     consoleCommandsEnabled?: boolean;
   } = {},
 ): SignatureHelp {
+  const resolvedParsingResult = parsingResult
+    ? parsingResult
+    : createParsingResult(query, { consoleCommandsEnabled });
+
+  // Always pass parsingResult
   const methodSignatureInfo = getMethodSignature({
-    query: parsingResult ?? query,
+    parsingResult: resolvedParsingResult,
     caretPosition,
     dbSchema,
-    consoleCommandsEnabled,
   });
 
   if (!methodSignatureInfo) {

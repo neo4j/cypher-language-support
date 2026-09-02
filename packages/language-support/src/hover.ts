@@ -13,10 +13,9 @@ export function getHoverInfo({
   parsingResult: ParsingResult;
 }): SignatureHoverInfo | undefined {
   const methodSignatureInfo = getMethodSignature({
-    query: parsingResult,
+    parsingResult,
     caretPosition,
     dbSchema,
-    consoleCommandsEnabled: false,
   });
   if (!methodSignatureInfo) {
     return;
