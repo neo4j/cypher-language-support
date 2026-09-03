@@ -1,13 +1,15 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
 import { testData } from '../testData.js';
 
+const dbSchema = testData.mockSchema;
+
 describe('Procedures hover', () => {
   test('provides hover info for procedures', () => {
     const query = 'CALL db.labels()';
 
     const hoverInfo = new CypherLanguageService().hoverInfo(query, {
       caretPosition: query.indexOf('db.labels') + 1,
-      dbSchema: testData.mockSchema,
+      dbSchema,
     });
 
     expect(hoverInfo).toStrictEqual({
