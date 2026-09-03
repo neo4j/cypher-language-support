@@ -59,6 +59,8 @@ export interface RegularChunk extends BaseChunk {
 
 export interface SyntaxErrorChunk extends BaseChunk {
   type: 'SYNTAX_ERROR';
+  noSpace?: boolean;
+  noBreak?: boolean;
 }
 
 // Comment chunk specific properties

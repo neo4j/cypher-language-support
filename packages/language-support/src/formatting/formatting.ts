@@ -358,6 +358,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (chunk.type === 'COMMENT') {
       return;
     }
+
     chunk[propertyName] = true;
   };
 
