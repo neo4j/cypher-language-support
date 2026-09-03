@@ -174,4 +174,44 @@ describe('Functions hover', () => {
         'trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING',
     });
   });
+
+  test('marks deprecated functions as deprecated', () => {
+    const query = 'CYPHER 5 RETURN apoc.create.uuid()';
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: query.indexOf('apoc.create.uuid') + 1,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toStrictEqual({
+      signature: 'apoc.create.uuid() :: STRING',
+      description: 'Returns a UUID.',
+      returnDescription: 'STRING',
+      isDeprecated: true,
+      params: [],
+    });
+  });
+
+  test('provides no hover info for a function missing in the Cypher version', () => {
+    // apoc.create.uuid only exists in Cypher 5
+    const query = 'CYPHER 25 RETURN apoc.create.uuid()';
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: query.indexOf('apoc.create.uuid') + 1,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toBeUndefined();
+  });
+
+  test('provides no hover info for unknown functions', () => {
+    const query = 'RETURN notARealFunction(1)';
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: query.indexOf('notARealFunction') + 1,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toBeUndefined();
+  });
 });
