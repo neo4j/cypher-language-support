@@ -10,7 +10,7 @@ describe('Functions hover', () => {
 
     const hoverInfo = new CypherLanguageService().hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
-      dbSchema: testData.mockSchema,
+      dbSchema,
     });
 
     expect(hoverInfo).toStrictEqual({
@@ -35,7 +35,7 @@ describe('Functions hover', () => {
 
     const hoverInfo = new CypherLanguageService().hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
-      dbSchema: testData.mockSchema,
+      dbSchema,
     });
 
     expect(hoverInfo).toStrictEqual({
@@ -60,12 +60,12 @@ describe('Functions hover', () => {
 
     const hoverInfo = new CypherLanguageService().hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
-      dbSchema: testData.mockSchema,
+      dbSchema,
     });
 
     const innerHoverInfo = new CypherLanguageService().hoverInfo(query, {
       caretPosition: query.indexOf('count') + 1,
-      dbSchema: testData.mockSchema,
+      dbSchema,
     });
 
     expect(hoverInfo).toStrictEqual({
