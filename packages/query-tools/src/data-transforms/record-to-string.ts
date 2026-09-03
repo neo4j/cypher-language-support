@@ -88,7 +88,7 @@ const cypherShellStyleStringify = (
   value: Node | Relationship | Path,
   {
     stringStyle,
-    quoteStrings = true,
+    quoteStrings,
   }: { stringStyle: CypherStringStyle; quoteStrings: boolean },
 ): string => {
   const includeIds = stringStyle === 'cypher-with-ids';

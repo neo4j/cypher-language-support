@@ -1,12 +1,25 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
+  // options: {
+  //   typeAware: true,
+  // },
   ignorePatterns: [
     'semanticAnalysis.js',
     'vendor/**',
     '**/fixtures/textmate/**',
   ],
-  plugins: ['typescript'],
+  plugins: [
+    // default plugins
+    'oxc',
+    'eslint',
+    'typescript',
+    'unicorn',
+    // additional plugins
+    'import',
+    'react',
+    'vitest',
+  ],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],
     // False positive: Playwright's `mount` fixture is destructured from the
@@ -17,5 +30,7 @@ export default defineConfig({
     '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/no-duplicate-type-constituents': 'off',
     '@typescript-eslint/no-misused-spread': 'off',
+    // asdfasdg
+    'vitest/expect-expect': 'off',
   },
 });
