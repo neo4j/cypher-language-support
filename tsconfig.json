@@ -1,5 +1,4 @@
 {
-  // Keep this as a solution-style config so `tsc -b` from the root only checks referenced projects.
   "files": [],
   "references": [
     { "path": "tsconfig.node.json" },
