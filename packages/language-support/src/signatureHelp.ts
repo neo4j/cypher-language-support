@@ -248,7 +248,6 @@ export function getSignatureInfo(
     ? parsingResult
     : createParsingResult(query, { consoleCommandsEnabled });
 
-  // Always pass parsingResult
   const methodSignatureInfo = getMethodSignature({
     parsingResult: resolvedParsingResult,
     caretPosition,
