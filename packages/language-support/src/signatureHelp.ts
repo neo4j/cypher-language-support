@@ -3,7 +3,7 @@ import {
   SignatureInformation,
 } from 'vscode-languageserver-types';
 
-import { ParseTreeWalker } from 'antlr4ng';
+import { ParserRuleContext, ParseTreeWalker, TerminalNode } from 'antlr4ng';
 import {
   CypherCmdParser as CypherParser,
   AllReduceExpressionInvalidArgumentsContext,
@@ -40,6 +40,15 @@ export enum MethodType {
   function = 'function',
   procedure = 'procedure',
 }
+/* The contexts we give signature help for open their argument list with either
+   ( or {. antlr4ng only generates an accessor for the tokens the rule actually
+   mentions, so both are optional here: any generated context is structurally
+   assignable, and the accessors are looked up with ?. at runtime. */
+type MethodContext = ParserRuleContext & {
+  LPAREN?: () => TerminalNode | null;
+  LCURLY?: () => TerminalNode | null;
+};
+
 interface ParsedMethod {
   methodName: string;
   activeParameter: number;
@@ -104,20 +113,28 @@ class SignatureHelper extends CypherCmdParserListener {
     super();
   }
 
+  shouldGiveSignatureHelp(ctx: MethodContext): boolean {
+    // We need to check we have opened the left parenthesis (or curly brace)
+    // and we won't offer the signature help on just the name
+    const openingToken = ctx.LPAREN?.() ?? ctx.LCURLY?.();
+
+    return (
+      isDefined(ctx.start) &&
+      isDefined(ctx.stop) &&
+      ctx.start.start <= this.caretToken.start &&
+      this.caretToken.stop <= ctx.stop.stop &&
+      isDefined(openingToken)
+    );
+  }
+
   handleAllReduce = (
     ctx:
       | AllReduceExpressionInvalidArgumentsContext
       | AllReduceExpressionValidArgumentsContext,
   ) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.ALLREDUCE().getText();
-      const previousArguments = ctx.COMMA_list().filter((arg) => {
+      const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
 
@@ -130,17 +147,12 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterShortestPathPattern = (ctx: ShortestPathPatternContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.SHORTEST_PATH()
-        ? ctx.SHORTEST_PATH().getText()
-        : ctx.ALL_SHORTEST_PATHS().getText();
+        ? ctx.SHORTEST_PATH()?.getText()
+        : ctx.ALL_SHORTEST_PATHS()?.getText();
       const activeParameter = 0;
+      if (!methodName) return;
       this.result = {
         methodName,
         activeParameter,
@@ -150,13 +162,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterVectorNormFunction = (ctx: VectorNormFunctionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.VECTOR_NORM().getText();
       const activeParameter =
         ctx.COMMA().symbol.stop < this.caretToken.stop ? 1 : 0;
@@ -169,15 +175,9 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.VECTOR_DISTANCE().getText();
-      const previousArguments = ctx.COMMA_list().filter((arg) => {
+      const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
       this.result = {
@@ -189,15 +189,9 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterVectorFunction = (ctx: VectorFunctionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.VECTOR().getText();
-      const previousArguments = ctx.COMMA_list().filter((arg) => {
+      const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
       });
       this.result = {
@@ -209,16 +203,11 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterNormalizeFunction = (ctx: NormalizeFunctionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.NORMALIZE().getText();
-      const activeParameter =
-        ctx.COMMA().symbol.stop < this.caretToken.stop ? 1 : 0;
+      const commaStop = ctx.COMMA()?.symbol.stop;
+      if (!commaStop) return;
+      const activeParameter = commaStop < this.caretToken.stop ? 1 : 0;
       this.result = {
         methodName,
         activeParameter,
@@ -228,16 +217,10 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterTrimFunction = (ctx: TrimFunctionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.TRIM().getText();
       let activeParameter = 0;
-      if (ctx.expression_list.length === 2) {
+      if (ctx.expression().length === 2) {
         const trimSource = ctx.expression(1);
         const trimCharacterString = ctx.expression(0);
         if (
@@ -267,13 +250,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterPropertyExistsPredicate = (ctx: PropertyExistsPredicateContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.PROPERTY_EXISTS().getText();
       const activeParameter =
         ctx.COMMA().symbol.stop <= this.caretToken.start ? 1 : 0;
@@ -286,13 +263,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterExistsExpression = (ctx: ExistsExpressionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left curly bracer
-      // and we won't offer the signature help on just the name
-      ctx.LCURLY()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.EXISTS().getText();
 
       const activeParameter = 0;
@@ -305,13 +276,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterReduceExpression = (ctx: ReduceExpressionContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.REDUCE().getText();
 
       const activeParameter =
@@ -338,14 +303,10 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterListItemsPredicate = (ctx: ListItemsPredicateContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      ctx.LPAREN()
-    ) {
-      const methodName = ctx.start.text;
+    if (this.shouldGiveSignatureHelp(ctx)) {
+      const methodName = ctx?.start?.text;
+      if (!methodName) return;
+
       let activeParameter = 0;
       if (ctx.IN() && ctx.IN().symbol.stop <= this.caretToken.start) {
         activeParameter = 1;
@@ -368,7 +329,9 @@ class SignatureHelper extends CypherCmdParserListener {
         expression finishes before the ( and we would have a 
         collection of spaces between apoc.do.when and the left parenthesis
       */
-      let index = ctx.stop.tokenIndex + 1;
+      const stopTokenIdx = ctx?.stop?.tokenIndex;
+      if (!stopTokenIdx) return;
+      let index = stopTokenIdx + 1;
       let nextToken = this.tokens[index];
 
       while (
@@ -395,13 +358,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterFunctionInvocation = (ctx: FunctionInvocationContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      isDefined(ctx.LPAREN())
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.functionName().getText();
       const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
@@ -416,13 +373,7 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 
   enterCallClause = (ctx: CallClauseContext) => {
-    if (
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      // We need to check we have opened the left parenthesis
-      // and we won't offer the signature help on just the name
-      isDefined(ctx.LPAREN())
-    ) {
+    if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.procedureName().getText();
       const previousArguments = ctx.COMMA().filter((arg) => {
         return arg.symbol.stop <= this.caretToken.start;
