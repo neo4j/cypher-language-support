@@ -77,7 +77,7 @@ export class Neo4jConnection {
     } else {
       result = tx.run(query, parameters);
     }
-    const records = [];
+    const records: Array<any> = [];
     let recordLimitHit = false;
 
     for await (const record of result) {

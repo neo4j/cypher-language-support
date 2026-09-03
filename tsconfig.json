@@ -1,16 +1,20 @@
 {
-  // the empty files is so you can run `tsc -b` in the root without double linting (first root, then subprojects)
+  // Keep this as a solution-style config so `tsc -b` from the root only checks referenced projects.
   "files": [],
-  "include": [],
   "references": [
+    { "path": "tsconfig.node.json" },
     { "path": "packages/language-support" },
+    { "path": "packages/language-support/tsconfig.node.json" },
+    { "path": "packages/lint-worker" },
+    { "path": "packages/lint-worker/tsconfig.node.json" },
+    { "path": "packages/query-tools" },
+    { "path": "packages/query-tools/tsconfig.node.json" },
     { "path": "packages/react-codemirror/" },
     { "path": "packages/react-codemirror/tsconfig.node.json" },
     { "path": "packages/react-codemirror-playground/" },
     { "path": "packages/react-codemirror-playground/tsconfig.node.json" },
     { "path": "packages/language-server/" },
     { "path": "packages/vscode-extension/" },
-    { "path": "packages/vscode-extension/tsconfig.node.json" },
-    { "path": "packages/query-tools/" }
+    { "path": "packages/vscode-extension/tsconfig.node.json" }
   ]
 }

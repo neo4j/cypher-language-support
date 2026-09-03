@@ -1,12 +1,13 @@
 {
+  "extends": "../../tsconfig.base.json",
   "include": [
     "./esbuild-extension.mts",
     "./genTextMate.js",
     "./tests/fixtures/textmate/simple-match.js"
   ],
   "compilerOptions": {
+    "allowJs": true,
     "module": "ESNext",
-    "target": "ESNext",
     "moduleResolution": "bundler",
     "noEmit": true
   }
