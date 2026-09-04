@@ -284,7 +284,7 @@ test('test onExecute', async ({ page, mount }) => {
   const execButton = isMac ? 'Meta+Enter' : 'Control+Enter';
 
   const initialValue = 'MATCH (n) RETURN n;';
-  const history = [];
+  const history: string[] = [];
 
   const onExecute = (cmd: string) => {
     history.unshift(cmd);

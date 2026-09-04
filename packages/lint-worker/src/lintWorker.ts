@@ -10,11 +10,10 @@ import workerpool from 'workerpool';
 
 function lintCypherQuery(
   query: string,
-  dbSchema,
+  dbSchema: DbSchema,
   featureFlags: { consoleCommands?: boolean } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
-  //cast to appease git lint check
-  return _lintCypherQuery(query, dbSchema as DbSchema, {
+  return _lintCypherQuery(query, dbSchema, {
     consoleCommandsEnabled: featureFlags?.consoleCommands,
   });
 }
