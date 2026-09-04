@@ -29,7 +29,7 @@
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
-    "clean": "rm -rf {dist,tsconfig.tsbuildinfo}",
+    "clean": "rm -rf dist tsconfig.tsbuildinfo",
     "test": "vitest run extract-unique-nodes-and-relationships",
     "test:polling": "vitest run pollingIntegrationTests"
   },

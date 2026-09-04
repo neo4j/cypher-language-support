@@ -92,3 +92,11 @@ export type SymbolsInfo = {
   query: string;
   symbolTables: SymbolTable[];
 };
+
+export type SignatureHoverInfo = {
+  signature: string;
+  description: string;
+  returnDescription: string | ReturnDescription[];
+  isDeprecated: boolean;
+  params: ArgumentDescription[];
+};
