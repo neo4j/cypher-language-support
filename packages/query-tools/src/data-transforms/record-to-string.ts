@@ -142,7 +142,7 @@ const cypherShellStyleStringify = (
 
     return value.segments
       .map((segment, index) => {
-        const result = [];
+        const result: string[] = [];
 
         if (index === 0) {
           result.push(
