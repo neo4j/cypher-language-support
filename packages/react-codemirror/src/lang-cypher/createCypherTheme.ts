@@ -255,8 +255,10 @@ export const createCypherTheme = ({
 
   const themeExtension = EditorView.theme(themeOptions, { dark });
 
-  const styles = Object.entries(highlightStyles).map(
-    ([token, color]: [HighlightedCypherTokenTypes, string]): TagStyle => ({
+  const styles = (
+    Object.entries(highlightStyles) as [HighlightedCypherTokenTypes, string][]
+  ).map(
+    ([token, color]): TagStyle => ({
       tag: tokenTypeToStyleTag[token],
       color,
       class: token === CypherTokenType.consoleCommand ? 'cm-bold' : undefined,
