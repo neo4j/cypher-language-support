@@ -1572,16 +1572,20 @@ removeNamedProvider
    ;
 
 userSetTagsClause
-   : tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
+   : explicitUserTags
    ;
 
 userAddTagsClause
-   : tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
+   : explicitUserTags
    ;
 
 userRemoveTagsClause
    : ALL tagToken
-   | tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
+   | explicitUserTags
+   ;
+
+explicitUserTags
+   : tagToken (stringLiteral | stringListLiteral | parameter["ANY"])
    ;
 
 password
