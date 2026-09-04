@@ -3,8 +3,8 @@ import { EditorView } from '@codemirror/view';
 export function getCSSStyleForClass(className: string): string {
   return Array.from(document.styleSheets).reduce((cssText, sheet) => {
     try {
-      const rules = sheet.cssRules ?? [];
-      for (const rule of Array.from(rules)) {
+      const rules = Array.from(sheet.cssRules ?? []);
+      for (const rule of rules) {
         if (
           rule instanceof CSSStyleRule &&
           rule.selectorText
