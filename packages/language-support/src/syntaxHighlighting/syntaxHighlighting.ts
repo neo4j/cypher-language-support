@@ -2,12 +2,15 @@ import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
 
 import {
   AccessModeArgsContext,
+  AllReduceExpressionInvalidArgumentsContext,
+  AllReduceExpressionValidArgumentsContext,
   ArrowLineContext,
   AutoCompletionRuleContext,
   BooleanLiteralContext,
   ConsoleCommandContext,
   CypherOptionNameContext,
   CypherOptionValueContext,
+  ExistsExpressionContext,
   FunctionNameContext,
   InterpolatedElementDoubleContext,
   InterpolatedElementSingleContext,
@@ -17,21 +20,28 @@ import {
   LabelTypeContext,
   LeftArrowContext,
   ListItemsPredicateContext,
+  NormalizeFunctionContext,
   NumberLiteralContext,
   ParameterContext,
   ParameterNameContext,
   ParamsArgsContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
+  PropertyExistsPredicateContext,
   PropertyKeyNameContext,
   ReduceExpressionContext,
   RightArrowContext,
   ServerCompletionRuleContext,
+  ShortestPathPatternContext,
   StringLiteralContext,
   StringsLiteralContext,
   SymbolicNameStringContext,
+  TrimFunctionContext,
   UseCompletionRuleContext,
   VariableContext,
+  VectorDistanceFunctionContext,
+  VectorFunctionContext,
+  VectorNormFunctionContext,
 } from '../generated-parser/CypherCmdParser.js';
 
 import {
@@ -200,6 +210,53 @@ class SyntaxHighlighter extends CypherParserListener {
     this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
   };
 
+  exitShortestPathPattern = (ctx: ShortestPathPatternContext) => {
+    const shortestFunction = ctx.SHORTEST_PATH()
+      ? ctx.SHORTEST_PATH()
+      : ctx.ALL_SHORTEST_PATHS();
+    this.colourFunction(shortestFunction);
+  };
+
+  exitAllReduceExpressionValidArguments = (
+    ctx: AllReduceExpressionValidArgumentsContext,
+  ) => {
+    this.colourPredicateFunction(ctx.ALLREDUCE());
+  };
+
+  exitAllReduceExpressionInvalidArguments = (
+    ctx: AllReduceExpressionInvalidArgumentsContext,
+  ) => {
+    this.colourPredicateFunction(ctx.ALLREDUCE());
+  };
+
+  exitVectorFunction = (ctx: VectorFunctionContext) => {
+    this.colourFunction(ctx.VECTOR());
+  };
+
+  exitVectorDistanceFunction = (ctx: VectorDistanceFunctionContext) => {
+    this.colourFunction(ctx.VECTOR_DISTANCE());
+  };
+
+  exitVectorNormFunction = (ctx: VectorNormFunctionContext) => {
+    this.colourFunction(ctx.VECTOR_NORM());
+  };
+
+  exitNormalizeFunction = (ctx: NormalizeFunctionContext) => {
+    this.colourFunction(ctx.NORMALIZE());
+  };
+
+  exitTrimFunction = (ctx: TrimFunctionContext) => {
+    this.colourFunction(ctx.TRIM());
+  };
+
+  exitPropertyExistsPredicate = (ctx: PropertyExistsPredicateContext) => {
+    this.colourPredicateFunction(ctx.PROPERTY_EXISTS());
+  };
+
+  exitExistsExpression = (ctx: ExistsExpressionContext) => {
+    this.colourPredicateFunction(ctx.EXISTS());
+  };
+
   exitFunctionName = (ctx: FunctionNameContext) => {
     this.colourMethodName(ctx, CypherTokenType.function);
   };
@@ -224,6 +281,10 @@ class SyntaxHighlighter extends CypherParserListener {
 
   private colourPredicateFunction = (ctx: TerminalNode) => {
     this.addToken(ctx.symbol, CypherTokenType.predicateFunction, ctx.getText());
+  };
+
+  private colourFunction = (ctx: TerminalNode) => {
+    this.addToken(ctx.symbol, CypherTokenType.function, ctx.getText());
   };
 
   exitVariable = (ctx: VariableContext) => {
