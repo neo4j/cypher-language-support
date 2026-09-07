@@ -1,6 +1,9 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
+  options: {
+    typeAware: true,
+  },
   ignorePatterns: [
     'semanticAnalysis.js',
     'vendor/**',
