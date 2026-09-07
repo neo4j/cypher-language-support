@@ -3,14 +3,15 @@ import type {
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
 import {
-  DbSchema,
+  DbSchema as DbSchemaV2,
   lintCypherQuery as _lintCypherQuery,
 } from '@neo4j-cypher/language-support';
+import type { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 import workerpool from 'workerpool';
 
 function lintCypherQuery(
   query: string,
-  dbSchema: DbSchema,
+  dbSchema: DbSchemaV2,
   featureFlags: { consoleCommands?: boolean } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables?: SymbolTable[] } {
   return _lintCypherQuery(query, dbSchema, {
@@ -20,10 +21,13 @@ function lintCypherQuery(
 
 workerpool.worker({ lintCypherQuery });
 
-type LinterArgs = Parameters<typeof lintCypherQuery>;
-
 export type LinterTask = workerpool.Promise<ReturnType<typeof lintCypherQuery>>;
 
+// Older downloaded workers accept DbSchemaV1
 export type LintWorker = {
-  lintCypherQuery: (...args: LinterArgs) => LinterTask;
+  lintCypherQuery: (
+    query: string,
+    dbSchema: DbSchemaV2 | DbSchemaV1,
+    featureFlags?: { consoleCommands?: boolean },
+  ) => LinterTask;
 };
