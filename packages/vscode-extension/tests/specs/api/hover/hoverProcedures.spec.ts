@@ -14,7 +14,7 @@ suite('Hover spec procedures', () => {
     '',
     '',
     '**Returns**',
-    `- \`${labelsProcedure.returnDescription[0].name}\` - ${labelsProcedure.returnDescription[0].description}`,
+    `- \`${labelsProcedure.returnDescription[0].name}\` - ${labelsProcedure.returnDescription[0].name} :: ${labelsProcedure.returnDescription[0].type}`,
   ].join('\n');
 
   test('Hover works for procedures', async () => {

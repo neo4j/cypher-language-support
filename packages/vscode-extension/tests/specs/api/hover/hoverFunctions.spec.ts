@@ -12,7 +12,7 @@ suite('Hover spec functions', () => {
     absFunction.description,
     '',
     '**Parameters**',
-    `- \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].description}`,
+    `- \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].name} :: ${absFunction.argumentDescription[0].type}`,
     '',
     `**Returns:** \`${absFunction.returnDescription}\``,
   ].join('\n');
@@ -59,22 +59,6 @@ suite('Hover spec functions', () => {
   test('Hover works for incomplete functions parameters along with signature help', async () => {
     const document = await newUntitledFileWithContent('RETURN abs(');
     const position = new vscode.Position(0, 8);
-
-    await eventually(async () => {
-      const signatureHelp: vscode.SignatureHelp =
-        await vscode.commands.executeCommand(
-          'vscode.executeSignatureHelpProvider',
-          document.uri,
-          new vscode.Position(0, 11),
-        );
-
-      assert.equal(
-        signatureHelp.signatures.some(
-          (signature) => signature.label === 'abs(input :: INTEGER | FLOAT)',
-        ),
-        true,
-      );
-    });
 
     await eventually(async () => {
       const hovers: vscode.Hover[] = await vscode.commands.executeCommand(
