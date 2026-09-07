@@ -1,9 +1,9 @@
 import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
-import { eventually, newUntitledFileWithContent } from '../../helpers';
+import { eventually, newUntitledFileWithContent } from '../../../helpers';
 
-suite('Hover spec', () => {
+suite('Hover spec functions', () => {
   const absFunction = testData.mockSchema.functions['CYPHER 5']['abs'];
   const expectedHoverInfo = [
     '```cypher',
