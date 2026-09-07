@@ -12,13 +12,13 @@ suite('Hover spec procedures', () => {
     '```',
     labelsProcedure.description,
     '',
-    '**Returns:**',
-    `- \`${labelsProcedure.returnDescription[0].name} - ${labelsProcedure.returnDescription[0].description}\``,
     '',
+    '**Returns**',
+    `- \`${labelsProcedure.returnDescription[0].name}\` - ${labelsProcedure.returnDescription[0].description}`,
   ].join('\n');
 
-  test('Hover works for prcedures', async () => {
-    const document = await newUntitledFileWithContent('RETURN db.labels()');
+  test('Hover works for procedures', async () => {
+    const document = await newUntitledFileWithContent('CALL db.labels()');
     const position = new vscode.Position(0, 8);
 
     await eventually(async () => {
