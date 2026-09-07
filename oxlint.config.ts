@@ -9,7 +9,17 @@ export default defineConfig({
     'vendor/**',
     '**/fixtures/textmate/**',
   ],
-  plugins: ['typescript'],
+  plugins: [
+    // default plugins
+    'oxc',
+    'eslint',
+    'typescript',
+    'unicorn',
+    // additional plugins
+    'import',
+    'react',
+    'vitest',
+  ],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],
     // False positive: Playwright's `mount` fixture is destructured from the
