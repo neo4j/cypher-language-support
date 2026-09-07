@@ -40,6 +40,13 @@ export function QueryDetails() {
     setOpenStatement(statement);
   };
 
+  const openLastStatement = (statementResults: QueryResults) => {
+    if (statementResults.length > 0) {
+      const lastStatement = statementResults[statementResults.length - 1];
+      setOpenStatement(lastStatement.statement);
+    }
+  };
+
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       const message = event.data as QueryResultsMessage;
@@ -50,6 +57,7 @@ export function QueryDetails() {
 
       if (message.type === 'executionStart') {
         setStatementResults(message.result);
+        openLastStatement(message.result);
       } else if (message.type === 'executionUpdate') {
         setStatementResults((prev) => {
           const newState = [...prev];
@@ -59,6 +67,7 @@ export function QueryDetails() {
           if (index !== -1) {
             newState[index] = message.result;
           }
+          openLastStatement(newState);
           return newState;
         });
       } else if (message.type === 'themeUpdate') {
@@ -75,12 +84,7 @@ export function QueryDetails() {
     };
   }, []);
 
-  useEffect(() => {
-    if (statementResults.length > 0) {
-      const lastStatement = statementResults[statementResults.length - 1];
-      setOpenStatement(lastStatement.statement);
-    }
-  }, [statementResults]);
+  useEffect(() => {}, [statementResults]);
 
   useEffect(() => {
     if (openStatement !== null) {

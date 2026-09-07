@@ -1,7 +1,7 @@
 import { keywordNames, operatorSymbols } from './lexerSymbols.js';
 
-const keywordRegex = new Array(...keywordNames.values()).join('|');
-const operatorsRegex = new Array(...operatorSymbols.values())
+const keywordRegex = [...keywordNames.values()].join('|');
+const operatorsRegex = [...operatorSymbols.values()]
   .map((v) => v.replace(/[.*+?^${}()|[\]\\/]/g, '\\$&'))
   .join('|');
 
