@@ -24,7 +24,7 @@ export const emptyResult: SignatureHelp = {
   activeParameter: undefined,
 };
 
-enum MethodType {
+export enum MethodType {
   function = 'function',
   procedure = 'procedure',
 }
@@ -70,11 +70,9 @@ export function toSignatureInformation(
 }
 
 function toSignatureHelp(
-  methodSignatures: Record<string, Neo4jFunction | Neo4jProcedure> = {},
+  method: Neo4jFunction | Neo4jProcedure | undefined,
   parsedMethod: ParsedMethod,
 ): SignatureHelp {
-  const methodName = parsedMethod.methodName;
-  const method = methodSignatures[methodName];
   const signatures = method ? [toSignatureInformation(method)] : [];
 
   const signatureHelp: SignatureHelp = {
@@ -173,6 +171,66 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
+export function getMethodSignature({
+  parsingResult,
+  dbSchema,
+  caretPosition,
+}: {
+  parsingResult: ParsingResult;
+  dbSchema: DbSchema;
+  caretPosition: number;
+}):
+  | {
+      parsedMethod: ParsedMethod;
+      schemaMethod: Neo4jFunction | Neo4jProcedure | undefined;
+    }
+  | undefined {
+  /* We need the token immediately before the caret
+
+      CALL something(
+                     ^
+     because in this case what gives us information on where we are
+     in the procedure is not the space at the caret, but the opening (
+  */
+  const prevCaretPosition = caretPosition - 1;
+
+  if (prevCaretPosition > 0) {
+    const caret = findCaret(parsingResult, prevCaretPosition);
+
+    if (caret) {
+      const statement = caret.statement;
+
+      const signatureHelper = new SignatureHelper(
+        statement.tokens,
+        caret.token,
+      );
+
+      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
+      const parsedMethod = signatureHelper.result;
+      if (!parsedMethod) {
+        return undefined;
+      }
+      const cypherVersion = resolveCypherVersion(
+        statement.cypherVersion,
+        dbSchema,
+      );
+
+      let schemaMethods: Record<string, Neo4jFunction | Neo4jProcedure> = {};
+      if (parsedMethod.methodType === MethodType.function) {
+        schemaMethods = dbSchema.functions?.[cypherVersion] ?? {};
+      } else {
+        schemaMethods = dbSchema.procedures?.[cypherVersion] ?? {};
+      }
+      const methodName = parsedMethod.methodName;
+
+      return {
+        parsedMethod,
+        schemaMethod: schemaMethods[methodName],
+      };
+    }
+  }
+}
+
 export function getSignatureInfo(
   query: string,
   dbSchema: DbSchema,
@@ -186,51 +244,22 @@ export function getSignatureInfo(
     consoleCommandsEnabled?: boolean;
   } = {},
 ): SignatureHelp {
-  const resolvedParsingResult =
-    parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
+  const resolvedParsingResult = parsingResult
+    ? parsingResult
+    : createParsingResult(query, { consoleCommandsEnabled });
 
-  let result: SignatureHelp = emptyResult;
-  /* We need the token immediately before the caret
+  const methodSignatureInfo = getMethodSignature({
+    parsingResult: resolvedParsingResult,
+    caretPosition,
+    dbSchema,
+  });
 
-      CALL something(
-                     ^
-     because in this case what gives us information on where we are
-     in the procedure is not the space at the caret, but the opening (
-  */
-  const prevCaretPosition = caretPosition - 1;
-
-  if (prevCaretPosition > 0) {
-    const caret = findCaret(resolvedParsingResult, prevCaretPosition);
-
-    if (caret) {
-      const statement = caret.statement;
-
-      const signatureHelper = new SignatureHelper(
-        statement.tokens,
-        caret.token,
-      );
-
-      ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
-      const method = signatureHelper.result;
-
-      if (method !== undefined) {
-        const cypherVersion = resolveCypherVersion(
-          statement.cypherVersion,
-          dbSchema,
-        );
-        if (method.methodType === MethodType.function) {
-          result = toSignatureHelp(
-            dbSchema.functions?.[cypherVersion] ?? {},
-            method,
-          );
-        } else {
-          result = toSignatureHelp(
-            dbSchema.procedures?.[cypherVersion] ?? {},
-            method,
-          );
-        }
-      }
-    }
+  if (!methodSignatureInfo) {
+    return emptyResult;
   }
-  return result;
+
+  return toSignatureHelp(
+    methodSignatureInfo.schemaMethod,
+    methodSignatureInfo.parsedMethod,
+  );
 }

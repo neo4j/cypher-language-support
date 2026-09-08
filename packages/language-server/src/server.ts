@@ -2,7 +2,10 @@ import {
   createConnection,
   Diagnostic,
   DidChangeConfigurationNotification,
+  Hover,
+  HoverParams,
   InitializeResult,
+  MarkupKind,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
@@ -32,6 +35,10 @@ import {
 import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
+import {
+  createParametersHoverString,
+  createReturnHoverString,
+} from './hoverInfo';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -172,6 +179,7 @@ connection.onInitialize(() => {
       signatureHelpProvider: {
         triggerCharacters: ['(', ',', ')'],
       },
+      hoverProvider: true,
       documentFormattingProvider: true,
     },
   };
@@ -237,6 +245,37 @@ connection.onNotification(
     neo4jSchemaPoller.events.once('schemaFetched', relintAllDocuments);
   },
 );
+
+connection.onHover((params: HoverParams): Hover | null => {
+  const textDocument = documents.get(params.textDocument.uri);
+  if (textDocument === undefined) return null;
+  const position = params.position;
+  const offset = textDocument.offsetAt(position);
+  const hoverInfo = languageService.hoverInfo(textDocument.getText(), {
+    caretPosition: offset,
+    dbSchema: neo4jSchemaPoller.metadata?.dbSchema ?? {},
+  });
+
+  if (!hoverInfo) {
+    return null;
+  }
+
+  return {
+    contents: {
+      kind: MarkupKind.Markdown,
+      value: [
+        '```cypher',
+        hoverInfo.signature,
+        '```',
+        `${hoverInfo.isDeprecated ? '(_deprecated_) ' : ''}${hoverInfo.description}`,
+        '',
+        ...createParametersHoverString(hoverInfo.params),
+        '',
+        ...createReturnHoverString(hoverInfo.returnDescription),
+      ].join('\n'),
+    },
+  };
+});
 
 connection.onNotification(
   'fetchSymbolTable',
