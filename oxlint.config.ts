@@ -30,7 +30,7 @@ export default defineConfig({
     '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/no-duplicate-type-constituents': 'off',
     '@typescript-eslint/no-misused-spread': 'off',
-    // asdfasdg
+    // We have lots of valid tests where expect is called indirectly.
     'vitest/expect-expect': 'off',
   },
 });
