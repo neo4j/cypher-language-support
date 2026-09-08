@@ -27,9 +27,9 @@ RETURN COLLECT(propertyKey)[..${ITEM_LIMIT}] AS result`;
     },
     collect(results, summary) {
       return {
-        labels: results[0],
-        relationshipTypes: results[1],
-        propertyKeys: results[2],
+        labels: results[0]!,
+        relationshipTypes: results[1]!,
+        propertyKeys: results[2]!,
         summary,
       };
     },

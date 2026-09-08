@@ -32,14 +32,14 @@ describe('Polling integration', () => {
   test('Polling graph schema query gives results in correct shape', async () => {
     const query = 'CALL db.schema.visualization() YIELD *';
     const result = await session.run(query);
-    validateGraphSchema(result.records[0].toObject());
+    validateGraphSchema(result.records[0]!.toObject());
     expect(validateGraphSchema.errors).toBe(null);
   });
 
   test('Polled graph schema is correctly retrieved from polling query result', async () => {
     const query = 'CALL db.schema.visualization() YIELD *';
     const result = await session.run(query);
-    const actualResult = [result.records[0].toObject()] as GraphSchema[];
+    const actualResult = [result.records[0]!.toObject()] as GraphSchema[];
     validateGraphSchema(actualResult[0]);
     const graphSchema = extractRelationshipsWithNamedNodes(actualResult);
     expect(graphSchema).toContainEqual({
