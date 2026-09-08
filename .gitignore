@@ -21,3 +21,6 @@ benchmarks.txt
 vite.config.ts.timestamp*
 .wdio-vscode-service
 .claude
+
+# API Extractor's scratch folder; the reviewed report lives in <package>/api-extractor/
+packages/*/temp/

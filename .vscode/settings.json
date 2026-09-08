@@ -1,6 +1,7 @@
 {
-  "typescript.tsc.autoDetect": "off",
-  "typescript.preferences.quoteStyle": "single",
+  "files.associations": { "*.json": "jsonc" },
+  "js/ts.tsc.autoDetect": "off",
+  "js/ts.preferences.quoteStyle": "single",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
