@@ -66,7 +66,7 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
-type GenericDiagnostic = { message: string };
+export type GenericDiagnostic = { message: string };
 
 export function isNotParamError<T extends GenericDiagnostic>(
   diagnostic: T,

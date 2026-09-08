@@ -3243,7 +3243,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-interface FormattingResult {
+export interface FormattingResult {
   formattedQuery: string;
   newCursorPos?: number; // Only set if cursorPosition is provided
 }
