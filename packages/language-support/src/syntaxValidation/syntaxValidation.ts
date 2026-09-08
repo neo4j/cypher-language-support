@@ -154,6 +154,8 @@ function detectNonDeclaredFunction(
     }
     return generateFunctionNotFoundError(parsedFunction);
   }
+
+  return undefined;
 }
 
 function functionExists(

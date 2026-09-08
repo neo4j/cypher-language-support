@@ -16,7 +16,7 @@
     "noUncheckedIndexedAccess": true,
     "noPropertyAccessFromIndexSignature": false, // TODO: set to true
     "noImplicitOverride": false, // TODO: set to true
-    "noImplicitReturns": false // TODO: set to true
+    "noImplicitReturns": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
