@@ -14,7 +14,6 @@
     "strictNullChecks": false, // TODO: remove this (default is true)
     "exactOptionalPropertyTypes": false, // TODO: set to true once strictNullChecks are enabled
     "noUncheckedIndexedAccess": true,
-    "noPropertyAccessFromIndexSignature": false, // TODO: set to true
     "noImplicitOverride": false, // TODO: set to true
     "noImplicitReturns": true
   },
