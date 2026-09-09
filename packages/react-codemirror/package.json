@@ -60,7 +60,7 @@
     "workerpool": "^9.3.3"
   },
   "devDependencies": {
-    "@neo4j-ndl/base": "^3.2.10",
+    "@neo4j-ndl/base": "^4.19.0",
     "@playwright/experimental-ct-react": "^1.62.1",
     "@playwright/test": "^1.62.1",
     "@types/lodash.debounce": "^4.0.9",

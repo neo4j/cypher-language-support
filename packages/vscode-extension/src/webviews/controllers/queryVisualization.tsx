@@ -14,12 +14,10 @@ declare const vscode: vscode;
 
 const renderContent = (result: QueryResult) => {
   if (result.type === 'executing') {
-    return <div className="n-px-token-5 n-py-token-4">Executing...</div>;
+    return <div className="query-status">Executing...</div>;
   }
   if (result.type === 'error') {
-    return (
-      <div className="n-px-token-5 n-py-token-4">{result.errorMessage}</div>
-    );
+    return <div className="query-status">{result.errorMessage}</div>;
   }
   if (result.type === 'success') {
     return (
@@ -68,7 +66,7 @@ export function QueryVisualization() {
       {statementResult ? (
         renderContent(statementResult)
       ) : (
-        <div className="n-px-token-5 n-py-token-4">
+        <div className="query-status">
           Select a statement from query details panel to see query results
         </div>
       )}

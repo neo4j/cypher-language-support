@@ -111,7 +111,7 @@ export function QueryDetails() {
           </Collapsible>
         ))
       ) : (
-        <div className="n-px-token-5 n-py-token-4">
+        <div className="query-status">
           Run a Cypher query to see the details
         </div>
       )}
