@@ -4,11 +4,24 @@ import {
   type DiffProps,
   type InlinePanelProps,
 } from '@neo4j-cypher/react-codemirror';
-import { useCallback, useMemo, useRef, useState } from 'react';
+import {
+  useCallback,
+  useMemo,
+  useRef,
+  useState,
+  type ComponentType,
+} from 'react';
 import { createPortal } from 'react-dom';
-import { Tree } from 'react-d3-tree';
+import Tree from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './treeUtil';
+
+// react-d3-tree's class component types are not compatible with React 19 yet.
+const Tree = D3Tree as unknown as ComponentType<{
+  data: ReturnType<typeof getDebugTree>;
+  orientation: 'vertical';
+  translate: { x: number; y: number };
+}>;
 
 function InlinePanelDemo({ onClose }: { onClose: () => void }) {
   const [text, setText] = useState('');
