@@ -10,7 +10,7 @@ type HistoryState = {
   documentUpdate: string | null;
 };
 const DRAFT_ENTRY_INDEX = -1;
-const historyInitialState = {
+const historyInitialState: HistoryState = {
   history: [],
   index: DRAFT_ENTRY_INDEX,
   documentUpdate: null,
