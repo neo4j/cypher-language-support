@@ -9,4 +9,4 @@ export default defineConfig({
       'packages/query-tools',
     ],
   },
-} as any);
+});

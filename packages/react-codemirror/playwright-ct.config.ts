@@ -38,7 +38,7 @@ export default defineConfig({
           },
         },
       },
-    } as any,
+    },
   },
 
   // Glob patterns or regular expressions that match test files.
