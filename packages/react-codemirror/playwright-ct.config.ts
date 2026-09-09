@@ -30,7 +30,7 @@ export default defineConfig({
     // vite config to get worker working
     ctViteConfig: {
       build: {
-        rollupOptions: {
+        rolldownOptions: {
           output: {
             entryFileNames: `assets/[name].js`,
             chunkFileNames: `assets/[name].js`,
@@ -38,7 +38,7 @@ export default defineConfig({
           },
         },
       },
-    },
+    } as any,
   },
 
   // Glob patterns or regular expressions that match test files.

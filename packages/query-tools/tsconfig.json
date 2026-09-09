@@ -5,7 +5,7 @@
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
-    "types": ["vitest/globals"],
+    "types": ["vitest/globals", "node"],
     "strict": true, // TODO: Move to tsconfig.base.json
     "strictNullChecks": true // TODO: Move to tsconfig.base.json
   }
