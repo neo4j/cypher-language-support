@@ -1,6 +1,9 @@
 import { Neo4jError } from 'neo4j-driver';
 
-export const FRIENDLY_ERROR_MESSAGES: { [key: string]: string } = {
+export const FRIENDLY_ERROR_MESSAGES: {
+  Default: string;
+  [key: string]: string;
+} = {
   'Neo.ClientError.Security.AuthenticationRateLimit':
     'Double check your username and password',
   'Neo.ClientError.Security.CredentialsExpired':

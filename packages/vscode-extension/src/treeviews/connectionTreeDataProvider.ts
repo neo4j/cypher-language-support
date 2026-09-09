@@ -45,6 +45,7 @@ class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
     if (element.type === 'activeConnection') {
       return this.getDatabaseConnectionItems(element);
     }
+    return undefined;
   }
 
   private getTopLevelConnections(): ConnectionItem[] {

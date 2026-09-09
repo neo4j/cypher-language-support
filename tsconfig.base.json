@@ -1,19 +1,21 @@
 {
+  "extends": "@tsconfig/recommended/tsconfig.json",
   "compilerOptions": {
     "composite": true,
     "allowJs": false,
     "declaration": true,
-    "esModuleInterop": true,
     "lib": ["dom", "ESNext"],
-    "module": "commonjs",
     "moduleResolution": "node",
-    "skipLibCheck": true,
     "sourceMap": true,
     "target": "ESNext",
     "outDir": "dist",
     "incremental": true,
-    "strict": true,
-    "strictNullChecks": false
+
+    "strictNullChecks": false, // TODO: remove this (default is true)
+    "exactOptionalPropertyTypes": false, // TODO: set to true once strictNullChecks are enabled
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": false, // TODO: set to true
+    "noImplicitReturns": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
