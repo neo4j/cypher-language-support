@@ -5,7 +5,7 @@ import {
   QueryResultWithLimit,
   getPropertyTypeDisplayName,
 } from '@neo4j-cypher/query-tools';
-import { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import { NeoNode, NeoRel } from '@neo4j-ndl/react-graph';
 import {
   isNode,
   isPath,
@@ -245,10 +245,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       .map((item) => {
         return {
           id: item.identity.toString(),
-          elementId: item.elementId,
-          startNodeId: item.start.toString(),
           from: item.start.toString(),
-          endNodeId: item.end.toString(),
           to: item.end.toString(),
           type: item.type,
           properties: Object.entries(item.properties).reduce(

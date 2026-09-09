@@ -1,7 +1,11 @@
 @import './components/vizWrapper.css';
 
 body {
-  background-color: rgb(var(--theme-palette-neutral-bg-default));
-  color: rgb(var(--theme-palette-neutral-text-default));
+  background-color: rgb(var(--theme-color-neutral-bg-default));
+  color: rgb(var(--theme-color-neutral-text-default));
   font-size: var(--vscode-editor-font-size);
+}
+
+.query-status {
+  padding: 8px 12px;
 }

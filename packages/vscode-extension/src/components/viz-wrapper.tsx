@@ -1,9 +1,5 @@
-import {
-  GraphVisualization,
-  NeoNode,
-  NeoRel,
-  SegmentedControl,
-} from '@neo4j-ndl/react';
+import { SegmentedControl } from '@neo4j-ndl/react';
+import { GraphVisualization, NeoNode, NeoRel } from '@neo4j-ndl/react-graph';
 import React from 'react';
 import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
 
@@ -87,7 +83,11 @@ export const VizWrapper: React.FC<VizWrapperProps> = ({
           <div className="vizWrapper-table">{renderTable(rows)}</div>
         ) : (
           <div className="vizWrapper-graph">
-            <GraphVisualization nodes={nodes} rels={relationships} />
+            <GraphVisualization
+              nodes={nodes}
+              rels={relationships}
+              topRightIsland={null}
+            />
           </div>
         )}
       </div>
