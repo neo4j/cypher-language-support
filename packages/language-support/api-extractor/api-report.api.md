@@ -4,22 +4,12 @@
 
 ```ts
 
-import { AbstractParseTreeVisitor } from 'antlr4ng';
-import * as antlr from 'antlr4ng';
 import { CompletionItem as CompletionItem_2 } from 'vscode-languageserver-types';
-import { DefaultErrorStrategy } from 'antlr4ng';
 import { Diagnostic } from 'vscode-languageserver-types';
-import { ErrorNode } from 'antlr4ng';
-import { Parser } from 'antlr4ng';
-import { ParserRuleContext } from 'antlr4ng';
-import { ParseTreeListener } from 'antlr4ng';
-import { RecognitionException } from 'antlr4ng';
 import { SemanticTokensLegend } from 'vscode-languageserver-types';
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { SignatureInformation } from 'vscode-languageserver-types';
-import { TerminalNode } from 'antlr4ng';
 import { TextDocument } from 'vscode-languageserver-textdocument';
-import { Token } from 'antlr4ng';
 
 // @public (undocumented)
 export const allCypherVersions: string[];
@@ -30,13 +20,19 @@ export type ArgumentDescription = ReturnDescription & {
 };
 
 // @public (undocumented)
-export function autocomplete(query: string, dbSchema: DbSchema, input?: {
-    symbolsInfo?: SymbolsInfo;
-    parsingResult?: ParsingResult;
+export function autocomplete(query: string, dbSchema: DbSchema, options?: AutocompleteOptions): CompletionItem[];
+
+// @public (undocumented)
+export interface AutocompleteOptions {
+    // (undocumented)
     caretPosition?: number;
-    manual?: boolean;
+    // (undocumented)
     consoleCommandsEnabled?: boolean;
-}): CompletionItem[];
+    // (undocumented)
+    manual?: boolean;
+    // (undocumented)
+    symbolsInfo?: SymbolsInfo;
+}
 
 // @public (undocumented)
 export function backtickIfNeeded(e: string, variant: BacktickVariant): string | undefined;
@@ -83,11 +79,6 @@ export type ConditionNode = {
 export const CONDITIONS: readonly ["and", "or", "not", "any"];
 
 // @public (undocumented)
-export function createParsingResult(query: string, settings: {
-    consoleCommandsEnabled: boolean;
-}): ParsingResult;
-
-// @public (undocumented)
 export class CypherLanguageService {
     constructor(input?: {
         consoleCommandsEnabled?: boolean;
@@ -110,8 +101,6 @@ export class CypherLanguageService {
         diagnostics: SyntaxDiagnostic[];
         symbolTables: SymbolTable[];
     };
-    // (undocumented)
-    parse(query: string): ParsingResult;
     // (undocumented)
     setSymbolsInfo(symbolsInfo: SymbolsInfo, sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>): void;
 }
@@ -238,11 +227,19 @@ export type GenericDiagnostic = {
 // @public
 export function getDebugTree(cypher: string): SimpleTree;
 
-// @public (undocumented)
-export function highlightSyntax(query: string, input?: {
+// @public
+export function getStatementAtCaret(input: string, caretOffset: number, input2?: {
     consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-}): ParsedCypherToken[];
+}): string;
+
+// @public (undocumented)
+export function highlightSyntax(query: string, options?: HighlightSyntaxOptions): ParsedCypherToken[];
+
+// @public (undocumented)
+export interface HighlightSyntaxOptions {
+    // (undocumented)
+    consoleCommandsEnabled?: boolean;
+}
 
 // @public (undocumented)
 export const _internalFeatureFlags: FeatureFlags;
@@ -262,13 +259,16 @@ export type LabelOrCondition = LabelLeaf | ConditionNode;
 export const lexerSymbols: Record<number, CypherTokenType>;
 
 // @public (undocumented)
-export function lintCypherQuery(query: string, dbSchema: DbSchema, input?: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-}): {
+export function lintCypherQuery(query: string, dbSchema: DbSchema, options?: LintCypherQueryOptions): {
     diagnostics: SyntaxDiagnostic[];
     symbolTables: SymbolTable[];
 };
+
+// @public (undocumented)
+export interface LintCypherQueryOptions {
+    // (undocumented)
+    consoleCommandsEnabled?: boolean;
+}
 
 // @public (undocumented)
 export function mapCypherToSemanticTokenIndex(cypherTokenType: CypherTokenType): number | undefined;
@@ -307,9 +307,6 @@ export type Neo4jProcedure = {
 export type Neo4jStringType = string;
 
 // @public (undocumented)
-export function parse(query: string): StatementOrCommandContext[];
-
-// @public (undocumented)
 export interface ParsedCypherToken {
     // (undocumented)
     bracketInfo?: BracketInfo;
@@ -324,54 +321,10 @@ export interface ParsedCypherToken {
 }
 
 // @public (undocumented)
-export interface ParsedStatement {
-    // (undocumented)
-    collectedFunctions: ParsedFunction[];
-    // (undocumented)
-    collectedLabelOrRelTypes: LabelOrRelType[];
-    // (undocumented)
-    collectedParameters: ParsedParameter[];
-    // (undocumented)
-    collectedProcedures: ParsedProcedure[];
-    // (undocumented)
-    collectedProperties: PropertyType[];
-    // (undocumented)
-    collectedReadPatternElements: PatternElementContext[];
-    // (undocumented)
-    collectedVariables: string[];
-    // (undocumented)
-    command: ParsedCommand;
-    // (undocumented)
-    ctx: StatementsOrCommandsContext;
-    // (undocumented)
-    cypherVersion?: CypherVersion;
-    // (undocumented)
-    cypherVersionError: SyntaxDiagnostic | undefined;
-    // (undocumented)
-    errorTracker: ErrorTrackingStrategy;
-    // (undocumented)
-    parser: CypherCmdParser;
-    // (undocumented)
-    stopNode: ParserRuleContext;
-    // (undocumented)
-    syntaxErrors: SyntaxDiagnostic[];
-    // (undocumented)
-    tokens: Token[];
-}
-
-// @public (undocumented)
 export function parseParameters(query: string, consoleCommandsEnabled: boolean): string[];
 
 // @public (undocumented)
 export function parseStatementsStrs(query: string): string[];
-
-// @public (undocumented)
-export interface ParsingResult {
-    // (undocumented)
-    query: string;
-    // (undocumented)
-    statementsParsing: ParsedStatement[];
-}
 
 // @public (undocumented)
 export type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE' | 'DEFAULT';
@@ -397,11 +350,15 @@ export type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
 export function shouldAutoCompleteYield(query: string, offset: number): boolean;
 
 // @public (undocumented)
-export function signatureHelp(query: string, dbSchema: DbSchema, input?: {
+export function signatureHelp(query: string, dbSchema: DbSchema, options?: SignatureInfoOptions): SignatureHelp;
+
+// @public (undocumented)
+export interface SignatureInfoOptions {
+    // (undocumented)
     caretPosition?: number;
-    parsingResult?: ParsingResult;
+    // (undocumented)
     consoleCommandsEnabled?: boolean;
-}): SignatureHelp;
+}
 
 // @public (undocumented)
 export interface SimpleTree {

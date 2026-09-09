@@ -173,18 +173,24 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
-export function getSignatureInfo(
+export interface SignatureInfoOptions {
+  caretPosition?: number;
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function getSignatureInfoWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     caretPosition = query.length,
     parsingResult,
     consoleCommandsEnabled = true,
-  }: {
-    caretPosition?: number;
-    parsingResult?: ParsingResult;
-    consoleCommandsEnabled?: boolean;
-  } = {},
+  }: SignatureInfoOptions & { parsingResult?: ParsingResult } = {},
 ): SignatureHelp {
   const resolvedParsingResult =
     parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
@@ -233,4 +239,12 @@ export function getSignatureInfo(
     }
   }
   return result;
+}
+
+export function getSignatureInfo(
+  query: string,
+  dbSchema: DbSchema,
+  options: SignatureInfoOptions = {},
+): SignatureHelp {
+  return getSignatureInfoWithParsingResult(query, dbSchema, options);
 }

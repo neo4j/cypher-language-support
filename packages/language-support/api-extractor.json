@@ -339,7 +339,9 @@
          *
          * DEFAULT VALUE: "warning"
          */
-        "logLevel": "warning",
+        // See api-extractor-base.json: a TypeScript diagnostic means the .d.ts we are
+        // describing may be wrong, so fail rather than record it. Currently zero.
+        "logLevel": "error",
 
         /**
          * When addToApiReportFile is true:  If API Extractor is configured to write an API report file (.api.md),
@@ -372,22 +374,32 @@
      * DEFAULT VALUE: See api-extractor-defaults.json for the complete table of extractorMessageReporting mappings
      */
     "extractorMessageReporting": {
+      // addToApiReportFile routes a message INTO the committed report instead of the
+      // build log. That is the enforcement mechanism: the report is committed and CI
+      // re-runs API Extractor with --ci, so any change to the set of warnings makes the
+      // report differ and fails the build. A log line would just get lost.
       "default": {
-        "logLevel": "warning"
-        // "addToApiReportFile": false
+        "logLevel": "warning",
+        "addToApiReportFile": true
       },
 
+      // Whitelisted: see api-extractor-base.json. Warning lines embed a .d.ts file:line
+      // that shifts when unrelated code moves, so tracking these would churn the report.
       "ae-undocumented": {
-        "logLevel": "warning"
+        "logLevel": "none"
       },
 
-      // Kept out of the report file (but still logged): our own API exposes the
-      // generated CypherParser class, so every one of its ~500 rule methods reports a
-      // forgotten context type. In the report those lines would churn on every
-      // grammar bump; in the log they can be filtered by source file instead.
+      // Whitelisted while the package is pre-release (2.0.0-next.x); revisit at 1.0.
+      "ae-missing-release-tag": {
+        "logLevel": "none"
+      },
+
+      // Tracked in the report. The public API no longer exposes the generated parser,
+      // so this is currently zero - any new one is a real regression and will show up
+      // as an added line in api-report.api.md.
       "ae-forgotten-export": {
         "logLevel": "warning",
-        "addToApiReportFile": false
+        "addToApiReportFile": true
       }
 
       // "ae-extra-release-tag": {
@@ -407,8 +419,8 @@
      */
     "tsdocMessageReporting": {
       "default": {
-        "logLevel": "warning"
-        // "addToApiReportFile": false
+        "logLevel": "warning",
+        "addToApiReportFile": true
       }
 
       // "tsdoc-link-tag-unescaped-text": {

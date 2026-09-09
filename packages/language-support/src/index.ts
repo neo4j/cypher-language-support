@@ -1,4 +1,5 @@
 export { autocomplete } from './autocompletion/autocompletion.js';
+export type { AutocompleteOptions } from './autocompletion/autocompletion.js';
 export {
   shouldAutoCompleteYield,
   BacktickVariant,
@@ -16,23 +17,22 @@ export {
 export { resolveCypherVersion } from './helpers.js';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols.js';
 export {
-  parse,
   parseParameters,
   CypherLanguageService,
   parseStatementsStrs,
-  createParsingResult,
-  ParsingResult,
-  ParsedStatement,
 } from './cypherLanguageService.js';
+export { getStatementAtCaret } from './statementAtCaret.js';
 export {
   getSignatureInfo as signatureHelp,
   toSignatureInformation,
 } from './signatureHelp.js';
+export type { SignatureInfoOptions } from './signatureHelp.js';
 export {
   highlightSyntax,
   mapCypherToSemanticTokenIndex,
   syntaxHighlightingLegend,
 } from './syntaxHighlighting/syntaxHighlighting.js';
+export type { HighlightSyntaxOptions } from './syntaxHighlighting/syntaxHighlighting.js';
 export type {
   ParsedCypherToken,
   BracketType,
@@ -47,6 +47,7 @@ export {
 export type {
   SyntaxDiagnostic,
   GenericDiagnostic,
+  LintCypherQueryOptions,
 } from './syntaxValidation/syntaxValidation.js';
 export { testData } from './tests/testData.js';
 export { textMateGrammar } from './textMateGrammar.js';

@@ -412,15 +412,21 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function highlightSyntax(
+export interface HighlightSyntaxOptions {
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function highlightSyntaxWithParsingResult(
   query: string,
   {
     consoleCommandsEnabled = true,
     parsingResult,
-  }: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-  } = {},
+  }: HighlightSyntaxOptions & { parsingResult?: ParsingResult } = {},
 ): ParsedCypherToken[] {
   const resolvedParsingResult =
     parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
@@ -464,4 +470,11 @@ export function highlightSyntax(
   );
 
   return result;
+}
+
+export function highlightSyntax(
+  query: string,
+  options: HighlightSyntaxOptions = {},
+): ParsedCypherToken[] {
+  return highlightSyntaxWithParsingResult(query, options);
 }

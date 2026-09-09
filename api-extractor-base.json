@@ -335,7 +335,10 @@
          *
          * DEFAULT VALUE: "warning"
          */
-        "logLevel": "warning",
+        // "error" rather than "warning": a TypeScript diagnostic during the analysis
+        // means the .d.ts we are describing may be wrong, so it should fail the build
+        // outright rather than land in the report. There are currently zero of these.
+        "logLevel": "error",
 
         /**
          * When addToApiReportFile is true:  If API Extractor is configured to write an API report file (.api.md),
@@ -368,13 +371,25 @@
      * DEFAULT VALUE: See api-extractor-defaults.json for the complete table of extractorMessageReporting mappings
      */
     "extractorMessageReporting": {
+      // addToApiReportFile routes a message INTO the committed report instead of the
+      // build log. That is the whole enforcement mechanism: the report is committed and
+      // CI re-runs API Extractor with --ci, so any change to the set of warnings makes
+      // the report differ and fails the build. A log line would just get lost.
       "default": {
-        "logLevel": "warning"
-        // "addToApiReportFile": false
+        "logLevel": "warning",
+        "addToApiReportFile": true
       },
 
+      // Ignored. Every warning line embeds a file:line from the emitted .d.ts, and
+      // those line numbers shift whenever unrelated code above them moves - so tracking
+      // these occurrences would fail CI spuriously. 
       "ae-undocumented": {
-        "logLevel": "warning"
+        "logLevel": "none"
+      },
+
+      // Ignored for now - to be revisited.
+      "ae-missing-release-tag": {
+        "logLevel": "none"
       }
 
       // "ae-extra-release-tag": {
@@ -394,8 +409,8 @@
      */
     "tsdocMessageReporting": {
       "default": {
-        "logLevel": "warning"
-        // "addToApiReportFile": false
+        "logLevel": "warning",
+        "addToApiReportFile": true
       }
 
       // "tsdoc-link-tag-unescaped-text": {

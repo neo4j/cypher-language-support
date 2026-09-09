@@ -420,16 +420,22 @@ function fixSymbolTableOffsets({
   });
 }
 
-export function lintCypherQuery(
+export interface LintCypherQueryOptions {
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function lintCypherQueryWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     consoleCommandsEnabled = true,
     parsingResult,
-  }: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-  } = {},
+  }: LintCypherQueryOptions & { parsingResult?: ParsingResult } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
     const resolvedParsingResult =
@@ -667,4 +673,12 @@ function errorOnUndeclaredProcedures(
   }
 
   return errors;
+}
+
+export function lintCypherQuery(
+  query: string,
+  dbSchema: DbSchema,
+  options: LintCypherQueryOptions = {},
+): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
+  return lintCypherQueryWithParsingResult(query, dbSchema, options);
 }
