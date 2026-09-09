@@ -2,10 +2,11 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "package.json", "vitest.config.mts"],
   "compilerOptions": {
-    "strict": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "resolveJsonModule": true,
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals"],
+    "strict": true, // TODO: Move to tsconfig.base.json
+    "strictNullChecks": true // TODO: Move to tsconfig.base.json
   }
 }
