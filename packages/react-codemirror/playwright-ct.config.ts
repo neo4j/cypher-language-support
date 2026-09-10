@@ -30,7 +30,7 @@ export default defineConfig({
     // vite config to get worker working
     ctViteConfig: {
       build: {
-        rollupOptions: {
+        rolldownOptions: {
           output: {
             entryFileNames: `assets/[name].js`,
             chunkFileNames: `assets/[name].js`,

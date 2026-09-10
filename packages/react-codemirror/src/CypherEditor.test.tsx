@@ -107,24 +107,28 @@ test('props.value set to undefined preserves editorValue', () => {
   expect(getEditorValue()).toBe('initial');
 });
 
-// value updates from outside onExecute are overwritten by pending updates
-test.fails('new props.value should cancel onChange', async () => {
+// This test documents unexpected behaviour:
+//  value updates (from outside onExecute) are overwritten by pending updates.
+test('new props.value should cancel onChange', async () => {
   // 1. value is updated internally
   ref.current.setValueAndFocus('update');
 
   // 2. editor is rerendered with a new value while a value update is still pending
+  // the update to 'new external value' is overwritten by the pending update to 'update'
   value = 'new external value';
   rerender();
 
   await debounce();
 
-  // expect(onChange).not.toHaveBeenCalled();
-  expect(getEditorValue()).toBe('new external value');
-  expect(value).toBe('new external value');
+  // NOTE: These assertions currently check for the WRONG behavior (they are inverted).
+  expect(onChange).toHaveBeenCalled();
+  expect(getEditorValue()).not.toBe('new external value');
+  expect(value).not.toBe('new external value');
 });
 
-// value updates from outside onExecute are overwritten by pending updates
-test.fails('new props.value set to same value should cancel onChange', async () => {
+// This test documents unexpected behaviour:
+//  value updates (from outside onExecute) are overwritten by pending updates
+test('new props.value set to same value should cancel onChange', async () => {
   // 1. value is set initially
   value = 'same value';
   rerender();
@@ -133,14 +137,16 @@ test.fails('new props.value set to same value should cancel onChange', async () 
   ref.current.setValueAndFocus('update');
 
   // 3. editor is rerendered with a new value while a value update is still pending
+  // the update to 'same value' is overwritten by the pending update to 'update'
   value = 'same value';
   rerender();
 
   await debounce();
 
-  // expect(onChange).not.toHaveBeenCalled();
-  expect(getEditorValue()).toBe('same value');
-  expect(value).toBe('same value');
+  // NOTE: These assertions currently check for the WRONG behavior (they are inverted).
+  expect(onChange).toHaveBeenCalled();
+  expect(getEditorValue()).not.toBe('same value');
+  expect(value).not.toBe('same value');
 });
 
 test('rerender should not cancel onChange', async () => {

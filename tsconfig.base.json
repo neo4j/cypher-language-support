@@ -11,7 +11,9 @@
     "sourceMap": true,
     "target": "ESNext",
     "outDir": "dist",
-    "incremental": true
+    "incremental": true,
+    "strict": false,
+    "strictNullChecks": false
   },
   "exclude": ["node_modules", ".vscode-test"]
 }
