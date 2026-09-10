@@ -47,10 +47,12 @@ describe('getHTML', () => {
     document.body.appendChild(wrapper);
 
     const mockView = {
-      domAtPos: vi.fn((pos: number) => ({
-        node: wrapper,
-        offset: pos === 0 ? 0 : 1,
-      })),
+      domAtPos: vi.fn<(pos: number) => { node: Node; offset: number }>(
+        (pos) => ({
+          node: wrapper,
+          offset: pos === 0 ? 0 : 1,
+        }),
+      ),
     } as unknown as EditorView;
 
     const html = getHTML(mockView, 0, 1);

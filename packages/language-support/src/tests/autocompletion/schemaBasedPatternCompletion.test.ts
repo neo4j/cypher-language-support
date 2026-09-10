@@ -343,7 +343,7 @@ describe('Schema based completions', () => {
     });
   });
 
-  test('Works in pattern expression ', () => {
+  test('Works in pattern expression', () => {
     const query = `MATCH (p:Pokemon)
 WHERE EXISTS {
   (p)-[:`;
@@ -362,7 +362,7 @@ WHERE EXISTS {
     });
   });
 
-  test('Node completion works in pattern expression ', () => {
+  test('Node completion works in pattern expression', () => {
     const query = `MATCH (p:Pokemon)-[r:KNOWS]->(m)
 WHERE EXISTS {
   (p)-[r]->(:`;
@@ -382,7 +382,7 @@ WHERE EXISTS {
     });
   });
 
-  test('Works in pattern comprehension ', () => {
+  test('Works in pattern comprehension', () => {
     const query = `MATCH (p:Pokemon)
 RETURN [(p)-[:`;
 
@@ -402,7 +402,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles patterns with multiple variables ', () => {
+  test('Handles patterns with multiple variables', () => {
     const query = 'MATCH (t:Trainer)-[:CATCHES]->(p:Pokemon), (p)-[r:';
 
     testCompletions({
@@ -940,7 +940,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Handles anonymous variables as context - relationship completion ', () => {
+  test('Handles anonymous variables as context - relationship completion', () => {
     const query = 'MATCH (:Trainer)-[r:';
 
     testCompletions({
@@ -969,7 +969,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not properly handle quantifiers ', () => {
+  test('Limitation: Does not properly handle quantifiers', () => {
     const query = 'MATCH (t:Trainer)-[r:CATCHES*1..3]->(p:Pokemon)-[r2:';
 
     testCompletions({
@@ -1131,7 +1131,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not deduplicate existing relationship types in pattern ', () => {
+  test('Limitation: Does not deduplicate existing relationship types in pattern', () => {
     const query = 'MATCH (t:Trainer)-[r:CATCHES|TRAINS|';
 
     testCompletions({
@@ -1151,7 +1151,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not deduplicate existing node labels in simple "|" pattern ', () => {
+  test('Limitation: Does not deduplicate existing node labels in simple "|" pattern', () => {
     const query = 'MATCH (g)<-[r:CHALLENGES]-(p:Pokemon|Gym|';
 
     testCompletions({
@@ -1173,7 +1173,7 @@ RETURN [(p)-[:`;
     });
   });
 
-  test('Limitation: Does not deduplicate existing node labels in simple "&" pattern ', () => {
+  test('Limitation: Does not deduplicate existing node labels in simple "&" pattern', () => {
     const query = 'MATCH (g)<-[r:CHALLENGES]-(p:Pokemon&Gym&';
 
     testCompletions({

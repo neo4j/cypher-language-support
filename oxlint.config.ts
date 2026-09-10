@@ -1,9 +1,7 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  options: {
-    typeAware: true,
-  },
+  options: { typeAware: true },
   ignorePatterns: [
     'semanticAnalysis.js',
     'vendor/**',
@@ -32,5 +30,18 @@ export default defineConfig({
     '@typescript-eslint/no-misused-spread': 'off',
     // We have lots of valid tests where expect is called indirectly.
     'vitest/expect-expect': 'off',
+    // This rule requires strictNullChecks to be true.
+    '@typescript-eslint/no-useless-default-assignment': 'off',
   },
+  overrides: [
+    {
+      // VS Code API and webview suites use mocha / WDIO, not vitest.
+      files: ['packages/vscode-extension/tests/**'],
+      rules: {
+        'vitest/valid-title': 'off',
+        'vitest/no-conditional-tests': 'off',
+        'vitest/no-conditional-expect': 'off',
+      },
+    },
+  ],
 });

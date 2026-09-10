@@ -132,7 +132,7 @@ export async function testCompletionNotContains({
 }
 
 suite('Auto completion spec', () => {
-  test('Completes allShortestPaths ', async () => {
+  test('Completes allShortestPaths', async () => {
     const position = new vscode.Position(2, 28);
 
     const expected: vscode.CompletionItem[] = [

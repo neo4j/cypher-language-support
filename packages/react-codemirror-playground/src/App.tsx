@@ -159,15 +159,15 @@ export function App() {
   }, []);
 
   const [diff, setDiff] = useState<DiffProps | null>(null);
-  let beforeValue: string = '';
+  const beforeValueRef = useRef('');
   const showDiff = useCallback(() => {
-    beforeValue =
+    beforeValueRef.current =
       editorRef.current?.editorView.current?.state.doc.toString() ?? '';
-    setDiff({ original: beforeValue });
+    setDiff({ original: beforeValueRef.current });
   }, []);
   const acceptDiff = useCallback(() => setDiff(null), []);
   const rejectDiff = useCallback(() => {
-    setValue(beforeValue);
+    setValue(beforeValueRef.current);
     setDiff(null);
   }, []);
 

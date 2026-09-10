@@ -57,7 +57,7 @@ describe('unscoped variable completions', () => {
     });
   });
 
-  test('does not suggest variables when unwinding ', () => {
+  test('does not suggest variables when unwinding', () => {
     const query = 'MATCH (n:Person) UNWIND [] as ';
 
     testCompletions({

@@ -84,8 +84,6 @@ export function QueryDetails() {
     };
   }, []);
 
-  useEffect(() => {}, [statementResults]);
-
   useEffect(() => {
     if (openStatement !== null) {
       const selectedResult: QueryResult = statementResults.find(
