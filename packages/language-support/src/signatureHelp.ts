@@ -113,7 +113,7 @@ class SignatureHelper extends CypherCmdParserListener {
     super();
   }
 
-  shouldGiveSignatureHelp(ctx: MethodContext): boolean {
+  private shouldGiveSignatureHelp(ctx: MethodContext): boolean {
     // We need to check we have opened the left parenthesis (or curly brace)
     // and we won't offer the signature help on just the name
     const openingToken = ctx.LPAREN?.() ?? ctx.LCURLY?.();
@@ -127,7 +127,7 @@ class SignatureHelper extends CypherCmdParserListener {
     );
   }
 
-  handleAllReduce = (
+  handleAllReduceExpression = (
     ctx:
       | AllReduceExpressionInvalidArgumentsContext
       | AllReduceExpressionValidArgumentsContext,
@@ -293,13 +293,13 @@ class SignatureHelper extends CypherCmdParserListener {
   enterAllReduceExpressionInvalidArguments = (
     ctx: AllReduceExpressionInvalidArgumentsContext,
   ) => {
-    this.handleAllReduce(ctx);
+    this.handleAllReduceExpression(ctx);
   };
 
   enterAllReduceExpressionValidArguments = (
     ctx: AllReduceExpressionValidArgumentsContext,
   ) => {
-    this.handleAllReduce(ctx);
+    this.handleAllReduceExpression(ctx);
   };
 
   enterListItemsPredicate = (ctx: ListItemsPredicateContext) => {
