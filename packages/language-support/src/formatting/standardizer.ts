@@ -4,7 +4,7 @@ import { CypherCmdParserVisitor } from '../generated-parser/CypherCmdParserVisit
 import { getParseTreeAndTokens } from './formattingHelpers.js';
 
 class StandardizingVisitor extends CypherCmdParserVisitor<void> {
-  buffer = [];
+  buffer: string[] = [];
 
   format = (root: StatementsOrCommandsContext) => {
     this.visit(root);

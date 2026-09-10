@@ -372,7 +372,7 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    setSchemaError(String(e));
+                    setSchemaError(String(e as Error));
                   }
                 }}
               />
