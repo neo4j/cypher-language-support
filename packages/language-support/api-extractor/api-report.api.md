@@ -97,6 +97,11 @@ export class CypherLanguageService {
     // (undocumented)
     highlightSyntax(query: string): ParsedCypherToken[];
     // (undocumented)
+    hoverInfo(query: string, input: {
+        caretPosition: number;
+        dbSchema: DbSchema;
+    }): SignatureHoverInfo | undefined;
+    // (undocumented)
     lint(query: string, dbSchema: DbSchema): {
         diagnostics: SyntaxDiagnostic[];
         symbolTables: SymbolTable[];
@@ -348,6 +353,15 @@ export function shouldAutoCompleteYield(query: string, offset: number): boolean;
 
 // @public (undocumented)
 export function signatureHelp(query: string, dbSchema: DbSchema, options?: SignatureInfoOptions): SignatureHelp;
+
+// @public (undocumented)
+export type SignatureHoverInfo = {
+    signature: string;
+    description: string;
+    returnDescription: string | ReturnDescription[];
+    isDeprecated: boolean;
+    params: ArgumentDescription[];
+};
 
 // @public (undocumented)
 export interface SignatureInfoOptions {
