@@ -68,4 +68,5 @@ export type {
   CONDITIONS,
   ConditionNode,
   SymbolsInfo,
+  SignatureHoverInfo,
 } from './types.js';

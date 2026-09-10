@@ -1,11 +1,11 @@
 {
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "composite": true,
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
-    "allowJs": true
+    "noEmit": true
   },
   "include": ["*.config.ts", "*.config.js", "src/vite-env.d.ts"]
 }

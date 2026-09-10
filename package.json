@@ -17,7 +17,7 @@
     "dev-vscode": "pnpm --recursive --parallel --filter='neo4j-for-vscode...' dev",
     "release": "pnpm build && pnpm --filter '!@neo4j-cypher/lint-worker' publish -r --tag next --access=public && pnpm --filter '@neo4j-cypher/lint-worker' publish -r --access=public --tag $(cat ./packages/lint-worker/server-version-tag.txt)",
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
-    "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig.tsbuildinfo} && pnpm clean",
+    "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig*.tsbuildinfo} && pnpm clean",
     "clean": "pnpm --recursive --parallel clean",
     "test": "pnpm --recursive --parallel test",
     "test:e2e": "pnpm --recursive test:e2e",
@@ -26,7 +26,8 @@
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "benchmark": "pnpm --recursive benchmark --concurrency=1"
+    "benchmark": "pnpm --recursive benchmark --concurrency=1",
+    "typecheck": "tsc -b --noEmit --force"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
@@ -47,7 +48,7 @@
     "ts-node": "10.9.1",
     "tsx": "^4.19.4",
     "typescript": "5.8.3",
-    "vitest": "^2.1.9"
+    "vitest": "^4.1.11"
   },
   "engines": {
     "node": ">=24.11.1",
