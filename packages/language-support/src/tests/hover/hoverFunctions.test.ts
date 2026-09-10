@@ -8,7 +8,7 @@ describe('Functions hover', () => {
   test('provides hover info for functions', () => {
     const query = 'CYPHER 25 RETURN abs(1,2)';
 
-    const hoverInfo = new CypherLanguageService().hoverInfo(query, {
+    const hoverInfo = languageService.hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
       dbSchema,
     });
@@ -33,7 +33,7 @@ describe('Functions hover', () => {
   test('provides hover info for incomplete function parameters', () => {
     const query = 'RETURN abs(';
 
-    const hoverInfo = new CypherLanguageService().hoverInfo(query, {
+    const hoverInfo = languageService.hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
       dbSchema,
     });
@@ -58,12 +58,12 @@ describe('Functions hover', () => {
   test('provides hover info for functions wrapping functions', () => {
     const query = 'MATCH (n) RETURN abs(count(n))';
 
-    const hoverInfo = new CypherLanguageService().hoverInfo(query, {
+    const hoverInfo = languageService.hoverInfo(query, {
       caretPosition: query.indexOf('abs') + 1,
       dbSchema,
     });
 
-    const innerHoverInfo = new CypherLanguageService().hoverInfo(query, {
+    const innerHoverInfo = languageService.hoverInfo(query, {
       caretPosition: query.indexOf('count') + 1,
       dbSchema,
     });
