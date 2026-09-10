@@ -256,7 +256,9 @@ export const createCypherTheme = ({
   const themeExtension = EditorView.theme(themeOptions, { dark });
 
   const styles = (
-    Object.entries(highlightStyles) as [HighlightedCypherTokenTypes, string][]
+    Object.entries(highlightStyles) as Array<
+      [HighlightedCypherTokenTypes, string]
+    >
   ).map(
     ([token, color]): TagStyle => ({
       tag: tokenTypeToStyleTag[token],
