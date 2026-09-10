@@ -67,6 +67,5 @@ export type {
   ProcedureMode,
   CONDITIONS,
   ConditionNode,
-  Neo4jStringType,
   SymbolsInfo,
 } from './types.js';

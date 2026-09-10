@@ -164,7 +164,11 @@
      *
      * DEFAULT VALUE: "false"
      */
-    "includeForgottenExports": true
+    // Forgotten exports are surfaced as a one-line "ae-forgotten-export" warning via
+    // messages.extractorMessageReporting instead. Setting this to true inlines the
+    // forgotten symbol's whole declaration, and then everything it references becomes
+    // forgotten in turn - a cascade that can pull in a generated parser wholesale.
+    "includeForgottenExports": false
   },
 
   /**
@@ -197,7 +201,8 @@
      *
      * DEFAULT VALUE: "false"
      */
-    "includeForgottenExports": true
+    // Same rationale as apiReport.includeForgottenExports above.
+    "includeForgottenExports": false
   },
 
   /**
@@ -382,7 +387,7 @@
 
       // Ignored. Every warning line embeds a file:line from the emitted .d.ts, and
       // those line numbers shift whenever unrelated code above them moves - so tracking
-      // these occurrences would fail CI spuriously. 
+      // these occurrences would fail CI spuriously.
       "ae-undocumented": {
         "logLevel": "none"
       },

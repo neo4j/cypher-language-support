@@ -304,9 +304,6 @@ export type Neo4jProcedure = {
 };
 
 // @public (undocumented)
-export type Neo4jStringType = string;
-
-// @public (undocumented)
 export interface ParsedCypherToken {
     // (undocumented)
     bracketInfo?: BracketInfo;
@@ -339,7 +336,7 @@ export function resolveCypherVersion(parsedVersion: CypherVersion | undefined, d
 export type ReturnDescription = {
     name: string;
     description: string;
-    type: Neo4jStringType;
+    type: string;
     isDeprecated: boolean;
 };
 

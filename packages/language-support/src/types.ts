@@ -3,7 +3,7 @@ import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-ty
 export type ReturnDescription = {
   name: string;
   description: string;
-  type: Neo4jStringType;
+  type: string;
   isDeprecated: boolean;
 };
 
@@ -11,8 +11,6 @@ export const allCypherVersions = ['CYPHER 5', 'CYPHER 25'];
 export const cypherVersionNumbers: string[] = ['5', '25'];
 export type CypherVersion = (typeof allCypherVersions)[number];
 
-// we could parse this string for better types in the future
-export type Neo4jStringType = string; //Whats the point of this?
 export type ArgumentDescription = ReturnDescription & { default?: string };
 
 export type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE' | 'DEFAULT';
