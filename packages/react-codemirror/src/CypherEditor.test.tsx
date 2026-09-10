@@ -18,9 +18,7 @@ const onChange = vi.fn((v: string) => {
   rerender();
 });
 
-(
-  globalThis as typeof globalThis & { IS_REACT_ACT_ENVIRONMENT: boolean }
-).IS_REACT_ACT_ENVIRONMENT = true;
+(global as any).IS_REACT_ACT_ENVIRONMENT = true;
 const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 
 /** Avoids crash in test environment */
