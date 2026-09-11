@@ -6,13 +6,13 @@ import { TextDocument } from 'vscode-languageserver-textdocument';
 import {
   getCurrentStatement,
   getSelectedText,
-  getStatementAtCaret,
   runCypher,
 } from '../../../src/commandHandlers/connection';
 import * as connectionService from '../../../src/connectionService';
 import * as contextService from '../../../src/contextService';
 import CypherRunner from '../../../src/cypherRunner';
 import { getMockConnection } from '../../helpers';
+import { getStatementAtCaret } from '@neo4j-cypher/language-support';
 
 suite('Cypher runner spec', () => {
   let sandbox: sinon.SinonSandbox;

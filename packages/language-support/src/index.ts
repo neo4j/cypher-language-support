@@ -1,36 +1,54 @@
-export { Trees } from 'antlr4ng';
-export type { ParseTree, ParserRuleContext } from 'antlr4ng';
 export { autocomplete } from './autocompletion/autocompletion.js';
-export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers.js';
+export type { AutocompleteOptions } from './autocompletion/autocompletion.js';
+export {
+  shouldAutoCompleteYield,
+  BacktickVariant,
+} from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
-export type { DbSchema } from './dbSchema.js';
-export { _internalFeatureFlags } from './featureFlags.js';
-export { formatQuery } from './formatting/formatting.js';
+export type { DbSchema, ScopedRegistry, Registry } from './dbSchema.js';
+export { getDebugTree } from './debugTree.js';
+export type { SimpleTree } from './debugTree.js';
+export { _internalFeatureFlags, FeatureFlags } from './featureFlags.js';
+export {
+  formatQuery,
+  FormattingOptions,
+  FormattingResult,
+} from './formatting/formatting.js';
 export { resolveCypherVersion } from './helpers.js';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols.js';
 export {
-  parse,
   parseParameters,
   CypherLanguageService,
   parseStatementsStrs,
-  createParsingResult,
 } from './cypherLanguageService.js';
+export { getStatementAtCaret } from './statementAtCaret.js';
 export {
   getSignatureInfo as signatureHelp,
   toSignatureInformation,
 } from './signatureHelp.js';
+export type { SignatureInfoOptions } from './signatureHelp.js';
 export {
   highlightSyntax,
   mapCypherToSemanticTokenIndex,
   syntaxHighlightingLegend,
 } from './syntaxHighlighting/syntaxHighlighting.js';
-export type { ParsedCypherToken } from './syntaxHighlighting/syntaxHighlightingHelper.js';
+export type { HighlightSyntaxOptions } from './syntaxHighlighting/syntaxHighlighting.js';
+export type {
+  ParsedCypherToken,
+  BracketType,
+  TokenPosition,
+  BracketInfo,
+} from './syntaxHighlighting/syntaxHighlightingHelper.js';
 export {
   lintCypherQuery,
   clampUnsafePositions,
   isNotParamError,
 } from './syntaxValidation/syntaxValidation.js';
-export type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
+export type {
+  SyntaxDiagnostic,
+  GenericDiagnostic,
+  LintCypherQueryOptions,
+} from './syntaxValidation/syntaxValidation.js';
 export { testData } from './tests/testData.js';
 export { textMateGrammar } from './textMateGrammar.js';
 export { allCypherVersions } from './types.js';
@@ -40,16 +58,15 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
+  Symbol,
+  ArgumentDescription,
+  ReturnDescription,
+  LabelOrCondition,
+  LabelLeaf,
+  Condition,
+  ProcedureMode,
+  CONDITIONS,
+  ConditionNode,
+  SymbolsInfo,
   SignatureHoverInfo,
 } from './types.js';
-export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
-
-import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
-import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser.js';
-import { CypherCmdParserListener as CypherParserListener } from './generated-parser/CypherCmdParserListener.js';
-import { CypherCmdParserVisitor as CypherParserVisitor } from './generated-parser/CypherCmdParserVisitor.js';
-
-export * from './generated-parser/CypherCmdLexer.js';
-export * from './generated-parser/CypherCmdParser.js';
-export * from './generated-parser/CypherCmdParserListener.js';
-export * from './generated-parser/CypherCmdParserVisitor.js';

@@ -7,8 +7,8 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Tree } from 'react-d3-tree';
+import { getDebugTree } from '@neo4j-cypher/language-support';
 import { TokenTable } from './TokenTable';
-import { getDebugTree } from './treeUtil';
 
 function InlinePanelDemo({ onClose }: { onClose: () => void }) {
   const [text, setText] = useState('');

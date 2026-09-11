@@ -7,7 +7,19 @@ import {
 import { CompletionItem, SymbolsInfo } from '../types.js';
 import { completionCoreCompletion } from './completionCoreCompletions.js';
 
-export function autocomplete(
+export interface AutocompleteOptions {
+  symbolsInfo?: SymbolsInfo;
+  caretPosition?: number;
+  manual?: boolean;
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Deliberately not re-exported from index.ts: ParsingResult exposes the
+ * generated ANTLR parser, and putting it in the public API drags the parser with it.
+ */
+export function autocompleteWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
@@ -16,13 +28,7 @@ export function autocomplete(
     caretPosition = query.length,
     manual = false,
     consoleCommandsEnabled = true,
-  }: {
-    symbolsInfo?: SymbolsInfo;
-    parsingResult?: ParsingResult;
-    caretPosition?: number;
-    manual?: boolean;
-    consoleCommandsEnabled?: boolean;
-  } = {},
+  }: AutocompleteOptions & { parsingResult?: ParsingResult } = {},
 ): CompletionItem[] {
   const resolvedParsingResult =
     parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
@@ -51,4 +57,12 @@ export function autocomplete(
   }
 
   return [];
+}
+
+export function autocomplete(
+  query: string,
+  dbSchema: DbSchema,
+  options: AutocompleteOptions = {},
+): CompletionItem[] {
+  return autocompleteWithParsingResult(query, dbSchema, options);
 }

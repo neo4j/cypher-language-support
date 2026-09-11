@@ -3243,7 +3243,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-interface FormattingResult {
+export interface FormattingResult {
   formattedQuery: string;
   newCursorPos?: number; // Only set if cursorPosition is provided
 }
@@ -3259,12 +3259,10 @@ export interface FormattingOptions {
  * Makes a best-effort attempt if the query is not parseable.
  *
  * @param query - Raw Cypher query string to format.
- * @param formattingOptions - Formatting behaviour flags.
- * @param formattingOptions.maxColumn - Maximum column width for the formatted query (80 recommended).
- *     Defaults to 80.
- * @param formattingOptions.cursorPosition - Index for the caret in the raw query.
- *     If supplied the return value will include `newCursorPos` which
- *     indicates its new position in the formatted query
+ * @param formattingOptions - Formatting behaviour flags. `maxColumn` is the maximum
+ *     column width for the formatted query (80 recommended, and the default).
+ *     `cursorPosition` is the index of the caret in the raw query; if supplied, the
+ *     return value includes `newCursorPos` giving its position in the formatted query.
  *
  * @returns An object containing:
  * * `formattedQuery` – formatted query string.
