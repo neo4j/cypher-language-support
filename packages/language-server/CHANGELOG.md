@@ -1,5 +1,19 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.39
+
+### Minor Changes
+
+- 1897def: Functions and procedures information on hover
+
+### Patch Changes
+
+- Updated dependencies [1897def]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/lint-worker@1.10.1-next.15
+  - @neo4j-cypher/query-tools@2.0.0-next.38
+
 ## 2.0.0-next.38
 
 ### Patch Changes
