@@ -1,5 +1,15 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.41
+
+### Patch Changes
+
+- f0f28db: Update vite to v8 and bump playwright
+- Updated dependencies [1897def]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/lint-worker@1.10.1-next.15
+
 ## 2.0.0-next.40
 
 ### Minor Changes
