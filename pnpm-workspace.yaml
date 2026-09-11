@@ -14,3 +14,5 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/interaction-handlers'
   - '@neo4j-nvl/layout-workers'
   - '@neo4j-nvl/react'
+  # Renovate security update: axios@1.18.0
+  - axios@1.18.0
