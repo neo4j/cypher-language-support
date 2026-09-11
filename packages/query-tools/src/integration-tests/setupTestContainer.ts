@@ -13,7 +13,7 @@ export async function createAndStartTestContainer(
   },
 ): Promise<StartedNeo4jContainer> {
   const password = 'password';
-  const env = { ...(opts.env ?? {}), NEO4J_ACCEPT_LICENSE_AGREEMENT: 'yes' };
+  const env = { ...opts.env, NEO4J_ACCEPT_LICENSE_AGREEMENT: 'yes' };
 
   const container = await new Neo4jContainer(opts.neo4jVersion)
     .withExposedPorts(7474, 7687)

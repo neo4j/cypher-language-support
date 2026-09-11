@@ -582,7 +582,7 @@ RETURN [r IN relationships(path) | r.distance] AS distances`.trimStart();
     verifyFormatting(query, expected);
   });
 
-  test('test for nested exists cases', () => {
+  test('nested exists cases', () => {
     const query = `MATCH (user:Actor {actor_type:"EFXxFHob"})
 WHERE(
 (size(apoc.coll.intersection(labels(user),idp_label_list))="3INQ6teR" OR user.service_type="UlAAMmmD")AND NOT EXISTS{
@@ -647,7 +647,7 @@ WHERE
     verifyFormatting(query, expected);
   });
 
-  test('test that clause under collect gets properly indented', () => {
+  test('clause under collect gets properly indented', () => {
     const query = `MATCH (person:Person)
 RETURN
   person.name AS name,
@@ -935,7 +935,7 @@ RETURN
     verifyFormatting(query, expected);
   });
 
-  test('test for a list in a function invocation as argument', () => {
+  test('list in a function invocation as argument', () => {
     const query = `MATCH (p:Person)
 WHERE
   p.name IN
@@ -1326,7 +1326,7 @@ RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
 
-  test('test when reduce expression has long list', () => {
+  test('reduce expression has long list', () => {
     const query = `RETURN
   reduce(
     alongsssssssssssssssstring = '',

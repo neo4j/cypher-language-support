@@ -1,12 +1,23 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
+  options: { typeAware: true },
   ignorePatterns: [
     'semanticAnalysis.js',
     'vendor/**',
     '**/fixtures/textmate/**',
   ],
-  plugins: ['typescript'],
+  plugins: [
+    // default plugins
+    'oxc',
+    'eslint',
+    'typescript',
+    'unicorn',
+    // additional plugins
+    'import',
+    'react',
+    'vitest',
+  ],
   rules: {
     'no-console': ['error', { allow: ['warn', 'error'] }],
     // False positive: Playwright's `mount` fixture is destructured from the
@@ -17,5 +28,20 @@ export default defineConfig({
     '@typescript-eslint/no-redundant-type-constituents': 'off',
     '@typescript-eslint/no-duplicate-type-constituents': 'off',
     '@typescript-eslint/no-misused-spread': 'off',
+    // We have lots of valid tests where expect is called indirectly.
+    'vitest/expect-expect': 'off',
+    // This rule requires strictNullChecks to be true.
+    '@typescript-eslint/no-useless-default-assignment': 'off',
   },
+  overrides: [
+    {
+      // VS Code API and webview suites use mocha / WDIO, not vitest.
+      files: ['packages/vscode-extension/tests/**'],
+      rules: {
+        'vitest/valid-title': 'off',
+        'vitest/no-conditional-tests': 'off',
+        'vitest/no-conditional-expect': 'off',
+      },
+    },
+  ],
 });

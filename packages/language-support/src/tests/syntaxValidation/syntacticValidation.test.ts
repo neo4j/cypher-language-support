@@ -1736,7 +1736,7 @@ describe('Syntactic validation spec', () => {
     ).toEqual([]);
   });
 
-  test('Lints on string interpolation in cypher 5 ', () => {
+  test('Lints on string interpolation in cypher 5', () => {
     const query = 'CYPHER 5 RETURN s"This is a string with an { 50+2 } in it"';
 
     expect(

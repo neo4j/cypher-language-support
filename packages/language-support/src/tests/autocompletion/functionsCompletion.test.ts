@@ -276,7 +276,7 @@ describe('function invocations', () => {
     });
   });
 
-  test('Correctly completes function name by namespace in left hand side of WHERE ', () => {
+  test('Correctly completes function name by namespace in left hand side of WHERE', () => {
     const query = 'MATCH (n) WHERE apoc.';
     testCompletions({
       query,
