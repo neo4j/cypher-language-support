@@ -24,7 +24,7 @@
 }
 
 .vizWrapper-graph {
-  background-color: rgb(var(--theme-palette-neutral-bg-weak));
+  background-color: rgb(var(--theme-color-neutral-bg-weak));
   border-radius: 10px;
   width: 100%;
   height: 100%;
@@ -45,13 +45,13 @@
 .vizWrapper thead {
   position: sticky;
   top: 0;
-  background-color: rgb(var(--theme-palette-neutral-bg-default));
+  background-color: rgb(var(--theme-color-neutral-bg-default));
 }
 
 .vizWrapper th:not(:first-child),
 .vizWrapper td:not(:first-child) {
   padding: 10px;
-  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border-bottom: 1px solid rgb(var(--theme-color-neutral-border-weak));
   text-align: left;
 }
 
@@ -61,15 +61,15 @@
 
 .vizWrapper td:first-child,
 .vizWrapper th:first-child {
-  color: rgb(var(--theme-palette-neutral-text-weakest));
+  color: rgb(var(--theme-color-neutral-text-weakest));
   font-size: 8px;
   padding-left: 4px;
-  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border-bottom: 1px solid rgb(var(--theme-color-neutral-border-weak));
   width: 6px;
 }
 
 .vizWrapper tr:hover {
-  background-color: rgb(var(--theme-palette-neutral-bg-on-bg-weak));
+  background-color: rgb(var(--theme-color-neutral-bg-on-bg-weak));
 }
 
 .vizWrapper-table-cell {
