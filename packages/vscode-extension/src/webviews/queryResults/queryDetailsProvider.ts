@@ -319,12 +319,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
       ),
     );
     const ndlCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'ndl.css',
-      ),
+      path.join(extensionContext.extensionPath, 'dist', 'webviews', 'ndl.css'),
     );
     const queryDetailsCssPath = Uri.file(
       path.join(

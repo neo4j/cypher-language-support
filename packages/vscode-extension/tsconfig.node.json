@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": [
     "./esbuild-extension.mts",
+    "./esbuild-webviews.mts",
     "./genTextMate.js",
     "./tests/fixtures/textmate/simple-match.js"
   ],
