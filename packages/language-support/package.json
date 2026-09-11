@@ -44,7 +44,8 @@
       "require": "./dist/cjs/index.cjs",
       "import": "./dist/esm/project/language-support/src/index.js",
       "default": "./dist/cjs/index.cjs"
-    }
+    },
+    "./grammar/*.g4": "./src/antlr-grammar/*.g4"
   },
   "scripts": {
     "gen-parser": "antlr-ng -Dlanguage=TypeScript --generate-visitor --lib src/antlr-grammar -o src/generated-parser --exact-output-dir -- src/antlr-grammar/CypherCmdLexer.g4 && antlr-ng -Dlanguage=TypeScript --generate-visitor --lib src/antlr-grammar -o src/generated-parser --exact-output-dir -- src/antlr-grammar/CypherCmdParser.g4",
