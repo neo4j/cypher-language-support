@@ -19,6 +19,7 @@ import {
   SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
+  renderLabelTree,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -258,6 +259,21 @@ connection.onHover((params: HoverParams): Hover | null => {
 
   if (!hoverInfo) {
     return null;
+  }
+
+  if ('variable' in hoverInfo) {
+    return {
+      contents: {
+        kind: MarkupKind.Markdown,
+        value: [
+          '`',
+          `${hoverInfo.variable}: ${hoverInfo.types.join(', ')}`,
+          '`',
+          '',
+          renderLabelTree(hoverInfo.labels),
+        ].join('\n'),
+      },
+    };
   }
 
   return {

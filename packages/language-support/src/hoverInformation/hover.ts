@@ -1,24 +1,39 @@
-import { ParsingResult } from './cypherLanguageService.js';
-import { DbSchema } from './dbSchema.js';
-import { getMethodSignature, MethodType } from './signatureHelp.js';
-import { SignatureHoverInfo, Neo4jFunction, Neo4jProcedure } from './types.js';
+import { ParsingResult } from '../cypherLanguageService.js';
+import { DbSchema } from '../dbSchema.js';
+import { getMethodSignature, MethodType } from '../signatureHelp.js';
+import {
+  SignatureHoverInfo,
+  Neo4jFunction,
+  Neo4jProcedure,
+  SymbolsInfo,
+  Symbol,
+} from '../types.js';
+import { findVariableOnCaret } from './variableHover.js';
 
 export function getHoverInfo({
   caretPosition,
   dbSchema,
   parsingResult,
+  symbolsInfo,
 }: {
   caretPosition: number;
   dbSchema: DbSchema;
   parsingResult: ParsingResult;
-}): SignatureHoverInfo | undefined {
+  symbolsInfo: SymbolsInfo;
+}): SignatureHoverInfo | Symbol | undefined {
   const methodSignatureInfo = getMethodSignature({
     parsingResult,
     caretPosition,
     dbSchema,
   });
-  if (!methodSignatureInfo) {
-    return;
+  if (!methodSignatureInfo && symbolsInfo) {
+    const variableSignatureInfo = findVariableOnCaret({
+      parsingResult,
+      caretPosition,
+      dbSchema,
+      symbolsInfo,
+    });
+    return variableSignatureInfo;
   }
 
   const { schemaMethod, parsedMethod } = methodSignatureInfo;
@@ -26,13 +41,13 @@ export function getHoverInfo({
     return;
   }
 
-  return createHoverInfoObject(
+  return createSignatureHoverInfoObject(
     schemaMethod,
     isDeprecated(schemaMethod, parsedMethod.methodType),
   );
 }
 
-function createHoverInfoObject(
+function createSignatureHoverInfoObject(
   fn: Neo4jFunction | Neo4jProcedure,
   isDeprecated: boolean,
 ): SignatureHoverInfo {

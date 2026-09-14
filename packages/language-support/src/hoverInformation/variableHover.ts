@@ -1,0 +1,24 @@
+import { ParsingResult } from '../cypherLanguageService.js';
+import { DbSchema } from '../dbSchema.js';
+import { findCaret } from '../helpers.js';
+import { SymbolsInfo, Symbol } from '../types.js';
+
+export function findVariableOnCaret({
+  parsingResult,
+  caretPosition,
+  symbolsInfo,
+}: {
+  parsingResult: ParsingResult;
+  dbSchema: DbSchema;
+  caretPosition: number;
+  symbolsInfo: SymbolsInfo;
+}): Symbol | undefined {
+  const caret = findCaret(parsingResult, caretPosition);
+  for (const symbolTable of symbolsInfo.symbolTables) {
+    for (const symbol of symbolTable) {
+      if (symbol.references.includes(caret.token.start)) {
+        return symbol;
+      }
+    }
+  }
+}
