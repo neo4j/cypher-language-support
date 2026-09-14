@@ -67,7 +67,6 @@ export function QueryDetails() {
           if (index !== -1) {
             newState[index] = message.result;
           }
-          openLastStatement(newState);
           return newState;
         });
       } else if (message.type === 'themeUpdate') {

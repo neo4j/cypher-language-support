@@ -1326,7 +1326,7 @@ RETURN deleteNodes`;
     verifyFormatting(query, expected);
   });
 
-  test('reduce expression has long list', () => {
+  test('reduce expression on long list', () => {
     const query = `RETURN
   reduce(
     alongsssssssssssssssstring = '',
