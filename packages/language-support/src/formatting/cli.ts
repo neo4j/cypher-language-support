@@ -138,7 +138,7 @@ function main() {
   } catch (error) {
     console.error(
       'Error:',
-      error instanceof Error ? error.message : String(error),
+      error instanceof Error ? error.message : JSON.stringify(error),
     );
     process.exit(1);
   }

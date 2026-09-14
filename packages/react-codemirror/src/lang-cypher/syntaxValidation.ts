@@ -64,8 +64,12 @@ export const cypherLinter: (config: CypherConfig) => Extension = (config) =>
       }
       return a;
     } catch (err) {
-      if (!String(err).includes('Worker terminated')) {
-        console.error(String(err) + ' ' + query);
+      if (err instanceof Error) {
+        if (!err.message.includes('Worker terminated')) {
+          console.error(String(err) + ' ' + query);
+        }
+      } else {
+        console.error(JSON.stringify(err));
       }
     }
     return [];

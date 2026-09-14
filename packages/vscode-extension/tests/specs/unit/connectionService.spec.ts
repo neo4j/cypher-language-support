@@ -821,7 +821,7 @@ suite('Connection service spec', () => {
           events: events,
           connect: connectFake,
           persistentConnect: persistentConnectFake,
-          disconnect: () => void 0,
+          disconnect: (): void => undefined,
         } as unknown as Neo4jSchemaPoller;
 
         sandbox
@@ -898,7 +898,7 @@ suite('Connection service spec', () => {
           events: events,
           connect: connectFake,
           persistentConnect: persistentConnectFake,
-          disconnect: () => void 0,
+          disconnect: (): void => undefined,
         } as unknown as Neo4jSchemaPoller;
 
         sandbox

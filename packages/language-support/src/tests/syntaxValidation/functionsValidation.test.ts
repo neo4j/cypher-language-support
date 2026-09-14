@@ -1,4 +1,5 @@
 import { DiagnosticTag } from 'vscode-languageserver-types';
+import { DbSchema } from '../../dbSchema.js';
 import { testData } from '../testData.js';
 import { getDiagnosticsForQuery } from './helpers.js';
 
@@ -732,7 +733,7 @@ describe('Functions semantic validation spec', () => {
   });
 
   test('Deprecations and removals for functions are based on the cypher version', () => {
-    const dbSchema = {
+    const dbSchema: DbSchema = {
       functions: {
         'CYPHER 5': {
           'apoc.create.uuid': {

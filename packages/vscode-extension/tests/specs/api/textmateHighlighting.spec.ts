@@ -18,11 +18,11 @@ function assertUnchangedTokens(testFixurePath: string) {
   const fileName = basename(testFixurePath);
 
   return vscode.commands
-    .executeCommand(
+    .executeCommand<{ c: string; t: string }[]>(
       '_workbench.captureSyntaxTokens',
       vscode.Uri.file(testFixurePath),
     )
-    .then((rawData: { c: string; t: string }[]) => {
+    .then((rawData) => {
       const data: SyntaxToken[] = rawData.map((row) => {
         return {
           character: row.c,

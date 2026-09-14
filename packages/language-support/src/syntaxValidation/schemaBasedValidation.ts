@@ -207,7 +207,8 @@ function checkAdjacency({
     });
   } catch (err) {
     if (
-      String(err).includes('Bailing schema based linting on large label tree')
+      err instanceof Error &&
+      err.message.includes('Bailing schema based linting on large label tree')
     ) {
       return undefined;
     } else {
