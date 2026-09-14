@@ -1,10 +1,11 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
+import { SignatureHoverInfo } from '../../types.js';
 import { testData } from '../testData.js';
 
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();
 
-const awaitIndexHoverInfo = {
+const awaitIndexHoverInfo: SignatureHoverInfo = {
   signature:
     'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
   description:
@@ -27,7 +28,7 @@ const awaitIndexHoverInfo = {
   ],
 };
 
-const labelsHoverInfo = {
+const labelsHoverInfo: SignatureHoverInfo = {
   signature: 'db.labels() :: (label :: STRING)',
   description:
     "List all labels attached to nodes within a database according to the user's access rights. The procedure returns empty results if the user is not authorized to view those labels.",
