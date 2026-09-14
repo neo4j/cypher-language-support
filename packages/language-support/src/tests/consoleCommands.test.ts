@@ -42,7 +42,7 @@ function expectErrorMessage(query: string, msg: string) {
 }
 
 describe('sanity checks', () => {
-  test('parses simple commands without args ', () => {
+  test('parses simple commands without args', () => {
     expectParsedCommands(':clear', [{ type: 'clear' }]);
     expectParsedCommands(':history', [{ type: 'history' }]);
     expectParsedCommands(':connect', [{ type: 'connect' }]);
@@ -264,7 +264,7 @@ describe('sanity checks', () => {
     ]);
   });
 
-  test('accepts trailing ; ', () => {
+  test('accepts trailing ;', () => {
     expectParsedCommands(':history;', [
       { type: 'history' },
       { type: 'cypher', statement: '' },

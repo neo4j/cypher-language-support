@@ -1,8 +1,8 @@
 {
-  "*.tsx": ["oxfmt", "oxlint --fix --type-aware --max-warnings 0"],
-  "*.jsx": ["oxlint --fix --type-aware --max-warnings 0"],
-  "*.ts": ["oxfmt", "oxlint --fix --type-aware --max-warnings 0"],
-  "*.js": ["oxlint --fix --type-aware --max-warnings 0"],
+  "*.tsx": ["oxfmt", "oxlint --fix --max-warnings 0"],
+  "*.jsx": ["oxlint --fix --max-warnings 0"],
+  "*.ts": ["oxfmt", "oxlint --fix --max-warnings 0"],
+  "*.js": ["oxlint --fix --max-warnings 0"],
   "*(!cypher).json": ["oxfmt"],
   "*(!pnpm-lock).yaml": ["oxfmt"],
   "*.yml": ["oxfmt"]

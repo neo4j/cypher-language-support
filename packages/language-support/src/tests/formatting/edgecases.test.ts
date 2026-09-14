@@ -39,7 +39,7 @@ RETURN 3;`;
     verifyFormatting(query3, expected3);
   });
 
-  test('test for function invocation', () => {
+  test('function invocation', () => {
     const query = `MATCH (n)
 RETURN count( DISTINCT   n,a )`;
     const expected = `MATCH (n)
