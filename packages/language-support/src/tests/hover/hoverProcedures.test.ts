@@ -34,7 +34,7 @@ List all labels attached to nodes within a database according to the user's acce
   },
 };
 
-describe('Procedures hover', () => {
+describe('Procedure hover', () => {
   test('provides hover info for procedures', () => {
     const query = 'CALL db.labels()';
 

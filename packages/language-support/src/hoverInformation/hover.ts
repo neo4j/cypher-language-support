@@ -34,6 +34,9 @@ export function getHoverInfo({
       dbSchema,
       symbolsInfo,
     });
+    if (!symbol) {
+      return;
+    }
     return {
       contents: {
         kind: MarkupKind.Markdown,
@@ -47,11 +50,10 @@ export function getHoverInfo({
       },
     };
   }
-
-  const { schemaMethod, parsedMethod } = methodSignatureInfo;
-  if (!schemaMethod) {
+  if (!methodSignatureInfo || !methodSignatureInfo.schemaMethod) {
     return;
   }
+  const { schemaMethod, parsedMethod } = methodSignatureInfo;
   const deprecated = isDeprecated(schemaMethod, parsedMethod.methodType);
   const params = schemaMethod.argumentDescription.map((arg) => {
     return {

@@ -4,7 +4,7 @@ import { testData } from '../testData.js';
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();
 
-describe('Functions hover', () => {
+describe('Function hover', () => {
   test('provides hover info for functions', () => {
     const query = 'CYPHER 25 RETURN abs(1,2)';
 
