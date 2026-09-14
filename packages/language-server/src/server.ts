@@ -5,7 +5,6 @@ import {
   Hover,
   HoverParams,
   InitializeResult,
-  MarkupKind,
   ProposedFeatures,
   SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
@@ -19,7 +18,6 @@ import {
   SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
-  renderLabelTree,
 } from '@neo4j-cypher/language-support';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import { doAutoCompletion } from './autocompletion';
@@ -36,10 +34,7 @@ import {
 import workerpool from 'workerpool';
 import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
-import {
-  createParametersHoverString,
-  createReturnHoverString,
-} from './hoverInfo';
+import { doHoverInfo } from './hoverInfo.js';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -248,49 +243,7 @@ connection.onNotification(
 );
 
 connection.onHover((params: HoverParams): Hover | null => {
-  const textDocument = documents.get(params.textDocument.uri);
-  if (textDocument === undefined) return null;
-  const position = params.position;
-  const offset = textDocument.offsetAt(position);
-  const hoverInfo = languageService.hoverInfo(textDocument.getText(), {
-    caretPosition: offset,
-    dbSchema: neo4jSchemaPoller.metadata?.dbSchema ?? {},
-  });
-
-  if (!hoverInfo) {
-    return null;
-  }
-
-  if ('variable' in hoverInfo) {
-    return {
-      contents: {
-        kind: MarkupKind.Markdown,
-        value: [
-          '`',
-          `${hoverInfo.variable}: ${hoverInfo.types.join(', ')}`,
-          '`',
-          '',
-          renderLabelTree(hoverInfo.labels),
-        ].join('\n'),
-      },
-    };
-  }
-
-  return {
-    contents: {
-      kind: MarkupKind.Markdown,
-      value: [
-        '```cypher',
-        hoverInfo.signature,
-        '```',
-        `${hoverInfo.isDeprecated ? '(_deprecated_) ' : ''}${hoverInfo.description}`,
-        '',
-        ...createParametersHoverString(hoverInfo.params),
-        '',
-        ...createReturnHoverString(hoverInfo.returnDescription),
-      ].join('\n'),
-    },
-  };
+  return doHoverInfo(documents, neo4jSchemaPoller, params);
 });
 
 connection.onNotification(

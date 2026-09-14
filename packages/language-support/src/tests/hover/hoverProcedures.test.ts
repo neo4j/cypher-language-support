@@ -1,47 +1,37 @@
+import { Hover } from 'vscode-languageserver-types';
 import { CypherLanguageService } from '../../cypherLanguageService.js';
-import { SignatureHoverInfo } from '../../types.js';
 import { testData } from '../testData.js';
 
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();
 
-const awaitIndexHoverInfo: SignatureHoverInfo = {
-  signature:
-    'db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)',
-  description:
-    'Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300)).',
-  returnDescription: [],
-  isDeprecated: false,
-  params: [
-    {
-      name: 'indexName',
-      description: 'The name of the awaited index.',
-      isDeprecated: false,
-      type: 'STRING',
-    },
-    {
-      name: 'timeOutSeconds',
-      description: 'The maximum time to wait in seconds.',
-      isDeprecated: false,
-      type: 'INTEGER',
-    },
-  ],
+const awaitIndexHoverInfo: Hover = {
+  contents: {
+    kind: 'markdown',
+    value: `\`\`\`cypher
+db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)
+\`\`\`
+Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300)).
+
+**Parameters**
+- \`indexName\` - The name of the awaited index.
+- \`timeOutSeconds\` - The maximum time to wait in seconds.
+`,
+  },
 };
 
-const labelsHoverInfo: SignatureHoverInfo = {
-  signature: 'db.labels() :: (label :: STRING)',
-  description:
-    "List all labels attached to nodes within a database according to the user's access rights. The procedure returns empty results if the user is not authorized to view those labels.",
-  returnDescription: [
-    {
-      name: 'label',
-      description: 'A label within the database.',
-      isDeprecated: false,
-      type: 'STRING',
-    },
-  ],
-  isDeprecated: false,
-  params: [],
+const labelsHoverInfo: Hover = {
+  contents: {
+    kind: 'markdown',
+    value: `\`\`\`cypher
+db.labels() :: (label :: STRING)
+\`\`\`
+List all labels attached to nodes within a database according to the user's access rights. The procedure returns empty results if the user is not authorized to view those labels.
+
+
+**Returns**
+- \`label\` - A label within the database.`,
+  },
 };
 
 describe('Procedures hover', () => {
@@ -52,8 +42,7 @@ describe('Procedures hover', () => {
       caretPosition: query.indexOf('db.labels') + 1,
       dbSchema,
     });
-
-    expect(hoverInfo).toStrictEqual(labelsHoverInfo);
+    expect(hoverInfo).toEqual(labelsHoverInfo);
   });
 
   test('provides hover info for procedures with arguments', () => {
@@ -63,8 +52,7 @@ describe('Procedures hover', () => {
       caretPosition: query.indexOf('db.awaitIndex') + 1,
       dbSchema,
     });
-
-    expect(hoverInfo).toStrictEqual(awaitIndexHoverInfo);
+    expect(hoverInfo).toEqual(awaitIndexHoverInfo);
   });
 
   test('provides hover info for incomplete procedure parameters', () => {
@@ -104,20 +92,19 @@ describe('Procedures hover', () => {
 
     expect(hoverInfo).toStrictEqual(awaitIndexHoverInfo);
 
-    expect(innerHoverInfo).toStrictEqual({
-      signature: 'toString(input :: ANY) :: STRING',
-      description:
-        'Converts an `INTEGER`, `FLOAT`, `BOOLEAN`, `POINT` or temporal type (i.e. `DATE`, `ZONED TIME`, `LOCAL TIME`, `ZONED DATETIME`, `LOCAL DATETIME` or `DURATION`) value to a `STRING`.',
-      returnDescription: 'STRING',
-      isDeprecated: false,
-      params: [
-        {
-          name: 'input',
-          description: 'A value to be converted into a string.',
-          isDeprecated: false,
-          type: 'ANY',
-        },
-      ],
+    expect(innerHoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+toString(input :: ANY) :: STRING
+\`\`\`
+Converts an \`INTEGER\`, \`FLOAT\`, \`BOOLEAN\`, \`POINT\` or temporal type (i.e. \`DATE\`, \`ZONED TIME\`, \`LOCAL TIME\`, \`ZONED DATETIME\`, \`LOCAL DATETIME\` or \`DURATION\`) value to a \`STRING\`.
+
+**Parameters**
+- \`input\` - A value to be converted into a string.
+
+**Returns:** \`STRING\``,
+      },
     });
   });
 
@@ -129,40 +116,22 @@ describe('Procedures hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toStrictEqual({
-      signature:
-        'db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: (node :: NODE)',
-      description:
-        "Set a vector property on a given node in a more space efficient representation than Cypher's SET.",
-      returnDescription: [
-        {
-          name: 'node',
-          description: 'The node on which the vector property was set.',
-          isDeprecated: false,
-          type: 'NODE',
-        },
-      ],
-      isDeprecated: true,
-      params: [
-        {
-          name: 'node',
-          description: 'The node on which the new property will be stored.',
-          isDeprecated: false,
-          type: 'NODE',
-        },
-        {
-          name: 'key',
-          description: 'The name of the new property.',
-          isDeprecated: false,
-          type: 'STRING',
-        },
-        {
-          name: 'vector',
-          description: 'The object containing the embedding.',
-          isDeprecated: false,
-          type: 'ANY',
-        },
-      ],
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: (node :: NODE)
+\`\`\`
+(_deprecated_) Set a vector property on a given node in a more space efficient representation than Cypher's SET.
+
+**Parameters**
+- \`node\` - The node on which the new property will be stored.
+- \`key\` - The name of the new property.
+- \`vector\` - The object containing the embedding.
+
+**Returns**
+- \`node\` - The node on which the vector property was set.`,
+      },
     });
   });
 

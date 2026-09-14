@@ -13,20 +13,19 @@ describe('Functions hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toStrictEqual({
-      signature: 'abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT',
-      description: 'Returns the absolute value of an `INTEGER` or `FLOAT`.',
-      returnDescription: 'INTEGER | FLOAT',
-      isDeprecated: false,
-      params: [
-        {
-          name: 'input',
-          description:
-            'A numeric value from which the absolute number will be returned.',
-          isDeprecated: false,
-          type: 'INTEGER | FLOAT',
-        },
-      ],
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
+\`\`\`
+Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
+
+**Parameters**
+- \`input\` - A numeric value from which the absolute number will be returned.
+
+**Returns:** \`INTEGER | FLOAT\``,
+      },
     });
   });
 
@@ -38,20 +37,19 @@ describe('Functions hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toStrictEqual({
-      signature: 'abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT',
-      description: 'Returns the absolute value of an `INTEGER` or `FLOAT`.',
-      returnDescription: 'INTEGER | FLOAT',
-      isDeprecated: false,
-      params: [
-        {
-          name: 'input',
-          description:
-            'A numeric value from which the absolute number will be returned.',
-          isDeprecated: false,
-          type: 'INTEGER | FLOAT',
-        },
-      ],
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
+\`\`\`
+Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
+
+**Parameters**
+- \`input\` - A numeric value from which the absolute number will be returned.
+
+**Returns:** \`INTEGER | FLOAT\``,
+      },
     });
   });
 
@@ -68,35 +66,34 @@ describe('Functions hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toStrictEqual({
-      signature: 'abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT',
-      description: 'Returns the absolute value of an `INTEGER` or `FLOAT`.',
-      returnDescription: 'INTEGER | FLOAT',
-      isDeprecated: false,
-      params: [
-        {
-          name: 'input',
-          description:
-            'A numeric value from which the absolute number will be returned.',
-          isDeprecated: false,
-          type: 'INTEGER | FLOAT',
-        },
-      ],
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
+\`\`\`
+Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
+
+**Parameters**
+- \`input\` - A numeric value from which the absolute number will be returned.
+
+**Returns:** \`INTEGER | FLOAT\``,
+      },
     });
 
-    expect(innerHoverInfo).toStrictEqual({
-      signature: 'count(input :: ANY) :: INTEGER',
-      description: 'Returns the number of values or rows.',
-      returnDescription: 'INTEGER',
-      isDeprecated: false,
-      params: [
-        {
-          name: 'input',
-          description: 'A value to be aggregated.',
-          isDeprecated: false,
-          type: 'ANY',
-        },
-      ],
+    expect(innerHoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+count(input :: ANY) :: INTEGER
+\`\`\`
+Returns the number of values or rows.
+
+**Parameters**
+- \`input\` - A value to be aggregated.
+
+**Returns:** \`INTEGER\``,
+      },
     });
   });
 
@@ -109,27 +106,19 @@ describe('Functions hover', () => {
     });
 
     expect(hoverInfo).toEqual({
-      description:
-        'Normalize a `STRING`. The `STRING` will be normalized according to the specified normalization form.',
-      isDeprecated: false,
-      params: [
-        {
-          description: 'A value to be normalized.',
-          isDeprecated: false,
-          name: 'input',
-          type: 'STRING',
-        },
-        {
-          description:
-            'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
-          isDeprecated: false,
-          name: 'normalForm',
-          type: '[NFC, NFD, NFKC, NFKD]',
-        },
-      ],
-      returnDescription: 'STRING',
-      signature:
-        'normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING',
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING
+\`\`\`
+Normalize a \`STRING\`. The \`STRING\` will be normalized according to the specified normalization form.
+
+**Parameters**
+- \`input\` - A value to be normalized.
+- \`normalForm\` - A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.
+
+**Returns:** \`STRING\``,
+      },
     });
   });
 
@@ -143,35 +132,20 @@ describe('Functions hover', () => {
     });
 
     expect(hoverInfo).toEqual({
-      description:
-        'Returns the given `STRING` with leading and/or trailing `trimCharacterString` removed.',
-      isDeprecated: false,
-      params: [
-        {
-          description:
-            'The parts of the string to trim; LEADING, TRAILING, BOTH',
-          isDeprecated: false,
-          name: 'trimSpecification',
-          type: '[LEADING, TRAILING, BOTH]',
-        },
-        {
-          description:
-            'The characters to be removed from the start and/or end of the given string.',
-          isDeprecated: false,
-          name: 'trimCharacterString',
-          type: 'STRING',
-        },
-        {
-          description:
-            'A value from which all leading and/or trailing trim characters will be removed.',
-          isDeprecated: false,
-          name: 'input',
-          type: 'STRING',
-        },
-      ],
-      returnDescription: 'STRING',
-      signature:
-        'trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING',
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING
+\`\`\`
+Returns the given \`STRING\` with leading and/or trailing \`trimCharacterString\` removed.
+
+**Parameters**
+- \`trimSpecification\` - The parts of the string to trim; LEADING, TRAILING, BOTH
+- \`trimCharacterString\` - The characters to be removed from the start and/or end of the given string.
+- \`input\` - A value from which all leading and/or trailing trim characters will be removed.
+
+**Returns:** \`STRING\``,
+      },
     });
   });
 
@@ -183,12 +157,17 @@ describe('Functions hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toStrictEqual({
-      signature: 'apoc.create.uuid() :: STRING',
-      description: 'Returns a UUID.',
-      returnDescription: 'STRING',
-      isDeprecated: true,
-      params: [],
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+apoc.create.uuid() :: STRING
+\`\`\`
+(_deprecated_) Returns a UUID.
+
+
+**Returns:** \`STRING\``,
+      },
     });
   });
 

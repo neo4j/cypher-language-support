@@ -1,3 +1,4 @@
+import { Hover, MarkupKind } from 'vscode-languageserver-types';
 import { ParsingResult } from '../cypherLanguageService.js';
 import { DbSchema } from '../dbSchema.js';
 import { getMethodSignature, MethodType } from '../signatureHelp.js';
@@ -6,9 +7,9 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolsInfo,
-  Symbol,
 } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
+import { renderLabelTree } from '../labelTreeRender.js';
 
 export function getHoverInfo({
   caretPosition,
@@ -20,50 +21,61 @@ export function getHoverInfo({
   dbSchema: DbSchema;
   parsingResult: ParsingResult;
   symbolsInfo: SymbolsInfo;
-}): SignatureHoverInfo | Symbol | undefined {
+}): Hover | undefined {
   const methodSignatureInfo = getMethodSignature({
     parsingResult,
     caretPosition,
     dbSchema,
   });
   if (!methodSignatureInfo && symbolsInfo) {
-    const variableSignatureInfo = findVariableOnCaret({
+    const symbol = findVariableOnCaret({
       parsingResult,
       caretPosition,
       dbSchema,
       symbolsInfo,
     });
-    return variableSignatureInfo;
+    return {
+      contents: {
+        kind: MarkupKind.Markdown,
+        value: [
+          '`',
+          `${symbol.variable}: ${symbol.types.join(', ')}`,
+          '`',
+          '',
+          renderLabelTree(symbol.labels),
+        ].join('\n'),
+      },
+    };
   }
 
   const { schemaMethod, parsedMethod } = methodSignatureInfo;
   if (!schemaMethod) {
     return;
   }
+  const deprecated = isDeprecated(schemaMethod, parsedMethod.methodType);
+  const params = schemaMethod.argumentDescription.map((arg) => {
+    return {
+      name: arg.name,
+      description: arg.description,
+      isDeprecated: arg.isDeprecated,
+      type: arg.type,
+    };
+  });
 
-  return createSignatureHoverInfoObject(
-    schemaMethod,
-    isDeprecated(schemaMethod, parsedMethod.methodType),
-  );
-}
-
-function createSignatureHoverInfoObject(
-  fn: Neo4jFunction | Neo4jProcedure,
-  isDeprecated: boolean,
-): SignatureHoverInfo {
   return {
-    signature: fn.signature,
-    description: fn.description,
-    returnDescription: fn.returnDescription,
-    isDeprecated: isDeprecated,
-    params: fn.argumentDescription.map((arg) => {
-      return {
-        name: arg.name,
-        description: arg.description,
-        isDeprecated: arg.isDeprecated,
-        type: arg.type,
-      };
-    }),
+    contents: {
+      kind: MarkupKind.Markdown,
+      value: [
+        '```cypher',
+        schemaMethod.signature,
+        '```',
+        `${deprecated ? '(_deprecated_) ' : ''}${schemaMethod.description}`,
+        '',
+        ...createParametersHoverString(params),
+        '',
+        ...createReturnHoverString(schemaMethod.returnDescription),
+      ].join('\n'),
+    },
   };
 }
 
@@ -77,4 +89,41 @@ function isDeprecated(
   if (type === MethodType.procedure) {
     return (method as Neo4jProcedure).option.deprecated;
   }
+}
+
+export function createParametersHoverString(
+  params: SignatureHoverInfo['params'],
+): string[] {
+  if (params.length === 0) {
+    return [];
+  }
+
+  return [
+    '**Parameters**',
+    ...params.map((param) => {
+      return `- \`${param.name}\` - ${param.description}`;
+    }),
+  ];
+}
+
+export function createReturnHoverString(
+  returnDescription: SignatureHoverInfo['returnDescription'],
+): string[] {
+  if (!returnDescription) {
+    return [];
+  }
+
+  if (typeof returnDescription === 'string') {
+    return [`**Returns:** \`${returnDescription}\``];
+  }
+  if (returnDescription.length === 0) {
+    return [];
+  }
+
+  return [
+    '**Returns**',
+    ...returnDescription.map((ret) => {
+      return `- \`${ret.name}\` - ${ret.description}`;
+    }),
+  ];
 }
