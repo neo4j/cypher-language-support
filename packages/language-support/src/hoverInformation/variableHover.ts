@@ -21,10 +21,11 @@ function isVariableNameToken(node: ParseTree, tokenStart: number): boolean {
     return false;
   }
 
-  /* A rule's start token is set on rule entry, so it never comes after any of
-     its children - safe to prune subtrees starting past the caret. We don't
-     prune on `stop`, which can be stale or null under error recovery. */
-  if (node.start && node.start.start > tokenStart) {
+  // Prune subtrees that cannot contain the caret
+  if (
+    (node.start && node.start.start > tokenStart) ||
+    (node.stop && node.stop.stop < tokenStart)
+  ) {
     return false;
   }
 
