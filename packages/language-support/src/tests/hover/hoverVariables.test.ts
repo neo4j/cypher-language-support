@@ -22,9 +22,7 @@ describe('Variable hover', () => {
         kind: 'markdown',
         value: `\`
 x: Integer
-\`
-
-`,
+\``,
       },
     });
   });
@@ -46,9 +44,7 @@ x: Integer
         kind: 'markdown',
         value: `\`
 n: Node
-\`
-
-`,
+\``,
       },
     });
   });
@@ -70,9 +66,7 @@ n: Node
         kind: 'markdown',
         value: `\`
 n: Node
-\`
-
-`,
+\``,
       },
     });
   });
@@ -96,7 +90,9 @@ n: Node
 r: Relationship
 \`
 
-KNOWS`,
+\`\`\`cypher
+KNOWS
+\`\`\``,
       },
     });
   });
@@ -120,7 +116,9 @@ KNOWS`,
 r: Relationship
 \`
 
-KNOWS`,
+\`\`\`cypher
+KNOWS
+\`\`\``,
       },
     });
   });
@@ -142,9 +140,7 @@ KNOWS`,
         kind: 'markdown',
         value: `\`
 n: Node
-\`
-
-`,
+\``,
       },
     });
   });
@@ -168,7 +164,9 @@ n: Node
 n: Node
 \`
 
-((Person | Pet) & Neighbour)`,
+\`\`\`cypher
+((Person | Pet) & Neighbour)
+\`\`\``,
       },
     });
   });

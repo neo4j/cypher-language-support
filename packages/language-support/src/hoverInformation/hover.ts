@@ -7,6 +7,7 @@ import {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolsInfo,
+  isLabelLeaf,
 } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
@@ -42,18 +43,31 @@ export function getHoverInfo({
     if (!symbol) {
       return;
     }
-    return {
-      contents: {
-        kind: MarkupKind.Markdown,
-        value: [
+
+    const hasLabels =
+      !isLabelLeaf(symbol.labels) && symbol.labels.children.length > 0;
+
+    const labelTreeString = [
+      '```cypher',
+      renderLabelTree(symbol.labels),
+      '```',
+    ].join('\n');
+    const hoverContent = hasLabels
+      ? [
           '`',
           `${symbol.variable}: ${symbol.types.join(', ')}`,
           '`',
           '',
-          renderLabelTree(symbol.labels),
-        ].join('\n'),
+          labelTreeString,
+        ].join('\n')
+      : ['`', `${symbol.variable}: ${symbol.types.join(', ')}`, '`'].join('\n');
+    const hover = {
+      contents: {
+        kind: MarkupKind.Markdown,
+        value: hoverContent,
       },
     };
+    return hover;
   }
 
   const { schemaMethod, parsedMethod } = methodSignatureInfo;
