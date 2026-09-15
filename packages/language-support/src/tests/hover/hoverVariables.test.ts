@@ -125,6 +125,30 @@ KNOWS`,
     });
   });
 
+  test('provides hover info for variables inside a function call', () => {
+    const query = 'MATCH (n) RETURN abs(n.age)';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'MATCH (n) RETURN abs('.length,
+      dbSchema,
+    });
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`
+n: Node
+\`
+
+`,
+      },
+    });
+  });
+
   test('provides hover info for variables with more complex labels', () => {
     const query = 'MATCH (n:Person|Pet) WHERE n:Neighbour RETURN ';
     const { symbolTables } = languageService.lint(query, dbSchema);

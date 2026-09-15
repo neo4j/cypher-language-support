@@ -29,6 +29,65 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
     });
   });
 
+  test('provides hover info on the first and last character of the function name', () => {
+    const query = 'CYPHER 25 RETURN abs(1,2)';
+    const expected = {
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
+\`\`\`
+Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
+
+**Parameters**
+- \`input\` - A numeric value from which the absolute number will be returned.
+
+**Returns:** \`INTEGER | FLOAT\``,
+      },
+    };
+
+    expect(
+      languageService.hoverInfo(query, {
+        caretPosition: query.indexOf('abs'),
+        dbSchema,
+      }),
+    ).toEqual(expected);
+
+    expect(
+      languageService.hoverInfo(query, {
+        caretPosition: query.indexOf('abs') + 'abs'.length - 1,
+        dbSchema,
+      }),
+    ).toEqual(expected);
+  });
+
+  test('provides hover info on the whole name of a namespaced function', () => {
+    const query = 'CYPHER 5 RETURN apoc.create.uuid()';
+    const expected = {
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher
+apoc.create.uuid() :: STRING
+\`\`\`
+(_deprecated_) Returns a UUID.
+
+
+**Returns:** \`STRING\``,
+      },
+    };
+
+    const name = 'apoc.create.uuid';
+    [
+      query.indexOf(name),
+      query.indexOf(name) + name.length - 1,
+      query.indexOf('create'),
+    ].forEach((caretPosition) => {
+      expect(
+        languageService.hoverInfo(query, { caretPosition, dbSchema }),
+      ).toEqual(expected);
+    });
+  });
+
   test('provides hover info for incomplete function parameters', () => {
     const query = 'RETURN abs(';
 

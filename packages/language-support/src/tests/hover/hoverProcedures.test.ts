@@ -45,6 +45,19 @@ describe('Procedure hover', () => {
     expect(hoverInfo).toEqual(labelsHoverInfo);
   });
 
+  test('provides hover info on the first and last character of the procedure name', () => {
+    const query = 'CALL db.labels()';
+    const name = 'db.labels';
+
+    [query.indexOf(name), query.indexOf(name) + name.length - 1].forEach(
+      (caretPosition) => {
+        expect(
+          languageService.hoverInfo(query, { caretPosition, dbSchema }),
+        ).toEqual(labelsHoverInfo);
+      },
+    );
+  });
+
   test('provides hover info for procedures with arguments', () => {
     const query = 'CALL db.awaitIndex("MyIndex", 300)';
 

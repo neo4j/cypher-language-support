@@ -26,8 +26,13 @@ export function getHoverInfo({
     parsingResult,
     caretPosition,
     dbSchema,
+    checkCaretOnMethodName: true,
   });
-  if (!methodSignatureInfo && symbolsInfo) {
+
+  if (!methodSignatureInfo?.schemaMethod) {
+    if (!symbolsInfo) {
+      return;
+    }
     const symbol = findVariableOnCaret({
       parsingResult,
       caretPosition,
@@ -50,9 +55,7 @@ export function getHoverInfo({
       },
     };
   }
-  if (!methodSignatureInfo || !methodSignatureInfo.schemaMethod) {
-    return;
-  }
+
   const { schemaMethod, parsedMethod } = methodSignatureInfo;
   const deprecated = isDeprecated(schemaMethod, parsedMethod.methodType);
   const params = schemaMethod.argumentDescription.map((arg) => {

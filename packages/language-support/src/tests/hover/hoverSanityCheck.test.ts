@@ -70,4 +70,38 @@ describe('Variable hover', () => {
 
     expect(hoverInfo).toEqual(undefined);
   });
+
+  test('Does not provide hover info on the parentheses of a function', () => {
+    const query = 'CYPHER 25 RETURN abs   (1, 2)';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({ query, symbolTables });
+
+    const positions = [
+      query.indexOf('abs') + 3, // the blank space right after the name
+      query.indexOf('('),
+      query.indexOf('1'),
+      query.indexOf(','),
+      query.indexOf(')'),
+    ];
+
+    positions.forEach((caretPosition) => {
+      expect(
+        languageService.hoverInfo(query, { caretPosition, dbSchema }),
+      ).toEqual(undefined);
+    });
+  });
+
+  test('Does not provide hover info inside the arguments of a procedure', () => {
+    const query = 'CALL db.awaitIndex("MyIndex", 300)';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({ query, symbolTables });
+
+    const positions = [query.indexOf('"MyIndex"'), query.indexOf('300')];
+
+    positions.forEach((caretPosition) => {
+      expect(
+        languageService.hoverInfo(query, { caretPosition, dbSchema }),
+      ).toEqual(undefined);
+    });
+  });
 });
