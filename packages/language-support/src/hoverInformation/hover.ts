@@ -96,7 +96,7 @@ function isDeprecated(
   }
 }
 
-export function createParametersHoverString(
+function createParametersHoverString(
   params: SignatureHoverInfo['params'],
 ): string[] {
   if (params.length === 0) {
@@ -111,7 +111,7 @@ export function createParametersHoverString(
   ];
 }
 
-export function createReturnHoverString(
+function createReturnHoverString(
   returnDescription: SignatureHoverInfo['returnDescription'],
 ): string[] {
   if (!returnDescription) {
