@@ -3,9 +3,10 @@ import { ParsingResult } from '../cypherLanguageService.js';
 import { DbSchema } from '../dbSchema.js';
 import { getMethodSignature, MethodType } from '../signatureHelp.js';
 import {
-  SignatureHoverInfo,
+  ArgumentDescription,
   Neo4jFunction,
   Neo4jProcedure,
+  ReturnDescription,
   SymbolsInfo,
   isLabelLeaf,
 } from '../types.js';
@@ -110,9 +111,7 @@ function isDeprecated(
   }
 }
 
-function createParametersHoverString(
-  params: SignatureHoverInfo['params'],
-): string[] {
+function createParametersHoverString(params: ArgumentDescription[]): string[] {
   if (params.length === 0) {
     return [];
   }
@@ -126,7 +125,7 @@ function createParametersHoverString(
 }
 
 function createReturnHoverString(
-  returnDescription: SignatureHoverInfo['returnDescription'],
+  returnDescription: string | ReturnDescription[],
 ): string[] {
   if (!returnDescription) {
     return [];

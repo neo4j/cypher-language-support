@@ -41,7 +41,6 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
-  SignatureHoverInfo,
   LabelOrCondition,
   LabelLeaf,
   ConditionNode,
