@@ -1,38 +1,20 @@
-import { SignatureHoverInfo } from '@neo4j-cypher/language-support';
+import { Hover, HoverParams, TextDocuments } from 'vscode-languageserver';
+import { TextDocument } from 'vscode-languageserver-textdocument';
+import { languageService } from './server.js';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 
-export function createParametersHoverString(
-  params: SignatureHoverInfo['params'],
-): string[] {
-  if (params.length === 0) {
-    return [];
-  }
-
-  return [
-    '**Parameters**',
-    ...params.map((param) => {
-      return `- \`${param.name}\` - ${param.description}`;
-    }),
-  ];
-}
-
-export function createReturnHoverString(
-  returnDescription: SignatureHoverInfo['returnDescription'],
-): string[] {
-  if (!returnDescription) {
-    return [];
-  }
-
-  if (typeof returnDescription === 'string') {
-    return [`**Returns:** \`${returnDescription}\``];
-  }
-  if (returnDescription.length === 0) {
-    return [];
-  }
-
-  return [
-    '**Returns**',
-    ...returnDescription.map((ret) => {
-      return `- \`${ret.name}\` - ${ret.description}`;
-    }),
-  ];
+export function doHoverInfo(
+  documents: TextDocuments<TextDocument>,
+  neo4jSchemaPoller: Neo4jSchemaPoller,
+  params: HoverParams,
+): Hover | null {
+  const textDocument = documents.get(params.textDocument.uri);
+  if (textDocument === undefined) return null;
+  const position = params.position;
+  const offset = textDocument.offsetAt(position);
+  const hoverInfo = languageService.hoverInfo(textDocument.getText(), {
+    caretPosition: offset,
+    dbSchema: neo4jSchemaPoller.metadata?.dbSchema ?? {},
+  });
+  return hoverInfo ? hoverInfo : null;
 }

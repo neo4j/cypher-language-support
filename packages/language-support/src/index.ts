@@ -4,6 +4,7 @@ export { autocomplete } from './autocompletion/autocompletion.js';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema } from './dbSchema.js';
+export { renderLabelTree } from './labelTreeRender.js';
 export { _internalFeatureFlags } from './featureFlags.js';
 export { formatQuery } from './formatting/formatting.js';
 export { resolveCypherVersion } from './helpers.js';
@@ -40,7 +41,9 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
-  SignatureHoverInfo,
+  LabelOrCondition,
+  LabelLeaf,
+  ConditionNode,
 } from './types.js';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
