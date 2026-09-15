@@ -1,5 +1,5 @@
 .collapsible:not(:last-child) {
-  border-bottom: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border-bottom: 1px solid rgb(var(--theme-color-neutral-border-weak));
   background-color: transparent;
 }
 
@@ -12,7 +12,7 @@
 }
 
 .collapsible-header:hover {
-  background-color: rgb(var(--theme-palette-neutral-hover));
+  background-color: rgb(var(--theme-color-neutral-hover));
 }
 
 .collapsible-title {
@@ -20,17 +20,17 @@
   padding: 2px;
   display: flex;
   width: 100%;
-  border: 1px solid rgb(var(--theme-palette-neutral-border-weak));
+  border: 1px solid rgb(var(--theme-color-neutral-border-weak));
   border-radius: 4px;
   overflow: hidden;
-  background-color: rgb(var(--theme-palette-neutral-bg-weak));
+  background-color: rgb(var(--theme-color-neutral-bg-weak));
   align-items: center;
 }
 
 .collapsible-title:focus-visible {
   outline-width: 2px;
   outline-offset: 2px;
-  outline-color: rgb(var(--theme-palette-primary-focus));
+  outline-color: rgb(var(--theme-color-primary-focus));
 }
 
 .collapsible-title-text {
@@ -45,9 +45,9 @@
 }
 
 .collapsible-title[data-active='true'] {
-  border-color: rgb(var(--theme-palette-primary-border-weak));
-  background-color: rgb(var(--theme-palette-primary-bg-weak));
-  color: rgb(var(--theme-palette-primary-text));
+  border-color: rgb(var(--theme-color-primary-border-weak));
+  background-color: rgb(var(--theme-color-primary-bg-weak));
+  color: rgb(var(--theme-color-primary-text));
 }
 
 .collapsible-title-icon {

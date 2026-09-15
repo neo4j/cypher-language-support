@@ -1,4 +1,4 @@
-import { IconButton } from '@neo4j-ndl/react';
+import { CleanIconButton } from '@neo4j-ndl/react';
 import {
   ChevronDownIconOutline,
   ChevronRightIconOutline,
@@ -23,12 +23,10 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
   return (
     <div className="collapsible">
       <div className="collapsible-header" data-expanded={expanded}>
-        <IconButton
-          isClean
-          ariaLabel={expanded ? 'Collapse statement' : 'Expand statement'}
+        <CleanIconButton
+          description={expanded ? 'Collapse statement' : 'Expand statement'}
           htmlAttributes={{
             'aria-expanded': expanded,
-            title: expanded ? 'Collapse statement' : 'Expand statement',
           }}
           onClick={() => {
             setExpanded((e) => !e);
@@ -36,11 +34,11 @@ export const Collapsible: React.FC<CollapsibleProps> = ({
           size="small"
         >
           {expanded ? (
-            <ChevronDownIconOutline className="text-palette-neutral-text-weak" />
+            <ChevronDownIconOutline className="n-text-neutral-text-weak" />
           ) : (
-            <ChevronRightIconOutline className="text-palette-neutral-text-weak" />
+            <ChevronRightIconOutline className="n-text-neutral-text-weak" />
           )}
-        </IconButton>
+        </CleanIconButton>
 
         <div
           className="collapsible-title"

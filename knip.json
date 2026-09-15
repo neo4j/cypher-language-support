@@ -34,6 +34,7 @@
     "packages/vscode-extension": {
       "entry": [
         "src/extension.ts",
+        "src/ndl.ts",
         "src/webviews/controllers/*.{ts,tsx}",
         "tests/runApiAndUnitTests.ts",
         "tests/runWebviewTests.ts",

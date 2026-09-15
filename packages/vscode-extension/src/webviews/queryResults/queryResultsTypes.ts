@@ -1,4 +1,4 @@
-import { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import { NeoNode, NeoRel } from '@neo4j-ndl/react-graph';
 import * as vscode from 'vscode';
 
 export const views = {

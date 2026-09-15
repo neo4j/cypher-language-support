@@ -70,12 +70,7 @@ export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
       ),
     );
     const ndlCssPath = Uri.file(
-      path.join(
-        extensionContext.extensionPath,
-        'resources',
-        'styles',
-        'ndl.css',
-      ),
+      path.join(extensionContext.extensionPath, 'dist', 'webviews', 'ndl.css'),
     );
     const queryVizCssUri = this.view.webview
       .asWebviewUri(queryVisualizationCssPath)

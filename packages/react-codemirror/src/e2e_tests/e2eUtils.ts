@@ -30,13 +30,20 @@ export class CypherEditorPage {
     return locator.evaluate((e: Element) => {
       // https://stackoverflow.com/questions/49974145/how-to-convert-rgba-to-hex-color-code-using-javascript
       function RGBAToHexA(rgba: string, forceRemoveAlpha = false) {
+        const components = rgba
+          .replace(/^rgba?\(|\s+|\)$/g, '')
+          .split(',')
+          .map((string) => parseFloat(string));
+        // getComputedStyle reports fully opaque colors as rgb(r, g, b) with
+        // no alpha component at all, rather than rgba(r, g, b, 1) - which
+        // means alpha = 1, so default it in rather than losing the byte.
+        if (components.length === 3) {
+          components.push(1);
+        }
         return (
           '#' +
-          rgba
-            .replace(/^rgba?\(|\s+|\)$/g, '')
-            .split(',')
-            .filter((string, index) => !forceRemoveAlpha || index !== 3)
-            .map((string) => parseFloat(string))
+          components
+            .filter((_number, index) => !forceRemoveAlpha || index !== 3)
             .map((number, index) =>
               index === 3 ? Math.round(number * 255) : number,
             )

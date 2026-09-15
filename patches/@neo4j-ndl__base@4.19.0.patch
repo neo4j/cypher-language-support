@@ -1,0 +1,30 @@
+diff --git a/lib/esm/index.js b/lib/esm/index.js
+index 520b5684c543e156efb8b1338ff38c95041d061b..add49d84148b33a99d28448fa44719fa3043869b 100644
+--- a/lib/esm/index.js
++++ b/lib/esm/index.js
+@@ -18,8 +18,8 @@
+  *  You should have received a copy of the GNU General Public License
+  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+-export * from './typings';
+-export * from './tokens/js/tokens';
++export * from './typings.js';
++export * from './tokens/js/tokens.js';
+ export * from './tailwindTheme.mjs';
+-export * from './tailwind-preset.config';
++export * from './tailwind-preset.config.js';
+ //# sourceMappingURL=index.js.map
+\ No newline at end of file
+diff --git a/lib/esm/tailwind-preset.config.js b/lib/esm/tailwind-preset.config.js
+index d3c5b21cb2b5793e91070505aec3da3b567f6142..f61892ffc8e50a8c073b9ab6a33432b7e523bfa9 100644
+--- a/lib/esm/tailwind-preset.config.js
++++ b/lib/esm/tailwind-preset.config.js
+@@ -19,7 +19,7 @@
+  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  */
+ import { tailwindTheme } from './tailwindTheme.mjs';
+-import { tokens } from './tokens/js/tokens-esm';
++import { tokens } from './tokens/js/tokens-esm.js';
+ /**
+  * Tailwind CSS Configuration
+  * containing all configurations we need
