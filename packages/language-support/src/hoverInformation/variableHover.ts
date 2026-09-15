@@ -1,5 +1,4 @@
 import { ParsingResult } from '../cypherLanguageService.js';
-import { DbSchema } from '../dbSchema.js';
 import { findCaret } from '../helpers.js';
 import { SymbolsInfo, Symbol } from '../types.js';
 
@@ -9,7 +8,6 @@ export function findVariableOnCaret({
   symbolsInfo,
 }: {
   parsingResult: ParsingResult;
-  dbSchema: DbSchema;
   caretPosition: number;
   symbolsInfo: SymbolsInfo;
 }): Symbol | undefined {

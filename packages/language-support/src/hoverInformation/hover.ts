@@ -38,7 +38,6 @@ export function getHoverInfo({
     const symbol = findVariableOnCaret({
       parsingResult,
       caretPosition,
-      dbSchema,
       symbolsInfo,
     });
     if (!symbol) {

@@ -170,4 +170,74 @@ n: Node
       },
     });
   });
+
+  test('Handles scope for shadowing variables', () => {
+    const query =
+      'MATCH (n:Person) CALL() {MATCH (n:Cat) RETURN n as x} RETURN x';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+    const outerHover = languageService.hoverInfo(query, {
+      caretPosition: 'MATCH ('.length,
+      dbSchema,
+    });
+    expect(outerHover).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`
+n: Node
+\`
+
+\`\`\`cypher
+Person
+\`\`\``,
+      },
+    });
+    const innerHover = languageService.hoverInfo(query, {
+      caretPosition: 'MATCH (n:Person) CALL() {MATCH (n:Cat) RETURN '.length,
+      dbSchema,
+    });
+    expect(innerHover).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`
+n: Node
+\`
+
+\`\`\`cypher
+Cat
+\`\`\``,
+      },
+    });
+  });
+
+  test('Does not provide hover info for properties', () => {
+    const query = 'MATCH (n:Person) RETURN n.age';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'MATCH (n:Person) RETURN n'.length,
+      dbSchema,
+    });
+    expect(hoverInfo).toEqual(undefined);
+  });
+
+  test('Does not provide hover info for anonymous variable', () => {
+    const query = 'MATCH (n:Person & Neighbour) RETURN n';
+    const { symbolTables } = languageService.lint(query, dbSchema);
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'MATCH ('.length,
+      dbSchema,
+    });
+    expect(hoverInfo).toEqual(undefined);
+  });
 });
