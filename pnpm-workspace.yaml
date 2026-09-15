@@ -14,3 +14,6 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/interaction-handlers'
   - '@neo4j-nvl/layout-workers'
   - '@neo4j-nvl/react'
+
+patchedDependencies:
+  '@neo4j-ndl/base@4.19.0': patches/@neo4j-ndl__base@4.19.0.patch

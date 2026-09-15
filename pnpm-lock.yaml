@@ -10,6 +10,11 @@ catalogs:
       specifier: 6.0.1
       version: 6.0.1
 
+patchedDependencies:
+  '@neo4j-ndl/base@4.19.0':
+    hash: d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06
+    path: patches/@neo4j-ndl__base@4.19.0.patch
+
 importers:
 
   .:
@@ -216,7 +221,7 @@ importers:
     devDependencies:
       '@neo4j-ndl/base':
         specifier: ^4.19.0
-        version: 4.19.0
+        version: 4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06)
       '@playwright/experimental-ct-react':
         specifier: ^1.62.1
         version: 1.62.1(@types/node@24.10.1)(esbuild@0.27.1)(jiti@2.7.0)(tsx@4.19.4)(vite@8.2.2(@types/node@24.10.1)(esbuild@0.27.1)(jiti@2.7.0)(tsx@4.19.4)(yaml@2.9.0))(yaml@2.9.0)
@@ -310,13 +315,13 @@ importers:
         version: link:../query-tools
       '@neo4j-ndl/base':
         specifier: 4.19.0
-        version: 4.19.0
+        version: 4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06)
       '@neo4j-ndl/react':
         specifier: 4.20.0
-        version: 4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@neo4j-ndl/react-graph':
         specifier: 2.1.17
-        version: 2.1.17(@neo4j-ndl/base@4.19.0)(@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@neo4j-nvl/base@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/interaction-handlers@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/react@1.2.1(neo4j-driver@6.0.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+        version: 2.1.17(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@neo4j-nvl/base@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/interaction-handlers@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/react@1.2.1(neo4j-driver@6.0.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@neo4j-nvl/base':
         specifier: 1.2.1
         version: 1.2.1(neo4j-driver@6.0.1)
@@ -8710,12 +8715,12 @@ snapshots:
       '@types/chroma-js': 2.1.4
       chroma-js: 2.4.2
 
-  '@neo4j-ndl/base@4.19.0': {}
+  '@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06)': {}
 
-  '@neo4j-ndl/react-graph@2.1.17(@neo4j-ndl/base@4.19.0)(@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@neo4j-nvl/base@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/interaction-handlers@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/react@1.2.1(neo4j-driver@6.0.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@neo4j-ndl/react-graph@2.1.17(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@neo4j-nvl/base@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/interaction-handlers@1.2.1(neo4j-driver@6.0.1))(@neo4j-nvl/react@1.2.1(neo4j-driver@6.0.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
-      '@neo4j-ndl/base': 4.19.0
-      '@neo4j-ndl/react': 4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
+      '@neo4j-ndl/base': 4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06)
+      '@neo4j-ndl/react': 4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@neo4j-nvl/base': 1.2.1(neo4j-driver@6.0.1)
       '@neo4j-nvl/interaction-handlers': 1.2.1(neo4j-driver@6.0.1)
       '@neo4j-nvl/react': 1.2.1(neo4j-driver@6.0.1)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
@@ -8726,7 +8731,7 @@ snapshots:
       temporal-polyfill: 1.0.1
       zod: 4.3.6
 
-  '@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0)(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
+  '@neo4j-ndl/react@4.20.0(@babel/runtime@7.29.7)(@neo4j-ndl/base@4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06))(@tanstack/react-table@8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(@types/mdast@4.0.4)(@types/react@19.2.18)(micromark-util-types@2.0.2)(micromark@4.0.2)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)':
     dependencies:
       '@dnd-kit/core': 6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@dnd-kit/sortable': 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.8(react@19.2.8))(react@19.2.8))(react@19.2.8)
@@ -8734,7 +8739,7 @@ snapshots:
       '@floating-ui/react-dom': 2.1.9(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@heroicons/react': 2.2.0(react@19.2.8)
       '@neo4j-devtools/word-color': 0.0.8
-      '@neo4j-ndl/base': 4.19.0
+      '@neo4j-ndl/base': 4.19.0(patch_hash=d70dace05368fcc4cb4d2b55520af556478b9dc17c335b6920ea8256ffbc4f06)
       '@tanstack/react-table': 8.21.3(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@tanstack/react-virtual': 3.13.23(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       '@uiw/react-color': 2.8.1(@babel/runtime@7.29.7)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
