@@ -36,7 +36,6 @@ describe('extractNodesAndRels', () => {
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const boltRecord = {
       keys: ['p'],
       get: () => path,
@@ -104,7 +103,6 @@ describe('extractNodesAndRels', () => {
       'node34',
     );
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const boltRecord = {
       keys: ['n'],
       get: () => [node1, node2, relationship],
@@ -148,7 +146,6 @@ describe('extractNodesAndRels', () => {
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const boltRecord = {
       keys: ['p'],
       get: () => path,
@@ -202,7 +199,6 @@ describe('extractNodesAndRels', () => {
     const pathSegment = new PathSegment(startNode, relationship, endNode);
     const path = new Path(startNode, endNode, [pathSegment]);
 
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const boltRecord = {
       keys: ['p'],
       get: () => path,

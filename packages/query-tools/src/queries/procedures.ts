@@ -101,7 +101,6 @@ export function listProcedures(
       const objResult = record.toObject();
       validateProcedure(objResult);
       // Type is verified in integration tests
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const result = cleanTypes(objResult as Neo4jProcedure);
       return result;
     },

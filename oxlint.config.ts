@@ -2,7 +2,7 @@ import { defineConfig } from 'oxlint';
 
 export default defineConfig({
   options: {
-    // reportUnusedDisableDirectives: 'error',
+    reportUnusedDisableDirectives: 'error',
     typeAware: true,
   },
   ignorePatterns: [

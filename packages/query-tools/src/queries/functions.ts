@@ -88,7 +88,6 @@ export function listFunctions(
     map(record) {
       const objResult = record.toObject();
       validateFunction(objResult);
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const result = cleanTypes(objResult as Neo4jFunction);
       return result;
     },

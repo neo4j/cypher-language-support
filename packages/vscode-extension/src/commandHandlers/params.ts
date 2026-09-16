@@ -170,7 +170,6 @@ export async function evaluateParam(
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const paramAsCypherType = resultEntries[0] as CypherDataType;
     const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
     const stringValue = cypherDataToString(paramAsCypherType).replaceAll(

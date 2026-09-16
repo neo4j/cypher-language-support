@@ -63,7 +63,6 @@ export async function eventually(
     } catch (e) {
       if (totalWait > timeoutMs) {
         throw new Error(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           `Timeout of ${timeoutMs} exceeded for test with last error: ${e as Error}`,
         );
       }
