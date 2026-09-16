@@ -1,9 +1,11 @@
 packages:
   - packages/*
+
 catalog:
   neo4j-driver: 6.2.0
 
 minimumReleaseAge: 4320
+
 minimumReleaseAgeExclude:
   # all neo4j-ndl and @neo4j-nvl have a minumum release age so we can exclude them here
   - '@neo4j-ndl/base'
@@ -16,4 +18,4 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/react'
 
 patchedDependencies:
-  '@neo4j-ndl/base@4.19.0': patches/@neo4j-ndl__base@4.19.0.patch
+  '@neo4j-ndl/base@4.21.0': patches/@neo4j-ndl__base@4.21.0.patch
