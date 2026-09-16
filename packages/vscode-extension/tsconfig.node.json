@@ -10,6 +10,7 @@
     "allowJs": true,
     "module": "ESNext",
     "moduleResolution": "bundler",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node"]
   }
 }
