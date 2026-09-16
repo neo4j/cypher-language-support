@@ -21,6 +21,7 @@ const languageService = new CypherLanguageService();
  * Run standard benchmarks for a given query
  */
 function benchmarkQuery(queryName: string, queryContent: string) {
+  // oxlint-disable-next-line vitest/valid-title
   describe(queryName, () => {
     bench('parse', () => {
       parse(queryContent);

@@ -13,7 +13,7 @@ let root: ReturnType<typeof createRoot>;
 
 const ref = createRef<CypherEditor>();
 let value = '';
-const onChange = vi.fn((v: string) => {
+const onChange = vi.fn<(v: string) => void>((v) => {
   value = v;
   rerender();
 });
@@ -23,12 +23,14 @@ const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 
 /** Avoids crash in test environment */
 function mockEditorView(editorView: EditorView) {
-  editorView.coordsAtPos = vi.fn().mockReturnValue({
-    left: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-  });
+  editorView.coordsAtPos = vi
+    .fn<() => { left: number; top: number; right: number; bottom: number }>()
+    .mockReturnValue({
+      left: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+    });
 }
 
 async function debounce() {
