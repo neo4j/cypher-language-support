@@ -1,18 +1,12 @@
-import type { Options } from '@wdio/types';
-export const config: Options.Testrunner = {
+import type { Capabilities, Options } from '@wdio/types';
+export const config: Options.Testrunner &
+  Capabilities.WithRequestedTestrunnerCapabilities = {
   //
   // ====================
   // Runner Configuration
   // ====================
   // WebdriverIO supports running e2e tests as well as unit and component tests.
   runner: 'local',
-  autoCompileOpts: {
-    autoCompile: false,
-    tsNodeOpts: {
-      project: '../tsconfig.json',
-      transpileOnly: true,
-    },
-  },
 
   //
   // ==================

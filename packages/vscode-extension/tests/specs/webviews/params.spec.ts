@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/await-thenable */
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import { Workbench } from 'wdio-vscode-service';

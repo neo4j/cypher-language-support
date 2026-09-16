@@ -1,3 +1,4 @@
+/* oxlint-disable typescript/await-thenable */
 import { integer } from 'vscode-languageclient';
 import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
@@ -285,7 +286,7 @@ export async function ensureNotificationsAreDismissed(
   browser: WebdriverIO.Browser,
 ): Promise<void> {
   const wb = await browser.getWorkbench();
-  return await browser.waitUntil(async () => {
+  await browser.waitUntil(async () => {
     const notifications = await wb.getNotifications();
     for (const notification of notifications) {
       await notification.dismiss();
