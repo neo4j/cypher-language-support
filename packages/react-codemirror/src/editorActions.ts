@@ -50,6 +50,12 @@ export type EditorActionsController = {
 
 const SPACER_BOTTOM_GAP = 2;
 const SPACER_LEFT_GAP = 4;
+/**
+ * Floor for the overlay's inset from the visible right edge, so it stays off
+ * the content's last pixel even if a theme zeroes `.cm-line`'s right padding
+ * (the base theme's 2px, which is what normally provides the inset).
+ */
+const MIN_OVERLAY_RIGHT_INSET = 2;
 
 export function createEditorActionsController(): EditorActionsController {
   const setActiveEffect = StateEffect.define<boolean>();
@@ -172,6 +178,15 @@ export function createEditorActionsController(): EditorActionsController {
             const scrollerRect = view.scrollDOM.getBoundingClientRect();
             const style = window.getComputedStyle(view.contentDOM);
             const visibleRight = scrollerRect.left + view.scrollDOM.clientWidth;
+            // Match the inset `.cm-line`'s right padding gives the spacer, so
+            // the overlay lands on the space the spacer reserves and stays off
+            // `contentRect.right - 1`, the pixel CodeMirror hit-tests to
+            // measure a wrapped line's selection. Cover it and the first
+            // line's highlight collapses to zero width — hence the floor.
+            const line = view.contentDOM.querySelector('.cm-line');
+            const lineRightPadding = line
+              ? parseFloat(window.getComputedStyle(line).paddingRight) || 0
+              : 0;
             return {
               top:
                 scrollerRect.top -
@@ -180,7 +195,8 @@ export function createEditorActionsController(): EditorActionsController {
               right:
                 editorRect.right -
                 visibleRight +
-                (parseFloat(style.paddingRight) || 0),
+                (parseFloat(style.paddingRight) || 0) +
+                Math.max(lineRightPadding, MIN_OVERLAY_RIGHT_INSET),
             };
           },
           write: (pos) => {
