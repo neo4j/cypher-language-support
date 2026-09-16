@@ -14,3 +14,5 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/interaction-handlers'
   - '@neo4j-nvl/layout-workers'
   - '@neo4j-nvl/react'
+  # Renovate security update: tar@7.5.21
+  - tar@7.5.21
