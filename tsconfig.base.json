@@ -5,12 +5,15 @@
     "allowJs": false,
     "declaration": true,
     "lib": ["dom", "ESNext"],
-    "moduleResolution": "node",
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
+    "skipLibCheck": true,
     "sourceMap": true,
     "target": "ESNext",
     "outDir": "dist",
     "incremental": true,
 
+    "strict": true,
     "strictNullChecks": false, // TODO: remove this (default is true)
     "exactOptionalPropertyTypes": false, // TODO: set to true once strictNullChecks are enabled
     "noUncheckedIndexedAccess": true,

@@ -8,6 +8,6 @@
     "esModuleInterop": true,
     "module": "nodenext",
     "moduleResolution": "nodenext",
-    "types": ["vitest/globals"]
+    "types": ["vitest/globals", "node"]
   }
 }

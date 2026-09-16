@@ -40,6 +40,7 @@ export type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
+  SignatureHoverInfo,
 } from './types.js';
 export { CypherLexer, CypherParser, CypherParserListener, CypherParserVisitor };
 
