@@ -1002,13 +1002,11 @@ export function translateTokensToRange(
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
   return [command]
     .filter((cmd) => cmd.type !== 'cypher')
-    .map(
-      ({ start, stop }): SyntaxDiagnostic => ({
-        message: 'Console commands are unsupported in this environment.',
-        severity: DiagnosticSeverity.Error,
-        ...translateTokensToRange(start, stop),
-      }),
-    );
+    .map(({ start, stop }): SyntaxDiagnostic => ({
+      message: 'Console commands are unsupported in this environment.',
+      severity: DiagnosticSeverity.Error,
+      ...translateTokensToRange(start, stop),
+    }));
 }
 
 export class CypherLanguageService {

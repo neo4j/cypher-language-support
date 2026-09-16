@@ -259,13 +259,11 @@ export const createCypherTheme = ({
     Object.entries(highlightStyles) as Array<
       [HighlightedCypherTokenTypes, string]
     >
-  ).map(
-    ([token, color]): TagStyle => ({
-      tag: tokenTypeToStyleTag[token],
-      color,
-      class: token === CypherTokenType.consoleCommand ? 'cm-bold' : undefined,
-    }),
-  );
+  ).map(([token, color]): TagStyle => ({
+    tag: tokenTypeToStyleTag[token],
+    color,
+    class: token === CypherTokenType.consoleCommand ? 'cm-bold' : undefined,
+  }));
   const highlightStyle = HighlightStyle.define(styles);
   const extension = [themeExtension, syntaxHighlighting(highlightStyle)];
 
