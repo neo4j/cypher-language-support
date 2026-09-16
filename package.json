@@ -10,7 +10,7 @@
     "url": "git+https://github.com/neo4j/cypher-language-support.git"
   },
   "scripts": {
-    "prepare": "husky install",
+    "prepare": "husky",
     "build": "pnpm --recursive build",
     "build-vscode": "pnpm --filter='neo4j-for-vscode...' build",
     "dev-codemirror": "pnpm --recursive --parallel --filter='@neo4j-cypher/react-codemirror-playground...' dev",
@@ -36,7 +36,7 @@
     "concurrently": "^10.0.5",
     "cross-env": "^10.1.0",
     "esbuild": "^0.28.2",
-    "husky": "^8.0.3",
+    "husky": "^9.1.7",
     "knip": "^6.35.1",
     "lint-staged": "^17.5.1",
     "oxfmt": "^0.67.0",
