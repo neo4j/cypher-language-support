@@ -1,10 +1,12 @@
-import {
-  cypherDataToString,
+import type {
   CypherDataType,
   CypherDataTypeName,
   Database,
-  getCypherTypeName,
   Neo4jType,
+} from '@neo4j-cypher/query-tools';
+import {
+  cypherDataToString,
+  getCypherTypeName,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/query-tools';
 import { Neo4jError } from 'neo4j-driver';
@@ -17,10 +19,8 @@ import {
   getParameterByKey,
   setParameter,
 } from '../parameterService';
-import {
-  ParameterItem,
-  parametersTreeDataProvider,
-} from '../treeviews/parametersTreeDataProvider';
+import type { ParameterItem } from '../treeviews/parametersTreeDataProvider';
+import { parametersTreeDataProvider } from '../treeviews/parametersTreeDataProvider';
 import { validateParamInput } from '../helpers';
 
 async function isConnected(): Promise<boolean> {

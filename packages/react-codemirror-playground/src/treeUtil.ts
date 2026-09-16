@@ -3,12 +3,8 @@ interface SimpleTree {
   children?: SimpleTree[];
 }
 
-import {
-  CypherParser,
-  parse,
-  ParseTree,
-  Trees,
-} from '@neo4j-cypher/language-support';
+import type { ParseTree } from '@neo4j-cypher/language-support';
+import { CypherParser, parse, Trees } from '@neo4j-cypher/language-support';
 
 export function getDebugTree(cypher: string): SimpleTree {
   const statements = parse(cypher);

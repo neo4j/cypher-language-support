@@ -1,8 +1,9 @@
-import { ConnnectionResult } from '@neo4j-cypher/query-tools';
-import { commands, Selection, window, workspace } from 'vscode';
+import type { ConnnectionResult } from '@neo4j-cypher/query-tools';
+import type { Selection } from 'vscode';
+import { commands, window, workspace } from 'vscode';
+import type { Connection } from '../connectionService';
 import {
   approveSettingConnection,
-  Connection,
   deleteConnectionAndUpdateDatabaseConnection,
   getActiveConnection,
   getConnectionByKey,
@@ -15,7 +16,7 @@ import {
 } from '../connectionService';
 import { CONSTANTS } from '../constants';
 import { getExtensionContext, getQueryRunner } from '../contextService';
-import { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
+import type { ConnectionItem } from '../treeviews/connectionTreeDataProvider';
 import {
   confirmSettingApproval,
   displayConfirmConnectionDeletionPrompt,

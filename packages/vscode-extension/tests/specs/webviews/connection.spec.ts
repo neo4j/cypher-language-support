@@ -1,7 +1,7 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
 import * as os from 'os';
-import { ViewSection, Workbench } from 'wdio-vscode-service';
+import type { ViewSection, Workbench } from 'wdio-vscode-service';
 import { CONSTANTS } from '../../../src/constants';
 import {
   clickOnContextMenuItem,

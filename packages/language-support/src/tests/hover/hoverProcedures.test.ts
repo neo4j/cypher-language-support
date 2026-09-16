@@ -1,5 +1,5 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
-import { SignatureHoverInfo } from '../../types.js';
+import type { SignatureHoverInfo } from '../../types.js';
 import { testData } from '../testData.js';
 
 const dbSchema = testData.mockSchema;

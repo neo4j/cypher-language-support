@@ -12,11 +12,11 @@ import { rmSync } from 'fs';
 import { testSyntaxValidation } from './syntaxValidation.spec';
 import * as linterService from '../../../src/linterService';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
-import { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import type { MockLanguageClient } from '../../mocks/mockLanguageClient';
 import { switchToLinter } from '../../../src/linterSwitching';
 import { manuallyAdjustLinter } from '../../../src/commandHandlers/linters';
 import assert from 'assert';
-import { LintWorkerSettings } from '@neo4j-cypher/language-server/src/types';
+import type { LintWorkerSettings } from '@neo4j-cypher/language-server/src/types';
 
 suite('Lint switching spec', () => {
   let sandbox: sinon.SinonSandbox;

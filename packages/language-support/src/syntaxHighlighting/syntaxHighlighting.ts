@@ -1,6 +1,7 @@
-import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
+import type { TerminalNode, Token } from 'antlr4ng';
+import { ParseTreeWalker } from 'antlr4ng';
 
-import {
+import type {
   AccessModeArgsContext,
   AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
@@ -44,23 +45,19 @@ import {
   VectorNormFunctionContext,
 } from '../generated-parser/CypherCmdParser.js';
 
-import {
-  SemanticTokensLegend,
-  SemanticTokenTypes,
-} from 'vscode-languageserver-types';
+import type { SemanticTokensLegend } from 'vscode-languageserver-types';
+import { SemanticTokenTypes } from 'vscode-languageserver-types';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import { CypherCmdParserListener as CypherParserListener } from '../generated-parser/CypherCmdParserListener.js';
 import { CypherTokenType } from '../lexerSymbols.js';
-import {
-  createParsingResult,
-  ParsingResult,
-} from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService.js';
+import { createParsingResult } from '../cypherLanguageService.js';
+import type { ParsedCypherToken } from './syntaxHighlightingHelper.js';
 import {
   BracketType,
   computeTokenKey,
   getCypherTokenType,
   getTokenPosition,
-  ParsedCypherToken,
   removeOverlappingTokens,
   shouldAssignTokenType,
   sortTokens,

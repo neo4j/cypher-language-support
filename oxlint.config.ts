@@ -19,6 +19,7 @@ export default defineConfig({
     'vitest',
   ],
   rules: {
+    'typescript/consistent-type-imports': 'error',
     'no-console': ['error', { allow: ['warn', 'error'] }],
     // False positive: Playwright's `mount` fixture is destructured from the
     // test context object, not from a class, so it is not an unbound method.

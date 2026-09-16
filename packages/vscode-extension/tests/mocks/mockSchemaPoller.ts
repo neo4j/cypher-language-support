@@ -1,10 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import {
-  ConnnectionResult,
-  Neo4jSchemaPoller,
-} from '@neo4j-cypher/query-tools';
+import type { ConnnectionResult } from '@neo4j-cypher/query-tools';
+import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import EventEmitter from 'events';
-import { Config } from 'neo4j-driver';
+import type { Config } from 'neo4j-driver';
 
 export class MockSchemaPoller extends Neo4jSchemaPoller {
   events: EventEmitter = new EventEmitter();

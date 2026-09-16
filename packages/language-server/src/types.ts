@@ -1,4 +1,4 @@
-import { DbSchema } from '@neo4j-cypher/language-support';
+import type { DbSchema } from '@neo4j-cypher/language-support';
 
 // These settings are defined in the package.json
 export type Neo4jConnectionSettings = {

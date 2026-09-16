@@ -1,11 +1,9 @@
-import {
-  SignatureHelp,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import type { SignatureHelp } from 'vscode-languageserver-types';
+import { SignatureInformation } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTreeWalker, TerminalNode } from 'antlr4ng';
-import {
-  CypherCmdParser as CypherParser,
+import type { ParserRuleContext, TerminalNode } from 'antlr4ng';
+import { ParseTreeWalker } from 'antlr4ng';
+import type {
   AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
   CallClauseContext,
@@ -22,13 +20,15 @@ import {
   VectorFunctionContext,
   VectorNormFunctionContext,
 } from './generated-parser/CypherCmdParser.js';
+import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser.js';
 
-import { Token } from 'antlr4ng';
-import { DbSchema } from './dbSchema.js';
+import type { Token } from 'antlr4ng';
+import type { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
-import { createParsingResult, ParsingResult } from './cypherLanguageService.js';
-import { Neo4jFunction, Neo4jProcedure } from './types.js';
+import type { ParsingResult } from './cypherLanguageService.js';
+import { createParsingResult } from './cypherLanguageService.js';
+import type { Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],

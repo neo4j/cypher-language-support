@@ -1,12 +1,11 @@
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { commands, WebviewPanel, window } from 'vscode';
+import type { WebviewPanel } from 'vscode';
+import { commands, window } from 'vscode';
 import * as connectionService from '../../../src/connectionService';
 import { CONSTANTS } from '../../../src/constants';
-import {
-  ConnectionPanel,
-  ConnectionPanelMessage,
-} from '../../../src/webviews/connectionPanel';
+import type { ConnectionPanelMessage } from '../../../src/webviews/connectionPanel';
+import { ConnectionPanel } from '../../../src/webviews/connectionPanel';
 import { getMockConnection } from '../../helpers';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 

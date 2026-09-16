@@ -1,9 +1,10 @@
-import { auth, Driver, driver, Session } from 'neo4j-driver';
+import type { Driver, Session } from 'neo4j-driver';
+import { auth, driver } from 'neo4j-driver';
 import { createAndStartTestContainer } from './setupTestContainer.js';
-import { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { GraphSchema } from '../queries/graphSchema.js';
 import {
   extractRelationshipsWithNamedNodes,
-  GraphSchema,
   validateGraphSchema,
 } from '../queries/graphSchema.js';
 

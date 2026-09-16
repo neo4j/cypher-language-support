@@ -2,7 +2,7 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema.js';
+import type { DbSchema } from '../../dbSchema.js';
 import { testData } from '../testData.js';
 import { testCompletions } from './completionAssertionHelpers.js';
 

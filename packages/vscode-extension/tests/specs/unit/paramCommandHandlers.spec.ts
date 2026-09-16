@@ -11,8 +11,8 @@ import {
 } from '../../../src/commandHandlers/params';
 import { CONSTANTS } from '../../../src/constants';
 import { parametersTreeDataProvider } from '../../../src/treeviews/parametersTreeDataProvider';
-import { MockLanguageClient } from '../../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import type { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import type { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Parameters command handlers spec', () => {

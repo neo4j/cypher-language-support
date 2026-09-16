@@ -1,22 +1,23 @@
-import {
-  createConnection,
+import type {
   Diagnostic,
-  DidChangeConfigurationNotification,
   Hover,
   HoverParams,
   InitializeResult,
+  SemanticTokensRegistrationOptions,
+} from 'vscode-languageserver/node';
+import {
+  createConnection,
+  DidChangeConfigurationNotification,
   MarkupKind,
   ProposedFeatures,
-  SemanticTokensRegistrationOptions,
   SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { DbSchema, SymbolTable } from '@neo4j-cypher/language-support';
 import {
-  DbSchema,
-  SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
 } from '@neo4j-cypher/language-support';
@@ -26,14 +27,15 @@ import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { highlightSyntaxForDocument } from './syntaxHighlighting';
-import {
+import type {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jParameters,
   Neo4jSettings,
 } from './types';
 import workerpool from 'workerpool';
-import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
+import type { LintWorker } from '@neo4j-cypher/lint-worker';
+import { convertDbSchema } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 import {
   createParametersHoverString,
