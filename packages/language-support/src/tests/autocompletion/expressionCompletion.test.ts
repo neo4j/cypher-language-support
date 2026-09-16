@@ -35,12 +35,10 @@ describe('expression completions', () => {
                         MATCH (n) WHERE n:A|AND 
       `;
 
-      expect(
-        testCompletions({
-          query: query,
-          expected: [{ label: 'AND', kind: CompletionItemKind.Keyword }],
-        }),
-      );
+      testCompletions({
+        query: query,
+        expected: [{ label: 'AND', kind: CompletionItemKind.Keyword }],
+      });
     });
   });
 });
