@@ -6,7 +6,7 @@ const languageService = new CypherLanguageService();
 
 describe('Variable hover', () => {
   test('provides hover info for LET variables', () => {
-    const query = 'CYPHER 25 LET x = 50 RETURN x';
+    const query = 'CYPHER 25 LET x = 50';
     const { symbolTables } = languageService.lint(query, dbSchema);
     languageService.setSymbolsInfo({
       query,
@@ -14,7 +14,7 @@ describe('Variable hover', () => {
     });
 
     const hoverInfo = languageService.hoverInfo(query, {
-      caretPosition: 'CYPHER 25 LET x = 50 RETURN '.length,
+      caretPosition: 'CYPHER 25 LET '.length,
       dbSchema,
     });
     expect(hoverInfo).toEqual({
