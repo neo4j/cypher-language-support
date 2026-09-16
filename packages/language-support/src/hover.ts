@@ -18,12 +18,12 @@ export function getHoverInfo({
     dbSchema,
   });
   if (!methodSignatureInfo) {
-    return;
+    return undefined;
   }
 
   const { schemaMethod, parsedMethod } = methodSignatureInfo;
   if (!schemaMethod) {
-    return;
+    return undefined;
   }
 
   return createHoverInfoObject(
@@ -62,4 +62,6 @@ function isDeprecated(
   if (type === MethodType.procedure) {
     return (method as Neo4jProcedure).option.deprecated;
   }
+
+  return false;
 }
