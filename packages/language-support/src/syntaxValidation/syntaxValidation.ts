@@ -30,7 +30,8 @@ import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
 
-export type SyntaxDiagnostic = Diagnostic & {
+export type SyntaxDiagnostic = Omit<Diagnostic, 'message'> & {
+  message: string;
   offsets: { start: number; end: number };
 };
 
