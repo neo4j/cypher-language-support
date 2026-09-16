@@ -125,7 +125,7 @@ export async function findWebview(
     },
   );
   // waitUntil throws on timeout, so match is guaranteed to be set here.
-  return match as WebView;
+  return match;
 }
 
 export async function createNewConnection(containerName: string) {

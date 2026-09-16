@@ -1,7 +1,10 @@
 import { defineConfig } from 'oxlint';
 
 export default defineConfig({
-  options: { typeAware: true },
+  options: {
+    // reportUnusedDisableDirectives: 'error',
+    typeAware: true,
+  },
   ignorePatterns: [
     'semanticAnalysis.js',
     'vendor/**',
@@ -20,6 +23,8 @@ export default defineConfig({
   ],
   rules: {
     'typescript/consistent-type-imports': 'error',
+    'typescript/no-unnecessary-type-assertion': 'error',
+    'no-unused-vars': 'error',
     'no-console': ['error', { allow: ['warn', 'error'] }],
     // False positive: Playwright's `mount` fixture is destructured from the
     // test context object, not from a class, so it is not an unbound method.
