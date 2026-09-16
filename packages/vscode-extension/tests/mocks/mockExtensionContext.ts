@@ -2,7 +2,8 @@ import {
   Extension,
   ExtensionContext,
   ExtensionMode,
-  EnvironmentVariableCollection,
+  GlobalEnvironmentVariableCollection,
+  LanguageModelAccessInformation,
   Memento,
   Uri,
 } from 'vscode';
@@ -17,7 +18,7 @@ export class MockExtensionContext implements ExtensionContext {
   secrets = new InMemorySecretStorage();
   extensionUri: Uri;
   extensionPath: string;
-  environmentVariableCollection: EnvironmentVariableCollection;
+  environmentVariableCollection: GlobalEnvironmentVariableCollection;
   asAbsolutePath(relativePath: string): string {
     return relativePath;
   }
@@ -29,4 +30,5 @@ export class MockExtensionContext implements ExtensionContext {
   logPath: string;
   extensionMode: ExtensionMode;
   extension: Extension<unknown>;
+  languageModelAccessInformation: LanguageModelAccessInformation;
 }

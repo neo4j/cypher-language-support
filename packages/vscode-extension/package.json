@@ -69,7 +69,7 @@
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@types/sinon": "17.0.3",
-    "@types/vscode": "1.75.0",
+    "@types/vscode": "1.137.0",
     "@vscode/test-electron": "2.4.1",
     "@vscode/vsce": "3.9.2",
     "@wdio/cli": "8.41.0",

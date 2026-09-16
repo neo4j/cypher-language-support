@@ -366,8 +366,8 @@ importers:
         specifier: 17.0.3
         version: 17.0.3
       '@types/vscode':
-        specifier: 1.75.0
-        version: 1.75.0
+        specifier: 1.137.0
+        version: 1.137.0
       '@vscode/test-electron':
         specifier: 2.4.1
         version: 2.4.1
@@ -3035,8 +3035,8 @@ packages:
   '@types/unist@3.0.3':
     resolution: {integrity: sha512-ko/gIFJRv177XgZsZcBwnqJN5x/Gien8qNOn0D5bQU/zAzVf9Zt3BlcUiLqhV9y4ARk0GbT3tnUiPNgnTXzc/Q==}
 
-  '@types/vscode@1.75.0':
-    resolution: {integrity: sha512-SAr0PoOhJS6FUq5LjNr8C/StBKALZwDVm3+U4pjF/3iYkt3GioJOPV/oB1Sf1l7lROe4TgrMyL5N1yaEgTWycw==}
+  '@types/vscode@1.137.0':
+    resolution: {integrity: sha512-0dc/BBWxkyUsJzXIZ7PkKSalThmS4xiBT+8YEDiWdCefRKHGVV5ZNkM5NB5ULYamallYJujIfncNoXWFlyzL8A==}
 
   '@types/which@2.0.2':
     resolution: {integrity: sha512-113D3mDkZDjo+EeUEHCFy0qniNc1ZpecGiAU7WSo7YDoSzolZIQKpYFHrPpjkB2nuyahcKfrmLXeQlh7gqJYdw==}
@@ -10994,7 +10994,7 @@ snapshots:
 
   '@types/unist@3.0.3': {}
 
-  '@types/vscode@1.75.0': {}
+  '@types/vscode@1.137.0': {}
 
   '@types/which@2.0.2': {}
 

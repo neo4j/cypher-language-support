@@ -3,6 +3,10 @@ import { Event, SecretStorage, SecretStorageChangeEvent } from 'vscode';
 export class InMemorySecretStorage implements SecretStorage {
   private _storage: { [keyName: string]: string } = {};
 
+  keys(): Thenable<string[]> {
+    return Promise.resolve(Object.keys(this._storage));
+  }
+
   get(key: string): Thenable<string> {
     return Promise.resolve(this._storage[key]);
   }
