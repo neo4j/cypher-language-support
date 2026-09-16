@@ -19,18 +19,18 @@
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
     "@neo4j-cypher/react-codemirror": "workspace:*",
-    "react": "^19.0.0",
+    "react": "^19.3.0",
     "react-d3-tree": "^3.6.6",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.3.0"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
-    "@types/react-dom": "^19.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.1",
-    "autoprefixer": "^10.4.14",
-    "postcss": "^8.4.23",
-    "tailwindcss": "^3.3.1",
-    "vite": "^8.2.2"
+    "autoprefixer": "^10.6.0",
+    "postcss": "^8.5.28",
+    "tailwindcss": "^3.4.19",
+    "vite": "^8.3.0"
   },
   "engines": {
     "node": ">=24.11.1"

@@ -61,10 +61,10 @@
     "antlr4-c3": "3.4.4",
     "antlr4ng": "3.0.16",
     "fastest-levenshtein": "^1.0.16",
-    "vscode-languageserver-types": "^3.17.3"
+    "vscode-languageserver-types": "3.17.5"
   },
   "devDependencies": {
-    "vscode-languageserver-textdocument": "^1.0.8"
+    "vscode-languageserver-textdocument": "^1.0.14"
   },
   "engines": {
     "node": ">=24.11.1"
