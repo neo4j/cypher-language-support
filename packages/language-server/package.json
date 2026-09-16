@@ -42,7 +42,7 @@
     "@neo4j-cypher/lint-worker": "workspace:*",
     "@neo4j-cypher/query-tools": "workspace:*",
     "lodash.debounce": "^4.0.8",
-    "vscode-languageserver": "^8.1.0",
+    "vscode-languageserver": "^10.1.1",
     "vscode-languageserver-textdocument": "^1.0.14",
     "workerpool": "^10.0.3"
   },
