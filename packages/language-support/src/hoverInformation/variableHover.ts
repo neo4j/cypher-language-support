@@ -55,11 +55,27 @@ export function findVariableOnCaret({
     return undefined;
   }
 
+  return getSymbolByReferenceMap(symbolsInfo).get(caret.token.start);
+}
+
+// So we don't have to search through the symbol table each time on hover
+const symbolByReference = new WeakMap<SymbolsInfo, Map<number, Symbol>>();
+function getSymbolByReferenceMap(
+  symbolsInfo: SymbolsInfo,
+): Map<number, Symbol> {
+  const cached = symbolByReference.get(symbolsInfo);
+  if (cached) {
+    return cached;
+  }
+
+  const index = new Map<number, Symbol>();
   for (const symbolTable of symbolsInfo.symbolTables) {
     for (const symbol of symbolTable) {
-      if (symbol.references.includes(caret.token.start)) {
-        return symbol;
+      for (const reference of symbol.references) {
+        index.set(reference, symbol);
       }
     }
   }
+  symbolByReference.set(symbolsInfo, index);
+  return index;
 }
