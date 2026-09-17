@@ -1,4 +1,4 @@
-import { Neo4jError } from 'neo4j-driver';
+import type { Neo4jError } from 'neo4j-driver';
 
 export const FRIENDLY_ERROR_MESSAGES: {
   Default: string;

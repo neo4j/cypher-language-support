@@ -1,15 +1,16 @@
 import { EventEmitter } from 'events';
-import neo4j, { Config, Driver } from 'neo4j-driver';
+import type { Config, Driver } from 'neo4j-driver';
+import neo4j from 'neo4j-driver';
+import type { ConnectionError } from './connectionErrorHandler.js';
 import {
-  ConnectionError,
   FRIENDLY_ERROR_MESSAGES,
   getConnectionError,
   isRetriableNeo4jError,
 } from './connectionErrorHandler.js';
+import type { MetadataPoller } from './metadataPoller.js';
 import {
   ConnectedMetadataPoller,
   DisconnectedMetadataPoller,
-  MetadataPoller,
 } from './metadataPoller.js';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { listDatabases } from './queries/databases.js';

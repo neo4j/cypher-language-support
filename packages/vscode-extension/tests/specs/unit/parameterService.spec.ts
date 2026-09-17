@@ -6,8 +6,8 @@ import { window } from 'vscode';
 import { evaluateParam } from '../../../src/commandHandlers/params';
 import { CONSTANTS } from '../../../src/constants';
 import * as parameters from '../../../src/parameterService';
-import { MockLanguageClient } from '../../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import type { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import type { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 function getTestVector(): Vector<BigInt64Array> {

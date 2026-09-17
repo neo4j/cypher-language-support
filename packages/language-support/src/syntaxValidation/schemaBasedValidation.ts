@@ -1,22 +1,21 @@
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import {
   NodePatternContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser.js';
-import {
-  ParsedStatement,
-  translateTokensToRange,
-} from '../cypherLanguageService.js';
+import type { ParsedStatement } from '../cypherLanguageService.js';
+import { translateTokensToRange } from '../cypherLanguageService.js';
 import {
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
 } from '../labelTreeRewriting.js';
 import { getNodesFromRelsSet } from '../labelTreeWalking.js';
-import { isLabelLeaf, LabelOrCondition, SymbolTable } from '../types.js';
-import { SyntaxDiagnostic } from './syntaxValidation.js';
+import type { LabelOrCondition, SymbolTable } from '../types.js';
+import { isLabelLeaf } from '../types.js';
+import type { SyntaxDiagnostic } from './syntaxValidation.js';
 import { getDirection } from '../helpers.js';
 
 // A relationship has exactly one type; this stand-in represents "some

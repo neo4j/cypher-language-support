@@ -1,8 +1,9 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as os from 'os';
-import { TextDocument, Uri, window, workspace } from 'vscode';
-import { Connection } from '../src/connectionService';
+import type { TextDocument } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
+import type { Connection } from '../src/connectionService';
 import { getNonce } from '../src/getNonce';
 
 export async function openDocument(docUri: Uri) {

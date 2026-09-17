@@ -1,10 +1,9 @@
-import type { ParserRuleContext } from 'antlr4ng';
+import type { ParserRuleContext, ParseTreeListener } from 'antlr4ng';
 import {
   ParseTreeWalker,
   CharStream,
   CommonTokenStream,
   ListTokenSource,
-  ParseTreeListener,
   Token,
 } from 'antlr4ng';
 
@@ -13,6 +12,11 @@ import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
 import { _internalFeatureFlags } from './featureFlags.js';
+import type {
+  StatementOrCommandContext,
+  StatementsOrCommandsContext,
+  SymbolicNameStringContext,
+} from './generated-parser/CypherCmdParser.js';
 import {
   ClauseContext,
   CypherVersionContext,
@@ -23,9 +27,6 @@ import {
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
-  StatementOrCommandContext,
-  StatementsOrCommandsContext,
-  SymbolicNameStringContext,
   VariableContext,
   PropertyKeyNameContext,
   Expression2Context,
@@ -42,20 +43,17 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers.js';
-import {
-  lintCypherQuery,
-  SyntaxDiagnostic,
-} from './syntaxValidation/syntaxValidation.js';
+import type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
+import { lintCypherQuery } from './syntaxValidation/syntaxValidation.js';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
-import {
+import type {
   CypherVersion,
-  cypherVersionNumbers,
-  allCypherVersions,
   SymbolsInfo,
   SymbolTable,
   SignatureHoverInfo,
 } from './types.js';
-import { DbSchema } from './dbSchema.js';
+import { cypherVersionNumbers, allCypherVersions } from './types.js';
+import type { DbSchema } from './dbSchema.js';
 import { getSignatureInfo } from './signatureHelp.js';
 import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from './autocompletion/autocompletion.js';

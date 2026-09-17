@@ -1,14 +1,8 @@
-import {
-  Integer,
-  Record,
-  ResultSummary,
-  resultTransformers,
-} from 'neo4j-driver';
+import type { Integer, Record, ResultSummary } from 'neo4j-driver';
+import { resultTransformers } from 'neo4j-driver';
 
-import {
-  DeduplicatedNodesAndRels,
-  extractUniqueNodesAndRels,
-} from '../cypher-execution/extract-unique-nodes-and-relationships.js';
+import type { DeduplicatedNodesAndRels } from '../cypher-execution/extract-unique-nodes-and-relationships.js';
+import { extractUniqueNodesAndRels } from '../cypher-execution/extract-unique-nodes-and-relationships.js';
 
 /**
  * Result type for graph queries that includes deduplicated nodes and relationships

@@ -25,15 +25,15 @@ import {
   syntaxHighlighting,
 } from '@codemirror/language';
 import { highlightSelectionMatches, searchKeymap } from '@codemirror/search';
-import { EditorState, Extension, StateCommand } from '@codemirror/state';
+import type { Extension, StateCommand } from '@codemirror/state';
+import { EditorState } from '@codemirror/state';
+import type { Command, KeyBinding } from '@codemirror/view';
 import {
-  Command,
   crosshairCursor,
   drawSelection,
   dropCursor,
   EditorView,
   highlightSpecialChars,
-  KeyBinding,
   keymap,
   rectangularSelection,
 } from '@codemirror/view';

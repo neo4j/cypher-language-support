@@ -1,5 +1,5 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
-import {
+import type { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import type {
   ConnectionError,
   ConnnectionResult,
   Database,

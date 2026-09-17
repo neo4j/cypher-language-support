@@ -1,19 +1,18 @@
 import * as path from 'path';
+import type { ExtensionContext } from 'vscode';
 import {
   commands,
-  ExtensionContext,
   RelativePattern,
   StatusBarAlignment,
   Uri,
   window,
   workspace,
 } from 'vscode';
-import {
-  LanguageClient,
+import type {
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
 } from 'vscode-languageclient/node';
+import { LanguageClient, TransportKind } from 'vscode-languageclient/node';
 import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
   handleSettingConnectionsChange,
@@ -22,7 +21,7 @@ import {
 import { getSchemaPoller, setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import type { SymbolTable } from '@neo4j-cypher/language-support';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { CONSTANTS } from './constants';
 

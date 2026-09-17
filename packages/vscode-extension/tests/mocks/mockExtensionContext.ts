@@ -1,11 +1,11 @@
-import {
+import type {
   Extension,
   ExtensionContext,
   ExtensionMode,
   EnvironmentVariableCollection,
   Memento,
-  Uri,
 } from 'vscode';
+import { Uri } from 'vscode';
 import { InMemoryMemento } from './inMemoryMemento';
 import { InMemorySecretStorage } from './inMemorySecretStorage';
 import { getExtensionStoragePath } from '../helpers';

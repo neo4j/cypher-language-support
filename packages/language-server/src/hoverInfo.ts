@@ -1,4 +1,4 @@
-import { SignatureHoverInfo } from '@neo4j-cypher/language-support';
+import type { SignatureHoverInfo } from '@neo4j-cypher/language-support';
 
 export function createParametersHoverString(
   params: SignatureHoverInfo['params'],

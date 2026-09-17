@@ -1,7 +1,5 @@
-import {
-  CypherDataTypeName,
-  deserializeTypeAnnotations,
-} from '@neo4j-cypher/query-tools';
+import type { CypherDataTypeName } from '@neo4j-cypher/query-tools';
+import { deserializeTypeAnnotations } from '@neo4j-cypher/query-tools';
 import * as vscode from 'vscode';
 import { CONSTANTS } from './constants';
 import { getExtensionContext } from './contextService';
