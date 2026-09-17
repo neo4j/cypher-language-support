@@ -6,7 +6,7 @@ import {
 } from '@neo4j-cypher/react-codemirror';
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { Tree } from 'react-d3-tree';
+import Tree from 'react-d3-tree';
 import { TokenTable } from './TokenTable';
 import { getDebugTree } from './treeUtil';
 
