@@ -41,7 +41,7 @@ export async function saveConnectionAndDisplayConnectionResult(
   password: string,
 ): Promise<ConnnectionResult> {
   if (!connection) {
-    return;
+    return undefined;
   }
 
   const result = await saveConnectionAndUpdateDatabaseConnection(
