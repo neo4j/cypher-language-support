@@ -373,7 +373,7 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    setSchemaError(String(e as Error));
+                    setSchemaError(String(e as any));
                   }
                 }}
               />

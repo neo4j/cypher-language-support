@@ -169,9 +169,7 @@ const namespacedCompletion = (
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map(
-        (label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem,
-      )
+      .map((label) => ({ label, kind, detail: `(namespace)` }))
       .concat(
         fullNames.map((label) => {
           const result = getMethodCompletionItem(

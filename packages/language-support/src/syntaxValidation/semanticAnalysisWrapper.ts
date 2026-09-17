@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import type { DbSchema, Registry } from '../dbSchema.js';
 import type {
@@ -12,7 +8,6 @@ import type {
   SymbolTable,
 } from '../types.js';
 import { isCondition } from '../types.js';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
 import type { SyntaxDiagnostic } from './syntaxValidation.js';
