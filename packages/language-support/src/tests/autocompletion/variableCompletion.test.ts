@@ -230,4 +230,13 @@ describe('unscoped variable completions', () => {
       expected: [{ label: 'x', kind: CompletionItemKind.Variable }],
     });
   });
+
+  test('suggests LET-defined variables', () => {
+    const query = 'LET x = "New var" RETURN ';
+
+    testCompletions({
+      query,
+      expected: [{ label: 'x', kind: CompletionItemKind.Variable }],
+    });
+  });
 });
