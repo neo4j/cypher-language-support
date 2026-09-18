@@ -1,5 +1,20 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.41
+
+### Patch Changes
+
+- f0f28db: Update vite to v8 and bump playwright
+- b38430c: Update grammar and semantic analysis to 2026.09
+- Updated dependencies [d3dbe10]
+- Updated dependencies [1897def]
+- Updated dependencies [b2432d3]
+- Updated dependencies [321e370]
+- Updated dependencies [f0f28db]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/react-codemirror@2.0.0-next.41
+
 ## 2.0.0-next.40
 
 ### Patch Changes

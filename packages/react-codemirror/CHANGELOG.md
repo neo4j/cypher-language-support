@@ -1,5 +1,18 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.41
+
+### Patch Changes
+
+- b2432d3: Keep the editor action in the editor's top-right corner when an inline panel or the deleted lines of a diff render above the first line
+- f0f28db: Update vite to v8 and bump playwright
+- Updated dependencies [d3dbe10]
+- Updated dependencies [1897def]
+- Updated dependencies [321e370]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/lint-worker@1.10.1-next.15
+
 ## 2.0.0-next.40
 
 ### Minor Changes
