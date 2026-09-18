@@ -1,0 +1,22 @@
+name: 'Demo smoke test'
+description: 'Loads the built react-codemirror-playground bundle in a browser and fails on any page or console error'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Install Playwright Browsers
+      shell: bash
+      run: pnpm exec playwright install --only-shell --with-deps chromium
+      working-directory: packages/react-codemirror-playground
+
+    - name: Run demo smoke test
+      shell: bash
+      run: pnpm --filter @neo4j-cypher/react-codemirror-playground test:e2e
+
+    - name: Upload Playwright Report
+      uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+      if: failure()
+      with:
+        name: playwright-report-demo-smoke-test
+        path: packages/react-codemirror-playground/playwright-report/
+        retention-days: 30
