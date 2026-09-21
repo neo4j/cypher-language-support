@@ -25,7 +25,7 @@ import {
   displaySaveConnectionAnywayPrompt,
 } from '../uiUtils';
 import { ConnectionPanel } from '../webviews/connectionPanel';
-import { createParsingResult } from '@neo4j-cypher/language-support';
+import { getStatementAtCaret } from '@neo4j-cypher/language-support';
 
 /**
  * Handler for SAVE_CONNECTION_COMMAND (neo4j.saveConnection)
@@ -240,31 +240,6 @@ export function getCurrentStatement(): string | undefined {
     const currentOffset = editor.document.offsetAt(editor.selection.active);
     return getStatementAtCaret(editor.document.getText(), currentOffset);
   } else return '';
-}
-
-//exported for testing
-export function getStatementAtCaret(
-  input: string,
-  caretOffset: number,
-): string {
-  const statements = createParsingResult(input, {
-    consoleCommandsEnabled: true,
-  });
-  // Since the find goes through the statements in order this will work out.
-  let currentStatement = statements.statementsParsing.find((statement) => {
-    const stopOffset = statement?.ctx?.stop?.stop;
-    return stopOffset ? stopOffset >= caretOffset : false;
-  });
-  // Special case for when the caret is after the final token
-  currentStatement =
-    !currentStatement && statements.statementsParsing
-      ? statements.statementsParsing.at(-1)
-      : currentStatement;
-  const result = input.slice(
-    currentStatement.tokens.at(0).start,
-    currentStatement.tokens.at(-1).stop + 1,
-  );
-  return result;
 }
 
 export async function cypherFileFromSelection(): Promise<void> {

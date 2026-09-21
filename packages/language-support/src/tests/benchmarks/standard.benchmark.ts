@@ -1,6 +1,10 @@
 /* eslint-disable no-console */
 import { describe, test } from 'vitest';
-import { CypherLanguageService, parse } from '../../cypherLanguageService.js';
+import {
+  createParsingResult,
+  CypherLanguageService,
+  parse,
+} from '../../cypherLanguageService.js';
 import { testData } from '../testData.js';
 import {
   createMovieDb,
@@ -25,10 +29,12 @@ function benchmarkQuery(queryName: string, queryContent: string) {
       }).run();
     });
 
-    test('parse with CypherLanguageService', async ({ bench }) => {
-      await bench('parse with CypherLanguageService', () => {
-        languageService.clearCache();
-        languageService.parse(queryContent);
+    // Equivalent to what CypherLanguageService.parse does on a cold cache; the
+    // method itself is private so that ParsingResult stays out of the public API.
+
+    test('createParsingResult', async ({ bench }) => {
+      await bench('createParsingResult', () => {
+        createParsingResult(queryContent, { consoleCommandsEnabled: true });
       }).run();
     });
 
