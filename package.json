@@ -9,7 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/neo4j/cypher-language-support.git"
   },
-  "type":"module",
+  "type": "module",
   "scripts": {
     "prepare": "husky install",
     "build": "pnpm --recursive build",
