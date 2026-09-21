@@ -130,8 +130,14 @@ function createCodeBlock(
 /* Inline code wins over emphasis, exactly like in markdown, which keeps
    descriptions like "the `*` wildcard" from turning into emphasis. Inline code
    is allowed to span lines, since that is how we emit it in the variable
-   hovers. The only emphasis we write is **bold** and _italic_. */
-const inlineMarkup = /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|_([^_\n]+)_/g;
+   hovers. The only emphasis we write is **bold** and _italic_.
+
+   An underscore only opens or closes emphasis when it is not inside a word,
+   the rule CommonMark (and with it the VS Code hover) follows. Descriptions
+   from the schema list values like 'DEFAULT_PATH_LEAF_TO_NULL', whose
+   underscores must stay put. */
+const inlineMarkup =
+  /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|(?<!\w)_([^_\n]+)_(?!\w)/g;
 
 function renderInline(target: HTMLElement, text: string) {
   let lastEnd = 0;

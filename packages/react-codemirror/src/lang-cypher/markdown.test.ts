@@ -49,6 +49,22 @@ test('renders a variable hover', () => {
   );
 });
 
+// Schema descriptions are interpolated into the markdown as they are, and
+// list values such as 'AS_PATH_LIST', which must not turn into emphasis
+test('leaves the underscores inside words alone', () => {
+  const description =
+    "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL').";
+
+  const dom = renderMarkdown(
+    ['**Parameters**', `- \`pathOptions\` - ${description}`].join('\n'),
+  );
+
+  expect(dom.querySelector('em')).toBeNull();
+  expect(dom.querySelector('li').textContent).toBe(
+    `pathOptions - ${description}`,
+  );
+});
+
 // The markdown language-support writes for a function or procedure hover
 test('renders a method hover', () => {
   const markdown = [
