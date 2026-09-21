@@ -13,6 +13,14 @@ import {
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 
+/* The code blocks hover emits hold Cypher fragments, not whole statements,
+  thus the parsing based syntax colouring needs a prefix to highlight correctly*/
+export type CypherFragmentKind = 'labelExpression' | 'function' | 'procedure';
+
+function cypherCodeBlock(fragment: string, kind: CypherFragmentKind): string[] {
+  return [`\`\`\`cypher ${kind}`, fragment, '```'];
+}
+
 export function getHoverInfo({
   caretPosition,
   dbSchema,
@@ -47,11 +55,10 @@ export function getHoverInfo({
     const hasLabels =
       !isLabelLeaf(symbol.labels) && symbol.labels.children.length > 0;
 
-    const labelTreeString = [
-      '```cypher',
+    const labelTreeString = cypherCodeBlock(
       renderLabelTree(symbol.labels),
-      '```',
-    ].join('\n');
+      'labelExpression',
+    ).join('\n');
     const hoverContent = hasLabels
       ? [
           '`',
@@ -85,9 +92,12 @@ export function getHoverInfo({
     contents: {
       kind: MarkupKind.Markdown,
       value: [
-        '```cypher',
-        schemaMethod.signature,
-        '```',
+        ...cypherCodeBlock(
+          schemaMethod.signature,
+          parsedMethod.methodType === MethodType.procedure
+            ? 'procedure'
+            : 'function',
+        ),
         `${deprecated ? '(_deprecated_) ' : ''}${schemaMethod.description}`,
         '',
         ...createParametersHoverString(params),

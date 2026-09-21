@@ -6,7 +6,7 @@ import { eventually, newUntitledFileWithContent } from '../../../helpers';
 suite('Hover spec functions', () => {
   const absFunction = testData.mockSchema.functions['CYPHER 5']['abs'];
   const expectedHoverInfo = [
-    '```cypher',
+    '```cypher function',
     absFunction.signature,
     '```',
     absFunction.description,

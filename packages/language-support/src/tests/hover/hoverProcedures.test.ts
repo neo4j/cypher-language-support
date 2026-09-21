@@ -8,7 +8,7 @@ const languageService = new CypherLanguageService();
 const awaitIndexHoverInfo: Hover = {
   contents: {
     kind: 'markdown',
-    value: `\`\`\`cypher
+    value: `\`\`\`cypher procedure
 db.awaitIndex(indexName :: STRING, timeOutSeconds = 300 :: INTEGER)
 \`\`\`
 Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300)).
@@ -23,7 +23,7 @@ Wait for an index to come online (for example: CALL db.awaitIndex("MyIndex", 300
 const labelsHoverInfo: Hover = {
   contents: {
     kind: 'markdown',
-    value: `\`\`\`cypher
+    value: `\`\`\`cypher procedure
 db.labels() :: (label :: STRING)
 \`\`\`
 List all labels attached to nodes within a database according to the user's access rights. The procedure returns empty results if the user is not authorized to view those labels.
@@ -108,7 +108,7 @@ describe('Procedure hover', () => {
     expect(innerHoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 toString(input :: ANY) :: STRING
 \`\`\`
 Converts an \`INTEGER\`, \`FLOAT\`, \`BOOLEAN\`, \`POINT\` or temporal type (i.e. \`DATE\`, \`ZONED TIME\`, \`LOCAL TIME\`, \`ZONED DATETIME\`, \`LOCAL DATETIME\` or \`DURATION\`) value to a \`STRING\`.
@@ -132,7 +132,7 @@ Converts an \`INTEGER\`, \`FLOAT\`, \`BOOLEAN\`, \`POINT\` or temporal type (i.e
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher procedure
 db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: (node :: NODE)
 \`\`\`
 (_deprecated_) Set a vector property on a given node in a more space efficient representation than Cypher's SET.

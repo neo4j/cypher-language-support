@@ -7,14 +7,21 @@
  * never inject HTML into the editor.
  */
 
+/** A fence info string, i.e. ```<language> <extra> */
+export type CodeBlockInfo = {
+  language: string;
+  /** Whatever followed the language, e.g. the kind of fragment the block holds */
+  extra: string;
+};
+
 /** Fills `target` with (optionally highlighted) content of a fenced code block. */
 export type CodeHighlighter = (
   code: string,
-  language: string,
+  info: CodeBlockInfo,
   target: HTMLElement,
 ) => void;
 
-const openingFence = /^\s*```(\S*)\s*$/;
+const openingFence = /^\s*```(\S*)[^\S\n]*(.*?)\s*$/;
 const closingFence = /^\s*```\s*$/;
 const listItem = /^\s*[-*+] +/;
 const heading = /^(#{1,6}) +(.*)$/;
@@ -53,7 +60,11 @@ export function renderMarkdown(
       // Skip the closing fence, if the block was closed at all
       i++;
       dom.appendChild(
-        createCodeBlock(code.join('\n'), fenceStart[1], highlightCode),
+        createCodeBlock(
+          code.join('\n'),
+          { language: fenceStart[1], extra: fenceStart[2] },
+          highlightCode,
+        ),
       );
       continue;
     }
@@ -97,14 +108,14 @@ export function renderMarkdown(
 
 function createCodeBlock(
   code: string,
-  language: string,
+  info: CodeBlockInfo,
   highlightCode?: CodeHighlighter,
 ): HTMLElement {
   const pre = document.createElement('pre');
   const codeElement = document.createElement('code');
 
   if (highlightCode) {
-    highlightCode(code, language, codeElement);
+    highlightCode(code, info, codeElement);
   } else {
     codeElement.textContent = code;
   }
