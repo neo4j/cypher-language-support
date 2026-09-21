@@ -6,6 +6,7 @@
 
 import { CompletionItem as CompletionItem_2 } from 'vscode-languageserver-types';
 import { Diagnostic } from 'vscode-languageserver-types';
+import { Hover } from 'vscode-languageserver-types';
 import { SemanticTokensLegend } from 'vscode-languageserver-types';
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { SignatureInformation } from 'vscode-languageserver-types';
@@ -100,7 +101,7 @@ export class CypherLanguageService {
     hoverInfo(query: string, input: {
         caretPosition: number;
         dbSchema: DbSchema;
-    }): SignatureHoverInfo | undefined;
+    }): Hover | undefined;
     // (undocumented)
     lint(query: string, dbSchema: DbSchema): {
         diagnostics: SyntaxDiagnostic[];
@@ -334,6 +335,9 @@ export type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE' | 'DEFAULT';
 // @public (undocumented)
 export type Registry<T> = Record<string, T>;
 
+// @public
+export function renderLabelTree(tree: LabelOrCondition): string;
+
 // @public (undocumented)
 export function resolveCypherVersion(parsedVersion: CypherVersion | undefined, dbSchema: DbSchema): string;
 
@@ -353,15 +357,6 @@ export function shouldAutoCompleteYield(query: string, offset: number): boolean;
 
 // @public (undocumented)
 export function signatureHelp(query: string, dbSchema: DbSchema, options?: SignatureInfoOptions): SignatureHelp;
-
-// @public (undocumented)
-export type SignatureHoverInfo = {
-    signature: string;
-    description: string;
-    returnDescription: string | ReturnDescription[];
-    isDeprecated: boolean;
-    params: ArgumentDescription[];
-};
 
 // @public (undocumented)
 export interface SignatureInfoOptions {
