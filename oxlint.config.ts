@@ -46,7 +46,7 @@ export default defineConfig({
       },
     },
     {
-      // Build scripts are CLIs: stdout is their output, not stray debugging.
+      // console.log is expected in these scripts
       files: ['scripts/**'],
       rules: {
         'no-console': 'off',
