@@ -1,7 +1,7 @@
 /**
- * Minimal markdown renderer for the markdown we produce ourselves in
- * language-support (hovers, documentation strings): fenced code blocks,
- * inline code, bold/italic, bullet lists, headings and paragraphs.
+ * Renders the markdown hovers are written in, in language-support: fenced
+ * code blocks, bullet lists, paragraphs, and inline code, bold and italic.
+ * It is not a general markdown renderer, it handles the shapes we emit.
  *
  * Everything is inserted as text nodes, so schema-provided descriptions can
  * never inject HTML into the editor.
@@ -22,8 +22,7 @@ export type CodeHighlighter = (
 ) => void;
 
 const fence = '```';
-const listItem = /^\s*[-*+] +/;
-const heading = /^(#{1,6}) +(.*)$/;
+const bullet = '- ';
 
 function parseOpeningFence(line: string): CodeBlockInfo | undefined {
   if (!line.startsWith(fence)) {
@@ -84,27 +83,16 @@ export function renderMarkdown(
       continue;
     }
 
-    if (listItem.test(line)) {
+    if (line.startsWith(bullet)) {
       flushParagraph();
       const list = document.createElement('ul');
-      while (i < lines.length && listItem.test(lines[i])) {
+      while (i < lines.length && lines[i].startsWith(bullet)) {
         const item = document.createElement('li');
-        renderInline(item, lines[i].replace(listItem, ''));
+        renderInline(item, lines[i].slice(bullet.length));
         list.appendChild(item);
         i++;
       }
       dom.appendChild(list);
-      continue;
-    }
-
-    const headingMatch = heading.exec(line);
-    if (headingMatch) {
-      flushParagraph();
-      const level = Math.min(headingMatch[1].length, 6);
-      const header = document.createElement(`h${level}`);
-      renderInline(header, headingMatch[2]);
-      dom.appendChild(header);
-      i++;
       continue;
     }
 
@@ -139,16 +127,17 @@ function createCodeBlock(
   return pre;
 }
 
-// Inline code wins over emphasis, exactly like in markdown. Inline code is
-// allowed to span lines, since that is how we emit it in the variable hovers
-const inlineMarkup =
-  /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|\*([^*\n]+)\*|_([^_\n]+)_/g;
+/* Inline code wins over emphasis, exactly like in markdown, which keeps
+   descriptions like "the `*` wildcard" from turning into emphasis. Inline code
+   is allowed to span lines, since that is how we emit it in the variable
+   hovers. The only emphasis we write is **bold** and _italic_. */
+const inlineMarkup = /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|_([^_\n]+)_/g;
 
 function renderInline(target: HTMLElement, text: string) {
   let lastEnd = 0;
 
   for (const match of text.matchAll(inlineMarkup)) {
-    const [matched, code, bold, starItalic, underscoreItalic] = match;
+    const [matched, code, bold, italic] = match;
 
     if (match.index > lastEnd) {
       target.appendChild(
@@ -166,7 +155,7 @@ function renderInline(target: HTMLElement, text: string) {
       target.appendChild(element);
     } else {
       const element = document.createElement('em');
-      element.textContent = starItalic ?? underscoreItalic;
+      element.textContent = italic;
       target.appendChild(element);
     }
 

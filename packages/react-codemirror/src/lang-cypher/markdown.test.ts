@@ -31,3 +31,45 @@ test('handles fences without a language or a fragment kind', () => {
     ['RETURN 1', { language: '', extra: '' }],
   ]);
 });
+
+// The markdown language-support writes for a variable hover
+test('renders a variable hover', () => {
+  const markdown = [
+    '`',
+    'n: Node',
+    '`',
+    '',
+    '```cypher labelExpression',
+    '(Person | Pet)',
+    '```',
+  ].join('\n');
+
+  expect(renderMarkdown(markdown).innerHTML).toBe(
+    '<p><code>n: Node</code></p><pre><code>(Person | Pet)</code></pre>',
+  );
+});
+
+// The markdown language-support writes for a function or procedure hover
+test('renders a method hover', () => {
+  const markdown = [
+    '```cypher function',
+    'abs(input :: INTEGER) :: INTEGER',
+    '```',
+    '(_deprecated_) Returns the absolute value of an `INTEGER`.',
+    '',
+    '**Parameters**',
+    '- `input` - A numeric value.',
+    '',
+    '**Returns:** `INTEGER`',
+  ].join('\n');
+
+  expect(renderMarkdown(markdown).innerHTML).toBe(
+    [
+      '<pre><code>abs(input :: INTEGER) :: INTEGER</code></pre>',
+      '<p>(<em>deprecated</em>) Returns the absolute value of an <code>INTEGER</code>.</p>',
+      '<p><strong>Parameters</strong></p>',
+      '<ul><li><code>input</code> - A numeric value.</li></ul>',
+      '<p><strong>Returns:</strong> <code>INTEGER</code></p>',
+    ].join(''),
+  );
+});

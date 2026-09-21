@@ -157,10 +157,6 @@ export const createCypherTheme = ({
       '& p': {
         margin: '6px 0',
       },
-      '& h1, & h2, & h3, & h4, & h5, & h6': {
-        margin: '8px 0 4px',
-        fontSize: '13px',
-      },
       '& ul': {
         margin: '6px 0',
         paddingLeft: '18px',
