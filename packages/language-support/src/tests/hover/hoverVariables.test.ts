@@ -90,7 +90,7 @@ n: Node
 r: Relationship
 \`
 
-\`\`\`cypher
+\`\`\`cypher labelExpression
 KNOWS
 \`\`\``,
       },
@@ -116,7 +116,7 @@ KNOWS
 r: Relationship
 \`
 
-\`\`\`cypher
+\`\`\`cypher labelExpression
 KNOWS
 \`\`\``,
       },
@@ -164,7 +164,7 @@ n: Node
 n: Node
 \`
 
-\`\`\`cypher
+\`\`\`cypher labelExpression
 ((Person | Pet) & Neighbour)
 \`\`\``,
       },
@@ -190,7 +190,7 @@ n: Node
 n: Node
 \`
 
-\`\`\`cypher
+\`\`\`cypher labelExpression
 Person
 \`\`\``,
       },
@@ -206,7 +206,7 @@ Person
 n: Node
 \`
 
-\`\`\`cypher
+\`\`\`cypher labelExpression
 Cat
 \`\`\``,
       },
