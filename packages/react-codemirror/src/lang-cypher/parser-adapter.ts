@@ -8,6 +8,9 @@ import {
   cypherTokenTypeToNode,
   parserAdapterNodeSet,
 } from './constants';
+// Must come before prism-cypher: it publishes the global `Prism` that the
+// component script assigns onto.
+import './prism-global.js';
 // This import will load the cypher support in prisma
 import 'prismjs/components/prism-cypher';
 import { CypherConfig } from './langCypher';
