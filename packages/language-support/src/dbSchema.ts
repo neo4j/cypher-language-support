@@ -1,7 +1,7 @@
 import { CypherVersion, Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export type Registry<T> = Record<string, T>;
-type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
+export type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
 
 export interface DbSchema {
   labels?: string[];

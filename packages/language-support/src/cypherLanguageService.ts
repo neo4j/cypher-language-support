@@ -47,7 +47,7 @@ import {
   splitIntoStatements,
 } from './helpers.js';
 import {
-  lintCypherQuery,
+  lintCypherQueryWithParsingResult,
   SyntaxDiagnostic,
 } from './syntaxValidation/syntaxValidation.js';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
@@ -59,9 +59,9 @@ import {
   SymbolTable,
 } from './types.js';
 import { DbSchema } from './dbSchema.js';
-import { getSignatureInfo } from './signatureHelp.js';
-import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
-import { autocomplete } from './autocompletion/autocompletion.js';
+import { getSignatureInfoWithParsingResult } from './signatureHelp.js';
+import { highlightSyntaxWithParsingResult } from './syntaxHighlighting/syntaxHighlighting.js';
+import { autocompleteWithParsingResult } from './autocompletion/autocompletion.js';
 import { getHoverInfo } from './hoverInformation/hover.js';
 
 export interface ParsedStatement {
@@ -1025,7 +1025,7 @@ export class CypherLanguageService {
     this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
-  parse(query: string): ParsingResult {
+  private parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
@@ -1055,12 +1055,12 @@ export class CypherLanguageService {
 
   lint(query: string, dbSchema: DbSchema) {
     const parsingResult = this.parse(query);
-    return lintCypherQuery(query, dbSchema, { parsingResult });
+    return lintCypherQueryWithParsingResult(query, dbSchema, { parsingResult });
   }
 
   highlightSyntax(query: string) {
     const parsingResult = this.parse(query);
-    return highlightSyntax(query, { parsingResult });
+    return highlightSyntaxWithParsingResult(query, { parsingResult });
   }
 
   hoverInfo(
@@ -1082,7 +1082,10 @@ export class CypherLanguageService {
     { caretPosition = query.length }: { caretPosition?: number } = {},
   ) {
     const parsingResult = this.parse(query);
-    return getSignatureInfo(query, dbSchema, { caretPosition, parsingResult });
+    return getSignatureInfoWithParsingResult(query, dbSchema, {
+      caretPosition,
+      parsingResult,
+    });
   }
 
   autocomplete(
@@ -1096,7 +1099,7 @@ export class CypherLanguageService {
     // TODO This is a temporary hack because completions are not working well
     query = query.slice(0, caretPosition);
     const parsingResult = this.parse(query);
-    return autocomplete(query, dbSchema, {
+    return autocompleteWithParsingResult(query, dbSchema, {
       consoleCommandsEnabled: this.consoleCommandsEnabled,
       caretPosition,
       manual,
