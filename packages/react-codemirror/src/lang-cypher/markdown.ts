@@ -21,10 +21,29 @@ export type CodeHighlighter = (
   target: HTMLElement,
 ) => void;
 
-const openingFence = /^\s*```(\S*)[^\S\n]*(.*?)\s*$/;
-const closingFence = /^\s*```\s*$/;
+const fence = '```';
 const listItem = /^\s*[-*+] +/;
 const heading = /^(#{1,6}) +(.*)$/;
+
+function parseOpeningFence(line: string): CodeBlockInfo | undefined {
+  if (!line.startsWith(fence)) {
+    return undefined;
+  }
+
+  const info = line.slice(fence.length);
+  const languageEnd = info.indexOf(' ');
+
+  return languageEnd === -1
+    ? { language: info, extra: '' }
+    : {
+        language: info.slice(0, languageEnd),
+        extra: info.slice(languageEnd + 1),
+      };
+}
+
+function isClosingFence(line: string): boolean {
+  return line === fence;
+}
 
 export function renderMarkdown(
   markdown: string,
@@ -47,24 +66,20 @@ export function renderMarkdown(
 
   while (i < lines.length) {
     const line = lines[i];
-    const fenceStart = openingFence.exec(line);
+    const fenceStart = parseOpeningFence(line);
 
     if (fenceStart) {
       flushParagraph();
       const code: string[] = [];
       i++;
-      while (i < lines.length && !closingFence.test(lines[i])) {
+      while (i < lines.length && !isClosingFence(lines[i])) {
         code.push(lines[i]);
         i++;
       }
-      // Skip the closing fence, if the block was closed at all
+      // Skip the closing fence
       i++;
       dom.appendChild(
-        createCodeBlock(
-          code.join('\n'),
-          { language: fenceStart[1], extra: fenceStart[2] },
-          highlightCode,
-        ),
+        createCodeBlock(code.join('\n'), fenceStart, highlightCode),
       );
       continue;
     }
