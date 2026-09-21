@@ -1,6 +1,6 @@
 import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
 
-type ReturnDescription = {
+export type ReturnDescription = {
   name: string;
   description: string;
   type: Neo4jStringType;
@@ -13,7 +13,7 @@ export type CypherVersion = (typeof allCypherVersions)[number];
 
 // we could parse this string for better types in the future
 type Neo4jStringType = string;
-type ArgumentDescription = ReturnDescription & { default?: string };
+export type ArgumentDescription = ReturnDescription & { default?: string };
 
 type ProcedureMode = 'READ' | 'DBMS' | 'SCHEMA' | 'WRITE' | 'DEFAULT';
 
@@ -91,12 +91,4 @@ export type ConditionNode = {
 export type SymbolsInfo = {
   query: string;
   symbolTables: SymbolTable[];
-};
-
-export type SignatureHoverInfo = {
-  signature: string;
-  description: string;
-  returnDescription: string | ReturnDescription[];
-  isDeprecated: boolean;
-  params: ArgumentDescription[];
 };

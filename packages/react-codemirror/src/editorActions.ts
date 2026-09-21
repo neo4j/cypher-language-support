@@ -40,10 +40,22 @@ export type EditorActionsController = {
  *    `absolute` on the editor element (which does not scroll). It never moves
  *    when the document grows, when an inline panel opens above the first line,
  *    or when the content scrolls — content simply scrolls behind it.
+ *
+ * The overlay is measured against the scroller's visible box rather than
+ * against the spacer or the content: the spacer moves down the document
+ * whenever something renders above the first line (an inline panel, the
+ * deleted lines of a diff), and the content reaches past the right edge as
+ * soon as it overflows.
  */
 
 const SPACER_BOTTOM_GAP = 2;
 const SPACER_LEFT_GAP = 4;
+/**
+ * Floor for the overlay's inset from the visible right edge, so it stays off
+ * the content's last pixel even if a theme zeroes `.cm-line`'s right padding
+ * (the base theme's 2px, which is what normally provides the inset).
+ */
+const MIN_OVERLAY_RIGHT_INSET = 2;
 
 export function createEditorActionsController(): EditorActionsController {
   const setActiveEffect = StateEffect.define<boolean>();
@@ -143,6 +155,10 @@ export function createEditorActionsController(): EditorActionsController {
             '--cm-editor-actions-content-min-height',
             `${container.offsetHeight + SPACER_BOTTOM_GAP}px`,
           );
+          view.dom.style.setProperty(
+            '--cm-editor-actions-reserved-width',
+            `${container.offsetWidth + SPACER_LEFT_GAP}px`,
+          );
           this.align(view);
         });
         this.resizeObserver.observe(container);
@@ -159,22 +175,28 @@ export function createEditorActionsController(): EditorActionsController {
               return null;
             }
             const editorRect = view.dom.getBoundingClientRect();
-            const spacer = view.dom.querySelector('.cm-editor-actions-spacer');
-            let topClient: number;
-            let rightClient: number;
-            if (spacer) {
-              const rect = spacer.getBoundingClientRect();
-              topClient = rect.top;
-              rightClient = rect.right;
-            } else {
-              const rect = view.contentDOM.getBoundingClientRect();
-              const style = window.getComputedStyle(view.contentDOM);
-              topClient = rect.top + (parseFloat(style.paddingTop) || 0);
-              rightClient = rect.right - (parseFloat(style.paddingRight) || 0);
-            }
+            const scrollerRect = view.scrollDOM.getBoundingClientRect();
+            const style = window.getComputedStyle(view.contentDOM);
+            const visibleRight = scrollerRect.left + view.scrollDOM.clientWidth;
+            // Match the inset `.cm-line`'s right padding gives the spacer, so
+            // the overlay lands on the space the spacer reserves and stays off
+            // `contentRect.right - 1`, the pixel CodeMirror hit-tests to
+            // measure a wrapped line's selection. Cover it and the first
+            // line's highlight collapses to zero width — hence the floor.
+            const line = view.contentDOM.querySelector('.cm-line');
+            const lineRightPadding = line
+              ? parseFloat(window.getComputedStyle(line).paddingRight) || 0
+              : 0;
             return {
-              top: topClient - editorRect.top + view.scrollDOM.scrollTop,
-              right: editorRect.right - rightClient - view.scrollDOM.scrollLeft,
+              top:
+                scrollerRect.top -
+                editorRect.top +
+                (parseFloat(style.paddingTop) || 0),
+              right:
+                editorRect.right -
+                visibleRight +
+                (parseFloat(style.paddingRight) || 0) +
+                Math.max(lineRightPadding, MIN_OVERLAY_RIGHT_INSET),
             };
           },
           write: (pos) => {
@@ -206,6 +228,7 @@ export function createEditorActionsController(): EditorActionsController {
           root.style.removeProperty('--cm-editor-actions-width');
           root.style.removeProperty('--cm-editor-actions-height');
           root.style.removeProperty('--cm-editor-actions-content-min-height');
+          root.style.removeProperty('--cm-editor-actions-reserved-width');
           root.style.removeProperty('--cm-editor-actions-top');
           root.style.removeProperty('--cm-editor-actions-right');
         }
@@ -229,6 +252,10 @@ export function createEditorActionsController(): EditorActionsController {
       userSelect: 'none',
       WebkitUserSelect: 'none',
       pointerEvents: 'none',
+    },
+    // The spacer only clears the first line, so a panel above it makes its own room.
+    '.cm-inline-panel': {
+      paddingRight: 'var(--cm-editor-actions-reserved-width, 0px)',
     },
     '.cm-placeholder': {
       display: 'inline',
