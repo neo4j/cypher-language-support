@@ -19,7 +19,9 @@
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
     "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig*.tsbuildinfo} && pnpm clean",
     "clean": "pnpm --recursive --parallel clean",
-    "test": "pnpm --recursive --parallel test",
+    "test": "vitest run",
+    "test:unit": "vitest run --project '*(unit)'",
+    "test:integration": "vitest run --project '*(integration)'",
     "test:e2e": "pnpm --recursive test:e2e",
     "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
     "lint": "oxlint --max-warnings 0",
@@ -47,7 +49,7 @@
     "ts-node": "10.9.1",
     "tsx": "^4.19.4",
     "typescript": "5.8.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.1"
   },
   "engines": {
     "node": ">=24.11.1",

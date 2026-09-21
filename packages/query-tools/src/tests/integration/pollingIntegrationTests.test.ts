@@ -5,7 +5,7 @@ import {
   extractRelationshipsWithNamedNodes,
   GraphSchema,
   validateGraphSchema,
-} from '../queries/graphSchema.js';
+} from '../../queries/graphSchema.js';
 
 describe('Polling integration', () => {
   let session: Session;
