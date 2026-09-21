@@ -35,6 +35,11 @@ jobs:
       - name: Setup and build project
         uses: ./.github/actions/setup-and-build
 
+      # CI already runs this per PR, but two PRs can each be green and still
+      # break the demo once both are on main, so re-check before publishing.
+      - name: Smoke test the built demo
+        uses: ./.github/actions/demo-smoke-test
+
       - name: Setup Pages
         uses: actions/configure-pages@45bfe0192ca1faeb007ade9deae92b16b8254a0d # v6.0.0
 

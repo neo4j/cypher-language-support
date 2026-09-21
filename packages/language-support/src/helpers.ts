@@ -198,6 +198,7 @@ export const rulesDefiningVariables = [
   CypherParser.RULE_reduceExpression,
   CypherParser.RULE_listItemsPredicate,
   CypherParser.RULE_listComprehension,
+  CypherParser.RULE_letItem,
 ];
 
 export const rulesDefiningOrUsingVariables = [

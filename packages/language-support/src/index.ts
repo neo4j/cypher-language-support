@@ -6,6 +6,7 @@ export {
 } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema, ScopedRegistry, Registry } from './dbSchema.js';
+export { renderLabelTree } from './labelTreeRender.js';
 export { getDebugTree } from './debugTree.js';
 export type { SimpleTree } from './debugTree.js';
 export { _internalFeatureFlags, FeatureFlags } from './featureFlags.js';
