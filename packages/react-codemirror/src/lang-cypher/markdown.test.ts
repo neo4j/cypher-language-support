@@ -1,6 +1,11 @@
 // @vitest-environment jsdom
 
+import {
+  CypherLanguageService,
+  testData,
+} from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
+import { MarkupContent } from 'vscode-languageserver-types';
 import { CodeBlockInfo, renderMarkdown } from './markdown';
 
 function codeBlockInfos(markdown: string): [string, CodeBlockInfo][] {
@@ -65,27 +70,41 @@ test('leaves the underscores inside words alone', () => {
   );
 });
 
-// The markdown language-support writes for a function or procedure hover
-test('renders a method hover', () => {
-  const markdown = [
-    '```cypher function',
-    'abs(input :: INTEGER) :: INTEGER',
-    '```',
-    '(_deprecated_) Returns the absolute value of an `INTEGER`.',
-    '',
-    '**Parameters**',
-    '- `input` - A numeric value.',
-    '',
-    '**Returns:** `INTEGER`',
-  ].join('\n');
+function renderMethodHover(query: string): HTMLElement {
+  const languageService = new CypherLanguageService();
+  const hover = languageService.hoverInfo(query, {
+    caretPosition: query.indexOf('(') - 1,
+    dbSchema: testData.mockSchema,
+  });
 
-  expect(renderMarkdown(markdown).innerHTML).toBe(
+  return renderMarkdown((hover.contents as MarkupContent).value);
+}
+
+test('renders a function hover', () => {
+  expect(renderMethodHover('RETURN toFloat(1)').innerHTML).toBe(
     [
-      '<pre><code>abs(input :: INTEGER) :: INTEGER</code></pre>',
-      '<p>(<em>deprecated</em>) Returns the absolute value of an <code>INTEGER</code>.</p>',
+      '<pre><code>toFloat(input :: STRING | INTEGER | FLOAT) :: FLOAT</code></pre>',
+      '<p>Converts a <code>STRING</code>, <code>INTEGER</code> or <code>FLOAT</code> value to a <code>FLOAT</code> value.</p>',
       '<p><strong>Parameters</strong></p>',
-      '<ul><li><code>input</code> - A numeric value.</li></ul>',
-      '<p><strong>Returns:</strong> <code>INTEGER</code></p>',
+      '<ul><li><code>input</code> - A value to be converted into a float.</li></ul>',
+      '<p><strong>Returns:</strong> <code>FLOAT</code></p>',
     ].join(''),
   );
+});
+
+test('renders a procedure hover', () => {
+  expect(renderMethodHover('CALL db.labels()').innerHTML).toBe(
+    [
+      '<pre><code>db.labels() :: (label :: STRING)</code></pre>',
+      "<p>List all labels attached to nodes within a database according to the user's access rights. The procedure returns empty results if the user is not authorized to view those labels.</p>",
+      '<p><strong>Returns</strong></p>',
+      '<ul><li><code>label</code> - A label within the database.</li></ul>',
+    ].join(''),
+  );
+});
+
+test('italicises the deprecation marker of a deprecated method', () => {
+  expect(
+    renderMethodHover('CYPHER 5 RETURN apoc.create.uuid()').innerHTML,
+  ).toContain('<p>(<em>deprecated</em>) Returns a UUID.</p>');
 });
