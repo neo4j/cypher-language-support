@@ -14,7 +14,7 @@
     "dev": "vite --open",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview",
-    "test:e2e": "npx playwright test --trace on",
+    "test:e2e": "playwright test --trace on",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo"
   },
   "dependencies": {
