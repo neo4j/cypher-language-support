@@ -172,8 +172,8 @@ export const createCypherTheme = ({
         margin: '6px 0',
         padding: '6px 8px',
         borderRadius: '3px',
-        overflowX: 'auto',
-        whiteSpace: 'pre',
+        whiteSpace: 'pre-wrap',
+        overflowWrap: 'break-word',
         backgroundColor: dark
           ? 'rgba(255, 255, 255, 0.08)'
           : 'rgba(0, 0, 0, 0.05)',
