@@ -22,7 +22,13 @@ export type CodeHighlighter = (
 ) => void;
 
 const fence = '```';
-const bullet = '- ';
+// We write our bullets with -, the schema writes its descriptions' with *
+const bullets = ['- ', '* '];
+
+function bulletContent(line: string): string | undefined {
+  const bullet = bullets.find((marker) => line.startsWith(marker));
+  return bullet === undefined ? undefined : line.slice(bullet.length);
+}
 
 function parseOpeningFence(line: string): CodeBlockInfo | undefined {
   if (!line.startsWith(fence)) {
@@ -83,14 +89,17 @@ export function renderMarkdown(
       continue;
     }
 
-    if (line.startsWith(bullet)) {
+    let itemContent = bulletContent(line);
+
+    if (itemContent !== undefined) {
       flushParagraph();
       const list = document.createElement('ul');
-      while (i < lines.length && lines[i].startsWith(bullet)) {
+      while (itemContent !== undefined) {
         const item = document.createElement('li');
-        renderInline(item, lines[i].slice(bullet.length));
+        renderInline(item, itemContent);
         list.appendChild(item);
         i++;
+        itemContent = i < lines.length ? bulletContent(lines[i]) : undefined;
       }
       dom.appendChild(list);
       continue;
@@ -127,15 +136,10 @@ function createCodeBlock(
   return pre;
 }
 
-/* Inline code wins over emphasis, exactly like in markdown, which keeps
-   descriptions like "the `*` wildcard" from turning into emphasis. Inline code
-   is allowed to span lines, since that is how we emit it in the variable
-   hovers. The only emphasis we write is **bold** and _italic_.
-
-   An underscore only opens or closes emphasis when it is not inside a word,
-   the rule CommonMark (and with it the VS Code hover) follows. Descriptions
-   from the schema list values like 'DEFAULT_PATH_LEAF_TO_NULL', whose
-   underscores must stay put. */
+/* Underscores only count as emphasis outside a word, so that descriptions
+   listing values like 'DEFAULT_PATH_LEAF_TO_NULL' keep them — the same rule
+   CommonMark (https://spec.commonmark.org/0.31.2/#example-374) follows. 
+   * is not emphasis here at all, descriptions use it as a wildcard. */
 const inlineMarkup =
   /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|(?<!\w)_([^_\n]+)_(?!\w)/g;
 

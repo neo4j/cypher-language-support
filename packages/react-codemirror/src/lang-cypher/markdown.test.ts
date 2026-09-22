@@ -54,6 +54,25 @@ test('renders a variable hover', () => {
   );
 });
 
+// Schema descriptions bring their own bullet lists, written with *
+test('renders the bullet lists in a schema description', () => {
+  const dom = renderMarkdown(
+    [
+      "* 'skip' -- to skip the top N results.",
+      "* 'limit' -- to limit the number of results returned.",
+    ].join('\n'),
+  );
+
+  expect(dom.innerHTML).toBe(
+    [
+      '<ul>',
+      "<li>'skip' -- to skip the top N results.</li>",
+      "<li>'limit' -- to limit the number of results returned.</li>",
+      '</ul>',
+    ].join(''),
+  );
+});
+
 // Schema descriptions are interpolated into the markdown as they are, and
 // list values such as 'AS_PATH_LIST', which must not turn into emphasis
 test('leaves the underscores inside words alone', () => {
