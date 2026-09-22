@@ -1,5 +1,7 @@
-import { Extension, StateEffect } from '@codemirror/state';
-import { EditorView, keymap } from '@codemirror/view';
+import type { Extension } from '@codemirror/state';
+import { StateEffect } from '@codemirror/state';
+import type { EditorView } from '@codemirror/view';
+import { keymap } from '@codemirror/view';
 
 import { StateField } from '@codemirror/state';
 

@@ -1,5 +1,10 @@
-import { integer } from 'vscode-languageclient';
-import { TreeItem, ViewSection, WebView, Workbench } from 'wdio-vscode-service';
+import type { integer } from 'vscode-languageclient';
+import type {
+  TreeItem,
+  ViewSection,
+  WebView,
+  Workbench,
+} from 'wdio-vscode-service';
 import { createAndStartTestContainer } from './setupTestContainer';
 
 export async function waitUntilNotification(

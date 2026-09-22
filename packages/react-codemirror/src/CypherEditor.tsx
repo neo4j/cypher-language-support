@@ -1,18 +1,8 @@
 import { insertNewline } from '@codemirror/commands';
-import {
-  Annotation,
-  Compartment,
-  EditorState,
-  Extension,
-} from '@codemirror/state';
-import {
-  EditorView,
-  KeyBinding,
-  keymap,
-  lineNumbers,
-  placeholder,
-  ViewUpdate,
-} from '@codemirror/view';
+import type { Extension } from '@codemirror/state';
+import { Annotation, Compartment, EditorState } from '@codemirror/state';
+import type { KeyBinding, ViewUpdate } from '@codemirror/view';
+import { EditorView, keymap, lineNumbers, placeholder } from '@codemirror/view';
 import {
   createInlinePanelController,
   type InlinePanelCallbacks,
@@ -37,12 +27,13 @@ import {
   replaceHistory,
   replMode as historyNavigation,
 } from './historyNavigation';
-import { cypher, CypherConfig } from './lang-cypher/langCypher';
+import type { CypherConfig } from './lang-cypher/langCypher';
+import { cypher } from './lang-cypher/langCypher';
 import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
-import { LintWorker } from '@neo4j-cypher/lint-worker';
+import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import workerpool from 'workerpool';
 
 type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];

@@ -1,5 +1,5 @@
-import { NeoNode, NeoRel } from '@neo4j-ndl/react';
-import * as vscode from 'vscode';
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import type * as vscode from 'vscode';
 
 export const views = {
   detailsView: undefined as vscode.WebviewView | undefined,

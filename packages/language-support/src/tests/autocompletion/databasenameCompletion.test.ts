@@ -1,5 +1,5 @@
 import { CompletionItemKind } from 'vscode-languageserver-types';
-import { DbSchema } from '../../dbSchema.js';
+import type { DbSchema } from '../../dbSchema.js';
 import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('Can complete database names', () => {

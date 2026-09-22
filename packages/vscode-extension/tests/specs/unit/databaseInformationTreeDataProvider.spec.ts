@@ -4,7 +4,7 @@ import * as sinon from 'sinon';
 import * as connectionService from '../../../src/connectionService';
 import { databaseInformationTreeDataProvider } from '../../../src/treeviews/databaseInformationTreeDataProvider';
 import { getMockConnection } from '../../helpers';
-import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import type { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Database information tree data provider spec', () => {

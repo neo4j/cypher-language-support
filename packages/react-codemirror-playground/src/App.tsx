@@ -1,4 +1,5 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import type { DbSchema } from '@neo4j-cypher/language-support';
+import { testData } from '@neo4j-cypher/language-support';
 import {
   CypherEditor,
   type DiffProps,

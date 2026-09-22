@@ -1,4 +1,4 @@
-import { DbSchema } from '../../dbSchema.js';
+import type { DbSchema } from '../../dbSchema.js';
 import { lintCypherQuery } from '../../syntaxValidation/syntaxValidation.js';
 
 type SyntaxValidationTestArgs = {

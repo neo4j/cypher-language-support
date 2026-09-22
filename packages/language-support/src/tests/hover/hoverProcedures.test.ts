@@ -1,4 +1,4 @@
-import { Hover } from 'vscode-languageserver-types';
+import type { Hover } from 'vscode-languageserver-types';
 import { CypherLanguageService } from '../../cypherLanguageService.js';
 import { testData } from '../testData.js';
 

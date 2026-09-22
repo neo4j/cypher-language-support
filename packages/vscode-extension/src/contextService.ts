@@ -1,12 +1,12 @@
-import {
+import type {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
 import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
-import { ExtensionContext } from 'vscode';
+import type { ExtensionContext } from 'vscode';
 import CypherRunner from './cypherRunner';
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import type { SymbolTable } from '@neo4j-cypher/language-support';
 
 type LanguageClient = {
   sendNotification: (

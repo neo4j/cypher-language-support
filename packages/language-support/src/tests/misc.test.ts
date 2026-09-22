@@ -1,8 +1,8 @@
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { SyntaxDiagnostic } from '../syntaxValidation/syntaxValidation.js';
 import {
   clampUnsafePositions,
   isNotParamError,
-  SyntaxDiagnostic,
 } from '../syntaxValidation/syntaxValidation.js';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { getDiagnosticsForQuery } from './syntaxValidation/helpers.js';

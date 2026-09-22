@@ -1,11 +1,7 @@
-import {
-  GraphVisualization,
-  NeoNode,
-  NeoRel,
-  SegmentedControl,
-} from '@neo4j-ndl/react';
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import { GraphVisualization, SegmentedControl } from '@neo4j-ndl/react';
 import React from 'react';
-import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
+import type { ResultRows } from '../webviews/queryResults/queryResultsTypes';
 
 type VizWrapperProps = {
   rows: ResultRows;

@@ -1,6 +1,6 @@
 import { browser } from '@wdio/globals';
 import { before } from 'mocha';
-import { Workbench } from 'wdio-vscode-service';
+import type { Workbench } from 'wdio-vscode-service';
 import { Key } from 'webdriverio';
 import {
   checkResult,

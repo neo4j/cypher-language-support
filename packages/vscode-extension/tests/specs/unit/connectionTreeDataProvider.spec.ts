@@ -1,9 +1,9 @@
-import { Database } from '@neo4j-cypher/query-tools';
+import type { Database } from '@neo4j-cypher/query-tools';
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
 import * as connectionService from '../../../src/connectionService';
-import { Connection } from '../../../src/connectionService';
+import type { Connection } from '../../../src/connectionService';
 import { connectionTreeDataProvider } from '../../../src/treeviews/connectionTreeDataProvider';
 
 suite('Connection tree data provider spec', () => {

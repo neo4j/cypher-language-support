@@ -1,11 +1,12 @@
+import type { CompletionItem } from 'vscode-languageserver-types';
 import {
-  CompletionItem,
   CompletionItemKind,
   InsertTextFormat,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema.js';
-import { ParsedStatement } from '../cypherLanguageService.js';
-import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types.js';
+import type { DbSchema } from '../dbSchema.js';
+import type { ParsedStatement } from '../cypherLanguageService.js';
+import type { LabelOrCondition, SymbolsInfo } from '../types.js';
+import { isLabelLeaf } from '../types.js';
 import { findParent, getDirection } from '../helpers.js';
 import {
   NodePatternContext,

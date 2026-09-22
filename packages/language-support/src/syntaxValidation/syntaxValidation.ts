@@ -1,26 +1,25 @@
+import type { Diagnostic } from 'vscode-languageserver-types';
 import {
-  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
 } from 'vscode-languageserver-types';
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import { resolveCypherVersion } from '../helpers.js';
-import {
+import type {
   LabelOrRelType,
-  LabelType,
   ParsedFunction,
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
   ParsingResult,
   PropertyType,
-  createParsingResult,
 } from '../cypherLanguageService.js';
-import {
+import { LabelType, createParsingResult } from '../cypherLanguageService.js';
+import type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
