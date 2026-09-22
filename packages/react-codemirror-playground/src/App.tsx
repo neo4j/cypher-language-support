@@ -13,17 +13,17 @@ import { getDebugTree } from './treeUtil';
 function InlinePanelDemo({ onClose }: { onClose: () => void }) {
   const [text, setText] = useState('');
   return (
-    <div className="border w-fit border-blue-400 bg-blue-50 dark:bg-gray-700 dark:border-blue-300 p-3 m-1 rounded flex flex-col gap-2 text-black dark:text-white">
+    <div className="border w-fit border-blue-400 bg-blue-50 dark:bg-gray-700 dark:border-blue-300 p-3 m-1 rounded-sm flex flex-col gap-2 text-black dark:text-white">
       <div className="text-sm">Inline panel demo</div>
       <div className="flex gap-2 items-center text-sm">
         <input
-          className="border px-2 py-1 text-black rounded flex-1"
+          className="border px-2 py-1 text-black rounded-sm flex-1"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="Type something"
         />
         <button
-          className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-1 rounded"
+          className="bg-gray-400 hover:bg-gray-500 text-white px-2 py-1 rounded-sm"
           onClick={onClose}
         >
           Close
@@ -230,7 +230,7 @@ export function App() {
               {(Object.keys(demos) as DemoName[]).map((demoName) => (
                 <button
                   key={demoName}
-                  className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded
+                  className={`hover:bg-blue-600 text-white font-bold py-1 px-3 rounded-sm
                 ${
                   selectedDemoName === demoName ? 'bg-blue-600' : 'bg-blue-400'
                 }`}
