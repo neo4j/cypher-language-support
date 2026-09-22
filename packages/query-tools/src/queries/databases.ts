@@ -1,6 +1,7 @@
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs, DbType } from '../types/sdkTypes.js';
+import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
+import { DbType } from '../types/sdkTypes.js';
 
 type DatabaseStatus =
   | 'online'
@@ -147,8 +148,6 @@ function getLogicalDatabases(
 
 function sortDatabases(databases: Database[]) {
   function databaseComparator(a: Database, b: Database) {
-    // disable eslint to make code more readable
-    /* eslint-disable curly */
     // home is greater than default
     if (a.default && b.home) return 1;
 
@@ -159,7 +158,6 @@ function sortDatabases(databases: Database[]) {
     // system is less than anything else
     if (a.name === 'system') return 1;
     if (b.name === 'system') return -1;
-    /* eslint-enable curly */
 
     // else sort alphabetically
     return a.name.localeCompare(b.name);

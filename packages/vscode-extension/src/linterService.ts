@@ -1,7 +1,5 @@
-import {
-  linterFileToServerVersion,
-  NpmRelease,
-} from '@neo4j-cypher/lint-worker';
+import type { NpmRelease } from '@neo4j-cypher/lint-worker';
+import { linterFileToServerVersion } from '@neo4j-cypher/lint-worker';
 import { getExtensionContext } from './contextService';
 import * as vscode from 'vscode';
 import { sendNotificationToLanguageClient } from './languageClientService';

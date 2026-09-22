@@ -1,5 +1,5 @@
-import { Memento } from 'vscode';
-import { Connections } from '../../src/connectionService';
+import type { Memento } from 'vscode';
+import type { Connections } from '../../src/connectionService';
 
 export class InMemoryMemento implements Memento {
   private _storage: { [keyName: string]: Connections } = {};

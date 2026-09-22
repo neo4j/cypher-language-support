@@ -1,16 +1,10 @@
-import { Database } from '@neo4j-cypher/query-tools';
+import type { Database } from '@neo4j-cypher/query-tools';
 import path from 'path';
-import {
-  Event,
-  EventEmitter,
-  TreeDataProvider,
-  TreeItem,
-  TreeItemCollapsibleState,
-  Uri,
-} from 'vscode';
+import type { Event, TreeDataProvider } from 'vscode';
+import { EventEmitter, TreeItem, TreeItemCollapsibleState, Uri } from 'vscode';
 import { CONSTANTS } from '../constants';
+import type { Connection } from './../connectionService';
 import {
-  Connection,
   getAllConnections,
   getConnectionByKey,
   getConnectionDatabases,
@@ -45,6 +39,7 @@ class ConnectionTreeDataProvider implements TreeDataProvider<ConnectionItem> {
     if (element.type === 'activeConnection') {
       return this.getDatabaseConnectionItems(element);
     }
+    return undefined;
   }
 
   private getTopLevelConnections(): ConnectionItem[] {

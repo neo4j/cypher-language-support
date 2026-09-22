@@ -1,11 +1,11 @@
 import { compareMajorMinorVersions } from './version.js';
-import {
+import type {
   DbSchema as DbSchemaV2,
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
 import axios from 'axios';
-import { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
+import type { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 
 // for older versions of the language support, the dbschema was not the same,
 // meaning old linters need conversion of the new schema

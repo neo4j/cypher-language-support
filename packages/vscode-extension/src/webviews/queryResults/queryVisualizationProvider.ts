@@ -1,14 +1,10 @@
-import {
-  WebviewViewProvider,
-  WebviewView,
-  Uri,
-  window,
-  ColorThemeKind,
-} from 'vscode';
+import type { WebviewViewProvider, WebviewView } from 'vscode';
+import { Uri, window, ColorThemeKind } from 'vscode';
 import { getExtensionContext } from '../../contextService';
 import path from 'path';
 import { getNonce } from '../../getNonce';
-import { QueryResultsMessage, views } from './queryResultsTypes';
+import type { QueryResultsMessage } from './queryResultsTypes';
+import { views } from './queryResultsTypes';
 
 export class Neo4jQueryVisualizationProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;

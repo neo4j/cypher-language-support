@@ -1,13 +1,11 @@
-import {
-  HighlightStyle,
-  syntaxHighlighting,
-  TagStyle,
-} from '@codemirror/language';
-import { Extension } from '@codemirror/state';
+import type { TagStyle } from '@codemirror/language';
+import { HighlightStyle, syntaxHighlighting } from '@codemirror/language';
+import type { Extension } from '@codemirror/state';
 import { EditorView } from '@codemirror/view';
 import { CypherTokenType } from '@neo4j-cypher/language-support';
-import { StyleSpec } from 'style-mod';
-import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
+import type { StyleSpec } from 'style-mod';
+import type { HighlightedCypherTokenTypes } from './constants';
+import { tokenTypeToStyleTag } from './constants';
 import {
   byWordSvg,
   caseSensitiveSvg,

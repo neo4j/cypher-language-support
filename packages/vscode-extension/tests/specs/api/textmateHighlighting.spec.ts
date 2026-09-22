@@ -42,7 +42,6 @@ function assertUnchangedTokens(testFixurePath: string) {
         fileName.replace('.', '-') + '.json',
       );
       if (fs.existsSync(resultPath)) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const previousData = JSON.parse(fs.readFileSync(resultPath).toString());
         try {
           assert.deepEqual(previousData, data);

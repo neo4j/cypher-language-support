@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { describe, test } from 'vitest';
+import { describe } from 'vitest';
 import { CypherLanguageService, parse } from '../../cypherLanguageService.js';
 import { testData } from '../testData.js';
 import { autocompletionQueries, tictactoe } from './benchmarkQueries.js';

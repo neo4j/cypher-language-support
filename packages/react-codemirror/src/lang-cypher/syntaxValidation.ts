@@ -1,5 +1,6 @@
-import { Diagnostic, linter } from '@codemirror/lint';
-import { Extension } from '@codemirror/state';
+import type { Diagnostic } from '@codemirror/lint';
+import { linter } from '@codemirror/lint';
+import type { Extension } from '@codemirror/state';
 import { DiagnosticSeverity, DiagnosticTag } from 'vscode-languageserver-types';
 import workerpool from 'workerpool';
 import type { CypherConfig } from './langCypher';

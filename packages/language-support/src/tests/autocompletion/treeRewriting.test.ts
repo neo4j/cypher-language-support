@@ -1,4 +1,5 @@
-import { isLabelLeaf, LabelOrCondition } from '../../types.js';
+import type { LabelOrCondition } from '../../types.js';
+import { isLabelLeaf } from '../../types.js';
 import {
   childAlreadyExists,
   convertToCNF,

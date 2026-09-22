@@ -1,4 +1,5 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import type { DbSchema } from '@neo4j-cypher/language-support';
+import { testData } from '@neo4j-cypher/language-support';
 import {
   CypherEditor,
   type DiffProps,
@@ -372,7 +373,8 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    setSchemaError(String(e as Error));
+                    // oxlint-disable-next-line typescript/no-base-to-string
+                    setSchemaError(String(e));
                   }
                 }}
               />

@@ -1,10 +1,12 @@
-import {
-  cypherDataToString,
+import type {
   CypherDataType,
   CypherDataTypeName,
   Database,
-  getCypherTypeName,
   Neo4jType,
+} from '@neo4j-cypher/query-tools';
+import {
+  cypherDataToString,
+  getCypherTypeName,
   serializeTypeAnnotations,
 } from '@neo4j-cypher/query-tools';
 import { Neo4jError } from 'neo4j-driver';
@@ -17,10 +19,8 @@ import {
   getParameterByKey,
   setParameter,
 } from '../parameterService';
-import {
-  ParameterItem,
-  parametersTreeDataProvider,
-} from '../treeviews/parametersTreeDataProvider';
+import type { ParameterItem } from '../treeviews/parametersTreeDataProvider';
+import { parametersTreeDataProvider } from '../treeviews/parametersTreeDataProvider';
 import { validateParamInput } from '../helpers';
 
 async function isConnected(): Promise<boolean> {
@@ -170,7 +170,6 @@ export async function evaluateParam(
     }
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-call
     const paramAsCypherType = resultEntries[0] as CypherDataType;
     const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
     const stringValue = cypherDataToString(paramAsCypherType).replaceAll(

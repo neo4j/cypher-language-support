@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { EditorView } from '@codemirror/view';
+import type { EditorView } from '@codemirror/view';
 import { getHTML, getCSSStyleForClass } from './richClipboardCopier';
 
 function createStyleSheet(rules: string): CSSStyleSheet {

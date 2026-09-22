@@ -1,19 +1,17 @@
-import { Facet } from '@codemirror/state';
-import { Input, NodeType, Parser, PartialParse, Tree } from '@lezer/common';
-import { ParsedCypherToken } from '@neo4j-cypher/language-support';
+import type { Facet } from '@codemirror/state';
+import type { Input, NodeType, PartialParse } from '@lezer/common';
+import { Parser, Tree } from '@lezer/common';
+import type { ParsedCypherToken } from '@neo4j-cypher/language-support';
 
 import Prism from 'prismjs';
-import {
-  CodemirrorParseTokenType,
-  cypherTokenTypeToNode,
-  parserAdapterNodeSet,
-} from './constants';
+import type { CodemirrorParseTokenType } from './constants';
+import { cypherTokenTypeToNode, parserAdapterNodeSet } from './constants';
 // Must come before prism-cypher: it publishes the global `Prism` that the
 // component script assigns onto.
 import './prism-global.js';
 // This import will load the cypher support in prisma
 import 'prismjs/components/prism-cypher';
-import { CypherConfig } from './langCypher';
+import type { CypherConfig } from './langCypher';
 
 const DEFAULT_NODE_GROUP_SIZE = 4;
 Prism.manual = true;

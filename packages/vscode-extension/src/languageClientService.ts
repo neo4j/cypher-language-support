@@ -1,10 +1,10 @@
-import {
+import type {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
 import { getLanguageClient } from './contextService';
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import type { SymbolTable } from '@neo4j-cypher/language-support';
 
 export type MethodName =
   | 'connectionUpdated'

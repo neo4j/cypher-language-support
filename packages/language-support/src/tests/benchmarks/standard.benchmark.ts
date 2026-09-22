@@ -1,5 +1,4 @@
-/* eslint-disable no-console */
-import { describe, test } from 'vitest';
+import { describe } from 'vitest';
 import {
   createParsingResult,
   CypherLanguageService,

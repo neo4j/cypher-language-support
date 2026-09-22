@@ -1,10 +1,10 @@
-import {
+import type {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jSettings,
   SymbolFetchingParams,
 } from '@neo4j-cypher/language-server/src/types';
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import type { SymbolTable } from '@neo4j-cypher/language-support';
 
 export class MockLanguageClient {
   async sendNotification(

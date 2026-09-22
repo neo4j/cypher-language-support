@@ -2,7 +2,7 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
@@ -25,20 +25,21 @@ import {
   tokenNames,
 } from '../lexerSymbols.js';
 
-import { getMethodName, ParsedStatement } from '../cypherLanguageService.js';
+import type { ParsedStatement } from '../cypherLanguageService.js';
+import { getMethodName } from '../cypherLanguageService.js';
 
-import type { ICandidateRule } from 'antlr4-c3';
-import { CandidatesCollection, CodeCompletionCore } from 'antlr4-c3';
-import { Token } from 'antlr4ng';
-import {
+import type { ICandidateRule, CandidatesCollection } from 'antlr4-c3';
+import { CodeCompletionCore } from 'antlr4-c3';
+import type { Token } from 'antlr4ng';
+import type {
   CompletionItem,
   CypherVersion,
-  cypherVersionNumbers,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
   SymbolsInfo,
 } from '../types.js';
+import { cypherVersionNumbers } from '../types.js';
 import {
   completeRelationshipType,
   allLabelCompletions,
@@ -168,9 +169,7 @@ const namespacedCompletion = (
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map(
-        (label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem,
-      )
+      .map((label): CompletionItem => ({ label, kind, detail: `(namespace)` }))
       .concat(
         fullNames.map((label) => {
           const result = getMethodCompletionItem(

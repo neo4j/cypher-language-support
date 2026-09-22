@@ -4,13 +4,13 @@
 
 ```ts
 
-import { CompletionItem as CompletionItem_2 } from 'vscode-languageserver-types';
-import { Diagnostic } from 'vscode-languageserver-types';
-import { Hover } from 'vscode-languageserver-types';
-import { SemanticTokensLegend } from 'vscode-languageserver-types';
+import type { CompletionItem as CompletionItem_2 } from 'vscode-languageserver-types';
+import type { Diagnostic } from 'vscode-languageserver-types';
+import type { Hover } from 'vscode-languageserver-types';
+import type { SemanticTokensLegend } from 'vscode-languageserver-types';
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { SignatureInformation } from 'vscode-languageserver-types';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 // @public (undocumented)
 export const allCypherVersions: string[];

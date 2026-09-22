@@ -43,6 +43,7 @@ export function runApiExtractor(packageFolder: string): void {
           `${path.relative(process.cwd(), config.reportFilePath)} - CI fails if it is not up to date.`,
       );
     }
+    // oxlint-disable-next-line no-console
     console.log(
       `API Extractor succeeded with ${result.warningCount} warning(s).`,
     );
