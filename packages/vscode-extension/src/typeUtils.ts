@@ -18,7 +18,7 @@ import {
 import { isDate } from 'util/types';
 import { spacialFormat } from '@neo4j-cypher/query-tools';
 
-export function toNativeTypes(properties: Record<string, any>) {
+export function toNativeTypes(properties: Record<string, unknown>) {
   return Object.fromEntries(
     Object.keys(properties).map((key) => {
       const value = valueToNativeType(properties[key]);

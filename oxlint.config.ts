@@ -22,6 +22,7 @@ export default defineConfig({
     'vitest',
   ],
   rules: {
+    'typescript/no-explicit-any': 'error',
     'typescript/consistent-type-imports': 'error',
     'typescript/no-unnecessary-type-assertion': 'error',
     'no-unused-vars': 'error',
