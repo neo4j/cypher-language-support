@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Locator } from 'playwright/test';

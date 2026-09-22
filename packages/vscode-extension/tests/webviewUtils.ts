@@ -53,18 +53,13 @@ export async function openFixtureFile(
   await browser.executeWorkbench(
     async (vscode, __dirname, fileName, options: OpenFileOptions) => {
       const textDocumentUri = `${__dirname}/../../tests/fixtures/${fileName}`;
-      // eslint-disable-next-line
       const document = await vscode.workspace.openTextDocument(textDocumentUri);
-      // eslint-disable-next-line
       const editor = await vscode.window.showTextDocument(document);
 
       if (options.selectLines && options.selectLines > 0) {
         const lastLine = options.selectLines - 1;
-        // eslint-disable-next-line
         editor.selection = new vscode.Selection(
-          // eslint-disable-next-line
           new vscode.Position(0, 0), // Start at the beginning of the first line
-          // eslint-disable-next-line
           new vscode.Position(lastLine, document.lineAt(lastLine).text.length),
         );
       }
@@ -125,7 +120,7 @@ export async function findWebview(
     },
   );
   // waitUntil throws on timeout, so match is guaranteed to be set here.
-  return match as WebView;
+  return match;
 }
 
 export async function createNewConnection(containerName: string) {
@@ -237,9 +232,7 @@ export async function setText(webview: WebView, elem: string, value: string) {
 
 export async function closeActiveTab(browser: WebdriverIO.Browser) {
   await browser.executeWorkbench(async (vscode) => {
-    // eslint-disable-next-line
     await vscode.window.tabGroups.close(
-      // eslint-disable-next-line
       vscode.window.tabGroups.activeTabGroup.activeTab,
     );
   });

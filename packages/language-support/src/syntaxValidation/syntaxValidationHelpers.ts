@@ -134,12 +134,9 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportAttemptingFullContext() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportAmbiguity() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportContextSensitivity() {}
 }

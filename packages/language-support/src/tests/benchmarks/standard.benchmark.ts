@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { bench, describe } from 'vitest';
 import {
   createParsingResult,

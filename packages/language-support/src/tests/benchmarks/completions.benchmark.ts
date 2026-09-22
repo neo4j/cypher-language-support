@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { bench, describe } from 'vitest';
 import { CypherLanguageService, parse } from '../../cypherLanguageService.js';
 import { testData } from '../testData.js';

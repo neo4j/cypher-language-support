@@ -69,14 +69,12 @@ suite('Params panel testing', () => {
 
   async function addParamWithInputBox() {
     await browser.executeWorkbench(async (vscode) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand('neo4j.addParameter');
     });
   }
 
   async function forceDeleteParam(key: string) {
     await browser.executeWorkbench(async (vscode, key: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand(
         'neo4j.internal.forceDeleteParam',
         key,
@@ -87,7 +85,6 @@ suite('Params panel testing', () => {
   async function forceAddParam(key: string, value: string) {
     await browser.executeWorkbench(
       async (vscode, key: string, value: string) => {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
         await vscode.commands.executeCommand(
           'neo4j.internal.evalParam',
           key,
@@ -106,14 +103,12 @@ suite('Params panel testing', () => {
 
   async function clearParams() {
     await browser.executeWorkbench(async (vscode) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand('neo4j.clearParameters');
     });
   }
 
   async function forceDisconnect() {
     void browser.executeWorkbench((vscode) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       void vscode.commands.executeCommand('neo4j.internal.forceDisconnect');
     });
     await waitUntilNotification(browser, 'Disconnected from Neo4j.');
@@ -121,7 +116,6 @@ suite('Params panel testing', () => {
 
   async function forceSwitchDatabase(database: string) {
     await browser.executeWorkbench(async (vscode, database: string) => {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
       await vscode.commands.executeCommand(
         'neo4j.internal.forceSwitchDatabase',
         database,

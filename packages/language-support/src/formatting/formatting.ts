@@ -83,7 +83,6 @@ import type {
   LocalOutputFieldsSignatureContext,
   LocalProcedureDefinitionContext,
   MapContext,
-  MapOrParameterContext,
   MapProjectionContext,
   MatchClauseContext,
   MergeActionContext,
@@ -849,7 +848,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.PROPERTIES() && mapOrParameters.length >= 1) {
       this.breakLine();
       this.visit(ctx.PROPERTIES());
-      this.visit(mapOrParameters.at(-1) as MapOrParameterContext);
+      this.visit(mapOrParameters.at(-1));
     }
   };
 

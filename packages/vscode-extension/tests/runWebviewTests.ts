@@ -71,7 +71,7 @@ export const config: Options.Testrunner = {
         },
       },
       'wdio:maxInstances': 1,
-    } as WebdriverIO.Capabilities,
+    },
   ],
 
   //
