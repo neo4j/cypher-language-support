@@ -30,8 +30,7 @@ import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
 
-export type SyntaxDiagnostic = Omit<Diagnostic, 'message'> & {
-  message: string;
+export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
 };
 
@@ -67,14 +66,17 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
-type GenericDiagnostic = { message: string };
+type GenericDiagnostic = Pick<Diagnostic, 'message'>;
 
 export function isNotParamError<T extends GenericDiagnostic>(
   diagnostic: T,
 ): boolean {
+  const message =
+    typeof diagnostic.message === 'string'
+      ? diagnostic.message
+      : diagnostic.message.value;
   return (
-    !diagnostic.message.startsWith('Parameter ') ||
-    !diagnostic.message.endsWith(' is not defined.')
+    !message.startsWith('Parameter ') || !message.endsWith(' is not defined.')
   );
 }
 
@@ -466,7 +468,9 @@ export function lintCypherQuery(
         );
 
         function moveUnfinishedErrorToEndPoint(e: SyntaxDiagnostic) {
-          return e.message.includes('Query cannot conclude with')
+          const message =
+            typeof e.message === 'string' ? e.message : e.message.value;
+          return message.includes('Query cannot conclude with')
             ? {
                 ...e,
                 offsets: { start: e.offsets.end, end: e.offsets.end },
