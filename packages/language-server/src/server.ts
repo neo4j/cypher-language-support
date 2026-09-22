@@ -205,7 +205,6 @@ connection.onInitialized(() => {
 });
 
 connection.onDidChangeConfiguration((params) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   settings = params.settings?.neo4j as Neo4jSettings;
   relintAllDocuments();
 });

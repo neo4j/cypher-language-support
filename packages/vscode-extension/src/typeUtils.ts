@@ -18,7 +18,6 @@ import {
 import { isDate } from 'util/types';
 import { spacialFormat } from '@neo4j-cypher/query-tools';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function toNativeTypes(properties: Record<string, any>) {
   return Object.fromEntries(
     Object.keys(properties).map((key) => {
