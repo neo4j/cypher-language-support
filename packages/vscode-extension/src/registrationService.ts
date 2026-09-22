@@ -1,4 +1,5 @@
-import { commands, Disposable, window } from 'vscode';
+import type { Disposable } from 'vscode';
+import { commands, window } from 'vscode';
 import {
   createConnectionPanel,
   cypherFileFromSelection,
@@ -23,10 +24,8 @@ import {
   removeParameterByKey,
 } from './commandHandlers/params';
 import { CONSTANTS } from './constants';
-import {
-  ConnectionItem,
-  connectionTreeDataProvider,
-} from './treeviews/connectionTreeDataProvider';
+import type { ConnectionItem } from './treeviews/connectionTreeDataProvider';
+import { connectionTreeDataProvider } from './treeviews/connectionTreeDataProvider';
 import { connectionTreeDecorationProvider } from './treeviews/connectionTreeDecorationProvider';
 import { databaseInformationTreeDataProvider } from './treeviews/databaseInformationTreeDataProvider';
 import { parametersTreeDataProvider } from './treeviews/parametersTreeDataProvider';

@@ -1,4 +1,5 @@
-import { DbSchema, lintCypherQuery } from '@neo4j-cypher/language-support';
+import type { DbSchema } from '@neo4j-cypher/language-support';
+import { lintCypherQuery } from '@neo4j-cypher/language-support';
 
 export function validateParamInput(
   paramValue: string,

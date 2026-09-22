@@ -1,4 +1,4 @@
-import { Event, SecretStorage, SecretStorageChangeEvent } from 'vscode';
+import type { Event, SecretStorage, SecretStorageChangeEvent } from 'vscode';
 
 export class InMemorySecretStorage implements SecretStorage {
   private _storage: { [keyName: string]: string } = {};

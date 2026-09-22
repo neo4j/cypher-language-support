@@ -1,19 +1,23 @@
-import type { CypherVersion } from '@neo4j-cypher/language-support';
-import {
-  allCypherVersions,
+import type {
+  CypherVersion,
   DbSchema,
   Neo4jFunction,
   Neo4jProcedure,
 } from '@neo4j-cypher/language-support';
-import { EventEmitter } from 'events';
-import { Neo4jConnection } from './neo4jConnection.js';
-import { Database, listDatabases } from './queries/databases.js';
-import { DataSummary, getDataSummary } from './queries/dataSummary.js';
+import { allCypherVersions } from '@neo4j-cypher/language-support';
+import type { EventEmitter } from 'events';
+import type { Neo4jConnection } from './neo4jConnection.js';
+import type { Database } from './queries/databases.js';
+import { listDatabases } from './queries/databases.js';
+import type { DataSummary } from './queries/dataSummary.js';
+import { getDataSummary } from './queries/dataSummary.js';
 import { listFunctions } from './queries/functions.js';
 import { listProcedures } from './queries/procedures.js';
-import { listRoles, Neo4jRole } from './queries/roles.js';
-import { listUsers, Neo4jUser } from './queries/users.js';
-import { ExecuteQueryArgs } from './types/sdkTypes.js';
+import type { Neo4jRole } from './queries/roles.js';
+import { listRoles } from './queries/roles.js';
+import type { Neo4jUser } from './queries/users.js';
+import { listUsers } from './queries/users.js';
+import type { ExecuteQueryArgs } from './types/sdkTypes.js';
 import { listGraphSchema } from './queries/graphSchema.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';

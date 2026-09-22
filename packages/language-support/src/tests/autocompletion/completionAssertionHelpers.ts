@@ -1,6 +1,6 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
-import { DbSchema } from '../../dbSchema.js';
-import { CompletionItem } from '../../types.js';
+import type { DbSchema } from '../../dbSchema.js';
+import type { CompletionItem } from '../../types.js';
 
 const languageService = new CypherLanguageService({
   consoleCommandsEnabled: false,

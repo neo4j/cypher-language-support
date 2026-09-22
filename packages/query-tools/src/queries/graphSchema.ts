@@ -1,6 +1,7 @@
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs } from '../types/sdkTypes.js';
-import { Ajv, JSONSchemaType } from 'ajv';
+import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
+import type { JSONSchemaType } from 'ajv';
+import { Ajv } from 'ajv';
 
 type NeoNode = {
   labels: string[];

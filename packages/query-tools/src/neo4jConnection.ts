@@ -1,4 +1,4 @@
-import {
+import type {
   Driver,
   ManagedTransaction,
   QueryResult,
@@ -7,8 +7,8 @@ import {
   Session,
 } from 'neo4j-driver';
 import packageJson from '../package.json' with { type: 'json' };
-import { Database } from './queries/databases.js';
-import { ExecuteQueryArgs, QueryType } from './types/sdkTypes.js';
+import type { Database } from './queries/databases.js';
+import type { ExecuteQueryArgs, QueryType } from './types/sdkTypes.js';
 
 const METADATA_BASE = {
   app: 'neo4j-sdk',

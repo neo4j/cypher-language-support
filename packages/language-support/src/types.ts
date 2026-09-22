@@ -1,4 +1,4 @@
-import { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
+import type { CompletionItem as VSCodeCompletionItem } from 'vscode-languageserver-types';
 
 export type ReturnDescription = {
   name: string;

@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
 
-import { EditorView } from '@codemirror/view';
+import type { EditorView } from '@codemirror/view';
 import { createRef } from 'react';
 import { createRoot } from 'react-dom/client';
 import { act } from 'react-dom/test-utils';

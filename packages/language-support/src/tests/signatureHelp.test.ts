@@ -1,5 +1,5 @@
-import { SignatureHelp } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema.js';
+import type { SignatureHelp } from 'vscode-languageserver-types';
+import type { DbSchema } from '../dbSchema.js';
 import {
   emptyResult,
   getSignatureInfo,

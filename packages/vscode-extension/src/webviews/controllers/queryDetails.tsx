@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Collapsible } from '../../components/collapsible';
-import {
+import type {
   QueryResult,
   QueryResults,
   QueryResultsMessage,
 } from '../queryResults/queryResultsTypes';
-import { ColorThemeKind } from 'vscode';
+import type { ColorThemeKind } from 'vscode';
 
 interface vscode {
   postMessage(message: QueryResultsMessage): void;

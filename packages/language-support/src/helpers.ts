@@ -1,20 +1,23 @@
-import {
-  CommonToken,
+import type {
   CommonTokenStream,
   ParserRuleContext,
   ParseTree,
   Token,
 } from 'antlr4ng';
-import { DbSchema } from './dbSchema.js';
+import { CommonToken } from 'antlr4ng';
+import type { DbSchema } from './dbSchema.js';
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
+import type { StatementsOrCommandsContext } from './generated-parser/CypherCmdParser.js';
 import {
   CypherCmdParser as CypherParser,
   NodePatternContext,
   RelationshipPatternContext,
-  StatementsOrCommandsContext,
 } from './generated-parser/CypherCmdParser.js';
-import { ParsedStatement, ParsingResult } from './cypherLanguageService.js';
-import { CypherVersion } from './types.js';
+import type {
+  ParsedStatement,
+  ParsingResult,
+} from './cypherLanguageService.js';
+import type { CypherVersion } from './types.js';
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;

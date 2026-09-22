@@ -1,10 +1,10 @@
-import { EditorState, StateField } from '@codemirror/state';
-import { showTooltip, Tooltip } from '@codemirror/view';
-import {
-  MarkupContent,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
-import { CypherConfig } from './langCypher';
+import type { EditorState } from '@codemirror/state';
+import { StateField } from '@codemirror/state';
+import type { Tooltip } from '@codemirror/view';
+import { showTooltip } from '@codemirror/view';
+import type { SignatureInformation } from 'vscode-languageserver-types';
+import { MarkupContent } from 'vscode-languageserver-types';
+import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
 
 function getTriggerCharacter(query: string, caretPosition: number) {

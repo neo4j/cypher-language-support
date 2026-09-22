@@ -1,7 +1,7 @@
-import { Hover, HoverParams, TextDocuments } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { Hover, HoverParams, TextDocuments } from 'vscode-languageserver';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 import { languageService } from './server.js';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 
 export function doHoverInfo(
   documents: TextDocuments<TextDocument>,

@@ -1,11 +1,9 @@
 import type {
   SymbolTable,
   SyntaxDiagnostic,
-} from '@neo4j-cypher/language-support';
-import {
   DbSchema as DbSchemaV2,
-  lintCypherQuery as _lintCypherQuery,
 } from '@neo4j-cypher/language-support';
+import { lintCypherQuery as _lintCypherQuery } from '@neo4j-cypher/language-support';
 import type { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 import workerpool from 'workerpool';
 

@@ -1,4 +1,5 @@
-import { CharStream, CommonTokenStream, TerminalNode, Token } from 'antlr4ng';
+import type { TerminalNode, Token } from 'antlr4ng';
+import { CharStream, CommonTokenStream } from 'antlr4ng';
 import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser,
