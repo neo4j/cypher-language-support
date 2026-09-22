@@ -127,3 +127,71 @@ test('italicises the deprecation marker of a deprecated method', () => {
     renderMethodHover('CYPHER 5 RETURN apoc.create.uuid()').innerHTML,
   ).toContain('<p>(<em>deprecated</em>) Returns a UUID.</p>');
 });
+
+// language-support escapes the markdown characters of the schema descriptions
+// it interpolates, so that the renderers CommonMark shows them as written
+test('renders the characters language-support escapes as text', () => {
+  expect(renderMarkdown("(e.g. '\\*:\\*,name=\\*neo4j\\*')").innerHTML).toBe(
+    "<p>(e.g. '*:*,name=*neo4j*')</p>",
+  );
+
+  expect(renderMarkdown('a \\\\ b').innerHTML).toBe('<p>a \\ b</p>');
+});
+
+// An escaped character cannot open markup of its own
+test('does not let an escaped backtick open a code span', () => {
+  expect(renderMarkdown('a \\` b `c` d').innerHTML).toBe(
+    '<p>a ` b <code>c</code> d</p>',
+  );
+});
+
+test('does not start a list from an escaped asterisk', () => {
+  const dom = renderMarkdown('\\* not a bullet');
+
+  expect(dom.querySelector('ul')).toBeNull();
+  expect(dom.innerHTML).toBe('<p>* not a bullet</p>');
+});
+
+// The end to end proof: the wildcards dbms.queryJmx' descriptions write are
+// rendered, both the escaped ones and the ones inside a code span
+test('renders the wildcards of a procedure description', () => {
+  const html = renderMethodHover('CALL dbms.queryJmx()').innerHTML;
+
+  expect(html).toContain(
+    '<p>Query JMX management data by domain and name. For instance, use <code>*:*</code> to find all JMX beans.</p>',
+  );
+  expect(html).toContain(
+    "<li><code>query</code> - A query for MBeans on this MBeanServer (e.g. '*:*,name=*neo4j*' for all metrics in neo4j database).</li>",
+  );
+  // A backslash of our own would mean the escaping was not undone
+  expect(html).not.toContain('\\');
+});
+
+// The markup a description does write is not escaped, so it still renders
+test('renders the bullet list and the italics of a procedure description', () => {
+  const html = renderMethodHover(
+    'CALL db.index.fulltext.queryNodes()',
+  ).innerHTML;
+
+  expect(html).toContain('Valid <em>key: value</em> pairs');
+  expect(html).toContain(
+    [
+      '<ul>',
+      "<li>'skip' -- to skip the top N results.</li>",
+      "<li>'limit' -- to limit the number of results returned.</li>",
+      "<li>'analyzer' -- to use the specified analyzer as a search analyzer for this query.</li>",
+      '</ul>',
+    ].join(''),
+  );
+});
+
+test('renders a parameter that carries its own layout as a code block', () => {
+  expect(renderMethodHover('CALL apoc.export.csv.all()').innerHTML).toContain(
+    [
+      '<ul><li><code>file</code> - The name of the file to which the data will be exported.</li>',
+      '<li><code>config</code> -</li></ul>',
+      '<pre><code>{\n',
+      '        stream = false :: BOOLEAN,\n',
+    ].join(''),
+  );
+});

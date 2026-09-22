@@ -12,6 +12,10 @@ import {
 } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
+import {
+  descriptionBullet,
+  escapeSchemaMarkdown,
+} from './schemaDescription.js';
 
 /* The code blocks hover emits hold Cypher fragments, not whole statements,
   thus the parsing based syntax colouring needs a prefix to highlight correctly*/
@@ -98,7 +102,9 @@ export function getHoverInfo({
             ? 'procedure'
             : 'function',
         ),
-        `${deprecated ? '(_deprecated_) ' : ''}${schemaMethod.description}`,
+        `${deprecated ? '(_deprecated_) ' : ''}${escapeSchemaMarkdown(
+          schemaMethod.description,
+        )}`,
         '',
         ...createParametersHoverString(params),
         '',
@@ -127,9 +133,9 @@ function createParametersHoverString(params: ArgumentDescription[]): string[] {
 
   return [
     '**Parameters**',
-    ...params.map((param) => {
-      return `- \`${param.name}\` - ${param.description}`;
-    }),
+    ...params.flatMap((param) =>
+      descriptionBullet(param.name, param.description),
+    ),
   ];
 }
 
@@ -149,8 +155,8 @@ function createReturnHoverString(
 
   return [
     '**Returns**',
-    ...returnDescription.map((ret) => {
-      return `- \`${ret.name}\` - ${ret.description}`;
-    }),
+    ...returnDescription.flatMap((ret) =>
+      descriptionBullet(ret.name, ret.description),
+    ),
   ];
 }

@@ -1,6 +1,7 @@
 /**
  * Renders the markdown hovers are written in, in language-support: fenced
- * code blocks, bullet lists, paragraphs, and inline code, bold and italic.
+ * code blocks, bullet lists, paragraphs, backslash escapes, and inline code,
+ * bold and italic.
  * It is not a general markdown renderer, it handles the shapes we emit.
  *
  * Everything is inserted as text nodes, so schema-provided descriptions can
@@ -136,18 +137,24 @@ function createCodeBlock(
   return pre;
 }
 
-/* Underscores only count as emphasis outside a word, so that descriptions
+/* A backslash escape comes first: language-support escapes the markdown
+   characters of the descriptions it interpolates (see its
+   hoverInformation/schemaDescription.ts), and the escaped character has to be
+   consumed here so that it cannot open markup of its own. The set is
+   CommonMark's, every ASCII punctuation character, so the two stay in step if
+   language-support ever escapes more than it does today.
+   Underscores only count as emphasis outside a word, so that descriptions
    listing values like 'DEFAULT_PATH_LEAF_TO_NULL' keep them — the same rule
-   CommonMark (https://spec.commonmark.org/0.31.2/#example-374) follows. 
+   CommonMark (https://spec.commonmark.org/0.31.2/#example-374) follows.
    * is not emphasis here at all, descriptions use it as a wildcard. */
 const inlineMarkup =
-  /`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|(?<!\w)_([^_\n]+)_(?!\w)/g;
+  /\\([!-/:-@[-`{-~])|`([\s\S]+?)`|\*\*([\s\S]+?)\*\*|(?<!\w)_([^_\n]+)_(?!\w)/g;
 
 function renderInline(target: HTMLElement, text: string) {
   let lastEnd = 0;
 
   for (const match of text.matchAll(inlineMarkup)) {
-    const [matched, code, bold, italic] = match;
+    const [matched, escaped, code, bold, italic] = match;
 
     if (match.index > lastEnd) {
       target.appendChild(
@@ -155,7 +162,9 @@ function renderInline(target: HTMLElement, text: string) {
       );
     }
 
-    if (code !== undefined) {
+    if (escaped !== undefined) {
+      target.appendChild(document.createTextNode(escaped));
+    } else if (code !== undefined) {
       const element = document.createElement('code');
       element.textContent = code.trim();
       target.appendChild(element);

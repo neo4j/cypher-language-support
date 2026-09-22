@@ -230,6 +230,31 @@ apoc.create.uuid() :: STRING
     });
   });
 
+  /* Markdown would read the multiplication sign as emphasis and eat it */
+  test('escapes the asterisk a description writes as prose', () => {
+    const query = 'RETURN apoc.math.sigmoidPrime(1.0)';
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: query.indexOf('apoc.math.sigmoidPrime') + 1,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher function
+apoc.math.sigmoidPrime(value :: FLOAT) :: FLOAT
+\`\`\`
+Returns the sigmoid prime [ sigmoid(val) \\* (1 - sigmoid(val)) ] of the given value.
+
+**Parameters**
+- \`value\` - An angle in radians.
+
+**Returns:** \`FLOAT\``,
+      },
+    });
+  });
+
   test('provides no hover info for a function missing in the Cypher version', () => {
     // apoc.create.uuid only exists in Cypher 5
     const query = 'CYPHER 25 RETURN apoc.create.uuid()';
