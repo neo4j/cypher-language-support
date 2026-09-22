@@ -565,7 +565,7 @@ class VariableCollector implements ParseTreeListener {
         this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
-        ctx.parent?.ruleIndex as number,
+        ctx.parent?.ruleIndex,
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {

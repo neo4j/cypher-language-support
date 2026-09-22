@@ -100,7 +100,7 @@ export function serializeTypeAnnotations(
   }
   if (item === null || item === undefined) {
     // This is needed due to the method overloading types
-    return item as any;
+    return item;
   }
 
   if (item instanceof types.Record) {
