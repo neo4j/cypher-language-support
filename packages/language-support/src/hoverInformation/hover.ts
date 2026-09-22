@@ -33,7 +33,7 @@ export function getHoverInfo({
 
   if (!methodSignatureInfo?.schemaMethod) {
     if (!symbolsInfo) {
-      return;
+      return undefined;
     }
     const symbol = findVariableOnCaret({
       parsingResult,
@@ -41,7 +41,7 @@ export function getHoverInfo({
       symbolsInfo,
     });
     if (!symbol) {
-      return;
+      return undefined;
     }
 
     const hasLabels =
@@ -108,6 +108,8 @@ function isDeprecated(
   if (type === MethodType.procedure) {
     return (method as Neo4jProcedure).option.deprecated;
   }
+
+  return false;
 }
 
 function createParametersHoverString(params: ArgumentDescription[]): string[] {

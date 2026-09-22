@@ -117,7 +117,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
   forceSave?: boolean,
 ): Promise<ConnnectionResult> {
   if (!connection) {
-    return;
+    return undefined;
   }
 
   await disconnectAllDatabaseConnections();
@@ -143,7 +143,7 @@ export async function saveConnectionAndUpdateDatabaseConnection(
  */
 export async function switchDatabase(connection: Connection | null) {
   if (!connection) {
-    return;
+    return undefined;
   }
 
   return await updateDatabaseConnectionAndNotifyLanguageClient(connection);

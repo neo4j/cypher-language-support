@@ -454,6 +454,8 @@ class PropertiesCollector implements ParseTreeListener {
         start: varCtx.start.start,
       };
     }
+
+    return undefined;
   }
 
   private getVariableFromPatternProperty(
@@ -471,6 +473,7 @@ class PropertiesCollector implements ParseTreeListener {
     ) {
       return patternElement.variable();
     }
+    return undefined;
   }
 
   private getVariableFromPropertyAccess(
@@ -483,6 +486,8 @@ class PropertiesCollector implements ParseTreeListener {
     if (propertyAccessExpr instanceof Expression2Context) {
       return propertyAccessExpr.expression1().variable();
     }
+
+    return undefined;
   }
 
   /** Checks if a parent clause is writable for properties */

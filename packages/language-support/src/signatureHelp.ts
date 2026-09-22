@@ -519,6 +519,7 @@ export function getMethodSignature({
       };
     }
   }
+  return undefined;
 }
 
 export function getSignatureInfo(

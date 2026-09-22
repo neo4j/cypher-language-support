@@ -15,7 +15,7 @@ export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
   neo4j: Neo4jSchemaPoller,
 ) {
-  return (completionParams: CompletionParams) => {
+  return (completionParams: CompletionParams): CompletionItem[] | undefined => {
     const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 
@@ -53,5 +53,6 @@ export function doAutoCompletion(
 
       return result;
     }
+    return undefined;
   };
 }
