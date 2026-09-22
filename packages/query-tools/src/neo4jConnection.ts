@@ -77,7 +77,8 @@ export class Neo4jConnection {
     } else {
       result = tx.run(query, parameters);
     }
-    const records: Array<RecordShape> = [];
+    // oxlint-disable-next-line typescript/no-explicit-any
+    const records: Array<any> = [];
     let recordLimitHit = false;
 
     for await (const record of result) {

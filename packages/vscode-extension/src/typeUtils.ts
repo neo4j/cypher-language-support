@@ -56,7 +56,7 @@ function valueToNativeType(value: unknown) {
     value !== undefined &&
     value !== null
   ) {
-    value = toNativeTypes(value);
+    value = toNativeTypes(value as Record<string, unknown>);
   }
 
   return value;
