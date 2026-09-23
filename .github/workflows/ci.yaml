@@ -61,8 +61,8 @@ jobs:
       - name: Run tests
         run: pnpm test:unit
 
-  test-polling:
-    name: Polling integration tests
+  test-integration:
+    name: Integration tests
     needs: build
     runs-on: ubuntu-latest
     steps:
