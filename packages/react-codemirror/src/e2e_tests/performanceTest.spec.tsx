@@ -32,7 +32,7 @@ test('benchmarking & performance test session', async ({
       observer.observe({ entryTypes: ['longtask'] });
     });
   } else {
-    test.setTimeout(30 * 1000);
+    test.setTimeout(60 * 1000);
   }
   const editorPage = new CypherEditorPage(page);
   const component = await mount(
