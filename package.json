@@ -27,7 +27,6 @@
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "benchmark": "pnpm --recursive benchmark --concurrency=1",
     "typecheck": "tsc -b --noEmit --force"
   },
   "devDependencies": {

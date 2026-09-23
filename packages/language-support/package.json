@@ -56,7 +56,6 @@
     "check-api-report": "tsx checkApiReport.ts",
     "gen-api-report": "pnpm build-esm-and-types && pnpm check-api-report",
     "dev": "pnpm build && concurrently 'tsc --outDir dist/esm/project/language-support --watch' 'npm:build-commonjs -- --watch'",
-    "benchmark": "esbuild ./src/tests/benchmarks/benchmark.ts --bundle --outfile=dist/benchmark/benchmark.js && BENCHMARKING=true node dist/benchmark/benchmark.js",
     "clean": "rm -rf dist src/generated-parser tsconfig*.tsbuildinfo",
     "test": "vitest run"
   },

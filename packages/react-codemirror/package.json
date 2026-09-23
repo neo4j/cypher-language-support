@@ -38,8 +38,7 @@
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
-    "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui",
-    "benchmark": "BENCHMARKING=true playwright test -c playwright-ct.config.ts -g \"benchmarking & performance test session\""
+    "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui"
   },
   "dependencies": {
     "@codemirror/autocomplete": "^6.18.6",
