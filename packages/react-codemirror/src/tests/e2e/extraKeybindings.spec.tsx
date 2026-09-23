@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
 test('can add extra keybinding statically', async ({ mount, page }) => {
