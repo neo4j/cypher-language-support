@@ -36,10 +36,9 @@ Each package has a `vitest.config.ts` defining one or more projects:
 * unit
 * integration
 
-
 ### E2E
 
-e2e tests run using playwright, defined in playwirght-ct.config.ts
+e2e tests run using playwright, defined in `playwirght-ct.config.ts` in each project
 
 ### Executing the tests
 
@@ -47,6 +46,12 @@ Unit tests:
 
 ```
 pnpm test:unit
+```
+
+Integration tests:
+
+```
+pnpm test:integration
 ```
 
 End to end tests:
