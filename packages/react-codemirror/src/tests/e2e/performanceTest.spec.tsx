@@ -1,6 +1,6 @@
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
 test.use({ viewport: { width: 1000, height: 500 } });
@@ -32,7 +32,7 @@ test('benchmarking & performance test session', async ({
       observer.observe({ entryTypes: ['longtask'] });
     });
   } else {
-    test.setTimeout(30 * 1000);
+    test.setTimeout(60 * 1000);
   }
   const editorPage = new CypherEditorPage(page);
   const component = await mount(

@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 
 test('prompt shows up', async ({ mount, page }) => {
   const component = await mount(<CypherEditor prompt="neo4j>" />);

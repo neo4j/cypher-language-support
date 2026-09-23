@@ -28,12 +28,30 @@ From here you can start the `react-codemirror-playground` with:
 
 To run the VS Code extension, choose `VSCode Playground` in the `Run & Debug` menu in VS Code.
 
-## Executing the tests
+
+## Testing
+
+Each package has a `vitest.config.ts` defining one or more projects:
+
+* unit
+* integration
+
+### E2E
+
+e2e tests run using playwright, defined in `playwirght-ct.config.ts` in each project
+
+### Executing the tests
 
 Unit tests:
 
 ```
-pnpm test
+pnpm test:unit
+```
+
+Integration tests:
+
+```
+pnpm test:integration
 ```
 
 End to end tests:

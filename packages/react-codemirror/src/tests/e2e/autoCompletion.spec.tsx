@@ -1,7 +1,7 @@
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Page } from '@playwright/test';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 
 test('hello world end 2 end test', async ({ mount }) => {
   const component = await mount(<CypherEditor value="hello world" />);
