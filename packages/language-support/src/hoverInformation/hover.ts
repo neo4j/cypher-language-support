@@ -14,8 +14,8 @@ import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import {
   descriptionBullet,
-  escapeSchemaMarkdown,
-} from './schemaDescription.js';
+  escapeDescription,
+} from './descriptionToMarkdown.js';
 
 /* The code blocks hover emits hold Cypher fragments, not whole statements,
   thus the parsing based syntax colouring needs a prefix to highlight correctly*/
@@ -91,8 +91,7 @@ export function getHoverInfo({
       type: arg.type,
     };
   });
-
-  return {
+  const returnValue = {
     contents: {
       kind: MarkupKind.Markdown,
       value: [
@@ -102,7 +101,7 @@ export function getHoverInfo({
             ? 'procedure'
             : 'function',
         ),
-        `${deprecated ? '(_deprecated_) ' : ''}${escapeSchemaMarkdown(
+        `${deprecated ? '(_deprecated_) ' : ''}${escapeDescription(
           schemaMethod.description,
         )}`,
         '',
@@ -112,6 +111,8 @@ export function getHoverInfo({
       ].join('\n'),
     },
   };
+
+  return returnValue;
 }
 
 function isDeprecated(

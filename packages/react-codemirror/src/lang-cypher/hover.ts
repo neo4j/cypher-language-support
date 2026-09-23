@@ -100,6 +100,7 @@ function cypherCodeHighlighter(
   cfg: CypherConfig,
 ): CodeHighlighter {
   return (code, info, target) => {
+    // Like in vscode, untagged blocks also highlight as Cypher
     if (info.language && info.language !== 'cypher') {
       target.textContent = code;
       return;

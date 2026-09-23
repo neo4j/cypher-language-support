@@ -137,12 +137,10 @@ function createCodeBlock(
   return pre;
 }
 
-/* A backslash escape comes first: language-support escapes the markdown
-   characters of the descriptions it interpolates (see its
-   hoverInformation/schemaDescription.ts), and the escaped character has to be
-   consumed here so that it cannot open markup of its own. The set is
-   CommonMark's, every ASCII punctuation character, so the two stay in step if
-   language-support ever escapes more than it does today.
+/*  Matches the markdown constructs VS Code would render — code spans, emphasis and the like.
+   The first pattern is to render escaped 'special characters' as text instead,
+   handling the descriptions escaped in hoverInformation/descriptionToMarkdown.ts
+   The escapable character set here is CommonMark's ASCII punctuation, so the two stay in step if it ever escapes more.
    Underscores only count as emphasis outside a word, so that descriptions
    listing values like 'DEFAULT_PATH_LEAF_TO_NULL' keep them — the same rule
    CommonMark (https://spec.commonmark.org/0.31.2/#example-374) follows.
