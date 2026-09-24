@@ -1,13 +1,14 @@
 import { highlightingFor } from '@codemirror/language';
-import { EditorView, HoverTooltipSource } from '@codemirror/view';
-import {
-  CypherFragmentKind,
-  CypherTokenType,
-} from '@neo4j-cypher/language-support';
-import { Hover, MarkupContent } from 'vscode-languageserver-types';
-import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
-import { CypherConfig } from './langCypher';
-import { HoverCodeHighlighter, renderHoverMarkdown } from './hoverMarkdown';
+import type { EditorView, HoverTooltipSource } from '@codemirror/view';
+import type { CypherFragmentKind } from '@neo4j-cypher/language-support';
+import { CypherTokenType } from '@neo4j-cypher/language-support';
+import type { Hover } from 'vscode-languageserver-types';
+import { MarkupContent } from 'vscode-languageserver-types';
+import type { HighlightedCypherTokenTypes } from './constants';
+import { tokenTypeToStyleTag } from './constants';
+import type { CypherConfig } from './langCypher';
+import type { HoverCodeHighlighter } from './hoverMarkdown';
+import { renderHoverMarkdown } from './hoverMarkdown';
 
 export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   const hoverSource: HoverTooltipSource = (view, pos) => {

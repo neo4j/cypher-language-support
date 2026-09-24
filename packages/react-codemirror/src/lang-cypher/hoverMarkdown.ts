@@ -9,10 +9,8 @@
  * never inject HTML into the editor.
  */
 
-import {
-  CypherFragmentKind,
-  cypherFragmentKinds,
-} from '@neo4j-cypher/language-support';
+import type { CypherFragmentKind } from '@neo4j-cypher/language-support';
+import { cypherFragmentKinds } from '@neo4j-cypher/language-support';
 
 /** Fills the `target` element of a hover code block with its highlighted Cypher fragment. */
 export type HoverCodeHighlighter = (

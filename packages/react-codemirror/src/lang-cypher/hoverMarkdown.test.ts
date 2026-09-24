@@ -1,12 +1,12 @@
 // @vitest-environment jsdom
 
+import type { CypherFragmentKind } from '@neo4j-cypher/language-support';
 import {
-  CypherFragmentKind,
   CypherLanguageService,
   testData,
 } from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
-import { MarkupContent } from 'vscode-languageserver-types';
+import type { MarkupContent } from 'vscode-languageserver-types';
 import { renderHoverMarkdown } from './hoverMarkdown';
 
 function highlightedFragments(
