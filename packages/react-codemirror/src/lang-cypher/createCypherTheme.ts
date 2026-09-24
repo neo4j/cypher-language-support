@@ -141,10 +141,14 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
+    // Capped on the host, which a hover shares with lint diagnostics, so all
+    // its sections wrap at the same width
+    '& .cm-tooltip-hover': {
+      maxWidth: '800px',
+    },
     '& .cm-hover-tooltip': {
       backgroundColor: settings.autoCompletionPanel.backgroundColor,
       color: settings.foreground,
-      maxWidth: '600px',
       maxHeight: '300px',
       overflow: 'auto',
       padding: '2px 10px',
