@@ -14,16 +14,13 @@
       ]
     },
     "packages/language-support": {
-      "entry": ["src/tests/benchmarks/*.benchmark.ts"],
-      "project": ["src/**/*.ts", "!src/generated-parser/**"],
-      "ignoreUnresolved": ["./src/tests/benchmarks/benchmark.ts"]
+      "project": ["src/**/*.ts", "!src/generated-parser/**"]
     },
     "packages/language-server": {},
     "packages/lint-worker": {
       "project": ["src/**/*.ts"]
     },
     "packages/query-tools": {
-      "entry": ["src/index.ts"],
       "project": ["src/**/*.ts"]
     },
     "packages/react-codemirror": {
