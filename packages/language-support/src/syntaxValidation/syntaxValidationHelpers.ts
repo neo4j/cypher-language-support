@@ -1,4 +1,4 @@
-import {
+import type {
   ANTLRErrorListener,
   ParserRuleContext,
   RecognitionException,
@@ -14,7 +14,7 @@ import {
 } from '../generated-parser/CypherCmdParser.js';
 import { findParent, isCommentOpener } from '../helpers.js';
 import { completionCoreErrormessage } from './completionCoreErrors.js';
-import { SyntaxDiagnostic } from './syntaxValidation.js';
+import type { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export class SyntaxErrorsListener implements ANTLRErrorListener {
   errors: SyntaxDiagnostic[];
@@ -134,12 +134,9 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportAttemptingFullContext() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportAmbiguity() {}
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   public reportContextSensitivity() {}
 }

@@ -1,15 +1,16 @@
-import { Hover, MarkupKind } from 'vscode-languageserver-types';
-import { ParsingResult } from '../cypherLanguageService.js';
-import { DbSchema } from '../dbSchema.js';
+import type { Hover } from 'vscode-languageserver-types';
+import { MarkupKind } from 'vscode-languageserver-types';
+import type { ParsingResult } from '../cypherLanguageService.js';
+import type { DbSchema } from '../dbSchema.js';
 import { getMethodSignature, MethodType } from '../signatureHelp.js';
-import {
+import type {
   ArgumentDescription,
   Neo4jFunction,
   Neo4jProcedure,
   ReturnDescription,
   SymbolsInfo,
-  isLabelLeaf,
 } from '../types.js';
+import { isLabelLeaf } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import {
@@ -50,7 +51,7 @@ export function getHoverInfo({
 
   if (!methodSignatureInfo?.schemaMethod) {
     if (!symbolsInfo) {
-      return;
+      return undefined;
     }
     const symbol = findVariableOnCaret({
       parsingResult,
@@ -58,7 +59,7 @@ export function getHoverInfo({
       symbolsInfo,
     });
     if (!symbol) {
-      return;
+      return undefined;
     }
 
     const hasLabels =
@@ -130,6 +131,8 @@ function isDeprecated(
   if (type === MethodType.procedure) {
     return (method as Neo4jProcedure).option.deprecated;
   }
+
+  return false;
 }
 
 function createParametersHoverString(params: ArgumentDescription[]): string[] {

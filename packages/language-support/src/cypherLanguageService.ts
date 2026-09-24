@@ -1,22 +1,23 @@
-import type { ParserRuleContext } from 'antlr4ng';
+import type { ParserRuleContext, ParseTreeListener } from 'antlr4ng';
 import {
   ParseTreeWalker,
   CharStream,
   CommonTokenStream,
   ListTokenSource,
-  ParseTreeListener,
   Token,
 } from 'antlr4ng';
 
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 
-import {
-  DiagnosticSeverity,
-  Hover,
-  Position,
-} from 'vscode-languageserver-types';
+import type { Hover } from 'vscode-languageserver-types';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
 import { _internalFeatureFlags } from './featureFlags.js';
+import type {
+  StatementOrCommandContext,
+  StatementsOrCommandsContext,
+  SymbolicNameStringContext,
+} from './generated-parser/CypherCmdParser.js';
 import {
   ClauseContext,
   CypherVersionContext,
@@ -27,9 +28,6 @@ import {
   ParameterContext,
   ProcedureNameContext,
   ProcedureResultItemContext,
-  StatementOrCommandContext,
-  StatementsOrCommandsContext,
-  SymbolicNameStringContext,
   VariableContext,
   PropertyKeyNameContext,
   Expression2Context,
@@ -46,22 +44,15 @@ import {
   rulesDefiningOrUsingVariables,
   splitIntoStatements,
 } from './helpers.js';
-import {
-  lintCypherQuery,
-  SyntaxDiagnostic,
-} from './syntaxValidation/syntaxValidation.js';
+import type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
+import { lintCypherQueryWithParsingResult } from './syntaxValidation/syntaxValidation.js';
 import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
-import {
-  CypherVersion,
-  cypherVersionNumbers,
-  allCypherVersions,
-  SymbolsInfo,
-  SymbolTable,
-} from './types.js';
-import { DbSchema } from './dbSchema.js';
-import { getSignatureInfo } from './signatureHelp.js';
-import { highlightSyntax } from './syntaxHighlighting/syntaxHighlighting.js';
-import { autocomplete } from './autocompletion/autocompletion.js';
+import type { CypherVersion, SymbolsInfo, SymbolTable } from './types.js';
+import { cypherVersionNumbers, allCypherVersions } from './types.js';
+import type { DbSchema } from './dbSchema.js';
+import { getSignatureInfoWithParsingResult } from './signatureHelp.js';
+import { highlightSyntaxWithParsingResult } from './syntaxHighlighting/syntaxHighlighting.js';
+import { autocompleteWithParsingResult } from './autocompletion/autocompletion.js';
 import { getHoverInfo } from './hoverInformation/hover.js';
 
 export interface ParsedStatement {
@@ -454,6 +445,8 @@ class PropertiesCollector implements ParseTreeListener {
         start: varCtx.start.start,
       };
     }
+
+    return undefined;
   }
 
   private getVariableFromPatternProperty(
@@ -471,6 +464,7 @@ class PropertiesCollector implements ParseTreeListener {
     ) {
       return patternElement.variable();
     }
+    return undefined;
   }
 
   private getVariableFromPropertyAccess(
@@ -483,6 +477,8 @@ class PropertiesCollector implements ParseTreeListener {
     if (propertyAccessExpr instanceof Expression2Context) {
       return propertyAccessExpr.expression1().variable();
     }
+
+    return undefined;
   }
 
   /** Checks if a parent clause is writable for properties */
@@ -569,7 +565,7 @@ class VariableCollector implements ParseTreeListener {
         this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
 
       const definesVariable = rulesDefiningOrUsingVariables.includes(
-        ctx.parent?.ruleIndex as number,
+        ctx.parent?.ruleIndex,
       );
 
       if (variable && !nextTokenIsEOF && definesVariable) {
@@ -1025,7 +1021,7 @@ export class CypherLanguageService {
     this.consoleCommandsEnabled = consoleCommandsEnabled;
   }
 
-  parse(query: string): ParsingResult {
+  private parse(query: string): ParsingResult {
     if (
       this.parsingResult !== undefined &&
       this.parsingResult.query === query
@@ -1055,12 +1051,12 @@ export class CypherLanguageService {
 
   lint(query: string, dbSchema: DbSchema) {
     const parsingResult = this.parse(query);
-    return lintCypherQuery(query, dbSchema, { parsingResult });
+    return lintCypherQueryWithParsingResult(query, dbSchema, { parsingResult });
   }
 
   highlightSyntax(query: string) {
     const parsingResult = this.parse(query);
-    return highlightSyntax(query, { parsingResult });
+    return highlightSyntaxWithParsingResult(query, { parsingResult });
   }
 
   hoverInfo(
@@ -1082,7 +1078,10 @@ export class CypherLanguageService {
     { caretPosition = query.length }: { caretPosition?: number } = {},
   ) {
     const parsingResult = this.parse(query);
-    return getSignatureInfo(query, dbSchema, { caretPosition, parsingResult });
+    return getSignatureInfoWithParsingResult(query, dbSchema, {
+      caretPosition,
+      parsingResult,
+    });
   }
 
   autocomplete(
@@ -1096,7 +1095,7 @@ export class CypherLanguageService {
     // TODO This is a temporary hack because completions are not working well
     query = query.slice(0, caretPosition);
     const parsingResult = this.parse(query);
-    return autocomplete(query, dbSchema, {
+    return autocompleteWithParsingResult(query, dbSchema, {
       consoleCommandsEnabled: this.consoleCommandsEnabled,
       caretPosition,
       manual,

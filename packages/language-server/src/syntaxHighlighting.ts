@@ -1,10 +1,10 @@
 import { mapCypherToSemanticTokenIndex } from '@neo4j-cypher/language-support';
-import {
-  SemanticTokensBuilder,
+import type {
   SemanticTokensParams,
   TextDocument,
   TextDocuments,
 } from 'vscode-languageserver';
+import { SemanticTokensBuilder } from 'vscode-languageserver';
 import { languageService } from './server';
 
 export function highlightSyntaxForDocument(

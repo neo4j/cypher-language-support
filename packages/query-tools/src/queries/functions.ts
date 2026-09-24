@@ -1,5 +1,9 @@
-import { CypherVersion, Neo4jFunction } from '@neo4j-cypher/language-support';
-import { Ajv, JSONSchemaType } from 'ajv';
+import type {
+  CypherVersion,
+  Neo4jFunction,
+} from '@neo4j-cypher/language-support';
+import type { JSONSchemaType } from 'ajv';
+import { Ajv } from 'ajv';
 import { resultTransformers } from 'neo4j-driver';
 import {
   cleanType,
@@ -84,7 +88,6 @@ export function listFunctions(
     map(record) {
       const objResult = record.toObject();
       validateFunction(objResult);
-      // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
       const result = cleanTypes(objResult as Neo4jFunction);
       return result;
     },

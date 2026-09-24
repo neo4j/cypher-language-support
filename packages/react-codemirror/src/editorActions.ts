@@ -46,6 +46,7 @@ export type EditorActionsController = {
  * whenever something renders above the first line (an inline panel, the
  * deleted lines of a diff), and the content reaches past the right edge as
  * soon as it overflows.
+ * Vertically the cluster is centred on the first line.
  */
 
 const SPACER_BOTTOM_GAP = 2;
@@ -148,17 +149,11 @@ export function createEditorActionsController(): EditorActionsController {
             `${container.offsetWidth}px`,
           );
           view.dom.style.setProperty(
-            '--cm-editor-actions-height',
-            `${container.offsetHeight}px`,
-          );
-          view.dom.style.setProperty(
-            '--cm-editor-actions-content-min-height',
-            `${container.offsetHeight + SPACER_BOTTOM_GAP}px`,
-          );
-          view.dom.style.setProperty(
             '--cm-editor-actions-reserved-width',
             `${container.offsetWidth + SPACER_LEFT_GAP}px`,
           );
+          // The spacer's height follows the overlay's position, so `align`
+          // owns it.
           this.align(view);
         });
         this.resizeObserver.observe(container);
@@ -169,7 +164,12 @@ export function createEditorActionsController(): EditorActionsController {
       }
 
       private align(view: EditorView): void {
-        view.requestMeasure<{ top: number; right: number } | null>({
+        view.requestMeasure<{
+          top: number;
+          right: number;
+          spacerHeight: number;
+          contentMinHeight: number;
+        } | null>({
           read: () => {
             if (!this.dom) {
               return null;
@@ -187,16 +187,29 @@ export function createEditorActionsController(): EditorActionsController {
             const lineRightPadding = line
               ? parseFloat(window.getComputedStyle(line).paddingRight) || 0
               : 0;
+
+            const contentPaddingTop = parseFloat(style.paddingTop) || 0;
+            const height = this.dom.offsetHeight;
+            // How far the cluster has to rise above the first line's top to
+            // sit centred on it, limited to the padding it can rise into.
+            const lift = Math.min(
+              Math.max((height - view.defaultLineHeight) / 2, 0),
+              contentPaddingTop,
+            );
+
             return {
-              top:
-                scrollerRect.top -
-                editorRect.top +
-                (parseFloat(style.paddingTop) || 0),
+              top: scrollerRect.top - editorRect.top + contentPaddingTop - lift,
               right:
                 editorRect.right -
                 visibleRight +
                 (parseFloat(style.paddingRight) || 0) +
                 Math.max(lineRightPadding, MIN_OVERLAY_RIGHT_INSET),
+              // The spacer starts at the first line's top, so it only needs to
+              // clear the part of the cluster that hangs below it.
+              spacerHeight: height - lift,
+              // A floor under the content, so an empty document is still tall
+              // enough to hold the overlay.
+              contentMinHeight: contentPaddingTop - lift + height,
             };
           },
           write: (pos) => {
@@ -210,6 +223,14 @@ export function createEditorActionsController(): EditorActionsController {
             view.dom.style.setProperty(
               '--cm-editor-actions-right',
               `${pos.right}px`,
+            );
+            view.dom.style.setProperty(
+              '--cm-editor-actions-height',
+              `${pos.spacerHeight}px`,
+            );
+            view.dom.style.setProperty(
+              '--cm-editor-actions-content-min-height',
+              `${pos.contentMinHeight}px`,
             );
           },
         });

@@ -1,11 +1,11 @@
-import {
+import type {
   FileDecoration,
   FileDecorationProvider,
   ProviderResult,
-  ThemeColor,
   Uri,
 } from 'vscode';
-import { ConnectionItemType } from './connectionTreeDataProvider';
+import { ThemeColor } from 'vscode';
+import type { ConnectionItemType } from './connectionTreeDataProvider';
 
 class ConnectionTreeDecorationProvider implements FileDecorationProvider {
   provideFileDecoration(uri: Uri): ProviderResult<FileDecoration> {

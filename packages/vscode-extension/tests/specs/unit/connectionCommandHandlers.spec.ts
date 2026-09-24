@@ -3,8 +3,8 @@ import * as sinon from 'sinon';
 import { switchToDatabase } from '../../../src/commandHandlers/connection';
 import * as connection from '../../../src/connectionService';
 import { getMockConnection } from '../../helpers';
-import { MockLanguageClient } from '../../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import type { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import type { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Command handlers spec', () => {

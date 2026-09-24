@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/unbound-method */
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
-import { Locator } from 'playwright/test';
+import type { Locator } from 'playwright/test';
 import { CypherEditor } from '../CypherEditor';
 
 test.use({ viewport: { width: 1000, height: 500 } });

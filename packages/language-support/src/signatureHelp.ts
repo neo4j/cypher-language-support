@@ -1,11 +1,9 @@
-import {
-  SignatureHelp,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import type { SignatureHelp } from 'vscode-languageserver-types';
+import { SignatureInformation } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTreeWalker, TerminalNode } from 'antlr4ng';
-import {
-  CypherCmdParser as CypherParser,
+import type { ParserRuleContext, TerminalNode } from 'antlr4ng';
+import { ParseTreeWalker } from 'antlr4ng';
+import type {
   AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
   CallClauseContext,
@@ -22,13 +20,15 @@ import {
   VectorFunctionContext,
   VectorNormFunctionContext,
 } from './generated-parser/CypherCmdParser.js';
+import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser.js';
 
-import { Token } from 'antlr4ng';
-import { DbSchema } from './dbSchema.js';
+import type { Token } from 'antlr4ng';
+import type { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
-import { createParsingResult, ParsingResult } from './cypherLanguageService.js';
-import { Neo4jFunction, Neo4jProcedure } from './types.js';
+import type { ParsingResult } from './cypherLanguageService.js';
+import { createParsingResult } from './cypherLanguageService.js';
+import type { Neo4jFunction, Neo4jProcedure } from './types.js';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -430,6 +430,11 @@ class SignatureHelper extends CypherCmdParserListener {
   };
 }
 
+export interface SignatureInfoOptions {
+  caretPosition?: number;
+  consoleCommandsEnabled?: boolean;
+}
+
 function onMethodName(
   parsedMethod: ParsedMethod,
   caretPosition: number,
@@ -514,20 +519,30 @@ export function getMethodSignature({
       };
     }
   }
+  return undefined;
 }
 
 export function getSignatureInfo(
+  query: string,
+  dbSchema: DbSchema,
+  options: SignatureInfoOptions = {},
+): SignatureHelp {
+  return getSignatureInfoWithParsingResult(query, dbSchema, options);
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function getSignatureInfoWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     caretPosition = query.length,
     parsingResult,
     consoleCommandsEnabled = true,
-  }: {
-    caretPosition?: number;
-    parsingResult?: ParsingResult;
-    consoleCommandsEnabled?: boolean;
-  } = {},
+  }: SignatureInfoOptions & { parsingResult?: ParsingResult } = {},
 ): SignatureHelp {
   const resolvedParsingResult = parsingResult
     ? parsingResult

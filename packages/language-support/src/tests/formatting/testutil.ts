@@ -1,4 +1,5 @@
-import { formatQuery, FormattingOptions } from '../../formatting/formatting.js';
+import type { FormattingOptions } from '../../formatting/formatting.js';
+import { formatQuery } from '../../formatting/formatting.js';
 import { standardizeQuery } from '../../formatting/standardizer.js';
 
 export function verifyFormatting(

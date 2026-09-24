@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import {
+import type {
   QueryResultsMessage,
   QueryResult,
 } from '../queryResults/queryResultsTypes';

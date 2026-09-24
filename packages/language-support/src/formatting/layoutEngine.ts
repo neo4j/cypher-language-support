@@ -1,7 +1,5 @@
+import type { Chunk, Group, IndentationModifier } from './formattingHelpers.js';
 import {
-  Chunk,
-  Group,
-  IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isInlineComment,
   shouldAddSpace,

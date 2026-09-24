@@ -1,12 +1,7 @@
-import {
-  CommonTokenStream,
-  ErrorNode,
-  ParserRuleContext,
-  TerminalNode,
-  Token,
-} from 'antlr4ng';
+import type { CommonTokenStream, Token } from 'antlr4ng';
+import { ErrorNode, ParserRuleContext, TerminalNode } from 'antlr4ng';
 import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
-import {
+import type {
   AddPropContext,
   AllPathContext,
   AllReduceExpressionInvalidArgumentsContext,
@@ -58,14 +53,12 @@ import {
   Expression7Context,
   Expression8Context,
   Expression9Context,
-  ExpressionContext,
   ExtendedCaseAlternativeContext,
   ExtendedCaseExpressionContext,
   FilterClauseContext,
   ForeachClauseContext,
   ForListClauseContext,
   FunctionInvocationContext,
-  GraphTypeElementContext,
   GraphTypeSpecificationBodyContext,
   GraphTypeSpecificationContext,
   HintContext,
@@ -75,8 +68,6 @@ import {
   InsertClauseContext,
   KeywordLiteralContext,
   LabelComparisonContext,
-  LabelExpression2Context,
-  LabelExpression3Context,
   LabelExpression4Context,
   LabelExpressionContext,
   LabelOrRelTypeContext,
@@ -92,23 +83,19 @@ import {
   LocalOutputFieldsSignatureContext,
   LocalProcedureDefinitionContext,
   MapContext,
-  MapOrParameterContext,
   MapProjectionContext,
-  MapProjectionElementContext,
   MatchClauseContext,
   MergeActionContext,
   MergeClauseContext,
   MultiLabelNodePatternContext,
   NamespaceContext,
   NextStatementContext,
-  NodePatternContext,
   NodeTypeInSituReferenceContext,
   NodeTypeSpecificationContext,
   NormalizeFunctionContext,
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
-  ParenthesizedPathContext,
   PathLengthContext,
   PathPatternNonEmptyContext,
   PatternComprehensionContext,
@@ -117,14 +104,11 @@ import {
   PatternListContext,
   ProcedureNameContext,
   PropertyContext,
-  PropertyTypeContext,
   PropertyTypeListContext,
-  QuantifierContext,
   QueryBodyContext,
   QueryWithLocalDefinitionsContext,
   RangePostfixContext,
   ReduceExpressionContext,
-  RelationshipPatternContext,
   RelTypeContext,
   ReturnBodyContext,
   ReturnClauseContext,
@@ -156,20 +140,34 @@ import {
   WithClauseContext,
   WithPropertiesContext,
 } from '../generated-parser/CypherCmdParser.js';
-import { CypherCmdParserVisitor } from '../generated-parser/CypherCmdParserVisitor.js';
 import {
+  ExpressionContext,
+  GraphTypeElementContext,
+  LabelExpression2Context,
+  LabelExpression3Context,
+  MapProjectionElementContext,
+  NodePatternContext,
+  ParenthesizedPathContext,
+  PropertyTypeContext,
+  QuantifierContext,
+  RelationshipPatternContext,
+} from '../generated-parser/CypherCmdParser.js';
+import { CypherCmdParserVisitor } from '../generated-parser/CypherCmdParserVisitor.js';
+import type {
   Chunk,
   CommentChunk,
+  Group,
+  IndentationModifier,
+  RegularChunk,
+  SyntaxErrorChunk,
+} from './formattingHelpers.js';
+import {
   DEFAULT_MAX_COL,
   fillInRegularChunkGroupSizes,
   findTargetToken,
   getParseTreeAndTokens,
-  Group,
-  IndentationModifier,
   INTERNAL_FORMAT_ERROR_MESSAGE,
   isComment,
-  RegularChunk,
-  SyntaxErrorChunk,
   verifyGroupSizes,
   wantsToBeConcatenated,
   wantsToBeUpperCase,
@@ -850,7 +848,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     if (ctx.PROPERTIES() && mapOrParameters.length >= 1) {
       this.breakLine();
       this.visit(ctx.PROPERTIES());
-      this.visit(mapOrParameters.at(-1) as MapOrParameterContext);
+      this.visit(mapOrParameters.at(-1));
     }
   };
 
@@ -3243,7 +3241,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 }
 
-interface FormattingResult {
+export interface FormattingResult {
   formattedQuery: string;
   newCursorPos?: number; // Only set if cursorPosition is provided
 }
@@ -3259,12 +3257,10 @@ export interface FormattingOptions {
  * Makes a best-effort attempt if the query is not parseable.
  *
  * @param query - Raw Cypher query string to format.
- * @param formattingOptions - Formatting behaviour flags.
- * @param formattingOptions.maxColumn - Maximum column width for the formatted query (80 recommended).
- *     Defaults to 80.
- * @param formattingOptions.cursorPosition - Index for the caret in the raw query.
- *     If supplied the return value will include `newCursorPos` which
- *     indicates its new position in the formatted query
+ * @param formattingOptions - Formatting behaviour flags. `maxColumn` is the maximum
+ *     column width for the formatted query (80 recommended, and the default).
+ *     `cursorPosition` is the index of the caret in the raw query; if supplied, the
+ *     return value includes `newCursorPos` giving its position in the formatted query.
  *
  * @returns An object containing:
  * * `formattedQuery` – formatted query string.

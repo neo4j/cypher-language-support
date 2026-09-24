@@ -1,5 +1,5 @@
 import semver from 'semver';
-import { integer } from 'vscode-languageserver-types';
+import type { integer } from 'vscode-languageserver-types';
 
 /**Like semver.compare - Returns:
  *  - -1 if v1 < v2

@@ -1,21 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { DbSchema, Registry } from '../dbSchema.js';
-import {
+import type { DbSchema, Registry } from '../dbSchema.js';
+import type {
   CypherVersion,
-  isCondition,
   LabelOrCondition,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
 } from '../types.js';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import { isCondition } from '../types.js';
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
-import { SyntaxDiagnostic } from './syntaxValidation.js';
+import type { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];

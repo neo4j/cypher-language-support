@@ -1,4 +1,5 @@
-import { Neo4jContainer, StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import { Neo4jContainer } from '@testcontainers/neo4j';
 
 type ContainerOpts = {
   containerName?: string;

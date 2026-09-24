@@ -1,6 +1,7 @@
-import { ParseTreeWalker, TerminalNode, Token } from 'antlr4ng';
+import type { TerminalNode, Token } from 'antlr4ng';
+import { ParseTreeWalker } from 'antlr4ng';
 
-import {
+import type {
   AccessModeArgsContext,
   AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
@@ -44,23 +45,19 @@ import {
   VectorNormFunctionContext,
 } from '../generated-parser/CypherCmdParser.js';
 
-import {
-  SemanticTokensLegend,
-  SemanticTokenTypes,
-} from 'vscode-languageserver-types';
+import type { SemanticTokensLegend } from 'vscode-languageserver-types';
+import { SemanticTokenTypes } from 'vscode-languageserver-types';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import { CypherCmdParserListener as CypherParserListener } from '../generated-parser/CypherCmdParserListener.js';
 import { CypherTokenType } from '../lexerSymbols.js';
-import {
-  createParsingResult,
-  ParsingResult,
-} from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService.js';
+import { createParsingResult } from '../cypherLanguageService.js';
+import type { ParsedCypherToken } from './syntaxHighlightingHelper.js';
 import {
   BracketType,
   computeTokenKey,
   getCypherTokenType,
   getTokenPosition,
-  ParsedCypherToken,
   removeOverlappingTokens,
   shouldAssignTokenType,
   sortTokens,
@@ -473,15 +470,21 @@ function colourLexerTokens(tokens: Token[]) {
   return result;
 }
 
-export function highlightSyntax(
+export interface HighlightSyntaxOptions {
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function highlightSyntaxWithParsingResult(
   query: string,
   {
     consoleCommandsEnabled = true,
     parsingResult,
-  }: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-  } = {},
+  }: HighlightSyntaxOptions & { parsingResult?: ParsingResult } = {},
 ): ParsedCypherToken[] {
   const resolvedParsingResult =
     parsingResult ?? createParsingResult(query, { consoleCommandsEnabled });
@@ -525,4 +528,11 @@ export function highlightSyntax(
   );
 
   return result;
+}
+
+export function highlightSyntax(
+  query: string,
+  options: HighlightSyntaxOptions = {},
+): ParsedCypherToken[] {
+  return highlightSyntaxWithParsingResult(query, options);
 }

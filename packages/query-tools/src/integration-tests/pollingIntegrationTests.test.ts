@@ -1,9 +1,10 @@
-import { auth, Driver, driver, Session } from 'neo4j-driver';
+import type { Driver, Session } from 'neo4j-driver';
+import { auth, driver } from 'neo4j-driver';
 import { createAndStartTestContainer } from './setupTestContainer.js';
-import { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { GraphSchema } from '../queries/graphSchema.js';
 import {
   extractRelationshipsWithNamedNodes,
-  GraphSchema,
   validateGraphSchema,
 } from '../queries/graphSchema.js';
 
@@ -32,14 +33,14 @@ describe('Polling integration', () => {
   test('Polling graph schema query gives results in correct shape', async () => {
     const query = 'CALL db.schema.visualization() YIELD *';
     const result = await session.run(query);
-    validateGraphSchema(result.records[0].toObject());
+    validateGraphSchema(result.records[0]!.toObject());
     expect(validateGraphSchema.errors).toBe(null);
   });
 
   test('Polled graph schema is correctly retrieved from polling query result', async () => {
     const query = 'CALL db.schema.visualization() YIELD *';
     const result = await session.run(query);
-    const actualResult = [result.records[0].toObject()] as GraphSchema[];
+    const actualResult = [result.records[0]!.toObject()] as GraphSchema[];
     validateGraphSchema(actualResult[0]);
     const graphSchema = extractRelationshipsWithNamedNodes(actualResult);
     expect(graphSchema).toContainEqual({

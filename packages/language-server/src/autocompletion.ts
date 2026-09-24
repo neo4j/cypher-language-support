@@ -1,21 +1,21 @@
-import {
+import type {
   CompletionParams,
-  CompletionTriggerKind,
   Position,
   TextDocuments,
 } from 'vscode-languageserver/node';
+import { CompletionTriggerKind } from 'vscode-languageserver/node';
 
 import type { CompletionItem } from '@neo4j-cypher/language-support';
 import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 import { languageService } from './server';
 
 export function doAutoCompletion(
   documents: TextDocuments<TextDocument>,
   neo4j: Neo4jSchemaPoller,
 ) {
-  return (completionParams: CompletionParams) => {
+  return (completionParams: CompletionParams): CompletionItem[] | undefined => {
     const textDocument = documents.get(completionParams.textDocument.uri);
     if (textDocument === undefined) return [];
 
@@ -53,5 +53,6 @@ export function doAutoCompletion(
 
       return result;
     }
+    return undefined;
   };
 }

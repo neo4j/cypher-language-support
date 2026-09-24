@@ -1,26 +1,25 @@
+import type { Diagnostic } from 'vscode-languageserver-types';
 import {
-  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
 } from 'vscode-languageserver-types';
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import { resolveCypherVersion } from '../helpers.js';
-import {
+import type {
   LabelOrRelType,
-  LabelType,
   ParsedFunction,
   ParsedParameter,
   ParsedProcedure,
   ParsedStatement,
   ParsingResult,
   PropertyType,
-  createParsingResult,
 } from '../cypherLanguageService.js';
-import {
+import { LabelType, createParsingResult } from '../cypherLanguageService.js';
+import type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
@@ -66,7 +65,7 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
-type GenericDiagnostic = { message: string };
+export type GenericDiagnostic = { message: string };
 
 export function isNotParamError<T extends GenericDiagnostic>(
   diagnostic: T,
@@ -154,6 +153,8 @@ function detectNonDeclaredFunction(
     }
     return generateFunctionNotFoundError(parsedFunction);
   }
+
+  return undefined;
 }
 
 function functionExists(
@@ -420,16 +421,22 @@ function fixSymbolTableOffsets({
   });
 }
 
-export function lintCypherQuery(
+export interface LintCypherQueryOptions {
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function lintCypherQueryWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     consoleCommandsEnabled = true,
     parsingResult,
-  }: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-  } = {},
+  }: LintCypherQueryOptions & { parsingResult?: ParsingResult } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
     const resolvedParsingResult =
@@ -667,4 +674,12 @@ function errorOnUndeclaredProcedures(
   }
 
   return errors;
+}
+
+export function lintCypherQuery(
+  query: string,
+  dbSchema: DbSchema,
+  options: LintCypherQueryOptions = {},
+): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
+  return lintCypherQueryWithParsingResult(query, dbSchema, options);
 }

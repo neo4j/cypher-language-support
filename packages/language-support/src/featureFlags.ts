@@ -1,4 +1,4 @@
-interface FeatureFlags {
+export interface FeatureFlags {
   debugSymbolTable: boolean;
 }
 

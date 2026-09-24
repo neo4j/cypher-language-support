@@ -21,18 +21,18 @@ jobs:
     name: Setup and build project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - name: Check the TextMate grammar is up to date
         run: |
           (git diff-index --name-status HEAD | grep "cypher.json" && (echo "Run pnpm build and commit an up to date cypher.json file please" && exit 1)) || echo "\n\nTextMate grammar is up to date"
 
-  lint-and-format:
-    name: Run oxlint and check formatting
+  lint-format-and-api:
+    name: Run oxlint, check formatting and api report
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Check there are no linting errors
@@ -44,12 +44,18 @@ jobs:
       - name: Detect unused exports and dependencies
         run: pnpm knip
 
+      # Fails if the public API changed without the committed report being regenerated.
+      # Tracked API Extractor warnings are written into the report too, so a change in
+      # the set of warnings also fails here rather than scrolling past in a build log.
+      - name: Check the API report is up to date
+        run: pnpm --filter @neo4j-cypher/language-support check-api-report --ci
+
   unit-test:
     name: Unit tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
@@ -60,7 +66,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
@@ -73,7 +79,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
@@ -85,7 +91,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
@@ -97,7 +103,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/demo-smoke-test
 
@@ -107,7 +113,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run e2e test
@@ -120,7 +126,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests

@@ -28,7 +28,6 @@ export type Neo4jType =
 
 export function addAnnotationProp(
   obj: Record<string, unknown>,
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   type: string | unknown,
   prop: string = RESERVED_TYPE_PROPERTY_NAME,
 ): Record<string, unknown> {
@@ -73,14 +72,11 @@ function copyAndAnnotate(
   obj: Exclude<Neo4jType | QueryResult, undefined | null | Neo4jType[]>,
 ): Record<string, unknown> {
   return Object.keys(obj).reduce<Record<string, unknown>>((newObj, key) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore TypeScript complains about not being able to use `key` to
     // index `obj`, but we know that `key` exists in `obj` since it's coming
     // from Object.keys.
-    // eslint-disable-next-line @typescript-eslint/consistent-type-assertions
     const value = obj[key] as unknown as Neo4jType;
 
-    // eslint-disable-next-line @typescript-eslint/no-use-before-define
     newObj[key] = serializeTypeAnnotations(value);
     return newObj;
   }, {});
@@ -99,11 +95,11 @@ export function serializeTypeAnnotations(
     return item.map((i) => serializeTypeAnnotations(i));
   }
   if (item === null || item === undefined) {
+    // This is needed due to the method overloading types
     return item;
   }
 
   if (item instanceof types.Record) {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore There are two versions of the type for Record coming from the
     // driver.
     const tmp = copyAndAnnotate(item);
@@ -181,16 +177,9 @@ export function serializeTypeAnnotations(
     return addAnnotationProp(tmp, 'Object');
   }
 
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore this type isn't inferred correctly
   return item;
 }
-
-/* eslint-disable @typescript-eslint/no-explicit-any,
-@typescript-eslint/no-unsafe-return, @typescript-eslint/no-unsafe-member-access,
-@typescript-eslint/no-unsafe-argument, @typescript-eslint/no-unsafe-assignment,
-no-underscore-dangle, @typescript-eslint/no-redundant-type-constituents
-*/
 
 export function deserializeTypeAnnotations(
   rawItem: Record<string, unknown>,
@@ -369,7 +358,6 @@ export function deserializeTypeAnnotations(
           break;
         case 'INT64':
           // For INT64, values are stored as strings to avoid BigInt serialization issues
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-call
           typedArray = new BigInt64Array(values.map((v: any) => BigInt(v)));
           break;
         case 'FLOAT32':
