@@ -1,4 +1,8 @@
-import { CypherLanguageService } from '@neo4j-cypher/language-support';
+import {
+  CypherFragmentKind,
+  cypherFragmentKinds,
+  CypherLanguageService,
+} from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
 import { tokenizeFragment } from './hover';
 import { CypherConfig } from './langCypher';
@@ -8,7 +12,7 @@ const cfg: CypherConfig = {
   useLightVersion: false,
 };
 
-function getTokenTypes(code: string, kind: string) {
+function getTokenTypes(code: string, kind: CypherFragmentKind) {
   return tokenizeFragment(cfg, code, kind).map(({ start, end, tokenType }) => ({
     token: code.slice(start, end),
     tokenType,
@@ -57,24 +61,15 @@ test('colours a procedure signature fragment like the editor does', () => {
   ]);
 });
 
-test('tokenizes the fragment as is when the hover gives no kind', () => {
-  expect(getTokenTypes('RETURN 1', '')).toEqual([
-    { token: 'RETURN', tokenType: 'keyword' },
-    { token: '1', tokenType: 'numberLiteral' },
-  ]);
-});
-
 test('drops the tokens of the surrounding context', () => {
-  ['labelExpression', 'function', 'procedure', 'unknownKind'].forEach(
-    (kind) => {
-      const code = 'Person';
-      const ranges = tokenizeFragment(cfg, code, kind);
-      expect(
-        ranges.every(({ start, end }) => start >= 0 && end <= code.length),
-      ).toBe(true);
-      expect(
-        ranges.map(({ start, end }) => code.slice(start, end)).join(''),
-      ).toBe(code);
-    },
-  );
+  cypherFragmentKinds.forEach((kind) => {
+    const code = 'Person';
+    const ranges = tokenizeFragment(cfg, code, kind);
+    expect(
+      ranges.every(({ start, end }) => start >= 0 && end <= code.length),
+    ).toBe(true);
+    expect(
+      ranges.map(({ start, end }) => code.slice(start, end)).join(''),
+    ).toBe(code);
+  });
 });

@@ -19,7 +19,12 @@ import {
 
 /* The code blocks hover emits hold Cypher fragments, not whole statements,
   thus the parsing based syntax colouring needs a prefix to highlight correctly*/
-export type CypherFragmentKind = 'labelExpression' | 'function' | 'procedure';
+export const cypherFragmentKinds = [
+  'labelExpression',
+  'function',
+  'procedure',
+] as const;
+export type CypherFragmentKind = (typeof cypherFragmentKinds)[number];
 
 function cypherCodeBlock(fragment: string, kind: CypherFragmentKind): string[] {
   return [`\`\`\`cypher ${kind}`, fragment, '```'];

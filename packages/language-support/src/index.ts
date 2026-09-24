@@ -4,6 +4,7 @@ export { autocomplete } from './autocompletion/autocompletion.js';
 export { shouldAutoCompleteYield } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema } from './dbSchema.js';
+export { cypherFragmentKinds } from './hoverInformation/hover.js';
 export type { CypherFragmentKind } from './hoverInformation/hover.js';
 export { renderLabelTree } from './labelTreeRender.js';
 export { _internalFeatureFlags } from './featureFlags.js';

@@ -1,40 +1,51 @@
 // @vitest-environment jsdom
 
 import {
+  CypherFragmentKind,
   CypherLanguageService,
   testData,
 } from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
 import { MarkupContent } from 'vscode-languageserver-types';
-import { CodeBlockInfo, renderMarkdown } from './markdown';
+import { renderHoverMarkdown } from './hoverMarkdown';
 
-function codeBlockInfos(markdown: string): [string, CodeBlockInfo][] {
-  const seen: [string, CodeBlockInfo][] = [];
-  renderMarkdown(markdown, (code, info, target) => {
-    seen.push([code, info]);
+function highlightedFragments(
+  markdown: string,
+): [string, CypherFragmentKind][] {
+  const seen: [string, CypherFragmentKind][] = [];
+  renderHoverMarkdown(markdown, (code, kind, target) => {
+    seen.push([code, kind]);
     target.textContent = code;
   });
   return seen;
 }
 
-test('passes the fence language and fragment kind to the highlighter', () => {
+test('passes the fragment kind of a cypher block to the highlighter', () => {
   expect(
-    codeBlockInfos(
+    highlightedFragments(
       ['```cypher labelExpression', '(Person | Pet)', '```'].join('\n'),
     ),
-  ).toEqual([
-    ['(Person | Pet)', { language: 'cypher', extra: 'labelExpression' }],
-  ]);
+  ).toEqual([['(Person | Pet)', 'labelExpression']]);
 });
 
-test('handles fences without a language or a fragment kind', () => {
-  expect(codeBlockInfos(['```cypher', 'RETURN 1', '```'].join('\n'))).toEqual([
-    ['RETURN 1', { language: 'cypher', extra: '' }],
-  ]);
+// Descriptions that carry their own layout come as ```text blocks
+test('renders blocks without a fragment kind as plain text', () => {
+  const markdown = [
+    '```text',
+    '{',
+    '    stream = false :: BOOLEAN',
+    '}',
+    '```',
+  ].join('\n');
 
-  expect(codeBlockInfos(['```', 'RETURN 1', '```'].join('\n'))).toEqual([
-    ['RETURN 1', { language: '', extra: '' }],
-  ]);
+  expect(highlightedFragments(markdown)).toEqual([]);
+  expect(renderHoverMarkdown(markdown).innerHTML).toBe(
+    '<pre><code>{\n    stream = false :: BOOLEAN\n}</code></pre>',
+  );
+
+  expect(
+    highlightedFragments(['```cypher', 'RETURN 1', '```'].join('\n')),
+  ).toEqual([]);
 });
 
 // The markdown language-support writes for a variable hover
@@ -49,14 +60,14 @@ test('renders a variable hover', () => {
     '```',
   ].join('\n');
 
-  expect(renderMarkdown(markdown).innerHTML).toBe(
+  expect(renderHoverMarkdown(markdown).innerHTML).toBe(
     '<p><code>n: Node</code></p><pre><code>(Person | Pet)</code></pre>',
   );
 });
 
 // Schema descriptions bring their own bullet lists, written with *
 test('renders the bullet lists in a schema description', () => {
-  const dom = renderMarkdown(
+  const dom = renderHoverMarkdown(
     [
       "* 'skip' -- to skip the top N results.",
       "* 'limit' -- to limit the number of results returned.",
@@ -79,7 +90,7 @@ test('leaves the underscores inside words alone', () => {
   const description =
     "JSON path options: ('ALWAYS_RETURN_LIST', 'AS_PATH_LIST', 'DEFAULT_PATH_LEAF_TO_NULL').";
 
-  const dom = renderMarkdown(
+  const dom = renderHoverMarkdown(
     ['**Parameters**', `- \`pathOptions\` - ${description}`].join('\n'),
   );
 
@@ -96,7 +107,7 @@ function renderMethodHover(query: string): HTMLElement {
     dbSchema: testData.mockSchema,
   });
 
-  return renderMarkdown((hover.contents as MarkupContent).value);
+  return renderHoverMarkdown((hover.contents as MarkupContent).value);
 }
 
 test('renders a function hover', () => {
@@ -131,22 +142,22 @@ test('italicises the deprecation marker of a deprecated method', () => {
 // language-support escapes the markdown characters of the schema descriptions
 // it interpolates, so that the renderers CommonMark shows them as written
 test('renders the characters language-support escapes as text', () => {
-  expect(renderMarkdown("(e.g. '\\*:\\*,name=\\*neo4j\\*')").innerHTML).toBe(
-    "<p>(e.g. '*:*,name=*neo4j*')</p>",
-  );
+  expect(
+    renderHoverMarkdown("(e.g. '\\*:\\*,name=\\*neo4j\\*')").innerHTML,
+  ).toBe("<p>(e.g. '*:*,name=*neo4j*')</p>");
 
-  expect(renderMarkdown('a \\\\ b').innerHTML).toBe('<p>a \\ b</p>');
+  expect(renderHoverMarkdown('a \\\\ b').innerHTML).toBe('<p>a \\ b</p>');
 });
 
 // An escaped character cannot open markup of its own
 test('does not let an escaped backtick open a code span', () => {
-  expect(renderMarkdown('a \\` b `c` d').innerHTML).toBe(
+  expect(renderHoverMarkdown('a \\` b `c` d').innerHTML).toBe(
     '<p>a ` b <code>c</code> d</p>',
   );
 });
 
 test('does not start a list from an escaped asterisk', () => {
-  const dom = renderMarkdown('\\* not a bullet');
+  const dom = renderHoverMarkdown('\\* not a bullet');
 
   expect(dom.querySelector('ul')).toBeNull();
   expect(dom.innerHTML).toBe('<p>* not a bullet</p>');

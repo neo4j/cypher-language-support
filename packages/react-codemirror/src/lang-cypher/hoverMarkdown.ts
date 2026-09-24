@@ -1,24 +1,23 @@
 /**
- * Renders the markdown hovers are written in, in language-support: fenced
- * code blocks, bullet lists, paragraphs, backslash escapes, and inline code,
- * bold and italic.
- * It is not a general markdown renderer, it handles the shapes we emit.
+ * Renders the markdown of language-support's Hover (hoverInformation/hover.ts
+ * and descriptionToMarkdown.ts) into the hover tooltip: fenced code blocks,
+ * bullet lists, paragraphs, backslash escapes, and inline code, bold and
+ * italic.
+ * It is not a general markdown renderer, it handles the shapes hover emits.
  *
  * Everything is inserted as text nodes, so schema-provided descriptions can
  * never inject HTML into the editor.
  */
 
-/** A fence info string, i.e. ```<language> <extra> */
-export type CodeBlockInfo = {
-  language: string;
-  /** Whatever followed the language, e.g. the kind of fragment the block holds */
-  extra: string;
-};
+import {
+  CypherFragmentKind,
+  cypherFragmentKinds,
+} from '@neo4j-cypher/language-support';
 
-/** Fills `target` with (optionally highlighted) content of a fenced code block. */
-export type CodeHighlighter = (
+/** Fills the `target` element of a hover code block with its highlighted Cypher fragment. */
+export type HoverCodeHighlighter = (
   code: string,
-  info: CodeBlockInfo,
+  kind: CypherFragmentKind,
   target: HTMLElement,
 ) => void;
 
@@ -31,32 +30,21 @@ function bulletContent(line: string): string | undefined {
   return bullet === undefined ? undefined : line.slice(bullet.length);
 }
 
-function parseOpeningFence(line: string): CodeBlockInfo | undefined {
-  if (!line.startsWith(fence)) {
-    return undefined;
-  }
-
-  const info = line.slice(fence.length);
-  const languageEnd = info.indexOf(' ');
-
-  return languageEnd === -1
-    ? { language: info, extra: '' }
-    : {
-        language: info.slice(0, languageEnd),
-        extra: info.slice(languageEnd + 1),
-      };
+/* Hover fences its Cypher as ```cypher <kind>, and the descriptions that carry
+   their own layout as ```text, which have no kind and render plain */
+function fragmentKind(openingFence: string): CypherFragmentKind | undefined {
+  const [language, kind] = openingFence.slice(fence.length).split(' ');
+  return language === 'cypher'
+    ? cypherFragmentKinds.find((fragmentKind) => fragmentKind === kind)
+    : undefined;
 }
 
-function isClosingFence(line: string): boolean {
-  return line === fence;
-}
-
-export function renderMarkdown(
+export function renderHoverMarkdown(
   markdown: string,
-  highlightCode?: CodeHighlighter,
+  highlightHoverCode?: HoverCodeHighlighter,
 ): HTMLElement {
   const dom = document.createElement('div');
-  dom.className = 'cm-markdown';
+  dom.className = 'cm-hover-markdown';
 
   const lines = markdown.split('\n');
   let paragraph: string[] = [];
@@ -72,20 +60,20 @@ export function renderMarkdown(
 
   while (i < lines.length) {
     const line = lines[i];
-    const fenceStart = parseOpeningFence(line);
 
-    if (fenceStart) {
+    if (line.startsWith(fence)) {
       flushParagraph();
+      const kind = fragmentKind(line);
       const code: string[] = [];
       i++;
-      while (i < lines.length && !isClosingFence(lines[i])) {
+      while (i < lines.length && lines[i] !== fence) {
         code.push(lines[i]);
         i++;
       }
       // Skip the closing fence
       i++;
       dom.appendChild(
-        createCodeBlock(code.join('\n'), fenceStart, highlightCode),
+        createCodeBlock(code.join('\n'), kind, highlightHoverCode),
       );
       continue;
     }
@@ -121,14 +109,14 @@ export function renderMarkdown(
 
 function createCodeBlock(
   code: string,
-  info: CodeBlockInfo,
-  highlightCode?: CodeHighlighter,
+  kind: CypherFragmentKind | undefined,
+  highlightHoverCode?: HoverCodeHighlighter,
 ): HTMLElement {
   const pre = document.createElement('pre');
   const codeElement = document.createElement('code');
 
-  if (highlightCode) {
-    highlightCode(code, info, codeElement);
+  if (kind && highlightHoverCode) {
+    highlightHoverCode(code, kind, codeElement);
   } else {
     codeElement.textContent = code;
   }

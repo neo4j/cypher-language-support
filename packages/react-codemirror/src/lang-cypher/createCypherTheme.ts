@@ -149,7 +149,7 @@ export const createCypherTheme = ({
       overflow: 'auto',
       padding: '2px 10px',
     },
-    '& .cm-markdown': {
+    '& .cm-hover-markdown': {
       fontFamily:
         '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
       fontSize: '13px',

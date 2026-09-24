@@ -7,7 +7,7 @@ import {
 import { Hover, MarkupContent } from 'vscode-languageserver-types';
 import { HighlightedCypherTokenTypes, tokenTypeToStyleTag } from './constants';
 import { CypherConfig } from './langCypher';
-import { CodeHighlighter, renderMarkdown } from './markdown';
+import { HoverCodeHighlighter, renderHoverMarkdown } from './hoverMarkdown';
 
 export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   const hoverSource: HoverTooltipSource = (view, pos) => {
@@ -16,7 +16,7 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
       caretPosition: pos,
       dbSchema: cfg.schema ?? {},
     });
-    const markdown = getMarkdown(hoverInfo?.contents);
+    const markdown = hoverMarkdown(hoverInfo);
 
     if (!markdown) {
       return null;
@@ -29,7 +29,7 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
         const dom = document.createElement('div');
         dom.className = 'cm-hover-tooltip';
         dom.appendChild(
-          renderMarkdown(markdown, cypherCodeHighlighter(view, cfg)),
+          renderHoverMarkdown(markdown, hoverCodeHighlighter(view, cfg)),
         );
         return { dom };
       },
@@ -38,21 +38,9 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   return hoverSource;
 }
 
-function getMarkdown(contents: Hover['contents'] | undefined): string {
-  if (!contents) {
-    return '';
-  }
-  if (typeof contents === 'string') {
-    return contents;
-  }
-  if (Array.isArray(contents)) {
-    return contents.map((content) => getMarkdown(content)).join('\n\n');
-  }
-  if (MarkupContent.is(contents)) {
-    return contents.value;
-  }
-  // A MarkedString, i.e. a code block with a language
-  return ['```' + contents.language, contents.value, '```'].join('\n');
+// language-support writes its hovers as a single markdown MarkupContent
+function hoverMarkdown(hover: Hover | undefined): string {
+  return MarkupContent.is(hover?.contents) ? hover.contents.value : '';
 }
 
 //Need some prefixing for the cypher fragment to parse correctly (and get the same highlighting as in a valid query)
@@ -61,10 +49,6 @@ const fragmentPrefixes: Record<CypherFragmentKind, string> = {
   function: 'RETURN ',
   procedure: 'CALL ',
 };
-
-function isFragmentKind(kind: string): kind is CypherFragmentKind {
-  return kind in fragmentPrefixes;
-}
 
 interface HighlightedRange {
   start: number;
@@ -76,9 +60,9 @@ interface HighlightedRange {
 export function tokenizeFragment(
   cfg: CypherConfig,
   code: string,
-  kind: string,
+  kind: CypherFragmentKind,
 ): HighlightedRange[] {
-  const prefix = isFragmentKind(kind) ? fragmentPrefixes[kind] : '';
+  const prefix = fragmentPrefixes[kind];
 
   const tokens = cfg.languageService.highlightSyntax(prefix + code);
 
@@ -92,21 +76,16 @@ export function tokenizeFragment(
 }
 
 /**
- * Highlights cypher code blocks with the same colours the editor itself uses,
- * by looking up the style class of each token in the active highlight style.
+ * Highlights the cypher code blocks of the hover tooltip with the same colours
+ * the editor itself uses, by looking up the style class of each token in the
+ * active highlight style.
  */
-function cypherCodeHighlighter(
+function hoverCodeHighlighter(
   view: EditorView,
   cfg: CypherConfig,
-): CodeHighlighter {
-  return (code, info, target) => {
-    // Like in vscode, untagged blocks also highlight as Cypher
-    if (info.language && info.language !== 'cypher') {
-      target.textContent = code;
-      return;
-    }
-
-    const tokens = tokenizeFragment(cfg, code, info.extra);
+): HoverCodeHighlighter {
+  return (code, kind, target) => {
+    const tokens = tokenizeFragment(cfg, code, kind);
     let offset = 0;
 
     tokens.forEach(({ start, end, tokenType }) => {
