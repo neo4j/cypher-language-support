@@ -21,11 +21,6 @@ const bulletMarker = '* ';
 const codeSpanOrProse = /(`[^`]*`)|([^`]+|`)/g;
 
 export function escapeDescriptionForMarkdown(description: string): string {
-  // The schema comes off the wire, a description can be missing
-  if (!description) {
-    return description;
-  }
-
   // Line by line, so that an unclosed backtick cannot reach the lines below
   return description.split('\n').map(escapeLine).join('\n');
 }
@@ -53,10 +48,6 @@ function escapeLine(line: string): string {
      }
    Markdown reads the newlines as spaces, so this would come out on one line. */
 function carriesOwnLayout(description: string): boolean {
-  if (!description) {
-    return false;
-  }
-
   const lines = description.trimEnd().split('\n');
 
   return lines.length > 1 && lines.some((line) => line.startsWith(' '));
