@@ -7,7 +7,7 @@ suite('Hover spec procedures', () => {
   const labelsProcedure =
     testData.mockSchema.procedures['CYPHER 5']['db.labels'];
   const expectedHoverInfo = [
-    '```cypher',
+    '```cypher procedure',
     labelsProcedure.signature,
     '```',
     labelsProcedure.description,

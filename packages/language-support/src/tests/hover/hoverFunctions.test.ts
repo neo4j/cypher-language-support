@@ -16,7 +16,7 @@ describe('Function hover', () => {
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
 \`\`\`
 Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
@@ -34,7 +34,7 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
     const expected = {
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
 \`\`\`
 Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
@@ -66,7 +66,7 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
     const expected = {
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 apoc.create.uuid() :: STRING
 \`\`\`
 (_deprecated_) Returns a UUID.
@@ -99,7 +99,7 @@ apoc.create.uuid() :: STRING
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
 \`\`\`
 Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
@@ -128,7 +128,7 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
 \`\`\`
 Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
@@ -143,7 +143,7 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
     expect(innerHoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 count(input :: ANY) :: INTEGER
 \`\`\`
 Returns the number of values or rows.
@@ -167,7 +167,7 @@ Returns the number of values or rows.
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING
 \`\`\`
 Normalize a \`STRING\`. The \`STRING\` will be normalized according to the specified normalization form.
@@ -193,7 +193,7 @@ Normalize a \`STRING\`. The \`STRING\` will be normalized according to the speci
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING
 \`\`\`
 Returns the given \`STRING\` with leading and/or trailing \`trimCharacterString\` removed.
@@ -219,13 +219,37 @@ Returns the given \`STRING\` with leading and/or trailing \`trimCharacterString\
     expect(hoverInfo).toEqual({
       contents: {
         kind: 'markdown',
-        value: `\`\`\`cypher
+        value: `\`\`\`cypher function
 apoc.create.uuid() :: STRING
 \`\`\`
 (_deprecated_) Returns a UUID.
 
 
 **Returns:** \`STRING\``,
+      },
+    });
+  });
+
+  test('escapes the asterisk a description writes as prose, so its not interpreted as emphasis in markdown', () => {
+    const query = 'RETURN apoc.math.sigmoidPrime(1.0)';
+
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: query.indexOf('apoc.math.sigmoidPrime') + 1,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toEqual({
+      contents: {
+        kind: 'markdown',
+        value: `\`\`\`cypher function
+apoc.math.sigmoidPrime(value :: FLOAT) :: FLOAT
+\`\`\`
+Returns the sigmoid prime [ sigmoid(val) \\* (1 - sigmoid(val)) ] of the given value.
+
+**Parameters**
+- \`value\` - An angle in radians.
+
+**Returns:** \`FLOAT\``,
       },
     });
   });

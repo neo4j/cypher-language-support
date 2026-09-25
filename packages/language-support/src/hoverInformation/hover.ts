@@ -13,6 +13,23 @@ import type {
 import { isLabelLeaf } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
+import {
+  formatLineForMarkdown,
+  escapeDescriptionForMarkdown,
+} from './descriptionToMarkdown.js';
+
+/* The code blocks hover emits hold Cypher fragments, not whole statements,
+  thus the parsing based syntax colouring needs a prefix to highlight correctly*/
+export const cypherFragmentKinds = [
+  'labelExpression',
+  'function',
+  'procedure',
+] as const;
+export type CypherFragmentKind = (typeof cypherFragmentKinds)[number];
+
+function cypherCodeBlock(fragment: string, kind: CypherFragmentKind): string[] {
+  return [`\`\`\`cypher ${kind}`, fragment, '```'];
+}
 
 export function getHoverInfo({
   caretPosition,
@@ -48,11 +65,10 @@ export function getHoverInfo({
     const hasLabels =
       !isLabelLeaf(symbol.labels) && symbol.labels.children.length > 0;
 
-    const labelTreeString = [
-      '```cypher',
+    const labelTreeString = cypherCodeBlock(
       renderLabelTree(symbol.labels),
-      '```',
-    ].join('\n');
+      'labelExpression',
+    ).join('\n');
     const hoverContent = hasLabels
       ? [
           '`',
@@ -81,15 +97,19 @@ export function getHoverInfo({
       type: arg.type,
     };
   });
-
-  return {
+  const returnValue = {
     contents: {
       kind: MarkupKind.Markdown,
       value: [
-        '```cypher',
-        schemaMethod.signature,
-        '```',
-        `${deprecated ? '(_deprecated_) ' : ''}${schemaMethod.description}`,
+        ...cypherCodeBlock(
+          schemaMethod.signature,
+          parsedMethod.methodType === MethodType.procedure
+            ? 'procedure'
+            : 'function',
+        ),
+        `${deprecated ? '(_deprecated_) ' : ''}${escapeDescriptionForMarkdown(
+          schemaMethod.description,
+        )}`,
         '',
         ...createParametersHoverString(params),
         '',
@@ -97,6 +117,8 @@ export function getHoverInfo({
       ].join('\n'),
     },
   };
+
+  return returnValue;
 }
 
 function isDeprecated(
@@ -120,9 +142,9 @@ function createParametersHoverString(params: ArgumentDescription[]): string[] {
 
   return [
     '**Parameters**',
-    ...params.map((param) => {
-      return `- \`${param.name}\` - ${param.description}`;
-    }),
+    ...params.flatMap((param) =>
+      formatLineForMarkdown(param.name, param.description),
+    ),
   ];
 }
 
@@ -142,8 +164,8 @@ function createReturnHoverString(
 
   return [
     '**Returns**',
-    ...returnDescription.map((ret) => {
-      return `- \`${ret.name}\` - ${ret.description}`;
-    }),
+    ...returnDescription.flatMap((ret) =>
+      formatLineForMarkdown(ret.name, ret.description),
+    ),
   ];
 }

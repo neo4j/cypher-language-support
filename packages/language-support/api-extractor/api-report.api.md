@@ -80,6 +80,12 @@ export type ConditionNode = {
 export const CONDITIONS: readonly ["and", "or", "not", "any"];
 
 // @public (undocumented)
+export type CypherFragmentKind = (typeof cypherFragmentKinds)[number];
+
+// @public (undocumented)
+export const cypherFragmentKinds: readonly ["labelExpression", "function", "procedure"];
+
+// @public (undocumented)
 export class CypherLanguageService {
     constructor(input?: {
         consoleCommandsEnabled?: boolean;

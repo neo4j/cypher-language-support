@@ -139,6 +139,54 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
+    // Capped on the host, which a hover shares with lint diagnostics, so all
+    // its sections wrap at the same width
+    '& .cm-tooltip-hover': {
+      maxWidth: '800px',
+    },
+    '& .cm-hover-tooltip': {
+      backgroundColor: settings.autoCompletionPanel.backgroundColor,
+      color: settings.foreground,
+      maxHeight: '300px',
+      overflow: 'auto',
+      padding: '2px 10px',
+    },
+    '& .cm-hover-markdown': {
+      fontFamily:
+        '-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif',
+      fontSize: '13px',
+      lineHeight: '1.5',
+      '& p': {
+        margin: '6px 0',
+      },
+      '& ul': {
+        margin: '6px 0',
+        paddingLeft: '18px',
+      },
+      '& li': {
+        margin: '2px 0',
+      },
+      '& code': {
+        fontFamily: 'Fira Code, Menlo, Monaco, Lucida Console, monospace',
+        fontSize: '12px',
+      },
+      '& pre': {
+        margin: '6px 0',
+        padding: '6px 8px',
+        borderRadius: '3px',
+        whiteSpace: 'pre-wrap',
+        overflowWrap: 'break-word',
+        backgroundColor: dark
+          ? 'rgba(255, 255, 255, 0.08)'
+          : 'rgba(0, 0, 0, 0.05)',
+      },
+      '& > *:first-child': {
+        marginTop: '0',
+      },
+      '& > *:last-child': {
+        marginBottom: '0',
+      },
+    },
     '.cm-completionInfo-signature': {
       color: 'darkgrey',
     },
