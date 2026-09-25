@@ -230,8 +230,7 @@ apoc.create.uuid() :: STRING
     });
   });
 
-  /* Markdown would read the multiplication sign as emphasis and eat it */
-  test('escapes the asterisk a description writes as prose', () => {
+  test('escapes the asterisk a description writes as prose, so its not interpreted as emphasis in markdown', () => {
     const query = 'RETURN apoc.math.sigmoidPrime(1.0)';
 
     const hoverInfo = languageService.hoverInfo(query, {
