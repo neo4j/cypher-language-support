@@ -1,5 +1,18 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.38
+
+### Minor Changes
+
+- 1897def: Functions and procedures information on hover
+- 2844ec4: Modify exports for api stability in language-support. Adds "forgotten exports" and most importantly (possibly breaking for dependants) removes export of generated antlr classes (or functions referencing these) - namely "parse", "createParsingResult" and full exports of generated Lexer/Parser files. Exported language support methods for linting, formatting etc no longer take optional "ParsingResult". Antlr grammar is now exported as .g4 files instead - see readme for instructions on how to generate parser/lexer.
+
+### Patch Changes
+
+- d3dbe10: Improve handling of grammar-defined functions (for hover+highlighting)
+- 321e370: Add hover on variables
+- b38430c: Update grammar and semantic analysis to 2026.09
+
 ## 2.0.0-next.37
 
 ### Minor Changes
