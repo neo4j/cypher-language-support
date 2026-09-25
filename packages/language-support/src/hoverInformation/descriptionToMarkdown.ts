@@ -40,25 +40,19 @@ function escapeLine(line: string): string {
   );
 }
 
-/* A map-style description, laid out over several indented lines:
-     {
-         stream = false :: BOOLEAN,
-         batchSize = 20000 :: INTEGER
-     }
-   Markdown reads the newlines as spaces, so this would come out on one line. */
-function carriesOwnLayout(description: string): boolean {
+/* For example a map-style description, laid out over several lines */
+function hasInnerNewlines(description: string): boolean {
   const lines = description.trimEnd().split('\n');
-
-  return lines.length > 1 && lines.some((line) => line.startsWith(' '));
+  return lines.length > 1;
 }
 
-/** The markdown lines describing one parameter or return value of a method. */
-export function descriptionBullet(name: string, description: string): string[] {
+export function formatLineForMarkdown(
+  name: string,
+  description: string,
+): string[] {
   const bullet = `- \`${name}\` -`;
 
-  /* Tagged 'text' so it renders plain. Untagged, VS Code colours the block as
-     Cypher, the language of the document the hover sits in. */
-  return carriesOwnLayout(description)
+  return hasInnerNewlines(description)
     ? [bullet, '```text', description.trimEnd(), '```']
     : [`${bullet} ${escapeDescriptionForMarkdown(description)}`];
 }

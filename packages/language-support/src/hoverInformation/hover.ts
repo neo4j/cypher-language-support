@@ -14,7 +14,7 @@ import { isLabelLeaf } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import {
-  descriptionBullet,
+  formatLineForMarkdown,
   escapeDescriptionForMarkdown,
 } from './descriptionToMarkdown.js';
 
@@ -143,7 +143,7 @@ function createParametersHoverString(params: ArgumentDescription[]): string[] {
   return [
     '**Parameters**',
     ...params.flatMap((param) =>
-      descriptionBullet(param.name, param.description),
+      formatLineForMarkdown(param.name, param.description),
     ),
   ];
 }
@@ -165,7 +165,7 @@ function createReturnHoverString(
   return [
     '**Returns**',
     ...returnDescription.flatMap((ret) =>
-      descriptionBullet(ret.name, ret.description),
+      formatLineForMarkdown(ret.name, ret.description),
     ),
   ];
 }

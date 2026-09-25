@@ -1,5 +1,5 @@
 import {
-  descriptionBullet,
+  formatLineForMarkdown,
   escapeDescriptionForMarkdown,
 } from '../../hoverInformation/descriptionToMarkdown.js';
 
@@ -127,14 +127,14 @@ describe('description bullets', () => {
 
   test('writes a prose description inline', () => {
     expect(
-      descriptionBullet('query', "A query for MBeans (e.g. '*:*')."),
+      formatLineForMarkdown('query', "A query for MBeans (e.g. '*:*')."),
     ).toEqual(["- `query` - A query for MBeans (e.g. '\\*:\\*')."]);
   });
 
   test('writes a description that is several lines of prose inline', () => {
     // The renderers join these lines into one paragraph, as markdown does
     expect(
-      descriptionBullet('sort', 'Sorts the list.\nTo sort ascending.'),
+      formatLineForMarkdown('sort', 'Sorts the list.\nTo sort ascending.'),
     ).toEqual(['- `sort` - Sorts the list.\nTo sort ascending.']);
   });
 
@@ -142,7 +142,7 @@ describe('description bullets', () => {
     const description =
       '{\n    delimiter = "," :: STRING,\n    skipLines = 1 :: INTEGER\n}\n';
 
-    expect(descriptionBullet('config', description)).toEqual([
+    expect(formatLineForMarkdown('config', description)).toEqual([
       '- `config` -',
       '```text',
       '{\n    delimiter = "," :: STRING,\n    skipLines = 1 :: INTEGER\n}',
