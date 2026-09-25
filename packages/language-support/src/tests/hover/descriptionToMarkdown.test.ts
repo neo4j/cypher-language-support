@@ -1,6 +1,6 @@
 import {
   descriptionBullet,
-  escapeDescription,
+  escapeDescriptionForMarkdown,
 } from '../../hoverInformation/descriptionToMarkdown.js';
 
 /* Uses descriptions from real procedures and
@@ -9,7 +9,7 @@ import {
 describe('escapes the wildcards a description writes as prose', () => {
   test('dbms.queryJmxs query parameter', () => {
     expect(
-      escapeDescription(
+      escapeDescriptionForMarkdown(
         "A query for MBeans on this MBeanServer (e.g. '*:*,name=*neo4j*' for all metrics in neo4j database).",
       ),
     ).toBe(
@@ -19,7 +19,7 @@ describe('escapes the wildcards a description writes as prose', () => {
 
   test('apoc.math.sigmoidPrime description', () => {
     expect(
-      escapeDescription(
+      escapeDescriptionForMarkdown(
         'Returns the sigmoid prime [ sigmoid(val) * (1 - sigmoid(val)) ] of the given value.',
       ),
     ).toBe(
@@ -28,7 +28,7 @@ describe('escapes the wildcards a description writes as prose', () => {
   });
 
   test('apoc.algo.aStar description', () => {
-    expect(escapeDescription('Runs the A* search algorithm.')).toBe(
+    expect(escapeDescriptionForMarkdown('Runs the A* search algorithm.')).toBe(
       'Runs the A\\* search algorithm.',
     );
   });
@@ -39,21 +39,21 @@ describe('leaves the wildcards inside a code span alone', () => {
     const description =
       'Query JMX management data by domain and name. For instance, use `*:*` to find all JMX beans.';
 
-    expect(escapeDescription(description)).toBe(description);
+    expect(escapeDescriptionForMarkdown(description)).toBe(description);
   });
 
   test('gds.graph.nodeProperties.streams nodeLabels parameter', () => {
     const listed =
       "The node labels to aggregate over. Use `['*']` to indicate all.";
 
-    expect(escapeDescription(listed)).toBe(listed);
+    expect(escapeDescriptionForMarkdown(listed)).toBe(listed);
   });
 });
 
 describe('escaping descriptions', () => {
   test('escapes the backslashes, so that the escaping can be undone', () => {
-    expect(escapeDescription('a \\ b')).toBe('a \\\\ b');
-    expect(escapeDescription('already \\* escaped')).toBe(
+    expect(escapeDescriptionForMarkdown('a \\ b')).toBe('a \\\\ b');
+    expect(escapeDescriptionForMarkdown('already \\* escaped')).toBe(
       'already \\\\\\* escaped',
     );
   });
@@ -62,39 +62,41 @@ describe('escaping descriptions', () => {
     const values =
       "JSON path options: ('ALWAYS_RETURN_LIST', 'DEFAULT_PATH_LEAF_TO_NULL').";
 
-    expect(escapeDescription(values)).toBe(values);
+    expect(escapeDescriptionForMarkdown(values)).toBe(values);
   });
 
   test('leaves the underscores of a description alone - db.index.fulltext.queryNodes', () => {
     const italics = 'Valid _key: value_ pairs for the `options` map are:';
 
-    expect(escapeDescription(italics)).toBe(italics);
+    expect(escapeDescriptionForMarkdown(italics)).toBe(italics);
   });
 
   test('leaves a backtick that is never closed alone - apoc.node.relationships.exist relTypes parameter', () => {
-    expect(escapeDescription('syntax; `[<]TYPE[>]|.... with a * in it')).toBe(
-      'syntax; `[<]TYPE[>]|.... with a \\* in it',
-    );
+    expect(
+      escapeDescriptionForMarkdown('syntax; `[<]TYPE[>]|.... with a * in it'),
+    ).toBe('syntax; `[<]TYPE[>]|.... with a \\* in it');
   });
 
   test('leaves a backtick that is never closed alone - apoc.path.expandConfig startNode parameter', () => {
     const description =
       'The node to start the algorithm from. `startNode` can be of type `STRING` (elementId()), `INTEGER` (id()), `NODE`, or `LIST<STRING | INTEGER | NODE>.';
 
-    expect(escapeDescription(description)).toBe(description);
+    expect(escapeDescriptionForMarkdown(description)).toBe(description);
   });
 
   test('pairs the backticks within a line, not across the description', () => {
-    expect(escapeDescription('a ` b\nc * d')).toBe('a ` b\nc \\* d');
+    expect(escapeDescriptionForMarkdown('a ` b\nc * d')).toBe('a ` b\nc \\* d');
   });
 
   test('keeps the newlines a description brings, including a trailing one', () => {
-    expect(escapeDescription('first\n\nsecond\n')).toBe('first\n\nsecond\n');
+    expect(escapeDescriptionForMarkdown('first\n\nsecond\n')).toBe(
+      'first\n\nsecond\n',
+    );
   });
 
   test('hands back a description that is missing', () => {
-    expect(escapeDescription('')).toBe('');
-    expect(escapeDescription(undefined)).toBeUndefined();
+    expect(escapeDescriptionForMarkdown('')).toBe('');
+    expect(escapeDescriptionForMarkdown(undefined)).toBeUndefined();
   });
 });
 
@@ -107,16 +109,18 @@ describe('description bullets', () => {
       '* `V2_ONLY` -- it runs only discovery service v2.',
     ].join('\n');
 
-    expect(escapeDescription(description)).toBe(description);
+    expect(escapeDescriptionForMarkdown(description)).toBe(description);
   });
 
   test('escapes an asterisk that only looks like a bullet marker', () => {
     // An indented bullet is not one in react-codemirror's renderer
-    expect(escapeDescription('  * indented')).toBe('  \\* indented');
+    expect(escapeDescriptionForMarkdown('  * indented')).toBe('  \\* indented');
     // And neither is a bare asterisk without the space
-    expect(escapeDescription('*emphasised*')).toBe('\\*emphasised\\*');
+    expect(escapeDescriptionForMarkdown('*emphasised*')).toBe(
+      '\\*emphasised\\*',
+    );
     // The marker is kept, the wildcard on the same line is not
-    expect(escapeDescription("* 'skip' -- skips *:*")).toBe(
+    expect(escapeDescriptionForMarkdown("* 'skip' -- skips *:*")).toBe(
       "* 'skip' -- skips \\*:\\*",
     );
   });

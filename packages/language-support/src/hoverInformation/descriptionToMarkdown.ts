@@ -20,8 +20,7 @@ const bulletMarker = '* ';
    (apoc.nodes.rels', apoc.path.expandConfig') as prose. */
 const codeSpanOrProse = /(`[^`]*`)|([^`]+|`)/g;
 
-/** Escapes the markdown characters in the prose the schema gives us. */
-export function escapeDescription(description: string): string {
+export function escapeDescriptionForMarkdown(description: string): string {
   // The schema comes off the wire, a description can be missing
   if (!description) {
     return description;
@@ -71,5 +70,5 @@ export function descriptionBullet(name: string, description: string): string[] {
      Cypher, the language of the document the hover sits in. */
   return carriesOwnLayout(description)
     ? [bullet, '```text', description.trimEnd(), '```']
-    : [`${bullet} ${escapeDescription(description)}`];
+    : [`${bullet} ${escapeDescriptionForMarkdown(description)}`];
 }

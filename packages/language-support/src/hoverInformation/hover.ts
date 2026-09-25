@@ -15,7 +15,7 @@ import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import {
   descriptionBullet,
-  escapeDescription,
+  escapeDescriptionForMarkdown,
 } from './descriptionToMarkdown.js';
 
 /* The code blocks hover emits hold Cypher fragments, not whole statements,
@@ -107,7 +107,7 @@ export function getHoverInfo({
             ? 'procedure'
             : 'function',
         ),
-        `${deprecated ? '(_deprecated_) ' : ''}${escapeDescription(
+        `${deprecated ? '(_deprecated_) ' : ''}${escapeDescriptionForMarkdown(
           schemaMethod.description,
         )}`,
         '',
