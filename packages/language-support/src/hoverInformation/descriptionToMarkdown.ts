@@ -33,10 +33,9 @@ function escapeLine(line: string): string {
     line.slice(bullet.length).replace(
       codeSpanOrProse,
       /* Escaping inside a code span would show the backslash, and descriptions
-         put wildcards there too, e.g. 'use `*:*` to find all JMX beans'. The
-         backslashes go in the same pass, so the ones we add are left alone. */
-      (_matched, codeSpan: string | undefined, prose: string) =>
-        codeSpan ?? prose.replace(/[\\*]/g, '\\$&'),
+         put wildcards there too, e.g. 'use `*:*` to find all JMX beans'. */
+      (_matched, codeSpan: string | undefined, prose: string | undefined) =>
+        (codeSpan ?? prose) ? prose.replace(/[\\*]/g, '\\$&') : _matched,
     )
   );
 }
