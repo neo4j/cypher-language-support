@@ -246,7 +246,7 @@ export interface HighlightSyntaxOptions {
     consoleCommandsEnabled?: boolean;
 }
 
-// @public
+// @public (undocumented)
 export interface HoverDescription {
     // (undocumented)
     description: string;
