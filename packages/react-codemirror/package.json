@@ -35,6 +35,8 @@
     "dev": "tsc --watch",
     "build": "pnpm copy-lint-worker && tsc --declaration --outDir dist/",
     "copy-lint-worker": "copyfiles -u 4 ../lint-worker/dist/esm/lintWorker.mjs dist/src/lang-cypher && copyfiles -u 4 ../lint-worker/dist/esm/lintWorker.mjs src/lang-cypher",
+    "check-api-report": "tsx checkApiReport.ts",
+    "gen-api-report": "pnpm build && pnpm check-api-report",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "test": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
