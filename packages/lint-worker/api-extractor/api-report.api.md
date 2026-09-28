@@ -24,10 +24,16 @@ export function convertDbSchema(originalSchema: DbSchema, linterVersion: string)
 export function getTaggedRegistryVersions(): Promise<NpmRelease[]>;
 
 // @public (undocumented)
+export function lintCypherQuery(query: string, dbSchema: DbSchema, featureFlags?: {
+    consoleCommands?: boolean;
+}): {
+    diagnostics: SyntaxDiagnostic[];
+    symbolTables?: SymbolTable[];
+};
+
+// @public (undocumented)
 export function linterFileToServerVersion(fileName: string): string;
 
-// Warning: (ae-forgotten-export) The symbol "lintCypherQuery" needs to be exported by the entry point index.d.ts
-//
 // @public (undocumented)
 export type LinterTask = workerpool.Promise<ReturnType<typeof lintCypherQuery>>;
 
