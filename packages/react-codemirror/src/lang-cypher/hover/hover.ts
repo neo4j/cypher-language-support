@@ -1,14 +1,11 @@
 import { highlightingFor } from '@codemirror/language';
 import type { EditorView, HoverTooltipSource } from '@codemirror/view';
-import type { CypherFragmentKind } from '@neo4j-cypher/language-support';
 import { CypherTokenType } from '@neo4j-cypher/language-support';
-import type { Hover } from 'vscode-languageserver-types';
-import { MarkupContent } from 'vscode-languageserver-types';
 import type { HighlightedCypherTokenTypes } from '../constants';
 import { tokenTypeToStyleTag } from '../constants';
 import type { CypherConfig } from '../langCypher';
-import type { HoverCodeHighlighter } from './hoverMarkdown';
-import { renderHoverMarkdown } from './hoverMarkdown';
+import type { CypherFragmentKind, HoverCodeHighlighter } from './hoverRender';
+import { renderHoverInfo } from './hoverRender';
 
 export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   const hoverSource: HoverTooltipSource = (view, pos) => {
@@ -17,9 +14,8 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
       caretPosition: pos,
       dbSchema: cfg.schema ?? {},
     });
-    const markdown = hoverMarkdown(hoverInfo);
 
-    if (!markdown) {
+    if (!hoverInfo) {
       return null;
     }
 
@@ -30,18 +26,13 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
         const dom = document.createElement('div');
         dom.className = 'cm-hover-tooltip';
         dom.appendChild(
-          renderHoverMarkdown(markdown, hoverCodeHighlighter(view, cfg)),
+          renderHoverInfo(hoverInfo, hoverCodeHighlighter(view, cfg)),
         );
         return { dom };
       },
     };
   };
   return hoverSource;
-}
-
-// language-support writes its hovers as a single markdown MarkupContent
-function hoverMarkdown(hover: Hover | undefined): string {
-  return MarkupContent.is(hover?.contents) ? hover.contents.value : '';
 }
 
 //Need some prefixing for the cypher fragment to parse correctly (and get the same highlighting as in a valid query)

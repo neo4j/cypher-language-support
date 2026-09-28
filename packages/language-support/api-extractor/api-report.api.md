@@ -6,7 +6,6 @@
 
 import type { CompletionItem as CompletionItem_2 } from 'vscode-languageserver-types';
 import type { Diagnostic } from 'vscode-languageserver-types';
-import type { Hover } from 'vscode-languageserver-types';
 import type { SemanticTokensLegend } from 'vscode-languageserver-types';
 import { SignatureHelp } from 'vscode-languageserver-types';
 import { SignatureInformation } from 'vscode-languageserver-types';
@@ -80,12 +79,6 @@ export type ConditionNode = {
 export const CONDITIONS: readonly ["and", "or", "not", "any"];
 
 // @public (undocumented)
-export type CypherFragmentKind = (typeof cypherFragmentKinds)[number];
-
-// @public (undocumented)
-export const cypherFragmentKinds: readonly ["labelExpression", "function", "procedure"];
-
-// @public (undocumented)
 export class CypherLanguageService {
     constructor(input?: {
         consoleCommandsEnabled?: boolean;
@@ -107,7 +100,7 @@ export class CypherLanguageService {
     hoverInfo(query: string, input: {
         caretPosition: number;
         dbSchema: DbSchema;
-    }): Hover | undefined;
+    }): HoverInfo | undefined;
     // (undocumented)
     lint(query: string, dbSchema: DbSchema): {
         diagnostics: SyntaxDiagnostic[];
@@ -253,6 +246,28 @@ export interface HighlightSyntaxOptions {
     consoleCommandsEnabled?: boolean;
 }
 
+// @public
+export interface HoverDescription {
+    // (undocumented)
+    description: string;
+    // (undocumented)
+    name: string;
+}
+
+// @public
+export type HoverInfo = {
+    kind: 'variable';
+    variable: string;
+    types: string[];
+    labelExpression?: string;
+} | ({
+    kind: 'function';
+    returnType: string;
+} & MethodHoverInfo) | ({
+    kind: 'procedure';
+    returnValues: HoverDescription[];
+} & MethodHoverInfo);
+
 // @public (undocumented)
 export const _internalFeatureFlags: FeatureFlags;
 
@@ -284,6 +299,18 @@ export interface LintCypherQueryOptions {
 
 // @public (undocumented)
 export function mapCypherToSemanticTokenIndex(cypherTokenType: CypherTokenType): number | undefined;
+
+// @public
+export interface MethodHoverInfo {
+    // (undocumented)
+    description: string;
+    // (undocumented)
+    isDeprecated: boolean;
+    // (undocumented)
+    parameters: HoverDescription[];
+    // (undocumented)
+    signature: string;
+}
 
 // @public (undocumented)
 export type Neo4jFunction = {

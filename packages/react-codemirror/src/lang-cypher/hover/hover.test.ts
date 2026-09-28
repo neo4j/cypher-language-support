@@ -1,11 +1,14 @@
-import type { CypherFragmentKind } from '@neo4j-cypher/language-support';
-import {
-  cypherFragmentKinds,
-  CypherLanguageService,
-} from '@neo4j-cypher/language-support';
+import { CypherLanguageService } from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
 import { tokenizeFragment } from './hover';
+import type { CypherFragmentKind } from './hoverRender';
 import type { CypherConfig } from '../langCypher';
+
+const cypherFragmentKinds: CypherFragmentKind[] = [
+  'labelExpression',
+  'function',
+  'procedure',
+];
 
 const cfg: CypherConfig = {
   languageService: new CypherLanguageService(),

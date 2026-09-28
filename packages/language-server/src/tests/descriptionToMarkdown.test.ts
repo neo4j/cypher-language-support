@@ -1,7 +1,8 @@
+import { describe, expect, test } from 'vitest';
 import {
   formatLineForMarkdown,
   escapeDescriptionForMarkdown,
-} from '../../hoverInformation/descriptionToMarkdown.js';
+} from '../descriptionToMarkdown.js';
 
 /* Uses descriptions from real procedures and
    functions named in the test titles */
@@ -94,9 +95,8 @@ describe('escaping descriptions', () => {
     );
   });
 
-  test('hands back a description that is missing', () => {
+  test('handles empty description', () => {
     expect(escapeDescriptionForMarkdown('')).toBe('');
-    expect(escapeDescriptionForMarkdown(undefined)).toBeUndefined();
   });
 });
 
@@ -131,11 +131,16 @@ describe('description bullets', () => {
     ).toEqual(["- `query` - A query for MBeans (e.g. '\\*:\\*')."]);
   });
 
-  test('writes a description that is several lines of prose inline', () => {
-    // The renderers join these lines into one paragraph, as markdown does
+  test('accepts a description that is several lines of prose as a textblock', () => {
     expect(
       formatLineForMarkdown('sort', 'Sorts the list.\nTo sort ascending.'),
-    ).toEqual(['- `sort` - Sorts the list.\nTo sort ascending.']);
+    ).toEqual([
+      '- `sort` -',
+      '```text',
+      `Sorts the list.
+To sort ascending.`,
+      '```',
+    ]);
   });
 
   test('writes a description that carries its own layout as a code block - apoc.export.csv.all config parameter', () => {
