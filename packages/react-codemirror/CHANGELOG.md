@@ -1,5 +1,25 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.41
+
+### Minor Changes
+
+- 2844ec4: Modify exports for api stability in language-support. Adds "forgotten exports" and most importantly (possibly breaking for dependants) removes export of generated antlr classes (or functions referencing these) - namely "parse", "createParsingResult" and full exports of generated Lexer/Parser files. Exported language support methods for linting, formatting etc no longer take optional "ParsingResult". Antlr grammar is now exported as .g4 files instead - see readme for instructions on how to generate parser/lexer.
+
+### Patch Changes
+
+- c2d5648: Center `editorActions` on the editor's first line instead of aligning them with its top
+- b2432d3: Keep the editor action in the editor's top-right corner when an inline panel or the deleted lines of a diff render above the first line
+- 5f11dd8: Fix vite bundling bug on prism after vite v8 update
+- f0f28db: Update vite to v8 and bump playwright
+- Updated dependencies [d3dbe10]
+- Updated dependencies [1897def]
+- Updated dependencies [321e370]
+- Updated dependencies [2844ec4]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/lint-worker@1.10.1-next.15
+
 ## 2.0.0-next.40
 
 ### Minor Changes
