@@ -125,9 +125,6 @@ db.create.setVectorProperty(node :: NODE, key :: STRING, vector :: ANY) :: (node
     );
   });
 
-  /* A description writes a wildcard both ways: as prose, where markdown would
-     read it as emphasis and eat it, and inside a code span, where an escape
-     would be shown rather than undone */
   test('escapes the wildcards a description writes, but not the ones in its code spans', () => {
     expect(hoverMarkdown('CALL dbms.queryJmx("*:*")', 'dbms.queryJmx')).toBe(
       `\`\`\`cypher
@@ -145,8 +142,6 @@ Query JMX management data by domain and name. For instance, use \`*:*\` to find 
     );
   });
 
-  /* The markup a description does write - a bullet list, italics, code spans -
-     is left as it is, so that it still renders as markup */
   test('keeps the bullet list and the italics of a description', () => {
     expect(
       hoverMarkdown(
