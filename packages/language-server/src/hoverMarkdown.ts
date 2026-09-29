@@ -27,15 +27,15 @@ export function hoverInfoToMarkdown(info: HoverInfo): string {
       info.description,
     )}`,
     '',
-    ...describedList('**Parameters**', info.parameters),
+    ...descriptionsToMarkdown('**Parameters**', info.parameters),
     '',
     ...(info.kind === 'function'
       ? functionReturn(info.returnType)
-      : describedList('**Returns**', info.returnValues)),
+      : descriptionsToMarkdown('**Returns**', info.returnValues)),
   ].join('\n');
 }
 
-function describedList(
+function descriptionsToMarkdown(
   heading: string,
   descriptions: HoverDescription[],
 ): string[] {
