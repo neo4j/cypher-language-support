@@ -139,8 +139,7 @@ export const createCypherTheme = ({
     '& .cm-signature-help-panel-description': {
       padding: '5px',
     },
-    // Capped on the host, which a hover shares with lint diagnostics, so all
-    // its sections wrap at the same width
+    // Shared between both hover tooltips and hover errors
     '& .cm-tooltip-hover': {
       maxWidth: '800px',
     },
