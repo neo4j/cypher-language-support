@@ -10,6 +10,8 @@ import { completionStyles, cypherAutocomplete } from './autocomplete';
 import { ParserAdapter } from './parser-adapter';
 import { signatureHelpTooltip } from './signatureHelp';
 import { cypherLinter } from './syntaxValidation';
+import { hoverTooltip } from '@codemirror/view';
+import { getHoverSource } from './hover/hover.js';
 
 const facet = defineLanguageFacet({
   commentTokens: { block: { open: '/*', close: '*/' }, line: '//' },
@@ -40,5 +42,6 @@ export function cypher(config: CypherConfig) {
     }),
     cypherLinter(config),
     signatureHelpTooltip(config),
+    hoverTooltip(getHoverSource(config)),
   ]);
 }

@@ -9,7 +9,6 @@ import {
 
 import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 
-import type { Hover } from 'vscode-languageserver-types';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
 import { _internalFeatureFlags } from './featureFlags.js';
@@ -53,6 +52,7 @@ import type { DbSchema } from './dbSchema.js';
 import { getSignatureInfoWithParsingResult } from './signatureHelp.js';
 import { highlightSyntaxWithParsingResult } from './syntaxHighlighting/syntaxHighlighting.js';
 import { autocompleteWithParsingResult } from './autocompletion/autocompletion.js';
+import type { HoverInfo } from './hoverInformation/hover.js';
 import { getHoverInfo } from './hoverInformation/hover.js';
 
 export interface ParsedStatement {
@@ -1062,7 +1062,7 @@ export class CypherLanguageService {
   hoverInfo(
     query: string,
     { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
-  ): Hover | undefined {
+  ): HoverInfo | undefined {
     const parsingResult = this.parse(query);
     return getHoverInfo({
       caretPosition,
