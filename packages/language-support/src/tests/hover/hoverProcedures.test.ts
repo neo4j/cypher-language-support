@@ -153,8 +153,7 @@ describe('Procedure hover', () => {
     });
   });
 
-  // Rendering the descriptions, and escaping them for it, is up to the consumer
-  test('passes the descriptions on as the schema writes them', () => {
+  test('does not escape *s that could be interpreted as emphasis in markdown', () => {
     const query = 'CALL dbms.queryJmx("*:*")';
 
     const hoverInfo = languageService.hoverInfo(query, {
