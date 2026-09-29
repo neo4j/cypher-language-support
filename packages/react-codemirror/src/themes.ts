@@ -6,7 +6,7 @@ import {
 } from './lang-cypher/createCypherTheme';
 import { tokens } from './ndlTokensCopy';
 
-export const lightDiffColors: DiffColors = {
+const lightDiffColors: DiffColors = {
   insertedLine: tokens.colors.forest['10'],
   insertedText: tokens.colors.forest['15'],
   deletedLine: tokens.colors.hibiscus['10'],
