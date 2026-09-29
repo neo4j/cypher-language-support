@@ -1,8 +1,33 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
+import type { HoverInfo } from '../../hoverInformation/hover.js';
 import { testData } from '../testData.js';
 
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();
+
+const absHoverInfo: HoverInfo = {
+  kind: 'function',
+  signature: 'abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT',
+  description: 'Returns the absolute value of an `INTEGER` or `FLOAT`.',
+  isDeprecated: false,
+  parameters: [
+    {
+      name: 'input',
+      description:
+        'A numeric value from which the absolute number will be returned.',
+    },
+  ],
+  returnType: 'INTEGER | FLOAT',
+};
+
+const uuidHoverInfo: HoverInfo = {
+  kind: 'function',
+  signature: 'apoc.create.uuid() :: STRING',
+  description: 'Returns a UUID.',
+  isDeprecated: true,
+  parameters: [],
+  returnType: 'STRING',
+};
 
 describe('Function hover', () => {
   test('provides hover info for functions', () => {
@@ -13,68 +38,29 @@ describe('Function hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
-\`\`\`
-Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
-
-**Parameters**
-- \`input\` - A numeric value from which the absolute number will be returned.
-
-**Returns:** \`INTEGER | FLOAT\``,
-      },
-    });
+    expect(hoverInfo).toEqual(absHoverInfo);
   });
 
   test('provides hover info on the first and last character of the function name', () => {
     const query = 'CYPHER 25 RETURN abs(1,2)';
-    const expected = {
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
-\`\`\`
-Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
-
-**Parameters**
-- \`input\` - A numeric value from which the absolute number will be returned.
-
-**Returns:** \`INTEGER | FLOAT\``,
-      },
-    };
 
     expect(
       languageService.hoverInfo(query, {
         caretPosition: query.indexOf('abs'),
         dbSchema,
       }),
-    ).toEqual(expected);
+    ).toEqual(absHoverInfo);
 
     expect(
       languageService.hoverInfo(query, {
         caretPosition: query.indexOf('abs') + 'abs'.length - 1,
         dbSchema,
       }),
-    ).toEqual(expected);
+    ).toEqual(absHoverInfo);
   });
 
   test('provides hover info on the whole name of a namespaced function', () => {
     const query = 'CYPHER 5 RETURN apoc.create.uuid()';
-    const expected = {
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-apoc.create.uuid() :: STRING
-\`\`\`
-(_deprecated_) Returns a UUID.
-
-
-**Returns:** \`STRING\``,
-      },
-    };
 
     const name = 'apoc.create.uuid';
     [
@@ -84,7 +70,7 @@ apoc.create.uuid() :: STRING
     ].forEach((caretPosition) => {
       expect(
         languageService.hoverInfo(query, { caretPosition, dbSchema }),
-      ).toEqual(expected);
+      ).toEqual(uuidHoverInfo);
     });
   });
 
@@ -96,20 +82,7 @@ apoc.create.uuid() :: STRING
       dbSchema,
     });
 
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
-\`\`\`
-Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
-
-**Parameters**
-- \`input\` - A numeric value from which the absolute number will be returned.
-
-**Returns:** \`INTEGER | FLOAT\``,
-      },
-    });
+    expect(hoverInfo).toEqual(absHoverInfo);
   });
 
   test('provides hover info for functions wrapping functions', () => {
@@ -125,34 +98,15 @@ Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
       dbSchema,
     });
 
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-abs(input :: INTEGER | FLOAT) :: INTEGER | FLOAT
-\`\`\`
-Returns the absolute value of an \`INTEGER\` or \`FLOAT\`.
-
-**Parameters**
-- \`input\` - A numeric value from which the absolute number will be returned.
-
-**Returns:** \`INTEGER | FLOAT\``,
-      },
-    });
+    expect(hoverInfo).toEqual(absHoverInfo);
 
     expect(innerHoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-count(input :: ANY) :: INTEGER
-\`\`\`
-Returns the number of values or rows.
-
-**Parameters**
-- \`input\` - A value to be aggregated.
-
-**Returns:** \`INTEGER\``,
-      },
+      kind: 'function',
+      signature: 'count(input :: ANY) :: INTEGER',
+      description: 'Returns the number of values or rows.',
+      isDeprecated: false,
+      parameters: [{ name: 'input', description: 'A value to be aggregated.' }],
+      returnType: 'INTEGER',
     });
   });
 
@@ -165,19 +119,21 @@ Returns the number of values or rows.
     });
 
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING
-\`\`\`
-Normalize a \`STRING\`. The \`STRING\` will be normalized according to the specified normalization form.
-
-**Parameters**
-- \`input\` - A value to be normalized.
-- \`normalForm\` - A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.
-
-**Returns:** \`STRING\``,
-      },
+      kind: 'function',
+      signature:
+        'normalize(input :: STRING, normalForm = NFC :: [NFC, NFD, NFKC, NFKD]) :: STRING',
+      description:
+        'Normalize a `STRING`. The `STRING` will be normalized according to the specified normalization form.',
+      isDeprecated: false,
+      parameters: [
+        { name: 'input', description: 'A value to be normalized.' },
+        {
+          name: 'normalForm',
+          description:
+            'A keyword specifying any of the normal forms; NFC, NFD, NFKC or NFKD.',
+        },
+      ],
+      returnType: 'STRING',
     });
   });
 
@@ -191,20 +147,30 @@ Normalize a \`STRING\`. The \`STRING\` will be normalized according to the speci
     });
 
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING
-\`\`\`
-Returns the given \`STRING\` with leading and/or trailing \`trimCharacterString\` removed.
-
-**Parameters**
-- \`trimSpecification\` - The parts of the string to trim; LEADING, TRAILING, BOTH
-- \`trimCharacterString\` - The characters to be removed from the start and/or end of the given string.
-- \`input\` - A value from which all leading and/or trailing trim characters will be removed.
-
-**Returns:** \`STRING\``,
-      },
+      kind: 'function',
+      signature:
+        'trim([[LEADING | TRAILING | BOTH] [trimCharacterString :: STRING] FROM] input :: STRING) :: STRING',
+      description:
+        'Returns the given `STRING` with leading and/or trailing `trimCharacterString` removed.',
+      isDeprecated: false,
+      parameters: [
+        {
+          name: 'trimSpecification',
+          description:
+            'The parts of the string to trim; LEADING, TRAILING, BOTH',
+        },
+        {
+          name: 'trimCharacterString',
+          description:
+            'The characters to be removed from the start and/or end of the given string.',
+        },
+        {
+          name: 'input',
+          description:
+            'A value from which all leading and/or trailing trim characters will be removed.',
+        },
+      ],
+      returnType: 'STRING',
     });
   });
 
@@ -216,18 +182,7 @@ Returns the given \`STRING\` with leading and/or trailing \`trimCharacterString\
       dbSchema,
     });
 
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`\`\`cypher
-apoc.create.uuid() :: STRING
-\`\`\`
-(_deprecated_) Returns a UUID.
-
-
-**Returns:** \`STRING\``,
-      },
-    });
+    expect(hoverInfo).toEqual(uuidHoverInfo);
   });
 
   test('provides no hover info for a function missing in the Cypher version', () => {

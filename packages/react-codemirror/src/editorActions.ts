@@ -2,6 +2,7 @@ import { StateEffect, StateField, type Extension } from '@codemirror/state';
 import {
   Decoration,
   EditorView,
+  type Rect,
   ViewPlugin,
   type ViewUpdate,
   WidgetType,
@@ -85,6 +86,38 @@ export function createEditorActionsController(): EditorActionsController {
 
     eq(): boolean {
       return true;
+    }
+
+    /**
+     * The spacer floats right, so CodeMirror's default — the widget's own box —
+     * puts the caret at the right edge of the cluster whenever the spacer is
+     * the only thing it can measure on the first line (an empty document).
+     * Report the start of the line's inline content instead: the node after
+     * the spacer (text, a placeholder, or CodeMirror's trailing `<br>`).
+     */
+    coordsAt(dom: HTMLElement): Rect | null {
+      const next = dom.nextSibling;
+      if (!next) {
+        return null;
+      }
+      let rects: DOMRectList;
+      if (next instanceof Element) {
+        rects = next.getClientRects();
+      } else {
+        const range = document.createRange();
+        range.selectNodeContents(next);
+        rects = range.getClientRects();
+      }
+      const rect = rects[0];
+      if (!rect) {
+        return null;
+      }
+      return {
+        left: rect.left,
+        right: rect.left,
+        top: rect.top,
+        bottom: rect.bottom,
+      };
     }
 
     ignoreEvent(): boolean {

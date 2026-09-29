@@ -6,6 +6,11 @@ export {
 } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
 export type { DbSchema, ScopedRegistry, Registry } from './dbSchema.js';
+export type {
+  HoverDescription,
+  HoverInfo,
+  MethodHoverInfo,
+} from './hoverInformation/hover.js';
 export { renderLabelTree } from './labelTreeRender.js';
 export { getDebugTree } from './debugTree.js';
 export type { SimpleTree } from './debugTree.js';
