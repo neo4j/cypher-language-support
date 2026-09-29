@@ -46,7 +46,7 @@ jobs:
 
       # Fails if the public API changed without the committed report being regenerated
       # in any of the tracked packages. Tracked API Extractor warnings are written into the
-      # report too, so a change in the set of warnings also fails here rather than scrolling 
+      # report too, so a change in the set of warnings also fails here rather than scrolling
       # past in a build log.
       - name: Check the API reports are up to date
         run: pnpm -r --no-bail run check-api-report --ci
