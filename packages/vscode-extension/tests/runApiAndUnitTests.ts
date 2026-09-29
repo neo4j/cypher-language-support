@@ -45,8 +45,7 @@ async function main() {
       },
     });
   } catch {
-    console.error('Failed to run integration tests');
-    process.exit(1);
+    throw new Error('Failed to run integration tests');
   } finally {
     await Promise.all([neo4j5Instance.stop(), neo4j2025Instance.stop()]);
   }
