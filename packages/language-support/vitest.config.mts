@@ -8,7 +8,6 @@ export default defineConfig({
         extends: true,
         test: {
           name: 'unit',
-          // include: ['src/tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
           include: ['src/tests/**/*.test.ts'],
         },
       },
