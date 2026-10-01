@@ -1,7 +1,9 @@
 import type { Hover, HoverParams, TextDocuments } from 'vscode-languageserver';
+import { MarkupKind } from 'vscode-languageserver';
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 import { languageService } from './server.js';
 import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import { hoverInfoToMarkdown } from './hoverMarkdown.js';
 
 export function doHoverInfo(
   documents: TextDocuments<TextDocument>,
@@ -16,5 +18,12 @@ export function doHoverInfo(
     caretPosition: offset,
     dbSchema: neo4jSchemaPoller.metadata?.dbSchema ?? {},
   });
-  return hoverInfo ? hoverInfo : null;
+  if (!hoverInfo) return null;
+
+  return {
+    contents: {
+      kind: MarkupKind.Markdown,
+      value: hoverInfoToMarkdown(hoverInfo),
+    },
+  };
 }
