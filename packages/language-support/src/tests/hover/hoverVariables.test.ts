@@ -1,8 +1,15 @@
 import { CypherLanguageService } from '../../cypherLanguageService.js';
+import type { HoverInfo } from '../../hoverInformation/hover.js';
 import { testData } from '../testData.js';
 
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();
+
+const unlabeledNodeHoverInfo: HoverInfo = {
+  kind: 'variable',
+  variable: 'n',
+  types: ['Node'],
+};
 
 describe('Variable hover', () => {
   test('provides hover info for LET variables', () => {
@@ -18,12 +25,9 @@ describe('Variable hover', () => {
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-x: Integer
-\``,
-      },
+      kind: 'variable',
+      variable: 'x',
+      types: ['Integer'],
     });
   });
 
@@ -39,14 +43,7 @@ x: Integer
       caretPosition: 'MATCH ('.length,
       dbSchema,
     });
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\``,
-      },
-    });
+    expect(hoverInfo).toEqual(unlabeledNodeHoverInfo);
   });
 
   test('provides hover info for MATCHed variables - reference-location', () => {
@@ -61,14 +58,7 @@ n: Node
       caretPosition: 'MATCH (n) RETURN '.length,
       dbSchema,
     });
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\``,
-      },
-    });
+    expect(hoverInfo).toEqual(unlabeledNodeHoverInfo);
   });
 
   test('provides hover info for labeled variables - definition-location', () => {
@@ -84,16 +74,10 @@ n: Node
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-r: Relationship
-\`
-
-\`\`\`cypher
-KNOWS
-\`\`\``,
-      },
+      kind: 'variable',
+      variable: 'r',
+      types: ['Relationship'],
+      labelExpression: 'KNOWS',
     });
   });
 
@@ -110,16 +94,10 @@ KNOWS
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-r: Relationship
-\`
-
-\`\`\`cypher
-KNOWS
-\`\`\``,
-      },
+      kind: 'variable',
+      variable: 'r',
+      types: ['Relationship'],
+      labelExpression: 'KNOWS',
     });
   });
 
@@ -135,14 +113,7 @@ KNOWS
       caretPosition: 'MATCH (n) RETURN abs('.length,
       dbSchema,
     });
-    expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\``,
-      },
-    });
+    expect(hoverInfo).toEqual(unlabeledNodeHoverInfo);
   });
 
   test('provides hover info for variables with more complex labels', () => {
@@ -158,16 +129,10 @@ n: Node
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\`
-
-\`\`\`cypher
-((Person | Pet) & Neighbour)
-\`\`\``,
-      },
+      kind: 'variable',
+      variable: 'n',
+      types: ['Node'],
+      labelExpression: '((Person | Pet) & Neighbour)',
     });
   });
 
@@ -184,32 +149,20 @@ n: Node
       dbSchema,
     });
     expect(outerHover).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\`
-
-\`\`\`cypher
-Person
-\`\`\``,
-      },
+      kind: 'variable',
+      variable: 'n',
+      types: ['Node'],
+      labelExpression: 'Person',
     });
     const innerHover = languageService.hoverInfo(query, {
       caretPosition: 'MATCH (n:Person) CALL() {MATCH (n:Cat) RETURN '.length,
       dbSchema,
     });
     expect(innerHover).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-n: Node
-\`
-
-\`\`\`cypher
-Cat
-\`\`\``,
-      },
+      kind: 'variable',
+      variable: 'n',
+      types: ['Node'],
+      labelExpression: 'Cat',
     });
   });
 
@@ -226,12 +179,9 @@ Cat
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-weird var: Node
-\``,
-      },
+      kind: 'variable',
+      variable: 'weird var',
+      types: ['Node'],
     });
   });
 
@@ -248,12 +198,9 @@ weird var: Node
       dbSchema,
     });
     expect(hoverInfo).toEqual({
-      contents: {
-        kind: 'markdown',
-        value: `\`
-count: Node
-\``,
-      },
+      kind: 'variable',
+      variable: 'count',
+      types: ['Node'],
     });
   });
 
