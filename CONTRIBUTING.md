@@ -36,11 +36,13 @@ Each package may have a `vitest.config.ts` defining one or more projects:
 * unit
 * integration
 
+These can be run with `pnpm test`, `pnpm test:unit` and `pnpm test:integration`
+
 ### E2E
 
 `react-codemirror` and `react-codemirror-playground` use Playwright for E2E testing, each project defines the tests in the `playwright-ct.config.ts` or `playwright.config.ts`.
 
-`vscode-extension`, the integration and e2e tests run using `vscode-electron`.
+`vscode-extension`, the integration and e2e tests run using `@vscode/test-electron`.
 
 ### Executing the tests
 
