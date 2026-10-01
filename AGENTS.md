@@ -8,19 +8,19 @@ pnpm monorepo (workspaces: `packages/*`) implementing Neo4j's Cypher language su
 
 ## Commands
 
+
+
 ```sh
 pnpm install
-pnpm build            # generates the ANTLR parser, TextMate grammar, and bundles
+pnpm build            # required before tests: generates the ANTLR parser, TextMate grammar, and bundles
 pnpm test             # all Vitest tests
 pnpm test:unit        # unit tests only
-pnpm test:integration # integration tests only
+pnpm test:integration # integration tests only requires Docker or another supported container manager
 pnpm test:e2e         # all end-to-end tests; see the testing notes below
 pnpm lint             # oxlint (not eslint); pnpm lint-fix to autofix 
 pnpm format           # oxfmt (not prettier); pnpm format:check to verify without autofix
 pnpm build-vscode     # build only the VS Code extension and its dependencies
 ```
-
-`pnpm build` is required after a fresh checkout and after grammar or build-pipeline changes. Source-only Vitest tests can otherwise be run directly.
 
 Run a single Vitest file or test by name from the repository root:
 
@@ -31,7 +31,6 @@ pnpm vitest run -t "test name substring"
 
 Package-specific and non-Vitest suites:
 
-- `pnpm --filter @neo4j-cypher/query-tools test` — schema-polling integration tests; requires Docker or another supported container manager.
 - `pnpm --filter @neo4j-cypher/react-codemirror test:e2e` — Playwright component tests; use `test:e2e-ui` for UI mode.
 - `pnpm --filter neo4j-for-vscode test:apiAndUnit` — VS Code API/unit tests; requires a container manager for Neo4j and launches VS Code.
 - `pnpm --filter neo4j-for-vscode test:webviews` — VS Code webview tests via WebdriverIO.
