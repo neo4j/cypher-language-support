@@ -35,7 +35,11 @@ async function main() {
 
     // Bootstraps VS Code and executes the integration tests
     await runTests({
-      launchArgs: [path.join(__dirname, '../../tests/fixtures/')],
+      version: '1.139.1',
+      launchArgs: [
+        path.join(__dirname, '../../tests/fixtures/'),
+        '--disableExtensions',
+      ],
       extensionDevelopmentPath,
       extensionTestsPath,
       extensionTestsEnv: {
