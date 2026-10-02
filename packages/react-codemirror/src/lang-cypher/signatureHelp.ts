@@ -59,7 +59,7 @@ const createSignatureHelpElement =
     contents.appendChild(separator);
     const currentParamDoc = parameters.find(
       (_, index) => index === activeParameter,
-    ).documentation;
+    )?.documentation;
     const currentParamDescription = MarkupContent.is(currentParamDoc)
       ? currentParamDoc.value
       : currentParamDoc;
