@@ -1,5 +1,15 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 8b991d6: Hover: Handle structured `HoverInfo` instead of recieving `Hover` from language-support
+- Updated dependencies [8b991d6]
+  - @neo4j-cypher/language-support@2.0.0-next.39
+  - @neo4j-cypher/lint-worker@1.10.1-next.16
+  - @neo4j-cypher/query-tools@2.0.0-next.39
+
 ## 2.0.0-next.39
 
 ### Minor Changes

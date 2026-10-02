@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.39
+
+### Minor Changes
+
+- 8b991d6: Hover: Return structured `hoverInfo` instead of vscode-languageserver-types `Hover`. Breaking for dependants
+
 ## 2.0.0-next.38
 
 ### Minor Changes
