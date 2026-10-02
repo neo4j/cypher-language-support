@@ -18,6 +18,7 @@ const onChange = vi.fn<(v: string) => void>((v) => {
   rerender();
 });
 
+// oxlint-disable-next-line typescript/no-explicit-any
 (global as any).IS_REACT_ACT_ENVIRONMENT = true;
 const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;
 
