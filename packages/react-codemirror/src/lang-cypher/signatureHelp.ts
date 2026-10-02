@@ -6,6 +6,8 @@ import type { SignatureInformation } from 'vscode-languageserver-types';
 import { MarkupContent } from 'vscode-languageserver-types';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
+import { tooltipCypherHighlighter } from './hover/hover.js';
+import type { TooltipCypherHighlighter } from './hover/hoverRender.js';
 
 function getTriggerCharacter(query: string, caretPosition: number) {
   let i = caretPosition - 1;
@@ -24,9 +26,11 @@ const createSignatureHelpElement =
   ({
     signature,
     activeParameter,
+    highlighter,
   }: {
     signature: SignatureInformation;
     activeParameter: number;
+    highlighter: TooltipCypherHighlighter;
   }) =>
   () => {
     const parameters = signature.parameters;
@@ -64,7 +68,8 @@ const createSignatureHelpElement =
       }
     });
 
-    signatureLabel.appendChild(document.createTextNode(')'));
+    signatureLabel.appendChild(document.createTextNode(')\n'));
+    highlighter(signature.label, 'procedure', signatureLabel, activeParameter);
     signatureLabel.appendChild(document.createTextNode(returnType));
 
     contents.appendChild(signatureLabel);
@@ -125,12 +130,17 @@ function getSignatureHelpTooltip(
         const showSignatureTooltipBelow =
           config.showSignatureTooltipBelow ?? true;
 
+        const highlighter = tooltipCypherHighlighter(state, config);
         result = [
           {
             pos: caretPosition,
             above: !showSignatureTooltipBelow,
             arrow: true,
-            create: createSignatureHelpElement({ signature, activeParameter }),
+            create: createSignatureHelpElement({
+              signature,
+              activeParameter,
+              highlighter,
+            }),
           },
         ];
       }

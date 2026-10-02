@@ -1,11 +1,15 @@
 import { highlightingFor } from '@codemirror/language';
-import type { EditorView, HoverTooltipSource } from '@codemirror/view';
+import type { HoverTooltipSource } from '@codemirror/view';
 import { CypherTokenType } from '@neo4j-cypher/language-support';
 import type { HighlightedCypherTokenTypes } from '../constants';
 import { tokenTypeToStyleTag } from '../constants';
 import type { CypherConfig } from '../langCypher';
-import type { CypherFragmentKind, HoverCodeHighlighter } from './hoverRender';
+import type {
+  CypherFragmentKind,
+  TooltipCypherHighlighter,
+} from './hoverRender';
 import { renderHoverInfo } from './hoverRender';
+import type { EditorState } from '@codemirror/state';
 
 export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   const hoverSource: HoverTooltipSource = (view, pos) => {
@@ -26,7 +30,7 @@ export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
         const dom = document.createElement('div');
         dom.className = 'cm-hover-tooltip';
         dom.appendChild(
-          renderHoverInfo(hoverInfo, hoverCodeHighlighter(view, cfg)),
+          renderHoverInfo(hoverInfo, tooltipCypherHighlighter(view.state, cfg)),
         );
         return { dom };
       },
@@ -68,18 +72,19 @@ export function tokenizeFragment(
 }
 
 /**
- * Highlights the cypher code blocks of the hover tooltip with the same colours
- * the editor itself uses, by looking up the style class of each token in the
+ * Highlights code blocks of the hover/signature help tooltip with the same colours
+ * the editor itself uses for cypher, by looking up the style class of each token in the
  * active highlight style.
  */
-function hoverCodeHighlighter(
-  view: EditorView,
+export function tooltipCypherHighlighter(
+  state: EditorState,
   cfg: CypherConfig,
-): HoverCodeHighlighter {
-  return (code, kind, target) => {
+): TooltipCypherHighlighter {
+  return (code, kind, target, activeParameter) => {
     const tokens = tokenizeFragment(cfg, code, kind);
     let offset = 0;
 
+    let currentParam = 0;
     tokens.forEach(({ start, end, tokenType }) => {
       // The tokens are expected to be ordered and non-overlapping, but we
       // don't want to duplicate or drop code if they ever aren't
@@ -89,9 +94,21 @@ function hoverCodeHighlighter(
       if (start > offset) {
         target.appendChild(document.createTextNode(code.slice(offset, start)));
       }
-      target.appendChild(
-        highlightToken(view, code.slice(start, end), tokenType),
-      );
+      const text = code.slice(start, end);
+
+      if (currentParam === activeParameter) {
+        const span = document.createElement('span');
+        //Only relevant for signature help panel
+        span.className = 'cm-signature-help-panel-current-argument';
+        span.textContent = text;
+        target.appendChild(span);
+      } else {
+        const highlighted = highlightToken(state, text, tokenType);
+        target.appendChild(highlighted);
+      }
+      if (text === ',' && tokenType === CypherTokenType.separator) {
+        currentParam++;
+      }
       offset = end;
     });
 
@@ -102,7 +119,7 @@ function hoverCodeHighlighter(
 }
 
 function highlightToken(
-  view: EditorView,
+  state: EditorState,
   text: string,
   tokenType: CypherTokenType,
 ): Node {
@@ -110,7 +127,7 @@ function highlightToken(
     tokenType === CypherTokenType.none
       ? undefined
       : tokenTypeToStyleTag[tokenType as HighlightedCypherTokenTypes];
-  const className = styleTag ? highlightingFor(view.state, [styleTag]) : null;
+  const className = styleTag ? highlightingFor(state, [styleTag]) : null;
 
   if (!className) {
     return document.createTextNode(text);
