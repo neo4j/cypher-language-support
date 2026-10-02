@@ -16,3 +16,5 @@ minimumReleaseAgeExclude:
   - '@neo4j-nvl/react'
   # Renovate security update: glob@11.1.0
   - glob@11.1.0
+  # Renovate security update: ajv@8.18.0
+  - ajv@8.18.0
