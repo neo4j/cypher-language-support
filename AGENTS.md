@@ -8,30 +8,35 @@ pnpm monorepo (workspaces: `packages/*`) implementing Neo4j's Cypher language su
 
 ## Commands
 
+
+
 ```sh
 pnpm install
 pnpm build            # required before tests: generates the ANTLR parser, TextMate grammar, and bundles
-pnpm test             # unit tests (vitest) across all packages
-pnpm test:e2e         # e2e tests (run `pnpm exec playwright install` once first). Ask user to run these, they requires container manager and pop up windows on execution
+pnpm test             # all Vitest tests
+pnpm test:unit        # unit tests only
+pnpm test:integration # integration tests only requires Docker or another supported container manager
+pnpm test:e2e         # all end-to-end tests; see the testing notes below
 pnpm lint             # oxlint (not eslint); pnpm lint-fix to autofix 
 pnpm format           # oxfmt (not prettier); pnpm format:check to verify without autofix
 pnpm build-vscode     # build only the VS Code extension and its dependencies
 ```
 
-Run a single test file from the repo root (vitest workspace covers `language-support`, `lint-worker`, `react-codemirror`, `query-tools`):
+Run a single Vitest file or test by name from the repository root:
 
 ```sh
 pnpm vitest run packages/language-support/src/tests/lexer.test.ts
 pnpm vitest run -t "test name substring"
 ```
 
-Package-specific test suites:
+Package-specific and non-Vitest suites:
 
-- `pnpm --filter @neo4j-cypher/query-tools test:polling` — schema-polling integration tests (testcontainers, needs Docker).
-- `pnpm --filter @neo4j-cypher/react-codemirror test:e2e` — Playwright component tests (`test:e2e-ui` for UI mode).
-- `pnpm --filter neo4j-for-vscode test:apiAndUnit` — VS Code API/unit tests (mocha via `@vscode/test-electron`). Needs container manager like Docker/Rancher to run Neo4j
-- `pnpm --filter neo4j-for-vscode test:webviews` — webview tests (wdio).
+- `pnpm --filter @neo4j-cypher/react-codemirror test:e2e` — Playwright component tests; use `test:e2e-ui` for UI mode.
+- `pnpm --filter neo4j-for-vscode test:apiAndUnit` — VS Code API/unit tests; requires a container manager for Neo4j and launches VS Code.
+- `pnpm --filter neo4j-for-vscode test:webviews` — VS Code webview tests via WebdriverIO.
 - `pnpm test:formattingIntegrity` — formatter verification over a large query corpus.
+
+Before the first Playwright run, install browsers with `pnpm exec playwright install`. The full E2E suite includes VS Code tests, which may require a container manager and a graphical environment; run those suites explicitly when that environment is available.
 
 ## Shell, paths and tooling (Windows dev machine)
 

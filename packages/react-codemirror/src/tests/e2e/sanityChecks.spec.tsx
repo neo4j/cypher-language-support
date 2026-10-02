@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 
 test('can mount the editor with text', async ({ mount }) => {
   const component = await mount(<CypherEditor value="MATCH (n) RETURN n;" />);
