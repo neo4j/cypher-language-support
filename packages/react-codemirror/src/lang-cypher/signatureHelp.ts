@@ -6,8 +6,10 @@ import type { SignatureInformation } from 'vscode-languageserver-types';
 import { MarkupContent } from 'vscode-languageserver-types';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
-import { tooltipCypherHighlighter } from './hover/hover.js';
-import type { TooltipCypherHighlighter } from './hover/hoverRender.js';
+import {
+  type TooltipCypherHighlighter,
+  tooltipCypherHighlighter,
+} from './tooltipHighlighting.js';
 
 function getTriggerCharacter(query: string, caretPosition: number) {
   let i = caretPosition - 1;
