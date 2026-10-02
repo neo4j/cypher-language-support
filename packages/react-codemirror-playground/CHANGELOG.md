@@ -1,5 +1,16 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.42
+
+### Patch Changes
+
+- 8b991d6: Support function/procedure/variable hover in codemirror
+  In re-exported language support: Hover - Return structured `hoverInfo` instead of vscode-languageserver-types `Hover`. Breaking for dependants
+- Updated dependencies [8b991d6]
+- Updated dependencies [8b991d6]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.42
+  - @neo4j-cypher/language-support@2.0.0-next.39
+
 ## 2.0.0-next.41
 
 ### Patch Changes
