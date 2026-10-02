@@ -9,23 +9,17 @@ import type {
   HoverDescription,
   HoverInfo,
 } from '@neo4j-cypher/language-support';
-
-/** The Cypher fragments a hover shows, each needing its own context to be highlighted */
-export type CypherFragmentKind = 'labelExpression' | 'function' | 'procedure';
-
-/** Fills the `target` element of a hover code block with its highlighted Cypher fragment. */
-export type HoverCodeHighlighter = (
-  code: string,
-  kind: CypherFragmentKind,
-  target: HTMLElement,
-) => void;
+import type {
+  CypherFragmentKind,
+  TooltipCypherHighlighter,
+} from '../tooltipHighlighting.js';
 
 // The schema writes the bullet lists of its descriptions with *
 const bullet = '* ';
 
 export function renderHoverInfo(
   info: HoverInfo,
-  highlightHoverCode?: HoverCodeHighlighter,
+  highlightHoverCode?: TooltipCypherHighlighter,
 ): HTMLElement {
   const dom = document.createElement('div');
   dom.className = 'cm-hover-info';
@@ -84,7 +78,7 @@ function element(tag: string, text: string): HTMLElement {
 function codeBlock(
   code: string,
   kind: CypherFragmentKind | undefined,
-  highlightHoverCode?: HoverCodeHighlighter,
+  highlightHoverCode?: TooltipCypherHighlighter,
 ): HTMLElement {
   const pre = document.createElement('pre');
   const codeElement = document.createElement('code');
