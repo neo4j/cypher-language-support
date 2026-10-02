@@ -10,7 +10,7 @@ import { extractUniqueNodesAndRels } from '../cypher-execution/extract-unique-no
  *
  * See {@link DeduplicatedNodesAndRels} for the type of the nodes and relationships.
  */
-type GraphResult = DeduplicatedNodesAndRels & {
+export type GraphResult = DeduplicatedNodesAndRels & {
   /** Original Neo4j records returned by the query */
   records: Record[];
   summary: ResultSummary<Integer>;

@@ -36,7 +36,9 @@ import { richClipboardCopier } from './richClipboardCopier';
 import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import workerpool from 'workerpool';
 
-type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
+export type DomEventHandlers = Parameters<
+  typeof EditorView.domEventHandlers
+>[0];
 
 /**
  * Normalize CRLF line endings to LF, which is what CodeMirror expects.
@@ -324,7 +326,7 @@ const formatLineNumber =
     return a.toString();
   };
 
-type CypherEditorState = {
+export type CypherEditorState = {
   editorActionsContainer: HTMLElement | null;
 };
 
@@ -332,7 +334,7 @@ const ExternalEdit = Annotation.define<boolean>();
 const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
   .pathname;
 
-class CodemirrorSymbolFetcher {
+export class CodemirrorSymbolFetcher {
   constructor(languageService: CypherLanguageService) {
     this.languageService = languageService;
   }

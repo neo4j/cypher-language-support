@@ -3,7 +3,7 @@ import { resultTransformers } from 'neo4j-driver';
 import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 import { DbType } from '../types/sdkTypes.js';
 
-type DatabaseStatus =
+export type DatabaseStatus =
   | 'online'
   | 'offline'
   | 'starting'
