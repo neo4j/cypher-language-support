@@ -33,12 +33,12 @@ function resolveInitialDatabase(
   return home?.name ?? def?.name ?? system?.name ?? databases[0]?.name;
 }
 
-type SdkQueryArgs = {
+export type SdkQueryArgs = {
   queryType: QueryType;
   abortSignal?: AbortSignal;
 };
 
-type RunCypherQueryArgs = {
+export type RunCypherQueryArgs = {
   query: string;
   parameters: Record<string, unknown>;
   database?: string;

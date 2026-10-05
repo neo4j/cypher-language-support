@@ -23,7 +23,7 @@ import {
   isTime,
   isVector,
 } from 'neo4j-driver';
-type NumberOrInteger = number | Integer | bigint;
+export type NumberOrInteger = number | Integer | bigint;
 
 /**
       The neo4j driver type mapping - https://neo4j.com/docs/javascript-manual/current/cypher-workflow/#js-driver-type-mapping

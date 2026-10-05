@@ -28,6 +28,8 @@
     "build-esm": "tsc --outDir dist/esm",
     "build-commonjs": "esbuild ./src/index.ts --bundle --format=cjs --sourcemap --packages=external --outfile=dist/cjs/index.cjs",
     "build-types": "tsc --emitDeclarationOnly --outDir dist/types",
+    "check-api-report": "tsx checkApiReport.ts",
+    "gen-api-report": "pnpm build-types && pnpm check-api-report",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "test": "vitest run extract-unique-nodes-and-relationships",
