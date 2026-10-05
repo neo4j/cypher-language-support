@@ -163,9 +163,6 @@ export type ExecuteQueryArgs<T> = {
 // @public (undocumented)
 export type ExtendedQueryConfig<T> = QueryConfig<T> & Required<Pick<QueryConfig<T>, 'routing' | 'resultTransformer'>>;
 
-// Warning: (tsdoc-param-tag-with-invalid-name) The @param block should be followed by a valid parameter name: The identifier cannot non-word characters
-// Warning: (tsdoc-param-tag-with-invalid-name) The @param block should be followed by a valid parameter name: The identifier cannot non-word characters
-//
 // @public
 export const extractUniqueNodesAndRels: (records: Record_2[], input?: {
     nodeLimit?: number;
