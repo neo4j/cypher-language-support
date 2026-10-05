@@ -31,18 +31,18 @@ To run the VS Code extension, choose `VSCode Playground` in the `Run & Debug` me
 
 ## Testing
 
-Each package may have a `vitest.config.ts` defining one or more projects:
+To make unit tests, or tests that do not require any complex setup, define a `vitest.config.ts` file in each package. This file can define one or more projects:
 
 * unit
 * integration
 
-These can be run with `pnpm test`, `pnpm test:unit` and `pnpm test:integration`
+These can be run with `pnpm test`, `pnpm test:unit` and `pnpm test:integration` in the top `package.json`.
 
 ### E2E
 
 `react-codemirror` and `react-codemirror-playground` use Playwright for E2E testing, each project defines the tests in the `playwright-ct.config.ts` or `playwright.config.ts`.
 
-`vscode-extension`, the integration and e2e tests run using `@vscode/test-electron`.
+`vscode-extension`, the integration and e2e tests run using `@vscode/test-electron` with `mocha`. The `webview` tests additionally uses `webdriverio`.
 
 ### Executing the tests
 
