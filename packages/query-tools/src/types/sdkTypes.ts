@@ -18,10 +18,10 @@ export type QueryType =
   // Query that has been derived from the user input.
   | 'user-transpiled';
 
-type ExtendedQueryConfig<T> = QueryConfig<T> &
+export type ExtendedQueryConfig<T> = QueryConfig<T> &
   Required<Pick<QueryConfig<T>, 'routing' | 'resultTransformer'>>;
 
-type Result<T> = T & { summary: ResultSummary };
+export type Result<T> = T & { summary: ResultSummary };
 
 export type ExecuteQueryArgs<T> = {
   query: string;

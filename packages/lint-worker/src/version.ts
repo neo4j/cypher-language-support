@@ -1,12 +1,21 @@
 import semver from 'semver';
 import type { integer } from 'vscode-languageserver-types';
 
-/**Like semver.compare - Returns:
- *  - -1 if v1 < v2
- *  -  0 if v1 === v2
- *  -  1 if  v1 > v2
- *  But ignores patch version,
- *  and returns undefined if versions are of incorrect format */
+/**
+ * Compares the major and minor version of a neo4j release, ignoring patch version.
+ * Our linters are versioned per minor release, and this allows us to match server
+ * version to corresponding linter.
+ *
+ * @param version1 - One semver-style version
+ * @param version2 - Another semver-style version
+ *
+ * @returns
+ *  - -1 if version1 < version2
+ *  -  0 if version1 === version2
+ *  -  1 if version1 > version2
+ *
+ *  Ignoring patch version, and undefined if versions are of incorrect format
+ */
 export function compareMajorMinorVersions(
   version1: string,
   version2: string,

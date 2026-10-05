@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import { afterEach, beforeEach } from 'mocha';
-import { Integer, Record } from 'neo4j-driver';
+import { Integer, Record as Neo4jRecord } from 'neo4j-driver';
 import * as sinon from 'sinon';
 import { window } from 'vscode';
 import {
@@ -73,7 +73,7 @@ suite('Parameters command handlers spec', () => {
     runCypherQueryStub
       .withArgs({ query: 'RETURN "charmander" AS param', parameters: {} })
       .resolves({
-        records: [new Record(['param'], ['charmander'])],
+        records: [new Neo4jRecord(['param'], ['charmander'])],
         summary: undefined,
         recordLimitHit: false,
       });
@@ -81,7 +81,7 @@ suite('Parameters command handlers spec', () => {
     runCypherQueryStub
       .withArgs({ query: 'RETURN "pikachu" AS param', parameters: {} })
       .resolves({
-        records: [new Record(['param'], ['pikachu'])],
+        records: [new Neo4jRecord(['param'], ['pikachu'])],
         summary: undefined,
         recordLimitHit: false,
       });
@@ -89,7 +89,7 @@ suite('Parameters command handlers spec', () => {
     runCypherQueryStub
       .withArgs({ query: 'RETURN 1234 AS param', parameters: {} })
       .resolves({
-        records: [new Record(['param'], [Integer.fromInt(1234)])],
+        records: [new Neo4jRecord(['param'], [Integer.fromInt(1234)])],
         summary: undefined,
         recordLimitHit: false,
       });
