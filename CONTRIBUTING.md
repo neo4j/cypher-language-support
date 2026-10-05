@@ -42,7 +42,8 @@ These can be run with `pnpm test`, `pnpm test:unit` and `pnpm test:integration` 
 
 `react-codemirror` and `react-codemirror-playground` use Playwright for E2E testing, each project defines the tests in the `playwright-ct.config.ts` or `playwright.config.ts`.
 
-`vscode-extension`, the integration and e2e tests run using `@vscode/test-electron` with `mocha`. The `webview` tests additionally uses `webdriverio`.
+`vscode-extension`, the integration and e2e tests run using `@vscode/test-electron` with `mocha`. The `webview` tests additionally use `webdriverio`.
+
 
 ### Executing the tests
 

@@ -15,7 +15,7 @@ pnpm install
 pnpm build            # required before tests: generates the ANTLR parser, TextMate grammar, and bundles
 pnpm test             # all Vitest tests
 pnpm test:unit        # unit tests only
-pnpm test:integration # integration tests only requires Docker or another supported container manager
+pnpm test:integration # integration tests only. Requires Docker or another supported container manager
 pnpm test:e2e         # all end-to-end tests; see the testing notes below
 pnpm lint             # oxlint (not eslint); pnpm lint-fix to autofix 
 pnpm format           # oxfmt (not prettier); pnpm format:check to verify without autofix
