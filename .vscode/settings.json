@@ -3,7 +3,7 @@
   "js/ts.tsc.autoDetect": "off",
   "js/ts.preferences.quoteStyle": "single",
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit"
+    "source.fixAll.oxc": "explicit"
   },
   "editor.defaultFormatter": "oxc.oxc-vscode",
   "editor.formatOnSave": true,
