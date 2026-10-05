@@ -2,4 +2,4 @@
 "@neo4j-cypher/react-codemirror": patch
 ---
 
-Make "regular" signature help use same styling as hover signature help
+Make signature help use same highlighting as hover signature.
