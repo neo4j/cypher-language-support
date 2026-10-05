@@ -1,4 +1,8 @@
-import type { Integer, Record, ResultSummary } from 'neo4j-driver';
+import type {
+  Integer,
+  Record as Neo4jRecord,
+  ResultSummary,
+} from 'neo4j-driver';
 import { resultTransformers } from 'neo4j-driver';
 
 import type { DeduplicatedNodesAndRels } from '../cypher-execution/extract-unique-nodes-and-relationships.js';
@@ -12,7 +16,7 @@ import { extractUniqueNodesAndRels } from '../cypher-execution/extract-unique-no
  */
 export type GraphResult = DeduplicatedNodesAndRels & {
   /** Original Neo4j records returned by the query */
-  records: Record[];
+  records: Neo4jRecord[];
   summary: ResultSummary<Integer>;
 };
 
