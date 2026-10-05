@@ -1,7 +1,7 @@
 import { testData } from '@neo4j-cypher/language-support';
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Locator } from 'playwright/test';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 
 test.use({ viewport: { width: 1000, height: 500 } });
 

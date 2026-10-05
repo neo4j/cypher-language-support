@@ -60,10 +60,10 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test:unit
 
-  test-polling:
-    name: Polling integration tests
+  test-integration:
+    name: Integration tests
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -71,7 +71,7 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm --filter @neo4j-cypher/query-tools test:polling
+        run: pnpm --filter @neo4j-cypher/query-tools test --project integration
 
   firefox-react-codemirror-e2e-test:
     name: Firefox React Codemirror E2E tests

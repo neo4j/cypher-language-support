@@ -32,8 +32,7 @@
     "gen-api-report": "pnpm build-types && pnpm check-api-report",
     "dev": "concurrently 'npm:build-esm -- --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
-    "test": "vitest run extract-unique-nodes-and-relationships",
-    "test:polling": "vitest run pollingIntegrationTests"
+    "test": "vitest run"
   },
   "dependencies": {
     "@neo4j-cypher/language-support": "workspace:*",
