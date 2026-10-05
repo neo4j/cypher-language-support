@@ -1,4 +1,4 @@
-import type { Record } from 'neo4j-driver';
+import type { Record as Neo4jRecord } from 'neo4j-driver';
 import { Node, Path, PathSegment, Relationship } from 'neo4j-driver';
 
 import { describe, expect, test } from 'vitest';
@@ -39,7 +39,7 @@ describe('extractNodesAndRels', () => {
     const boltRecord = {
       keys: ['p'],
       get: () => path,
-    } as unknown as Record;
+    } as unknown as Neo4jRecord;
 
     const { nodes, relationships } = extractUniqueNodesAndRels([boltRecord]);
 
@@ -106,7 +106,7 @@ describe('extractNodesAndRels', () => {
     const boltRecord = {
       keys: ['n'],
       get: () => [node1, node2, relationship],
-    } as unknown as Record;
+    } as unknown as Neo4jRecord;
 
     const { nodes, relationships, limitHit } = extractUniqueNodesAndRels([
       boltRecord,
@@ -149,7 +149,7 @@ describe('extractNodesAndRels', () => {
     const boltRecord = {
       keys: ['p'],
       get: () => path,
-    } as unknown as Record;
+    } as unknown as Neo4jRecord;
 
     const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(
       [boltRecord],
@@ -202,7 +202,7 @@ describe('extractNodesAndRels', () => {
     const boltRecord = {
       keys: ['p'],
       get: () => path,
-    } as unknown as Record;
+    } as unknown as Neo4jRecord;
 
     const { nodes, relationships, limitHit } = extractUniqueNodesAndRels(
       [boltRecord],

@@ -7,7 +7,10 @@ export {
   getCypherTypeName,
   getPropertyTypeDisplayName,
 } from './data-transforms/cypher-type-names.js';
-export type { CypherDataTypeName } from './data-transforms/cypher-type-names.js';
+export type {
+  CypherDataTypeName,
+  CypherPropertyName,
+} from './data-transforms/cypher-type-names.js';
 export * from './data-transforms/record-to-string.js';
 export * from './types/cypher-data-types.js';
 export type {
@@ -18,10 +21,21 @@ export type {
 export type {
   Neo4jConnection,
   QueryResultWithLimit,
+  RunCypherQueryArgs,
+  SdkQueryArgs,
 } from './neo4jConnection.js';
-export type { Database } from './queries/databases.js';
-export { graphResultTransformer } from './result-transformers/graph-result-transformer.js';
+export type { Database, DatabaseStatus } from './queries/databases.js';
+export {
+  graphResultTransformer,
+  GraphResult,
+} from './result-transformers/graph-result-transformer.js';
 export { Neo4jSchemaPoller } from './schemaPoller.js';
 export type { ConnnectionResult } from './schemaPoller.js';
 export type { CypherDataType } from './types/cypher-data-types.js';
 export { getVersion } from './queries/version.js';
+export {
+  ExecuteQueryArgs,
+  QueryType,
+  ExtendedQueryConfig,
+  Result,
+} from './types/sdkTypes.js';

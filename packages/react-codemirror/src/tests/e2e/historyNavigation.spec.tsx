@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
+import { CypherEditor } from '../../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
 test('respects preloaded history', async ({ page, mount }) => {

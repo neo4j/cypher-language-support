@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { DEBOUNCE_TIME } from '../constants';
-import { CypherEditor } from '../CypherEditor';
+import { DEBOUNCE_TIME } from '../../constants';
+import { CypherEditor } from '../../CypherEditor';
 import { CypherEditorPage } from './e2eUtils';
 
 const DEBOUNCE_TIME_WITH_MARGIN = DEBOUNCE_TIME + 100;

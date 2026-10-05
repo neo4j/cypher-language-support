@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
-import { CypherEditor } from '../CypherEditor';
-import { darkThemeConstants, lightThemeConstants } from '../themes';
+import { CypherEditor } from '../../CypherEditor';
+import { darkThemeConstants, lightThemeConstants } from '../../themes';
 import { CypherEditorPage } from './e2eUtils';
 
 test('light theme highlighting', async ({ page, mount }) => {

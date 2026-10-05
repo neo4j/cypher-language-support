@@ -44,11 +44,12 @@ jobs:
       - name: Detect unused exports and dependencies
         run: pnpm knip
 
-      # Fails if the public API changed without the committed report being regenerated.
-      # Tracked API Extractor warnings are written into the report too, so a change in
-      # the set of warnings also fails here rather than scrolling past in a build log.
-      - name: Check the API report is up to date
-        run: pnpm --filter @neo4j-cypher/language-support check-api-report --ci
+      # Fails if the public API changed without the committed report being regenerated
+      # in any of the tracked packages. Tracked API Extractor warnings are written into the
+      # report too, so a change in the set of warnings also fails here rather than scrolling
+      # past in a build log.
+      - name: Check the API reports are up to date
+        run: pnpm -r --no-bail run check-api-report --ci
 
   unit-test:
     name: Unit tests
@@ -59,10 +60,10 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test:unit
 
-  test-polling:
-    name: Polling integration tests
+  test-integration:
+    name: Integration tests
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -70,7 +71,7 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm --filter @neo4j-cypher/query-tools test:polling
+        run: pnpm --filter @neo4j-cypher/query-tools test --project integration
 
   firefox-react-codemirror-e2e-test:
     name: Firefox React Codemirror E2E tests
