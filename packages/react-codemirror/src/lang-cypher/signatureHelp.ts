@@ -6,6 +6,10 @@ import type { SignatureInformation } from 'vscode-languageserver-types';
 import { MarkupContent } from 'vscode-languageserver-types';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
+import {
+  type TooltipCypherHighlighter,
+  tooltipCypherHighlighter,
+} from './tooltipHighlighting.js';
 
 function getTriggerCharacter(query: string, caretPosition: number) {
   let i = caretPosition - 1;
@@ -24,9 +28,11 @@ const createSignatureHelpElement =
   ({
     signature,
     activeParameter,
+    highlighter,
   }: {
     signature: SignatureInformation;
     activeParameter: number;
+    highlighter: TooltipCypherHighlighter;
   }) =>
   () => {
     const parameters = signature.parameters;
@@ -40,31 +46,9 @@ const createSignatureHelpElement =
 
     const signatureLabel = document.createElement('div');
     signatureLabel.className = 'cm-signature-help-panel-name';
-    const methodName = signature.label.slice(0, signature.label.indexOf('('));
     const returnType = signature.label.slice(signature.label.indexOf(')') + 1);
-    signatureLabel.appendChild(document.createTextNode(`${methodName}(`));
-    let currentParamDescription: string | undefined = undefined;
 
-    parameters.forEach((param, index) => {
-      if (typeof param.label === 'string') {
-        const span = document.createElement('span');
-        span.appendChild(document.createTextNode(param.label));
-        if (index !== parameters.length - 1) {
-          span.appendChild(document.createTextNode(', '));
-        }
-
-        if (index === activeParameter) {
-          span.className = 'cm-signature-help-panel-current-argument';
-          const paramDoc = param.documentation;
-          currentParamDescription = MarkupContent.is(paramDoc)
-            ? paramDoc.value
-            : paramDoc;
-        }
-        signatureLabel.appendChild(span);
-      }
-    });
-
-    signatureLabel.appendChild(document.createTextNode(')'));
+    highlighter(signature.label, 'procedure', signatureLabel, activeParameter);
     signatureLabel.appendChild(document.createTextNode(returnType));
 
     contents.appendChild(signatureLabel);
@@ -73,6 +57,12 @@ const createSignatureHelpElement =
     separator.className = 'cm-signature-help-panel-separator';
 
     contents.appendChild(separator);
+    const currentParamDoc = parameters.find(
+      (_, index) => index === activeParameter,
+    )?.documentation;
+    const currentParamDescription = MarkupContent.is(currentParamDoc)
+      ? currentParamDoc.value
+      : currentParamDoc;
 
     if (currentParamDescription !== undefined) {
       const argDescription = document.createElement('div');
@@ -125,12 +115,17 @@ function getSignatureHelpTooltip(
         const showSignatureTooltipBelow =
           config.showSignatureTooltipBelow ?? true;
 
+        const highlighter = tooltipCypherHighlighter(state, config);
         result = [
           {
             pos: caretPosition,
             above: !showSignatureTooltipBelow,
             arrow: true,
-            create: createSignatureHelpElement({ signature, activeParameter }),
+            create: createSignatureHelpElement({
+              signature,
+              activeParameter,
+              highlighter,
+            }),
           },
         ];
       }
