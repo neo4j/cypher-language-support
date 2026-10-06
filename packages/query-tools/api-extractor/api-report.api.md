@@ -73,19 +73,6 @@ export interface CypherMap {
 }
 
 // @public (undocumented)
-export class CypherMetadataPoller extends MetadataPoller {
-    constructor(databases: Database[], parameters: Record<string, unknown>, serverCypherVersions: string[] | undefined, connection: Neo4jConnection, events: EventEmitter);
-    // (undocumented)
-    dbSchema: DbSchema;
-    // (undocumented)
-    fetchDbSchema(): Promise<void>;
-    // (undocumented)
-    startBackgroundPolling(intervalSeconds?: number): void;
-    // (undocumented)
-    stopBackgroundPolling(): void;
-}
-
-// @public (undocumented)
 export type CypherProperty = CypherBasicPropertyType | CypherBasicPropertyType[];
 
 // @public (undocumented)
@@ -137,19 +124,6 @@ export function deserializeTypeAnnotations(rawItem: Record<string, unknown>): Qu
 
 // @public (undocumented)
 export function deserializeTypeAnnotations(rawItem: any): any;
-
-// @public (undocumented)
-export class EmptyMetadataPoller extends MetadataPoller {
-    constructor(parameters: Record<string, unknown>);
-    // (undocumented)
-    dbSchema: DbSchema;
-    // (undocumented)
-    fetchDbSchema(): void;
-    // (undocumented)
-    startBackgroundPolling(): void;
-    // (undocumented)
-    stopBackgroundPolling(): void;
-}
 
 // @public (undocumented)
 export const ESCAPE_CHAR = "_";

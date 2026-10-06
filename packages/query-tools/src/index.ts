@@ -14,8 +14,6 @@ export type {
 export * from './data-transforms/record-to-string.js';
 export * from './types/cypher-data-types.js';
 export type { MetadataPoller } from './pollers/metadata/metadataPoller.js';
-export type { DisconnectedMetadataPoller as EmptyMetadataPoller } from './pollers/metadata/disconnectedMetadataPoller.js';
-export type { ConnectedMetadataPoller as CypherMetadataPoller } from './pollers/metadata/connectedMetadataPoller.js';
 export type {
   Neo4jConnection,
   QueryResultWithLimit,
