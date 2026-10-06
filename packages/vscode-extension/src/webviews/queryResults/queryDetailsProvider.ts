@@ -106,6 +106,7 @@ export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
           couldbeLoadingDataWithApoc) &&
         isSupportedDatabase
       ) {
+        // Not ideal, should this avoid accessing .metadata?
         this.schemaPoller.metadata?.fetchDbSchema();
       }
     }

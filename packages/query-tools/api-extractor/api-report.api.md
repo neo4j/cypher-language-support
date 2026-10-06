@@ -187,9 +187,9 @@ export abstract class MetadataPoller {
     dbSchema: DbSchema;
     // (undocumented)
     abstract fetchDbSchema(): void;
-    // (undocumented)
+    // @internal (undocumented)
     abstract startBackgroundPolling(intervalSeconds?: number): void;
-    // (undocumented)
+    // @internal (undocumented)
     abstract stopBackgroundPolling(): void;
 }
 

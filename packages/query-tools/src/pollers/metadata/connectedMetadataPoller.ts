@@ -162,12 +162,12 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     this.events.emit('schemaFetched');
   }
 
-  stopBackgroundPolling() {
+  public stopBackgroundPolling() {
     clearInterval(this.dbPollingInterval);
     this.dbPollingInterval = undefined;
   }
 
-  startBackgroundPolling(intervalSeconds = 30) {
+  public startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
     void this.fetchDbSchema();
     this.dbPollingInterval = setInterval(

@@ -33,7 +33,7 @@ export class Neo4jSchemaPoller {
   private lastError?: ConnectionError;
   private parameters: Record<string, unknown> = {};
 
-  setParameters(parameters: Record<string, unknown>) {
+  public setParameters(parameters: Record<string, unknown>): void {
     this.parameters = parameters;
 
     if (this.metadata) {
@@ -43,7 +43,7 @@ export class Neo4jSchemaPoller {
     }
   }
 
-  async connect(
+  public async connect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
@@ -68,7 +68,7 @@ export class Neo4jSchemaPoller {
     return { success: true };
   }
 
-  async persistentConnect(
+  public async persistentConnect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
@@ -137,7 +137,7 @@ export class Neo4jSchemaPoller {
     return { success: true };
   }
 
-  disconnect() {
+  public disconnect(): void {
     if (this.connection) {
       // eslint-disable-next-line no-console
       console.log('Disconnected from Neo4j');

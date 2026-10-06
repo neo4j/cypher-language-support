@@ -17,9 +17,6 @@ type PollerConfig<T> = {
 
 export class QueryPoller<T> {
   public status: PollingStatus = 'not-started';
-  public data?: T;
-  public lastFetchStart?: number;
-  public errorMessage?: string;
   private connection: Neo4jConnection;
   private onRefetchDone?: FetchCallback<T>;
   private queryArgs: ExecuteQueryArgs<T>;
@@ -35,8 +32,6 @@ export class QueryPoller<T> {
     this.onRefetchDone = onRefetchDone;
 
     if (prefetchedData) {
-      this.data = prefetchedData;
-      this.lastFetchStart = Date.now();
       this.status = 'fetched';
     }
   }
@@ -45,21 +40,16 @@ export class QueryPoller<T> {
     if (this.status === 'fetching') return;
 
     this.status = 'fetching';
-    this.lastFetchStart = Date.now();
-    delete this.errorMessage;
 
     try {
       const data = await this.connection.runSdkQuery(this.queryArgs, {
         queryType: 'system',
       });
-      this.data = data;
       this.status = 'fetched';
       this.onRefetchDone?.({ success: true, data });
     } catch (e) {
       const errorMessage = String(e);
-      this.errorMessage = errorMessage;
       this.status = 'error';
-      console.error(e);
       this.onRefetchDone?.({ success: false, errorMessage });
     }
   }
