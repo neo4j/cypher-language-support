@@ -2,6 +2,50 @@ import { testData } from '../testData.js';
 import { getDiagnosticsForQuery } from './helpers.js';
 
 describe('Syntactic validation spec', () => {
+  test('Unfinished LET', () => {
+    const query = 'CYPHER 25 LET x a= ';
+
+    expect(getDiagnosticsForQuery({ query })).toEqual([
+      {
+        message:
+          'Query cannot conclude with LET (must be a RETURN clause, a FINISH clause, an update clause, a unit subquery call, or a procedure call with no YIELD).',
+        offsets: {
+          end: 10,
+          start: 10,
+        },
+        range: {
+          end: {
+            character: 10,
+            line: 0,
+          },
+          start: {
+            character: 10,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+      {
+        message: "Invalid input 'a': expected '='",
+        offsets: {
+          end: 17,
+          start: 16,
+        },
+        range: {
+          end: {
+            character: 17,
+            line: 0,
+          },
+          start: {
+            character: 16,
+            line: 0,
+          },
+        },
+        severity: 1,
+      },
+    ]);
+  });
+
   test('Misspelt keyword at the beginning of the statement', () => {
     const query = 'METCH (n:Person)';
 
