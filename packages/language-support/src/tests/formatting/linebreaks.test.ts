@@ -1176,6 +1176,33 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
+  test('map comprehensions should split in a resonable way if they have to split - MapComprehensionForList version', () => {
+    const query = `WITH [1, 2, 3] AS list
+RETURN {valueWithLongName in list WHERE valueWithLongName > 2  | keyWithLongName : valueWithLongName * 10} AS result`;
+    const expected = `WITH [1, 2, 3] AS list
+RETURN
+  {
+    valueWithLongName IN list
+    WHERE valueWithLongName > 2
+    | keyWithLongName: valueWithLongName * 10
+  } AS result`;
+    verifyFormatting(query, expected);
+  });
+
+  test('map comprehensions should split in a resonable way if they have to split - MapComprehensionForMap version', () => {
+    const query = `WITH {a: 1, b: 2, c: 3} AS map
+RETURN {keyWithLongName : valueWithLongName IN map | keyWithLongName : valueWithLongName * 10} AS result`;
+    const expected = `WITH {a: 1, b: 2, c: 3} AS map
+RETURN
+  {
+    keyWithLongName: valueWithLongName
+    IN
+    map
+    | keyWithLongName: valueWithLongName * 10
+  } AS result`;
+    verifyFormatting(query, expected);
+  });
+
   test('SET clause with equal sign should group the EQ', () => {
     const query = `      CALL {
         WITH connectedNodes, parentNodes
