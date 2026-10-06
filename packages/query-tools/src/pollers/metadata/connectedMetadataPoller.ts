@@ -6,19 +6,20 @@ import type {
 } from '@neo4j-cypher/language-support';
 import { allCypherVersions } from '@neo4j-cypher/language-support';
 import type { EventEmitter } from 'events';
-import type { Neo4jConnection } from './neo4jConnection.js';
-import type { Database } from './queries/databases.js';
-import { listDatabases } from './queries/databases.js';
-import type { DataSummary } from './queries/dataSummary.js';
-import { getDataSummary } from './queries/dataSummary.js';
-import { listFunctions } from './queries/functions.js';
-import { listProcedures } from './queries/procedures.js';
-import type { Neo4jRole } from './queries/roles.js';
-import { listRoles } from './queries/roles.js';
-import type { Neo4jUser } from './queries/users.js';
-import { listUsers } from './queries/users.js';
-import type { ExecuteQueryArgs } from './types/sdkTypes.js';
-import { listGraphSchema } from './queries/graphSchema.js';
+import type { Neo4jConnection } from '../../neo4jConnection.js';
+import type { Database } from '../../queries/databases.js';
+import { listDatabases } from '../../queries/databases.js';
+import type { DataSummary } from '../../queries/dataSummary.js';
+import { getDataSummary } from '../../queries/dataSummary.js';
+import { listFunctions } from '../../queries/functions.js';
+import { listProcedures } from '../../queries/procedures.js';
+import type { Neo4jRole } from '../../queries/roles.js';
+import { listRoles } from '../../queries/roles.js';
+import type { Neo4jUser } from '../../queries/users.js';
+import { listUsers } from '../../queries/users.js';
+import type { ExecuteQueryArgs } from '../../types/sdkTypes.js';
+import { listGraphSchema } from '../../queries/graphSchema.js';
+import { MetadataPoller } from './metadataPoller.js';
 
 type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
 
@@ -82,24 +83,6 @@ class QueryPoller<T> {
       this.onRefetchDone?.({ success: false, errorMessage });
     }
   }
-}
-
-export abstract class MetadataPoller {
-  public dbSchema: DbSchema = {};
-  abstract stopBackgroundPolling(): void;
-  abstract startBackgroundPolling(intervalSeconds?: number): void;
-  abstract fetchDbSchema(): void;
-}
-
-export class DisconnectedMetadataPoller extends MetadataPoller {
-  public dbSchema: DbSchema = {};
-  constructor(parameters: Record<string, unknown>) {
-    super();
-    this.dbSchema.parameters = parameters;
-  }
-  stopBackgroundPolling() {}
-  startBackgroundPolling() {}
-  fetchDbSchema(): void {}
 }
 
 export class ConnectedMetadataPoller extends MetadataPoller {

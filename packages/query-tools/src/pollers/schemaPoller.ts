@@ -1,20 +1,18 @@
 import { EventEmitter } from 'events';
 import type { Config, Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
-import type { ConnectionError } from './connectionErrorHandler.js';
+import type { ConnectionError } from '../connectionErrorHandler.js';
 import {
   FRIENDLY_ERROR_MESSAGES,
   getConnectionError,
   isRetriableNeo4jError,
-} from './connectionErrorHandler.js';
-import type { MetadataPoller } from './metadataPoller.js';
-import {
-  ConnectedMetadataPoller,
-  DisconnectedMetadataPoller,
-} from './metadataPoller.js';
-import { Neo4jConnection } from './neo4jConnection.js';
-import { listDatabases } from './queries/databases.js';
-import { getVersion } from './queries/version.js';
+} from '../connectionErrorHandler.js';
+import type { MetadataPoller } from './metadata/metadataPoller.js';
+import { Neo4jConnection } from '../neo4jConnection.js';
+import { listDatabases } from '../queries/databases.js';
+import { getVersion } from '../queries/version.js';
+import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
+import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
 
 export type ConnnectionResult = {
   success: boolean;
