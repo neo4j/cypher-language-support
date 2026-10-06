@@ -1,3 +1,4 @@
+// oxlint-disable typescript/no-explicit-any
 import type { QueryResult, Record as Neo4jRecord } from 'neo4j-driver';
 import { int, isInt, isVector, types, Vector } from 'neo4j-driver';
 

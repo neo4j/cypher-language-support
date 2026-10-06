@@ -9,7 +9,11 @@ type VizWrapperProps = {
   relationships: NeoRel[];
 };
 
-function renderRow(keys: any[], row: Record<string, unknown>, index: number) {
+function renderRow(
+  keys: string[],
+  row: Record<string, unknown>,
+  index: number,
+) {
   return (
     <tr>
       <td>{index}</td>
