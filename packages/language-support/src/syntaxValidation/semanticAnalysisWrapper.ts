@@ -24,10 +24,10 @@ interface ElementPosition {
   column: number;
 }
 
-interface SemanticAnalysisElement {
+export interface SemanticAnalysisElement {
   message: string;
-  startPosition: ElementPosition;
-  endPosition: ElementPosition;
+  startPosition: ElementPosition | null;
+  endPosition: ElementPosition | null;
 }
 
 const previousResolvers: {
@@ -37,22 +37,38 @@ const previousResolvers: {
   };
 } = {};
 
-function copySettingSeverity(
+function statementEndPosition(statement: string): ElementPosition {
+  const lines = statement.split('\n');
+  return {
+    offset: statement.length,
+    line: lines.length - 1,
+    column: lines[lines.length - 1].length,
+  };
+}
+
+export function copyDiagnosticsAndFillMissingPositions(
   elements: SemanticAnalysisElement[],
   severity: DiagnosticSeverity,
+  statement: string,
 ): SyntaxDiagnostic[] {
-  return elements.map(({ message, startPosition, endPosition }) => ({
-    severity: severity,
-    message,
-    range: {
-      start: Position.create(startPosition.line, startPosition.column),
-      end: Position.create(endPosition.line, endPosition.column),
-    },
-    offsets: {
-      start: startPosition.offset,
-      end: endPosition.offset,
-    },
-  }));
+  return elements.map(({ message, startPosition, endPosition }) => {
+    // A single missing position collapses the span to the other one; only mark the whole statement if both are missing
+    const start = startPosition ??
+      endPosition ?? { offset: 0, line: 0, column: 0 };
+    const end = endPosition ?? startPosition ?? statementEndPosition(statement);
+    return {
+      severity: severity,
+      message,
+      range: {
+        start: Position.create(start.line, start.column),
+        end: Position.create(end.line, end.column),
+      },
+      offsets: {
+        start: start.offset,
+        end: end.offset,
+      },
+    };
+  });
 }
 
 function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
@@ -124,7 +140,7 @@ function updateResolverForVersion(
 }
 
 export function wrappedSemanticAnalysis(
-  query: string,
+  statement: string,
   dbSchema: DbSchema,
   parsedVersion?: CypherVersion,
 ): SemanticAnalysisResult {
@@ -132,17 +148,22 @@ export function wrappedSemanticAnalysis(
     const defaultVersion = dbSchema?.defaultLanguage;
     const cypherVersion = parsedVersion ?? defaultVersion ?? 'CYPHER 5';
     updateResolverForVersion(dbSchema, cypherVersion);
-    const semanticErrorsResult = analyzeQuery(query, cypherVersion);
+    const semanticErrorsResult = analyzeQuery(statement, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;
     const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
-      errors: copySettingSeverity(errors, DiagnosticSeverity.Error),
-      notifications: copySettingSeverity(
+      errors: copyDiagnosticsAndFillMissingPositions(
+        errors,
+        DiagnosticSeverity.Error,
+        statement,
+      ),
+      notifications: copyDiagnosticsAndFillMissingPositions(
         notifications,
         DiagnosticSeverity.Warning,
+        statement,
       ),
       symbolTable: copySymbolTable(symbolTable),
     };
