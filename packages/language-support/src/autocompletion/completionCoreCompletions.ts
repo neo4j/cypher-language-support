@@ -343,6 +343,7 @@ const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
 
   if (
     [
+      CypherParser.RULE_stringOrParameterExpression,
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_commandNameExpression,
       CypherParser.RULE_symbolicNameOrStringParameterList,
