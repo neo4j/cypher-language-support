@@ -372,6 +372,7 @@ type FixSymbolTablePositionArgs = {
   parseResult: ParsedStatement;
 };
 
+/** moves offsets/positions to fit the whole query after per-statement linting */
 function fixOffsets({
   semanticDiagnostics,
   parseResult,
@@ -403,6 +404,7 @@ function fixOffsets({
   });
 }
 
+/** moves offsets/positions to fit the whole query after per-statement symbol table retrieval */
 function fixSymbolTableOffsets({
   symbolTable,
   parseResult,
