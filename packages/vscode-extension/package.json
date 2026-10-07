@@ -40,10 +40,11 @@
     "dev": "tsc -b && pnpm gen-textmate && concurrently 'node --experimental-strip-types esbuild-extension.mts' 'pnpm bundle-webview-controllers --watch' ",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
     "package": "pnpm vsce package --pre-release --no-dependencies",
-    "test:e2e": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false pnpm test:apiAndUnit && cross-env DEBUG_VSCODE_TESTS=false pnpm test:webviews",
-    "test:apiAndUnit": "pnpm build:dev && rm -rf .vscode-test/user-data && cross-env DEBUG_VSCODE_TESTS=false node ./dist/tests/runApiAndUnitTests.js",
+    "test:e2e": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false pnpm test:api && cross-env DEBUG_VSCODE_TESTS=false pnpm test:webviews",
+    "test:api": "pnpm build:dev && rm -rf .vscode-test/user-data && cross-env DEBUG_VSCODE_TESTS=false node ./dist/tests/runApiAndUnitTests.js",
     "test:webviews": "pnpm build:dev && cross-env DEBUG_VSCODE_TESTS=false wdio run ./dist/tests/runWebviewTests.js",
-    "test": "vitest run"
+    "test:unit": "vitest run",
+    "test": "pnpm test:unit && pnpm test:e2e"
   },
   "dependencies": {
     "@neo4j-cypher/language-server": "workspace:*",

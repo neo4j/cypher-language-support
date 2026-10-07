@@ -122,7 +122,7 @@ jobs:
         run: xvfb-run -a pnpm --filter neo4j-for-vscode test:webviews
 
   vscode-api-and-unit-tests:
-    name: VSCode API and Unit tests
+    name: VSCode API tests
     needs: build
     timeout-minutes: 30
     runs-on: ubuntu-latest
@@ -131,4 +131,4 @@ jobs:
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: xvfb-run -a pnpm --filter neo4j-for-vscode test:apiAndUnit
+        run: xvfb-run -a pnpm --filter neo4j-for-vscode test:api
