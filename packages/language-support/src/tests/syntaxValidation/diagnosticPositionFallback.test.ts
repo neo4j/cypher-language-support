@@ -1,6 +1,6 @@
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import {
-  copyDiagnosticsAndFillMissingPositions,
+  transpiledDiagnosticsToSyntaxDiagnostics,
   type SemanticAnalysisElement,
 } from '../../syntaxValidation/semanticAnalysisWrapper.js';
 
@@ -12,7 +12,7 @@ LET x a=`;
   const position = { offset: 12, line: 1, column: 2 };
 
   function rangeOf(element: SemanticAnalysisElement) {
-    const [{ range, offsets }] = copyDiagnosticsAndFillMissingPositions(
+    const [{ range, offsets }] = transpiledDiagnosticsToSyntaxDiagnostics(
       [element],
       DiagnosticSeverity.Error,
       statement,

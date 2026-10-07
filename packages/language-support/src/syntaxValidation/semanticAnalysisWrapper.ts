@@ -46,7 +46,7 @@ function statementEndPosition(statement: string): ElementPosition {
   };
 }
 
-export function copyDiagnosticsAndFillMissingPositions(
+export function transpiledDiagnosticsToSyntaxDiagnostics(
   elements: SemanticAnalysisElement[],
   severity: DiagnosticSeverity,
   statement: string,
@@ -71,7 +71,9 @@ export function copyDiagnosticsAndFillMissingPositions(
   });
 }
 
-function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
+function transpiledSymbolTableToJSObject(
+  symbolTable: SymbolTable,
+): SymbolTable {
   return symbolTable.map(
     ({ variable, definitionPosition, types, references, labels }) => {
       return {
@@ -155,17 +157,17 @@ export function wrappedSemanticAnalysis(
     const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
-      errors: copyDiagnosticsAndFillMissingPositions(
+      errors: transpiledDiagnosticsToSyntaxDiagnostics(
         errors,
         DiagnosticSeverity.Error,
         statement,
       ),
-      notifications: copyDiagnosticsAndFillMissingPositions(
+      notifications: transpiledDiagnosticsToSyntaxDiagnostics(
         notifications,
         DiagnosticSeverity.Warning,
         statement,
       ),
-      symbolTable: copySymbolTable(symbolTable),
+      symbolTable: transpiledSymbolTableToJSObject(symbolTable),
     };
   } catch {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */
