@@ -72,6 +72,7 @@ export interface CypherEditorProps {
     // Warning: (tsdoc-undefined-tag) The TSDoc tag "@default" is not defined in this configuration
     autofocus?: boolean;
     className?: string;
+    contentAttributes?: Record<string, string>;
     diff?: DiffProps | null;
     // Warning: (tsdoc-escape-greater-than) The ">" character should be escaped using a backslash to avoid confusion with an HTML tag
     // Warning: (tsdoc-escape-right-brace) The "}" character should be escaped using a backslash to avoid confusion with a TSDoc inline tag
@@ -206,7 +207,7 @@ export interface ThemeOptions {
 
 // Warnings were encountered during analysis:
 //
-// dist/src/CypherEditor.d.ts:178:8 - (tsdoc-undefined-tag) The TSDoc tag "@default" is not defined in this configuration
+// dist/src/CypherEditor.d.ts:183:8 - (tsdoc-undefined-tag) The TSDoc tag "@default" is not defined in this configuration
 
 // (No @packageDocumentation comment for this package)
 
