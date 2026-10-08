@@ -1,5 +1,16 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.16
+
+### Patch Changes
+
+- b510128: Update grammar and semantic analysis to 2026.10
+- b510128: Add fallback when transpiled linter produces errors with faulty positions
+- Updated dependencies [b510128]
+- Updated dependencies [8b991d6]
+- Updated dependencies [b510128]
+  - @neo4j-cypher/language-support@2.0.0-next.39
+
 ## 1.10.1-next.15
 
 ### Patch Changes
