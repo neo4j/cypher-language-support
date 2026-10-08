@@ -397,8 +397,8 @@ importers:
         specifier: 18.0.1
         version: 18.0.1
       vscode-languageserver-textdocument:
-        specifier: 1.0.12
-        version: 1.0.12
+        specifier: 1.0.15
+        version: 1.0.15
       wdio-vscode-service:
         specifier: 6.1.4
         version: 6.1.4(webdriverio@8.41.0)
@@ -7100,6 +7100,9 @@ packages:
 
   vscode-languageserver-textdocument@1.0.12:
     resolution: {integrity: sha512-cxWNPesCnQCcMPeenjKKsOCKQZ/L6Tv19DTRIGuLWe32lyzWhihGVJ/rcckZXJxfdKCFvRLS3fpBIsV/ZGX4zA==}
+
+  vscode-languageserver-textdocument@1.0.15:
+    resolution: {integrity: sha512-Gsfr9S8LU3S6885cS+NaleasJ0n3V5y/SOTqHCifQiXWFw3G9w9/YItDfwHrlCz+dSZWWZ8ilYVMcJe7Sz7Sxw==}
 
   vscode-languageserver-types@3.17.3:
     resolution: {integrity: sha512-SYU4z1dL0PyIMd4Vj8YOqFvHu7Hz/enbWtpfnVbJHU4Nd1YNYx8u0ennumc6h48GQNeOLxmwySmnADouT/AuZA==}
@@ -14918,6 +14921,8 @@ snapshots:
       vscode-languageserver-types: 3.17.3
 
   vscode-languageserver-textdocument@1.0.12: {}
+
+  vscode-languageserver-textdocument@1.0.15: {}
 
   vscode-languageserver-types@3.17.3: {}
 
