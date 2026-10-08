@@ -8,8 +8,7 @@ export default defineProject({
         extends: true,
         test: {
           name: 'unit',
-          include: ['src/**/*.test.ts'],
-          exclude: ['src/tests/integration/**'],
+          include: ['src/tests/unit/**/*.test.ts'],
         },
       },
       {

@@ -8,8 +8,7 @@ export default defineProject({
       {
         test: {
           name: 'unit',
-          include: ['src/**/*.test.{ts,tsx}'],
-          exclude: ['src/tests/e2e/**'],
+           include: ['src/tests/unit/**/*.test.{ts,tsx}'],
         },
       },
     ],
