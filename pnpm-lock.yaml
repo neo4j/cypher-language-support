@@ -209,7 +209,7 @@ importers:
         version: 1.29.0
       style-mod:
         specifier: ^4.1.2
-        version: 4.1.2
+        version: 4.1.4
       vscode-languageserver-types:
         specifier: ^3.17.3
         version: 3.17.5
@@ -6573,8 +6573,8 @@ packages:
     resolution: {integrity: sha512-ERPW+XkvX9W2A+ov07iy+ZFJpVdik04GhDA4eVogiG9hpC97Kem2iucyzhFxbFRvQ5o2UckFtKZdp1hkGvnrEw==}
     engines: {node: '>=16'}
 
-  style-mod@4.1.2:
-    resolution: {integrity: sha512-wnD1HyVqpJUI2+eKZ+eo1UwghftP6yuFheBqqe+bWCotBjC2K1YnteJILRMs3SM4V/0dLEW1SC27MWP5y+mwmw==}
+  style-mod@4.1.4:
+    resolution: {integrity: sha512-XXWIQt633/EpAFx8aZDOTjBzrCaGmhvEQlQo6MVPfa2OzO2cWo+4hV9h+6UkHYlXGfy+ODXKUdP7Pthmcu5ATw==}
 
   stylis@4.2.0:
     resolution: {integrity: sha512-Orov6g6BB1sDfYgzWfTHDOxamtX1bE/zo104Dh9e6fqJ3PooipYyfJ0pUmrZO2wAvO8YbEyeFrkV91XTsGMSrw==}
@@ -7645,7 +7645,7 @@ snapshots:
       '@lezer/common': 1.2.1
       '@lezer/highlight': 1.2.1
       '@lezer/lr': 1.4.2
-      style-mod: 4.1.2
+      style-mod: 4.1.4
 
   '@codemirror/lint@6.8.5':
     dependencies:
@@ -7659,7 +7659,7 @@ snapshots:
       '@codemirror/state': 6.5.2
       '@codemirror/view': 6.38.1
       '@lezer/highlight': 1.2.1
-      style-mod: 4.1.2
+      style-mod: 4.1.4
 
   '@codemirror/search@6.5.11':
     dependencies:
@@ -7675,7 +7675,7 @@ snapshots:
     dependencies:
       '@codemirror/state': 6.5.2
       crelt: 1.0.6
-      style-mod: 4.1.2
+      style-mod: 4.1.4
       w3c-keyname: 2.2.8
 
   '@cspotcode/source-map-support@0.8.1':
@@ -14383,7 +14383,7 @@ snapshots:
       '@tokenizer/token': 0.3.0
       peek-readable: 5.3.1
 
-  style-mod@4.1.2: {}
+  style-mod@4.1.4: {}
 
   stylis@4.2.0: {}
 
