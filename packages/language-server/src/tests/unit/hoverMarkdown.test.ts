@@ -3,7 +3,7 @@ import {
   testData,
 } from '@neo4j-cypher/language-support';
 import { describe, expect, test } from 'vitest';
-import { hoverInfoToMarkdown } from '../hoverMarkdown.js';
+import { hoverInfoToMarkdown } from '../../hoverMarkdown.js';
 
 const dbSchema = testData.mockSchema;
 const languageService = new CypherLanguageService();

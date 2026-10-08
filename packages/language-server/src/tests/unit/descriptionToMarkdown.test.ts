@@ -2,7 +2,7 @@ import { describe, expect, test } from 'vitest';
 import {
   formatLineForMarkdown,
   escapeDescriptionForMarkdown,
-} from '../descriptionToMarkdown.js';
+} from '../../descriptionToMarkdown.js';
 
 /* Uses descriptions from real procedures and
    functions named in the test titles */
