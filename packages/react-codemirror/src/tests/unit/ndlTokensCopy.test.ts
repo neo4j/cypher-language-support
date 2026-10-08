@@ -1,6 +1,6 @@
 import { tokens } from '@neo4j-ndl/base';
 import { expect, test } from 'vitest';
-import { tokens as tokensCopy } from './ndlTokensCopy';
+import { tokens as tokensCopy } from '../../ndlTokensCopy';
 
 /*
  * Needle has some odd package configuration that made playwright stop working

@@ -6,8 +6,8 @@ import {
   testData,
 } from '@neo4j-cypher/language-support';
 import { describe, expect, test } from 'vitest';
-import type { CypherFragmentKind } from '../tooltipHighlighting.js';
-import { renderHoverInfo } from './hoverRender';
+import type { CypherFragmentKind } from '../../../../lang-cypher/tooltipHighlighting.js';
+import { renderHoverInfo } from '../../../../lang-cypher/hover/hoverRender';
 
 function methodHover(query: string): HoverInfo {
   const languageService = new CypherLanguageService();

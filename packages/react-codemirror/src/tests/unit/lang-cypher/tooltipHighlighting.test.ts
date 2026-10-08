@@ -1,8 +1,8 @@
 import { CypherLanguageService } from '@neo4j-cypher/language-support';
 import { expect, test } from 'vitest';
-import { tokenizeFragment } from './tooltipHighlighting.js';
-import type { CypherFragmentKind } from './tooltipHighlighting.js';
-import type { CypherConfig } from './langCypher.js';
+import { tokenizeFragment } from '../../../lang-cypher/tooltipHighlighting.js';
+import type { CypherFragmentKind } from '../../../lang-cypher/tooltipHighlighting.js';
+import type { CypherConfig } from '../../../lang-cypher/langCypher.js';
 
 const cypherFragmentKinds: CypherFragmentKind[] = [
   'labelExpression',
