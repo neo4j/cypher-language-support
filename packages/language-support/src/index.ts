@@ -55,7 +55,7 @@ export type {
   GenericDiagnostic,
   LintCypherQueryOptions,
 } from './syntaxValidation/syntaxValidation.js';
-export { testData } from './tests/testData.js';
+export { testData } from './tests/unit/testData.js';
 export { textMateGrammar } from './textMateGrammar.js';
 export { allCypherVersions } from './types.js';
 export type {
