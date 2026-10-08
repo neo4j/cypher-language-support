@@ -190,6 +190,12 @@ export interface CypherEditorProps {
   ariaLabel?: string;
 
   /**
+   * Extra attributes to set on the editable content element, e.g. `aria-invalid` and
+   * `aria-describedby` to associate the editor with an error message rendered outside of it.
+   */
+  contentAttributes?: Record<string, string>;
+
+  /**
    * Whether keybindings for inserting indents with the Tab key should be disabled.
    *
    * true will not create keybindings for inserting indents.
@@ -316,6 +322,7 @@ const readOnlyCompartment = new Compartment();
 const placeholderCompartment = new Compartment();
 const domEventHandlerCompartment = new Compartment();
 const diffCompartment = new Compartment();
+const contentAttributesCompartment = new Compartment();
 
 const formatLineNumber =
   (prompt?: string) => (a: number, state: EditorState) => {
@@ -603,6 +610,9 @@ export class CypherEditor extends Component<
               'aria-label': this.props.ariaLabel,
             })
           : [],
+        contentAttributesCompartment.of(
+          EditorView.contentAttributes.of(this.props.contentAttributes ?? {}),
+        ),
         !this.props.moveFocusOnTab
           ? EditorView.contentAttributes.of({
               'aria-description':
@@ -745,6 +755,17 @@ export class CypherEditor extends Component<
           this.props.lineNumbers
             ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
             : [],
+        ),
+      });
+    }
+
+    if (
+      JSON.stringify(prevProps.contentAttributes) !==
+      JSON.stringify(this.props.contentAttributes)
+    ) {
+      this.editorView.current.dispatch({
+        effects: contentAttributesCompartment.reconfigure(
+          EditorView.contentAttributes.of(this.props.contentAttributes ?? {}),
         ),
       });
     }
