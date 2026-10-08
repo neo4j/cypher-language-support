@@ -13,11 +13,7 @@ export type {
 } from './data-transforms/cypher-type-names.js';
 export * from './data-transforms/record-to-string.js';
 export * from './types/cypher-data-types.js';
-export type {
-  ConnectedMetadataPoller as CypherMetadataPoller,
-  DisconnectedMetadataPoller as EmptyMetadataPoller,
-  MetadataPoller,
-} from './metadataPoller.js';
+export type { MetadataPoller } from './schema-poller/metadata/metadataPoller.js';
 export type {
   Neo4jConnection,
   QueryResultWithLimit,
@@ -29,8 +25,8 @@ export {
   graphResultTransformer,
   GraphResult,
 } from './result-transformers/graph-result-transformer.js';
-export { Neo4jSchemaPoller } from './schemaPoller.js';
-export type { ConnnectionResult } from './schemaPoller.js';
+export { Neo4jSchemaPoller } from './schema-poller/schemaPoller.js';
+export type { ConnnectionResult } from './schema-poller/schemaPoller.js';
 export type { CypherDataType } from './types/cypher-data-types.js';
 export { getVersion } from './queries/version.js';
 export {
