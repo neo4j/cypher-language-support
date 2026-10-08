@@ -20,3 +20,5 @@ minimumReleaseAgeExclude:
   - postcss@8.5.23
   # Renovate security update: prismjs@1.30.0
   - prismjs@1.30.0
+  # Renovate security update: axios@1.20.0
+  - axios@1.20.0
