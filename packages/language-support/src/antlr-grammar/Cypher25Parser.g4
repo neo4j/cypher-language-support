@@ -644,6 +644,7 @@ expression1
    | collectExpression
    | mapProjection
    | listComprehension
+   | mapComprehension
    | listLiteral
    | patternComprehension
    | reduceExpression
@@ -708,10 +709,15 @@ extendedWhen
 
 // Observe that this is not possible to write as:
 // (WHERE whereExp = expression)? (BAR barExp = expression)? RBRACKET
-// Due to an ambigouity with cases such as [node IN nodes WHERE node:A|B]
+// Due to an ambiguity with cases such as [node IN nodes WHERE node:A|B]
 // where |B will be interpreted as part of the whereExp, rather than as the expected barExp.
 listComprehension
    : LBRACKET variable IN expression ((WHERE whereExp = expression)? BAR barExp = expression | (WHERE whereExp = expression)?) RBRACKET
+   ;
+   
+mapComprehension
+   : LCURLY variable IN expression (WHERE whereExp = expression)? BAR keyExp = expression6 COLON valueExp = expression RCURLY                                    # MapComprehensionForList
+   | LCURLY keyVar = variable COLON valueVar = variable IN expression (WHERE whereExp = expression)? BAR keyExp = expression6 COLON valueExp = expression RCURLY # MapComprehensionForMap
    ;
 
 patternComprehension
@@ -957,6 +963,8 @@ vectorCoordinateType
     | FLOAT
     | FLOAT64
     | FLOAT32
+    | FLOAT16
+    | BFLOAT16
     ) typeNullability?
     ;
 
@@ -1022,7 +1030,8 @@ dropCommand
 showAdminCommand
    : SHOW (
       showAliases
-      | showCurrentUser
+      | showAuthRulePrivileges
+      | showAuthRules
       | showPrivileges
       | showRolePrivileges
       | showRoles
@@ -1030,7 +1039,6 @@ showAdminCommand
       | showSupportedPrivileges
       | showUserPrivileges
       | showUsers
-      | showAuthRules
    )
    ;
 
@@ -1080,6 +1088,7 @@ composableShowCommandClauses
       showIndexCommand
       | showConstraintCommand
       | showCurrentGraphTypeCommand
+      | showCurrentUser
       | showFunctions
       | showProcedures
       | showSettings
@@ -1456,19 +1465,19 @@ commandToken
 // Server commands
 
 enableServerCommand
-   : ENABLE SERVER stringOrParameter commandOptions?
+   : ENABLE SERVER stringOrParameterExpression commandOptions?
    ;
 
 alterServer
-   : SERVER stringOrParameter SET commandOptions
+   : SERVER stringOrParameterExpression SET commandOptions
    ;
 
 renameServer
-   : SERVER stringOrParameter TO stringOrParameter
+   : SERVER stringOrParameterExpression TO stringOrParameterExpression
    ;
 
 dropServer
-   : SERVER stringOrParameter
+   : SERVER stringOrParameterExpression
    ;
 
 showServers
@@ -1480,7 +1489,7 @@ allocationCommand
    ;
 
 deallocateDatabaseFromServers
-   : DEALLOCATE (DATABASE | DATABASES) FROM (SERVER | SERVERS) stringOrParameter (COMMA stringOrParameter)*
+   : DEALLOCATE (DATABASE | DATABASES) FROM (SERVER | SERVERS) stringOrParameterExpression (COMMA stringOrParameterExpression)*
    ;
 
 reallocateDatabases
@@ -1630,7 +1639,7 @@ showUsers
    ;
 
 showCurrentUser
-   : CURRENT USER showCommandYield?
+   : CURRENT USER showCommandYieldWhere?
    ;
 
 // Privilege commands
@@ -1649,6 +1658,10 @@ showRolePrivileges
 
 showUserPrivileges
    : (USER | USERS) userNames? privilegeToken privilegeAsCommand? showCommandYield?
+   ;
+
+showAuthRulePrivileges
+   : authRuleKeywords authRuleNames privilegeToken privilegeAsCommand? showCommandYield?
    ;
 
 privilegeAsCommand
@@ -2286,6 +2299,7 @@ unescapedSymbolicNameString_
    | AT
    | AUTH
    | AUTO
+   | BFLOAT16
    | BINDINGS
    | BOOL
    | BOOLEAN
@@ -2370,6 +2384,7 @@ unescapedSymbolicNameString_
    | FLOAT   
    | FLOAT64
    | FLOAT32
+   | FLOAT16
    | FOREACH
    | FOR
    | FORWARDING

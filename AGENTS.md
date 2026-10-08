@@ -32,7 +32,7 @@ pnpm vitest run -t "test name substring"
 Package-specific and non-Vitest suites:
 
 - `pnpm --filter @neo4j-cypher/react-codemirror test:e2e` — Playwright component tests; use `test:e2e-ui` for UI mode.
-- `pnpm --filter neo4j-for-vscode test:apiAndUnit` — VS Code API/unit tests; requires a container manager for Neo4j and launches VS Code.
+- `pnpm --filter neo4j-for-vscode test:api` — VS Code API/unit tests; requires a container manager for Neo4j and launches VS Code.
 - `pnpm --filter neo4j-for-vscode test:webviews` — VS Code webview tests via WebdriverIO.
 - `pnpm test:formattingIntegrity` — formatter verification over a large query corpus.
 

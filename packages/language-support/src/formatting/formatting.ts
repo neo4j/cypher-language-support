@@ -82,6 +82,8 @@ import type {
   LocalInputFieldsSignatureContext,
   LocalOutputFieldsSignatureContext,
   LocalProcedureDefinitionContext,
+  MapComprehensionForListContext,
+  MapComprehensionForMapContext,
   MapContext,
   MapProjectionContext,
   MatchClauseContext,
@@ -2998,6 +3000,85 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       spacingChoice: 'SPACE_AFTER',
     });
     this.endGroup(mapGrp);
+  };
+
+  visitMapComprehensionForList = (ctx: MapComprehensionForListContext) => {
+    const mapComprehensionGrp = this.startGroup();
+    this._visit(ctx.LCURLY());
+    const mapIndent = this.addIndentation();
+    const keyValueGrp = this.startGroup();
+    this._visit(ctx.variable());
+    this.avoidBreakBetween();
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(0));
+    this.endGroup(keyValueGrp);
+    if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
+      this._visit(ctx.WHERE());
+      const whereIndent = this.addIndentation();
+      this._visit(ctx._whereExp);
+      this.removeIndentation(whereIndent);
+      this.endGroup(whereGrp);
+    }
+
+    this._visit(ctx.BAR());
+    const barGrp = this.startGroup();
+    this.avoidBreakBetween();
+    this._visit(ctx._keyExp);
+
+    this._visit(ctx.COLON());
+    this._visit(ctx._valueExp);
+
+    this.removeIndentation(mapIndent);
+    this.endGroup(barGrp);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RCURLY(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(mapComprehensionGrp);
+  };
+
+  visitMapComprehensionForMap = (ctx: MapComprehensionForMapContext) => {
+    const mapComprehensionGrp = this.startGroup();
+    this._visit(ctx.LCURLY());
+    const mapIndent = this.addIndentation();
+    const keyValueGrp = this.startGroup();
+    this._visit(ctx._keyVar);
+    const mapValueIndent = this.addIndentation();
+    this._visitTerminalRaw(ctx.COLON(0));
+    this._visit(ctx._valueVar);
+    this.removeIndentation(mapValueIndent);
+    this.endGroup(keyValueGrp);
+    this._visit(ctx.IN());
+    this._visit(ctx.expression(0));
+
+    if (ctx.WHERE()) {
+      const whereGrp = this.startGroup();
+      this._visit(ctx.WHERE());
+      const whereIndent = this.addIndentation();
+      this._visit(ctx._whereExp);
+      this.removeIndentation(whereIndent);
+      this.endGroup(whereGrp);
+    }
+
+    this._visit(ctx.BAR());
+    const barGrp = this.startGroup();
+
+    this.avoidBreakBetween();
+    this._visit(ctx._keyExp);
+
+    this._visit(ctx.COLON(1));
+    this._visit(ctx._valueExp);
+
+    this.endGroup(barGrp);
+    this.removeIndentation(mapIndent);
+    this.avoidSpaceBetween();
+    this._visitTerminalRaw(ctx.RCURLY(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(mapComprehensionGrp);
   };
 
   visitMapProjectionElement = (ctx: MapProjectionElementContext) => {
