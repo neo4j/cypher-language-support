@@ -2,7 +2,7 @@ import type { Record as Neo4jRecord } from 'neo4j-driver';
 import { Node, Path, PathSegment, Relationship } from 'neo4j-driver';
 
 import { describe, expect, test } from 'vitest';
-import { extractUniqueNodesAndRels } from './extract-unique-nodes-and-relationships.js';
+import { extractUniqueNodesAndRels } from '../../../cypher-execution/extract-unique-nodes-and-relationships.js';
 
 describe('extractNodesAndRels', () => {
   test('should map bolt records with a path to nodes and relationships', () => {
