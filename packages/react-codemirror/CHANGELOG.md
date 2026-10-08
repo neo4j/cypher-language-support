@@ -1,5 +1,19 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.42
+
+### Patch Changes
+
+- 8b991d6: Support function/procedure/variable hover in codemirror
+  In re-exported language support: Hover - Return structured `hoverInfo` instead of vscode-languageserver-types `Hover`. Breaking for dependants
+- a42578c: Make signature help use same highlighting as hover signature.
+- 8ed272e: Adds a `contentAttributes` prop to the CypherEditor component to set extra attributes (e.g. `aria-invalid`, `aria-describedby`) on the editable content element
+- Updated dependencies [b510128]
+- Updated dependencies [8b991d6]
+- Updated dependencies [b510128]
+  - @neo4j-cypher/language-support@2.0.0-next.39
+  - @neo4j-cypher/lint-worker@1.10.1-next.16
+
 ## 2.0.0-next.41
 
 ### Minor Changes
