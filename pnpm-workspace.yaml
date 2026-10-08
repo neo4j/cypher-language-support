@@ -18,3 +18,5 @@ minimumReleaseAgeExclude:
   - glob@11.1.0
   # Renovate security update: postcss@8.5.23
   - postcss@8.5.23
+  # Renovate security update: prismjs@1.30.0
+  - prismjs@1.30.0
