@@ -10,7 +10,7 @@ const baseURL = `http://localhost:${PORT}`;
  * breakage (e.g. mis-ordered CJS side effects) never shows up there.
  */
 export default defineConfig({
-  testDir: './e2e',
+  testDir: './tests/e2e',
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   reporter: 'html',

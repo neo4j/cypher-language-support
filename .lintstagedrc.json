@@ -1,8 +1,14 @@
 {
-  "*.tsx": ["oxfmt", "oxlint --fix --max-warnings 0"],
-  "*.jsx": ["oxlint --fix --max-warnings 0"],
-  "*.ts": ["oxfmt", "oxlint --fix --max-warnings 0"],
-  "*.js": ["oxlint --fix --max-warnings 0"],
+  "*.tsx": [
+    "oxfmt",
+    "oxlint --fix --max-warnings 0 --no-error-on-unmatched-pattern"
+  ],
+  "*.jsx": ["oxlint --fix --max-warnings 0 --no-error-on-unmatched-pattern"],
+  "*.ts": [
+    "oxfmt",
+    "oxlint --fix --max-warnings 0 --no-error-on-unmatched-pattern"
+  ],
+  "*.js": ["oxlint --fix --max-warnings 0 --no-error-on-unmatched-pattern"],
   "*(!cypher).json": ["oxfmt"],
   "*(!pnpm-lock).yaml": ["oxfmt"],
   "*.yml": ["oxfmt"]

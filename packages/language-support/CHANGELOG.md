@@ -1,5 +1,16 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.39
+
+### Minor Changes
+
+- 8b991d6: Hover: Return structured `hoverInfo` instead of vscode-languageserver-types `Hover`. Breaking for dependants
+
+### Patch Changes
+
+- b510128: Update grammar and semantic analysis to 2026.10
+- b510128: Add fallback when transpiled linter produces errors with faulty positions
+
 ## 2.0.0-next.38
 
 ### Minor Changes

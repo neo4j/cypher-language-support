@@ -25,7 +25,7 @@ pnpm build-vscode     # build only the VS Code extension and its dependencies
 Run a single Vitest file or test by name from the repository root:
 
 ```sh
-pnpm vitest run packages/language-support/src/tests/lexer.test.ts
+pnpm vitest run packages/language-support/src/tests/unit/lexer.test.ts
 pnpm vitest run -t "test name substring"
 ```
 
