@@ -38,7 +38,7 @@
     "check-api-report": "tsx checkApiReport.ts",
     "gen-api-report": "pnpm build && pnpm check-api-report",
     "clean": "rm -rf dist tsconfig*.tsbuildinfo",
-    "test": "vitest run",
+    "test:unit": "vitest run",
     "test:e2e": "playwright test -c playwright-ct.config.ts",
     "test:e2e-ui": "playwright test -c playwright-ct.config.ts --ui"
   },
