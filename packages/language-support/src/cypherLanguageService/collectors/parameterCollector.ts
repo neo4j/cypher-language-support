@@ -1,6 +1,6 @@
 import type { ParseTreeListener } from 'antlr4ng';
 import { ParameterContext } from '../../generated-parser/CypherCmdParser.js';
-import type { ParsedParameter } from '../types.js';
+import type { ParsedParameter } from '../parsingTypes.js';
 
 export class ParameterCollector implements ParseTreeListener {
   parameters: ParsedParameter[] = [];

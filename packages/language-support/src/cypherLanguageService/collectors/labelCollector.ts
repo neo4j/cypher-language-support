@@ -6,8 +6,8 @@ import {
 import { inNodeLabel, inRelationshipType, isDefined } from '../../helpers.js';
 import { couldCreateNewLabel } from '../utils/couldCreateNewLabel.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
-import type { LabelOrRelType } from '../types.js';
-import { LabelType } from '../types.js';
+import type { LabelOrRelType } from '../parsingTypes.js';
+import { LabelType } from '../parsingTypes.js';
 
 /** This listener collects all labels and relationship types in read operations */
 export class ReadLabelAndRelTypesCollector implements ParseTreeListener {

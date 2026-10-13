@@ -44,7 +44,7 @@ import type {
   ParsedFunction,
   ParsedProcedure,
   PropertyType,
-} from './types.js';
+} from './parsingTypes.js';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
 export interface ParsedStatement {
@@ -177,6 +177,18 @@ export function createParsingResult(
       parser.addParseListener(readPatternElementsCollector);
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
+
+      // ParseTreeWalker.DEFAULT.walk(labelsCollector, ctx);
+      // ParseTreeWalker.DEFAULT.walk(parameterFinder, ctx);
+      // ParseTreeWalker.DEFAULT.walk(variableFinder, ctx);
+      // ParseTreeWalker.DEFAULT.walk(methodsFinder, ctx);
+      // ParseTreeWalker.DEFAULT.walk(cypherVersionCollector, ctx);
+      // ParseTreeWalker.DEFAULT.walk(propertiesFinder, ctx);
+      // ParseTreeWalker.DEFAULT.walk(readPatternElementsCollector, ctx);
+
+      // // ParseTreeWalker.DEFAULT.walk(variableFinder, ctx);
+      // // ParseTreeWalker.DEFAULT.walk(labelsCollector, ctx);
+
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
         tokens.find(

@@ -9,7 +9,7 @@ import {
 } from '../../generated-parser/CypherCmdParser.js';
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
-import type { PropertyType } from '../types.js';
+import type { PropertyType } from '../parsingTypes.js';
 
 // This listener collects all properties in read operations
 export class PropertiesCollector implements ParseTreeListener {

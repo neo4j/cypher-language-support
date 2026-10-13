@@ -29,8 +29,8 @@ import type {
   ParsedParameter,
   PropertyType,
   ParsedFunction,
-} from '../cypherLanguageService/types.js';
-import { LabelType } from '../cypherLanguageService/types.js';
+} from '../cypherLanguageService/parsingTypes.js';
+import { LabelType } from '../cypherLanguageService/parsingTypes.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
