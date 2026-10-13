@@ -4,7 +4,7 @@ This package contains the core language support features for Cypher built with A
 
 ## Usage
 
-The API is not yet properly documented, but here are two simple examples of what you can do!
+Here are some simple examples of what you can do!
 
 `npm install @neo4j-cypher/language-support@next`
 
@@ -13,16 +13,46 @@ import {
   autocomplete,
   validateSyntax,
   DbSchema,
+  CypherLanguageService
 } from '@neo4j-cypher/language-support';
 
 const schema: DbSchema = { labels: ['Person'] };
+const languageService = new CypherLanguageService();
 
-autocomplete('MATCH (n:', schema); // yields CompletionItem[] containing "Person"
+languageService.autocomplete('MATCH (n:', schema); // yields CompletionItem[] containing "Person"
 
-validateSyntax('RETRN 123', schema); // yields SyntaxDiagnostic[] with Invalid keyword, did you mean RETURN?
+languageService.lint('RETRN 123', schema); // yields SyntaxDiagnostic[] with Invalid keyword, did you mean RETURN?
 ```
 
-## Generating your own parser from the Cypher grammars
+`CypherLanguageService` also provides helpers to provide syntax highlighting, hover information and signature help.
+
+[API-reference](https://github.com/neo4j/cypher-language-support/blob/main/packages/language-support/api-extractor/api-report.api.md)
+
+
+## Cypherfmt CLI
+
+This package includes a command-line tool for formatting Cypher queries using `cypherfmt`. After installation, you can use it via the `cypherfmt` command:
+
+```bash
+# Format a file and output to stdout
+cypherfmt file.cy
+
+# Format a file in place
+cypherfmt -i file.cy
+
+# Check if a file is formatted correctly (exits with code 1 if not formatted correctly)
+cypherfmt -c file.cy
+
+# Format all .cy, .cyp, and .cypher files in a directory recursively
+cypherfmt directory/
+
+# Format input from stdin
+cat file.cy | cypherfmt
+```
+
+For more information, run `cypherfmt --help`.
+
+## Parsing Cypher with ANTLR using our grammars
 
 This package no longer exports the generated ANTLR lexer/parser classes. If you need to
 parse Cypher yourself, the ANTLR4 grammar files ship with the package and can be
@@ -94,26 +124,3 @@ Some caveats:
 - Only TypeScript output is generated, so this requires a TypeScript build step.
 - `Cypher25Lexer.g4` and `Cypher25Parser.g4` track Neo4j's internal grammar and are
   updated roughly monthly, so rule and token names can change between releases.
-
-## Cypherfmt CLI
-
-This package includes a command-line tool for formatting Cypher queries using `cypherfmt`. After installation, you can use it via the `cypherfmt` command:
-
-```bash
-# Format a file and output to stdout
-cypherfmt file.cy
-
-# Format a file in place
-cypherfmt -i file.cy
-
-# Check if a file is formatted correctly (exits with code 1 if not formatted correctly)
-cypherfmt -c file.cy
-
-# Format all .cy, .cyp, and .cypher files in a directory recursively
-cypherfmt directory/
-
-# Format input from stdin
-cat file.cy | cypherfmt
-```
-
-For more information, run `cypherfmt --help`.
