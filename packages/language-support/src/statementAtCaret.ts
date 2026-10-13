@@ -1,4 +1,4 @@
-import { createParsingResult } from './cypherLanguageService.js';
+import { createParsingResult } from './cypherLanguageService/cypherLanguageService.js';
 
 /**
  * Returns the text of the statement containing the caret.

@@ -1,6 +1,6 @@
 import type { ParseTree } from 'antlr4ng';
 import { ParserRuleContext } from 'antlr4ng';
-import type { ParsingResult } from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
 import { VariableContext } from '../generated-parser/CypherCmdParser.js';
 import { findCaret } from '../helpers.js';
 import type { SymbolsInfo, Symbol } from '../types.js';

@@ -50,8 +50,8 @@ import { SemanticTokenTypes } from 'vscode-languageserver-types';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import { CypherCmdParserListener as CypherParserListener } from '../generated-parser/CypherCmdParserListener.js';
 import { CypherTokenType } from '../lexerSymbols.js';
-import type { ParsingResult } from '../cypherLanguageService.js';
-import { createParsingResult } from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
+import { createParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
 import type { ParsedCypherToken } from './syntaxHighlightingHelper.js';
 import {
   BracketType,

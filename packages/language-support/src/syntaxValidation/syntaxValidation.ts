@@ -10,16 +10,6 @@ import type { TextDocument } from 'vscode-languageserver-textdocument';
 import type { DbSchema } from '../dbSchema.js';
 import { resolveCypherVersion } from '../helpers.js';
 import type {
-  LabelOrRelType,
-  ParsedFunction,
-  ParsedParameter,
-  ParsedProcedure,
-  ParsedStatement,
-  ParsingResult,
-  PropertyType,
-} from '../cypherLanguageService.js';
-import { LabelType, createParsingResult } from '../cypherLanguageService.js';
-import type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
@@ -28,6 +18,19 @@ import type {
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
+import type {
+  ParsedStatement,
+  ParsingResult,
+} from '../cypherLanguageService/cypherLanguageService.js';
+import { createParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
+import type {
+  LabelOrRelType,
+  ParsedProcedure,
+  ParsedParameter,
+  PropertyType,
+  ParsedFunction,
+} from '../cypherLanguageService/types.js';
+import { LabelType } from '../cypherLanguageService/types.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

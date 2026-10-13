@@ -16,7 +16,7 @@ import {
 import type {
   ParsedStatement,
   ParsingResult,
-} from './cypherLanguageService.js';
+} from './cypherLanguageService/cypherLanguageService.js';
 import type { CypherVersion } from './types.js';
 
 export function findStopNode(root: StatementsOrCommandsContext) {

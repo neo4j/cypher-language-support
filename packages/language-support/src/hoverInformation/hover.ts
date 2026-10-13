@@ -1,4 +1,4 @@
-import type { ParsingResult } from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
 import type { DbSchema } from '../dbSchema.js';
 import { getMethodSignature, MethodType } from '../signatureHelp.js';
 import type { Neo4jFunction, Neo4jProcedure, SymbolsInfo } from '../types.js';

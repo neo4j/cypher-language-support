@@ -26,7 +26,7 @@ export {
   parseParameters,
   CypherLanguageService,
   parseStatementsStrs,
-} from './cypherLanguageService.js';
+} from './cypherLanguageService/cypherLanguageService.js';
 export { getStatementAtCaret } from './statementAtCaret.js';
 export {
   getSignatureInfo as signatureHelp,

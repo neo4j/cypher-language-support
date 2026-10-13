@@ -1,59 +1,51 @@
-import type { ParserRuleContext, ParseTreeListener } from 'antlr4ng';
+import type { ParserRuleContext } from 'antlr4ng';
 import {
-  ParseTreeWalker,
   CharStream,
   CommonTokenStream,
   ListTokenSource,
   Token,
 } from 'antlr4ng';
 
-import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
+import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 
-import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { ErrorTrackingStrategy } from './errorTrackingStrategy.js';
-import { _internalFeatureFlags } from './featureFlags.js';
+import { ErrorTrackingStrategy } from '../errorTrackingStrategy.js';
+import { _internalFeatureFlags } from '../featureFlags.js';
 import type {
   StatementOrCommandContext,
   StatementsOrCommandsContext,
   SymbolicNameStringContext,
-} from './generated-parser/CypherCmdParser.js';
-import {
-  ClauseContext,
-  CypherVersionContext,
-  CypherCmdParser as CypherParser,
   FunctionNameContext,
-  LabelNameContext,
-  LabelOrRelTypeContext,
-  ParameterContext,
   ProcedureNameContext,
-  ProcedureResultItemContext,
-  VariableContext,
-  PropertyKeyNameContext,
-  Expression2Context,
   PatternElementContext,
-  NodePatternContext,
-  RelationshipPatternContext,
-} from './generated-parser/CypherCmdParser.js';
-import {
-  findParent,
-  findStopNode,
-  inNodeLabel,
-  inRelationshipType,
-  isDefined,
-  rulesDefiningOrUsingVariables,
-  splitIntoStatements,
-} from './helpers.js';
-import type { SyntaxDiagnostic } from './syntaxValidation/syntaxValidation.js';
-import { lintCypherQueryWithParsingResult } from './syntaxValidation/syntaxValidation.js';
-import { SyntaxErrorsListener } from './syntaxValidation/syntaxValidationHelpers.js';
-import type { CypherVersion, SymbolsInfo, SymbolTable } from './types.js';
-import { cypherVersionNumbers, allCypherVersions } from './types.js';
-import type { DbSchema } from './dbSchema.js';
-import { getSignatureInfoWithParsingResult } from './signatureHelp.js';
-import { highlightSyntaxWithParsingResult } from './syntaxHighlighting/syntaxHighlighting.js';
-import { autocompleteWithParsingResult } from './autocompletion/autocompletion.js';
-import type { HoverInfo } from './hoverInformation/hover.js';
-import { getHoverInfo } from './hoverInformation/hover.js';
+} from '../generated-parser/CypherCmdParser.js';
+import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
+import { findStopNode, splitIntoStatements } from '../helpers.js';
+import type { SyntaxDiagnostic } from '../syntaxValidation/syntaxValidation.js';
+import { lintCypherQueryWithParsingResult } from '../syntaxValidation/syntaxValidation.js';
+import { SyntaxErrorsListener } from '../syntaxValidation/syntaxValidationHelpers.js';
+import type { CypherVersion, SymbolsInfo, SymbolTable } from '../types.js';
+import type { DbSchema } from '../dbSchema.js';
+import { getSignatureInfoWithParsingResult } from '../signatureHelp.js';
+import { highlightSyntaxWithParsingResult } from '../syntaxHighlighting/syntaxHighlighting.js';
+import { autocompleteWithParsingResult } from '../autocompletion/autocompletion.js';
+import type { HoverInfo } from '../hoverInformation/hover.js';
+import { getHoverInfo } from '../hoverInformation/hover.js';
+import { PropertiesCollector } from './collectors/propertiesCollector.js';
+import { ReadLabelAndRelTypesCollector } from './collectors/labelCollector.js';
+import { VariableCollector } from './collectors/variableCollector.js';
+import { MethodsCollector } from './collectors/methodsCollector.js';
+import { CypherVersionCollector } from './collectors/versionCollector.js';
+import { ParameterCollector } from './collectors/parameterCollector.js';
+import { ReadPatternElementsCollector } from './collectors/readPatternElementsCollector.js';
+import { translateTokensToRange } from './utils/translateTokenToRange.js';
+import type {
+  LabelOrRelType,
+  ParsedParameter,
+  ParsedFunction,
+  ParsedProcedure,
+  PropertyType,
+} from './types.js';
+import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -91,66 +83,6 @@ interface StatementParsingScaffolding {
   tokenStream: CommonTokenStream;
   tokens: Token[];
 }
-
-export enum LabelType {
-  nodeLabelType = 'Label',
-  relLabelType = 'Relationship type',
-  unknown = 'Label or relationship type',
-}
-
-function getLabelType(ctx: ParserRuleContext): LabelType {
-  if (inNodeLabel(ctx)) return LabelType.nodeLabelType;
-  else if (inRelationshipType(ctx)) return LabelType.relLabelType;
-  else return LabelType.unknown;
-}
-
-function couldCreateNewLabel(ctx: ParserRuleContext): boolean {
-  const parent = findParent(ctx, (ctx) => ctx instanceof ClauseContext);
-
-  if (parent instanceof ClauseContext) {
-    const clause = parent;
-    return Boolean(
-      clause.mergeClause() || clause.createClause() || clause.insertClause(),
-    );
-  } else {
-    return false;
-  }
-}
-
-type HasPosition = {
-  line: number;
-  column: number;
-  offsets: {
-    start: number;
-    end: number;
-  };
-};
-
-export type LabelOrRelType = HasPosition & {
-  labelType: LabelType;
-  labelText: string;
-};
-
-export type PropertyType = HasPosition & {
-  propertyName: string;
-  variable?: {
-    name: string;
-    start: number;
-  };
-  type: 'read' | 'write';
-};
-
-export type ParsedParameter = HasPosition & {
-  name: string;
-  rawText: string;
-};
-
-export type ParsedFunction = HasPosition & {
-  name: string;
-  rawText: string;
-};
-
-export type ParsedProcedure = ParsedFunction;
 
 function getStatementTokenChunks(query: string): Token[][] {
   const inputStream = CharStream.fromString(query);
@@ -298,22 +230,6 @@ const getClearParamName = (name: string): string => {
   return name;
 };
 
-function hasErrorNodesUnder(ctx: ParserRuleContext): boolean {
-  let found: boolean = false;
-  ParseTreeWalker.DEFAULT.walk(
-    {
-      visitTerminal() {},
-      visitErrorNode() {
-        found = true;
-      },
-      enterEveryRule() {},
-      exitEveryRule() {},
-    },
-    ctx,
-  );
-  return found;
-}
-
 export function parseParameters(
   query: string,
   consoleCommandsEnabled: boolean,
@@ -323,281 +239,6 @@ export function parseParameters(
     statement.collectedParameters.map((param) => getClearParamName(param.name)),
   );
   return [...new Set(parameters)];
-}
-
-/** This listener collects all labels and relationship types in read operations */
-class ReadLabelAndRelTypesCollector implements ParseTreeListener {
-  labelOrRelTypes: LabelOrRelType[] = [];
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof LabelNameContext) {
-      // If the parser recovered from an error reading the label
-      // like in the case MATCH (n:) RETURN n
-      // RETURN would be incorrectly idenfified as the label
-      // If this is the case, the context containing the label would have an error node
-      if (
-        ctx.parent &&
-        !hasErrorNodesUnder(ctx.parent) &&
-        !couldCreateNewLabel(ctx)
-      ) {
-        this.labelOrRelTypes.push({
-          labelType: getLabelType(ctx),
-          labelText: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
-          offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
-          },
-        });
-      }
-    } else if (ctx instanceof LabelOrRelTypeContext) {
-      const symbolicName = ctx.symbolicNameString();
-      // Read comment for the label name case
-      if (
-        isDefined(symbolicName) &&
-        ctx.parent &&
-        !hasErrorNodesUnder(ctx.parent) &&
-        !couldCreateNewLabel(ctx)
-      ) {
-        this.labelOrRelTypes.push({
-          labelType: getLabelType(ctx),
-          labelText: symbolicName.start.text,
-          line: symbolicName.start.line,
-          column: symbolicName.start.column,
-          offsets: {
-            start: symbolicName.start.start,
-            end: symbolicName.stop.stop + 1,
-          },
-        });
-      }
-    }
-  }
-}
-
-// This listener collects all properties in read operations
-class PropertiesCollector implements ParseTreeListener {
-  properties: PropertyType[] = [];
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof PropertyKeyNameContext) {
-      if (ctx.parent && !hasErrorNodesUnder(ctx.parent)) {
-        const parentClause = findParent(
-          ctx,
-          (ctx) => ctx instanceof ClauseContext,
-        );
-        if (parentClause instanceof ClauseContext) {
-          const isRead = this.isReadClause(parentClause);
-          const isWrite = this.isWriteClause(parentClause);
-
-          if (isRead || isWrite) {
-            const variable = this.getPropertyVariable(ctx);
-
-            const propertyName = ctx.getText().replace(/^`|`$/g, '');
-
-            this.properties.push({
-              propertyName,
-              variable,
-              line: ctx.start.line,
-              column: ctx.start.column,
-              offsets: {
-                start: ctx.start.start,
-                end: ctx.stop.stop + 1,
-              },
-              type: isWrite ? 'write' : 'read',
-            });
-          }
-        }
-      }
-    }
-  }
-
-  private getPropertyVariable(
-    ctx: PropertyKeyNameContext,
-  ): { name: string; start: number } | undefined {
-    const varCtx =
-      this.getVariableFromPatternProperty(ctx) ??
-      this.getVariableFromPropertyAccess(ctx);
-
-    if (varCtx) {
-      return {
-        name: varCtx.getText(),
-        start: varCtx.start.start,
-      };
-    }
-
-    return undefined;
-  }
-
-  private getVariableFromPatternProperty(
-    ctx: PropertyKeyNameContext,
-  ): VariableContext | undefined {
-    const patternElement = findParent(ctx, (ctx) => {
-      return (
-        ctx instanceof NodePatternContext ||
-        ctx instanceof RelationshipPatternContext
-      );
-    });
-    if (
-      patternElement instanceof NodePatternContext ||
-      patternElement instanceof RelationshipPatternContext
-    ) {
-      return patternElement.variable();
-    }
-    return undefined;
-  }
-
-  private getVariableFromPropertyAccess(
-    ctx: PropertyKeyNameContext,
-  ): VariableContext | undefined {
-    const propertyAccessExpr = findParent(
-      ctx,
-      (ctx) => ctx instanceof Expression2Context,
-    );
-    if (propertyAccessExpr instanceof Expression2Context) {
-      return propertyAccessExpr.expression1().variable();
-    }
-
-    return undefined;
-  }
-
-  /** Checks if a parent clause is writable for properties */
-  private isWriteClause(clause: ClauseContext): boolean {
-    return Boolean(
-      clause.mergeClause() ||
-      clause.createClause() ||
-      clause.insertClause() ||
-      clause.setClause() ||
-      clause.removeClause(),
-    );
-  }
-
-  /** Checks if a parent clause is readonly for properties */
-  private isReadClause(clause: ClauseContext): boolean {
-    return Boolean(
-      clause.matchClause() || clause.withClause() || clause.returnClause(),
-    );
-  }
-}
-
-class ParameterCollector implements ParseTreeListener {
-  parameters: ParsedParameter[] = [];
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof ParameterContext) {
-      const parameterName = ctx.parameterName().getText();
-      if (parameterName) {
-        this.parameters.push({
-          name: parameterName,
-          rawText: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
-          offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
-          },
-        });
-      }
-    }
-  }
-}
-
-// This class is collects all variables detected by the parser which means
-// it does include variable scope nor differentiate between variable use and definition
-// we use it when the semantic anaylsis result is not available
-class VariableCollector implements ParseTreeListener {
-  variables: string[] = [];
-  private tokenStream: CommonTokenStream;
-
-  constructor(tokenStream: CommonTokenStream) {
-    this.tokenStream = tokenStream;
-  }
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof VariableContext) {
-      const variable = ctx.symbolicVariableNameString().getText();
-      // To avoid suggesting the variable that is currently being typed
-      // For example RETURN a| <- we don't want to suggest "a" as a variable
-      // We check if the variable is in the end of the statement
-      const nextTokenIndex = ctx.stop?.tokenIndex;
-
-      const nextTokenIsEOF =
-        nextTokenIndex !== undefined &&
-        this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
-
-      const definesVariable = rulesDefiningOrUsingVariables.includes(
-        ctx.parent?.ruleIndex,
-      );
-
-      if (variable && !nextTokenIsEOF && definesVariable) {
-        this.variables.push(variable);
-      }
-    }
-    if (ctx instanceof ProcedureResultItemContext) {
-      const variable = ctx.getText();
-      if (variable) {
-        this.variables.push(variable);
-      }
-    }
-  }
-}
-
-class ReadPatternElementsCollector implements ParseTreeListener {
-  readPatternElements: PatternElementContext[] = [];
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof PatternElementContext && !couldCreateNewLabel(ctx)) {
-      this.readPatternElements.push(ctx);
-    }
-  }
 }
 
 export function getMethodName(
@@ -625,99 +266,6 @@ function getNamespaceString(ctx: SymbolicNameStringContext): string {
   }
 
   return text;
-}
-
-// This listener collects all functions and procedures
-class MethodsCollector implements ParseTreeListener {
-  public procedures: ParsedProcedure[] = [];
-  public functions: ParsedFunction[] = [];
-  private tokens: Token[];
-
-  constructor(tokens: Token[]) {
-    this.tokens = tokens;
-  }
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (
-      ctx instanceof FunctionNameContext ||
-      ctx instanceof ProcedureNameContext
-    ) {
-      const methodName = getMethodName(ctx);
-
-      const startTokenIndex = ctx.start.tokenIndex;
-      const stopTokenIndex = ctx.stop.tokenIndex;
-
-      const rawText = this.tokens
-        .slice(startTokenIndex, stopTokenIndex + 1)
-        .map((token) => {
-          return token.text;
-        })
-        .join('');
-
-      const result = {
-        name: methodName,
-        rawText: rawText,
-        line: ctx.start.line,
-        column: ctx.start.column,
-        offsets: {
-          start: ctx.start.start,
-          end: ctx.stop.stop + 1,
-        },
-      };
-
-      if (ctx instanceof FunctionNameContext) {
-        this.functions.push(result);
-      } else {
-        this.procedures.push(result);
-      }
-    }
-  }
-}
-
-class CypherVersionCollector implements ParseTreeListener {
-  public cypherVersion: CypherVersion;
-  public invalidVersionError: SyntaxDiagnostic;
-
-  enterEveryRule() {
-    /* no-op */
-  }
-  visitTerminal() {
-    /* no-op */
-  }
-  visitErrorNode() {
-    /* no-op */
-  }
-
-  exitEveryRule(ctx: unknown) {
-    if (ctx instanceof CypherVersionContext) {
-      const parsedVersion = 'CYPHER ' + ctx.getText();
-      allCypherVersions.forEach((validVersion) => {
-        if (parsedVersion === validVersion) {
-          this.cypherVersion = parsedVersion;
-        }
-      });
-      if (!this.cypherVersion) {
-        this.invalidVersionError = {
-          message:
-            ctx.getText() +
-            ' is not a valid option for cypher version. Valid options are: ' +
-            cypherVersionNumbers.join(', '),
-          severity: DiagnosticSeverity.Error,
-          ...translateTokensToRange(ctx.start, ctx.stop),
-        };
-      }
-    }
-  }
 }
 
 type RuleTokens = {
@@ -980,22 +528,6 @@ function parseToCommand(
     return { type: 'cypher', statement, start: start, stop: stopToken };
   }
   return { type: 'parse-error', start: stmts.start, stop: stmts.stop };
-}
-
-export function translateTokensToRange(
-  start: Token,
-  stop: Token,
-): Pick<SyntaxDiagnostic, 'range' | 'offsets'> {
-  return {
-    range: {
-      start: Position.create(start.line - 1, start.column),
-      end: Position.create(stop.line - 1, stop.column + stop.text.length),
-    },
-    offsets: {
-      start: start.start,
-      end: stop.stop + 1,
-    },
-  };
 }
 
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
