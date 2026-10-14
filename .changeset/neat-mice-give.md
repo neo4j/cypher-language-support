@@ -3,4 +3,4 @@
 "@neo4j-cypher/lint-worker": patch
 ---
 
-Fix linter crashing on firefox
+Fix linter crashing on firefox with "Worker is terminated"
