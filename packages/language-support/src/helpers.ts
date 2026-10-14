@@ -1,6 +1,11 @@
 import type { ParserRuleContext, ParseTree, Token } from 'antlr4ng';
 import type { DbSchema } from './dbSchema.js';
-import type { StatementsOrCommandsContext } from './generated-parser/CypherCmdParser.js';
+import type {
+  FunctionNameContext,
+  ProcedureNameContext,
+  StatementsOrCommandsContext,
+  SymbolicNameStringContext,
+} from './generated-parser/CypherCmdParser.js';
 import {
   CypherCmdParser as CypherParser,
   NodePatternContext,
@@ -176,3 +181,30 @@ export const rulesDefiningOrUsingVariables = [
   CypherParser.RULE_nodePattern,
   CypherParser.RULE_relationshipPattern,
 ];
+
+export function getMethodName(
+  ctx: ProcedureNameContext | FunctionNameContext,
+): string {
+  const namespaces = ctx.namespace().symbolicNameString();
+  const methodName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, methodName]
+    .map((symbolicName) => {
+      return getNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
+}

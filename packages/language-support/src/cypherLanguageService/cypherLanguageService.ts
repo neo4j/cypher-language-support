@@ -1,9 +1,4 @@
 import { _internalFeatureFlags } from '../featureFlags.js';
-import type {
-  SymbolicNameStringContext,
-  FunctionNameContext,
-  ProcedureNameContext,
-} from '../generated-parser/CypherCmdParser.js';
 import { lintCypherQueryWithParsingResult } from '../syntaxValidation/syntaxValidation.js';
 import type { SymbolsInfo, SymbolTable } from '../types.js';
 import type { DbSchema } from '../dbSchema.js';
@@ -14,33 +9,6 @@ import type { HoverInfo } from '../hoverInformation/hover.js';
 import { getHoverInfo } from '../hoverInformation/hover.js';
 import type { ParsingResult } from './parser/parser.js';
 import { createParsingResult } from './parser/parser.js';
-
-export function getMethodName(
-  ctx: ProcedureNameContext | FunctionNameContext,
-): string {
-  const namespaces = ctx.namespace().symbolicNameString();
-  const methodName = ctx.symbolicNameString();
-
-  const normalizedName = [...namespaces, methodName]
-    .map((symbolicName) => {
-      return getNamespaceString(symbolicName);
-    })
-    .join('.');
-
-  return normalizedName;
-}
-
-function getNamespaceString(ctx: SymbolicNameStringContext): string {
-  const text = ctx.getText();
-  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
-  const hasDot = text.includes('.');
-
-  if (isEscaped && !hasDot) {
-    return text.slice(1, -1);
-  }
-
-  return text;
-}
 
 export class CypherLanguageService {
   private parsingResult?: ParsingResult;

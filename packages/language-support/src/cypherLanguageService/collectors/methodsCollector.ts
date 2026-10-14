@@ -3,8 +3,8 @@ import {
   FunctionNameContext,
   ProcedureNameContext,
 } from '../../generated-parser/CypherCmdParser.js';
-import { getMethodName } from '../cypherLanguageService.js';
 import type { ParsedFunction, ParsedProcedure } from '../parsingTypes.js';
+import { getMethodName } from '../../helpers.js';
 
 // This listener collects all functions and procedures
 export class MethodsCollector implements ParseTreeListener {

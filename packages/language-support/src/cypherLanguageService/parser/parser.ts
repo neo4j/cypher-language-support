@@ -4,7 +4,6 @@ import type {
   StatementOrCommandContext,
   StatementsOrCommandsContext,
 } from '../../generated-parser/CypherCmdParser.js';
-import { findStopNode } from '../../helpers.js';
 import { SyntaxErrorsListener } from '../../syntaxValidation/syntaxValidationHelpers.js';
 import { ReadLabelAndRelTypesCollector } from '../collectors/labelCollector.js';
 import { MethodsCollector } from '../collectors/methodsCollector.js';
@@ -32,6 +31,7 @@ import type {
   ParsedProcedure,
   PropertyType,
 } from '../parsingTypes.js';
+import { findStopNode } from '../../helpers.js';
 
 type RuleTokens = {
   start: Token;
