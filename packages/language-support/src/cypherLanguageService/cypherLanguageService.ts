@@ -1,10 +1,5 @@
-import type { ParserRuleContext } from 'antlr4ng';
-import {
-  CharStream,
-  CommonTokenStream,
-  ListTokenSource,
-  Token,
-} from 'antlr4ng';
+import type { ParserRuleContext, CommonTokenStream } from 'antlr4ng';
+import { Token } from 'antlr4ng';
 
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 
@@ -18,8 +13,8 @@ import type {
   ProcedureNameContext,
   PatternElementContext,
 } from '../generated-parser/CypherCmdParser.js';
-import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
-import { findStopNode, splitIntoStatements } from '../helpers.js';
+import type { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
+import { findStopNode } from '../helpers.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation/syntaxValidation.js';
 import { lintCypherQueryWithParsingResult } from '../syntaxValidation/syntaxValidation.js';
 import { SyntaxErrorsListener } from '../syntaxValidation/syntaxValidationHelpers.js';
@@ -46,6 +41,10 @@ import type {
   PropertyType,
 } from './parsingTypes.js';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
+import {
+  createParsingScaffolding,
+  getStatementTokenChunks,
+} from './parserScaffolding.js';
 
 export interface ParsedStatement {
   command: ParsedCommand;
@@ -71,49 +70,6 @@ export interface ParsedStatement {
 export interface ParsingResult {
   query: string;
   statementsParsing: ParsedStatement[];
-}
-
-interface ParsingScaffolding {
-  query: string;
-  statementsScaffolding: StatementParsingScaffolding[];
-}
-
-interface StatementParsingScaffolding {
-  parser: CypherParser;
-  tokenStream: CommonTokenStream;
-  tokens: Token[];
-}
-
-function getStatementTokenChunks(query: string): Token[][] {
-  const inputStream = CharStream.fromString(query);
-  const lexer = new CypherLexer(inputStream);
-  const tokenStream = new CommonTokenStream(lexer);
-
-  return splitIntoStatements(tokenStream);
-}
-
-function createParsingScaffolding(query: string): ParsingScaffolding {
-  const statementChunks = getStatementTokenChunks(query);
-
-  const statementsScaffolding: StatementParsingScaffolding[] =
-    statementChunks.map((tokens) => {
-      const statementStream = new CommonTokenStream(
-        new ListTokenSource(tokens),
-      );
-      const parser = new CypherParser(statementStream);
-      parser.removeErrorListeners();
-
-      return {
-        parser: parser,
-        tokenStream: statementStream,
-        tokens: tokens,
-      };
-    });
-
-  return {
-    query: query,
-    statementsScaffolding: statementsScaffolding,
-  };
 }
 
 export function parseStatementsStrs(query: string): string[] {
@@ -575,6 +531,7 @@ export class CypherLanguageService {
       const parsingResult = createParsingResult(query, {
         consoleCommandsEnabled: this.consoleCommandsEnabled,
       });
+      // this.parsingResult=parsingResult
       return parsingResult;
     }
   }

@@ -1,12 +1,5 @@
-import type {
-  CommonTokenStream,
-  ParserRuleContext,
-  ParseTree,
-  Token,
-} from 'antlr4ng';
-import { CommonToken } from 'antlr4ng';
+import type { ParserRuleContext, ParseTree, Token } from 'antlr4ng';
 import type { DbSchema } from './dbSchema.js';
-import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
 import type { StatementsOrCommandsContext } from './generated-parser/CypherCmdParser.js';
 import {
   CypherCmdParser as CypherParser,
@@ -107,34 +100,6 @@ export function findCaret(
 
       j++;
     }
-    i++;
-  }
-
-  return result;
-}
-
-export function splitIntoStatements(tokenStream: CommonTokenStream): Token[][] {
-  tokenStream.fill();
-  const tokens = tokenStream.getTokens();
-
-  let i = 0;
-  const result: Token[][] = [];
-  let chunk: Token[] = [];
-
-  while (i < tokens.length) {
-    const current = CommonToken.fromToken(tokens[i]);
-    current.tokenIndex = chunk.length;
-
-    chunk.push(current);
-
-    if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
-    ) {
-      result.push(chunk);
-      chunk = [];
-    }
-
     i++;
   }
 
