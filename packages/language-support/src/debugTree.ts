@@ -1,6 +1,6 @@
 import { type ParseTree, Trees } from 'antlr4ng';
-import { parse } from './cypherLanguageService/cypherLanguageService.js';
 import { CypherCmdParser } from './generated-parser/CypherCmdParser.js';
+import { parse } from './cypherLanguageService/parser/parser.js';
 
 export interface SimpleTree {
   name: string;

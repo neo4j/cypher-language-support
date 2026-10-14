@@ -5,8 +5,8 @@ import {
   ListTokenSource,
   CommonToken,
 } from 'antlr4ng';
-import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
-import { CypherCmdParser as CypherParser } from '../generated-parser/CypherCmdParser.js';
+import { CypherCmdLexer as CypherLexer } from '../../generated-parser/CypherCmdLexer.js';
+import { CypherCmdParser as CypherParser } from '../../generated-parser/CypherCmdParser.js';
 
 interface ParsingScaffolding {
   query: string;

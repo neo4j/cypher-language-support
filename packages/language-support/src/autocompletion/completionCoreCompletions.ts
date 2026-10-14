@@ -25,7 +25,6 @@ import {
   tokenNames,
 } from '../lexerSymbols.js';
 
-import type { ParsedStatement } from '../cypherLanguageService/cypherLanguageService.js';
 import { getMethodName } from '../cypherLanguageService/cypherLanguageService.js';
 
 import type { ICandidateRule, CandidatesCollection } from 'antlr4-c3';
@@ -49,6 +48,7 @@ import {
   allReltypeCompletions,
 } from './schemaBasedCompletions.js';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
+import type { ParsedStatement } from '../cypherLanguageService/parser/parser.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {

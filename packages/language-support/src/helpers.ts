@@ -6,11 +6,12 @@ import {
   NodePatternContext,
   RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser.js';
-import type {
-  ParsedStatement,
-  ParsingResult,
-} from './cypherLanguageService/cypherLanguageService.js';
+
 import type { CypherVersion } from './types.js';
+import type {
+  ParsingResult,
+  ParsedStatement,
+} from './cypherLanguageService/parser/parser.js';
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;

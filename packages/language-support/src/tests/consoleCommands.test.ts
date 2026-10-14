@@ -1,5 +1,3 @@
-import type { ParsedCommandNoPosition } from '../cypherLanguageService/cypherLanguageService.js';
-import { createParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
 import { testData } from './testData.js';
 import { highlightSyntax } from '../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../autocompletion/autocompletion.js';
@@ -7,6 +5,8 @@ import {
   getDiagnosticsForQuery,
   getSymbolTablesForQuery,
 } from './syntaxValidation/helpers.js';
+import type { ParsedCommandNoPosition } from '../cypherLanguageService/parser/parser.js';
+import { createParsingResult } from '../cypherLanguageService/parser/parser.js';
 
 function expectParsedCommands(
   query: string,

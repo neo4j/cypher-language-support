@@ -1,7 +1,7 @@
+import type { ParsingResult } from '../cypherLanguageService/parser/parser.js';
+import { createParsingResult } from '../cypherLanguageService/parser/parser.js';
 import type { DbSchema } from '../dbSchema.js';
 import { findCaret } from '../helpers.js';
-import type { ParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
-import { createParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
 import type { CompletionItem, SymbolsInfo } from '../types.js';
 import { completionCoreCompletion } from './completionCoreCompletions.js';
 

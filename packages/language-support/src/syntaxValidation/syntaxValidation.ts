@@ -18,11 +18,7 @@ import type {
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
-import type {
-  ParsedStatement,
-  ParsingResult,
-} from '../cypherLanguageService/cypherLanguageService.js';
-import { createParsingResult } from '../cypherLanguageService/cypherLanguageService.js';
+
 import type {
   LabelOrRelType,
   ParsedProcedure,
@@ -31,6 +27,11 @@ import type {
   ParsedFunction,
 } from '../cypherLanguageService/parsingTypes.js';
 import { LabelType } from '../cypherLanguageService/parsingTypes.js';
+import type {
+  ParsedStatement,
+  ParsingResult,
+} from '../cypherLanguageService/parser/parser.js';
+import { createParsingResult } from '../cypherLanguageService/parser/parser.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

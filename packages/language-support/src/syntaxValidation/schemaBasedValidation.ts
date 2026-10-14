@@ -5,7 +5,6 @@ import {
   NodePatternContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser.js';
-import type { ParsedStatement } from '../cypherLanguageService/cypherLanguageService.js';
 import {
   isAnyNode,
   isNotAnyNode,
@@ -18,6 +17,7 @@ import type { SyntaxDiagnostic } from './syntaxValidation.js';
 import { getDirection } from '../helpers.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
+import type { ParsedStatement } from '../cypherLanguageService/parser/parser.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a

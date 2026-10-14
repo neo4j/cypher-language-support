@@ -1,7 +1,7 @@
 import {
   createParsingResult,
   parseStatementsStrs,
-} from '../cypherLanguageService/cypherLanguageService.js';
+} from '../cypherLanguageService/parser/parser.js';
 
 function parseCypherStatements(query: string): string[] {
   const result = createParsingResult(query, { consoleCommandsEnabled: true });
