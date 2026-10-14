@@ -31,6 +31,7 @@ export class CypherLanguageService {
       const parsingResult = createParsingResult(query, {
         consoleCommandsEnabled: this.consoleCommandsEnabled,
       });
+      this.parsingResult = parsingResult;
       return parsingResult;
     }
   }
