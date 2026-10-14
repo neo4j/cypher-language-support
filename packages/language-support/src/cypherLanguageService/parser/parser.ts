@@ -106,17 +106,6 @@ export function createParsingResult(
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
 
-      // ParseTreeWalker.DEFAULT.walk(labelsCollector, ctx);
-      // ParseTreeWalker.DEFAULT.walk(parameterFinder, ctx);
-      // ParseTreeWalker.DEFAULT.walk(variableFinder, ctx);
-      // ParseTreeWalker.DEFAULT.walk(methodsFinder, ctx);
-      // ParseTreeWalker.DEFAULT.walk(cypherVersionCollector, ctx);
-      // ParseTreeWalker.DEFAULT.walk(propertiesFinder, ctx);
-      // ParseTreeWalker.DEFAULT.walk(readPatternElementsCollector, ctx);
-
-      // // ParseTreeWalker.DEFAULT.walk(variableFinder, ctx);
-      // // ParseTreeWalker.DEFAULT.walk(labelsCollector, ctx);
-
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =
         tokens.find(
@@ -452,12 +441,12 @@ export function parseStatementsStrs(query: string): string[] {
   return result;
 }
 
-const getClearParamName = (name: string): string => {
+function getClearParamName(name: string): string {
   if (name.startsWith('`') && name.endsWith('`')) {
     return name.slice(1, -1);
   }
   return name;
-};
+}
 
 export function parseParameters(
   query: string,
