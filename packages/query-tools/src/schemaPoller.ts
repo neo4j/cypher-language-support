@@ -14,6 +14,11 @@ import {
 } from './metadataPoller.js';
 import { Neo4jConnection } from './neo4jConnection.js';
 import { listDatabases } from './queries/databases.js';
+import type { PollingPermissions } from './queries/privileges.js';
+import {
+  getPollingPermissions,
+  listCurrentUserPrivileges,
+} from './queries/privileges.js';
 import { getVersion } from './queries/version.js';
 
 export type ConnnectionResult = {
@@ -176,6 +181,34 @@ export class Neo4jSchemaPoller {
     return ['5'];
   }
 
+  // Some security setups flag any query rejected by access control, so we
+  // only poll for admin metadata the user is known to be allowed to see
+  private async getPollingPermissions(
+    serverEdition: string | undefined,
+  ): Promise<PollingPermissions> {
+    // Community has no role based access control: every user can list users,
+    // but role commands are unsupported
+    if (serverEdition === 'community') {
+      return { users: true, roles: false };
+    }
+
+    if (serverEdition === 'enterprise' && this.driver) {
+      const { query, queryConfig } = listCurrentUserPrivileges();
+      try {
+        const { privileges } = await this.driver.executeQuery(
+          query,
+          {},
+          queryConfig,
+        );
+        return getPollingPermissions(privileges);
+      } catch (error) {
+        console.error('Could not fetch privileges of current user', error);
+      }
+    }
+
+    return { users: false, roles: false };
+  }
+
   private async connectAndStartMetadataPoller(
     url: string,
     credentials: { username: string; password: string },
@@ -208,7 +241,7 @@ export class Neo4jSchemaPoller {
 
     const { query: serverVersionQuery, queryConfig: serverVersionQueryConfig } =
       getVersion();
-    let { serverVersion } = await this.driver.executeQuery(
+    let { serverVersion, serverEdition } = await this.driver.executeQuery(
       serverVersionQuery,
       {},
       serverVersionQueryConfig,
@@ -228,10 +261,12 @@ export class Neo4jSchemaPoller {
 
     this.connection.serverVersion = serverVersion;
 
+    const pollingPermissions = await this.getPollingPermissions(serverEdition);
     this.metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
       serverCypherVersions,
+      pollingPermissions,
       this.connection,
       this.events,
     );

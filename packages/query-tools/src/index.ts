@@ -25,6 +25,7 @@ export type {
   SdkQueryArgs,
 } from './neo4jConnection.js';
 export type { Database, DatabaseStatus } from './queries/databases.js';
+export type { PollingPermissions } from './queries/privileges.js';
 export {
   graphResultTransformer,
   GraphResult,

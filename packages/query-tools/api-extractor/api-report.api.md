@@ -74,7 +74,7 @@ export interface CypherMap {
 
 // @public (undocumented)
 export class CypherMetadataPoller extends MetadataPoller {
-    constructor(databases: Database[], parameters: Record<string, unknown>, serverCypherVersions: string[] | undefined, connection: Neo4jConnection, events: EventEmitter);
+    constructor(databases: Database[], parameters: Record<string, unknown>, serverCypherVersions: string[] | undefined, pollingPermissions: PollingPermissions, connection: Neo4jConnection, events: EventEmitter);
     // (undocumented)
     dbSchema: DbSchema;
     // (undocumented)
@@ -184,6 +184,7 @@ export const getPropertyTypeDisplayName: (val?: CypherProperty) => CypherPropert
 // @public
 export function getVersion(): ExecuteQueryArgs<{
     serverVersion: string | undefined;
+    serverEdition: string | undefined;
 }>;
 
 // @public
@@ -285,6 +286,12 @@ export type Neo4jType = typeof types.Record | typeof types.Result | typeof types
 
 // @public (undocumented)
 export type NumberOrInteger = number | Integer | bigint;
+
+// @public (undocumented)
+export type PollingPermissions = {
+    users: boolean;
+    roles: boolean;
+};
 
 // @public (undocumented)
 export type Properties = RecordShape<string, CypherProperty>;
