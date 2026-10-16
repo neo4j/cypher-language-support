@@ -12,6 +12,7 @@ import { listDatabases } from './queries/databases.js';
 import type { DataSummary } from './queries/dataSummary.js';
 import { getDataSummary } from './queries/dataSummary.js';
 import { listFunctions } from './queries/functions.js';
+import type { PollingPermissions } from './queries/privileges.js';
 import { listProcedures } from './queries/procedures.js';
 import type { Neo4jRole } from './queries/roles.js';
 import { listRoles } from './queries/roles.js';
@@ -124,6 +125,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     databases: Database[],
     parameters: Record<string, unknown>,
     serverCypherVersions: string[] | undefined,
+    private readonly pollingPermissions: PollingPermissions,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
   ) {
@@ -250,14 +252,31 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     });
   }
 
+  private canExecuteProcedures(names: string[]): boolean {
+    return Object.values(this.dbSchema.procedures ?? {}).some((procedures) =>
+      names.every((name) => procedures?.[name] !== undefined),
+    );
+  }
+
   public async fetchDbSchema(): Promise<void> {
     await Promise.allSettled([
       this.databases.refetch(),
-      this.dataSummary.refetch(),
       ...Object.values(this.procedures).map((version) => version?.refetch()),
       ...Object.values(this.functions).map((version) => version?.refetch()),
+      ...(this.pollingPermissions.users ? [this.users.refetch()] : []),
+      ...(this.pollingPermissions.roles ? [this.roles.refetch()] : []),
     ]);
     if (
+      this.canExecuteProcedures([
+        'db.labels',
+        'db.relationshipTypes',
+        'db.propertyKeys',
+      ])
+    ) {
+      await this.dataSummary.refetch();
+    }
+    if (
+      this.canExecuteProcedures(['db.schema.visualization']) &&
       this.dbSchema.labels &&
       this.dbSchema.relationshipTypes &&
       this.dbSchema.labels.length + this.dbSchema.relationshipTypes.length < 200
