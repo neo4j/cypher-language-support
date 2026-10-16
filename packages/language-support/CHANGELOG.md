@@ -1,5 +1,11 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 20d5c8c: Fix linter crashing on firefox with "Worker is terminated"
+
 ## 2.0.0-next.39
 
 ### Minor Changes
