@@ -37,6 +37,7 @@ import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import { convertDbSchema } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 import { doHoverInfo } from './hoverInfo.js';
+import { goToDefinition } from './goToDefinition.js';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -179,6 +180,7 @@ connection.onInitialize(() => {
       },
       hoverProvider: true,
       documentFormattingProvider: true,
+      definitionProvider: true,
     },
   };
 
@@ -218,6 +220,8 @@ connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
+// Trigger go to definition for variables
+connection.onDefinition(goToDefinition(documents));
 
 connection.onNotification(
   'updateLintWorker',
