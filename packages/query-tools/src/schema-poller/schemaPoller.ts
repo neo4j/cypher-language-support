@@ -1,20 +1,18 @@
 import { EventEmitter } from 'events';
 import type { Config, Driver } from 'neo4j-driver';
 import neo4j from 'neo4j-driver';
-import type { ConnectionError } from './connectionErrorHandler.js';
+import type { ConnectionError } from '../connectionErrorHandler.js';
 import {
   FRIENDLY_ERROR_MESSAGES,
   getConnectionError,
   isRetriableNeo4jError,
-} from './connectionErrorHandler.js';
-import type { MetadataPoller } from './metadataPoller.js';
-import {
-  ConnectedMetadataPoller,
-  DisconnectedMetadataPoller,
-} from './metadataPoller.js';
-import { Neo4jConnection } from './neo4jConnection.js';
-import { listDatabases } from './queries/databases.js';
-import { getVersion } from './queries/version.js';
+} from '../connectionErrorHandler.js';
+import type { MetadataPoller } from './metadata/metadataPoller.js';
+import { Neo4jConnection } from '../neo4jConnection.js';
+import { listDatabases } from '../queries/databases.js';
+import { getVersion } from '../queries/version.js';
+import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
+import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -35,7 +33,7 @@ export class Neo4jSchemaPoller {
   private lastError?: ConnectionError;
   private parameters: Record<string, unknown> = {};
 
-  setParameters(parameters: Record<string, unknown>) {
+  public setParameters(parameters: Record<string, unknown>): void {
     this.parameters = parameters;
 
     if (this.metadata) {
@@ -45,7 +43,7 @@ export class Neo4jSchemaPoller {
     }
   }
 
-  async connect(
+  public async connect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
@@ -70,7 +68,7 @@ export class Neo4jSchemaPoller {
     return { success: true };
   }
 
-  async persistentConnect(
+  public async persistentConnect(
     url: string,
     credentials: { username: string; password: string },
     config: { driverConfig?: Config; appName: string },
@@ -139,7 +137,7 @@ export class Neo4jSchemaPoller {
     return { success: true };
   }
 
-  disconnect() {
+  public disconnect(): void {
     if (this.connection) {
       // eslint-disable-next-line no-console
       console.log('Disconnected from Neo4j');

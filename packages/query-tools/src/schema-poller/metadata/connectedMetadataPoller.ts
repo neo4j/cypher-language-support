@@ -6,101 +6,16 @@ import type {
 } from '@neo4j-cypher/language-support';
 import { allCypherVersions } from '@neo4j-cypher/language-support';
 import type { EventEmitter } from 'events';
-import type { Neo4jConnection } from './neo4jConnection.js';
-import type { Database } from './queries/databases.js';
-import { listDatabases } from './queries/databases.js';
-import type { DataSummary } from './queries/dataSummary.js';
-import { getDataSummary } from './queries/dataSummary.js';
-import { listFunctions } from './queries/functions.js';
-import { listProcedures } from './queries/procedures.js';
-import type { Neo4jRole } from './queries/roles.js';
-import { listRoles } from './queries/roles.js';
-import type { Neo4jUser } from './queries/users.js';
-import { listUsers } from './queries/users.js';
-import type { ExecuteQueryArgs } from './types/sdkTypes.js';
-import { listGraphSchema } from './queries/graphSchema.js';
-
-type PollingStatus = 'not-started' | 'fetching' | 'fetched' | 'error';
-
-type FetchCallback<T> = (
-  result: { success: true; data: T } | { success: false; errorMessage: string },
-) => void;
-
-type PollerConfig<T> = {
-  queryArgs: ExecuteQueryArgs<T>;
-  connection: Neo4jConnection;
-  prefetchedData?: T;
-  onRefetchDone?: FetchCallback<T>;
-  database?: string;
-};
-
-class QueryPoller<T> {
-  public status: PollingStatus = 'not-started';
-  public data?: T;
-  public lastFetchStart?: number;
-  public errorMessage?: string;
-  private connection: Neo4jConnection;
-  private onRefetchDone?: FetchCallback<T>;
-  private queryArgs: ExecuteQueryArgs<T>;
-
-  constructor({
-    prefetchedData,
-    queryArgs,
-    connection,
-    onRefetchDone,
-  }: PollerConfig<T>) {
-    this.connection = connection;
-    this.queryArgs = queryArgs;
-    this.onRefetchDone = onRefetchDone;
-
-    if (prefetchedData) {
-      this.data = prefetchedData;
-      this.lastFetchStart = Date.now();
-      this.status = 'fetched';
-    }
-  }
-
-  async refetch() {
-    if (this.status === 'fetching') return;
-
-    this.status = 'fetching';
-    this.lastFetchStart = Date.now();
-    delete this.errorMessage;
-
-    try {
-      const data = await this.connection.runSdkQuery(this.queryArgs, {
-        queryType: 'system',
-      });
-      this.data = data;
-      this.status = 'fetched';
-      this.onRefetchDone?.({ success: true, data });
-    } catch (e) {
-      const errorMessage = String(e);
-      this.errorMessage = errorMessage;
-      this.status = 'error';
-      console.error(e);
-      this.onRefetchDone?.({ success: false, errorMessage });
-    }
-  }
-}
-
-export abstract class MetadataPoller {
-  public dbSchema: DbSchema = {};
-  abstract stopBackgroundPolling(): void;
-  abstract startBackgroundPolling(intervalSeconds?: number): void;
-  abstract fetchDbSchema(): void;
-}
-
-export class DisconnectedMetadataPoller extends MetadataPoller {
-  public dbSchema: DbSchema = {};
-  constructor(parameters: Record<string, unknown>) {
-    super();
-    this.dbSchema.parameters = parameters;
-  }
-  stopBackgroundPolling() {}
-  startBackgroundPolling() {}
-  fetchDbSchema(): void {}
-}
+import type { Neo4jConnection } from '../../neo4jConnection.js';
+import type { Database } from '../../queries/databases.js';
+import { listDatabases } from '../../queries/databases.js';
+import type { DataSummary } from '../../queries/dataSummary.js';
+import { getDataSummary } from '../../queries/dataSummary.js';
+import { listFunctions } from '../../queries/functions.js';
+import { listProcedures } from '../../queries/procedures.js';
+import { listGraphSchema } from '../../queries/graphSchema.js';
+import { MetadataPoller } from './metadataPoller.js';
+import { QueryPoller } from './queryPoller.js';
 
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
@@ -111,8 +26,6 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   private procedures: Partial<
     Record<CypherVersion, QueryPoller<{ procedures: Neo4jProcedure[] }>>
   > = {};
-  private users: QueryPoller<{ users: Neo4jUser[] }>;
-  private roles: QueryPoller<{ roles: Neo4jRole[] }>;
   private graphSchema: QueryPoller<{
     graphSchema: { from: string; to: string; relType: string }[];
   }>;
@@ -150,26 +63,6 @@ export class ConnectedMetadataPoller extends MetadataPoller {
           if (currentDb) {
             this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
           }
-        }
-      },
-    });
-
-    this.users = new QueryPoller({
-      connection,
-      queryArgs: listUsers(),
-      onRefetchDone: (result) => {
-        if (result.success) {
-          this.dbSchema.userNames = result.data.users.map((user) => user.user);
-        }
-      },
-    });
-
-    this.roles = new QueryPoller({
-      connection,
-      queryArgs: listRoles(),
-      onRefetchDone: (result) => {
-        if (result.success) {
-          this.dbSchema.roleNames = result.data.roles.map((role) => role.role);
         }
       },
     });
@@ -269,12 +162,12 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     this.events.emit('schemaFetched');
   }
 
-  stopBackgroundPolling() {
+  public stopBackgroundPolling() {
     clearInterval(this.dbPollingInterval);
     this.dbPollingInterval = undefined;
   }
 
-  startBackgroundPolling(intervalSeconds = 30) {
+  public startBackgroundPolling(intervalSeconds = 30) {
     this.stopBackgroundPolling();
     void this.fetchDbSchema();
     this.dbPollingInterval = setInterval(
