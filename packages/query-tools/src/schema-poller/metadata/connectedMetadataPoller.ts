@@ -16,6 +16,10 @@ import { listProcedures } from '../../queries/procedures.js';
 import { listGraphSchema } from '../../queries/graphSchema.js';
 import { MetadataPoller } from './metadataPoller.js';
 import { QueryPoller } from './queryPoller.js';
+import type { Neo4jRole } from '../../queries/roles.js';
+import { listRoles } from '../../queries/roles.js';
+import type { Neo4jUser } from '../../queries/users.js';
+import { listUsers } from '../../queries/users.js';
 
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
@@ -26,6 +30,8 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   private procedures: Partial<
     Record<CypherVersion, QueryPoller<{ procedures: Neo4jProcedure[] }>>
   > = {};
+  private users: QueryPoller<{ users: Neo4jUser[] }>;
+  private roles: QueryPoller<{ roles: Neo4jRole[] }>;
   private graphSchema: QueryPoller<{
     graphSchema: { from: string; to: string; relType: string }[];
   }>;
@@ -63,6 +69,26 @@ export class ConnectedMetadataPoller extends MetadataPoller {
           if (currentDb) {
             this.dbSchema.defaultLanguage = currentDb.defaultLanguage;
           }
+        }
+      },
+    });
+
+    this.users = new QueryPoller({
+      connection,
+      queryArgs: listUsers(),
+      onRefetchDone: (result) => {
+        if (result.success) {
+          this.dbSchema.userNames = result.data.users.map((user) => user.user);
+        }
+      },
+    });
+
+    this.roles = new QueryPoller({
+      connection,
+      queryArgs: listRoles(),
+      onRefetchDone: (result) => {
+        if (result.success) {
+          this.dbSchema.roleNames = result.data.roles.map((role) => role.role);
         }
       },
     });
