@@ -52,6 +52,7 @@ function normalizeLineEndings(value: string): string {
   return value.replace(/\r\n/g, '\n');
 }
 
+//TODO: Fix TSDoc issues and update readme to point to api-report
 export interface CypherEditorProps {
   /**
    * The prompt to show on single line editors
