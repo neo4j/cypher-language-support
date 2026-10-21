@@ -10,7 +10,7 @@ type ContainerOpts = {
 export async function createAndStartTestContainer(
   opts: ContainerOpts = {
     containerName: 'polling-integration-tests',
-    neo4jVersion: 'neo4j:5-enterprise',
+    neo4jVersion: 'neo4j:2026-enterprise',
   },
 ): Promise<StartedNeo4jContainer> {
   const password = 'password';
