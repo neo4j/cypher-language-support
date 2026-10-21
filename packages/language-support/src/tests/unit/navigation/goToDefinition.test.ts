@@ -247,4 +247,38 @@ RETURN pe`.length,
     );
     expect(result).toEqual(undefined);
   });
+
+  test('Does not throw on comment', () => {
+    const query = `//All nodes are persons
+    MATCH (person) RETURN person`;
+    const { symbolTables } = languageService.lint(query, {});
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+
+    const result = languageService.findDefinitionPosition(
+      query,
+      `//All node`.length,
+    );
+    expect(result).toEqual(undefined);
+  });
+
+  test('Does not throw on empty statement', () => {
+    const query = `MATCH (n) RETURN n;
+      ;
+MATCH (m) RETURN m`;
+    const { symbolTables } = languageService.lint(query, {});
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+
+    const result = languageService.findDefinitionPosition(
+      query,
+      `MATCH (n) RETURN n;
+   `.length,
+    );
+    expect(result).toEqual(undefined);
+  });
 });

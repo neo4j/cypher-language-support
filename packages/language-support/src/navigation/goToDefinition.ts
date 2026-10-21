@@ -12,11 +12,10 @@ export function getDefinitionPosition({
   symbolsInfo: SymbolsInfo;
 }): { startOffset: number; endOffset: number } | undefined {
   const caret = findCaret(parsingResult, caretPosition);
-  const currentSymbolTable = parsingResult.statementsParsing.indexOf(
-    caret.statement,
-  );
+  const currentSymbolTable = caret
+    ? parsingResult.statementsParsing.indexOf(caret.statement)
+    : -1;
   if (
-    caret &&
     symbolsInfo?.symbolTables &&
     symbolsInfo.query === parsingResult.query &&
     currentSymbolTable >= 0
