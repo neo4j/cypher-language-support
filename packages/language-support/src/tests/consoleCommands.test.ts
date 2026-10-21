@@ -5,8 +5,8 @@ import {
   getDiagnosticsForQuery,
   getSymbolTablesForQuery,
 } from './syntaxValidation/helpers.js';
-import type { ParsedCommandNoPosition } from '../cypherLanguageService/parser/parser.js';
-import { createParsingResult } from '../cypherLanguageService/parser/parser.js';
+import type { ParsedCommandNoPosition } from '../cypherLanguageService/parser/parserWrapper.js';
+import { createParsingResult } from '../cypherLanguageService/parser/parserWrapper.js';
 
 function expectParsedCommands(
   query: string,

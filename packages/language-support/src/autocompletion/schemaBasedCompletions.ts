@@ -25,7 +25,7 @@ import {
   getRelsFromNodesSets,
   walkCNFTree,
 } from '../labelTreeWalking.js';
-import type { ParsedStatement } from '../cypherLanguageService/parser/parser.js';
+import type { ParsedStatement } from '../cypherLanguageService/parser/parserWrapper.js';
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,

@@ -17,7 +17,7 @@ import type { SyntaxDiagnostic } from './syntaxValidation.js';
 import { getDirection } from '../helpers.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
-import type { ParsedStatement } from '../cypherLanguageService/parser/parser.js';
+import type { ParsedStatement } from '../cypherLanguageService/parser/parserWrapper.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a

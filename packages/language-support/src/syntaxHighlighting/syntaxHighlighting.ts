@@ -61,8 +61,8 @@ import {
   sortTokens,
   toParsedTokens,
 } from './syntaxHighlightingHelper.js';
-import type { ParsingResult } from '../cypherLanguageService/parser/parser.js';
-import { createParsingResult } from '../cypherLanguageService/parser/parser.js';
+import type { ParsingResult } from '../cypherLanguageService/parser/parserWrapper.js';
+import { createParsingResult } from '../cypherLanguageService/parser/parserWrapper.js';
 
 export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],

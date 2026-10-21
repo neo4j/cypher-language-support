@@ -7,8 +7,8 @@ import { highlightSyntaxWithParsingResult } from '../syntaxHighlighting/syntaxHi
 import { autocompleteWithParsingResult } from '../autocompletion/autocompletion.js';
 import type { HoverInfo } from '../hoverInformation/hover.js';
 import { getHoverInfo } from '../hoverInformation/hover.js';
-import type { ParsingResult } from './parser/parser.js';
-import { createParsingResult } from './parser/parser.js';
+import type { ParsingResult } from './parser/parserWrapper.js';
+import { createParsingResult } from './parser/parserWrapper.js';
 
 export class CypherLanguageService {
   private parsingResult?: ParsingResult;
