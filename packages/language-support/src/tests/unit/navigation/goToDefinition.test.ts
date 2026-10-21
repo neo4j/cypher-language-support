@@ -218,4 +218,33 @@ RETURN per`.length,
     );
     expect(result).toEqual(undefined);
   });
+
+  test('Does not crash on missing symbol table', () => {
+    const query = `MATCH (person) RETURN person`;
+
+    const result = languageService.findDefinitionPosition(
+      query,
+      `MATCH (pe`.length,
+    );
+    expect(result).toEqual(undefined);
+  });
+
+  test('Does not provide go to definition if symbol table is out of sync', () => {
+    const query = `MATCH (person) RETURN person`;
+    const { symbolTables } = languageService.lint(query, {});
+    languageService.setSymbolsInfo({
+      query,
+      symbolTables: symbolTables,
+    });
+
+    const formattedQuery = `MATCH (person)
+RETURN person`;
+
+    const result = languageService.findDefinitionPosition(
+      formattedQuery,
+      `MATCH (person)
+RETURN pe`.length,
+    );
+    expect(result).toEqual(undefined);
+  });
 });
