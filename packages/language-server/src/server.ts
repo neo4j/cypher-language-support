@@ -262,8 +262,6 @@ connection.onNotification(
     version: number;
     schema: DbSchema;
   }) => {
-    // Schema may be out of date, but that is irrelevant for the symbol table,
-    // except for the rare case when default language is updated
     symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema);
   },
 );

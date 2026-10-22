@@ -19,7 +19,7 @@ describe('go to variable definition', () => {
     expect(endOffset).toEqual('MATCH (person'.length);
   });
 
-  test('Can find definition-location when requesting from the end of a reference - not end of query example', () => {
+  test('Can find definition-location when requesting from the end of a reference also with query continuing after', () => {
     const query = 'MATCH (person) RETURN person, 50';
     const { symbolTables } = languageService.lint(query, {});
     languageService.setSymbolsInfo({
@@ -239,7 +239,7 @@ RETURN pe`.length,
     expect(result).toEqual(undefined);
   });
 
-  test('Does not throw on comment', () => {
+  test('Does nothing on comment', () => {
     const query = `//All nodes are persons
     MATCH (person) RETURN person`;
     const { symbolTables } = languageService.lint(query, {});
@@ -252,7 +252,7 @@ RETURN pe`.length,
     expect(result).toEqual(undefined);
   });
 
-  test('Does not throw on empty statement', () => {
+  test('Does nothing on empty statement', () => {
     const query = `MATCH (n) RETURN n;
       ;
 MATCH (m) RETURN m`;

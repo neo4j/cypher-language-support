@@ -3,31 +3,26 @@ import * as vscode from 'vscode';
 import { eventually, getDocumentUri, openDocument } from '../../../helpers.js';
 
 type InclusionTestArgs = {
-  textFile: string | vscode.Uri;
+  textFile: string;
   position: vscode.Position;
   expectedOffset: number;
   variableLength: number;
 };
-// Note position should be zero-based lines/cols
-export async function testGoToArrives({
+// Note that position should be zero-based lines/cols
+export async function testGoToDefinition({
   textFile,
   position,
   expectedOffset,
   variableLength,
 }: InclusionTestArgs): Promise<void> {
-  let docUri: vscode.Uri;
-  if (typeof textFile === 'string') {
-    docUri = getDocumentUri(textFile);
-    await openDocument(docUri);
-  } else {
-    docUri = textFile;
-  }
+  const docUri = getDocumentUri(textFile);
+  await openDocument(docUri);
 
   const activeDoc = vscode.window.activeTextEditor.document;
   const expectedStop = activeDoc.positionAt(expectedOffset + variableLength);
   const expectedStart = activeDoc.positionAt(expectedOffset);
 
-  const range = new vscode.Range(expectedStart, expectedStop);
+  const expectedRange = new vscode.Range(expectedStart, expectedStop);
 
   await eventually(async () => {
     const actualLocation: vscode.Location[] =
@@ -37,7 +32,7 @@ export async function testGoToArrives({
         position,
       );
     assert.equal(actualLocation.length, 1);
-    assert.deepEqual(actualLocation[0].range, range);
+    assert.deepEqual(actualLocation[0].range, expectedRange);
   });
 }
 
@@ -47,7 +42,7 @@ suite('Go to definition spec', () => {
 
     const expectedOffset = 8;
     const variableLength = 1;
-    await testGoToArrives({
+    await testGoToDefinition({
       textFile: 'valid.cypher',
       position,
       expectedOffset,
@@ -60,7 +55,7 @@ suite('Go to definition spec', () => {
 
     const expectedOffset = 65;
     const variableLength = 1;
-    await testGoToArrives({
+    await testGoToDefinition({
       textFile: 'multiline.cypher',
       position,
       expectedOffset,
@@ -73,7 +68,7 @@ suite('Go to definition spec', () => {
 
     const expectedOffset = 29;
     const variableLength = 1;
-    await testGoToArrives({
+    await testGoToDefinition({
       textFile: 'subquery-call.cypher',
       position,
       expectedOffset,
@@ -86,7 +81,7 @@ suite('Go to definition spec', () => {
 
     const expectedOffset = 22;
     const variableLength = 1;
-    await testGoToArrives({
+    await testGoToDefinition({
       textFile: 'call-in-transactions.cypher',
       position,
       expectedOffset,
