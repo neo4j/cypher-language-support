@@ -1,4 +1,4 @@
-import { CypherLanguageService } from '../../../cypherLanguageService.js';
+import { CypherLanguageService } from '../../../cypherLanguageService/cypherLanguageService.js';
 import type { HoverInfo } from '../../../hoverInformation/hover.js';
 import { testData } from '../testData.js';
 
