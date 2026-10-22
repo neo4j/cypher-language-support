@@ -71,7 +71,7 @@ suite('Go to definition spec', () => {
   test('Handles scope v1', async () => {
     const position = new vscode.Position(3, 10);
 
-    const expectedOffset = 31;
+    const expectedOffset = 29;
     const variableLength = 1;
     await testGoToArrives({
       textFile: 'subquery-call.cypher',
