@@ -27,8 +27,8 @@ import type { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
 import type { Neo4jFunction, Neo4jProcedure } from './types.js';
-import type { ParsingResult } from './cypherLanguageService/parser/parserWrapper.js';
-import { createParsingResult } from './cypherLanguageService/parser/parserWrapper.js';
+import type { ParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
+import { createParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],

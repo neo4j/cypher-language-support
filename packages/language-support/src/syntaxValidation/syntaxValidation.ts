@@ -30,8 +30,8 @@ import { LabelType } from '../cypherLanguageService/parsingTypes.js';
 import type {
   ParsedStatement,
   ParsingResult,
-} from '../cypherLanguageService/parser/parserWrapper.js';
-import { createParsingResult } from '../cypherLanguageService/parser/parserWrapper.js';
+} from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

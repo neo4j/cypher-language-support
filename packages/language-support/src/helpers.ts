@@ -16,7 +16,7 @@ import type { CypherVersion } from './types.js';
 import type {
   ParsingResult,
   ParsedStatement,
-} from './cypherLanguageService/parser/parserWrapper.js';
+} from './cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;

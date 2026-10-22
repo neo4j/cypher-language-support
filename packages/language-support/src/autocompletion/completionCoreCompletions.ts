@@ -47,7 +47,7 @@ import {
   allReltypeCompletions,
 } from './schemaBasedCompletions.js';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
-import type { ParsedStatement } from '../cypherLanguageService/parser/parserWrapper.js';
+import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {

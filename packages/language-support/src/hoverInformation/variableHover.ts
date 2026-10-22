@@ -3,7 +3,7 @@ import { ParserRuleContext } from 'antlr4ng';
 import { VariableContext } from '../generated-parser/CypherCmdParser.js';
 import { findCaret } from '../helpers.js';
 import type { SymbolsInfo, Symbol } from '../types.js';
-import type { ParsingResult } from '../cypherLanguageService/parser/parserWrapper.js';
+import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 /* The symbol tables come from the semantic analysis and hold entries that are
    not user-written variables: property accesses (`n.age`, positioned on the
