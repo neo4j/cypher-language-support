@@ -1,7 +1,16 @@
-import { defineConfig } from 'vitest/config';
+import { defineProject } from 'vitest/config';
 
-export default defineConfig({
+export default defineProject({
   test: {
-    include: ['src/tests/**/*.{test,spec}.?(c|m)[jt]s?(x)'],
+    globals: true,
+    projects: [
+      {
+        extends: true,
+        test: {
+          name: 'unit',
+          include: ['src/tests/unit/**/*.test.ts'],
+        },
+      },
+    ],
   },
 });
