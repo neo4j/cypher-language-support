@@ -11,7 +11,8 @@ import type { ParsingResult } from './parserWrapper/parserWrapper.js';
 import { createParsingResult } from './parserWrapper/parserWrapper.js';
 
 export class CypherLanguageService {
-  private parsingResult?: ParsingResult;
+  // parsingResult needs to be private at JavaScript level to avoid serializing it
+  #parsingResult?: ParsingResult;
   private symbolsInfo?: SymbolsInfo;
   private consoleCommandsEnabled: boolean;
 
@@ -23,20 +24,21 @@ export class CypherLanguageService {
 
   private parse(query: string): ParsingResult {
     if (
-      this.parsingResult !== undefined &&
-      this.parsingResult.query === query
+      this.#parsingResult !== undefined &&
+      this.#parsingResult.query === query
     ) {
-      return this.parsingResult;
+      return this.#parsingResult;
     } else {
-      const parsingResult = createParsingResult(query, {
+      this.#parsingResult = createParsingResult(query, {
         consoleCommandsEnabled: this.consoleCommandsEnabled,
       });
-      return parsingResult;
+
+      return this.#parsingResult;
     }
   }
 
   clearCache() {
-    this.parsingResult = undefined;
+    this.#parsingResult = undefined;
     this.symbolsInfo = undefined;
   }
 
