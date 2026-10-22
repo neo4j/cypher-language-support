@@ -41,6 +41,9 @@ jobs:
       - name: Check there are no linting errors
         run: pnpm lint
 
+      - name: Check TypeScript types
+        run: pnpm typecheck
+
       - name: Check formatting
         run: pnpm format:check
 

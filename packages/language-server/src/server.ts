@@ -77,6 +77,10 @@ class SymbolFetcher {
     }
   }
 
+  private isCurrentDocument(uri: string) {
+    return !this.nextJob || this.nextJob.uri === uri;
+  }
+
   private async processJobQueue() {
     this.processing = true;
     while (this.nextJob) {
@@ -94,7 +98,7 @@ class SymbolFetcher {
         if (
           //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
-          !(this.nextJob && this.nextJob.uri != docUri)
+          this.isCurrentDocument(docUri)
         ) {
           languageService.setSymbolsInfo(
             {
@@ -128,10 +132,10 @@ async function lintSingleDocument(document: TextDocument): Promise<void> {
   symbolFetcher.queueSymbolJob(
     document.getText(),
     document.uri,
-    neo4jSchemaPoller?.metadata?.dbSchema,
+    neo4jSchemaPoller.metadata?.dbSchema ?? {},
   );
   if (settings?.features?.linting) {
-    return lintDocument(
+    await lintDocument(
       document,
       (diagnostics: Diagnostic[]) => {
         void connection.sendDiagnostics({

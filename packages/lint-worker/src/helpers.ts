@@ -11,13 +11,16 @@ import type { DbSchema as DbSchemaV1 } from 'languageSupport-next.13';
 // meaning old linters need conversion of the new schema
 export function convertDbSchema(
   originalSchema: DbSchemaV2,
-  linterVersion: string,
+  linterVersion: string | undefined,
 ): DbSchemaV2 | DbSchemaV1 {
   if (!originalSchema) {
     return originalSchema;
   }
 
-  if (compareMajorMinorVersions(linterVersion, '2025.01') < 0) {
+  const versionComparison = linterVersion
+    ? compareMajorMinorVersions(linterVersion, '2025.01')
+    : undefined;
+  if (versionComparison !== undefined && versionComparison < 0) {
     let oldFunctions: Record<string, Neo4jFunction> | undefined = undefined;
     let oldProcedures: Record<string, Neo4jProcedure> | undefined = undefined;
     if (originalSchema.functions && originalSchema.functions['CYPHER 5']) {
@@ -49,7 +52,8 @@ export function serverVersionToLinter(serverVersion: string): {
   const linterVersion = serverVersion.match(versionRegex)?.[0];
 
   // If we have a version lower than 5.23, use that linter
-  if (compareMajorMinorVersions(serverVersion, '5.23') < 0) {
+  const versionComparison = compareMajorMinorVersions(serverVersion, '5.23');
+  if (versionComparison !== undefined && versionComparison < 0) {
     return { linterVersion: '5.23', notSupported: true };
   } else if (serverVersion.match(auraRegex)) {
     return { linterVersion: 'Default' };
@@ -84,8 +88,9 @@ export async function getTaggedRegistryVersions(): Promise<NpmRelease[]> {
     const response = await axios.get<NpmData>(registryUrl);
     const data: NpmData = response.data;
     const taggedVersions: { tag: string; version: string }[] = [];
-    if (data !== null && data['dist-tags'] !== null) {
-      for (const [tag, version] of Object.entries(data['dist-tags'])) {
+    const distTags = data?.['dist-tags'];
+    if (distTags) {
+      for (const [tag, version] of Object.entries(distTags)) {
         if (npmTagToLinterVersion(tag)) {
           taggedVersions.push({ tag, version });
         }

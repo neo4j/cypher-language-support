@@ -3,6 +3,7 @@
   "include": ["src", "vitest.config.mts"],
   "exclude": ["**/lintWorker.mjs"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: migrate this package to the shared strictNullChecks default
     "jsx": "react-jsx",
     "allowJs": true,
     "module": "esnext",

@@ -3,6 +3,7 @@
   "include": ["src"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: migrate this package to the shared strictNullChecks default
     "outDir": "dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",

@@ -99,7 +99,9 @@ function filterLintResult(
     : clampUnsafePositions(diagnostics, document);
 }
 
-export const lintDocument: typeof rawLintDocument = debounce(
+export const lintDocument: (
+  ...args: Parameters<typeof rawLintDocument>
+) => ReturnType<typeof rawLintDocument> | undefined = debounce(
   rawLintDocument,
   600,
   {

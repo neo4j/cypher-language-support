@@ -2,7 +2,7 @@ import {
   CypherLanguageService,
   testData,
 } from '@neo4j-cypher/language-support';
-import { describe, expect, test } from 'vitest';
+import { assert, describe, expect, test } from 'vitest';
 import { hoverInfoToMarkdown } from '../../hoverMarkdown.js';
 
 const dbSchema = testData.mockSchema;
@@ -13,15 +13,19 @@ function hoverMarkdown(query: string, hovered: string): string {
     caretPosition: query.indexOf(hovered) + 1,
     dbSchema,
   });
+  assert.isDefined(hoverInfo);
   return hoverInfoToMarkdown(hoverInfo);
 }
 
 function variableHoverMarkdown(query: string, caretPosition: number): string {
   const { symbolTables } = languageService.lint(query, dbSchema);
   languageService.setSymbolsInfo({ query, symbolTables });
-  return hoverInfoToMarkdown(
-    languageService.hoverInfo(query, { caretPosition, dbSchema }),
-  );
+  const hoverInfo = languageService.hoverInfo(query, {
+    caretPosition,
+    dbSchema,
+  });
+  assert.isDefined(hoverInfo);
+  return hoverInfoToMarkdown(hoverInfo);
 }
 
 describe('Function hover markdown', () => {

@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "tests", "test"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: migrate this package to the shared strictNullChecks default
     "outDir": "dist",
     "jsx": "react-jsx",
     "types": ["@wdio/globals/types"]
