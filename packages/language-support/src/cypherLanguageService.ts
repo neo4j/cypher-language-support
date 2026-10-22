@@ -1104,8 +1104,8 @@ export class CypherLanguageService {
       parsingResult,
     });
   }
-  // Figure with this name we can also use it to find definition of a function/procedure via local callables
-  findDefinitionPosition(query: string, caretPosition: number) {
+
+  goToDefinition(query: string, caretPosition: number) {
     const parsingResult = this.parse(query);
     return getDefinitionPosition({
       caretPosition,

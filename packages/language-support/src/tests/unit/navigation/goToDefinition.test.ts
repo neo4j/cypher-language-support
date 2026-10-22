@@ -11,7 +11,7 @@ describe('go to variable definition', () => {
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN per'.length,
     );
@@ -27,7 +27,7 @@ describe('go to variable definition', () => {
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN person'.length,
     );
@@ -43,7 +43,7 @@ describe('go to variable definition', () => {
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       query.length,
     );
@@ -59,7 +59,7 @@ describe('go to variable definition', () => {
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN '.length,
     );
@@ -80,7 +80,7 @@ RETURN person`;
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH (person)
 CALL () {
@@ -112,7 +112,7 @@ RETURN person`;
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH (person)
 CALL () {
@@ -133,7 +133,7 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH (p:Person {age: 50}) RETURN p, p`.length,
     );
@@ -149,7 +149,7 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH ()-[knows]-() RETURN kn`.length,
     );
@@ -165,7 +165,7 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `CYPHER 25 LET nbr = 50 RETURN n`.length,
     );
@@ -181,7 +181,7 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.findDefinitionPosition(
+    const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `CYPHER 25 LET name = "Pikachu" RETURN na`.length,
     );
@@ -197,10 +197,7 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const result = languageService.findDefinitionPosition(
-      query,
-      `MATCH (n)-[`.length,
-    );
+    const result = languageService.goToDefinition(query, `MATCH (n)-[`.length);
     expect(result).toEqual(undefined);
   });
 
@@ -212,20 +209,14 @@ RETURN per`.length,
       symbolTables: symbolTables,
     });
 
-    const result = languageService.findDefinitionPosition(
-      query,
-      `MATCH (pe`.length,
-    );
+    const result = languageService.goToDefinition(query, `MATCH (pe`.length);
     expect(result).toEqual(undefined);
   });
 
   test('Does not crash on missing symbol table', () => {
     const query = `MATCH (person) RETURN person`;
 
-    const result = languageService.findDefinitionPosition(
-      query,
-      `MATCH (pe`.length,
-    );
+    const result = languageService.goToDefinition(query, `MATCH (pe`.length);
     expect(result).toEqual(undefined);
   });
 
@@ -240,7 +231,7 @@ RETURN per`.length,
     const formattedQuery = `MATCH (person)
 RETURN person`;
 
-    const result = languageService.findDefinitionPosition(
+    const result = languageService.goToDefinition(
       formattedQuery,
       `MATCH (person)
 RETURN pe`.length,
@@ -257,10 +248,7 @@ RETURN pe`.length,
       symbolTables: symbolTables,
     });
 
-    const result = languageService.findDefinitionPosition(
-      query,
-      `//All node`.length,
-    );
+    const result = languageService.goToDefinition(query, `//All node`.length);
     expect(result).toEqual(undefined);
   });
 
@@ -274,7 +262,7 @@ MATCH (m) RETURN m`;
       symbolTables: symbolTables,
     });
 
-    const result = languageService.findDefinitionPosition(
+    const result = languageService.goToDefinition(
       query,
       `MATCH (n) RETURN n;
    `.length,

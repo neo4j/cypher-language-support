@@ -10,7 +10,7 @@ export function goToDefinition(documents: TextDocuments<TextDocument>) {
   return (params: DefinitionParams): Definition | undefined => {
     const textDocument = documents.get(params.textDocument.uri);
     const offset = textDocument.offsetAt(params.position);
-    const result = languageService.findDefinitionPosition(
+    const result = languageService.goToDefinition(
       textDocument.getText(),
       offset,
     );
