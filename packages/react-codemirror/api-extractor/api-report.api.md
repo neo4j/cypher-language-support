@@ -4,6 +4,7 @@
 
 ```ts
 
+import { Command } from '@codemirror/view';
 import { Component } from 'react';
 import { CypherLanguageService } from '@neo4j-cypher/language-support';
 import type { CypherTokenType } from '@neo4j-cypher/language-support';
@@ -150,6 +151,9 @@ export type DiffProps = {
 
 // @public (undocumented)
 export type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
+
+// @public (undocumented)
+export const goToDefinitionCommand: (config: CypherConfig) => Command;
 
 // @public (undocumented)
 export type HighlightedCypherTokenTypes = Exclude<CypherTokenType, 'none'>;
