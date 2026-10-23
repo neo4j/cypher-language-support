@@ -1,5 +1,14 @@
 # @neo4j-cypher/query-tools
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 71e158d: Remove exported classes CypherMetadataPoller and EmptyMetadataPoller
+- Updated dependencies [20d5c8c]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/language-support@2.0.0-next.40
+
 ## 2.0.0-next.39
 
 ### Patch Changes
