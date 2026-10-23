@@ -1,5 +1,14 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.17
+
+### Patch Changes
+
+- 20d5c8c: Fix linter crashing on firefox with "Worker is terminated"
+- Updated dependencies [20d5c8c]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/language-support@2.0.0-next.40
+
 ## 1.10.1-next.16
 
 ### Patch Changes
