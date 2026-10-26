@@ -6,16 +6,14 @@ import { eventually, newUntitledFileWithContent } from '../../../helpers';
 suite('Hover spec procedures', () => {
   const labelsProcedure =
     testData.mockSchema.procedures['CYPHER 5']['db.labels'];
-  const expectedHoverInfo = [
-    '```cypher',
-    labelsProcedure.signature,
-    '```',
-    labelsProcedure.description,
-    '',
-    '',
-    '**Returns**',
-    `- \`${labelsProcedure.returnDescription[0].name}\` - ${labelsProcedure.returnDescription[0].name} :: ${labelsProcedure.returnDescription[0].type}`,
-  ].join('\n');
+  const expectedHoverInfo = `\`\`\`cypher
+${labelsProcedure.signature}
+\`\`\`
+${labelsProcedure.description}
+
+
+**Returns**
+- \`${labelsProcedure.returnDescription[0].name}\` - ${labelsProcedure.returnDescription[0].name} :: ${labelsProcedure.returnDescription[0].type}`;
 
   test('Hover works for procedures', async () => {
     const document = await newUntitledFileWithContent('CALL db.labels()');

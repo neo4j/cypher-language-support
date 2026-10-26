@@ -1,4 +1,4 @@
-import { CypherLanguageService } from '../../../cypherLanguageService.js';
+import { CypherLanguageService } from '../../../cypherLanguageService/cypherLanguageService.js';
 import type { DbSchema } from '../../../dbSchema.js';
 import type { CompletionItem } from '../../../types.js';
 

@@ -20,6 +20,12 @@ jobs:
     outputs:
       skip: ${{ steps.check_skip.outputs.skip }}
     steps:
+      - name: Patch eMudhra CA compromise (CVE-2026-111943)
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade -y ca-certificates
+          sudo update-ca-certificates --fresh
       - name: Check date if run on schedule
         id: check_skip
         run: |
@@ -38,8 +44,13 @@ jobs:
     needs: check-day-of-month
     if: ${{ needs.check-day-of-month.outputs.skip == 'false' }}
     steps:
+      - name: Patch eMudhra CA compromise (CVE-2026-111943)
+        shell: bash
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade -y ca-certificates
+          sudo update-ca-certificates --fresh
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-
       - name: Set Up Git User
         run: |
           git config --global user.name "Dev Artifact Bot"

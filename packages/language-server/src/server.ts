@@ -3,13 +3,11 @@ import type {
   Hover,
   HoverParams,
   InitializeResult,
-  SemanticTokensRegistrationOptions,
 } from 'vscode-languageserver/node';
 import {
   createConnection,
   DidChangeConfigurationNotification,
   ProposedFeatures,
-  SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
@@ -37,6 +35,7 @@ import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import { convertDbSchema } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
 import { doHoverInfo } from './hoverInfo.js';
+import { goToDefinition } from './goToDefinition.js';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -50,7 +49,7 @@ class SymbolFetcher {
     | {
         query: string;
         uri: string;
-        schema: DbSchema;
+        schema: DbSchema | undefined; //undefined when disconnected
       }
     | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
@@ -64,6 +63,7 @@ class SymbolFetcher {
     linterVersion: string | undefined,
   ) {
     this.linterVersion = linterVersion;
+    this.symbolTablePool.terminate();
     this.symbolTablePool = workerpool.pool(lintWorkerPath, {
       maxWorkers: 1,
       workerTerminateTimeout: 0,
@@ -82,7 +82,7 @@ class SymbolFetcher {
     while (this.nextJob) {
       try {
         const query = this.nextJob.query;
-        const dbSchema = this.nextJob.schema;
+        const dbSchema = this.nextJob.schema ?? {};
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
         const proxyWorker =
@@ -107,9 +107,9 @@ class SymbolFetcher {
               }),
           );
         }
-      } catch {
+      } catch (e) {
         //eslint-disable-next-line
-        console.log('Symbol table calculation failed');
+        console.log('Symbol table calculation failed: ', e);
       }
     }
     this.processing = false;
@@ -129,11 +129,6 @@ const neo4jSchemaPoller = new Neo4jSchemaPoller();
 const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
-  symbolFetcher.queueSymbolJob(
-    document.getText(),
-    document.uri,
-    neo4jSchemaPoller.metadata?.dbSchema ?? {},
-  );
   if (settings?.features?.linting) {
     await lintDocument(
       document,
@@ -183,6 +178,7 @@ connection.onInitialize(() => {
       },
       hoverProvider: true,
       documentFormattingProvider: true,
+      definitionProvider: true,
     },
   };
 
@@ -193,19 +189,6 @@ connection.onInitialized(() => {
   void connection.client.register(DidChangeConfigurationNotification.type, {
     section: 'neo4j',
   });
-
-  const registrationOptions: SemanticTokensRegistrationOptions = {
-    documentSelector: [{ language: 'cypher' }],
-    legend: syntaxHighlightingLegend,
-    range: false,
-    full: {
-      delta: false,
-    },
-  };
-  void connection.client.register(
-    SemanticTokensRegistrationType.type,
-    registrationOptions,
-  );
 });
 
 connection.onDidChangeConfiguration((params) => {
@@ -213,7 +196,14 @@ connection.onDidChangeConfiguration((params) => {
   relintAllDocuments();
 });
 
-documents.onDidChangeContent((change) => lintSingleDocument(change.document));
+documents.onDidChangeContent((change) => {
+  symbolFetcher.queueSymbolJob(
+    change.document.getText(),
+    change.document.uri,
+    neo4jSchemaPoller.metadata?.dbSchema ?? {},
+  );
+  return lintSingleDocument(change.document);
+});
 
 // Trigger the syntax highlighting
 connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
@@ -222,6 +212,8 @@ connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
+// Trigger go to definition for variables
+connection.onDefinition(goToDefinition(documents));
 
 connection.onNotification(
   'updateLintWorker',
@@ -259,9 +251,7 @@ connection.onNotification(
     version: number;
     schema: DbSchema;
   }) => {
-    neo4jSchemaPoller.events.once('schemaFetched', () =>
-      symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema),
-    );
+    symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema);
   },
 );
 

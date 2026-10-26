@@ -15,6 +15,7 @@ import {
 import {
   findParent,
   findPreviousNonSpace,
+  getMethodName,
   resolveCypherVersion,
   rulesDefiningVariables,
 } from '../helpers.js';
@@ -24,9 +25,6 @@ import {
   lexerSymbols,
   tokenNames,
 } from '../lexerSymbols.js';
-
-import type { ParsedStatement } from '../cypherLanguageService.js';
-import { getMethodName } from '../cypherLanguageService.js';
 
 import type { ICandidateRule, CandidatesCollection } from 'antlr4-c3';
 import { CodeCompletionCore } from 'antlr4-c3';
@@ -49,6 +47,7 @@ import {
   allReltypeCompletions,
 } from './schemaBasedCompletions.js';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
+import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
