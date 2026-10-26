@@ -1,4 +1,4 @@
-import type { ParsingResult } from '../cypherLanguageService.js';
+import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 import { findCaret } from '../helpers.js';
 import type { SymbolsInfo } from '../types.js';
 
