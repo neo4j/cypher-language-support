@@ -95,6 +95,11 @@ export class CypherLanguageService {
         caretPosition?: number;
     }): SignatureHelp;
     // (undocumented)
+    goToDefinition(query: string, caretPosition: number): {
+        startOffset: number;
+        endOffset: number;
+    };
+    // (undocumented)
     highlightSyntax(query: string): ParsedCypherToken[];
     // (undocumented)
     hoverInfo(query: string, input: {

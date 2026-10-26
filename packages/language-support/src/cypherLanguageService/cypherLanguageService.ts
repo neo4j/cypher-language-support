@@ -9,6 +9,7 @@ import type { HoverInfo } from '../hoverInformation/hover.js';
 import { getHoverInfo } from '../hoverInformation/hover.js';
 import type { ParsingResult } from './parserWrapper/parserWrapper.js';
 import { createParsingResult } from './parserWrapper/parserWrapper.js';
+import { getDefinitionPosition } from '../navigation/goToDefinition.js';
 
 export class CypherLanguageService {
   // parsingResult needs to be private at JavaScript level to avoid serializing it
@@ -103,6 +104,15 @@ export class CypherLanguageService {
       manual,
       symbolsInfo: this.symbolsInfo,
       parsingResult,
+    });
+  }
+
+  goToDefinition(query: string, caretPosition: number) {
+    const parsingResult = this.parse(query);
+    return getDefinitionPosition({
+      caretPosition,
+      parsingResult,
+      symbolsInfo: this.symbolsInfo,
     });
   }
 }
