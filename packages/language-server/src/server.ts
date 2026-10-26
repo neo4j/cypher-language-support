@@ -3,13 +3,11 @@ import type {
   Hover,
   HoverParams,
   InitializeResult,
-  SemanticTokensRegistrationOptions,
 } from 'vscode-languageserver/node';
 import {
   createConnection,
   DidChangeConfigurationNotification,
   ProposedFeatures,
-  SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
@@ -187,19 +185,6 @@ connection.onInitialized(() => {
   void connection.client.register(DidChangeConfigurationNotification.type, {
     section: 'neo4j',
   });
-
-  const registrationOptions: SemanticTokensRegistrationOptions = {
-    documentSelector: [{ language: 'cypher' }],
-    legend: syntaxHighlightingLegend,
-    range: false,
-    full: {
-      delta: false,
-    },
-  };
-  void connection.client.register(
-    SemanticTokensRegistrationType.type,
-    registrationOptions,
-  );
 });
 
 connection.onDidChangeConfiguration((params) => {

@@ -1,4 +1,4 @@
-import { CypherLanguageService } from '../../../cypherLanguageService.js';
+import { CypherLanguageService } from '../../../cypherLanguageService/cypherLanguageService.js';
 
 const languageService = new CypherLanguageService();
 
