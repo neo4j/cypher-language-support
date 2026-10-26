@@ -17,9 +17,10 @@ export function convertDbSchema(
     return originalSchema;
   }
 
-  const versionComparison = linterVersion
-    ? compareMajorMinorVersions(linterVersion, '2025.01')
-    : undefined;
+  const versionComparison = compareMajorMinorVersions(
+    linterVersion ?? '',
+    '2025.01',
+  );
   if (versionComparison !== undefined && versionComparison < 0) {
     let oldFunctions: Record<string, Neo4jFunction> | undefined = undefined;
     let oldProcedures: Record<string, Neo4jProcedure> | undefined = undefined;
@@ -64,7 +65,9 @@ export function serverVersionToLinter(serverVersion: string): {
   return { linterVersion: 'Default', notResolved: true };
 }
 
-export function linterFileToServerVersion(fileName: string) {
+export function linterFileToServerVersion(
+  fileName: string,
+): string | undefined {
   const linterFileRegex = /^([\d.]+)-lintWorker-([\d.]+).*?\.cjs$/;
   return fileName ? fileName.match(linterFileRegex)?.[1] : undefined;
 }

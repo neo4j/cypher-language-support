@@ -77,10 +77,6 @@ class SymbolFetcher {
     }
   }
 
-  private isCurrentDocument(uri: string) {
-    return !this.nextJob || this.nextJob.uri === uri;
-  }
-
   private async processJobQueue() {
     this.processing = true;
     while (this.nextJob) {
@@ -96,8 +92,8 @@ class SymbolFetcher {
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
-          //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
+          //if this.nextJob has new doc, our result is no longer valid
           this.isCurrentDocument(docUri)
         ) {
           languageService.setSymbolsInfo(
@@ -117,6 +113,10 @@ class SymbolFetcher {
       }
     }
     this.processing = false;
+  }
+
+  private isCurrentDocument(uri: string) {
+    return !this.nextJob || this.nextJob.uri === uri;
   }
 }
 

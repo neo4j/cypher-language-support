@@ -43,7 +43,7 @@ async function rawLintDocument(
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
   notifySymbolTableDone: (symbolTable: SymbolTable[]) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
-) {
+): Promise<void> {
   const query = document.getText();
   if (query.length === 0) {
     sendDiagnostics([]);
@@ -101,14 +101,10 @@ function filterLintResult(
 
 export const lintDocument: (
   ...args: Parameters<typeof rawLintDocument>
-) => ReturnType<typeof rawLintDocument> | undefined = debounce(
-  rawLintDocument,
-  600,
-  {
-    leading: false,
-    trailing: true,
-  },
-);
+) => Promise<void> | undefined = debounce(rawLintDocument, 600, {
+  leading: false,
+  trailing: true,
+});
 
 export const cleanupWorkers = async () => {
   await pool.terminate();

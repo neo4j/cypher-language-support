@@ -38,4 +38,9 @@ describe('Version comparison', () => {
     expect(compareMajorMinorVersions('2024.5.0', '2023.500.30')).toBe(1);
     expect(compareMajorMinorVersions('4.5.0-alpha', '3.5.0-beta')).toBe(1);
   });
+
+  test('compare invalid version should return undefined', () => {
+    expect(compareMajorMinorVersions('5.24.0', '')).toBeUndefined();
+    expect(compareMajorMinorVersions('', '2025.01')).toBeUndefined();
+  });
 });
