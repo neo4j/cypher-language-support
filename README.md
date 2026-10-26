@@ -1,29 +1,30 @@
 # Neo4j Cypher Language Support
 
-This mono repo contains packages that together make up Neo4j's Cypher Language support.
+This mono repo contains packages that together make up Neo4j's [Cypher](https://neo4j.com/docs/cypher/) Language support. We provide support for editors used in [Neo4j Console](https://console.neo4j.io) and also in our [VS Code extension](https://marketplace.visualstudio.com/items?itemName=neo4j-extensions.neo4j-for-vscode). 
 
-## Project status
+## Capabilities
 
-The project is in an early stage. We are still missing important features and the project is not yet stable. We welcome feedback and contributions!
-
-Try it out in our [demo](https://neo4j.github.io/cypher-language-support/) or in our alpha releases in [Neo4j Workspace](https://workspace.neo4j.io) and soon also in our VS Code extension.
+- Syntax highlighting
+- Autocompletion
+- Linting
+- Formatting
+- Signature help
+- Hover information
 
 ## Project Overview
 
+The project comprises several packages:
+
+- [language-support](./packages/language-support/README.md) - The core library implementing the language support features.
+- [language-server](./packages/language-server/README.md) - The [language server](https://microsoft.github.io/language-server-protocol/) wrapper for the `language-support` package.
+- [vscode-extension](./packages/vscode-extension/README.md) - The Neo4j VS Code extension which bundles the `language-server`.
+- [react-codemirror](./packages/react-codemirror/README.md) - A set of [codemirror 6](https://codemirror.net/) Cypher language support plugins and a react wrapper.
+- [react-codemirror-playground](./packages/react-codemirror-playground/README.md) - A playground for the codemirror integration.
+- [query-tools](./packages/query-tools/README.md) - An internal package we use to manage the Neo4j connection and keep the schema (procedure names, labels, database names, etc.) up to date in the language server.
+- [lint-worker](./packages/lint-worker/README.md) - An internal package we use to create worker files for our lint jobs.
+
+
 ```mermaid
----
-config:
-  theme: 'base'
-  themeVariables:
-    primaryColor: '#EDF0FD'
-    primaryTextColor: '#0A0F25'
-    secondaryTextColor: '#0A0F25'
-    primaryBorderColor: '#0D32B2'
-    lineColor: '#0D32B2'
-    secondaryColor: '#E3E9FD'
-    tertiaryColor: '#E3E9FD'
-    tertiaryBorderColor: '#0D32B2'
----
 flowchart TD
     subgraph CLS[Cypher Language Support]
     direction TD
@@ -53,25 +54,15 @@ flowchart TD
     LS -->|used to manage neo4j connection|POLLER
 
 
-    LSUPPORT -->|Import ANTLR4 cypher grammar & semantic analysis compiled to js|Neo4j
+    LSUPPORT -->|Import ANTLR4 Cypher grammar & semantic analysis compiled to js|Neo4j
     end
 ```
 
-The project comprises several packages:
+## Project status
 
-- [language-support](./packages/language-support/README.md) - The core library implementing the language support features.
-- [language-server](./packages/language-server/README.md) - The language server wrapper for the `language-support` package.
-- [vscode-extension](./packages/vscode-extension/README.md) - The Neo4j VS Code extension which bundles the `language-server`
-- [react-codemirror](./packages/react-codemirror/README.md) - A set of [codemirror6](https://codemirror.net/) cypher language support plugins and a react wrapper.
-- [react-codemirror-playground](./packages/react-codemirror-playground/README.md) - A playground for the codemirror integration.
-- [query-tools](./packages/query-tools/README.md) - An internal package we use to manage the Neo4j connection and keep the schema (procedure names, labels, database names, etc.) up to date in the language server.
+The project is in an early stage. We are still missing features and the project is not yet stable. We welcome feedback and contributions!
 
-## Capabilities
-
-- Syntax highlighting
-- Autocompletion
-- Linting
-- Formatting
+Try it out in our [demo](https://neo4j.github.io/cypher-language-support/), in [Neo4j Console](https://console.neo4j.io) or in [vscode](https://marketplace.visualstudio.com/items?itemName=neo4j-extensions.neo4j-for-vscode).
 
 ## Building the project and contributing
 

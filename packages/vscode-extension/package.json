@@ -1,7 +1,7 @@
 {
   "name": "neo4j-for-vscode",
   "displayName": "Neo4j for VS Code",
-  "version": "1.21.5",
+  "version": "1.21.11",
   "private": true,
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "categories": [
@@ -90,18 +90,18 @@
       {
         "command": "neo4j.switchLinter",
         "category": "Neo4j",
-        "title": "Select Cypher linter version"
+        "title": "Select Cypher Linter Version"
       },
       {
         "command": "neo4j.editConnection",
         "category": "Neo4j",
-        "title": "Edit connection",
+        "title": "Edit Connection",
         "icon": "$(pencil)"
       },
       {
         "command": "neo4j.createConnection",
         "category": "Neo4j",
-        "title": "Create new connection",
+        "title": "Create New Connection",
         "icon": "$(add)"
       },
       {
@@ -116,63 +116,63 @@
       },
       {
         "command": "neo4j.deleteConnection",
-        "title": "Delete connection...",
+        "title": "Delete Connection...",
         "category": "Neo4j",
         "icon": "$(trash)"
       },
       {
         "command": "neo4j.refreshConnections",
-        "title": "Refresh connections",
+        "title": "Refresh Connections",
         "category": "Neo4j"
       },
       {
         "command": "neo4j.saveConnection",
-        "title": "Create connection",
+        "title": "Create Connection",
         "category": "Neo4j"
       },
       {
         "command": "neo4j.switchDatabase",
-        "title": "Switch to database",
+        "title": "Switch to Database",
         "category": "Neo4j"
       },
       {
         "command": "neo4j.runCypher",
-        "title": "Run Cypher statements",
+        "title": "Run Cypher Statements",
         "category": "Neo4j",
         "icon": "$(play)"
       },
       {
         "command": "neo4j.runSingleCypher",
-        "title": "Run single Cypher statement",
+        "title": "Run Single Cypher Statement",
         "category": "Neo4j",
         "icon": "$(play)"
       },
       {
         "command": "neo4j.cypherFileFromSelection",
-        "title": "Create Cypher file from selection",
+        "title": "Create Cypher File From Selection",
         "category": "Neo4j"
       },
       {
         "command": "neo4j.addParameter",
-        "title": "Add parameter",
+        "title": "Add Parameter",
         "category": "Neo4j",
         "icon": "$(add)"
       },
       {
         "command": "neo4j.clearParameters",
-        "title": "Clear all parameters",
+        "title": "Clear All Parameters",
         "category": "Neo4j",
         "icon": "$(trash)"
       },
       {
         "command": "neo4j.deleteParameter",
-        "title": "Delete parameter",
+        "title": "Delete Parameter",
         "category": "Neo4j",
         "icon": "$(trash)"
       },
       {
         "command": "neo4j.editParameter",
-        "title": "Edit parameter",
+        "title": "Edit Parameter",
         "category": "Neo4j",
         "icon": "$(pencil)"
       },
@@ -183,7 +183,7 @@
       },
       {
         "command": "neo4j.addGraphAcademyMcpServer",
-        "title": "Add GraphAcademy MCP server",
+        "title": "Add GraphAcademy MCP Server",
         "category": "Neo4j"
       }
     ],
