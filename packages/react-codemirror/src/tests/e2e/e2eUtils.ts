@@ -111,3 +111,44 @@ export class CypherEditorPage {
     expect(tooltipTexts).toContain(expectedMsg);
   }
 }
+
+// Center and left edge of the character at the given line and column
+export async function charCoords(page: Page, line: number, column: number) {
+  return page.evaluate(
+    ([line, column]) => {
+      const lineElement = document.querySelectorAll('.cm-line')[line];
+      const walker = document.createTreeWalker(
+        lineElement,
+        NodeFilter.SHOW_TEXT,
+      );
+      let remaining = column;
+      while (walker.nextNode()) {
+        const text = walker.currentNode as Text;
+        if (remaining < text.length) {
+          const range = document.createRange();
+          range.setStart(text, remaining);
+          range.setEnd(text, remaining + 1);
+          const rect = range.getBoundingClientRect();
+          return {
+            x: rect.x + rect.width / 2,
+            y: rect.y + rect.height / 2,
+            left: rect.x,
+          };
+        }
+        remaining -= text.length;
+      }
+      throw new Error(`No character at ${line}:${column}`);
+    },
+    [line, column],
+  );
+}
+
+export async function clickWith(
+  page: Page,
+  { x, y }: { x: number; y: number },
+  modifier: string,
+) {
+  await page.keyboard.down(modifier);
+  await page.mouse.click(x, y);
+  await page.keyboard.up(modifier);
+}

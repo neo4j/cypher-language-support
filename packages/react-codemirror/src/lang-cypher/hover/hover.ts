@@ -2,13 +2,9 @@ import type { HoverTooltipSource } from '@codemirror/view';
 import type { CypherConfig } from '../langCypher';
 import { renderHoverInfo } from './hoverRender';
 import { tooltipCypherHighlighter } from '../tooltipHighlighting.js';
-import { hoverSuppressed } from '../goToDefinition';
 
 export function getHoverSource(cfg: CypherConfig): HoverTooltipSource {
   const hoverSource: HoverTooltipSource = (view, pos) => {
-    if (view.state.field(hoverSuppressed, false)) {
-      return null;
-    }
     const doc = view.state.doc.toString();
     const hoverInfo = cfg.languageService.hoverInfo(doc, {
       caretPosition: pos,
