@@ -373,7 +373,7 @@ class SignatureHelper extends CypherCmdParserListener {
       let nextToken = this.tokens[index];
 
       while (
-        nextToken.type === CypherParser.SPACE &&
+        nextToken?.type === CypherParser.SPACE &&
         index < this.tokens.length
       ) {
         index++;
