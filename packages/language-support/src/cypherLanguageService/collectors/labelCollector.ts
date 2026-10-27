@@ -37,11 +37,11 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
+          line: ctx.start!.line,
+          column: ctx.start!.column,
           offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
+            start: ctx.start!.start,
+            end: ctx.stop!.stop + 1,
           },
         });
       }
@@ -56,12 +56,12 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
-          labelText: symbolicName.start.text,
-          line: symbolicName.start.line,
-          column: symbolicName.start.column,
+          labelText: symbolicName.start!.text!,
+          line: symbolicName.start!.line,
+          column: symbolicName.start!.column,
           offsets: {
-            start: symbolicName.start.start,
-            end: symbolicName.stop.stop + 1,
+            start: symbolicName.start!.start,
+            end: symbolicName.stop!.stop + 1,
           },
         });
       }

@@ -60,7 +60,7 @@ function splitIntoStatements(tokenStream: CommonTokenStream): Token[][] {
   let chunk: Token[] = [];
 
   while (i < tokens.length) {
-    const current = CommonToken.fromToken(tokens[i]);
+    const current = CommonToken.fromToken(tokens[i]!);
     current.tokenIndex = chunk.length;
 
     chunk.push(current);

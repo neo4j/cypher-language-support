@@ -10,12 +10,12 @@ export function renderLabelTree(tree: LabelOrCondition): string {
     case 'any':
       return '%';
     case 'not':
-      return '!' + renderLabelTree(tree.children[0]);
+      return '!' + renderLabelTree(tree.children[0]!);
     case 'and':
     case 'or': {
       if (tree.children.length <= 1) {
         return tree.children.length === 1
-          ? renderLabelTree(tree.children[0])
+          ? renderLabelTree(tree.children[0]!)
           : '';
       }
       const separator = tree.condition === 'and' ? ' & ' : ' | ';
