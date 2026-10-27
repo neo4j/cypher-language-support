@@ -224,13 +224,13 @@ function checkAdjacency({
   if (position === 'left') {
     return {
       message: `[:${relStr}] has no ${qualifier}(:${nodeStr})`,
-      ...translateTokensToRange(node.start, rel.stop),
+      ...translateTokensToRange(node.start!, rel.stop!),
       severity: DiagnosticSeverity.Warning,
     };
   }
   return {
     message: `(:${nodeStr}) has no ${qualifier}[:${relStr}]`,
-    ...translateTokensToRange(rel.start, node.stop),
+    ...translateTokensToRange(rel.start!, node.stop!),
     severity: DiagnosticSeverity.Warning,
   };
 }
@@ -269,12 +269,12 @@ function findEntry(
   if (variable === null) {
     return symbolTable.find(
       (entry) =>
-        entry.definitionPosition >= element.start.start &&
+        entry.definitionPosition >= element.start!.start &&
         entry.definitionPosition <= (element.stop?.stop ?? -1),
     );
   }
   return symbolTable.find((entry) =>
-    entry.references.includes(variable.start.start),
+    entry.references.includes(variable.start!.start),
   );
 }
 
@@ -318,7 +318,7 @@ function labelTreeSatisfiableBy(
     const labelSubSet = new Set<string>();
     for (let i = 0; i < n; i++) {
       if (mask & (1 << i)) {
-        labelSubSet.add(candInTree[i]);
+        labelSubSet.add(candInTree[i]!);
       }
     }
     // The assignment must correspond to a real, non-empty node: it either uses
@@ -344,7 +344,7 @@ function evalLabelTree(tree: LabelOrCondition, labelSet: Set<string>): boolean {
     case 'or':
       return tree.children.some((c) => evalLabelTree(c, labelSet));
     case 'not':
-      return !evalLabelTree(tree.children[0], labelSet);
+      return !evalLabelTree(tree.children[0]!, labelSet);
     case 'any':
       return labelSet.size > 0;
   }
