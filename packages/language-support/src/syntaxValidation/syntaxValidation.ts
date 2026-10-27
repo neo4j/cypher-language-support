@@ -452,6 +452,7 @@ export function lintCypherQueryWithParsingResult(
       const cmd = current.command;
       if (
         (cmd.type === 'cypher' || cmd.type === 'auto') &&
+        cmd.statement &&
         cmd.statement.length > 0
       ) {
         if (current.cypherVersionError)
@@ -582,7 +583,7 @@ function warningOnDeprecatedFunction(
     functionsInQuery.forEach((parsedFunction) => {
       const fn = dbSchema.functions?.[cypherVersion]?.[parsedFunction.name];
       const functionDeprecated = fn?.isDeprecated;
-      const deprecatedBy = fn?.deprecatedBy;
+      const deprecatedBy = fn?.deprecatedBy ?? undefined;
       if (functionDeprecated) {
         warnings.push(
           generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy),

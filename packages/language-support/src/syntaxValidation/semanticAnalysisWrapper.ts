@@ -42,7 +42,7 @@ function statementEndPosition(statement: string): ElementPosition {
   return {
     offset: statement.length,
     line: lines.length - 1,
-    column: lines[lines.length - 1].length,
+    column: lines[lines.length - 1]!.length,
   };
 }
 
@@ -122,8 +122,8 @@ function updateResolverForVersion(
 ) {
   const previousResolver = previousResolvers?.[cypherVersion];
   const currentResolver = {
-    procedures: dbSchema?.procedures?.[cypherVersion],
-    functions: dbSchema?.functions?.[cypherVersion],
+    procedures: dbSchema?.procedures?.[cypherVersion] ?? {},
+    functions: dbSchema?.functions?.[cypherVersion] ?? {},
   };
   if (JSON.stringify(previousResolver) !== JSON.stringify(currentResolver)) {
     previousResolvers[cypherVersion] = currentResolver;
