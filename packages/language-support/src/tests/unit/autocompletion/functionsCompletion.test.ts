@@ -2,12 +2,11 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import type { DbSchema } from '../../../dbSchema.js';
 import { testData } from '../testData.js';
 import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('function invocations', () => {
-  const dbSchema: DbSchema = testData.mockSchema;
+  const dbSchema = testData.mockSchema;
   const functions = dbSchema.functions;
 
   test('Correctly completes unstarted function name in left hand side of WHERE', () => {
