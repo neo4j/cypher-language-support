@@ -157,8 +157,8 @@ export function getParseTreeAndTokens(query: string) {
 export function findTargetToken(
   tokens: Token[],
   cursorPosition: number,
-): Token | false {
-  let targetToken: Token;
+): Token | false | undefined {
+  let targetToken: Token | undefined;
   for (const token of tokens) {
     if (token.channel === 0) {
       targetToken = token;
@@ -220,7 +220,10 @@ export function verifyGroupSizes(chunkList: Chunk[]) {
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
-export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+export function shouldAddSpace(
+  chunk: Chunk,
+  nextChunk: Chunk | undefined,
+): boolean {
   if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
     return false;
   }

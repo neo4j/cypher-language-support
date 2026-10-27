@@ -269,7 +269,7 @@ function simplifyAndRemoveTautologies(
     return newRoot;
   } else {
     // Removed children are marked during traversal and filtered out afterwards.
-    const children: (LabelOrCondition | undefined)[] = newRoot.children;
+    const children: Array<LabelOrCondition | undefined> = newRoot.children;
     for (let i = 0; i < children.length; i++) {
       const currentNode = children[i];
       if (!currentNode) {
