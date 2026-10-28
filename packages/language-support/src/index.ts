@@ -22,11 +22,11 @@ export {
 } from './formatting/formatting.js';
 export { resolveCypherVersion } from './helpers.js';
 export { CypherTokenType, lexerSymbols } from './lexerSymbols.js';
+export { CypherLanguageService } from './cypherLanguageService/cypherLanguageService.js';
 export {
   parseParameters,
-  CypherLanguageService,
   parseStatementsStrs,
-} from './cypherLanguageService.js';
+} from './cypherLanguageService/parserWrapper/parserWrapper.js';
 export { getStatementAtCaret } from './statementAtCaret.js';
 export {
   getSignatureInfo as signatureHelp,

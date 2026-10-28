@@ -1,23 +1,22 @@
-import type {
-  CommonTokenStream,
-  ParserRuleContext,
-  ParseTree,
-  Token,
-} from 'antlr4ng';
-import { CommonToken } from 'antlr4ng';
+import type { ParserRuleContext, ParseTree, Token } from 'antlr4ng';
 import type { DbSchema } from './dbSchema.js';
-import { CypherCmdLexer as CypherLexer } from './generated-parser/CypherCmdLexer.js';
-import type { StatementsOrCommandsContext } from './generated-parser/CypherCmdParser.js';
+import type {
+  FunctionNameContext,
+  ProcedureNameContext,
+  StatementsOrCommandsContext,
+  SymbolicNameStringContext,
+} from './generated-parser/CypherCmdParser.js';
 import {
   CypherCmdParser as CypherParser,
   NodePatternContext,
   RelationshipPatternContext,
 } from './generated-parser/CypherCmdParser.js';
-import type {
-  ParsedStatement,
-  ParsingResult,
-} from './cypherLanguageService.js';
+
 import type { CypherVersion } from './types.js';
+import type {
+  ParsingResult,
+  ParsedStatement,
+} from './cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export function findStopNode(root: StatementsOrCommandsContext) {
   let children = root.children;
@@ -113,34 +112,6 @@ export function findCaret(
   return result;
 }
 
-export function splitIntoStatements(tokenStream: CommonTokenStream): Token[][] {
-  tokenStream.fill();
-  const tokens = tokenStream.getTokens();
-
-  let i = 0;
-  const result: Token[][] = [];
-  let chunk: Token[] = [];
-
-  while (i < tokens.length) {
-    const current = CommonToken.fromToken(tokens[i]);
-    current.tokenIndex = chunk.length;
-
-    chunk.push(current);
-
-    if (
-      current.type === CypherLexer.SEMICOLON ||
-      current.type === CypherLexer.EOF
-    ) {
-      result.push(chunk);
-      chunk = [];
-    }
-
-    i++;
-  }
-
-  return result;
-}
-
 export function findPreviousNonSpace(
   tokens: Token[],
   index: number,
@@ -210,3 +181,30 @@ export const rulesDefiningOrUsingVariables = [
   CypherParser.RULE_nodePattern,
   CypherParser.RULE_relationshipPattern,
 ];
+
+export function getMethodName(
+  ctx: ProcedureNameContext | FunctionNameContext,
+): string {
+  const namespaces = ctx.namespace().symbolicNameString();
+  const methodName = ctx.symbolicNameString();
+
+  const normalizedName = [...namespaces, methodName]
+    .map((symbolicName) => {
+      return getNamespaceString(symbolicName);
+    })
+    .join('.');
+
+  return normalizedName;
+}
+
+function getNamespaceString(ctx: SymbolicNameStringContext): string {
+  const text = ctx.getText();
+  const isEscaped = Boolean(ctx.escapedSymbolicNameString());
+  const hasDot = text.includes('.');
+
+  if (isEscaped && !hasDot) {
+    return text.slice(1, -1);
+  }
+
+  return text;
+}
