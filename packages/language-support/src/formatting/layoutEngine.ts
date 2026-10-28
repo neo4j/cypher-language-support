@@ -26,7 +26,7 @@ function shouldBreak(
   state: State,
   chunk: Chunk,
   nextChunk: Chunk | undefined,
-): boolean | undefined {
+): boolean {
   if (chunk.type === 'COMMENT') return true;
 
   if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
@@ -37,10 +37,10 @@ function shouldBreak(
     return false;
   }
 
-  return (
+  return Boolean(
     chunk.mustBreak ||
     chunk.doubleBreak ||
-    state.activeGroups.at(-1)?.shouldBreak
+    state.activeGroups.at(-1)?.shouldBreak,
   );
 }
 
@@ -133,7 +133,7 @@ function handleComments(state: State, chunk: Chunk) {
     // Inline comment - append directly
     state.formatted += ' ';
     state.formatted += chunk.comment;
-    state.column += chunk.comment!.length;
+    state.column += chunk.comment.length;
     // Always include space after, even if the chunk has noSpace
     if (chunk.type === 'REGULAR' && chunk.noSpace) {
       state.formatted += ' ';

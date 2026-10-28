@@ -874,7 +874,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x.insertText?.slice(1, x.insertText.length),
+              insertText: x.insertText.slice(1),
               label: x.label.slice(1, x.label.length),
             };
           });
@@ -896,7 +896,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x.insertText?.slice(1, x.insertText.length),
+              insertText: x.insertText.slice(1),
               label: x.label.slice(1, x.label.length),
             };
           });
@@ -923,7 +923,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x.insertText?.slice(2, x.insertText.length),
+              insertText: x.insertText.slice(2),
               label: x.label.slice(2, x.label.length),
             };
           });
