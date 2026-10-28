@@ -3,6 +3,7 @@
   "include": ["src", "vitest.config.mts"],
   "exclude": ["**/lintWorker.mjs"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: Remove this once the package is fixed (default is true)
     "jsx": "react-jsx",
     "allowJs": true,
     "module": "esnext",

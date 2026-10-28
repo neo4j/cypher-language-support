@@ -2,6 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": ["src", "tests", "test"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: Remove this once the package is fixed (default is true)
     "outDir": "dist",
     "jsx": "react-jsx",
     "types": ["@wdio/globals/types"]

@@ -34,7 +34,7 @@ export function doAutoCompletion(
         {
           caretPosition: offset,
           manual:
-            completionParams.context.triggerKind ===
+            completionParams.context?.triggerKind ===
             CompletionTriggerKind.Invoked,
         },
       );
