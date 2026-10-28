@@ -201,8 +201,7 @@ export function chunksToFormattedString(
 ): FinalResultWithPos {
   const state = createInitialState();
 
-  for (let i = 0; i < chunkList.length; i++) {
-    const chunk = chunkList[i]!;
+  for (const [i, chunk] of chunkList.entries()) {
     const nextChunk = chunkList[i + 1];
 
     applyIndentationIfNeeded(state);
