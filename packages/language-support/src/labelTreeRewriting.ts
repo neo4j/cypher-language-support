@@ -475,11 +475,10 @@ export function removeDuplicates(
   if (isLabelLeaf(newLabelTree)) {
     return newLabelTree;
   }
-  for (let i = 0; i < newLabelTree.children.length; i++) {
-    newLabelTree.children[i] = removeDuplicates(newLabelTree.children[i]!);
-  }
 
-  const children: Array<LabelOrCondition | undefined> = newLabelTree.children;
+  const children: Array<LabelOrCondition | undefined> =
+    newLabelTree.children.map(removeDuplicates);
+
   for (let i = 0; i < children.length; i++) {
     for (let j = i + 1; j < children.length; j++) {
       const child1 = children[i];

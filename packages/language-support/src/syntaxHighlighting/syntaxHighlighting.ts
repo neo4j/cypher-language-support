@@ -244,7 +244,9 @@ class SyntaxHighlighter extends CypherParserListener {
     const shortestFunction = ctx.SHORTEST_PATH()
       ? ctx.SHORTEST_PATH()
       : ctx.ALL_SHORTEST_PATHS();
-    this.colourFunction(shortestFunction!);
+    if (shortestFunction) {
+      this.colourFunction(shortestFunction);
+    }
   };
 
   exitAllReduceExpressionValidArguments = (
@@ -412,10 +414,15 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
-    if (ctx.ANY()) this.colourPredicateFunction(ctx.ANY()!);
-    if (ctx.ALL()) this.colourPredicateFunction(ctx.ALL()!);
-    if (ctx.NONE()) this.colourPredicateFunction(ctx.NONE()!);
-    if (ctx.SINGLE()) this.colourPredicateFunction(ctx.SINGLE()!);
+    const any = ctx.ANY();
+    const all = ctx.ALL();
+    const none = ctx.NONE();
+    const single = ctx.SINGLE();
+
+    if (any) this.colourPredicateFunction(any);
+    if (all) this.colourPredicateFunction(all);
+    if (none) this.colourPredicateFunction(none);
+    if (single) this.colourPredicateFunction(single);
   };
 
   exitReduceExpression = (ctx: ReduceExpressionContext) => {

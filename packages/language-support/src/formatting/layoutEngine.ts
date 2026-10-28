@@ -74,7 +74,12 @@ function updateIndentationState(
 ) {
   for (const indent of chunk.indentation) {
     if (applySpecialBreak(state, chunk, nextChunk)) {
-      indent.removeReference!.isApplied = false;
+      if (!indent.removeReference) {
+        throw new Error(
+          '[updateIndentationState] indent.removeReference not available',
+        );
+      }
+      indent.removeReference.isApplied = false;
     } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
       state.indentation += INDENTATION_SPACES;
@@ -183,7 +188,7 @@ function validateFinalState(state: State) {
 }
 
 function applySpecialBreak(
-  state: State,
+  _state: State,
   chunk: Chunk,
   nextChunk: Chunk | undefined,
 ) {

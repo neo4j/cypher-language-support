@@ -22,20 +22,20 @@ export function backtickIfNeeded(
   e: string,
   variant: BacktickVariant,
 ): string | undefined {
-  if (e == null || e == '') {
+  if (!e) {
     return undefined;
   } else if (
     (variant === 'label' ||
       variant === 'propertyKey' ||
       variant === 'relType') &&
-    (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0]!))
+    (/[^\p{L}\p{N}_]/u.test(e) || /[^\p{L}_]/u.test(e[0] ?? ''))
   ) {
     return `\`${e}\``;
   } else if (
     variant === 'dbName' &&
     (/[^\p{L}\p{N}_.]/u.test(e) ||
-      /[^\p{L}_]/u.test(e[0]!) ||
-      /[^\p{L}\p{N}_]/u.test(e.at(-1)!))
+      /[^\p{L}_]/u.test(e[0] ?? '') ||
+      /[^\p{L}\p{N}_]/u.test(e.at(-1) ?? ''))
   ) {
     return `\`${e}\``;
   } else if (variant === 'param' && /[^\p{L}\p{N}_]/u.test(e)) {
