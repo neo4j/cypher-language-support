@@ -95,6 +95,8 @@ export class CypherLanguageService {
         caretPosition?: number;
     }): SignatureHelp;
     // (undocumented)
+    getSymbolsInfo(): SymbolsInfo;
+    // (undocumented)
     goToDefinition(query: string, caretPosition: number): {
         startOffset: number;
         endOffset: number;
