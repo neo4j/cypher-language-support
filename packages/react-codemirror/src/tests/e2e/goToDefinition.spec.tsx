@@ -106,3 +106,35 @@ test('Mod-click on a non-variable does nothing', async ({ page, mount }) => {
   await editorPage.getEditor().press('x');
   await expect(page.locator('.cm-content')).toHaveText('MATCH (n) RETURN nx');
 });
+
+test('Mod-press while hovering a variable reference converts it to a clickableSymbol with its own styling', async ({
+  page,
+  mount,
+}) => {
+  await mount(<CypherEditor value="MATCH (n) RETURN n" />);
+  const reference = await charCoords(page, 0, 17);
+  const hover = page.locator('.cm-hover-tooltip');
+
+  await expect(async () => {
+    await page.mouse.move(0, 0);
+    await page.mouse.move(reference.x, reference.y);
+    await expect(hover).toBeVisible({ timeout: 1000 });
+  }).toPass({ timeout: 20000 });
+
+  await expect(async () => {
+    await page.keyboard.up('ControlOrMeta');
+    await page.keyboard.down('ControlOrMeta');
+    await page.mouse.move(0, 0);
+    await page.mouse.move(reference.x, reference.y);
+    const clickableSymbol = await page
+      .locator('.cm-clickableSymbol')
+      ?.boundingBox();
+    expect(clickableSymbol?.x).toBeDefined();
+  }).toPass({ timeout: 20000 });
+
+  await expect(async () => {
+    await page.keyboard.up('ControlOrMeta');
+    const clickableSymbol = page.locator('.cm-clickableSymbol');
+    await expect(clickableSymbol).toBeHidden();
+  }).toPass({ timeout: 20000 });
+});
