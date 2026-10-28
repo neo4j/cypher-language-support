@@ -101,7 +101,7 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
   class {
     decorations = Decoration.none;
     showClickCursor = false;
-    pos: { x: number; y: number } = { x: 0, y: 0 };
+    coords: { x: number; y: number } = { x: 0, y: 0 };
 
     constructor(
       readonly view: EditorView,
@@ -111,11 +111,11 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
     set(e: MouseEvent | KeyboardEvent) {
       const modKey = isMac ? e.metaKey : e.ctrlKey;
       if (e instanceof MouseEvent) {
-        this.pos = { x: e.clientX, y: e.clientY };
+        this.coords = { x: e.clientX, y: e.clientY };
       }
-      const pos = this.view.posAtCoords({ x: this.pos.x, y: this.pos.y });
+      const pos = this.view.posAtCoords({ x: this.coords.x, y: this.coords.y });
       const definition =
-        pos !== null && symbolWithDefinitionRange(this.view, pos, this.cfg);
+        pos != null && symbolWithDefinitionRange(this.view, pos, this.cfg);
       const showClickCursor = modKey && definition !== undefined;
       if (this.showClickCursor !== showClickCursor) {
         this.showClickCursor = showClickCursor;
@@ -126,11 +126,9 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
           this.decorations = Decoration.set(
             decoration.range(definition.from, definition.to),
           );
-          this.view.focus();
           this.view.update([]);
         } else {
           this.decorations = Decoration.none;
-          this.view.focus();
           this.view.update([]);
         }
       }
