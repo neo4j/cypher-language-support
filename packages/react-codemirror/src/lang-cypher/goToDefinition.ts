@@ -47,24 +47,24 @@ function symbolWithDefinitionRange(
     view.state.doc.toString(),
     pos,
   );
-  if (definition) {
-    const symbol = config.languageService
-      .getSymbolsInfo()
-      .symbolTables.flatMap((table) =>
-        table.map((symbol) =>
-          symbol.definitionPosition === definition.startOffset
-            ? symbol
-            : undefined,
-        ),
-      )
-      .find((x) => x !== undefined);
-    const symbolStart = symbol.references.find(
-      (ref) => ref <= pos && ref + symbol.variable.length >= pos,
+  if (!definition) {
+    return undefined;
+  }
+  const symbols =
+    config.languageService.getSymbolsInfo()?.symbolTables?.flat() ?? [];
+  for (const symbol of symbols) {
+    if (symbol.definitionPosition !== definition.startOffset) {
+      continue;
+    }
+    const from = symbol.references.find(
+      (ref) =>
+        ref !== symbol.definitionPosition &&
+        ref <= pos &&
+        pos <= ref + symbol.variable.length,
     );
-    return {
-      from: symbolStart,
-      to: symbolStart + symbol.variable.length,
-    };
+    if (from !== undefined) {
+      return { from, to: from + symbol.variable.length };
+    }
   }
   return undefined;
 }
@@ -97,10 +97,12 @@ export function cypherGoToDefinition(config: CypherConfig): Extension {
   ];
 }
 
+const clickableSymbolMark = Decoration.mark({ class: 'cm-clickableSymbol' });
+
 const clickableSymbolPlugin = ViewPlugin.fromClass(
   class {
     decorations = Decoration.none;
-    showClickCursor = false;
+    range: { from: number; to: number } | undefined;
     coords: { x: number; y: number } = { x: 0, y: 0 };
 
     constructor(
@@ -113,24 +115,18 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
       if (e instanceof MouseEvent) {
         this.coords = { x: e.clientX, y: e.clientY };
       }
-      const pos = this.view.posAtCoords({ x: this.coords.x, y: this.coords.y });
-      const definition =
-        pos != null && symbolWithDefinitionRange(this.view, pos, this.cfg);
-      const showClickCursor = modKey && definition !== undefined;
-      if (this.showClickCursor !== showClickCursor) {
-        this.showClickCursor = showClickCursor;
-        if (this.showClickCursor) {
-          const decoration: Decoration = Decoration.mark({
-            class: 'cm-clickableSymbol',
-          });
-          this.decorations = Decoration.set(
-            decoration.range(definition.from, definition.to),
-          );
-          this.view.update([]);
-        } else {
-          this.decorations = Decoration.none;
-          this.view.update([]);
-        }
+      const pos = modKey ? this.view.posAtCoords(this.coords) : null;
+      const range =
+        pos === null
+          ? undefined
+          : symbolWithDefinitionRange(this.view, pos, this.cfg);
+      //Only need changes when hovering on the position of a new reference
+      if (range?.from !== this.range?.from || range?.to !== this.range?.to) {
+        this.range = range;
+        this.decorations = range
+          ? Decoration.set(clickableSymbolMark.range(range.from, range.to))
+          : Decoration.none;
+        this.view.update([]);
       }
     }
   },

@@ -19,10 +19,15 @@ async function waitForSymbolTable(
   }).toPass({ timeout: 20000 });
 }
 
-// Fails unless the drawn caret sits at the start of the given character
+// Fails unless the drawn caret ends up at the start of the given character.
+// Polls, since CodeMirror redraws the caret in a later animation frame
 async function expectCaretAt(page: Page, char: { left: number }) {
-  const caret = await page.locator('.cm-cursor-primary').boundingBox();
-  expect(Math.abs((caret?.x ?? -100) - char.left)).toBeLessThan(2);
+  await expect
+    .poll(async () => {
+      const caret = await page.locator('.cm-cursor-primary').boundingBox();
+      return Math.abs((caret?.x ?? -100) - char.left);
+    })
+    .toBeLessThan(2);
 }
 
 test('F12 moves the caret to the start of the definition', async ({
@@ -34,11 +39,10 @@ test('F12 moves the caret to the start of the definition', async ({
   await editorPage.getEditor().focus();
   await editorPage.getEditor().press('End');
   const definitionCoordinates = await charCoords(page, 0, 7);
-
-  await expect(async () => {
-    await editorPage.getEditor().press('F12');
-    await expectCaretAt(page, definitionCoordinates);
-  }).toPass({ timeout: 20000 });
+  const referenceCoordinates = await charCoords(page, 0, 17);
+  await waitForSymbolTable(page, referenceCoordinates);
+  await editorPage.getEditor().press('F12');
+  await expectCaretAt(page, definitionCoordinates);
 
   await editorPage.getEditor().press('x');
   await expect(page.locator('.cm-content')).toHaveText('MATCH (xn) RETURN n');
@@ -66,10 +70,9 @@ test('Mod-click on a variable jumps to its definition', async ({
   const referenceCoordinates = await charCoords(page, 0, 17);
   const definitionCoordinates = await charCoords(page, 0, 7);
 
-  await expect(async () => {
-    await clickWith(page, referenceCoordinates, 'ControlOrMeta');
-    await expectCaretAt(page, definitionCoordinates);
-  }).toPass({ timeout: 20000 });
+  await waitForSymbolTable(page, referenceCoordinates);
+  await clickWith(page, referenceCoordinates, 'ControlOrMeta');
+  await expectCaretAt(page, definitionCoordinates);
 
   await editorPage.getEditor().press('x');
   await expect(page.locator('.cm-content')).toHaveText('MATCH (xn) RETURN n');
@@ -86,13 +89,12 @@ test('Mod-click hides the hover until the mouse moves again', async ({
 
   await waitForSymbolTable(page, referenceCoordinates);
 
-  await expect(async () => {
-    await page.keyboard.down('ControlOrMeta');
-    await page.mouse.down();
-    await page.mouse.up();
-    await page.keyboard.up('ControlOrMeta');
-    await expectCaretAt(page, definitionCoordinates);
-  }).toPass({ timeout: 20000 });
+  await page.keyboard.down('ControlOrMeta');
+  await page.mouse.down();
+  await page.mouse.up();
+  await page.keyboard.up('ControlOrMeta');
+  await expectCaretAt(page, definitionCoordinates);
+
   await expect(hover).toBeHidden();
   // Wait past the hover delay, hover should not reopen without real mouse movement
   await page.waitForTimeout(1000);
@@ -107,7 +109,7 @@ test('Mod-click on a non-variable does nothing', async ({ page, mount }) => {
   await mount(<CypherEditor value="MATCH (n) RETURN n" />);
   await editorPage.getEditor().focus();
   await editorPage.getEditor().press('End');
-  await page.waitForTimeout(3000);
+  await waitForSymbolTable(page, await charCoords(page, 0, 17));
 
   await clickWith(page, await charCoords(page, 0, 2), 'ControlOrMeta');
 
@@ -138,4 +140,24 @@ test('Mod-press while hovering a variable reference underlines it with a pointer
 
   await page.keyboard.up('ControlOrMeta');
   await expect(clickableSymbol).toHaveCount(0);
+});
+
+test('Underline follows the mouse between clickable symbols while mod is held', async ({
+  page,
+  mount,
+}) => {
+  const editorPage = new CypherEditorPage(page);
+  await mount(<CypherEditor value="MATCH (n), (m) RETURN n, m" />);
+  await editorPage.getEditor().focus();
+  const referenceN = await charCoords(page, 0, 22);
+  const referenceM = await charCoords(page, 0, 25);
+  const clickableSymbol = page.locator('.cm-clickableSymbol');
+
+  await waitForSymbolTable(page, referenceN);
+
+  await page.keyboard.down('ControlOrMeta');
+  await expect(clickableSymbol).toHaveText('n');
+  await page.mouse.move(referenceM.x, referenceM.y);
+  await expect(clickableSymbol).toHaveText('m');
+  await page.keyboard.up('ControlOrMeta');
 });
