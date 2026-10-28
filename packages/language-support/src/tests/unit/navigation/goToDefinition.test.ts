@@ -3,68 +3,58 @@ import { CypherLanguageService } from '../../../cypherLanguageService/cypherLang
 const languageService = new CypherLanguageService();
 
 describe('go to variable definition', () => {
-  test('Can find definition-location when requesting from the middle of a reference', () => {
-    const query = 'MATCH (person) RETURN person';
+  function goToDefinitionExpect(
+    query: string,
+    caret: number,
+    expectation: { startOffset: number; endOffset: number } | undefined,
+  ): void {
     const { symbolTables } = languageService.lint(query, {});
     languageService.setSymbolsInfo({
       query,
       symbolTables: symbolTables,
     });
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      'MATCH (person) RETURN per'.length,
-    )!;
-    expect(startOffset).toEqual('MATCH ('.length);
-    expect(endOffset).toEqual('MATCH (person'.length);
+    const offset = languageService.goToDefinition(query, caret);
+
+    expect(offset).toEqual(expectation);
+  }
+
+  test('Can find definition-location when requesting from the middle of a reference', () => {
+    const query = 'MATCH (person) RETURN person';
+    const caret = 'MATCH (person) RETURN per'.length;
+
+    goToDefinitionExpect(query, caret, {
+      startOffset: 'MATCH ('.length,
+      endOffset: 'MATCH (person'.length,
+    });
   });
 
   test('Can find definition-location when requesting from the end of a reference also with query continuing after', () => {
     const query = 'MATCH (person) RETURN person, 50';
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = 'MATCH (person) RETURN person'.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      'MATCH (person) RETURN person'.length,
-    )!;
-    expect(startOffset).toEqual('MATCH ('.length);
-    expect(endOffset).toEqual('MATCH (person'.length);
+    goToDefinitionExpect(query, caret, {
+      startOffset: 'MATCH ('.length,
+      endOffset: 'MATCH (person'.length,
+    });
   });
 
   test('Can find definition-location when requesting from the end of a reference', () => {
     const query = 'MATCH (person) RETURN person';
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
+    goToDefinitionExpect(query, query.length, {
+      startOffset: 'MATCH ('.length,
+      endOffset: 'MATCH (person'.length,
     });
-
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      query.length,
-    )!;
-    expect(startOffset).toEqual('MATCH ('.length);
-    expect(endOffset).toEqual('MATCH (person'.length);
   });
 
   test('Can find definition-location when requesting from the start of a reference', () => {
     const query = 'MATCH (person) RETURN person';
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = 'MATCH (person) RETURN '.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      'MATCH (person) RETURN '.length,
-    )!;
-    expect(startOffset).toEqual('MATCH ('.length);
-    expect(endOffset).toEqual('MATCH (person'.length);
+    goToDefinitionExpect(query, caret, {
+      startOffset: 'MATCH ('.length,
+      endOffset: 'MATCH (person'.length,
+    });
   });
 
   test('Handles scope (inner)', () => {
@@ -74,29 +64,19 @@ CALL () {
   RETURN person as x
 } 
 RETURN person`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
-
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `MATCH (person)
+    const caret = `MATCH (person)
 CALL () {
   MATCH (person)
-  RETURN per`.length,
-    )!;
-    expect(startOffset).toEqual(
-      `MATCH (person)
+  RETURN per`.length;
+
+    goToDefinitionExpect(query, caret, {
+      startOffset: `MATCH (person)
 CALL () {
   MATCH (`.length,
-    );
-    expect(endOffset).toEqual(
-      `MATCH (person)
+      endOffset: `MATCH (person)
 CALL () {
   MATCH (person`.length,
-    );
+    });
   });
 
   test('Handles scope (outer)', () => {
@@ -106,111 +86,71 @@ CALL () {
   RETURN person as x
 } 
 RETURN person`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
-
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `MATCH (person)
+    const caret = `MATCH (person)
 CALL () {
   MATCH (person)
   RETURN person as x
 } 
-RETURN per`.length,
-    )!;
-    expect(startOffset).toEqual(`MATCH (`.length);
-    expect(endOffset).toEqual(`MATCH (person`.length);
+RETURN per`.length;
+
+    goToDefinitionExpect(query, caret, {
+      startOffset: `MATCH (`.length,
+      endOffset: `MATCH (person`.length,
+    });
   });
 
   test('Handles variables with properties', () => {
     const query = `MATCH (p:Person {age: 50}) RETURN p, p.age`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `MATCH (p:Person {age: 50}) RETURN p, p`.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `MATCH (p:Person {age: 50}) RETURN p, p`.length,
-    )!;
-    expect(startOffset).toEqual(`MATCH (`.length);
-    expect(endOffset).toEqual(`MATCH (p`.length);
-  })!;
+    goToDefinitionExpect(query, caret, {
+      startOffset: `MATCH (`.length,
+      endOffset: `MATCH (p`.length,
+    });
+  });
 
   test('Handles rel variables', () => {
     const query = `MATCH ()-[knows]-() RETURN knows`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `MATCH ()-[knows]-() RETURN kn`.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `MATCH ()-[knows]-() RETURN kn`.length,
-    )!;
-    expect(startOffset).toEqual(`MATCH ()-[`.length);
-    expect(endOffset).toEqual(`MATCH ()-[knows`.length);
+    goToDefinitionExpect(query, caret, {
+      startOffset: `MATCH ()-[`.length,
+      endOffset: `MATCH ()-[knows`.length,
+    });
   });
 
   test('Handles integer variables', () => {
     const query = `CYPHER 25 LET nbr = 50 RETURN nbr`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `CYPHER 25 LET nbr = 50 RETURN n`.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `CYPHER 25 LET nbr = 50 RETURN n`.length,
-    )!;
-    expect(startOffset).toEqual(`CYPHER 25 LET `.length);
-    expect(endOffset).toEqual(`CYPHER 25 LET nbr`.length);
+    goToDefinitionExpect(query, caret, {
+      startOffset: `CYPHER 25 LET `.length,
+      endOffset: `CYPHER 25 LET nbr`.length,
+    });
   });
 
   test('Handles string variables', () => {
     const query = `CYPHER 25 LET name = "Pikachu" RETURN name`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `CYPHER 25 LET name = "Pikachu" RETURN na`.length;
 
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      `CYPHER 25 LET name = "Pikachu" RETURN na`.length,
-    )!;
-    expect(startOffset).toEqual(`CYPHER 25 LET `.length);
-    expect(endOffset).toEqual(`CYPHER 25 LET name`.length);
+    goToDefinitionExpect(query, caret, {
+      startOffset: `CYPHER 25 LET `.length,
+      endOffset: `CYPHER 25 LET name`.length,
+    });
   });
 
   test('Does not break on anonymous variables', () => {
     const query = `MATCH (n)-[:KNOWS]-() RETURN n`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `MATCH (n)-[`.length;
 
-    const result = languageService.goToDefinition(query, `MATCH (n)-[`.length);
-    expect(result).toEqual(undefined);
+    goToDefinitionExpect(query, caret, undefined);
   });
 
   test('Does nothing at definition position', () => {
     const query = `MATCH (person) RETURN person`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `MATCH (pe`.length;
 
-    const result = languageService.goToDefinition(query, `MATCH (pe`.length);
-    expect(result).toEqual(undefined);
+    goToDefinitionExpect(query, caret, undefined);
   });
 
   test('Does not crash on missing symbol table', () => {
@@ -242,31 +182,18 @@ RETURN pe`.length,
   test('Does nothing on comment', () => {
     const query = `//All nodes are persons
     MATCH (person) RETURN person`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `//All node`.length;
 
-    const result = languageService.goToDefinition(query, `//All node`.length);
-    expect(result).toEqual(undefined);
+    goToDefinitionExpect(query, caret, undefined);
   });
 
   test('Does nothing on empty statement', () => {
     const query = `MATCH (n) RETURN n;
       ;
 MATCH (m) RETURN m`;
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
-    });
+    const caret = `MATCH (n) RETURN n;
+   `.length;
 
-    const result = languageService.goToDefinition(
-      query,
-      `MATCH (n) RETURN n;
-   `.length,
-    );
-    expect(result).toEqual(undefined);
+    goToDefinitionExpect(query, caret, undefined);
   });
 });
