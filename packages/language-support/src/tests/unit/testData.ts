@@ -9,7 +9,7 @@ function asNeo4jProcedures<T extends Record<string, Neo4jProcedure>>(obj: T) {
   return obj as { [P in keyof T]: Neo4jProcedure };
 }
 
-const mockSchema: DbSchema = {
+const mockSchema = {
   functions: {
     'CYPHER 5': asNeo4jFunctions({
       abs: {
@@ -119419,7 +119419,7 @@ const mockSchema: DbSchema = {
     'Stadium',
   ],
   userNames: ['oskar', 'neo4j', 'admin'],
-};
+} satisfies DbSchema;
 
 const largeQuery: string = /* cypher */ `
 CREATE (TheMatrix:Movie {title:'The Matrix', released:1999, tagline:'Welcome to the Real World'})
@@ -119932,7 +119932,7 @@ WITH TomH as a
 MATCH (a)-[:ACTED_IN]->(m)<-[:DIRECTED]-(d) RETURN a,m,d LIMIT 10;`;
 
 export const testData: {
-  mockSchema: DbSchema;
+  mockSchema: typeof mockSchema;
   largeQuery: string;
   emptyFunction: Neo4jFunction;
   emptyProcedure: Neo4jProcedure;
