@@ -1,3 +1,7 @@
+import type { DbSchema } from './dbSchema.js';
+import { testData as internalTestData } from './tests/unit/testData.js';
+import type { Neo4jFunction, Neo4jProcedure } from './types.js';
+
 export { autocomplete } from './autocompletion/autocompletion.js';
 export type { AutocompleteOptions } from './autocompletion/autocompletion.js';
 export {
@@ -55,7 +59,12 @@ export type {
   GenericDiagnostic,
   LintCypherQueryOptions,
 } from './syntaxValidation/syntaxValidation.js';
-export { testData } from './tests/unit/testData.js';
+export const testData: {
+  mockSchema: DbSchema;
+  largeQuery: string;
+  emptyFunction: Neo4jFunction;
+  emptyProcedure: Neo4jProcedure;
+} = internalTestData;
 export { textMateGrammar } from './textMateGrammar.js';
 export { allCypherVersions } from './types.js';
 export type {
