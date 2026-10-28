@@ -109,9 +109,9 @@ export function findPreviousNonSpace(
 ): Token | undefined {
   let i = index;
   while (i > 0) {
-    const token = tokens[--i]!;
+    const token = tokens[--i];
 
-    if (token.type !== CypherParser.SPACE) {
+    if (token && token.type !== CypherParser.SPACE) {
       return token;
     }
   }

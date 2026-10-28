@@ -64,7 +64,7 @@ export const testData: {
   largeQuery: string;
   emptyFunction: Neo4jFunction;
   emptyProcedure: Neo4jProcedure;
-} = internalTestData;
+} = internalTestData; // Re-export internal test data, to make it a more generic type
 export { textMateGrammar } from './textMateGrammar.js';
 export { allCypherVersions } from './types.js';
 export type {

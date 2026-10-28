@@ -14,9 +14,8 @@ export function renderLabelTree(tree: LabelOrCondition): string {
     case 'and':
     case 'or': {
       if (tree.children.length <= 1) {
-        return tree.children.length === 1
-          ? renderLabelTree(tree.children[0]!)
-          : '';
+        const child = tree.children[0];
+        return child ? renderLabelTree(child) : '';
       }
       const separator = tree.condition === 'and' ? ' & ' : ' | ';
       return '(' + tree.children.map(renderLabelTree).join(separator) + ')';
