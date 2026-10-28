@@ -69,7 +69,7 @@ function symbolWithDefinitionRange(
   return undefined;
 }
 
-export const goToDefinitionCommand =
+const goToDefinitionCommand =
   (config: CypherConfig): Command =>
   (view) =>
     goToDefinitionAt(view, view.state.selection.main.head, config);

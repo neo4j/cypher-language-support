@@ -11,7 +11,6 @@ export type { InlinePanelProps } from './CypherEditor';
 export type { InlinePanelCallbacks } from './inlinePanel.js';
 export type { DiffProps } from './diffView';
 export { cypher, CypherConfig } from './lang-cypher/langCypher';
-export { goToDefinitionCommand } from './lang-cypher/goToDefinition';
 export { darkThemeConstants, lightThemeConstants } from './themes';
 export type {
   ThemeOptions,
