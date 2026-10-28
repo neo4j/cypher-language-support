@@ -1,10 +1,10 @@
-import type { ParsingResult } from '../cypherLanguageService.js';
 import type { DbSchema } from '../dbSchema.js';
 import { getMethodSignature, MethodType } from '../signatureHelp.js';
 import type { Neo4jFunction, Neo4jProcedure, SymbolsInfo } from '../types.js';
 import { isLabelLeaf } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
+import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export interface HoverDescription {
   name: string;
