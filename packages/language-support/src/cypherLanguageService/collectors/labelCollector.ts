@@ -8,6 +8,10 @@ import { couldCreateNewLabel } from '../utils/couldCreateNewLabel.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
 import type { LabelOrRelType } from '../parsingTypes.js';
 import { LabelType } from '../parsingTypes.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../../helpers/getContextToken.js';
 
 /** This listener collects all labels and relationship types in read operations */
 export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
@@ -37,11 +41,11 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
           labelText: ctx.getText(),
-          line: ctx.start!.line,
-          column: ctx.start!.column,
+          line: getContextStartToken(ctx).line,
+          column: getContextStartToken(ctx).column,
           offsets: {
-            start: ctx.start!.start,
-            end: ctx.stop!.stop + 1,
+            start: getContextStartToken(ctx).start,
+            end: getContextStopToken(ctx).stop + 1,
           },
         });
       }
@@ -56,12 +60,12 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
-          labelText: symbolicName.start!.text!,
-          line: symbolicName.start!.line,
-          column: symbolicName.start!.column,
+          labelText: getContextStartToken(symbolicName).text ?? '',
+          line: getContextStartToken(symbolicName).line,
+          column: getContextStartToken(symbolicName).column,
           offsets: {
-            start: symbolicName.start!.start,
-            end: symbolicName.stop!.stop + 1,
+            start: getContextStartToken(symbolicName).start,
+            end: getContextStopToken(symbolicName).stop + 1,
           },
         });
       }

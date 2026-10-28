@@ -26,6 +26,7 @@ import {
   walkCNFTree,
 } from '../labelTreeWalking.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { getContextStartToken } from '../helpers/getContextToken.js';
 
 // Internal type of CompletionItem for path completions, provide more explicit types
 type PathCompletionItem = CompletionItem & {
@@ -220,12 +221,15 @@ function findLastVariable(
         (entry) =>
           // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
           // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
-          entry.definitionPosition >= lastValidElement.start!.start &&
+          entry.definitionPosition >=
+            getContextStartToken(lastValidElement).start &&
           entry.definitionPosition <= (lastValidElement.stop?.stop ?? -1),
       )
     : symbolsInfo?.symbolTables
         ?.flat()
-        .find((entry) => entry.references.includes(variable.start!.start));
+        .find((entry) =>
+          entry.references.includes(getContextStartToken(variable).start),
+        );
   return foundVariable;
 }
 
