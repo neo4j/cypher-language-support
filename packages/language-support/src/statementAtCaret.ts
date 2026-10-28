@@ -34,8 +34,9 @@ function sliceInput(
   currentStatement: ParsedStatement | undefined,
 ): string {
   const tokens = currentStatement?.tokens ?? [];
-  const start = tokens.at(0)?.start ?? 0;
-  const end = (tokens.at(-1)?.stop ?? input.length - 1) + 1;
 
-  return input.slice(start, end);
+  const start = tokens.at(0)?.start ?? 0;
+  const stop = tokens.at(1)?.stop;
+
+  return input.slice(start, stop ? stop + 1 : undefined);
 }
