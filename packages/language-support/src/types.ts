@@ -27,7 +27,7 @@ export type Neo4jProcedure = {
   admin: boolean;
   // Flexbible field, most hold if procedure is deprecated or not
   option: { deprecated: boolean } & Record<string, unknown>;
-  deprecatedBy?: string | null; // TODO: should we remove null?
+  deprecatedBy?: string | null; // TODO: Ideally, this will only return string | undefined
 };
 
 export type Neo4jFunction = {
@@ -40,7 +40,7 @@ export type Neo4jFunction = {
   signature: string;
   aggregating: boolean;
   isDeprecated: boolean;
-  deprecatedBy?: string | null; // TODO: should we remove null?
+  deprecatedBy?: string | null; // TODO: Ideally, this will only return string | undefined
 };
 
 export type CompletionItem = VSCodeCompletionItem & {

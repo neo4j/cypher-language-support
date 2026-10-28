@@ -12,13 +12,19 @@ LET x a=`;
   const position = { offset: 12, line: 1, column: 2 };
 
   function rangeOf(element: SemanticAnalysisElement) {
-    const { range, offsets } = convertTranspiledDiagnosticToSyntaxDiagnostic(
+    const diagnostic = convertTranspiledDiagnosticToSyntaxDiagnostic(
       [element],
       DiagnosticSeverity.Error,
       statement,
-    )[0]!;
+    )[0];
 
-    return { range, offsets };
+    if (diagnostic) {
+      return {
+        range: diagnostic.range,
+        offsets: diagnostic.offsets,
+      };
+    }
+    return undefined;
   }
 
   test('Missing end position collapses to the start position', () => {
