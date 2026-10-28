@@ -27,12 +27,19 @@ import {
 } from '../labelTreeWalking.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
+// Internal type of CompletionItem for path completions, provide more explicit types
+type PathCompletionItem = CompletionItem & {
+  kind: typeof CompletionItemKind.Snippet;
+  insertTextFormat: typeof InsertTextFormat.Snippet;
+  insertText: string;
+};
+
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
   symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
-): CompletionItem[] {
-  const snippetCompletions: CompletionItem[] = [];
+): PathCompletionItem[] {
+  const snippetCompletions: PathCompletionItem[] = [];
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
   if (
     !lastVariable ||
@@ -95,8 +102,8 @@ export function getPathCompletions(
   lastNode: NodePatternContext,
   symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
-): CompletionItem[] {
-  const snippetCompletions: CompletionItem[] = [];
+): PathCompletionItem[] {
+  const snippetCompletions: PathCompletionItem[] = [];
 
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
   if (

@@ -106,8 +106,11 @@ export function isComment(token: Token) {
   );
 }
 
-export const isInlineComment = (chunk: Chunk) =>
-  chunk.comment && chunk.comment.startsWith('/*');
+export function isInlineComment(
+  chunk: Chunk,
+): chunk is Chunk & { comment: string } {
+  return Boolean(chunk.comment?.startsWith('/*'));
+}
 
 // Variables, functions/procedures namespaces or property names that have the same name as a keyword should not be
 // treated as keywords
@@ -157,7 +160,7 @@ export function getParseTreeAndTokens(query: string) {
 export function findTargetToken(
   tokens: Token[],
   cursorPosition: number,
-): Token | false | undefined {
+): Token | undefined {
   let targetToken: Token | undefined;
   for (const token of tokens) {
     if (token.channel === 0) {
@@ -167,7 +170,7 @@ export function findTargetToken(
       return targetToken;
     }
   }
-  return false;
+  return undefined;
 }
 
 // These three are helpers for the fillInGroupSizes method to make it more manageable
