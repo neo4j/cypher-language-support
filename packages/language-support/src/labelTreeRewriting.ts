@@ -430,10 +430,8 @@ function isTautology(node: LabelOrCondition): boolean {
     return false;
   }
   //getting here node must be an OR-condition
-  for (let i = 0; i < node.children.length; i++) {
-    for (let j = i + 1; j < node.children.length; j++) {
-      const nodeI = node.children[i]!;
-      const nodeJ = node.children[j]!;
+  for (const nodeI of node.children) {
+    for (const nodeJ of node.children) {
       //If we have OR(A, !A)
       if (
         isLabelLeaf(nodeI) &&
