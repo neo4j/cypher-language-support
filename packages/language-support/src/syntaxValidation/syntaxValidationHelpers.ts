@@ -1,9 +1,4 @@
-import type {
-  ANTLRErrorListener,
-  ParserRuleContext,
-  RecognitionException,
-  Token,
-} from 'antlr4ng';
+import type { ANTLRErrorListener, RecognitionException, Token } from 'antlr4ng';
 import type { ATNSimulator, Recognizer } from 'antlr4ng';
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
@@ -48,7 +43,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
       const startLine = line - 1;
       const startColumn = charPositionInLine;
       const parser = recognizer;
-      const ctx: ParserRuleContext = parser.context;
+      const ctx = parser.context;
       const tokenIndex = offendingSymbol.tokenIndex;
       const nextTokenIndex = tokenIndex + 1;
       const nextToken = this.tokens.at(nextTokenIndex);
@@ -82,7 +77,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
 
         if (errorMessage) {
           // This is the EOF token
-          const lastToken = this.tokens.at(-1);
+          const lastToken = this.tokens.at(-1)!;
           this.unfinishedToken = true;
 
           const diagnostic = {
@@ -114,7 +109,7 @@ export class SyntaxErrorsListener implements ANTLRErrorListener {
           const endColumn =
             offendingSymbol.type === CypherLexer.EOF
               ? startColumn
-              : startColumn + offendingSymbol.text.length;
+              : startColumn + offendingSymbol.text!.length;
 
           const diagnostic: SyntaxDiagnostic = {
             severity: DiagnosticSeverity.Error,

@@ -21,11 +21,11 @@ export class ParameterCollector implements ParseTreeListener {
         this.parameters.push({
           name: parameterName,
           rawText: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
+          line: ctx.start!.line,
+          column: ctx.start!.column,
           offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
+            start: ctx.start!.start,
+            end: ctx.stop!.stop + 1,
           },
         });
       }

@@ -27,7 +27,7 @@ export type Neo4jProcedure = {
   admin: boolean;
   // Flexbible field, most hold if procedure is deprecated or not
   option: { deprecated: boolean } & Record<string, unknown>;
-  deprecatedBy?: string;
+  deprecatedBy?: string | null; // TODO: should we remove null?
 };
 
 export type Neo4jFunction = {
@@ -40,7 +40,7 @@ export type Neo4jFunction = {
   signature: string;
   aggregating: boolean;
   isDeprecated: boolean;
-  deprecatedBy?: string;
+  deprecatedBy?: string | null; // TODO: should we remove null?
 };
 
 export type CompletionItem = VSCodeCompletionItem & {
@@ -72,11 +72,11 @@ export const isCondition = (condition: string): condition is Condition => {
 export type LabelLeaf = {
   value: string;
 };
-export const isLabelLeaf = (
-  labelOrCondition: LabelOrCondition,
-): labelOrCondition is LabelLeaf => {
-  return 'value' in labelOrCondition;
-};
+export function isLabelLeaf(
+  labelOrCondition: LabelOrCondition | undefined,
+): labelOrCondition is LabelLeaf {
+  return Boolean(labelOrCondition && 'value' in labelOrCondition);
+}
 
 export const CONDITIONS = ['and', 'or', 'not', 'any'] as const;
 export type Condition = (typeof CONDITIONS)[number];

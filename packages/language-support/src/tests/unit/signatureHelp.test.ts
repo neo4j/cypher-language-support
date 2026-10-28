@@ -9,17 +9,17 @@ import { testData } from './testData.js';
 
 export function testSignatureHelp(
   fileText: string,
-  dbSchema: DbSchema,
-  expected: SignatureHelp,
+  dbSchema?: DbSchema,
+  expected?: SignatureHelp,
   offset: number = fileText.length,
 ) {
   const actualSignatureHelp = getSignatureInfo(fileText, dbSchema, {
     caretPosition: offset,
   });
 
-  expect(actualSignatureHelp.activeParameter).toBe(expected.activeParameter);
-  expect(actualSignatureHelp.activeSignature).toBe(expected.activeSignature);
-  expect(actualSignatureHelp.signatures).toStrictEqual(expected.signatures);
+  expect(actualSignatureHelp.activeParameter).toBe(expected?.activeParameter);
+  expect(actualSignatureHelp.activeSignature).toBe(expected?.activeSignature);
+  expect(actualSignatureHelp.signatures).toStrictEqual(expected?.signatures);
 }
 
 describe('Procedures signature help', () => {

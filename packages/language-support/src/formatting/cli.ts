@@ -81,7 +81,7 @@ function parseArgs(args: string[]): ParsedArgs {
   let inputPath: string | undefined;
 
   for (let i = 0; i < args.length; i++) {
-    const arg = args[i];
+    const arg = args[i]!;
     if (arg === '-h' || arg === '--help') {
       printUsage();
     } else if (arg === '-i' || arg === '--in-place') {

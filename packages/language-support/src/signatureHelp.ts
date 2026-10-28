@@ -373,7 +373,7 @@ class SignatureHelper extends CypherCmdParserListener {
       let nextToken = this.tokens[index];
 
       while (
-        nextToken.type === CypherParser.SPACE &&
+        nextToken?.type === CypherParser.SPACE &&
         index < this.tokens.length
       ) {
         index++;
@@ -455,7 +455,7 @@ export function getMethodSignature({
   checkCaretOnMethodName = false,
 }: {
   parsingResult: ParsingResult;
-  dbSchema: DbSchema;
+  dbSchema?: DbSchema;
   caretPosition: number;
   checkCaretOnMethodName?: boolean;
 }):
@@ -464,6 +464,10 @@ export function getMethodSignature({
       schemaMethod: Neo4jFunction | Neo4jProcedure | undefined;
     }
   | undefined {
+  if (!dbSchema) {
+    return undefined;
+  }
+
   /* For in-typing signature help we need the token immediately before the caret
 
       CALL something(
@@ -524,7 +528,7 @@ export function getMethodSignature({
 
 export function getSignatureInfo(
   query: string,
-  dbSchema: DbSchema,
+  dbSchema: DbSchema = {},
   options: SignatureInfoOptions = {},
 ): SignatureHelp {
   return getSignatureInfoWithParsingResult(query, dbSchema, options);

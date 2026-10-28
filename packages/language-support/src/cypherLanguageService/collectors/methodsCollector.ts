@@ -33,8 +33,8 @@ export class MethodsCollector implements ParseTreeListener {
     ) {
       const methodName = getMethodName(ctx);
 
-      const startTokenIndex = ctx.start.tokenIndex;
-      const stopTokenIndex = ctx.stop.tokenIndex;
+      const startTokenIndex = ctx.start!.tokenIndex;
+      const stopTokenIndex = ctx.stop!.tokenIndex;
 
       const rawText = this.tokens
         .slice(startTokenIndex, stopTokenIndex + 1)
@@ -46,11 +46,11 @@ export class MethodsCollector implements ParseTreeListener {
       const result = {
         name: methodName,
         rawText: rawText,
-        line: ctx.start.line,
-        column: ctx.start.column,
+        line: ctx.start!.line,
+        column: ctx.start!.column,
         offsets: {
-          start: ctx.start.start,
-          end: ctx.stop.stop + 1,
+          start: ctx.start!.start,
+          end: ctx.stop!.stop + 1,
         },
       };
 

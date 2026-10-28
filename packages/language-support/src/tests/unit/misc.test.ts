@@ -80,7 +80,7 @@ function testPositionCoversDoc(
     0,
     text,
   );
-  const cleanedResult = clampUnsafePositions([error], textDoc)[0];
+  const cleanedResult = clampUnsafePositions([error], textDoc)[0]!;
 
   expect(cleanedResult.range.start.line).toBe(0);
   expect(cleanedResult.range.start.character).toBe(0);

@@ -29,7 +29,7 @@ import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/par
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
 ): CompletionItem[] {
   const snippetCompletions: CompletionItem[] = [];
@@ -93,7 +93,7 @@ export function getShortPathCompletions(
 
 export function getPathCompletions(
   lastNode: NodePatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
 ): CompletionItem[] {
   const snippetCompletions: CompletionItem[] = [];
@@ -204,7 +204,7 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
 
 function findLastVariable(
   lastValidElement: NodePatternContext | RelationshipPatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ) {
   const variable = lastValidElement.variable();
   const isAnonVar = variable === null;
@@ -213,19 +213,19 @@ function findLastVariable(
         (entry) =>
           // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
           // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
-          entry.definitionPosition >= lastValidElement.start.start &&
+          entry.definitionPosition >= lastValidElement.start!.start &&
           entry.definitionPosition <= (lastValidElement.stop?.stop ?? -1),
       )
     : symbolsInfo?.symbolTables
         ?.flat()
-        .find((entry) => entry.references.includes(variable.start.start));
+        .find((entry) => entry.references.includes(variable.start!.start));
   return foundVariable;
 }
 
 export function completeNodeLabel(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ): CompletionItem[] {
   if (dbSchema.graphSchema === undefined) {
     return allLabelCompletions(dbSchema);
@@ -300,7 +300,7 @@ export function completeNodeLabel(
 export function completeRelationshipType(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ): CompletionItem[] {
   if (dbSchema.graphSchema === undefined) {
     return allReltypeCompletions(dbSchema);

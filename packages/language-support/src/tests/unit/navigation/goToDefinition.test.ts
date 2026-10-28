@@ -14,7 +14,7 @@ describe('go to variable definition', () => {
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN per'.length,
-    );
+    )!;
     expect(startOffset).toEqual('MATCH ('.length);
     expect(endOffset).toEqual('MATCH (person'.length);
   });
@@ -30,7 +30,7 @@ describe('go to variable definition', () => {
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN person'.length,
-    );
+    )!;
     expect(startOffset).toEqual('MATCH ('.length);
     expect(endOffset).toEqual('MATCH (person'.length);
   });
@@ -46,7 +46,7 @@ describe('go to variable definition', () => {
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       query.length,
-    );
+    )!;
     expect(startOffset).toEqual('MATCH ('.length);
     expect(endOffset).toEqual('MATCH (person'.length);
   });
@@ -62,7 +62,7 @@ describe('go to variable definition', () => {
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       'MATCH (person) RETURN '.length,
-    );
+    )!;
     expect(startOffset).toEqual('MATCH ('.length);
     expect(endOffset).toEqual('MATCH (person'.length);
   });
@@ -86,7 +86,7 @@ RETURN person`;
 CALL () {
   MATCH (person)
   RETURN per`.length,
-    );
+    )!;
     expect(startOffset).toEqual(
       `MATCH (person)
 CALL () {
@@ -120,7 +120,7 @@ CALL () {
   RETURN person as x
 } 
 RETURN per`.length,
-    );
+    )!;
     expect(startOffset).toEqual(`MATCH (`.length);
     expect(endOffset).toEqual(`MATCH (person`.length);
   });
@@ -136,10 +136,10 @@ RETURN per`.length,
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH (p:Person {age: 50}) RETURN p, p`.length,
-    );
+    )!;
     expect(startOffset).toEqual(`MATCH (`.length);
     expect(endOffset).toEqual(`MATCH (p`.length);
-  });
+  })!;
 
   test('Handles rel variables', () => {
     const query = `MATCH ()-[knows]-() RETURN knows`;
@@ -152,7 +152,7 @@ RETURN per`.length,
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `MATCH ()-[knows]-() RETURN kn`.length,
-    );
+    )!;
     expect(startOffset).toEqual(`MATCH ()-[`.length);
     expect(endOffset).toEqual(`MATCH ()-[knows`.length);
   });
@@ -168,7 +168,7 @@ RETURN per`.length,
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `CYPHER 25 LET nbr = 50 RETURN n`.length,
-    );
+    )!;
     expect(startOffset).toEqual(`CYPHER 25 LET `.length);
     expect(endOffset).toEqual(`CYPHER 25 LET nbr`.length);
   });
@@ -184,7 +184,7 @@ RETURN per`.length,
     const { startOffset, endOffset } = languageService.goToDefinition(
       query,
       `CYPHER 25 LET name = "Pikachu" RETURN na`.length,
-    );
+    )!;
     expect(startOffset).toEqual(`CYPHER 25 LET `.length);
     expect(endOffset).toEqual(`CYPHER 25 LET name`.length);
   });

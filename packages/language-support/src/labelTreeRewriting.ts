@@ -29,7 +29,7 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
     }
     const newChildren: LabelOrCondition[] = [];
     newRoot.children.forEach((x) => {
-      const newChild: LabelOrCondition | undefined = depthFirstConvertAnds(x);
+      const newChild: LabelOrCondition = depthFirstConvertAnds(x);
       addChild(newChildren, newChild, 'and');
     });
     const cnfRoot: ConditionNode = { condition: 'and', children: newChildren };
@@ -48,7 +48,7 @@ export function convertToCNF(root: LabelOrCondition): LabelOrCondition {
  */
 function depthFirstConvertAnds(
   existingNode: LabelOrCondition,
-): LabelOrCondition | undefined {
+): LabelOrCondition {
   let node: LabelOrCondition = copyLabelTree(existingNode);
   if (isLabelLeaf(node)) {
     return node;
@@ -56,8 +56,7 @@ function depthFirstConvertAnds(
   const newChildren: LabelOrCondition[] = [];
   const condition: Condition = node.condition;
   node.children.forEach((x: LabelOrCondition) => {
-    const convertedChild: LabelOrCondition | undefined =
-      depthFirstConvertAnds(x);
+    const convertedChild: LabelOrCondition = depthFirstConvertAnds(x);
     //To get Ex. AND(AND(X,Y),Z) = AND(X,Y,Z)
     if (convertedChild) {
       addChild(newChildren, convertedChild, condition);
@@ -180,7 +179,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
       //Rewrite using Associative Law like OR(x,y, AND(A,B), AND(U,R,S)) = OR(OR(x,y,z, AND(A,B)),AND(R,S,T))
       //Then rewrite inner OR with the single AND using the distributive law so we get
       //OR(AND(OR(x,y,z,A), OR(x,y,z,B)), AND(R,S,T)), so we're left with just multiple ANDs of { literals/ORs of literals }
-      const firstAnd: ConditionNode = innerAnds[0];
+      const firstAnd: ConditionNode = innerAnds[0]!;
       const newInnerChildren: LabelOrCondition[] = [];
       for (const c of firstAnd.children) {
         const newGrandChildren: LabelOrCondition[] = [...innerLiterals];
@@ -191,7 +190,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
             children: newGrandChildren,
           });
         } else if (newGrandChildren.length === 1) {
-          newInnerChildren.push(newGrandChildren[0]);
+          newInnerChildren.push(newGrandChildren[0]!);
         }
       }
 
@@ -211,8 +210,8 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
       // And rewrite each new inner OR with the distributive law ->
       // OR(AND(AND(OR(A,D),OR(A,E),OR(A,F),...),AND(OR(B,D),...),...)), AND(R,S,T)) - not forgetting to simplify double AND to
       // OR(AND(OR(A,D),OR(A,E),...),AND(R,S,T)) <- and we have reduced the inner AND-count by one. Rinse and repeat
-      const firstAnd = innerAnds[0];
-      const secondAnd = innerAnds[1];
+      const firstAnd = innerAnds[0]!;
+      const secondAnd = innerAnds[1]!;
       const totalMergedChildren: LabelOrCondition[] = [];
       for (const c of firstAnd.children) {
         //each of the first AND-children A,B,C gives us a new OR like OR(A, AND(D,E,F)), OR(B, AND(...))...
@@ -228,7 +227,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
               children: newChildren,
             });
           } else if (newChildren.length === 1) {
-            totalMergedChildren.push(newChildren[0]);
+            totalMergedChildren.push(newChildren[0]!);
           }
         }
       }
@@ -241,7 +240,7 @@ function pushInOr(orCondition: LabelOrCondition): LabelOrCondition {
       );
     } else {
       //Finally after merging ANDs one by one we will arrive at OR(AND(...)) = AND(...) (where the final AND can get some pretty massive amount of children)
-      return innerAnds[0];
+      return innerAnds[0]!;
     }
   }
   //Only reach this if we had no inner ands
@@ -269,58 +268,56 @@ function simplifyAndRemoveTautologies(
   if (isLabelLeaf(newRoot) || newRoot.condition !== 'and') {
     return newRoot;
   } else {
-    for (let i = 0; i < newRoot.children.length; i++) {
-      if (!newRoot.children[i]) {
+    // Removed children are marked during traversal and filtered out afterwards.
+    const children: Array<LabelOrCondition | undefined> = newRoot.children;
+    for (let i = 0; i < children.length; i++) {
+      const currentNode = children[i];
+      if (!currentNode) {
         continue;
       }
       //Rewriting to CNF we can get nodes like OR(Person,Person)
       //We can also have tautologies like OR(!A, A) or OR(!A, !B) which are always true
       //within the AND, we can also remove ORs fully covered by other ORs or literals
       //Ex. AND(A, OR(A,B), OR(B,C), OR(B,C,D)) = AND(A,OR(B,C))
-      if (isTautology(newRoot.children[i])) {
-        newRoot.children[i] = undefined;
+      if (isTautology(currentNode)) {
+        children[i] = undefined;
         continue;
       }
       //After removing tautologies we can only have 0 or 1 Not-node inside an OR-condition, without any matching not-NOT node with the same label.
       //These can then be simplified to just the not-condition since ex. OR(!A, B, C)=!A (!A covers B and C too)
-      const currentNode = newRoot.children[i];
       if (!isLabelLeaf(currentNode) && currentNode.condition === 'or') {
         for (const c of currentNode.children) {
           if (!isLabelLeaf(c) && c.condition === 'not') {
-            newRoot.children[i] = c;
+            children[i] = c;
           }
         }
       }
-      for (let j = i + 1; j < newRoot.children.length; j++) {
-        if (!newRoot.children[j]) {
+      for (let j = i + 1; j < children.length; j++) {
+        const childI = children[i];
+        const childJ = children[j];
+        if (!childJ) {
           continue;
-        } else if (!newRoot.children[i]) {
+        } else if (!childI) {
           break;
         }
 
-        const stricterCondition = findStricterCondition(
-          newRoot.children[i],
-          newRoot.children[j],
-        );
-        if (stricterCondition === newRoot.children[i]) {
-          newRoot.children[j] = undefined;
+        const stricterCondition = findStricterCondition(childI, childJ);
+        if (stricterCondition === childI) {
+          children[j] = undefined;
           continue;
         }
-        if (stricterCondition === newRoot.children[j]) {
-          newRoot.children[i] = undefined;
+        if (stricterCondition === childJ) {
+          children[i] = undefined;
           break;
         }
 
-        const isDuplicate = checkEquality(
-          newRoot.children[i],
-          newRoot.children[j],
-        );
+        const isDuplicate = checkEquality(childI, childJ);
         if (isDuplicate) {
-          newRoot.children[i] = undefined;
+          children[i] = undefined;
         }
       }
     }
-    newRoot.children = newRoot.children.filter((x) => x !== undefined);
+    newRoot.children = children.filter((x) => x !== undefined);
     return newRoot;
   }
 }
@@ -435,8 +432,8 @@ function isTautology(node: LabelOrCondition): boolean {
   //getting here node must be an OR-condition
   for (let i = 0; i < node.children.length; i++) {
     for (let j = i + 1; j < node.children.length; j++) {
-      const nodeI = node.children[i];
-      const nodeJ = node.children[j];
+      const nodeI = node.children[i]!;
+      const nodeJ = node.children[j]!;
       //If we have OR(A, !A)
       if (
         isLabelLeaf(nodeI) &&
@@ -479,27 +476,25 @@ export function removeDuplicates(
     return newLabelTree;
   }
   for (let i = 0; i < newLabelTree.children.length; i++) {
-    newLabelTree.children[i] = removeDuplicates(newLabelTree.children[i]);
+    newLabelTree.children[i] = removeDuplicates(newLabelTree.children[i]!);
   }
-  for (let i = 0; i < newLabelTree.children.length; i++) {
-    for (let j = i + 1; j < newLabelTree.children.length; j++) {
-      if (
-        newLabelTree.children[i] === undefined ||
-        newLabelTree.children[j] === undefined
-      ) {
+
+  const children: Array<LabelOrCondition | undefined> = newLabelTree.children;
+  for (let i = 0; i < children.length; i++) {
+    for (let j = i + 1; j < children.length; j++) {
+      const child1 = children[i];
+      const child2 = children[j];
+      if (child1 === undefined || child2 === undefined) {
         continue;
       }
-      const foundDuplicate: boolean = checkEquality(
-        newLabelTree.children[i],
-        newLabelTree.children[j],
-      );
+      const foundDuplicate: boolean = checkEquality(child1, child2);
       if (foundDuplicate) {
-        newLabelTree.children[i] = undefined;
+        children[i] = undefined;
         break;
       }
     }
   }
-  newLabelTree.children = newLabelTree.children.filter((x) => x !== undefined);
+  newLabelTree.children = children.filter((x) => x !== undefined);
   return newLabelTree;
 }
 
@@ -562,7 +557,7 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
     newLabelTree.condition === 'not' &&
     !isLabelLeaf(newLabelTree.children[0])
   ) {
-    const c = newLabelTree.children[0];
+    const c = newLabelTree.children[0]!;
     const newCondition =
       c.condition === 'not'
         ? 'doubleNegation'
@@ -571,14 +566,13 @@ export function pushInNots(labelTree: LabelOrCondition): LabelOrCondition {
           : 'and';
     if (newCondition === 'doubleNegation') {
       // If double negation, completely remove both negations and restart to check for leaves
-      newLabelTree = newLabelTree.children[0].children[0];
+      newLabelTree = c.children[0]!;
       return pushInNots(newLabelTree);
     } else {
       // If single negation, use De Morgan's law to move down NOTs like NOT(AND(A,B,...)) = OR(NOT(A),NOT(B),...)
-      const newChildren: LabelOrCondition[] =
-        newLabelTree.children[0].children.map((c) => {
-          return { condition: 'not', children: [c] };
-        });
+      const newChildren: LabelOrCondition[] = c.children.map((c) => {
+        return { condition: 'not', children: [c] };
+      });
       newLabelTree = { condition: newCondition, children: newChildren };
     }
   }
@@ -596,7 +590,7 @@ export const isNotAnyNode = (n: LabelOrCondition) =>
   !isLabelLeaf(n) &&
   n.condition === 'not' &&
   n.children.length === 1 &&
-  isAnyNode(n.children[0]);
+  isAnyNode(n.children[0]!);
 
 /**
  * Converts a label tree with ANYs to one without ANYs by simplifying like

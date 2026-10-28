@@ -44,11 +44,11 @@ export class PropertiesCollector implements ParseTreeListener {
             this.properties.push({
               propertyName,
               variable,
-              line: ctx.start.line,
-              column: ctx.start.column,
+              line: ctx.start!.line,
+              column: ctx.start!.column,
               offsets: {
-                start: ctx.start.start,
-                end: ctx.stop.stop + 1,
+                start: ctx.start!.start,
+                end: ctx.stop!.stop + 1,
               },
               type: isWrite ? 'write' : 'read',
             });
@@ -68,7 +68,7 @@ export class PropertiesCollector implements ParseTreeListener {
     if (varCtx) {
       return {
         name: varCtx.getText(),
-        start: varCtx.start.start,
+        start: varCtx.start!.start,
       };
     }
 
@@ -77,7 +77,7 @@ export class PropertiesCollector implements ParseTreeListener {
 
   private getVariableFromPatternProperty(
     ctx: PropertyKeyNameContext,
-  ): VariableContext | undefined {
+  ): VariableContext | null | undefined {
     const patternElement = findParent(ctx, (ctx) => {
       return (
         ctx instanceof NodePatternContext ||
@@ -95,7 +95,7 @@ export class PropertiesCollector implements ParseTreeListener {
 
   private getVariableFromPropertyAccess(
     ctx: PropertyKeyNameContext,
-  ): VariableContext | undefined {
+  ): VariableContext | null | undefined {
     const propertyAccessExpr = findParent(
       ctx,
       (ctx) => ctx instanceof Expression2Context,

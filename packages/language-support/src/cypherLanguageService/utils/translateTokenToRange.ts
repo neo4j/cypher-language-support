@@ -9,7 +9,7 @@ export function translateTokensToRange(
   return {
     range: {
       start: Position.create(start.line - 1, start.column),
-      end: Position.create(stop.line - 1, stop.column + stop.text.length),
+      end: Position.create(stop.line - 1, stop.column + stop.text!.length),
     },
     offsets: {
       start: start.start,

@@ -20,7 +20,7 @@ export function getDefinitionPosition({
     symbolsInfo.query === parsingResult.query &&
     currentSymbolTable >= 0
   ) {
-    const matchingVariable = symbolsInfo.symbolTables[currentSymbolTable].find(
+    const matchingVariable = symbolsInfo.symbolTables[currentSymbolTable]!.find(
       (x) =>
         x.references.some(
           (ref) =>
