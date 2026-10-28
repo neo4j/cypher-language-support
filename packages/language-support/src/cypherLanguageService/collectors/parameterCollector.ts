@@ -1,6 +1,10 @@
 import type { ParseTreeListener } from 'antlr4ng';
 import { ParameterContext } from '../../generated-parser/CypherCmdParser.js';
 import type { ParsedParameter } from '../parsingTypes.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../../helpers/getContextToken.js';
 
 export class ParameterCollector implements ParseTreeListener {
   parameters: ParsedParameter[] = [];
@@ -21,11 +25,11 @@ export class ParameterCollector implements ParseTreeListener {
         this.parameters.push({
           name: parameterName,
           rawText: ctx.getText(),
-          line: ctx.start!.line,
-          column: ctx.start!.column,
+          line: getContextStartToken(ctx).line,
+          column: getContextStartToken(ctx).column,
           offsets: {
-            start: ctx.start!.start,
-            end: ctx.stop!.stop + 1,
+            start: getContextStartToken(ctx).start,
+            end: getContextStopToken(ctx).stop + 1,
           },
         });
       }

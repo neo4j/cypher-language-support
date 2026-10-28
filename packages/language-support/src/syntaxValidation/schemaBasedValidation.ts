@@ -18,6 +18,10 @@ import { getDirection } from '../helpers.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../helpers/getContextToken.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a
@@ -224,13 +228,19 @@ function checkAdjacency({
   if (position === 'left') {
     return {
       message: `[:${relStr}] has no ${qualifier}(:${nodeStr})`,
-      ...translateTokensToRange(node.start!, rel.stop!),
+      ...translateTokensToRange(
+        getContextStartToken(node),
+        getContextStopToken(rel),
+      ),
       severity: DiagnosticSeverity.Warning,
     };
   }
   return {
     message: `(:${nodeStr}) has no ${qualifier}[:${relStr}]`,
-    ...translateTokensToRange(rel.start!, node.stop!),
+    ...translateTokensToRange(
+      getContextStartToken(rel),
+      getContextStopToken(node),
+    ),
     severity: DiagnosticSeverity.Warning,
   };
 }
@@ -269,12 +279,12 @@ function findEntry(
   if (variable === null) {
     return symbolTable.find(
       (entry) =>
-        entry.definitionPosition >= element.start!.start &&
+        entry.definitionPosition >= getContextStartToken(element).start &&
         entry.definitionPosition <= (element.stop?.stop ?? -1),
     );
   }
   return symbolTable.find((entry) =>
-    entry.references.includes(variable.start!.start),
+    entry.references.includes(getContextStartToken(variable).start),
   );
 }
 

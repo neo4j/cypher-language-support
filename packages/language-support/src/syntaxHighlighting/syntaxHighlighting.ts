@@ -63,7 +63,7 @@ import {
 } from './syntaxHighlightingHelper.js';
 import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
-import { getContextStart } from './syntaxHighlightingHelpers.js';
+import { getContextStartToken } from '../helpers/getContextToken.js';
 
 export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],
@@ -146,7 +146,7 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     } else {
       this.addToken(
-        getContextStart(ctx),
+        getContextStartToken(ctx),
         CypherTokenType.stringLiteral,
         ctx.getText(),
       );
@@ -169,7 +169,7 @@ class SyntaxHighlighter extends CypherParserListener {
       );
     } else {
       this.addToken(
-        getContextStart(ctx),
+        getContextStartToken(ctx),
         CypherTokenType.stringLiteral,
         ctx.getText(),
       );
@@ -178,18 +178,26 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitCypherOptionValue = (ctx: CypherOptionValueContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.settingValue,
       ctx.getText(),
     );
   };
 
   exitCypherOptionName = (ctx: CypherOptionNameContext) => {
-    this.addToken(getContextStart(ctx), CypherTokenType.setting, ctx.getText());
+    this.addToken(
+      getContextStartToken(ctx),
+      CypherTokenType.setting,
+      ctx.getText(),
+    );
   };
 
   exitLabelName = (ctx: LabelNameContext) => {
-    this.addToken(getContextStart(ctx), CypherTokenType.label, ctx.getText());
+    this.addToken(
+      getContextStartToken(ctx),
+      CypherTokenType.label,
+      ctx.getText(),
+    );
   };
 
   exitLabelType = (ctx: LabelTypeContext) => {
@@ -210,7 +218,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitLeftArrow = (ctx: LeftArrowContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.separator,
       ctx.getText(),
     );
@@ -218,7 +226,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitArrowLine = (ctx: ArrowLineContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.separator,
       ctx.getText(),
     );
@@ -226,7 +234,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitRightArrow = (ctx: RightArrowContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.separator,
       ctx.getText(),
     );
@@ -295,7 +303,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
     namespace.symbolicNameString().forEach((namespaceName) => {
       this.addToken(
-        getContextStart(namespaceName),
+        getContextStartToken(namespaceName),
         tokenType,
         namespaceName.getText(),
       );
@@ -303,7 +311,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
     const nameOfMethod = ctx.symbolicNameString();
     this.addToken(
-      getContextStart(nameOfMethod),
+      getContextStartToken(nameOfMethod),
       tokenType,
       nameOfMethod.getText(),
     );
@@ -319,7 +327,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitVariable = (ctx: VariableContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.variable,
       ctx.getText(),
     );
@@ -327,7 +335,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitParameterName = (ctx: ParameterNameContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.variable,
       ctx.getText(),
     );
@@ -335,7 +343,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitProcedureResultItem = (ctx: ProcedureResultItemContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.variable,
       ctx.getText(),
     );
@@ -344,7 +352,7 @@ class SyntaxHighlighter extends CypherParserListener {
   exitPropertyKeyName = (ctx: PropertyKeyNameContext) => {
     // FIXME Is this correct in this case for all cases, not just simple properties?
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.property,
       ctx.getText(),
     );
@@ -353,7 +361,7 @@ class SyntaxHighlighter extends CypherParserListener {
   // TODO Do we need this one and the one below?
   exitStringLiteral = (ctx: StringLiteralContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.stringLiteral,
       ctx.getText(),
     );
@@ -361,7 +369,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitStringsLiteral = (ctx: StringsLiteralContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.stringLiteral,
       ctx.getText(),
     );
@@ -370,7 +378,7 @@ class SyntaxHighlighter extends CypherParserListener {
   exitBooleanLiteral = (ctx: BooleanLiteralContext) => {
     // Normally booleans are coloured as numbers in other languages
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.booleanLiteral,
       ctx.getText(),
     );
@@ -378,7 +386,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitNumberLiteral = (ctx: NumberLiteralContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.numberLiteral,
       ctx.getText(),
     );
@@ -386,7 +394,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.keywordLiteral,
       ctx.getText(),
     );
@@ -397,7 +405,7 @@ class SyntaxHighlighter extends CypherParserListener {
     const parameterName = ctx.parameterName();
     this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
     this.addToken(
-      getContextStart(parameterName),
+      getContextStartToken(parameterName),
       CypherTokenType.paramValue,
       parameterName.getText(),
     );
@@ -416,7 +424,7 @@ class SyntaxHighlighter extends CypherParserListener {
 
   exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
     this.addToken(
-      getContextStart(ctx),
+      getContextStartToken(ctx),
       CypherTokenType.symbolicName,
       ctx.getText(),
     );

@@ -10,6 +10,10 @@ import {
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
 import type { PropertyType } from '../parsingTypes.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../../helpers/getContextToken.js';
 
 // This listener collects all properties in read operations
 export class PropertiesCollector implements ParseTreeListener {
@@ -44,11 +48,11 @@ export class PropertiesCollector implements ParseTreeListener {
             this.properties.push({
               propertyName,
               variable,
-              line: ctx.start!.line,
-              column: ctx.start!.column,
+              line: getContextStartToken(ctx).line,
+              column: getContextStartToken(ctx).column,
               offsets: {
-                start: ctx.start!.start,
-                end: ctx.stop!.stop + 1,
+                start: getContextStartToken(ctx).start,
+                end: getContextStopToken(ctx).stop + 1,
               },
               type: isWrite ? 'write' : 'read',
             });
@@ -68,7 +72,7 @@ export class PropertiesCollector implements ParseTreeListener {
     if (varCtx) {
       return {
         name: varCtx.getText(),
-        start: varCtx.start!.start,
+        start: getContextStartToken(varCtx).start,
       };
     }
 
@@ -77,7 +81,7 @@ export class PropertiesCollector implements ParseTreeListener {
 
   private getVariableFromPatternProperty(
     ctx: PropertyKeyNameContext,
-  ): VariableContext | null | undefined {
+  ): VariableContext | undefined {
     const patternElement = findParent(ctx, (ctx) => {
       return (
         ctx instanceof NodePatternContext ||
@@ -88,20 +92,20 @@ export class PropertiesCollector implements ParseTreeListener {
       patternElement instanceof NodePatternContext ||
       patternElement instanceof RelationshipPatternContext
     ) {
-      return patternElement.variable();
+      return patternElement.variable() ?? undefined;
     }
     return undefined;
   }
 
   private getVariableFromPropertyAccess(
     ctx: PropertyKeyNameContext,
-  ): VariableContext | null | undefined {
+  ): VariableContext | undefined {
     const propertyAccessExpr = findParent(
       ctx,
       (ctx) => ctx instanceof Expression2Context,
     );
     if (propertyAccessExpr instanceof Expression2Context) {
-      return propertyAccessExpr.expression1().variable();
+      return propertyAccessExpr.expression1().variable() ?? undefined;
     }
 
     return undefined;

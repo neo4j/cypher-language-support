@@ -32,6 +32,10 @@ import type {
   PropertyType,
 } from '../parsingTypes.js';
 import { findStopNode } from '../../helpers.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../../helpers/getContextToken.js';
 
 type RuleTokens = {
   start: Token;
@@ -161,8 +165,8 @@ function parseToCommand(
   const stmt = stmts.statementOrCommand().at(0);
 
   if (stmt) {
-    const start = stmts.start!;
-    let stop = stmts.stop!;
+    const start = getContextStartToken(stmts);
+    let stop = getContextStopToken(stmts);
 
     // Matching EOF sets the context stop to EOF. CommonTokenStream.LB() is
     // channel-aware, so this recovers the preceding default-channel token.
@@ -177,7 +181,7 @@ function parseToCommand(
     if (cypherStmt) {
       // we get the original text input to preserve whitespace
       // stripping the preparser part of it
-      const stmtStart = cypherStmt.start!;
+      const stmtStart = getContextStartToken(cypherStmt);
       const statement = inputstream.getTextFromRange(
         stmtStart.start,
         stop.stop,
@@ -187,7 +191,7 @@ function parseToCommand(
     }
 
     if (isEmptyStatement) {
-      const start = stmts.start!;
+      const start = getContextStartToken(stmts);
       return { type: 'cypher', statement: '', start: start, stop: start };
     }
 
@@ -381,7 +385,11 @@ function parseToCommand(
     const statement = inputstream.getTextFromRange(start.start, stopToken.stop);
     return { type: 'cypher', statement, start: start, stop: stopToken };
   }
-  return { type: 'parse-error', start: stmts.start!, stop: stmts.stop! };
+  return {
+    type: 'parse-error',
+    start: getContextStartToken(stmts),
+    stop: getContextStopToken(stmts),
+  };
 }
 
 function errorOnNonCypherCommands(command: ParsedCommand): SyntaxDiagnostic[] {
