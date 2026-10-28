@@ -86,27 +86,18 @@ export function findCaret(
   parsingResult: ParsingResult,
   caretPosition: number,
 ): { statement: ParsedStatement; token: Token } | undefined {
-  const statements = parsingResult.statementsParsing;
-  let i = 0;
   let result: { statement: ParsedStatement; token: Token } | undefined;
-  let keepLooking = true;
 
-  while (i < statements.length && keepLooking) {
-    let j = 0;
-    const statement = statements[i]!;
-    const tokens = statement.tokens;
-
-    while (j < tokens.length && keepLooking) {
-      const currentToken = tokens[j]!;
-      keepLooking = currentToken.start <= caretPosition;
-
-      if (currentToken.channel === 0 && keepLooking) {
-        result = { statement: statement, token: currentToken };
+  for (const statement of parsingResult.statementsParsing) {
+    for (const token of statement.tokens) {
+      if (token.start > caretPosition) {
+        return result;
       }
 
-      j++;
+      if (token.channel === 0) {
+        result = { statement, token };
+      }
     }
-    i++;
   }
 
   return result;
