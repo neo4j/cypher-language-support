@@ -303,7 +303,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     // but we should still be able to concatenate a, b to ba
     const indices: number[] = [];
     for (let i = this.chunkList.length - 1; i >= 0; i--) {
-      if (!(this.chunkList[i]!.type === 'COMMENT')) {
+      if (!(this.chunkList[i]?.type === 'COMMENT')) {
         indices.push(i);
         if (indices.length === 2) {
           break;
@@ -314,8 +314,8 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     if (
-      this.chunkList[indices[0]!]!.type !== 'REGULAR' ||
-      this.chunkList[indices[1]!]!.type !== 'REGULAR'
+      this.chunkList[indices[0]!]?.type !== 'REGULAR' ||
+      this.chunkList[indices[1]!]?.type !== 'REGULAR'
     ) {
       return;
     }
@@ -398,7 +398,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   getFirstNonCommentIdx = (): number => {
     let idx = this.chunkList.length - 1;
-    while (idx >= 0 && this.chunkList[idx]!.type === 'COMMENT') {
+    while (idx >= 0 && this.chunkList[idx]?.type === 'COMMENT') {
       idx--;
     }
     return idx;
@@ -463,13 +463,13 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   getBottomChild = (
     ctx: ParserRuleContext | TerminalNode,
     side: 'before' | 'after',
-  ): TerminalNode | null => {
+  ): TerminalNode | undefined => {
     if (ctx instanceof TerminalNode) {
       return ctx;
     }
     // In case there were syntax errors (missing tokens) there might not be any children.
     if (ctx.getChildCount() === 0) {
-      return null;
+      return undefined;
     }
     const idx = side === 'before' ? 0 : ctx.getChildCount() - 1;
     const child = ctx.getChild(idx);
@@ -500,7 +500,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     const token = bottomChild.symbol;
-    if (token.text!.startsWith(MISSING)) {
+    if (token.text?.startsWith(MISSING)) {
       return;
     }
     const hiddenTokens =
@@ -701,7 +701,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
         .replace(/\r\n/g, '\n');
     }
 
-    const errorText = token.text!.startsWith(MISSING) ? '' : token.text;
+    const errorText = token.text?.startsWith(MISSING) ? '' : token.text;
     const combinedText = gapText + errorText;
 
     this.previousTokenIndex = errorTokenIndex;
@@ -2055,14 +2055,14 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     const nodePatternGrp = this.startGroup();
     const nodeIndent = this.addIndentation();
     if (ctx.variable() || ctx.labelExpression() || ctx.properties()) {
-      let variableLabelGrp: number;
+      let variableLabelGrp: number | undefined;
       if (ctx.variable() && ctx.labelExpression()) {
         variableLabelGrp = this.startGroup();
       }
       this._visit(ctx.variable());
       this._visit(ctx.labelExpression());
-      if (ctx.variable() && ctx.labelExpression()) {
-        this.endGroup(variableLabelGrp!);
+      if (variableLabelGrp !== undefined) {
+        this.endGroup(variableLabelGrp);
       }
       this._visit(ctx.properties());
       if (ctx.WHERE()) {
@@ -2102,8 +2102,8 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     const anonymousPatternGrp = this.startGroup();
     this._visit(ctx.anonymousPattern());
-    if (variable) {
-      this.removeIndentation(patternIndent!);
+    if (patternIndent !== undefined) {
+      this.removeIndentation(patternIndent);
     }
     this.endGroup(anonymousPatternGrp);
     this.endGroup(selectorAnonymousPatternGrp);

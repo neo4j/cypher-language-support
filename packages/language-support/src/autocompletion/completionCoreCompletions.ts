@@ -107,7 +107,8 @@ const procedureNameCompletions = (
     'procedure',
   );
 
-function isDeprecated(arg: Neo4jFunction | Neo4jProcedure) {
+function isDeprecated(arg: Neo4jFunction | Neo4jProcedure | undefined) {
+  if (!arg) return false;
   if ('option' in arg) {
     return arg.option.deprecated;
   } else if ('isDeprecated' in arg) {
@@ -124,7 +125,7 @@ function getMethodCompletionItem(
   type: 'procedure' | 'function',
   kind: CompletionItemKind,
 ): CompletionItem {
-  const maybeSignature = signatures[fullName]!;
+  const maybeSignature = signatures[fullName];
   const typeDetail = type === 'procedure' ? '(procedure)' : '(function)';
   const deprecated = isDeprecated(maybeSignature);
   const maybeTags: { tags?: CompletionItemTag[] } = deprecated
@@ -165,7 +166,7 @@ const namespacedCompletion = (
     // If we don't have any prefix show full functions and top level namespaces
     const topLevelPrefixes = fullNames
       .filter((fn) => fn.includes('.'))
-      .map((fnName) => fnName.split('.')[0]!);
+      .map((fnName) => fnName.split('.')[0] ?? fnName);
 
     return uniq(topLevelPrefixes)
       .map((label): CompletionItem => ({ label, kind, detail: `(namespace)` }))
@@ -193,7 +194,7 @@ const namespacedCompletion = (
       if (name.startsWith(namespacePrefix)) {
         // given prefix `apoc.` turn `apoc.util.sleep` => `util`
         const splitByDot = name.slice(namespacePrefix.length).split('.');
-        const option = splitByDot[0]!;
+        const option = splitByDot[0] ?? '';
         const isFunctionName = splitByDot.length === 1;
 
         // handle prefix `time.truncate.` turning `time.truncate` => ``
@@ -244,7 +245,7 @@ function getTokenCompletions(
         : CompletionItemKind.Keyword;
 
       const firstToken = isConsoleCommand
-        ? tokenNames[tokenNumber]!.toLowerCase()
+        ? tokenNames[tokenNumber]?.toLowerCase()
         : tokenNames[tokenNumber];
 
       const firstIgnoredToken = followUpIndexes.findIndex((t) =>
@@ -468,7 +469,6 @@ export function completionCoreCompletion(
   // Move the caret index to the end of the query
   const eofIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
-  // The lexer always appends an EOF token, even for an empty query.
   const eof = tokens[eofIndex]!;
 
   // When we have EOF with a different text in the token, it means the parser has failed to parse it.
@@ -1061,7 +1061,7 @@ function completeSymbolicName({
     parsingResult.tokens,
     candidateRule.startTokenIndex,
   );
-  const afterToToken = previousNonSpace!.type === CypherParser.TO;
+  const afterToToken = previousNonSpace?.type === CypherParser.TO;
   const ruleList = candidateRule.ruleList;
 
   // avoid suggesting existing user names or role names when creating a new one

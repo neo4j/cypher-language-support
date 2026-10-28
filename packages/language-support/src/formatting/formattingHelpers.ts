@@ -99,7 +99,7 @@ function isKeywordTerminal(node: TerminalNode): boolean {
   return lexerKeywords.includes(node.symbol.type) && !isSymbolicName(node);
 }
 
-export function isComment(token: Token) {
+export function isComment(token: Token): boolean {
   return (
     token.type === CypherCmdLexer.MULTI_LINE_COMMENT ||
     token.type === CypherCmdLexer.SINGLE_LINE_COMMENT
