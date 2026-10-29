@@ -13,6 +13,8 @@ import { listDatabases } from '../queries/databases.js';
 import { getVersion } from '../queries/version.js';
 import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
 import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
+import { listConstraintFields } from '../queries/constraints.js';
+import type { Constraint } from '@neo4j-cypher/language-support';
 
 export type ConnnectionResult = {
   success: boolean;
@@ -226,7 +228,7 @@ export class Neo4jSchemaPoller {
 
     this.connection.serverVersion = serverVersion;
 
-    this.metadata = new ConnectedMetadataPoller(
+    const metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
       serverCypherVersions,
@@ -234,7 +236,31 @@ export class Neo4jSchemaPoller {
       this.events,
     );
 
+    await this.pollConstraintFields(metadata);
+
+    this.metadata = metadata;
+
     this.metadata.startBackgroundPolling();
+  }
+
+  private async pollConstraintFields(metadata: ConnectedMetadataPoller) {
+    if (this.connection?.currentDb && this.driver) {
+      const {
+        query: constraintFieldQuery,
+        queryConfig: constraintFieldQueryConfig,
+      } = listConstraintFields(this.connection.currentDb);
+      let { fieldNames } = await this.driver.executeQuery(
+        constraintFieldQuery,
+        {},
+        constraintFieldQueryConfig,
+      );
+      const constraintInfo: {
+        fieldNames: string[] | undefined;
+        constraints: Constraint[];
+      } = metadata.dbSchema.constraintInfo ?? { fieldNames, constraints: [] };
+      constraintInfo.fieldNames = fieldNames;
+      metadata.dbSchema.constraintInfo = constraintInfo;
+    }
   }
 
   private async initializeDriver(

@@ -90,3 +90,11 @@ export type SymbolsInfo = {
   query: string;
   symbolTables: SymbolTable[];
 };
+
+export type Constraint = {
+  type: string;
+  labelsOrTypes: string[];
+  properties: string[];
+  enforcedLabel: string;
+  propertyType: string;
+};

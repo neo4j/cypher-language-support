@@ -1,4 +1,9 @@
-import type { CypherVersion, Neo4jFunction, Neo4jProcedure } from './types.js';
+import type {
+  Constraint,
+  CypherVersion,
+  Neo4jFunction,
+  Neo4jProcedure,
+} from './types.js';
 
 export type Registry<T> = Record<string, T>;
 export type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
@@ -16,4 +21,8 @@ export interface DbSchema {
   functions?: ScopedRegistry<Neo4jFunction>;
   defaultLanguage?: CypherVersion;
   graphSchema?: { from: string; to: string; relType: string }[];
+  constraintInfo?: {
+    fieldNames: string[] | undefined;
+    constraints: Constraint[];
+  };
 }
