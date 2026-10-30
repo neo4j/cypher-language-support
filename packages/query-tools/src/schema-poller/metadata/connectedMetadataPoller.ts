@@ -22,7 +22,7 @@ import { listRoles } from '../../queries/roles.js';
 import type { Neo4jUser } from '../../queries/users.js';
 import { listUsers } from '../../queries/users.js';
 import { listConstraints } from '../../queries/constraints.js';
-import type { PollingPermissions } from '../schemaPoller.js';
+import type { PollingPermissions } from '../../queries/permissions.js';
 
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
@@ -178,15 +178,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         queryArgs: listConstraints(connection.currentDb),
         onRefetchDone: (result) => {
           if (result.success) {
-            const constraintInfo: {
-              fieldNames: string[] | undefined;
-              constraints: Constraint[];
-            } = this.dbSchema.constraintInfo ?? {
-              fieldNames: undefined,
-              constraints: [],
-            };
-            constraintInfo.constraints = result.data.constraints;
-            this.dbSchema.constraintInfo = constraintInfo;
+            this.dbSchema.constraints = result.data.constraints;
           }
         },
       });

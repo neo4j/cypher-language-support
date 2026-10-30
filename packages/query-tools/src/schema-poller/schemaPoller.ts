@@ -13,18 +13,15 @@ import { listDatabases } from '../queries/databases.js';
 import { getVersion } from '../queries/version.js';
 import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
 import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
-import { listConstraintFields } from '../queries/constraints.js';
-import type { Constraint } from '@neo4j-cypher/language-support';
+import { listYieldFields } from '../queries/yieldFields.js';
+import type { YieldableShowCommand } from '@neo4j-cypher/language-support';
+import type { PollingPermissions } from '../queries/permissions.js';
 import { getPermissions } from '../queries/permissions.js';
 
 export type ConnnectionResult = {
   success: boolean;
   retriable?: boolean;
   error?: ConnectionError;
-};
-
-export type PollingPermissions = {
-  constraints: boolean;
 };
 
 const MAX_RETRY_ATTEMPTS = 5;
@@ -39,7 +36,11 @@ export class Neo4jSchemaPoller {
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
   private parameters: Record<string, unknown> = {};
-  private permissions: PollingPermissions = { constraints: false };
+  private permissions: PollingPermissions = {
+    constraints: false,
+    users: false,
+    roles: false,
+  };
 
   public setParameters(parameters: Record<string, unknown>): void {
     this.parameters = parameters;
@@ -251,33 +252,47 @@ export class Neo4jSchemaPoller {
       this.events,
       this.permissions,
     );
-    if (this.permissions.constraints) {
-      await this.pollConstraintFields(metadata);
-    }
+    await this.pollYieldFields(metadata);
 
     this.metadata = metadata;
 
     this.metadata.startBackgroundPolling();
   }
 
-  private async pollConstraintFields(metadata: ConnectedMetadataPoller) {
-    if (this.connection?.currentDb && this.driver) {
-      const {
-        query: constraintFieldQuery,
-        queryConfig: constraintFieldQueryConfig,
-      } = listConstraintFields(this.connection.currentDb);
-      let { fieldNames } = await this.driver.executeQuery(
-        constraintFieldQuery,
-        {},
-        constraintFieldQueryConfig,
-      );
-      const constraintInfo: {
-        fieldNames: string[] | undefined;
-        constraints: Constraint[];
-      } = metadata.dbSchema.constraintInfo ?? { fieldNames, constraints: [] };
-      constraintInfo.fieldNames = fieldNames;
-      metadata.dbSchema.constraintInfo = constraintInfo;
+  /**
+   * Fetches the YIELD-able fields of SHOW commands once on connect,
+   * skipping commands we lack the privileges to run
+   */
+  private async pollYieldFields(metadata: ConnectedMetadataPoller) {
+    const driver = this.driver;
+    const currentDb = this.connection?.currentDb;
+    if (!driver || !currentDb) {
+      return;
     }
+
+    const showCommands: YieldableShowCommand[] = [
+      'databases',
+      ...(this.permissions.constraints ? (['constraints'] as const) : []),
+      ...(this.permissions.users ? (['users'] as const) : []),
+      ...(this.permissions.roles ? (['roles'] as const) : []),
+    ];
+
+    await Promise.allSettled(
+      showCommands.map(async (showCommand) => {
+        const { query, queryConfig } = listYieldFields(showCommand, currentDb);
+        const { fieldNames } = await driver.executeQuery(
+          query,
+          {},
+          queryConfig,
+        );
+        if (fieldNames) {
+          metadata.dbSchema.yieldFields = {
+            ...metadata.dbSchema.yieldFields,
+            [showCommand]: fieldNames,
+          };
+        }
+      }),
+    );
   }
 
   private async initializeDriver(

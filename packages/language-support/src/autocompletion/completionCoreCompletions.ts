@@ -2,7 +2,7 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import type { DbSchema } from '../dbSchema.js';
+import type { DbSchema, YieldableShowCommand } from '../dbSchema.js';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
@@ -11,7 +11,6 @@ import {
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
-  ShowConstraintsEndContext,
   YieldClauseContext,
 } from '../generated-parser/CypherCmdParser.js';
 import {
@@ -81,6 +80,43 @@ const procedureReturnCompletions = (
       return { label: x.name, kind: CompletionItemKind.Variable };
     }) ?? []
   );
+};
+
+const showCommandRules: [number, YieldableShowCommand][] = [
+  [CypherParser.RULE_showConstraintsEnd, 'constraints'],
+  [CypherParser.RULE_showUsers, 'users'],
+  [CypherParser.RULE_showRoles, 'roles'],
+  [CypherParser.RULE_showDatabase, 'databases'],
+];
+
+const showCommandYieldCompletions = (
+  candidateRule: ICandidateRule,
+  parsingResult: ParsedStatement,
+  dbSchema: DbSchema,
+): CompletionItem[] => {
+  const showCommand = showCommandRules.find(([rule]) =>
+    candidateRule.ruleList.includes(rule),
+  )?.[1];
+  if (showCommand === undefined) {
+    return [];
+  }
+
+  // With nothing yielded yet there may be no yield clause in the parse tree
+  const yieldClauseContext = findParent(
+    parsingResult.stopNode.parent,
+    (x) => x instanceof YieldClauseContext,
+  );
+  const existingYieldItems = new Set(
+    yieldClauseContext instanceof YieldClauseContext
+      ? yieldClauseContext.yieldItem().map((a) => a.getText())
+      : [],
+  );
+  return (dbSchema.yieldFields?.[showCommand] ?? [])
+    .filter((fieldName) => !existingYieldItems.has(fieldName))
+    .map((fieldName) => ({
+      label: fieldName,
+      kind: CompletionItemKind.Variable,
+    }));
 };
 
 const functionNameCompletions = (
@@ -777,27 +813,11 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_yieldItem) {
-        const showConstraintsEndContext = findParent(
-          parsingResult.stopNode.parent,
-          (x) => x instanceof ShowConstraintsEndContext,
+        return showCommandYieldCompletions(
+          candidateRule,
+          parsingResult,
+          dbSchema,
         );
-        const yieldClauseContext = findParent(
-          parsingResult.stopNode.parent,
-          (x) => x instanceof YieldClauseContext,
-        );
-        if (
-          showConstraintsEndContext instanceof ShowConstraintsEndContext &&
-          yieldClauseContext instanceof YieldClauseContext
-        ) {
-          const existingYieldItems = new Set(
-            yieldClauseContext.yieldItem().map((a) => a.getText()),
-          );
-          return dbSchema.constraintInfo.fieldNames
-            .map((fieldName) => {
-              return { label: fieldName, kind: CompletionItemKind.Variable };
-            })
-            .filter((a) => !existingYieldItems.has(a.label));
-        }
       }
 
       return [];

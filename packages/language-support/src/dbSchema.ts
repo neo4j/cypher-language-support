@@ -21,8 +21,13 @@ export interface DbSchema {
   functions?: ScopedRegistry<Neo4jFunction>;
   defaultLanguage?: CypherVersion;
   graphSchema?: { from: string; to: string; relType: string }[];
-  constraintInfo?: {
-    fieldNames: string[] | undefined;
-    constraints: Constraint[];
-  };
+  constraints?: Constraint[];
+  yieldFields?: Partial<Record<YieldableShowCommand, string[]>>;
 }
+
+// SHOW commands whose YIELD-able column names we fetch from the database
+export type YieldableShowCommand =
+  | 'constraints'
+  | 'users'
+  | 'roles'
+  | 'databases';
