@@ -30,31 +30,3 @@ export function listConstraints(currentDb: string): ExecuteQueryArgs<{
     queryConfig: { resultTransformer, routing: 'READ', database: currentDb },
   };
 }
-
-/**
- * List YIELDable fields available on SHOW CONSTRAINTS, or returns undefined if no constraints exist
- * https://neo4j.com/docs/cypher-manual/current/schema/constraints/list-constraints/
- */
-export function listConstraintFields(currentDb: string): ExecuteQueryArgs<{
-  fieldNames: string[] | undefined;
-}> {
-  const query = 'SHOW CONSTRAINTS YIELD * LIMIT 1';
-
-  const resultTransformer = resultTransformers.mapped({
-    map(record) {
-      const fieldNames: string[] = record.keys.map((x) => x.toString());
-      return fieldNames;
-    },
-    collect(fieldNames, summary) {
-      return {
-        fieldNames: fieldNames[0],
-        summary,
-      };
-    },
-  });
-
-  return {
-    query,
-    queryConfig: { resultTransformer, routing: 'READ', database: currentDb },
-  };
-}
