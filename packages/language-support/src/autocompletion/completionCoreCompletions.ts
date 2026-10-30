@@ -11,6 +11,8 @@ import {
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
+  ShowConstraintsEndContext,
+  YieldClauseContext,
 } from '../generated-parser/CypherCmdParser.js';
 import {
   findParent,
@@ -506,6 +508,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_cypher,
     CypherParser.RULE_labelType,
     CypherParser.RULE_relType,
+    CypherParser.RULE_yieldItem,
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(consoleCommandsEnabled
@@ -771,6 +774,30 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_autoCompletionRule) {
         return [{ label: 'auto', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_yieldItem) {
+        const showConstraintsEndContext = findParent(
+          parsingResult.stopNode.parent,
+          (x) => x instanceof ShowConstraintsEndContext,
+        );
+        const yieldClauseContext = findParent(
+          parsingResult.stopNode.parent,
+          (x) => x instanceof YieldClauseContext,
+        );
+        if (
+          showConstraintsEndContext instanceof ShowConstraintsEndContext &&
+          yieldClauseContext instanceof YieldClauseContext
+        ) {
+          const existingYieldItems = new Set(
+            yieldClauseContext.yieldItem().map((a) => a.getText()),
+          );
+          return dbSchema.constraintInfo.fieldNames
+            .map((fieldName) => {
+              return { label: fieldName, kind: CompletionItemKind.Variable };
+            })
+            .filter((a) => !existingYieldItems.has(a.label));
+        }
       }
 
       return [];

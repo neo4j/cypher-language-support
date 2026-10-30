@@ -1,4 +1,5 @@
 import type {
+  Constraint,
   CypherVersion,
   DbSchema,
   Neo4jFunction,
@@ -20,6 +21,8 @@ import type { Neo4jRole } from '../../queries/roles.js';
 import { listRoles } from '../../queries/roles.js';
 import type { Neo4jUser } from '../../queries/users.js';
 import { listUsers } from '../../queries/users.js';
+import { listConstraints } from '../../queries/constraints.js';
+import type { PollingPermissions } from '../schemaPoller.js';
 
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
@@ -35,6 +38,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
   private graphSchema: QueryPoller<{
     graphSchema: { from: string; to: string; relType: string }[];
   }>;
+  private constraints?: QueryPoller<{ constraints: Constraint[] }>;
   private dbPollingInterval: NodeJS.Timeout | undefined;
 
   public dbSchema: DbSchema = {};
@@ -45,6 +49,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     serverCypherVersions: string[] | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
+    permissions: PollingPermissions,
   ) {
     super();
 
@@ -167,6 +172,25 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         },
       });
     });
+    if (connection.currentDb && permissions.constraints) {
+      this.constraints = new QueryPoller({
+        connection,
+        queryArgs: listConstraints(connection.currentDb),
+        onRefetchDone: (result) => {
+          if (result.success) {
+            const constraintInfo: {
+              fieldNames: string[] | undefined;
+              constraints: Constraint[];
+            } = this.dbSchema.constraintInfo ?? {
+              fieldNames: undefined,
+              constraints: [],
+            };
+            constraintInfo.constraints = result.data.constraints;
+            this.dbSchema.constraintInfo = constraintInfo;
+          }
+        },
+      });
+    }
   }
 
   public async fetchDbSchema(): Promise<void> {
@@ -175,6 +199,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
       this.dataSummary.refetch(),
       ...Object.values(this.procedures).map((version) => version?.refetch()),
       ...Object.values(this.functions).map((version) => version?.refetch()),
+      this.constraints?.refetch(),
     ]);
     if (
       this.dbSchema.labels &&

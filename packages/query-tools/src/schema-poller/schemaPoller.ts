@@ -13,11 +13,18 @@ import { listDatabases } from '../queries/databases.js';
 import { getVersion } from '../queries/version.js';
 import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
 import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
+import { listConstraintFields } from '../queries/constraints.js';
+import type { Constraint } from '@neo4j-cypher/language-support';
+import { getPermissions } from '../queries/permissions.js';
 
 export type ConnnectionResult = {
   success: boolean;
   retriable?: boolean;
   error?: ConnectionError;
+};
+
+export type PollingPermissions = {
+  constraints: boolean;
 };
 
 const MAX_RETRY_ATTEMPTS = 5;
@@ -32,6 +39,7 @@ export class Neo4jSchemaPoller {
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
   private parameters: Record<string, unknown> = {};
+  private permissions: PollingPermissions = { constraints: false };
 
   public setParameters(parameters: Record<string, unknown>): void {
     this.parameters = parameters;
@@ -224,17 +232,52 @@ export class Neo4jSchemaPoller {
       }
     }
 
+    const { query: permissionQuery, queryConfig: permissionQueryConfig } =
+      getPermissions();
+    let { permissions } = await this.driver.executeQuery(
+      permissionQuery,
+      {},
+      permissionQueryConfig,
+    );
+    this.permissions = permissions;
+
     this.connection.serverVersion = serverVersion;
 
-    this.metadata = new ConnectedMetadataPoller(
+    const metadata = new ConnectedMetadataPoller(
       databases,
       this.parameters,
       serverCypherVersions,
       this.connection,
       this.events,
+      this.permissions,
     );
+    if (this.permissions.constraints) {
+      await this.pollConstraintFields(metadata);
+    }
+
+    this.metadata = metadata;
 
     this.metadata.startBackgroundPolling();
+  }
+
+  private async pollConstraintFields(metadata: ConnectedMetadataPoller) {
+    if (this.connection?.currentDb && this.driver) {
+      const {
+        query: constraintFieldQuery,
+        queryConfig: constraintFieldQueryConfig,
+      } = listConstraintFields(this.connection.currentDb);
+      let { fieldNames } = await this.driver.executeQuery(
+        constraintFieldQuery,
+        {},
+        constraintFieldQueryConfig,
+      );
+      const constraintInfo: {
+        fieldNames: string[] | undefined;
+        constraints: Constraint[];
+      } = metadata.dbSchema.constraintInfo ?? { fieldNames, constraints: [] };
+      constraintInfo.fieldNames = fieldNames;
+      metadata.dbSchema.constraintInfo = constraintInfo;
+    }
   }
 
   private async initializeDriver(

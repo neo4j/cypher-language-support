@@ -29,6 +29,7 @@ import type {
   Neo4jConnectionSettings,
   Neo4jParameters,
   Neo4jSettings,
+  SymbolFetchingParams,
 } from './types';
 import workerpool from 'workerpool';
 import type { LintWorker } from '@neo4j-cypher/lint-worker';
@@ -70,7 +71,11 @@ class SymbolFetcher {
     });
   }
 
-  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+  public queueSymbolJob(
+    query: string,
+    uri: string,
+    schema: DbSchema | undefined,
+  ) {
     this.nextJob = { query, uri, schema };
     if (!this.processing) {
       void this.processJobQueue();
@@ -241,13 +246,12 @@ connection.onHover((params: HoverParams): Hover | null => {
 
 connection.onNotification(
   'fetchSymbolTable',
-  (params: {
-    query: string;
-    uri: string;
-    version: number;
-    schema: DbSchema;
-  }) => {
-    symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema);
+  (params: SymbolFetchingParams) => {
+    symbolFetcher.queueSymbolJob(
+      params.query,
+      params.uri,
+      neo4jSchemaPoller.metadata?.dbSchema,
+    );
   },
 );
 

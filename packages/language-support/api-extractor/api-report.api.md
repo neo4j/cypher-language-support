@@ -79,6 +79,15 @@ export type ConditionNode = {
 export const CONDITIONS: readonly ["and", "or", "not", "any"];
 
 // @public (undocumented)
+export type Constraint = {
+    type: string;
+    labelsOrTypes: string[];
+    properties: string[];
+    enforcedLabel: string;
+    propertyType: string;
+};
+
+// @public (undocumented)
 export class CypherLanguageService {
     constructor(input?: {
         consoleCommandsEnabled?: boolean;
@@ -176,6 +185,11 @@ export type CypherVersion = (typeof allCypherVersions)[number];
 export interface DbSchema {
     // (undocumented)
     aliasNames?: string[];
+    // (undocumented)
+    constraintInfo?: {
+        fieldNames: string[] | undefined;
+        constraints: Constraint[];
+    };
     // (undocumented)
     databaseNames?: string[];
     // (undocumented)
