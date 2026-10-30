@@ -22,6 +22,7 @@ import { listRoles } from '../../queries/roles.js';
 import type { Neo4jUser } from '../../queries/users.js';
 import { listUsers } from '../../queries/users.js';
 import { listConstraints } from '../../queries/constraints.js';
+import type { PollingPermissions } from '../schemaPoller.js';
 
 export class ConnectedMetadataPoller extends MetadataPoller {
   private databases: QueryPoller<{ databases: Database[] }>;
@@ -48,6 +49,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
     serverCypherVersions: string[] | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,
+    permissions: PollingPermissions,
   ) {
     super();
 
@@ -170,7 +172,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         },
       });
     });
-    if (connection.currentDb) {
+    if (connection.currentDb && permissions.constraints) {
       this.constraints = new QueryPoller({
         connection,
         queryArgs: listConstraints(connection.currentDb),
