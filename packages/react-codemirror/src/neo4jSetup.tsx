@@ -29,17 +29,58 @@ import type { Extension, StateCommand } from '@codemirror/state';
 import { EditorState } from '@codemirror/state';
 import type { Command, KeyBinding } from '@codemirror/view';
 import {
-  crosshairCursor,
   drawSelection,
   dropCursor,
   EditorView,
   highlightSpecialChars,
   keymap,
   rectangularSelection,
+  ViewPlugin,
 } from '@codemirror/view';
 
 import { lintKeymap } from '@codemirror/lint';
 import { getIconForType } from './icons';
+
+// CodeMirror's crosshairCursor only supports a single modifier key, so this
+// mirrors it for our Shift-Alt box selection to keep the feature discoverable
+const crosshairPlugin = ViewPlugin.fromClass(
+  class {
+    bothKeysDown = false;
+
+    constructor(readonly view: EditorView) {}
+
+    set(e: KeyboardEvent | MouseEvent) {
+      const bothKeysDown = e.altKey && e.shiftKey;
+      if (this.bothKeysDown !== bothKeysDown) {
+        this.bothKeysDown = bothKeysDown;
+        this.view.update([]);
+      }
+    }
+  },
+  {
+    eventObservers: {
+      keydown(e) {
+        this.set(e);
+      },
+      keyup(e) {
+        this.set(e);
+      },
+      //Allows us to also show crosshair over editor when editor not in focus
+      mousemove(e) {
+        this.set(e);
+      },
+    },
+  },
+);
+
+const boxSelectionCrosshair: Extension = [
+  crosshairPlugin,
+  EditorView.contentAttributes.of((view) =>
+    view.plugin(crosshairPlugin)?.bothKeysDown
+      ? { style: 'cursor: crosshair' }
+      : null,
+  ),
+];
 
 const insertTab: StateCommand = (cmd) => {
   // if there is a selection we should indent the selected text, but if not insert
@@ -137,8 +178,17 @@ export const basicNeo4jSetup = ({
     }),
   );
 
-  extensions.push(rectangularSelection());
-  extensions.push(crosshairCursor());
+  // VS Code style modifiers: Mod-click is reserved for go to definition,
+  // so Alt-click adds a cursor and Shift-Alt-drag does box selection
+  extensions.push(
+    EditorView.clickAddsSelectionRange.of((e) => e.altKey && !e.shiftKey),
+  );
+  extensions.push(
+    rectangularSelection({
+      eventFilter: (e) => e.altKey && e.shiftKey && e.button === 0,
+    }),
+  );
+  extensions.push(boxSelectionCrosshair);
   extensions.push(highlightSelectionMatches());
 
   extensions.push(keymap.of(keymaps));
