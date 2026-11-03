@@ -13,14 +13,11 @@ export function convertDbSchema(
   originalSchema: DbSchemaV2,
   linterVersion: string | undefined,
 ): DbSchemaV2 | DbSchemaV1 {
-  if (!originalSchema) {
+  if (!linterVersion) {
     return originalSchema;
   }
 
-  const versionComparison = compareMajorMinorVersions(
-    linterVersion ?? '',
-    '2025.01',
-  );
+  const versionComparison = compareMajorMinorVersions(linterVersion, '2025.01');
   if (versionComparison !== undefined && versionComparison < 0) {
     let oldFunctions: Record<string, Neo4jFunction> | undefined = undefined;
     let oldProcedures: Record<string, Neo4jProcedure> | undefined = undefined;
