@@ -92,9 +92,9 @@ class SymbolFetcher {
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
-          //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
-          !(this.nextJob && this.nextJob.uri != docUri)
+          //if this.nextJob has new doc, our result is no longer valid
+          this.isCurrentDocument(docUri)
         ) {
           languageService.setSymbolsInfo(
             {
@@ -114,6 +114,10 @@ class SymbolFetcher {
     }
     this.processing = false;
   }
+
+  private isCurrentDocument(uri: string) {
+    return !this.nextJob || this.nextJob.uri === uri;
+  }
 }
 
 const connection = createConnection(ProposedFeatures.all);
@@ -126,7 +130,7 @@ const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
   if (settings?.features?.linting) {
-    return lintDocument(
+    await lintDocument(
       document,
       (diagnostics: Diagnostic[]) => {
         void connection.sendDiagnostics({
@@ -196,7 +200,7 @@ documents.onDidChangeContent((change) => {
   symbolFetcher.queueSymbolJob(
     change.document.getText(),
     change.document.uri,
-    neo4jSchemaPoller?.metadata?.dbSchema,
+    neo4jSchemaPoller.metadata?.dbSchema ?? {},
   );
   return lintSingleDocument(change.document);
 });

@@ -373,7 +373,6 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    // oxlint-disable-next-line typescript/no-base-to-string
                     setSchemaError(String(e));
                   }
                 }}

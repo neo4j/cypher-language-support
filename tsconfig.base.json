@@ -12,9 +12,7 @@
     "target": "ESNext",
     "outDir": "dist",
     "incremental": true,
-
     "strict": true,
-    "strictNullChecks": false, // TODO: remove this (default is true)
     "exactOptionalPropertyTypes": false, // TODO: set to true once strictNullChecks are enabled
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": false, // TODO: set to true
