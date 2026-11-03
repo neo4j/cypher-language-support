@@ -56,7 +56,7 @@ const historyState = StateField.define<HistoryState>({
             ...value,
             draft,
             index: newHistoryIndex,
-            documentUpdate: value.history[newHistoryIndex],
+            documentUpdate: value.history[newHistoryIndex] ?? null,
           };
         } else if (effect.value === 'FORWARDS') {
           const newHistoryIndex = currentHistoryIndex - 1;
@@ -75,7 +75,7 @@ const historyState = StateField.define<HistoryState>({
             return {
               ...value,
               index: newHistoryIndex,
-              documentUpdate: value.history[newHistoryIndex],
+              documentUpdate: value.history[newHistoryIndex] ?? null,
             };
           }
         }
@@ -104,7 +104,7 @@ function navigateHistory(view: EditorView, direction: HistoryNavigation) {
   );
 
   const updatedHistory = view.state.field<HistoryState>(historyState, false);
-  if (updatedHistory.documentUpdate !== null) {
+  if (updatedHistory && updatedHistory.documentUpdate !== null) {
     view.dispatch(
       view.state.update({
         changes: {
@@ -125,7 +125,7 @@ export const replMode = ({ history }: ReplProps): Extension[] => {
   return [
     historyState.init(() => ({
       ...historyInitialState,
-      history,
+      history: history ?? [],
     })),
     keymap.of([
       {

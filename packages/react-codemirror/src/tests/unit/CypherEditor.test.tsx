@@ -10,8 +10,10 @@ import { CypherEditor } from '../../CypherEditor';
 const container = document.createElement('div');
 let root: ReturnType<typeof createRoot>;
 
-const ref = createRef<CypherEditor>();
-let value = '';
+const ref = createRef<CypherEditor>() as {
+  current: CypherEditor;
+};
+let value: string | undefined = '';
 const onChange = vi.fn<(v: string) => void>((v) => {
   value = v;
   rerender();

@@ -48,7 +48,7 @@ export const completionStyles: (
   if (completion.deprecated) {
     return 'cm-deprecated-element';
   } else {
-    return null;
+    return '';
   }
 };
 
@@ -57,9 +57,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     const documentText = context.state.doc.toString();
     const offset = context.pos;
     const triggerCharacters = ['.', ':', '{', '$', ')', ']', '-', '<'];
-    const lastCharacter = documentText.at(offset - 1);
+    const lastCharacter = documentText.at(offset - 1)!;
     const yieldTriggered = shouldAutoCompleteYield(documentText, offset);
-    const lastWord = context.matchBefore(/\w*/);
+    const lastWord = context.matchBefore(/\w*/)!;
     const inWord = lastWord.from !== lastWord.to;
     const shouldTriggerCompletion =
       inWord ||
@@ -85,7 +85,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
     );
 
     return {
-      from: context.matchBefore(/(\w)*$/).from,
+      from: context.matchBefore(/(\w)*$/)!.from,
       options: options.map((o) => {
         let maybeInfo = {};
         let emptyInfo = true;
@@ -127,7 +127,7 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
         return {
           label: o.insertText ? o.insertText : o.label,
           displayLabel: o.label,
-          type: completionKindToCodemirrorIcon(o.kind),
+          type: completionKindToCodemirrorIcon(o.kind!),
           apply:
             o.kind === CompletionItemKind.Snippet
               ? // codemirror requires an empty snippet space to be able to tab out of the completion
