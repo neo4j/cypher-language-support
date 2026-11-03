@@ -9,7 +9,8 @@ export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   topNode: NodeType.define({
     id: 0,
     name: 'topNode',
-    props: [languageDataProp.add({ topNode: facet })],
+    // oxlint-disable-next-line typescript/no-explicit-any
+    props: [languageDataProp.add({ topNode: facet as Facet<any> })],
   }),
   comment: NodeType.define({ id: 1, name: 'comment' }),
   keyword: NodeType.define({ id: 2, name: 'keyword' }),

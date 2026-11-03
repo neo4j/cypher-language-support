@@ -343,7 +343,7 @@ async function getInfoTooltip(page: Page, methodName: string) {
   const firstOption = page.locator('li[aria-selected="true"]');
   let selectedOption = firstOption;
 
-  while (!(await infoTooltip.textContent()).includes(methodName)) {
+  while (!(await infoTooltip.textContent())!.includes(methodName)) {
     await page.keyboard.press('ArrowDown');
     const currentSelected = page.locator('li[aria-selected="true"]');
     expect(currentSelected).not.toBe(selectedOption);
@@ -360,7 +360,7 @@ test('shows signature help information on auto-completion for procedures', async
 }) => {
   await mount(<CypherEditor schema={testData.mockSchema} />);
   const procName = 'apoc.periodic.iterate';
-  const procedure = testData.mockSchema.procedures['CYPHER 5'][procName];
+  const procedure = testData.mockSchema.procedures!['CYPHER 5']![procName]!;
 
   const textField = page.getByRole('textbox');
   await textField.fill('CALL apoc.periodic.');
@@ -378,7 +378,7 @@ test('shows signature help information on auto-completion for functions', async 
 }) => {
   await mount(<CypherEditor schema={testData.mockSchema} />);
   const fnName = 'apoc.coll.combinations';
-  const fn = testData.mockSchema.functions['CYPHER 5'][fnName];
+  const fn = testData.mockSchema.functions!['CYPHER 5']![fnName]!;
 
   const textField = page.getByRole('textbox');
   await textField.fill('RETURN apoc.coll.');
@@ -401,7 +401,7 @@ test('shows deprecated procedures as strikethrough on auto-completion', async ({
       schema={{
         procedures: {
           'CYPHER 5': {
-            [procName]: testData.mockSchema.procedures['CYPHER 5'][procName],
+            [procName]: testData.mockSchema.procedures!['CYPHER 5']![procName]!,
           },
         },
       }}
@@ -426,7 +426,7 @@ test('shows deprecated function as strikethrough on auto-completion', async ({
       schema={{
         functions: {
           'CYPHER 5': {
-            [fnName]: testData.mockSchema.functions['CYPHER 5'][fnName],
+            [fnName]: testData.mockSchema.functions!['CYPHER 5']![fnName]!,
           },
         },
       }}

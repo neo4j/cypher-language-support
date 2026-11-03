@@ -242,6 +242,9 @@ const format = (view: EditorView): void => {
     const { formattedQuery, newCursorPos } = formatQuery(doc, {
       cursorPosition: view.state.selection.main.anchor,
     });
+    if (!newCursorPos) {
+      return;
+    }
     view.dispatch({
       changes: {
         from: 0,
@@ -406,7 +409,7 @@ export class CypherEditor extends Component<
   /**
    * The symbol fetcher object used to fetch the current symbol table on document changes
    */
-  symbolFetcher: CodemirrorSymbolFetcher;
+  symbolFetcher!: CodemirrorSymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -414,12 +417,15 @@ export class CypherEditor extends Component<
   /**
    * The codemirror editor state.
    */
-  editorState: React.MutableRefObject<EditorState> = createRef();
+  // oxlint-disable-next-line typescript/no-explicit-any
+  editorState: React.MutableRefObject<EditorState> = createRef() as any;
   /**
    * The codemirror editor view.
    */
-  editorView: React.MutableRefObject<EditorView> = createRef();
-  private schemaRef: React.MutableRefObject<CypherConfig> = createRef();
+  // oxlint-disable-next-line typescript/no-explicit-any
+  editorView: React.MutableRefObject<EditorView> = createRef() as any;
+  // oxlint-disable-next-line typescript/no-explicit-any
+  private schemaRef: React.MutableRefObject<CypherConfig> = createRef() as any;
   private inlinePanelController: InlinePanelController | null = null;
   private editorActionsController: EditorActionsController | null = null;
 
@@ -503,7 +509,7 @@ export class CypherEditor extends Component<
   private debouncedOnChange = this.props.onChange
     ? debounce(
         ((value, viewUpdate) => {
-          this.props.onChange(value, viewUpdate);
+          this.props.onChange!(value, viewUpdate);
         }) satisfies CypherEditorProps['onChange'],
         DEBOUNCE_TIME,
       )
@@ -545,7 +551,7 @@ export class CypherEditor extends Component<
     );
 
     const themeExtension = getThemeExtension(
-      theme,
+      theme ?? 'none',
       overrideThemeBackgroundColor,
     );
 
@@ -558,7 +564,7 @@ export class CypherEditor extends Component<
             if (upt.docChanged) {
               this.symbolFetcher.queueSymbolJob(
                 upt.state.doc.toString(),
-                this.schemaRef.current.schema,
+                this.schemaRef.current.schema!,
               );
             }
             const wasUserEdit = !upt.transactions.some((tr) =>
@@ -568,7 +574,7 @@ export class CypherEditor extends Component<
             if (upt.docChanged && wasUserEdit) {
               const doc = upt.state.doc;
               const value = doc.toString();
-              this.debouncedOnChange(value, upt);
+              this.debouncedOnChange!(value, upt);
             }
           }),
         ]
@@ -581,7 +587,7 @@ export class CypherEditor extends Component<
             ...executeKeybinding(onExecute, newLineOnEnter, () =>
               this.debouncedOnChange?.flush(),
             ),
-            ...extraKeybindings,
+            ...(extraKeybindings ?? []),
           ]),
         ),
         richClipboardCopier,
@@ -597,7 +603,9 @@ export class CypherEditor extends Component<
             ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
             : [],
         ),
-        readOnlyCompartment.of(EditorState.readOnly.of(this.props.readonly)),
+        readOnlyCompartment.of(
+          EditorState.readOnly.of(Boolean(this.props.readonly)),
+        ),
         placeholderCompartment.of(
           this.props.placeholder ? placeholder(this.props.placeholder) : [],
         ),
@@ -631,7 +639,7 @@ export class CypherEditor extends Component<
 
     this.editorView.current = new EditorView({
       state: this.editorState.current,
-      parent: this.editorContainer.current,
+      parent: this.editorContainer.current ?? undefined,
     });
 
     if (this.props.autofocus) {
@@ -740,7 +748,7 @@ export class CypherEditor extends Component<
       this.editorView.current.dispatch({
         effects: themeCompartment.reconfigure(
           getThemeExtension(
-            this.props.theme,
+            this.props.theme ?? 'none',
             this.props.overrideThemeBackgroundColor,
           ),
         ),
@@ -774,7 +782,7 @@ export class CypherEditor extends Component<
     if (prevProps.readonly !== this.props.readonly) {
       this.editorView.current.dispatch({
         effects: readOnlyCompartment.reconfigure(
-          EditorState.readOnly.of(this.props.readonly),
+          EditorState.readOnly.of(Boolean(this.props.readonly)),
         ),
       });
     }
@@ -799,7 +807,7 @@ export class CypherEditor extends Component<
               this.props.newLineOnEnter,
               () => this.debouncedOnChange?.flush(),
             ),
-            ...this.props.extraKeybindings,
+            ...(this.props.extraKeybindings ?? []),
           ]),
         ),
       });
