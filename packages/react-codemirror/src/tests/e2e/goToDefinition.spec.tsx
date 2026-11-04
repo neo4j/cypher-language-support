@@ -161,3 +161,23 @@ test('Underline follows the mouse between clickable symbols while mod is held', 
   await expect(clickableSymbol).toHaveText('m');
   await page.keyboard.up('ControlOrMeta');
 });
+
+test('Underline is not triggered in non-cypher after valid symbol', async ({
+  page,
+  mount,
+}) => {
+  const editorPage = new CypherEditorPage(page);
+  await mount(<CypherEditor value="MATCH (n) RETURN n //Simple match" />);
+  await editorPage.getEditor().focus();
+  const reference = await charCoords(page, 0, 17);
+  const commentPosition = await charCoords(page, 0, 24);
+  const clickableSymbol = page.locator('.cm-clickableSymbol');
+
+  await waitForSymbolTable(page, reference);
+  await page.keyboard.down('ControlOrMeta');
+  await expect(clickableSymbol).toBeVisible();
+  await page.mouse.move(commentPosition.x, commentPosition.y);
+  await page.keyboard.down('ControlOrMeta');
+  await expect(clickableSymbol).toBeHidden();
+  await page.keyboard.up('ControlOrMeta');
+});
