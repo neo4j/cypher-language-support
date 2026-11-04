@@ -53,8 +53,8 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     // (undocumented)
     static defaultProps: CypherEditorProps;
     editorContainer: React.RefObject<HTMLDivElement>;
-    editorState: React.MutableRefObject<EditorState>;
-    editorView: React.MutableRefObject<EditorView>;
+    editorState: React.MutableRefObject<EditorState | null>;
+    editorView: React.MutableRefObject<EditorView | null>;
     focus(): void;
     format(): void;
     // (undocumented)
@@ -62,7 +62,7 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     setValueAndFocus(value?: string): void;
     // (undocumented)
     state: CypherEditorState;
-    symbolFetcher: CodemirrorSymbolFetcher;
+    symbolFetcher?: CodemirrorSymbolFetcher;
     updateCursorPosition(position: number): void;
 }
 
@@ -133,7 +133,43 @@ export type CypherEditorState = {
 };
 
 // @public (undocumented)
-export const darkThemeConstants: ThemeOptions;
+export const darkThemeConstants: {
+    dark: true;
+    diffColors: DiffColors;
+    editorSettings: {
+        background: string;
+        foreground: string;
+        gutterForeground: string;
+        selection: string;
+        textMatchingSelection: string;
+        cursor: string;
+        autoCompletionPanel: {
+            selectedColor: string;
+            matchingTextColor: string;
+            backgroundColor: string;
+        };
+        searchPanel: {
+            background: string;
+            text: string;
+            buttonHoverBackground: string;
+        };
+    };
+    highlightStyles: {
+        comment: string;
+        keyword: string;
+        keywordLiteral: string;
+        label: string;
+        predicateFunction: string;
+        function: string;
+        procedure: string;
+        stringLiteral: string;
+        numberLiteral: string;
+        booleanLiteral: string;
+        operator: string;
+        property: string;
+        paramValue: string;
+    };
+};
 
 // @public (undocumented)
 export interface DiffColors {
@@ -172,7 +208,43 @@ export type InlinePanelProps = {
 export { LanguageSupport }
 
 // @public (undocumented)
-export const lightThemeConstants: ThemeOptions;
+export const lightThemeConstants: {
+    dark: false;
+    diffColors: DiffColors;
+    editorSettings: {
+        background: string;
+        foreground: string;
+        gutterForeground: string;
+        selection: string;
+        textMatchingSelection: string;
+        cursor: string;
+        autoCompletionPanel: {
+            selectedColor: string;
+            matchingTextColor: string;
+            backgroundColor: string;
+        };
+        searchPanel: {
+            background: string;
+            text: string;
+            buttonHoverBackground: string;
+        };
+    };
+    highlightStyles: {
+        comment: string;
+        keyword: string;
+        keywordLiteral: string;
+        label: string;
+        predicateFunction: string;
+        function: string;
+        procedure: string;
+        stringLiteral: string;
+        numberLiteral: string;
+        booleanLiteral: string;
+        operator: string;
+        property: string;
+        paramValue: string;
+    };
+};
 
 // @public (undocumented)
 export interface ThemeOptions {
