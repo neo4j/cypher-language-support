@@ -109,37 +109,52 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
       readonly view: EditorView,
       readonly cfg: CypherConfig,
     ) {}
-
-    set(e: MouseEvent | KeyboardEvent) {
-      const modKey = isMac ? e.metaKey : e.ctrlKey;
-      if (e instanceof MouseEvent) {
-        this.coords = { x: e.clientX, y: e.clientY };
-      }
-      const pos = modKey ? this.view.posAtCoords(this.coords) : null;
-      const range =
-        pos === null
-          ? undefined
-          : symbolWithDefinitionRange(this.view, pos, this.cfg);
-      //Only need changes when hovering on the position of a new reference
-      if (range?.from !== this.range?.from || range?.to !== this.range?.to) {
-        this.range = range;
-        this.decorations = range
-          ? Decoration.set(clickableSymbolMark.range(range.from, range.to))
-          : Decoration.none;
-        this.view.update([]);
-      }
-    }
   },
   {
     eventObservers: {
       mousemove(e) {
-        this.set(e);
+        const modKey = isMac ? e.metaKey : e.ctrlKey;
+        this.coords = { x: e.clientX, y: e.clientY };
+
+        const pos = modKey ? this.view.posAtCoords(this.coords) : undefined;
+        const range =
+          pos === undefined
+            ? undefined
+            : symbolWithDefinitionRange(this.view, pos, this.cfg);
+        //Only need changes when hovering on the position of a new reference
+        if (range?.from !== this.range?.from || range?.to !== this.range?.to) {
+          this.range = range;
+          this.decorations = range
+            ? Decoration.set(clickableSymbolMark.range(range.from, range.to))
+            : Decoration.none;
+          this.view.update([]);
+        }
       },
       keydown(e) {
-        this.set(e);
+        const modKey = isMac ? 'Meta' : 'Control';
+        if (e.key === modKey) {
+          const pos = this.view.posAtCoords(this.coords);
+          const range = symbolWithDefinitionRange(this.view, pos, this.cfg);
+          //Only need changes when hovering on the position of a new reference
+          if (
+            range?.from !== this.range?.from ||
+            range?.to !== this.range?.to
+          ) {
+            this.range = range;
+            this.decorations = range
+              ? Decoration.set(clickableSymbolMark.range(range.from, range.to))
+              : Decoration.none;
+            this.view.update([]);
+          }
+        }
       },
       keyup(e) {
-        this.set(e);
+        const modKey = isMac ? 'Meta' : 'Control';
+        if (e.key === modKey) {
+          this.range = undefined;
+          this.decorations = Decoration.none;
+          this.view.update([]);
+        }
       },
     },
     decorations: (plugin) => plugin.decorations,
