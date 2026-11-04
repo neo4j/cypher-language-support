@@ -430,34 +430,36 @@ function isTautology(node: LabelOrCondition): boolean {
     return false;
   }
   //getting here node must be an OR-condition
-  for (const nodeI of node.children) {
-    for (const nodeJ of node.children) {
+  for (let i = 0; i < node.children.length; i++) {
+    for (let j = i + 1; j < node.children.length; j++) {
+      const childI = node.children[i]!;
+      const childJ = node.children[j]!;
       //If we have OR(A, !A)
       if (
-        isLabelLeaf(nodeI) &&
-        !isLabelLeaf(nodeJ) &&
-        nodeJ.condition === 'not' &&
-        isLabelLeaf(nodeJ.children[0]) &&
-        nodeJ.children[0].value === nodeI.value
+        isLabelLeaf(childI) &&
+        !isLabelLeaf(childJ) &&
+        childJ.condition === 'not' &&
+        isLabelLeaf(childJ.children[0]) &&
+        childJ.children[0].value === childI.value
       ) {
         return true;
       } else if (
-        isLabelLeaf(nodeJ) &&
-        !isLabelLeaf(nodeI) &&
-        nodeI.condition === 'not' &&
-        isLabelLeaf(nodeI.children[0]) &&
-        nodeI.children[0].value === nodeJ.value
+        isLabelLeaf(childJ) &&
+        !isLabelLeaf(childI) &&
+        childI.condition === 'not' &&
+        isLabelLeaf(childI.children[0]) &&
+        childI.children[0].value === childJ.value
       ) {
         return true;
         //If we have OR(!A, !B)
       } else if (
-        !isLabelLeaf(nodeJ) &&
-        nodeJ.condition === 'not' &&
-        isLabelLeaf(nodeJ.children[0]) &&
-        !isLabelLeaf(nodeI) &&
-        nodeI.condition === 'not' &&
-        isLabelLeaf(nodeI.children[0]) &&
-        nodeI.children[0].value !== nodeJ.children[0].value
+        !isLabelLeaf(childJ) &&
+        childJ.condition === 'not' &&
+        isLabelLeaf(childJ.children[0]) &&
+        !isLabelLeaf(childI) &&
+        childI.condition === 'not' &&
+        isLabelLeaf(childI.children[0]) &&
+        childI.children[0].value !== childJ.children[0].value
       ) {
         return true;
       }
@@ -479,12 +481,12 @@ export function removeDuplicates(
 
   for (let i = 0; i < children.length; i++) {
     for (let j = i + 1; j < children.length; j++) {
-      const child1 = children[i];
-      const child2 = children[j];
-      if (child1 === undefined || child2 === undefined) {
+      const childI = children[i];
+      const childJ = children[j];
+      if (childI === undefined || childJ === undefined) {
         continue;
       }
-      const foundDuplicate: boolean = checkEquality(child1, child2);
+      const foundDuplicate: boolean = checkEquality(childI, childJ);
       if (foundDuplicate) {
         children[i] = undefined;
         break;

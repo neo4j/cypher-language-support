@@ -39,7 +39,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       acos: {
         name: 'acos',
@@ -67,7 +67,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       all: {
         name: 'all',
@@ -105,7 +105,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       any: {
         name: 'any',
@@ -142,7 +142,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.first': {
         name: 'apoc.agg.first',
@@ -163,7 +163,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.graph': {
         name: 'apoc.agg.graph',
@@ -185,7 +185,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.last': {
         name: 'apoc.agg.last',
@@ -206,7 +206,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.maxItems': {
         name: 'apoc.agg.maxItems',
@@ -242,7 +242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.median': {
         name: 'apoc.agg.median',
@@ -264,7 +264,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.minItems': {
         name: 'apoc.agg.minItems',
@@ -300,7 +300,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.nth': {
         name: 'apoc.agg.nth',
@@ -329,7 +329,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.percentiles': {
         name: 'apoc.agg.percentiles',
@@ -360,7 +360,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.product': {
         name: 'apoc.agg.product',
@@ -383,7 +383,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.slice': {
         name: 'apoc.agg.slice',
@@ -422,7 +422,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.statistics': {
         name: 'apoc.agg.statistics',
@@ -453,7 +453,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.isDeleted': {
         name: 'apoc.any.isDeleted',
@@ -476,7 +476,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.properties': {
         name: 'apoc.any.properties',
@@ -507,7 +507,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.property': {
         name: 'apoc.any.property',
@@ -535,7 +535,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.bitwise.op': {
         name: 'apoc.bitwise.op',
@@ -569,7 +569,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.avg': {
         name: 'apoc.coll.avg',
@@ -591,7 +591,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.combinations': {
         name: 'apoc.coll.combinations',
@@ -627,7 +627,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.contains': {
         name: 'apoc.coll.contains',
@@ -656,7 +656,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsAll': {
         name: 'apoc.coll.containsAll',
@@ -686,7 +686,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsAllSorted': {
         name: 'apoc.coll.containsAllSorted',
@@ -716,7 +716,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsDuplicates': {
         name: 'apoc.coll.containsDuplicates',
@@ -738,7 +738,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsSorted': {
         name: 'apoc.coll.containsSorted',
@@ -767,7 +767,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.different': {
         name: 'apoc.coll.different',
@@ -789,7 +789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.disjunction': {
         name: 'apoc.coll.disjunction',
@@ -819,7 +819,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.dropDuplicateNeighbors': {
         name: 'apoc.coll.dropDuplicateNeighbors',
@@ -843,7 +843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.duplicates': {
         name: 'apoc.coll.duplicates',
@@ -865,7 +865,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.duplicatesWithCount': {
         name: 'apoc.coll.duplicatesWithCount',
@@ -889,7 +889,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.fill': {
         name: 'apoc.coll.fill',
@@ -918,7 +918,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.flatten': {
         name: 'apoc.coll.flatten',
@@ -948,7 +948,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.frequencies': {
         name: 'apoc.coll.frequencies',
@@ -970,7 +970,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.frequenciesAsMap': {
         name: 'apoc.coll.frequenciesAsMap',
@@ -992,7 +992,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.indexOf': {
         name: 'apoc.coll.indexOf',
@@ -1022,7 +1022,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.insert': {
         name: 'apoc.coll.insert',
@@ -1057,7 +1057,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.insertAll': {
         name: 'apoc.coll.insertAll',
@@ -1093,7 +1093,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.intersection': {
         name: 'apoc.coll.intersection',
@@ -1124,7 +1124,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.isEqualCollection': {
         name: 'apoc.coll.isEqualCollection',
@@ -1155,7 +1155,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.max': {
         name: 'apoc.coll.max',
@@ -1177,7 +1177,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.min': {
         name: 'apoc.coll.min',
@@ -1199,7 +1199,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.occurrences': {
         name: 'apoc.coll.occurrences',
@@ -1228,7 +1228,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairWithOffset': {
         name: 'apoc.coll.pairWithOffset',
@@ -1257,7 +1257,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairs': {
         name: 'apoc.coll.pairs',
@@ -1279,7 +1279,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairsMin': {
         name: 'apoc.coll.pairsMin',
@@ -1301,7 +1301,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.partition': {
         name: 'apoc.coll.partition',
@@ -1330,7 +1330,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.randomItem': {
         name: 'apoc.coll.randomItem',
@@ -1352,7 +1352,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.randomItems': {
         name: 'apoc.coll.randomItems',
@@ -1389,7 +1389,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.remove': {
         name: 'apoc.coll.remove',
@@ -1426,7 +1426,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.removeAll': {
         name: 'apoc.coll.removeAll',
@@ -1455,7 +1455,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.runningTotal': {
         name: 'apoc.coll.runningTotal',
@@ -1477,7 +1477,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.set': {
         name: 'apoc.coll.set',
@@ -1511,7 +1511,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.shuffle': {
         name: 'apoc.coll.shuffle',
@@ -1532,7 +1532,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sort': {
         name: 'apoc.coll.sort',
@@ -1553,7 +1553,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortMaps': {
         name: 'apoc.coll.sortMaps',
@@ -1583,7 +1583,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortMulti': {
         name: 'apoc.coll.sortMulti',
@@ -1628,7 +1628,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortNodes': {
         name: 'apoc.coll.sortNodes',
@@ -1658,7 +1658,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortText': {
         name: 'apoc.coll.sortText',
@@ -1688,7 +1688,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.stdev': {
         name: 'apoc.coll.stdev',
@@ -1719,7 +1719,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.subtract': {
         name: 'apoc.coll.subtract',
@@ -1748,7 +1748,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sum': {
         name: 'apoc.coll.sum',
@@ -1770,7 +1770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sumLongs': {
         name: 'apoc.coll.sumLongs',
@@ -1794,7 +1794,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.toSet': {
         name: 'apoc.coll.toSet',
@@ -1815,7 +1815,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.union': {
         name: 'apoc.coll.union',
@@ -1846,7 +1846,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.unionAll': {
         name: 'apoc.coll.unionAll',
@@ -1877,7 +1877,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.zip': {
         name: 'apoc.coll.zip',
@@ -1906,7 +1906,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.fromJsonList': {
         name: 'apoc.convert.fromJsonList',
@@ -1945,7 +1945,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.fromJsonMap': {
         name: 'apoc.convert.fromJsonMap',
@@ -1983,7 +1983,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.getJsonProperty': {
         name: 'apoc.convert.getJsonProperty',
@@ -2028,7 +2028,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.getJsonPropertyMap': {
         name: 'apoc.convert.getJsonPropertyMap',
@@ -2073,7 +2073,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toJson': {
         name: 'apoc.convert.toJson',
@@ -2094,7 +2094,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toList': {
         name: 'apoc.convert.toList',
@@ -2115,7 +2115,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toMap': {
         name: 'apoc.convert.toMap',
@@ -2136,7 +2136,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toNode': {
         name: 'apoc.convert.toNode',
@@ -2157,7 +2157,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toNodeList': {
         name: 'apoc.convert.toNodeList',
@@ -2178,7 +2178,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toRelationship': {
         name: 'apoc.convert.toRelationship',
@@ -2199,7 +2199,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toRelationshipList': {
         name: 'apoc.convert.toRelationshipList',
@@ -2221,7 +2221,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toSet': {
         name: 'apoc.convert.toSet',
@@ -2243,7 +2243,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toSortedJsonMap': {
         name: 'apoc.convert.toSortedJsonMap',
@@ -2274,7 +2274,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuid': {
         name: 'apoc.create.uuid',
@@ -2302,7 +2302,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuidBase64ToHex': {
         name: 'apoc.create.uuidBase64ToHex',
@@ -2325,7 +2325,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuidHexToBase64': {
         name: 'apoc.create.uuidHexToBase64',
@@ -2347,7 +2347,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.vNode': {
         name: 'apoc.create.vNode',
@@ -2376,7 +2376,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.vRelationship': {
         name: 'apoc.create.vRelationship',
@@ -2418,7 +2418,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.virtual.fromNode': {
         name: 'apoc.create.virtual.fromNode',
@@ -2447,7 +2447,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.cypher.runFirstColumnMany': {
         name: 'apoc.cypher.runFirstColumnMany',
@@ -2477,7 +2477,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.cypher.runFirstColumnSingle': {
         name: 'apoc.cypher.runFirstColumnSingle',
@@ -2507,7 +2507,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.data.url': {
         name: 'apoc.data.url',
@@ -2528,7 +2528,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.add': {
         name: 'apoc.date.add',
@@ -2568,7 +2568,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.convert': {
         name: 'apoc.date.convert',
@@ -2603,7 +2603,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.convertFormat': {
         name: 'apoc.date.convertFormat',
@@ -2639,7 +2639,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.currentTimestamp': {
         name: 'apoc.date.currentTimestamp',
@@ -2654,7 +2654,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.field': {
         name: 'apoc.date.field',
@@ -2691,7 +2691,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.fields': {
         name: 'apoc.date.fields',
@@ -2722,7 +2722,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.format': {
         name: 'apoc.date.format',
@@ -2767,7 +2767,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.fromISO8601': {
         name: 'apoc.date.fromISO8601',
@@ -2789,7 +2789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.parse': {
         name: 'apoc.date.parse',
@@ -2834,7 +2834,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.systemTimezone': {
         name: 'apoc.date.systemTimezone',
@@ -2849,7 +2849,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.toISO8601': {
         name: 'apoc.date.toISO8601',
@@ -2879,7 +2879,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.toYears': {
         name: 'apoc.date.toYears',
@@ -2911,7 +2911,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.diff.nodes': {
         name: 'apoc.diff.nodes',
@@ -2940,7 +2940,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprint': {
         name: 'apoc.hashing.fingerprint',
@@ -2970,7 +2970,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprintGraph': {
         name: 'apoc.hashing.fingerprintGraph',
@@ -2994,7 +2994,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprinting': {
         name: 'apoc.hashing.fingerprinting',
@@ -3025,7 +3025,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.json.path': {
         name: 'apoc.json.path',
@@ -3062,7 +3062,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.label.exists': {
         name: 'apoc.label.exists',
@@ -3090,7 +3090,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.clean': {
         name: 'apoc.map.clean',
@@ -3125,7 +3125,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.flatten': {
         name: 'apoc.map.flatten',
@@ -3156,7 +3156,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromLists': {
         name: 'apoc.map.fromLists',
@@ -3186,7 +3186,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromNodes': {
         name: 'apoc.map.fromNodes',
@@ -3214,7 +3214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromPairs': {
         name: 'apoc.map.fromPairs',
@@ -3236,7 +3236,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromValues': {
         name: 'apoc.map.fromValues',
@@ -3259,7 +3259,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.get': {
         name: 'apoc.map.get',
@@ -3303,7 +3303,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.groupBy': {
         name: 'apoc.map.groupBy',
@@ -3332,7 +3332,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.groupByMulti': {
         name: 'apoc.map.groupByMulti',
@@ -3361,7 +3361,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.merge': {
         name: 'apoc.map.merge',
@@ -3388,7 +3388,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.mergeList': {
         name: 'apoc.map.mergeList',
@@ -3410,7 +3410,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.mget': {
         name: 'apoc.map.mget',
@@ -3454,7 +3454,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.removeKey': {
         name: 'apoc.map.removeKey',
@@ -3490,7 +3490,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.removeKeys': {
         name: 'apoc.map.removeKeys',
@@ -3526,7 +3526,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setEntry': {
         name: 'apoc.map.setEntry',
@@ -3594,7 +3594,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setLists': {
         name: 'apoc.map.setLists',
@@ -3630,7 +3630,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setPairs': {
         name: 'apoc.map.setPairs',
@@ -3659,7 +3659,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setValues': {
         name: 'apoc.map.setValues',
@@ -3688,7 +3688,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.sortedProperties': {
         name: 'apoc.map.sortedProperties',
@@ -3719,7 +3719,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.submap': {
         name: 'apoc.map.submap',
@@ -3763,7 +3763,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.unflatten': {
         name: 'apoc.map.unflatten',
@@ -3794,7 +3794,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.updateTree': {
         name: 'apoc.map.updateTree',
@@ -3830,7 +3830,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.values': {
         name: 'apoc.map.values',
@@ -3868,7 +3868,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.cosh': {
         name: 'apoc.math.cosh',
@@ -3889,7 +3889,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.coth': {
         name: 'apoc.math.coth',
@@ -3910,7 +3910,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.csch': {
         name: 'apoc.math.csch',
@@ -3931,7 +3931,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxByte': {
         name: 'apoc.math.maxByte',
@@ -3945,7 +3945,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxDouble': {
         name: 'apoc.math.maxDouble',
@@ -3960,7 +3960,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxInt': {
         name: 'apoc.math.maxInt',
@@ -3974,7 +3974,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxLong': {
         name: 'apoc.math.maxLong',
@@ -3988,7 +3988,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minByte': {
         name: 'apoc.math.minByte',
@@ -4002,7 +4002,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minDouble': {
         name: 'apoc.math.minDouble',
@@ -4017,7 +4017,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minInt': {
         name: 'apoc.math.minInt',
@@ -4031,7 +4031,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minLong': {
         name: 'apoc.math.minLong',
@@ -4045,7 +4045,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sech': {
         name: 'apoc.math.sech',
@@ -4066,7 +4066,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sigmoid': {
         name: 'apoc.math.sigmoid',
@@ -4087,7 +4087,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sigmoidPrime': {
         name: 'apoc.math.sigmoidPrime',
@@ -4109,7 +4109,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sinh': {
         name: 'apoc.math.sinh',
@@ -4130,7 +4130,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.tanh': {
         name: 'apoc.math.tanh',
@@ -4151,7 +4151,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.isType': {
         name: 'apoc.meta.cypher.isType',
@@ -4179,7 +4179,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.type': {
         name: 'apoc.meta.cypher.type',
@@ -4200,7 +4200,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.types': {
         name: 'apoc.meta.cypher.types',
@@ -4223,7 +4223,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.nodes.count': {
         name: 'apoc.meta.nodes.count',
@@ -4255,7 +4255,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree': {
         name: 'apoc.node.degree',
@@ -4286,7 +4286,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree.in': {
         name: 'apoc.node.degree.in',
@@ -4317,7 +4317,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree.out': {
         name: 'apoc.node.degree.out',
@@ -4348,7 +4348,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.id': {
         name: 'apoc.node.id',
@@ -4369,7 +4369,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.labels': {
         name: 'apoc.node.labels',
@@ -4390,7 +4390,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationship.exists': {
         name: 'apoc.node.relationship.exists',
@@ -4422,7 +4422,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationship.types': {
         name: 'apoc.node.relationship.types',
@@ -4454,7 +4454,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationships.exist': {
         name: 'apoc.node.relationships.exist',
@@ -4486,7 +4486,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.connected': {
         name: 'apoc.nodes.connected',
@@ -4525,7 +4525,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.isDense': {
         name: 'apoc.nodes.isDense',
@@ -4546,7 +4546,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.relationship.types': {
         name: 'apoc.nodes.relationship.types',
@@ -4577,7 +4577,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.relationships.exist': {
         name: 'apoc.nodes.relationships.exist',
@@ -4608,7 +4608,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.arabicToRoman': {
         name: 'apoc.number.arabicToRoman',
@@ -4630,7 +4630,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.add': {
         name: 'apoc.number.exact.add',
@@ -4661,7 +4661,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.div': {
         name: 'apoc.number.exact.div',
@@ -4707,7 +4707,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.mul': {
         name: 'apoc.number.exact.mul',
@@ -4753,7 +4753,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.sub': {
         name: 'apoc.number.exact.sub',
@@ -4784,7 +4784,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toExact': {
         name: 'apoc.number.exact.toExact',
@@ -4806,7 +4806,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toFloat': {
         name: 'apoc.number.exact.toFloat',
@@ -4844,7 +4844,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toInteger': {
         name: 'apoc.number.exact.toInteger',
@@ -4882,7 +4882,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.format': {
         name: 'apoc.number.format',
@@ -4919,7 +4919,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.parseFloat': {
         name: 'apoc.number.parseFloat',
@@ -4956,7 +4956,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.parseInt': {
         name: 'apoc.number.parseInt',
@@ -4993,7 +4993,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.romanToArabic': {
         name: 'apoc.number.romanToArabic',
@@ -5015,7 +5015,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.combine': {
         name: 'apoc.path.combine',
@@ -5042,7 +5042,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.create': {
         name: 'apoc.path.create',
@@ -5072,7 +5072,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.elements': {
         name: 'apoc.path.elements',
@@ -5095,7 +5095,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.slice': {
         name: 'apoc.path.slice',
@@ -5132,7 +5132,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.endNode': {
         name: 'apoc.rel.endNode',
@@ -5154,7 +5154,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.id': {
         name: 'apoc.rel.id',
@@ -5175,7 +5175,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.startNode': {
         name: 'apoc.rel.startNode',
@@ -5197,7 +5197,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.type': {
         name: 'apoc.rel.type',
@@ -5218,7 +5218,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.node.constraintExists': {
         name: 'apoc.schema.node.constraintExists',
@@ -5247,7 +5247,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.node.indexExists': {
         name: 'apoc.schema.node.indexExists',
@@ -5276,7 +5276,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.relationship.constraintExists': {
         name: 'apoc.schema.relationship.constraintExists',
@@ -5305,7 +5305,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.relationship.indexExists': {
         name: 'apoc.schema.relationship.indexExists',
@@ -5334,7 +5334,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.scoring.existence': {
         name: 'apoc.scoring.existence',
@@ -5362,7 +5362,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.scoring.pareto': {
         name: 'apoc.scoring.pareto',
@@ -5403,7 +5403,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.format': {
         name: 'apoc.temporal.format',
@@ -5433,7 +5433,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.formatDuration': {
         name: 'apoc.temporal.formatDuration',
@@ -5461,7 +5461,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.toZonedTemporal': {
         name: 'apoc.temporal.toZonedTemporal',
@@ -5499,7 +5499,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64Decode': {
         name: 'apoc.text.base64Decode',
@@ -5520,7 +5520,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64Encode': {
         name: 'apoc.text.base64Encode',
@@ -5541,7 +5541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64UrlDecode': {
         name: 'apoc.text.base64UrlDecode',
@@ -5562,7 +5562,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64UrlEncode': {
         name: 'apoc.text.base64UrlEncode',
@@ -5583,7 +5583,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.byteCount': {
         name: 'apoc.text.byteCount',
@@ -5612,7 +5612,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.bytes': {
         name: 'apoc.text.bytes',
@@ -5641,7 +5641,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.camelCase': {
         name: 'apoc.text.camelCase',
@@ -5662,7 +5662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.capitalize': {
         name: 'apoc.text.capitalize',
@@ -5683,7 +5683,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.capitalizeAll': {
         name: 'apoc.text.capitalizeAll',
@@ -5705,7 +5705,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.charAt': {
         name: 'apoc.text.charAt',
@@ -5736,7 +5736,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.clean': {
         name: 'apoc.text.clean',
@@ -5759,7 +5759,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.code': {
         name: 'apoc.text.code',
@@ -5780,7 +5780,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.compareCleaned': {
         name: 'apoc.text.compareCleaned',
@@ -5811,7 +5811,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.decapitalize': {
         name: 'apoc.text.decapitalize',
@@ -5834,7 +5834,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.decapitalizeAll': {
         name: 'apoc.text.decapitalizeAll',
@@ -5856,7 +5856,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.distance': {
         name: 'apoc.text.distance',
@@ -5885,7 +5885,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.doubleMetaphone': {
         name: 'apoc.text.doubleMetaphone',
@@ -5908,7 +5908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.format': {
         name: 'apoc.text.format',
@@ -5945,7 +5945,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.fuzzyMatch': {
         name: 'apoc.text.fuzzyMatch',
@@ -5974,7 +5974,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hammingDistance': {
         name: 'apoc.text.hammingDistance',
@@ -6003,7 +6003,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hexCharAt': {
         name: 'apoc.text.hexCharAt',
@@ -6034,7 +6034,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hexValue': {
         name: 'apoc.text.hexValue',
@@ -6056,7 +6056,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.indexOf': {
         name: 'apoc.text.indexOf',
@@ -6099,7 +6099,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.indexesOf': {
         name: 'apoc.text.indexesOf',
@@ -6142,7 +6142,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.jaroWinklerDistance': {
         name: 'apoc.text.jaroWinklerDistance',
@@ -6171,7 +6171,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.join': {
         name: 'apoc.text.join',
@@ -6201,7 +6201,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.levenshteinDistance': {
         name: 'apoc.text.levenshteinDistance',
@@ -6259,7 +6259,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.lpad': {
         name: 'apoc.text.lpad',
@@ -6295,7 +6295,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.phonetic': {
         name: 'apoc.text.phonetic',
@@ -6318,7 +6318,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.random': {
         name: 'apoc.text.random',
@@ -6348,7 +6348,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.regexGroups': {
         name: 'apoc.text.regexGroups',
@@ -6377,7 +6377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.regexGroupsByName': {
         name: 'apoc.text.regexGroupsByName',
@@ -6406,7 +6406,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.regreplace': {
         name: 'apoc.text.regreplace',
@@ -6471,7 +6471,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.replace': {
         name: 'apoc.text.replace',
@@ -6507,7 +6507,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.rpad': {
         name: 'apoc.text.rpad',
@@ -6543,7 +6543,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.slug': {
         name: 'apoc.text.slug',
@@ -6573,7 +6573,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.snakeCase': {
         name: 'apoc.text.snakeCase',
@@ -6594,7 +6594,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.sorensenDiceSimilarity': {
         name: 'apoc.text.sorensenDiceSimilarity',
@@ -6630,7 +6630,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.split': {
         name: 'apoc.text.split',
@@ -6667,7 +6667,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.swapCase': {
         name: 'apoc.text.swapCase',
@@ -6688,7 +6688,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.toCypher': {
         name: 'apoc.text.toCypher',
@@ -6718,7 +6718,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.toUpperCase': {
         name: 'apoc.text.toUpperCase',
@@ -6739,7 +6739,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.upperCamelCase': {
         name: 'apoc.text.upperCamelCase',
@@ -6760,7 +6760,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.urldecode': {
         name: 'apoc.text.urldecode',
@@ -6781,7 +6781,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.urlencode': {
         name: 'apoc.text.urlencode',
@@ -6802,7 +6802,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.compress': {
         name: 'apoc.util.compress',
@@ -6832,7 +6832,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.decompress': {
         name: 'apoc.util.decompress',
@@ -6862,7 +6862,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.md5': {
         name: 'apoc.util.md5',
@@ -6885,7 +6885,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha1': {
         name: 'apoc.util.sha1',
@@ -6908,7 +6908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha256': {
         name: 'apoc.util.sha256',
@@ -6931,7 +6931,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha384': {
         name: 'apoc.util.sha384',
@@ -6954,7 +6954,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha512': {
         name: 'apoc.util.sha512',
@@ -6977,7 +6977,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.validatePredicate': {
         name: 'apoc.util.validatePredicate',
@@ -7013,7 +7013,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.version': {
         name: 'apoc.version',
@@ -7027,7 +7027,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.xml.parse': {
         name: 'apoc.xml.parse',
@@ -7072,7 +7072,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       asin: {
         name: 'asin',
@@ -7100,7 +7100,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       atan: {
         name: 'atan',
@@ -7128,7 +7128,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       atan2: {
         name: 'atan2',
@@ -7163,7 +7163,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       avg: {
         name: 'avg',
@@ -7193,7 +7193,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       btrim: {
         name: 'btrim',
@@ -7231,7 +7231,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       ceil: {
         name: 'ceil',
@@ -7260,7 +7260,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       char_length: {
         name: 'char_length',
@@ -7289,7 +7289,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       character_length: {
         name: 'character_length',
@@ -7318,7 +7318,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       coalesce: {
         name: 'coalesce',
@@ -7348,7 +7348,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       collect: {
         name: 'collect',
@@ -7377,7 +7377,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       cos: {
         name: 'cos',
@@ -7405,7 +7405,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       cot: {
         name: 'cot',
@@ -7433,7 +7433,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       count: {
         name: 'count',
@@ -7461,7 +7461,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       date: {
         name: 'date',
@@ -7492,7 +7492,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.realtime': {
         name: 'date.realtime',
@@ -7524,7 +7524,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.statement': {
         name: 'date.statement',
@@ -7556,7 +7556,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.transaction': {
         name: 'date.transaction',
@@ -7588,7 +7588,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.truncate': {
         name: 'date.truncate',
@@ -7636,7 +7636,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       datetime: {
         name: 'datetime',
@@ -7668,7 +7668,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.fromepoch': {
         name: 'datetime.fromepoch',
@@ -7706,7 +7706,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.fromepochmillis': {
         name: 'datetime.fromepochmillis',
@@ -7737,7 +7737,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.realtime': {
         name: 'datetime.realtime',
@@ -7769,7 +7769,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.statement': {
         name: 'datetime.statement',
@@ -7801,7 +7801,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.transaction': {
         name: 'datetime.transaction',
@@ -7833,7 +7833,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.truncate': {
         name: 'datetime.truncate',
@@ -7881,7 +7881,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'db.nameFromElementId': {
         name: 'db.nameFromElementId',
@@ -7909,7 +7909,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       degrees: {
         name: 'degrees',
@@ -7937,7 +7937,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       duration: {
         name: 'duration',
@@ -7966,7 +7966,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.between': {
         name: 'duration.between',
@@ -8003,7 +8003,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inDays': {
         name: 'duration.inDays',
@@ -8040,7 +8040,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inMonths': {
         name: 'duration.inMonths',
@@ -8077,7 +8077,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inSeconds': {
         name: 'duration.inSeconds',
@@ -8114,7 +8114,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       e: {
         name: 'e',
@@ -8135,7 +8135,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       elementId: {
         name: 'elementId',
@@ -8163,7 +8163,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       endNode: {
         name: 'endNode',
@@ -8191,7 +8191,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       exists: {
         name: 'exists',
@@ -8220,7 +8220,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       exp: {
         name: 'exp',
@@ -8250,7 +8250,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       file: {
         name: 'file',
@@ -8272,7 +8272,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       floor: {
         name: 'floor',
@@ -8301,7 +8301,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.adamicAdar': {
         name: 'gds.alpha.linkprediction.adamicAdar',
@@ -8336,7 +8336,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.commonNeighbors': {
         name: 'gds.alpha.linkprediction.commonNeighbors',
@@ -8371,7 +8371,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.preferentialAttachment': {
         name: 'gds.alpha.linkprediction.preferentialAttachment',
@@ -8406,7 +8406,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.resourceAllocation': {
         name: 'gds.alpha.linkprediction.resourceAllocation',
@@ -8442,7 +8442,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.sameCommunity': {
         name: 'gds.alpha.linkprediction.sameCommunity',
@@ -8478,7 +8478,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.totalNeighbors': {
         name: 'gds.alpha.linkprediction.totalNeighbors',
@@ -8513,7 +8513,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.ml.oneHotEncoding': {
         name: 'gds.alpha.ml.oneHotEncoding',
@@ -8542,7 +8542,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.graph.exists': {
         name: 'gds.graph.exists',
@@ -8563,7 +8563,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.graph.project': {
         name: 'gds.graph.project',
@@ -8620,7 +8620,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.isLicensed': {
         name: 'gds.isLicensed',
@@ -8635,7 +8635,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.cosine': {
         name: 'gds.similarity.cosine',
@@ -8664,7 +8664,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.euclidean': {
         name: 'gds.similarity.euclidean',
@@ -8693,7 +8693,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.euclideanDistance': {
         name: 'gds.similarity.euclideanDistance',
@@ -8722,7 +8722,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.jaccard': {
         name: 'gds.similarity.jaccard',
@@ -8751,7 +8751,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.overlap': {
         name: 'gds.similarity.overlap',
@@ -8780,7 +8780,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.pearson': {
         name: 'gds.similarity.pearson',
@@ -8809,7 +8809,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.NaN': {
         name: 'gds.util.NaN',
@@ -8823,7 +8823,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.asNode': {
         name: 'gds.util.asNode',
@@ -8845,7 +8845,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.asNodes': {
         name: 'gds.util.asNodes',
@@ -8868,7 +8868,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.infinity': {
         name: 'gds.util.infinity',
@@ -8883,7 +8883,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.isFinite': {
         name: 'gds.util.isFinite',
@@ -8905,7 +8905,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.isInfinite': {
         name: 'gds.util.isInfinite',
@@ -8927,7 +8927,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.nodeProperty': {
         name: 'gds.util.nodeProperty',
@@ -8969,7 +8969,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.version': {
         name: 'gds.version',
@@ -8984,7 +8984,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.byElementId': {
         name: 'graph.byElementId',
@@ -9013,7 +9013,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.byName': {
         name: 'graph.byName',
@@ -9042,7 +9042,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.names': {
         name: 'graph.names',
@@ -9063,7 +9063,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.propertiesByName': {
         name: 'graph.propertiesByName',
@@ -9092,7 +9092,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       haversin: {
         name: 'haversin',
@@ -9120,7 +9120,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       head: {
         name: 'head',
@@ -9149,7 +9149,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       id: {
         name: 'id',
@@ -9177,7 +9177,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: true,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       isEmpty: {
         name: 'isEmpty',
@@ -9206,7 +9206,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       isNaN: {
         name: 'isNaN',
@@ -9234,7 +9234,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       keys: {
         name: 'keys',
@@ -9264,7 +9264,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       labels: {
         name: 'labels',
@@ -9293,7 +9293,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       last: {
         name: 'last',
@@ -9321,7 +9321,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       left: {
         name: 'left',
@@ -9358,7 +9358,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       length: {
         name: 'length',
@@ -9386,7 +9386,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       linenumber: {
         name: 'linenumber',
@@ -9408,7 +9408,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       localdatetime: {
         name: 'localdatetime',
@@ -9440,7 +9440,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.realtime': {
         name: 'localdatetime.realtime',
@@ -9472,7 +9472,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.statement': {
         name: 'localdatetime.statement',
@@ -9504,7 +9504,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.transaction': {
         name: 'localdatetime.transaction',
@@ -9536,7 +9536,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.truncate': {
         name: 'localdatetime.truncate',
@@ -9584,7 +9584,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       localtime: {
         name: 'localtime',
@@ -9616,7 +9616,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.realtime': {
         name: 'localtime.realtime',
@@ -9648,7 +9648,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.statement': {
         name: 'localtime.statement',
@@ -9680,7 +9680,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.transaction': {
         name: 'localtime.transaction',
@@ -9712,7 +9712,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.truncate': {
         name: 'localtime.truncate',
@@ -9760,7 +9760,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       log: {
         name: 'log',
@@ -9789,7 +9789,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       log10: {
         name: 'log10',
@@ -9818,7 +9818,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       lower: {
         name: 'lower',
@@ -9846,7 +9846,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       ltrim: {
         name: 'ltrim',
@@ -9884,7 +9884,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       max: {
         name: 'max',
@@ -9912,7 +9912,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       min: {
         name: 'min',
@@ -9940,7 +9940,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       nodes: {
         name: 'nodes',
@@ -9969,7 +9969,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       none: {
         name: 'none',
@@ -10006,7 +10006,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       normalize: {
         name: 'normalize',
@@ -10043,7 +10043,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       nullIf: {
         name: 'nullIf',
@@ -10080,7 +10080,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       percentileCont: {
         name: 'percentileCont',
@@ -10116,7 +10116,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       percentileDisc: {
         name: 'percentileDisc',
@@ -10152,7 +10152,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       pi: {
         name: 'pi',
@@ -10173,7 +10173,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       point: {
         name: 'point',
@@ -10203,7 +10203,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'point.distance': {
         name: 'point.distance',
@@ -10238,7 +10238,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'point.withinBBox': {
         name: 'point.withinBBox',
@@ -10280,7 +10280,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       properties: {
         name: 'properties',
@@ -10309,7 +10309,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       radians: {
         name: 'radians',
@@ -10337,7 +10337,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       rand: {
         name: 'rand',
@@ -10359,7 +10359,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       randomUUID: {
         name: 'randomUUID',
@@ -10380,7 +10380,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       range: {
         name: 'range',
@@ -10422,7 +10422,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       reduce: {
         name: 'reduce',
@@ -10460,7 +10460,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       relationships: {
         name: 'relationships',
@@ -10490,7 +10490,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       replace: {
         name: 'replace',
@@ -10532,7 +10532,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       reverse: {
         name: 'reverse',
@@ -10561,7 +10561,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       right: {
         name: 'right',
@@ -10598,7 +10598,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       round: {
         name: 'round',
@@ -10641,7 +10641,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       rtrim: {
         name: 'rtrim',
@@ -10679,7 +10679,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sign: {
         name: 'sign',
@@ -10708,7 +10708,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sin: {
         name: 'sin',
@@ -10736,7 +10736,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       single: {
         name: 'single',
@@ -10773,7 +10773,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       size: {
         name: 'size',
@@ -10802,7 +10802,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       split: {
         name: 'split',
@@ -10838,7 +10838,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sqrt: {
         name: 'sqrt',
@@ -10866,7 +10866,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       startNode: {
         name: 'startNode',
@@ -10894,7 +10894,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       stdev: {
         name: 'stdev',
@@ -10923,7 +10923,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       stdevp: {
         name: 'stdevp',
@@ -10953,7 +10953,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       substring: {
         name: 'substring',
@@ -10995,7 +10995,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sum: {
         name: 'sum',
@@ -11025,7 +11025,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       tail: {
         name: 'tail',
@@ -11054,7 +11054,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       tan: {
         name: 'tan',
@@ -11082,7 +11082,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       time: {
         name: 'time',
@@ -11114,7 +11114,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.realtime': {
         name: 'time.realtime',
@@ -11146,7 +11146,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.statement': {
         name: 'time.statement',
@@ -11178,7 +11178,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.transaction': {
         name: 'time.transaction',
@@ -11210,7 +11210,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.truncate': {
         name: 'time.truncate',
@@ -11258,7 +11258,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       timestamp: {
         name: 'timestamp',
@@ -11280,7 +11280,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBoolean: {
         name: 'toBoolean',
@@ -11309,7 +11309,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBooleanList: {
         name: 'toBooleanList',
@@ -11339,7 +11339,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBooleanOrNull: {
         name: 'toBooleanOrNull',
@@ -11368,7 +11368,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloat: {
         name: 'toFloat',
@@ -11397,7 +11397,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloatList: {
         name: 'toFloatList',
@@ -11427,7 +11427,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloatOrNull: {
         name: 'toFloatOrNull',
@@ -11456,7 +11456,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toInteger: {
         name: 'toInteger',
@@ -11486,7 +11486,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toIntegerList: {
         name: 'toIntegerList',
@@ -11516,7 +11516,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toIntegerOrNull: {
         name: 'toIntegerOrNull',
@@ -11545,7 +11545,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toLower: {
         name: 'toLower',
@@ -11573,7 +11573,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toString: {
         name: 'toString',
@@ -11602,7 +11602,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toStringList: {
         name: 'toStringList',
@@ -11632,7 +11632,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toStringOrNull: {
         name: 'toStringOrNull',
@@ -11661,7 +11661,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toUpper: {
         name: 'toUpper',
@@ -11689,7 +11689,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       trim: {
         name: 'trim',
@@ -11734,7 +11734,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       type: {
         name: 'type',
@@ -11763,7 +11763,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       upper: {
         name: 'upper',
@@ -11791,7 +11791,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       valueType: {
         name: 'valueType',
@@ -11820,7 +11820,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'vector.similarity.cosine': {
         name: 'vector.similarity.cosine',
@@ -11856,7 +11856,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'vector.similarity.euclidean': {
         name: 'vector.similarity.euclidean',
@@ -11892,7 +11892,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
     }),
     'CYPHER 25': asNeo4jFunctions({
@@ -11923,7 +11923,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       acos: {
         name: 'acos',
@@ -11951,7 +11951,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       all: {
         name: 'all',
@@ -11989,7 +11989,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       any: {
         name: 'any',
@@ -12026,7 +12026,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.first': {
         name: 'apoc.agg.first',
@@ -12047,7 +12047,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.graph': {
         name: 'apoc.agg.graph',
@@ -12069,7 +12069,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.last': {
         name: 'apoc.agg.last',
@@ -12090,7 +12090,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.maxItems': {
         name: 'apoc.agg.maxItems',
@@ -12126,7 +12126,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.median': {
         name: 'apoc.agg.median',
@@ -12148,7 +12148,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.minItems': {
         name: 'apoc.agg.minItems',
@@ -12184,7 +12184,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.nth': {
         name: 'apoc.agg.nth',
@@ -12213,7 +12213,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.percentiles': {
         name: 'apoc.agg.percentiles',
@@ -12244,7 +12244,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.product': {
         name: 'apoc.agg.product',
@@ -12267,7 +12267,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.slice': {
         name: 'apoc.agg.slice',
@@ -12306,7 +12306,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.agg.statistics': {
         name: 'apoc.agg.statistics',
@@ -12337,7 +12337,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.isDeleted': {
         name: 'apoc.any.isDeleted',
@@ -12360,7 +12360,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.properties': {
         name: 'apoc.any.properties',
@@ -12391,7 +12391,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.any.property': {
         name: 'apoc.any.property',
@@ -12419,7 +12419,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.bitwise.op': {
         name: 'apoc.bitwise.op',
@@ -12453,7 +12453,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.avg': {
         name: 'apoc.coll.avg',
@@ -12475,7 +12475,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.combinations': {
         name: 'apoc.coll.combinations',
@@ -12511,7 +12511,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.contains': {
         name: 'apoc.coll.contains',
@@ -12540,7 +12540,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsAll': {
         name: 'apoc.coll.containsAll',
@@ -12570,7 +12570,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsAllSorted': {
         name: 'apoc.coll.containsAllSorted',
@@ -12600,7 +12600,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsDuplicates': {
         name: 'apoc.coll.containsDuplicates',
@@ -12622,7 +12622,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.containsSorted': {
         name: 'apoc.coll.containsSorted',
@@ -12651,7 +12651,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.different': {
         name: 'apoc.coll.different',
@@ -12673,7 +12673,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.disjunction': {
         name: 'apoc.coll.disjunction',
@@ -12703,7 +12703,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.dropDuplicateNeighbors': {
         name: 'apoc.coll.dropDuplicateNeighbors',
@@ -12727,7 +12727,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.duplicates': {
         name: 'apoc.coll.duplicates',
@@ -12749,7 +12749,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.duplicatesWithCount': {
         name: 'apoc.coll.duplicatesWithCount',
@@ -12773,7 +12773,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.fill': {
         name: 'apoc.coll.fill',
@@ -12802,7 +12802,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.flatten': {
         name: 'apoc.coll.flatten',
@@ -12832,7 +12832,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.frequencies': {
         name: 'apoc.coll.frequencies',
@@ -12854,7 +12854,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.frequenciesAsMap': {
         name: 'apoc.coll.frequenciesAsMap',
@@ -12876,7 +12876,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.indexOf': {
         name: 'apoc.coll.indexOf',
@@ -12906,7 +12906,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.insert': {
         name: 'apoc.coll.insert',
@@ -12941,7 +12941,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.insertAll': {
         name: 'apoc.coll.insertAll',
@@ -12977,7 +12977,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.intersection': {
         name: 'apoc.coll.intersection',
@@ -13008,7 +13008,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.isEqualCollection': {
         name: 'apoc.coll.isEqualCollection',
@@ -13039,7 +13039,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.max': {
         name: 'apoc.coll.max',
@@ -13061,7 +13061,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.min': {
         name: 'apoc.coll.min',
@@ -13083,7 +13083,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.occurrences': {
         name: 'apoc.coll.occurrences',
@@ -13112,7 +13112,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairWithOffset': {
         name: 'apoc.coll.pairWithOffset',
@@ -13141,7 +13141,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairs': {
         name: 'apoc.coll.pairs',
@@ -13163,7 +13163,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.pairsMin': {
         name: 'apoc.coll.pairsMin',
@@ -13185,7 +13185,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.partition': {
         name: 'apoc.coll.partition',
@@ -13214,7 +13214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.randomItem': {
         name: 'apoc.coll.randomItem',
@@ -13236,7 +13236,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.randomItems': {
         name: 'apoc.coll.randomItems',
@@ -13273,7 +13273,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.remove': {
         name: 'apoc.coll.remove',
@@ -13310,7 +13310,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.removeAll': {
         name: 'apoc.coll.removeAll',
@@ -13339,7 +13339,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.runningTotal': {
         name: 'apoc.coll.runningTotal',
@@ -13361,7 +13361,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.set': {
         name: 'apoc.coll.set',
@@ -13395,7 +13395,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.shuffle': {
         name: 'apoc.coll.shuffle',
@@ -13416,7 +13416,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sort': {
         name: 'apoc.coll.sort',
@@ -13437,7 +13437,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortMaps': {
         name: 'apoc.coll.sortMaps',
@@ -13467,7 +13467,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortMulti': {
         name: 'apoc.coll.sortMulti',
@@ -13512,7 +13512,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortNodes': {
         name: 'apoc.coll.sortNodes',
@@ -13542,7 +13542,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sortText': {
         name: 'apoc.coll.sortText',
@@ -13572,7 +13572,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.stdev': {
         name: 'apoc.coll.stdev',
@@ -13603,7 +13603,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.subtract': {
         name: 'apoc.coll.subtract',
@@ -13632,7 +13632,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sum': {
         name: 'apoc.coll.sum',
@@ -13654,7 +13654,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.sumLongs': {
         name: 'apoc.coll.sumLongs',
@@ -13678,7 +13678,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.toSet': {
         name: 'apoc.coll.toSet',
@@ -13699,7 +13699,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.union': {
         name: 'apoc.coll.union',
@@ -13730,7 +13730,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.unionAll': {
         name: 'apoc.coll.unionAll',
@@ -13761,7 +13761,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.coll.zip': {
         name: 'apoc.coll.zip',
@@ -13790,7 +13790,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.fromJsonList': {
         name: 'apoc.convert.fromJsonList',
@@ -13829,7 +13829,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.fromJsonMap': {
         name: 'apoc.convert.fromJsonMap',
@@ -13867,7 +13867,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.getJsonProperty': {
         name: 'apoc.convert.getJsonProperty',
@@ -13912,7 +13912,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.getJsonPropertyMap': {
         name: 'apoc.convert.getJsonPropertyMap',
@@ -13957,7 +13957,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toJson': {
         name: 'apoc.convert.toJson',
@@ -13978,7 +13978,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toList': {
         name: 'apoc.convert.toList',
@@ -13999,7 +13999,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toMap': {
         name: 'apoc.convert.toMap',
@@ -14020,7 +14020,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toNode': {
         name: 'apoc.convert.toNode',
@@ -14041,7 +14041,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toNodeList': {
         name: 'apoc.convert.toNodeList',
@@ -14062,7 +14062,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toRelationship': {
         name: 'apoc.convert.toRelationship',
@@ -14083,7 +14083,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toRelationshipList': {
         name: 'apoc.convert.toRelationshipList',
@@ -14105,7 +14105,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toSet': {
         name: 'apoc.convert.toSet',
@@ -14127,7 +14127,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.convert.toSortedJsonMap': {
         name: 'apoc.convert.toSortedJsonMap',
@@ -14158,7 +14158,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuidBase64': {
         name: 'apoc.create.uuidBase64',
@@ -14172,7 +14172,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuidBase64ToHex': {
         name: 'apoc.create.uuidBase64ToHex',
@@ -14195,7 +14195,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.uuidHexToBase64': {
         name: 'apoc.create.uuidHexToBase64',
@@ -14217,7 +14217,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.vNode': {
         name: 'apoc.create.vNode',
@@ -14246,7 +14246,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.vRelationship': {
         name: 'apoc.create.vRelationship',
@@ -14288,7 +14288,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.create.virtual.fromNode': {
         name: 'apoc.create.virtual.fromNode',
@@ -14317,7 +14317,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.cypher.runFirstColumnMany': {
         name: 'apoc.cypher.runFirstColumnMany',
@@ -14347,7 +14347,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.cypher.runFirstColumnSingle': {
         name: 'apoc.cypher.runFirstColumnSingle',
@@ -14377,7 +14377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.data.url': {
         name: 'apoc.data.url',
@@ -14398,7 +14398,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.add': {
         name: 'apoc.date.add',
@@ -14438,7 +14438,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.convert': {
         name: 'apoc.date.convert',
@@ -14473,7 +14473,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.convertFormat': {
         name: 'apoc.date.convertFormat',
@@ -14509,7 +14509,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.currentTimestamp': {
         name: 'apoc.date.currentTimestamp',
@@ -14524,7 +14524,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.field': {
         name: 'apoc.date.field',
@@ -14561,7 +14561,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.fields': {
         name: 'apoc.date.fields',
@@ -14592,7 +14592,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.format': {
         name: 'apoc.date.format',
@@ -14637,7 +14637,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.fromISO8601': {
         name: 'apoc.date.fromISO8601',
@@ -14659,7 +14659,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.parse': {
         name: 'apoc.date.parse',
@@ -14704,7 +14704,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.systemTimezone': {
         name: 'apoc.date.systemTimezone',
@@ -14719,7 +14719,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.toISO8601': {
         name: 'apoc.date.toISO8601',
@@ -14749,7 +14749,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.date.toYears': {
         name: 'apoc.date.toYears',
@@ -14781,7 +14781,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.diff.nodes': {
         name: 'apoc.diff.nodes',
@@ -14810,7 +14810,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprint': {
         name: 'apoc.hashing.fingerprint',
@@ -14840,7 +14840,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprintGraph': {
         name: 'apoc.hashing.fingerprintGraph',
@@ -14864,7 +14864,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.hashing.fingerprinting': {
         name: 'apoc.hashing.fingerprinting',
@@ -14895,7 +14895,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.json.path': {
         name: 'apoc.json.path',
@@ -14932,7 +14932,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.label.exists': {
         name: 'apoc.label.exists',
@@ -14960,7 +14960,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.clean': {
         name: 'apoc.map.clean',
@@ -14995,7 +14995,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.flatten': {
         name: 'apoc.map.flatten',
@@ -15026,7 +15026,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromLists': {
         name: 'apoc.map.fromLists',
@@ -15056,7 +15056,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromNodes': {
         name: 'apoc.map.fromNodes',
@@ -15084,7 +15084,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromPairs': {
         name: 'apoc.map.fromPairs',
@@ -15106,7 +15106,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.fromValues': {
         name: 'apoc.map.fromValues',
@@ -15129,7 +15129,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.get': {
         name: 'apoc.map.get',
@@ -15173,7 +15173,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.groupBy': {
         name: 'apoc.map.groupBy',
@@ -15202,7 +15202,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.groupByMulti': {
         name: 'apoc.map.groupByMulti',
@@ -15231,7 +15231,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.merge': {
         name: 'apoc.map.merge',
@@ -15258,7 +15258,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.mergeList': {
         name: 'apoc.map.mergeList',
@@ -15280,7 +15280,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.mget': {
         name: 'apoc.map.mget',
@@ -15324,7 +15324,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.removeKey': {
         name: 'apoc.map.removeKey',
@@ -15360,7 +15360,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.removeKeys': {
         name: 'apoc.map.removeKeys',
@@ -15396,7 +15396,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setKey': {
         name: 'apoc.map.setKey',
@@ -15430,7 +15430,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setLists': {
         name: 'apoc.map.setLists',
@@ -15466,7 +15466,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setPairs': {
         name: 'apoc.map.setPairs',
@@ -15495,7 +15495,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.setValues': {
         name: 'apoc.map.setValues',
@@ -15524,7 +15524,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.sortedProperties': {
         name: 'apoc.map.sortedProperties',
@@ -15555,7 +15555,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.submap': {
         name: 'apoc.map.submap',
@@ -15599,7 +15599,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.unflatten': {
         name: 'apoc.map.unflatten',
@@ -15630,7 +15630,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.updateTree': {
         name: 'apoc.map.updateTree',
@@ -15666,7 +15666,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.map.values': {
         name: 'apoc.map.values',
@@ -15704,7 +15704,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.cosh': {
         name: 'apoc.math.cosh',
@@ -15725,7 +15725,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.coth': {
         name: 'apoc.math.coth',
@@ -15746,7 +15746,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.csch': {
         name: 'apoc.math.csch',
@@ -15767,7 +15767,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxByte': {
         name: 'apoc.math.maxByte',
@@ -15781,7 +15781,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxDouble': {
         name: 'apoc.math.maxDouble',
@@ -15796,7 +15796,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxInt': {
         name: 'apoc.math.maxInt',
@@ -15810,7 +15810,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.maxLong': {
         name: 'apoc.math.maxLong',
@@ -15824,7 +15824,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minByte': {
         name: 'apoc.math.minByte',
@@ -15838,7 +15838,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minDouble': {
         name: 'apoc.math.minDouble',
@@ -15853,7 +15853,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minInt': {
         name: 'apoc.math.minInt',
@@ -15867,7 +15867,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.minLong': {
         name: 'apoc.math.minLong',
@@ -15881,7 +15881,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sech': {
         name: 'apoc.math.sech',
@@ -15902,7 +15902,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sigmoid': {
         name: 'apoc.math.sigmoid',
@@ -15923,7 +15923,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sigmoidPrime': {
         name: 'apoc.math.sigmoidPrime',
@@ -15945,7 +15945,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.sinh': {
         name: 'apoc.math.sinh',
@@ -15966,7 +15966,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.math.tanh': {
         name: 'apoc.math.tanh',
@@ -15987,7 +15987,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.isType': {
         name: 'apoc.meta.cypher.isType',
@@ -16015,7 +16015,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.type': {
         name: 'apoc.meta.cypher.type',
@@ -16036,7 +16036,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.cypher.types': {
         name: 'apoc.meta.cypher.types',
@@ -16059,7 +16059,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.meta.nodes.count': {
         name: 'apoc.meta.nodes.count',
@@ -16091,7 +16091,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree': {
         name: 'apoc.node.degree',
@@ -16122,7 +16122,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree.in': {
         name: 'apoc.node.degree.in',
@@ -16153,7 +16153,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.degree.out': {
         name: 'apoc.node.degree.out',
@@ -16184,7 +16184,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.id': {
         name: 'apoc.node.id',
@@ -16205,7 +16205,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.labels': {
         name: 'apoc.node.labels',
@@ -16226,7 +16226,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationship.exists': {
         name: 'apoc.node.relationship.exists',
@@ -16258,7 +16258,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationship.types': {
         name: 'apoc.node.relationship.types',
@@ -16290,7 +16290,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.node.relationships.exist': {
         name: 'apoc.node.relationships.exist',
@@ -16322,7 +16322,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.connected': {
         name: 'apoc.nodes.connected',
@@ -16361,7 +16361,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.isDense': {
         name: 'apoc.nodes.isDense',
@@ -16382,7 +16382,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.relationship.types': {
         name: 'apoc.nodes.relationship.types',
@@ -16413,7 +16413,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.nodes.relationships.exist': {
         name: 'apoc.nodes.relationships.exist',
@@ -16444,7 +16444,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.arabicToRoman': {
         name: 'apoc.number.arabicToRoman',
@@ -16466,7 +16466,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.add': {
         name: 'apoc.number.exact.add',
@@ -16497,7 +16497,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.div': {
         name: 'apoc.number.exact.div',
@@ -16543,7 +16543,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.mul': {
         name: 'apoc.number.exact.mul',
@@ -16589,7 +16589,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.sub': {
         name: 'apoc.number.exact.sub',
@@ -16620,7 +16620,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toExact': {
         name: 'apoc.number.exact.toExact',
@@ -16642,7 +16642,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toFloat': {
         name: 'apoc.number.exact.toFloat',
@@ -16680,7 +16680,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.exact.toInteger': {
         name: 'apoc.number.exact.toInteger',
@@ -16718,7 +16718,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.format': {
         name: 'apoc.number.format',
@@ -16755,7 +16755,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.parseFloat': {
         name: 'apoc.number.parseFloat',
@@ -16792,7 +16792,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.parseInt': {
         name: 'apoc.number.parseInt',
@@ -16829,7 +16829,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.number.romanToArabic': {
         name: 'apoc.number.romanToArabic',
@@ -16851,7 +16851,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.combine': {
         name: 'apoc.path.combine',
@@ -16878,7 +16878,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.create': {
         name: 'apoc.path.create',
@@ -16908,7 +16908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.elements': {
         name: 'apoc.path.elements',
@@ -16931,7 +16931,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.path.slice': {
         name: 'apoc.path.slice',
@@ -16968,7 +16968,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.endNode': {
         name: 'apoc.rel.endNode',
@@ -16990,7 +16990,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.id': {
         name: 'apoc.rel.id',
@@ -17011,7 +17011,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.startNode': {
         name: 'apoc.rel.startNode',
@@ -17033,7 +17033,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.rel.type': {
         name: 'apoc.rel.type',
@@ -17054,7 +17054,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.node.constraintExists': {
         name: 'apoc.schema.node.constraintExists',
@@ -17083,7 +17083,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.node.indexExists': {
         name: 'apoc.schema.node.indexExists',
@@ -17112,7 +17112,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.relationship.constraintExists': {
         name: 'apoc.schema.relationship.constraintExists',
@@ -17141,7 +17141,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.schema.relationship.indexExists': {
         name: 'apoc.schema.relationship.indexExists',
@@ -17170,7 +17170,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.scoring.existence': {
         name: 'apoc.scoring.existence',
@@ -17198,7 +17198,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.scoring.pareto': {
         name: 'apoc.scoring.pareto',
@@ -17239,7 +17239,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.format': {
         name: 'apoc.temporal.format',
@@ -17269,7 +17269,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.formatDuration': {
         name: 'apoc.temporal.formatDuration',
@@ -17297,7 +17297,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.temporal.toZonedTemporal': {
         name: 'apoc.temporal.toZonedTemporal',
@@ -17335,7 +17335,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64Decode': {
         name: 'apoc.text.base64Decode',
@@ -17356,7 +17356,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64Encode': {
         name: 'apoc.text.base64Encode',
@@ -17377,7 +17377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64UrlDecode': {
         name: 'apoc.text.base64UrlDecode',
@@ -17398,7 +17398,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.base64UrlEncode': {
         name: 'apoc.text.base64UrlEncode',
@@ -17419,7 +17419,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.byteCount': {
         name: 'apoc.text.byteCount',
@@ -17448,7 +17448,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.bytes': {
         name: 'apoc.text.bytes',
@@ -17477,7 +17477,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.camelCase': {
         name: 'apoc.text.camelCase',
@@ -17498,7 +17498,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.capitalize': {
         name: 'apoc.text.capitalize',
@@ -17519,7 +17519,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.capitalizeAll': {
         name: 'apoc.text.capitalizeAll',
@@ -17541,7 +17541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.charAt': {
         name: 'apoc.text.charAt',
@@ -17572,7 +17572,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.clean': {
         name: 'apoc.text.clean',
@@ -17595,7 +17595,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.code': {
         name: 'apoc.text.code',
@@ -17616,7 +17616,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.compareCleaned': {
         name: 'apoc.text.compareCleaned',
@@ -17647,7 +17647,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.decapitalize': {
         name: 'apoc.text.decapitalize',
@@ -17670,7 +17670,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.decapitalizeAll': {
         name: 'apoc.text.decapitalizeAll',
@@ -17692,7 +17692,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.distance': {
         name: 'apoc.text.distance',
@@ -17721,7 +17721,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.doubleMetaphone': {
         name: 'apoc.text.doubleMetaphone',
@@ -17744,7 +17744,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.format': {
         name: 'apoc.text.format',
@@ -17781,7 +17781,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.fuzzyMatch': {
         name: 'apoc.text.fuzzyMatch',
@@ -17810,7 +17810,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hammingDistance': {
         name: 'apoc.text.hammingDistance',
@@ -17839,7 +17839,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hexCharAt': {
         name: 'apoc.text.hexCharAt',
@@ -17870,7 +17870,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.hexValue': {
         name: 'apoc.text.hexValue',
@@ -17892,7 +17892,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.indexOf': {
         name: 'apoc.text.indexOf',
@@ -17935,7 +17935,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.indexesOf': {
         name: 'apoc.text.indexesOf',
@@ -17978,7 +17978,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.jaroWinklerDistance': {
         name: 'apoc.text.jaroWinklerDistance',
@@ -18007,7 +18007,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.join': {
         name: 'apoc.text.join',
@@ -18037,7 +18037,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.levenshteinSimilarity': {
         name: 'apoc.text.levenshteinSimilarity',
@@ -18066,7 +18066,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.lpad': {
         name: 'apoc.text.lpad',
@@ -18102,7 +18102,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.phonetic': {
         name: 'apoc.text.phonetic',
@@ -18125,7 +18125,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.random': {
         name: 'apoc.text.random',
@@ -18155,7 +18155,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.regexGroups': {
         name: 'apoc.text.regexGroups',
@@ -18184,7 +18184,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.regexGroupsByName': {
         name: 'apoc.text.regexGroupsByName',
@@ -18213,7 +18213,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.repeat': {
         name: 'apoc.text.repeat',
@@ -18242,7 +18242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.replace': {
         name: 'apoc.text.replace',
@@ -18278,7 +18278,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.rpad': {
         name: 'apoc.text.rpad',
@@ -18314,7 +18314,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.slug': {
         name: 'apoc.text.slug',
@@ -18344,7 +18344,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.snakeCase': {
         name: 'apoc.text.snakeCase',
@@ -18365,7 +18365,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.sorensenDiceSimilarity': {
         name: 'apoc.text.sorensenDiceSimilarity',
@@ -18401,7 +18401,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.split': {
         name: 'apoc.text.split',
@@ -18438,7 +18438,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.swapCase': {
         name: 'apoc.text.swapCase',
@@ -18459,7 +18459,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.toCypher': {
         name: 'apoc.text.toCypher',
@@ -18489,7 +18489,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.toUpperCase': {
         name: 'apoc.text.toUpperCase',
@@ -18510,7 +18510,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.upperCamelCase': {
         name: 'apoc.text.upperCamelCase',
@@ -18531,7 +18531,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.urldecode': {
         name: 'apoc.text.urldecode',
@@ -18552,7 +18552,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.text.urlencode': {
         name: 'apoc.text.urlencode',
@@ -18573,7 +18573,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.compress': {
         name: 'apoc.util.compress',
@@ -18603,7 +18603,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.decompress': {
         name: 'apoc.util.decompress',
@@ -18633,7 +18633,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.md5': {
         name: 'apoc.util.md5',
@@ -18656,7 +18656,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha1': {
         name: 'apoc.util.sha1',
@@ -18679,7 +18679,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha256': {
         name: 'apoc.util.sha256',
@@ -18702,7 +18702,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha384': {
         name: 'apoc.util.sha384',
@@ -18725,7 +18725,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.sha512': {
         name: 'apoc.util.sha512',
@@ -18748,7 +18748,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.util.validatePredicate': {
         name: 'apoc.util.validatePredicate',
@@ -18784,7 +18784,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.version': {
         name: 'apoc.version',
@@ -18798,7 +18798,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'apoc.xml.parse': {
         name: 'apoc.xml.parse',
@@ -18843,7 +18843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       asin: {
         name: 'asin',
@@ -18871,7 +18871,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       atan: {
         name: 'atan',
@@ -18899,7 +18899,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       atan2: {
         name: 'atan2',
@@ -18934,7 +18934,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       avg: {
         name: 'avg',
@@ -18964,7 +18964,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       btrim: {
         name: 'btrim',
@@ -19002,7 +19002,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       ceil: {
         name: 'ceil',
@@ -19031,7 +19031,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       char_length: {
         name: 'char_length',
@@ -19060,7 +19060,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       character_length: {
         name: 'character_length',
@@ -19089,7 +19089,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       coalesce: {
         name: 'coalesce',
@@ -19119,7 +19119,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       collect: {
         name: 'collect',
@@ -19148,7 +19148,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       cos: {
         name: 'cos',
@@ -19176,7 +19176,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       cot: {
         name: 'cot',
@@ -19204,7 +19204,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       count: {
         name: 'count',
@@ -19232,7 +19232,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       date: {
         name: 'date',
@@ -19263,7 +19263,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.realtime': {
         name: 'date.realtime',
@@ -19295,7 +19295,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.statement': {
         name: 'date.statement',
@@ -19327,7 +19327,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.transaction': {
         name: 'date.transaction',
@@ -19359,7 +19359,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'date.truncate': {
         name: 'date.truncate',
@@ -19407,7 +19407,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       datetime: {
         name: 'datetime',
@@ -19439,7 +19439,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.fromepoch': {
         name: 'datetime.fromepoch',
@@ -19477,7 +19477,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.fromepochmillis': {
         name: 'datetime.fromepochmillis',
@@ -19508,7 +19508,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.realtime': {
         name: 'datetime.realtime',
@@ -19540,7 +19540,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.statement': {
         name: 'datetime.statement',
@@ -19572,7 +19572,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.transaction': {
         name: 'datetime.transaction',
@@ -19604,7 +19604,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'datetime.truncate': {
         name: 'datetime.truncate',
@@ -19652,7 +19652,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'db.nameFromElementId': {
         name: 'db.nameFromElementId',
@@ -19680,7 +19680,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       degrees: {
         name: 'degrees',
@@ -19708,7 +19708,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       duration: {
         name: 'duration',
@@ -19737,7 +19737,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.between': {
         name: 'duration.between',
@@ -19774,7 +19774,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inDays': {
         name: 'duration.inDays',
@@ -19811,7 +19811,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inMonths': {
         name: 'duration.inMonths',
@@ -19848,7 +19848,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'duration.inSeconds': {
         name: 'duration.inSeconds',
@@ -19885,7 +19885,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       e: {
         name: 'e',
@@ -19906,7 +19906,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       elementId: {
         name: 'elementId',
@@ -19934,7 +19934,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       endNode: {
         name: 'endNode',
@@ -19962,7 +19962,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       exists: {
         name: 'exists',
@@ -19991,7 +19991,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       exp: {
         name: 'exp',
@@ -20021,7 +20021,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       file: {
         name: 'file',
@@ -20043,7 +20043,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       floor: {
         name: 'floor',
@@ -20072,7 +20072,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.adamicAdar': {
         name: 'gds.alpha.linkprediction.adamicAdar',
@@ -20107,7 +20107,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.commonNeighbors': {
         name: 'gds.alpha.linkprediction.commonNeighbors',
@@ -20142,7 +20142,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.preferentialAttachment': {
         name: 'gds.alpha.linkprediction.preferentialAttachment',
@@ -20177,7 +20177,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.resourceAllocation': {
         name: 'gds.alpha.linkprediction.resourceAllocation',
@@ -20213,7 +20213,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.sameCommunity': {
         name: 'gds.alpha.linkprediction.sameCommunity',
@@ -20249,7 +20249,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.linkprediction.totalNeighbors': {
         name: 'gds.alpha.linkprediction.totalNeighbors',
@@ -20284,7 +20284,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.alpha.ml.oneHotEncoding': {
         name: 'gds.alpha.ml.oneHotEncoding',
@@ -20313,7 +20313,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.graph.exists': {
         name: 'gds.graph.exists',
@@ -20334,7 +20334,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.graph.project': {
         name: 'gds.graph.project',
@@ -20391,7 +20391,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.isLicensed': {
         name: 'gds.isLicensed',
@@ -20406,7 +20406,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.cosine': {
         name: 'gds.similarity.cosine',
@@ -20435,7 +20435,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.euclidean': {
         name: 'gds.similarity.euclidean',
@@ -20464,7 +20464,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.euclideanDistance': {
         name: 'gds.similarity.euclideanDistance',
@@ -20493,7 +20493,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.jaccard': {
         name: 'gds.similarity.jaccard',
@@ -20522,7 +20522,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.overlap': {
         name: 'gds.similarity.overlap',
@@ -20551,7 +20551,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.similarity.pearson': {
         name: 'gds.similarity.pearson',
@@ -20580,7 +20580,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.NaN': {
         name: 'gds.util.NaN',
@@ -20594,7 +20594,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.asNode': {
         name: 'gds.util.asNode',
@@ -20616,7 +20616,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.asNodes': {
         name: 'gds.util.asNodes',
@@ -20639,7 +20639,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.infinity': {
         name: 'gds.util.infinity',
@@ -20654,7 +20654,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.isFinite': {
         name: 'gds.util.isFinite',
@@ -20676,7 +20676,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.isInfinite': {
         name: 'gds.util.isInfinite',
@@ -20698,7 +20698,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.util.nodeProperty': {
         name: 'gds.util.nodeProperty',
@@ -20740,7 +20740,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'gds.version': {
         name: 'gds.version',
@@ -20755,7 +20755,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.byElementId': {
         name: 'graph.byElementId',
@@ -20784,7 +20784,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.byName': {
         name: 'graph.byName',
@@ -20813,7 +20813,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.names': {
         name: 'graph.names',
@@ -20834,7 +20834,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'graph.propertiesByName': {
         name: 'graph.propertiesByName',
@@ -20863,7 +20863,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       haversin: {
         name: 'haversin',
@@ -20891,7 +20891,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       head: {
         name: 'head',
@@ -20920,7 +20920,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       id: {
         name: 'id',
@@ -20948,7 +20948,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: true,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       isEmpty: {
         name: 'isEmpty',
@@ -20977,7 +20977,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       isNaN: {
         name: 'isNaN',
@@ -21005,7 +21005,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       keys: {
         name: 'keys',
@@ -21035,7 +21035,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       labels: {
         name: 'labels',
@@ -21064,7 +21064,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       last: {
         name: 'last',
@@ -21092,7 +21092,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       left: {
         name: 'left',
@@ -21129,7 +21129,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       length: {
         name: 'length',
@@ -21157,7 +21157,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       linenumber: {
         name: 'linenumber',
@@ -21179,7 +21179,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       localdatetime: {
         name: 'localdatetime',
@@ -21211,7 +21211,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.realtime': {
         name: 'localdatetime.realtime',
@@ -21243,7 +21243,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.statement': {
         name: 'localdatetime.statement',
@@ -21275,7 +21275,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.transaction': {
         name: 'localdatetime.transaction',
@@ -21307,7 +21307,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localdatetime.truncate': {
         name: 'localdatetime.truncate',
@@ -21355,7 +21355,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       localtime: {
         name: 'localtime',
@@ -21387,7 +21387,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.realtime': {
         name: 'localtime.realtime',
@@ -21419,7 +21419,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.statement': {
         name: 'localtime.statement',
@@ -21451,7 +21451,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.transaction': {
         name: 'localtime.transaction',
@@ -21483,7 +21483,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'localtime.truncate': {
         name: 'localtime.truncate',
@@ -21531,7 +21531,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       log: {
         name: 'log',
@@ -21560,7 +21560,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       log10: {
         name: 'log10',
@@ -21589,7 +21589,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       lower: {
         name: 'lower',
@@ -21617,7 +21617,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       ltrim: {
         name: 'ltrim',
@@ -21655,7 +21655,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       max: {
         name: 'max',
@@ -21683,7 +21683,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       min: {
         name: 'min',
@@ -21711,7 +21711,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       nodes: {
         name: 'nodes',
@@ -21740,7 +21740,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       none: {
         name: 'none',
@@ -21777,7 +21777,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       normalize: {
         name: 'normalize',
@@ -21814,7 +21814,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       nullIf: {
         name: 'nullIf',
@@ -21851,7 +21851,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       percentileCont: {
         name: 'percentileCont',
@@ -21887,7 +21887,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       percentileDisc: {
         name: 'percentileDisc',
@@ -21923,7 +21923,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       pi: {
         name: 'pi',
@@ -21944,7 +21944,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       point: {
         name: 'point',
@@ -21974,7 +21974,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'point.distance': {
         name: 'point.distance',
@@ -22009,7 +22009,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'point.withinBBox': {
         name: 'point.withinBBox',
@@ -22051,7 +22051,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       properties: {
         name: 'properties',
@@ -22080,7 +22080,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       radians: {
         name: 'radians',
@@ -22108,7 +22108,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       rand: {
         name: 'rand',
@@ -22130,7 +22130,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       randomUUID: {
         name: 'randomUUID',
@@ -22151,7 +22151,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       range: {
         name: 'range',
@@ -22193,7 +22193,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       reduce: {
         name: 'reduce',
@@ -22231,7 +22231,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       relationships: {
         name: 'relationships',
@@ -22261,7 +22261,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       replace: {
         name: 'replace',
@@ -22303,7 +22303,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       reverse: {
         name: 'reverse',
@@ -22332,7 +22332,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       right: {
         name: 'right',
@@ -22369,7 +22369,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       round: {
         name: 'round',
@@ -22412,7 +22412,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       rtrim: {
         name: 'rtrim',
@@ -22450,7 +22450,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sign: {
         name: 'sign',
@@ -22479,7 +22479,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sin: {
         name: 'sin',
@@ -22507,7 +22507,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       single: {
         name: 'single',
@@ -22544,7 +22544,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       size: {
         name: 'size',
@@ -22573,7 +22573,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       split: {
         name: 'split',
@@ -22609,7 +22609,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sqrt: {
         name: 'sqrt',
@@ -22637,7 +22637,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       startNode: {
         name: 'startNode',
@@ -22665,7 +22665,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       stdev: {
         name: 'stdev',
@@ -22694,7 +22694,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       stdevp: {
         name: 'stdevp',
@@ -22724,7 +22724,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       substring: {
         name: 'substring',
@@ -22766,7 +22766,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       sum: {
         name: 'sum',
@@ -22796,7 +22796,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       tail: {
         name: 'tail',
@@ -22825,7 +22825,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       tan: {
         name: 'tan',
@@ -22853,7 +22853,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       time: {
         name: 'time',
@@ -22885,7 +22885,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.realtime': {
         name: 'time.realtime',
@@ -22917,7 +22917,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.statement': {
         name: 'time.statement',
@@ -22949,7 +22949,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.transaction': {
         name: 'time.transaction',
@@ -22981,7 +22981,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'time.truncate': {
         name: 'time.truncate',
@@ -23029,7 +23029,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       timestamp: {
         name: 'timestamp',
@@ -23051,7 +23051,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBoolean: {
         name: 'toBoolean',
@@ -23080,7 +23080,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBooleanList: {
         name: 'toBooleanList',
@@ -23110,7 +23110,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toBooleanOrNull: {
         name: 'toBooleanOrNull',
@@ -23139,7 +23139,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloat: {
         name: 'toFloat',
@@ -23168,7 +23168,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloatList: {
         name: 'toFloatList',
@@ -23198,7 +23198,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toFloatOrNull: {
         name: 'toFloatOrNull',
@@ -23227,7 +23227,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toInteger: {
         name: 'toInteger',
@@ -23257,7 +23257,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toIntegerList: {
         name: 'toIntegerList',
@@ -23287,7 +23287,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toIntegerOrNull: {
         name: 'toIntegerOrNull',
@@ -23316,7 +23316,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toLower: {
         name: 'toLower',
@@ -23344,7 +23344,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toString: {
         name: 'toString',
@@ -23373,7 +23373,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toStringList: {
         name: 'toStringList',
@@ -23403,7 +23403,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toStringOrNull: {
         name: 'toStringOrNull',
@@ -23432,7 +23432,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       toUpper: {
         name: 'toUpper',
@@ -23460,7 +23460,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       trim: {
         name: 'trim',
@@ -23505,7 +23505,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       type: {
         name: 'type',
@@ -23534,7 +23534,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       upper: {
         name: 'upper',
@@ -23562,7 +23562,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       valueType: {
         name: 'valueType',
@@ -23591,7 +23591,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'vector.similarity.cosine': {
         name: 'vector.similarity.cosine',
@@ -23627,7 +23627,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
       'vector.similarity.euclidean': {
         name: 'vector.similarity.euclidean',
@@ -23663,7 +23663,7 @@ const mockSchema = {
         ],
         rolesBoostedExecution: [],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
       },
     }),
   },
@@ -23734,7 +23734,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -23793,7 +23793,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -23846,7 +23846,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -23878,7 +23878,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -23951,7 +23951,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24023,7 +24023,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24094,7 +24094,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24172,7 +24172,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24244,7 +24244,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24316,7 +24316,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24386,7 +24386,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -24436,7 +24436,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25131,7 +25131,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25170,7 +25170,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25209,7 +25209,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25248,7 +25248,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25287,7 +25287,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25325,7 +25325,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25412,7 +25412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25445,7 +25445,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25478,7 +25478,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25516,7 +25516,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25554,7 +25554,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25607,7 +25607,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25645,7 +25645,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25684,7 +25684,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25723,7 +25723,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25762,7 +25762,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25807,7 +25807,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25851,7 +25851,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25897,7 +25897,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -25941,7 +25941,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26018,7 +26018,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26056,7 +26056,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26109,7 +26109,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26185,7 +26185,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26224,7 +26224,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26263,7 +26263,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26316,7 +26316,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26369,7 +26369,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26408,7 +26408,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26453,7 +26453,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26491,7 +26491,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26541,7 +26541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26596,7 +26596,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -26687,7 +26687,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27233,7 +27233,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27352,7 +27352,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27464,7 +27464,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27577,7 +27577,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27704,7 +27704,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27843,7 +27843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -27975,7 +27975,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28108,7 +28108,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28235,7 +28235,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28341,7 +28341,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28460,7 +28460,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28572,7 +28572,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28685,7 +28685,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28792,7 +28792,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -28912,7 +28912,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29025,7 +29025,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29139,7 +29139,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29185,7 +29185,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29236,7 +29236,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29275,7 +29275,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29326,7 +29326,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29367,7 +29367,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29412,7 +29412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29458,7 +29458,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29499,7 +29499,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29574,7 +29574,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29690,7 +29690,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29798,7 +29798,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29907,7 +29907,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -29948,7 +29948,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30078,7 +30078,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30127,7 +30127,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30248,7 +30248,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30281,7 +30281,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30305,7 +30305,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30329,7 +30329,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30353,7 +30353,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30379,7 +30379,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30494,7 +30494,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30548,7 +30548,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30602,7 +30602,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30662,7 +30662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30722,7 +30722,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30789,7 +30789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30856,7 +30856,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -30929,7 +30929,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31002,7 +31002,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31118,7 +31118,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31241,7 +31241,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31281,7 +31281,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31328,7 +31328,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31368,7 +31368,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31440,7 +31440,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31518,7 +31518,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31552,7 +31552,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31628,7 +31628,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31667,7 +31667,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31715,7 +31715,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31764,7 +31764,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31813,7 +31813,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31862,7 +31862,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31910,7 +31910,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -31959,7 +31959,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32013,7 +32013,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32054,7 +32054,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32094,7 +32094,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32126,7 +32126,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32203,7 +32203,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32242,7 +32242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32274,7 +32274,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32336,7 +32336,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32377,7 +32377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32418,7 +32418,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32465,7 +32465,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32506,7 +32506,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32555,7 +32555,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32611,7 +32611,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32699,7 +32699,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32770,7 +32770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32894,7 +32894,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -32943,7 +32943,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33020,7 +33020,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33090,7 +33090,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33117,7 +33117,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33181,7 +33181,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33242,7 +33242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33303,7 +33303,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33356,7 +33356,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33409,7 +33409,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33463,7 +33463,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33527,7 +33527,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33578,7 +33578,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33622,7 +33622,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33663,7 +33663,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33705,7 +33705,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33749,7 +33749,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33864,7 +33864,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -33987,7 +33987,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34110,7 +34110,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34233,7 +34233,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34284,7 +34284,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34336,7 +34336,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34412,7 +34412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34505,7 +34505,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34544,7 +34544,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34604,7 +34604,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34665,7 +34665,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34724,7 +34724,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34771,7 +34771,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34818,7 +34818,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34877,7 +34877,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -34936,7 +34936,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35016,7 +35016,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35081,7 +35081,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35160,7 +35160,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35200,7 +35200,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35301,7 +35301,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35353,7 +35353,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35506,7 +35506,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35569,7 +35569,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35659,7 +35659,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -35716,7 +35716,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36024,7 +36024,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36093,7 +36093,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36162,7 +36162,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36187,7 +36187,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36225,7 +36225,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36516,7 +36516,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36668,7 +36668,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36694,7 +36694,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36719,7 +36719,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36744,7 +36744,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36813,7 +36813,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36844,7 +36844,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36869,7 +36869,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36907,7 +36907,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -36946,7 +36946,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37015,7 +37015,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37039,7 +37039,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37063,7 +37063,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37081,7 +37081,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37120,7 +37120,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37175,7 +37175,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37230,7 +37230,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37333,7 +37333,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37386,7 +37386,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37424,7 +37424,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37449,7 +37449,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37494,7 +37494,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37520,7 +37520,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37546,7 +37546,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37570,7 +37570,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37595,7 +37595,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37620,7 +37620,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37637,7 +37637,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37689,7 +37689,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37735,7 +37735,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37769,7 +37769,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37815,7 +37815,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37868,7 +37868,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37915,7 +37915,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -37961,7 +37961,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38000,7 +38000,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38046,7 +38046,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38090,7 +38090,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38167,7 +38167,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38192,7 +38192,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38268,7 +38268,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38344,7 +38344,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38420,7 +38420,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38438,7 +38438,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38488,7 +38488,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38599,7 +38599,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38668,7 +38668,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38701,7 +38701,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38790,7 +38790,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38816,7 +38816,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38860,7 +38860,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38953,7 +38953,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -38978,7 +38978,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39040,7 +39040,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39077,7 +39077,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39121,7 +39121,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39166,7 +39166,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39211,7 +39211,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39251,7 +39251,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39328,7 +39328,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39391,7 +39391,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39471,7 +39471,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39530,7 +39530,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39577,7 +39577,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39624,7 +39624,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39704,7 +39704,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39736,7 +39736,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39822,7 +39822,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39839,7 +39839,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39870,7 +39870,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39927,7 +39927,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39960,7 +39960,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -39997,7 +39997,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40047,7 +40047,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40187,7 +40187,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40274,7 +40274,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40332,7 +40332,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40419,7 +40419,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40495,7 +40495,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40582,7 +40582,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40652,7 +40652,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40739,7 +40739,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40809,7 +40809,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40896,7 +40896,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -40972,7 +40972,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41059,7 +41059,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41129,7 +41129,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41216,7 +41216,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41268,7 +41268,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41332,7 +41332,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41402,7 +41402,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41471,7 +41471,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41541,7 +41541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41610,7 +41610,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41680,7 +41680,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41755,7 +41755,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41824,7 +41824,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41893,7 +41893,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -41962,7 +41962,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42025,7 +42025,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42095,7 +42095,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42140,7 +42140,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42209,7 +42209,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42266,7 +42266,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42354,7 +42354,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42441,7 +42441,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42517,7 +42517,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42604,7 +42604,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42650,7 +42650,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42737,7 +42737,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42825,7 +42825,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42912,7 +42912,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -42976,7 +42976,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43063,7 +43063,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43115,7 +43115,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43202,7 +43202,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43242,7 +43242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43329,7 +43329,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43393,7 +43393,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43480,7 +43480,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43543,7 +43543,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43619,7 +43619,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43706,7 +43706,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43770,7 +43770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43857,7 +43857,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -43939,7 +43939,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44026,7 +44026,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44102,7 +44102,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44189,7 +44189,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44259,7 +44259,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44346,7 +44346,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44392,7 +44392,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44479,7 +44479,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44531,7 +44531,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44618,7 +44618,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44688,7 +44688,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44775,7 +44775,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44850,7 +44850,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44920,7 +44920,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -44995,7 +44995,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45064,7 +45064,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45132,7 +45132,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45195,7 +45195,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45277,7 +45277,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45364,7 +45364,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45416,7 +45416,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45503,7 +45503,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45560,7 +45560,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45646,7 +45646,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45716,7 +45716,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45791,7 +45791,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45860,7 +45860,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45929,7 +45929,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -45992,7 +45992,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46062,7 +46062,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46149,7 +46149,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46201,7 +46201,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46288,7 +46288,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46358,7 +46358,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46445,7 +46445,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46514,7 +46514,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46571,7 +46571,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46658,7 +46658,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46734,7 +46734,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46821,7 +46821,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46885,7 +46885,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -46972,7 +46972,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47018,7 +47018,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47105,7 +47105,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47181,7 +47181,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47268,7 +47268,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47338,7 +47338,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47425,7 +47425,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47483,7 +47483,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47570,7 +47570,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47622,7 +47622,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47710,7 +47710,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47756,7 +47756,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47843,7 +47843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47919,7 +47919,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -47983,7 +47983,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48029,7 +48029,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48105,7 +48105,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48181,7 +48181,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48245,7 +48245,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48291,7 +48291,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48367,7 +48367,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48431,7 +48431,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48477,7 +48477,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48517,7 +48517,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48558,7 +48558,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48598,7 +48598,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48639,7 +48639,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48714,7 +48714,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48760,7 +48760,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48828,7 +48828,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48858,7 +48858,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -48934,7 +48934,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49021,7 +49021,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49085,7 +49085,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49172,7 +49172,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49218,7 +49218,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49305,7 +49305,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49381,7 +49381,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49468,7 +49468,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49538,7 +49538,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49625,7 +49625,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49677,7 +49677,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49765,7 +49765,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49853,7 +49853,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -49940,7 +49940,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50016,7 +50016,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50103,7 +50103,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50149,7 +50149,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50236,7 +50236,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50324,7 +50324,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50411,7 +50411,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50481,7 +50481,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50568,7 +50568,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50626,7 +50626,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50713,7 +50713,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50759,7 +50759,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50846,7 +50846,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -50916,7 +50916,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51003,7 +51003,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51129,7 +51129,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51167,7 +51167,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51248,7 +51248,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51329,7 +51329,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51417,7 +51417,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51511,7 +51511,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51605,7 +51605,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51662,7 +51662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51707,7 +51707,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51821,7 +51821,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51895,7 +51895,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -51969,7 +51969,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52026,7 +52026,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52096,7 +52096,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52173,7 +52173,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52237,7 +52237,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52319,7 +52319,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52591,7 +52591,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52680,7 +52680,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52756,7 +52756,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52843,7 +52843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52913,7 +52913,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -52970,7 +52970,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53028,7 +53028,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53104,7 +53104,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53191,7 +53191,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53267,7 +53267,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53355,7 +53355,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53431,7 +53431,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53501,7 +53501,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53588,7 +53588,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53634,7 +53634,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53721,7 +53721,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53797,7 +53797,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53884,7 +53884,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -53948,7 +53948,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54036,7 +54036,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54082,7 +54082,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54170,7 +54170,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54246,7 +54246,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54334,7 +54334,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54404,7 +54404,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54491,7 +54491,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54549,7 +54549,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54636,7 +54636,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54682,7 +54682,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54770,7 +54770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54840,7 +54840,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -54927,7 +54927,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55009,7 +55009,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55096,7 +55096,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55172,7 +55172,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55259,7 +55259,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55305,7 +55305,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55392,7 +55392,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55474,7 +55474,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55561,7 +55561,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55631,7 +55631,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55706,7 +55706,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55793,7 +55793,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55856,7 +55856,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55943,7 +55943,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -55988,7 +55988,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56075,7 +56075,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56150,7 +56150,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56237,7 +56237,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56331,7 +56331,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56418,7 +56418,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56500,7 +56500,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56587,7 +56587,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56645,7 +56645,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56732,7 +56732,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56826,7 +56826,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -56913,7 +56913,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57013,7 +57013,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57100,7 +57100,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57194,7 +57194,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57281,7 +57281,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57333,7 +57333,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57420,7 +57420,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57520,7 +57520,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57607,7 +57607,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57707,7 +57707,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57794,7 +57794,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57888,7 +57888,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -57975,7 +57975,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58027,7 +58027,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58114,7 +58114,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58214,7 +58214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58301,7 +58301,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58395,7 +58395,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58482,7 +58482,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58564,7 +58564,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58651,7 +58651,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58697,7 +58697,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58784,7 +58784,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58878,7 +58878,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -58965,7 +58965,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59077,7 +59077,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59164,7 +59164,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59264,7 +59264,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59351,7 +59351,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59403,7 +59403,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59490,7 +59490,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59602,7 +59602,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59689,7 +59689,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59720,7 +59720,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59772,7 +59772,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59847,7 +59847,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -59929,7 +59929,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60016,7 +60016,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60086,7 +60086,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60173,7 +60173,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60219,7 +60219,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60306,7 +60306,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60388,7 +60388,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60475,7 +60475,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60575,7 +60575,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60662,7 +60662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60750,7 +60750,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60837,7 +60837,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60889,7 +60889,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -60976,7 +60976,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61076,7 +61076,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61163,7 +61163,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61239,7 +61239,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61326,7 +61326,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61372,7 +61372,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61459,7 +61459,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61503,7 +61503,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61541,7 +61541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61579,7 +61579,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61667,7 +61667,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61711,7 +61711,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61792,7 +61792,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61830,7 +61830,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61910,7 +61910,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -61955,7 +61955,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62037,7 +62037,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62124,7 +62124,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62170,7 +62170,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62257,7 +62257,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62357,7 +62357,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62444,7 +62444,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62538,7 +62538,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62625,7 +62625,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62671,7 +62671,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62758,7 +62758,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62858,7 +62858,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -62945,7 +62945,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63027,7 +63027,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63114,7 +63114,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63160,7 +63160,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63247,7 +63247,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63323,7 +63323,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63410,7 +63410,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63492,7 +63492,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63579,7 +63579,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63655,7 +63655,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63742,7 +63742,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63794,7 +63794,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63881,7 +63881,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -63963,7 +63963,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64050,7 +64050,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64132,7 +64132,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64219,7 +64219,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64295,7 +64295,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64382,7 +64382,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64434,7 +64434,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64521,7 +64521,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64603,7 +64603,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64690,7 +64690,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64778,7 +64778,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64865,7 +64865,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -64941,7 +64941,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65028,7 +65028,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65074,7 +65074,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65161,7 +65161,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65249,7 +65249,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65336,7 +65336,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65393,7 +65393,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65438,7 +65438,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65489,7 +65489,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65541,7 +65541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65628,7 +65628,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65698,7 +65698,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65785,7 +65785,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65837,7 +65837,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65924,7 +65924,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -65970,7 +65970,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66057,7 +66057,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66108,7 +66108,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66183,7 +66183,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66270,7 +66270,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66333,7 +66333,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66420,7 +66420,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66465,7 +66465,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66552,7 +66552,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66627,7 +66627,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66714,7 +66714,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66796,7 +66796,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66883,7 +66883,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -66953,7 +66953,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67040,7 +67040,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67086,7 +67086,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67173,7 +67173,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67255,7 +67255,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67342,7 +67342,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67412,7 +67412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67499,7 +67499,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67575,7 +67575,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67662,7 +67662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67732,7 +67732,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67819,7 +67819,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67889,7 +67889,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -67976,7 +67976,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68052,7 +68052,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68139,7 +68139,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68209,7 +68209,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68296,7 +68296,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68366,7 +68366,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68453,7 +68453,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68529,7 +68529,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68616,7 +68616,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68686,7 +68686,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68773,7 +68773,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68849,7 +68849,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -68936,7 +68936,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69000,7 +69000,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69087,7 +69087,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69133,7 +69133,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69220,7 +69220,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69296,7 +69296,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69383,7 +69383,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69459,7 +69459,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69546,7 +69546,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69610,7 +69610,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69697,7 +69697,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69749,7 +69749,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69836,7 +69836,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69912,7 +69912,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -69999,7 +69999,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70081,7 +70081,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70169,7 +70169,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70239,7 +70239,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70327,7 +70327,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70379,7 +70379,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70467,7 +70467,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70549,7 +70549,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70637,7 +70637,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70699,7 +70699,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70781,7 +70781,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70868,7 +70868,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -70938,7 +70938,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71025,7 +71025,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71071,7 +71071,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71158,7 +71158,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71240,7 +71240,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71327,7 +71327,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71379,7 +71379,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71424,7 +71424,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71449,7 +71449,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71531,7 +71531,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71618,7 +71618,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71688,7 +71688,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71775,7 +71775,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71821,7 +71821,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71908,7 +71908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -71990,7 +71990,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72077,7 +72077,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72101,7 +72101,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72126,7 +72126,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72198,7 +72198,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72257,7 +72257,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72310,7 +72310,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72342,7 +72342,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72415,7 +72415,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72487,7 +72487,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72558,7 +72558,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72636,7 +72636,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72708,7 +72708,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72780,7 +72780,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72850,7 +72850,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -72900,7 +72900,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73595,7 +73595,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73634,7 +73634,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73673,7 +73673,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73712,7 +73712,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73751,7 +73751,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73789,7 +73789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73827,7 +73827,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73860,7 +73860,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73893,7 +73893,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73931,7 +73931,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -73969,7 +73969,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74022,7 +74022,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74060,7 +74060,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74099,7 +74099,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74138,7 +74138,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74177,7 +74177,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74222,7 +74222,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74266,7 +74266,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74312,7 +74312,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74356,7 +74356,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74394,7 +74394,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74432,7 +74432,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74485,7 +74485,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74561,7 +74561,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74600,7 +74600,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74639,7 +74639,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74692,7 +74692,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74745,7 +74745,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74784,7 +74784,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74837,7 +74837,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74875,7 +74875,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74925,7 +74925,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -74980,7 +74980,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75071,7 +75071,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75177,7 +75177,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75296,7 +75296,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75408,7 +75408,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75521,7 +75521,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75648,7 +75648,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75787,7 +75787,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -75919,7 +75919,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76052,7 +76052,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76179,7 +76179,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76285,7 +76285,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76404,7 +76404,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76516,7 +76516,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76629,7 +76629,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76736,7 +76736,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76856,7 +76856,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -76969,7 +76969,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77083,7 +77083,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77129,7 +77129,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77180,7 +77180,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77219,7 +77219,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77270,7 +77270,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77311,7 +77311,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77356,7 +77356,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77402,7 +77402,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77443,7 +77443,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77518,7 +77518,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77634,7 +77634,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77742,7 +77742,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77851,7 +77851,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77892,7 +77892,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77942,7 +77942,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -77991,7 +77991,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78049,7 +78049,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78082,7 +78082,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78106,7 +78106,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78130,7 +78130,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78154,7 +78154,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78180,7 +78180,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78243,7 +78243,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78297,7 +78297,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78351,7 +78351,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78411,7 +78411,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78471,7 +78471,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78538,7 +78538,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78605,7 +78605,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78678,7 +78678,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78751,7 +78751,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78867,7 +78867,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -78990,7 +78990,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79030,7 +79030,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79077,7 +79077,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79117,7 +79117,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79189,7 +79189,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79267,7 +79267,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79301,7 +79301,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79377,7 +79377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79416,7 +79416,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79464,7 +79464,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79513,7 +79513,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79562,7 +79562,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79611,7 +79611,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79659,7 +79659,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79708,7 +79708,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79762,7 +79762,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79803,7 +79803,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79843,7 +79843,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79875,7 +79875,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79952,7 +79952,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -79991,7 +79991,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80023,7 +80023,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80085,7 +80085,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80126,7 +80126,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80167,7 +80167,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80214,7 +80214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80255,7 +80255,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80304,7 +80304,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80360,7 +80360,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80448,7 +80448,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80519,7 +80519,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80643,7 +80643,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80692,7 +80692,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80769,7 +80769,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80839,7 +80839,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80866,7 +80866,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80930,7 +80930,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -80991,7 +80991,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81052,7 +81052,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81105,7 +81105,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81158,7 +81158,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81212,7 +81212,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81276,7 +81276,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81327,7 +81327,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81371,7 +81371,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81412,7 +81412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81454,7 +81454,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81498,7 +81498,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81613,7 +81613,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81736,7 +81736,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81859,7 +81859,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -81982,7 +81982,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82033,7 +82033,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82085,7 +82085,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82161,7 +82161,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82254,7 +82254,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82293,7 +82293,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82353,7 +82353,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82414,7 +82414,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82473,7 +82473,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82520,7 +82520,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82567,7 +82567,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82626,7 +82626,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82685,7 +82685,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82765,7 +82765,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82830,7 +82830,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82909,7 +82909,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -82949,7 +82949,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83050,7 +83050,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83102,7 +83102,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83171,7 +83171,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83234,7 +83234,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83324,7 +83324,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83381,7 +83381,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83444,7 +83444,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83513,7 +83513,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83582,7 +83582,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83607,7 +83607,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83645,7 +83645,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83701,7 +83701,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83853,7 +83853,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83879,7 +83879,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83904,7 +83904,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83929,7 +83929,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -83998,7 +83998,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84029,7 +84029,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84054,7 +84054,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84092,7 +84092,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84131,7 +84131,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84155,7 +84155,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84179,7 +84179,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84203,7 +84203,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84221,7 +84221,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84260,7 +84260,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84315,7 +84315,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84370,7 +84370,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84423,7 +84423,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84476,7 +84476,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84514,7 +84514,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84539,7 +84539,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84584,7 +84584,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84610,7 +84610,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84636,7 +84636,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84660,7 +84660,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84685,7 +84685,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84710,7 +84710,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84727,7 +84727,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84779,7 +84779,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84825,7 +84825,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84859,7 +84859,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84905,7 +84905,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -84958,7 +84958,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85005,7 +85005,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85051,7 +85051,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85090,7 +85090,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85136,7 +85136,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85180,7 +85180,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85257,7 +85257,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85282,7 +85282,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85358,7 +85358,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85434,7 +85434,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85510,7 +85510,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85528,7 +85528,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85578,7 +85578,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85689,7 +85689,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85758,7 +85758,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85791,7 +85791,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85880,7 +85880,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85906,7 +85906,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -85950,7 +85950,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86043,7 +86043,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86068,7 +86068,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86105,7 +86105,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86142,7 +86142,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86186,7 +86186,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86231,7 +86231,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86276,7 +86276,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86316,7 +86316,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86393,7 +86393,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86456,7 +86456,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86536,7 +86536,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86595,7 +86595,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86642,7 +86642,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86689,7 +86689,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86769,7 +86769,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86801,7 +86801,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86887,7 +86887,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86904,7 +86904,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86935,7 +86935,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -86992,7 +86992,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87025,7 +87025,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87062,7 +87062,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87112,7 +87112,7 @@ const mockSchema = {
         rolesExecution: ['admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87182,7 +87182,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87269,7 +87269,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87327,7 +87327,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87414,7 +87414,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87490,7 +87490,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87577,7 +87577,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87647,7 +87647,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87734,7 +87734,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87804,7 +87804,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87891,7 +87891,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -87967,7 +87967,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88054,7 +88054,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88124,7 +88124,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88211,7 +88211,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88263,7 +88263,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88327,7 +88327,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88397,7 +88397,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88466,7 +88466,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88536,7 +88536,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88605,7 +88605,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88675,7 +88675,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88750,7 +88750,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88819,7 +88819,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88888,7 +88888,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -88957,7 +88957,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89020,7 +89020,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89090,7 +89090,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89135,7 +89135,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89204,7 +89204,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89261,7 +89261,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89349,7 +89349,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89436,7 +89436,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89512,7 +89512,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89599,7 +89599,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89645,7 +89645,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89732,7 +89732,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89820,7 +89820,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89907,7 +89907,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -89971,7 +89971,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90058,7 +90058,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90110,7 +90110,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90197,7 +90197,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90237,7 +90237,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90324,7 +90324,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90388,7 +90388,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90475,7 +90475,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90538,7 +90538,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90614,7 +90614,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90701,7 +90701,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90765,7 +90765,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90852,7 +90852,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -90934,7 +90934,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91021,7 +91021,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91097,7 +91097,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91184,7 +91184,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91254,7 +91254,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91341,7 +91341,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91387,7 +91387,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91474,7 +91474,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91526,7 +91526,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91613,7 +91613,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91683,7 +91683,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91770,7 +91770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91845,7 +91845,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91915,7 +91915,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -91990,7 +91990,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92059,7 +92059,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92127,7 +92127,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92190,7 +92190,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92272,7 +92272,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92359,7 +92359,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92411,7 +92411,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92498,7 +92498,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92555,7 +92555,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92641,7 +92641,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92711,7 +92711,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92786,7 +92786,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92855,7 +92855,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92924,7 +92924,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -92987,7 +92987,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93057,7 +93057,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93144,7 +93144,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93196,7 +93196,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93283,7 +93283,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93353,7 +93353,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93440,7 +93440,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93509,7 +93509,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93566,7 +93566,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93653,7 +93653,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93729,7 +93729,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93816,7 +93816,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93880,7 +93880,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -93967,7 +93967,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94013,7 +94013,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94100,7 +94100,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94176,7 +94176,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94263,7 +94263,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94333,7 +94333,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94420,7 +94420,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94478,7 +94478,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94565,7 +94565,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94617,7 +94617,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94705,7 +94705,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94751,7 +94751,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94838,7 +94838,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94914,7 +94914,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -94978,7 +94978,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95024,7 +95024,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95100,7 +95100,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95176,7 +95176,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95240,7 +95240,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95286,7 +95286,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95362,7 +95362,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95426,7 +95426,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95472,7 +95472,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95512,7 +95512,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95553,7 +95553,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95593,7 +95593,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95634,7 +95634,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95709,7 +95709,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95755,7 +95755,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95823,7 +95823,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95853,7 +95853,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -95929,7 +95929,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96016,7 +96016,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96080,7 +96080,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96167,7 +96167,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96213,7 +96213,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96300,7 +96300,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96376,7 +96376,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96463,7 +96463,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96533,7 +96533,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96620,7 +96620,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96672,7 +96672,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96760,7 +96760,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96848,7 +96848,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -96935,7 +96935,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97011,7 +97011,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97098,7 +97098,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97144,7 +97144,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97231,7 +97231,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97319,7 +97319,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97406,7 +97406,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97476,7 +97476,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97563,7 +97563,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97621,7 +97621,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97708,7 +97708,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97754,7 +97754,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97841,7 +97841,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97911,7 +97911,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -97998,7 +97998,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98124,7 +98124,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98162,7 +98162,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98243,7 +98243,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98324,7 +98324,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98412,7 +98412,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98506,7 +98506,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98600,7 +98600,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98657,7 +98657,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98702,7 +98702,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98816,7 +98816,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98890,7 +98890,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -98964,7 +98964,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99021,7 +99021,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99091,7 +99091,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99168,7 +99168,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99232,7 +99232,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99314,7 +99314,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99586,7 +99586,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99675,7 +99675,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99751,7 +99751,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99838,7 +99838,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99908,7 +99908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -99965,7 +99965,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100023,7 +100023,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100099,7 +100099,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100186,7 +100186,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100262,7 +100262,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100350,7 +100350,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100426,7 +100426,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100496,7 +100496,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100583,7 +100583,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100629,7 +100629,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100716,7 +100716,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100792,7 +100792,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100879,7 +100879,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -100943,7 +100943,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101031,7 +101031,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101077,7 +101077,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101165,7 +101165,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101241,7 +101241,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101329,7 +101329,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101399,7 +101399,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101486,7 +101486,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101544,7 +101544,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101631,7 +101631,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101677,7 +101677,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101765,7 +101765,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101835,7 +101835,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -101922,7 +101922,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102004,7 +102004,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102091,7 +102091,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102167,7 +102167,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102254,7 +102254,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102300,7 +102300,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102387,7 +102387,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102469,7 +102469,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102556,7 +102556,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102626,7 +102626,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102701,7 +102701,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102788,7 +102788,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102851,7 +102851,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102938,7 +102938,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -102983,7 +102983,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103070,7 +103070,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103145,7 +103145,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103232,7 +103232,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103326,7 +103326,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103413,7 +103413,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103495,7 +103495,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103582,7 +103582,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103640,7 +103640,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103727,7 +103727,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103821,7 +103821,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -103908,7 +103908,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104008,7 +104008,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104095,7 +104095,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104189,7 +104189,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104276,7 +104276,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104328,7 +104328,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104415,7 +104415,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104515,7 +104515,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104602,7 +104602,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104702,7 +104702,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104789,7 +104789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104883,7 +104883,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -104970,7 +104970,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105022,7 +105022,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105109,7 +105109,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105209,7 +105209,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105296,7 +105296,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105390,7 +105390,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105477,7 +105477,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105559,7 +105559,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105646,7 +105646,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105692,7 +105692,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105779,7 +105779,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105873,7 +105873,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -105960,7 +105960,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106072,7 +106072,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106159,7 +106159,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106259,7 +106259,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106346,7 +106346,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106398,7 +106398,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106485,7 +106485,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106597,7 +106597,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106684,7 +106684,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106715,7 +106715,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106767,7 +106767,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106842,7 +106842,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -106924,7 +106924,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107011,7 +107011,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107081,7 +107081,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107168,7 +107168,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107214,7 +107214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107301,7 +107301,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107383,7 +107383,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107470,7 +107470,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107570,7 +107570,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107657,7 +107657,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107745,7 +107745,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107832,7 +107832,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107884,7 +107884,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -107971,7 +107971,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108071,7 +108071,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108158,7 +108158,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108234,7 +108234,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108321,7 +108321,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108367,7 +108367,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108454,7 +108454,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108498,7 +108498,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108536,7 +108536,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108574,7 +108574,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108662,7 +108662,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108706,7 +108706,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108787,7 +108787,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108825,7 +108825,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108905,7 +108905,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -108950,7 +108950,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109032,7 +109032,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109119,7 +109119,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109165,7 +109165,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109252,7 +109252,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109352,7 +109352,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109439,7 +109439,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109533,7 +109533,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109620,7 +109620,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109666,7 +109666,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109753,7 +109753,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109853,7 +109853,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -109940,7 +109940,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110022,7 +110022,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110109,7 +110109,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110155,7 +110155,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110242,7 +110242,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110318,7 +110318,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110405,7 +110405,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110487,7 +110487,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110574,7 +110574,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110650,7 +110650,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110737,7 +110737,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110789,7 +110789,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110876,7 +110876,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -110958,7 +110958,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111045,7 +111045,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111127,7 +111127,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111214,7 +111214,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111290,7 +111290,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111377,7 +111377,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111429,7 +111429,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111516,7 +111516,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111598,7 +111598,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111685,7 +111685,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111773,7 +111773,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111860,7 +111860,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -111936,7 +111936,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112023,7 +112023,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112069,7 +112069,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112156,7 +112156,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112244,7 +112244,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112331,7 +112331,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112388,7 +112388,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112433,7 +112433,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112484,7 +112484,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112536,7 +112536,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112623,7 +112623,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112693,7 +112693,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112780,7 +112780,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112832,7 +112832,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112919,7 +112919,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -112965,7 +112965,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113052,7 +113052,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113103,7 +113103,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113178,7 +113178,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113265,7 +113265,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113328,7 +113328,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113415,7 +113415,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113460,7 +113460,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113547,7 +113547,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113622,7 +113622,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113709,7 +113709,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113791,7 +113791,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113878,7 +113878,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -113948,7 +113948,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114035,7 +114035,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114081,7 +114081,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114168,7 +114168,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114250,7 +114250,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114337,7 +114337,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114407,7 +114407,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114494,7 +114494,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114570,7 +114570,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114657,7 +114657,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114727,7 +114727,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114814,7 +114814,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114884,7 +114884,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -114971,7 +114971,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115047,7 +115047,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115134,7 +115134,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115204,7 +115204,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115291,7 +115291,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115361,7 +115361,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115448,7 +115448,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115524,7 +115524,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115611,7 +115611,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115681,7 +115681,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115768,7 +115768,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115844,7 +115844,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115931,7 +115931,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -115995,7 +115995,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116082,7 +116082,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116128,7 +116128,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116215,7 +116215,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116291,7 +116291,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116378,7 +116378,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116454,7 +116454,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116541,7 +116541,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116605,7 +116605,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116692,7 +116692,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116744,7 +116744,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116831,7 +116831,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116907,7 +116907,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -116994,7 +116994,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117076,7 +117076,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117164,7 +117164,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117234,7 +117234,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117322,7 +117322,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117374,7 +117374,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117462,7 +117462,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117544,7 +117544,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117632,7 +117632,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117694,7 +117694,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117776,7 +117776,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117863,7 +117863,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -117933,7 +117933,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118020,7 +118020,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118066,7 +118066,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118153,7 +118153,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118235,7 +118235,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118322,7 +118322,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118374,7 +118374,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118419,7 +118419,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118444,7 +118444,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118526,7 +118526,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118613,7 +118613,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118683,7 +118683,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118770,7 +118770,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118816,7 +118816,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118903,7 +118903,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -118985,7 +118985,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -119072,7 +119072,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -119096,7 +119096,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },
@@ -119121,7 +119121,7 @@ const mockSchema = {
         rolesExecution: ['PUBLIC', 'admin'],
         rolesBoostedExecution: ['admin'],
         isDeprecated: false,
-        deprecatedBy: null,
+        deprecatedBy: undefined,
         option: {
           deprecated: false,
         },

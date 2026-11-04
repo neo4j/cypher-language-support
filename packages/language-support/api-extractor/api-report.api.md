@@ -328,7 +328,7 @@ export type Neo4jFunction = {
     signature: string;
     aggregating: boolean;
     isDeprecated: boolean;
-    deprecatedBy?: string | null;
+    deprecatedBy?: string;
 };
 
 // @public (undocumented)
@@ -344,7 +344,7 @@ export type Neo4jProcedure = {
     option: {
         deprecated: boolean;
     } & Record<string, unknown>;
-    deprecatedBy?: string | null;
+    deprecatedBy?: string;
 };
 
 // @public (undocumented)

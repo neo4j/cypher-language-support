@@ -29,11 +29,11 @@ import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/par
 import { getContextStartToken } from '../helpers/getContextToken.js';
 
 // Internal type of CompletionItem for path completions, provide more explicit types
-type PathCompletionItem = CompletionItem & {
+interface PathCompletionItem extends CompletionItem {
   kind: typeof CompletionItemKind.Snippet;
   insertTextFormat: typeof InsertTextFormat.Snippet;
   insertText: string;
-};
+}
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
