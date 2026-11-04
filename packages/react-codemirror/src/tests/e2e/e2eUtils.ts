@@ -122,6 +122,7 @@ export async function charCoords(page: Page, line: number, column: number) {
         NodeFilter.SHOW_TEXT,
       );
       let remaining = column;
+      // Walk through text nodes until we have consumed enough characters that the column character is within the curent node
       while (walker.nextNode()) {
         const text = walker.currentNode as Text;
         if (remaining < text.length) {
