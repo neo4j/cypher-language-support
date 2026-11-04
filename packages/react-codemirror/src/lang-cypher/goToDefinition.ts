@@ -100,9 +100,9 @@ const clickableSymbolMark = Decoration.mark({ class: 'cm-clickableSymbol' });
 
 const clickableSymbolPlugin = ViewPlugin.fromClass(
   class {
-    decorations = Decoration.none;
-    range: { from: number; to: number } | undefined;
-    coords: { x: number; y: number } = { x: 0, y: 0 };
+    public decorations = Decoration.none;
+    public range: { from: number; to: number } | undefined;
+    public coords: { x: number; y: number } = { x: 0, y: 0 };
 
     constructor(
       readonly view: EditorView,

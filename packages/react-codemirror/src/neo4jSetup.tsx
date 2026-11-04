@@ -45,7 +45,7 @@ import { getIconForType } from './icons';
 // mirrors it for our Shift-Alt box selection to keep the feature discoverable
 const crosshairPlugin = ViewPlugin.fromClass(
   class {
-    bothKeysDown = false;
+    public bothKeysDown = false;
 
     constructor(readonly view: EditorView) {}
 
