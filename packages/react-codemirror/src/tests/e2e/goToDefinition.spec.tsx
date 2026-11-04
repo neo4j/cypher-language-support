@@ -16,7 +16,7 @@ async function waitForSymbolTable(
     await expect(page.locator('.cm-hover-tooltip')).toBeVisible({
       timeout: 1000,
     });
-  }).toPass({ timeout: 20000 });
+  }).toPass({ timeout: 10000 });
 }
 
 // Fails unless the drawn caret ends up at the start of the given character.
