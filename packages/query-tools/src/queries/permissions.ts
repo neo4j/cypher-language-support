@@ -10,18 +10,12 @@ export function getPermissions(): ExecuteQueryArgs<{
   const query = 'SHOW USER PRIVILEGE';
 
   const resultTransformer = resultTransformers.mapped({
-    map(record) {
-      const obj = record.toObject();
-      if (obj.action === 'constraint' && obj.access === 'GRANTED') {
-        return { constraints: true };
-      }
-      return {};
-    },
-    collect(privileges, summary) {
+    collect(records, summary) {
       const permissions = { constraints: false };
-      for (const privilege of privileges) {
-        if (privilege.constraints) {
-          permissions.constraints = privilege.constraints;
+      for (const record of records) {
+        const obj = record.toObject();
+        if (obj.action === 'constraint' && obj.access === 'GRANTED') {
+          permissions.constraints = true;
         }
       }
       return { permissions, summary };
