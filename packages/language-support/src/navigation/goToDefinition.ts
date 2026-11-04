@@ -13,7 +13,10 @@ export function getDefinitionPosition({
 }): { startOffset: number; endOffset: number } | undefined {
   const caret = findCaret(parsingResult, caretPosition);
   //Bail if cypher token caret is at does not cover the caret, for example when in a comment
-  if (caret.token.start > caretPosition || caret.token.stop < caretPosition) {
+  if (
+    caret?.token?.start > caretPosition ||
+    caret?.token?.stop < caretPosition
+  ) {
     return undefined;
   }
   const currentSymbolTable = caret
