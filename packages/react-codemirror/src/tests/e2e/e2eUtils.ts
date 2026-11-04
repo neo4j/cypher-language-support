@@ -144,7 +144,7 @@ export async function charCoords(page: Page, line: number, column: number) {
   );
 }
 
-export async function clickWith(
+export async function clickWithModifier(
   page: Page,
   { x, y }: { x: number; y: number },
   modifier: string,

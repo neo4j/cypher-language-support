@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import type { Page } from 'playwright/test';
 import { CypherEditor } from '../../CypherEditor';
-import { charCoords, clickWith, CypherEditorPage } from './e2eUtils';
+import { charCoords, clickWithModifier, CypherEditorPage } from './e2eUtils';
 
 test.use({ viewport: { width: 1000, height: 500 } });
 
@@ -71,7 +71,7 @@ test('Mod-click on a variable jumps to its definition', async ({
   const definitionCoordinates = await charCoords(page, 0, 7);
 
   await waitForSymbolTable(page, referenceCoordinates);
-  await clickWith(page, referenceCoordinates, 'ControlOrMeta');
+  await clickWithModifier(page, referenceCoordinates, 'ControlOrMeta');
   await expectCaretAt(page, definitionCoordinates);
 
   await editorPage.getEditor().press('x');
@@ -111,7 +111,7 @@ test('Mod-click on a non-variable does nothing', async ({ page, mount }) => {
   await editorPage.getEditor().press('End');
   await waitForSymbolTable(page, await charCoords(page, 0, 17));
 
-  await clickWith(page, await charCoords(page, 0, 2), 'ControlOrMeta');
+  await clickWithModifier(page, await charCoords(page, 0, 2), 'ControlOrMeta');
 
   await editorPage.getEditor().press('x');
   await expect(page.locator('.cm-content')).toHaveText('MATCH (n) RETURN nx');

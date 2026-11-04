@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/experimental-ct-react';
 import { CypherEditor } from '../../CypherEditor.js';
-import { charCoords, clickWith, CypherEditorPage } from './e2eUtils';
+import { charCoords, clickWithModifier, CypherEditorPage } from './e2eUtils';
 
 test('Alt-click adds a cursor', async ({ page, mount }) => {
   const editorPage = new CypherEditorPage(page);
@@ -9,7 +9,7 @@ test('Alt-click adds a cursor', async ({ page, mount }) => {
   await editorPage.getEditor().press('End');
 
   const { x, y } = await charCoords(page, 0, 0);
-  await clickWith(page, { x: x - 2, y }, 'Alt');
+  await clickWithModifier(page, { x: x - 2, y }, 'Alt');
 
   await editorPage.getEditor().press('x');
   await expect(page.locator('.cm-content')).toHaveText('xMATCH (n) RETURN nx');
