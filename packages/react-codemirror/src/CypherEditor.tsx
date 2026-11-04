@@ -20,6 +20,7 @@ import {
   type DbSchema,
 } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
+import type { MutableRefObject } from 'react';
 import { Component, createRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { DEBOUNCE_TIME } from './constants';
@@ -409,7 +410,7 @@ export class CypherEditor extends Component<
   /**
    * The symbol fetcher object used to fetch the current symbol table on document changes
    */
-  symbolFetcher!: CodemirrorSymbolFetcher;
+  symbolFetcher?: CodemirrorSymbolFetcher;
   /**
    * The codemirror editor container.
    */
@@ -417,15 +418,15 @@ export class CypherEditor extends Component<
   /**
    * The codemirror editor state.
    */
-  // oxlint-disable-next-line typescript/no-explicit-any
-  editorState: React.MutableRefObject<EditorState> = createRef() as any;
+  editorState: React.MutableRefObject<EditorState> =
+    createRef() as MutableRefObject<EditorState>;
   /**
    * The codemirror editor view.
    */
-  // oxlint-disable-next-line typescript/no-explicit-any
-  editorView: React.MutableRefObject<EditorView> = createRef() as any;
-  // oxlint-disable-next-line typescript/no-explicit-any
-  private schemaRef: React.MutableRefObject<CypherConfig> = createRef() as any;
+  editorView: React.MutableRefObject<EditorView> =
+    createRef() as MutableRefObject<EditorView>;
+  private schemaRef: React.MutableRefObject<CypherConfig> =
+    createRef() as MutableRefObject<CypherConfig>;
   private inlinePanelController: InlinePanelController | null = null;
   private editorActionsController: EditorActionsController | null = null;
 
@@ -562,7 +563,7 @@ export class CypherEditor extends Component<
       ? [
           EditorView.updateListener.of((upt: ViewUpdate) => {
             if (upt.docChanged) {
-              this.symbolFetcher.queueSymbolJob(
+              this.symbolFetcher?.queueSymbolJob(
                 upt.state.doc.toString(),
                 this.schemaRef.current.schema!,
               );

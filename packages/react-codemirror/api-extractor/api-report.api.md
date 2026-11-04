@@ -53,8 +53,8 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     // (undocumented)
     static defaultProps: CypherEditorProps;
     editorContainer: React.RefObject<HTMLDivElement>;
-    editorState: React.MutableRefObject<EditorState | null>;
-    editorView: React.MutableRefObject<EditorView | null>;
+    editorState: React.MutableRefObject<EditorState>;
+    editorView: React.MutableRefObject<EditorView>;
     focus(): void;
     format(): void;
     // (undocumented)
