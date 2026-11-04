@@ -9,8 +9,7 @@ import {
 } from '@codemirror/view';
 import type { CypherConfig } from './langCypher';
 
-const isMac =
-  typeof navigator !== 'undefined' && /Mac/.test(navigator.platform);
+const isMac = navigator !== undefined && /Mac/.test(navigator.platform);
 
 function goToDefinitionAt(
   view: EditorView,
