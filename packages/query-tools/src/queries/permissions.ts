@@ -2,7 +2,7 @@ import { resultTransformers } from 'neo4j-driver';
 import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
 
 /**
- * Investigate what queries we have permission to execute in polling
+ * Check what queries we have permission to execute in polling
  */
 export function getPermissions(): ExecuteQueryArgs<{
   permissions: { constraints: boolean };
