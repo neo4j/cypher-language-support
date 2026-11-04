@@ -133,43 +133,7 @@ export type CypherEditorState = {
 };
 
 // @public (undocumented)
-export const darkThemeConstants: {
-    dark: true;
-    diffColors: DiffColors;
-    editorSettings: {
-        background: string;
-        foreground: string;
-        gutterForeground: string;
-        selection: string;
-        textMatchingSelection: string;
-        cursor: string;
-        autoCompletionPanel: {
-            selectedColor: string;
-            matchingTextColor: string;
-            backgroundColor: string;
-        };
-        searchPanel: {
-            background: string;
-            text: string;
-            buttonHoverBackground: string;
-        };
-    };
-    highlightStyles: {
-        comment: string;
-        keyword: string;
-        keywordLiteral: string;
-        label: string;
-        predicateFunction: string;
-        function: string;
-        procedure: string;
-        stringLiteral: string;
-        numberLiteral: string;
-        booleanLiteral: string;
-        operator: string;
-        property: string;
-        paramValue: string;
-    };
-};
+export const darkTheme: ThemeOptions;
 
 // @public (undocumented)
 export interface DiffColors {
@@ -208,43 +172,7 @@ export type InlinePanelProps = {
 export { LanguageSupport }
 
 // @public (undocumented)
-export const lightThemeConstants: {
-    dark: false;
-    diffColors: DiffColors;
-    editorSettings: {
-        background: string;
-        foreground: string;
-        gutterForeground: string;
-        selection: string;
-        textMatchingSelection: string;
-        cursor: string;
-        autoCompletionPanel: {
-            selectedColor: string;
-            matchingTextColor: string;
-            backgroundColor: string;
-        };
-        searchPanel: {
-            background: string;
-            text: string;
-            buttonHoverBackground: string;
-        };
-    };
-    highlightStyles: {
-        comment: string;
-        keyword: string;
-        keywordLiteral: string;
-        label: string;
-        predicateFunction: string;
-        function: string;
-        procedure: string;
-        stringLiteral: string;
-        numberLiteral: string;
-        booleanLiteral: string;
-        operator: string;
-        property: string;
-        paramValue: string;
-    };
-};
+export const lightThemeConstants: ThemeOptions;
 
 // @public (undocumented)
 export interface ThemeOptions {
