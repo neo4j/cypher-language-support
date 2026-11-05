@@ -795,8 +795,8 @@ export function completionCoreCompletion(
           const existingYieldItems = new Set(
             yieldClauseContext.yieldItem().map((a) => a.getText()),
           );
-          return dbSchema.constraintInfo.fieldNames
-            .map((fieldName) => {
+          return (dbSchema.constraintInfo?.fieldNames ?? [])
+            .map((fieldName: string): CompletionItem => {
               return { label: fieldName, kind: CompletionItemKind.Variable };
             })
             .filter((a) => !existingYieldItems.has(a.label));

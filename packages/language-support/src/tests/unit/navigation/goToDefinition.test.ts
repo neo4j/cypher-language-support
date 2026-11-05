@@ -49,18 +49,11 @@ describe('go to variable definition', () => {
 
   test('Can find definition-location when requesting from the end of a reference followed by whitespace', () => {
     const query = 'MATCH (person) WITH person AS x RETURN x';
-    const { symbolTables } = languageService.lint(query, {});
-    languageService.setSymbolsInfo({
-      query,
-      symbolTables: symbolTables,
+    const caret = 'MATCH (person) WITH person'.length;
+    goToDefinitionExpect(query, caret, {
+      startOffset: 'MATCH ('.length,
+      endOffset: 'MATCH (person'.length,
     });
-
-    const { startOffset, endOffset } = languageService.goToDefinition(
-      query,
-      'MATCH (person) WITH person'.length,
-    );
-    expect(startOffset).toEqual('MATCH ('.length);
-    expect(endOffset).toEqual('MATCH (person'.length);
   });
 
   test('Can find definition-location when requesting from the start of a reference', () => {
