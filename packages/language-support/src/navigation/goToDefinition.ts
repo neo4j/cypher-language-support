@@ -13,9 +13,11 @@ export function getDefinitionPosition({
 }): { startOffset: number; endOffset: number } | undefined {
   const caret = findCaret(parsingResult, caretPosition);
   //Bail if cypher token caret is at does not cover the caret, for example when in a comment
+  //+1 at stop, so we cover when caret is after final letter of caret token
   if (
-    caret?.token?.start > caretPosition ||
-    caret?.token?.stop < caretPosition
+    !caret ||
+    caret.token.start > caretPosition ||
+    caret.token.stop + 1 < caretPosition
   ) {
     return undefined;
   }
