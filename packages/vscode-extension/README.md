@@ -10,6 +10,7 @@ Official extension for Neo4j Cypher query language featuring:
 - Connection management
 - Query parameter management
 - Query execution with a visualization panel
+- Go to definition navigation
 
 ## Getting started
 

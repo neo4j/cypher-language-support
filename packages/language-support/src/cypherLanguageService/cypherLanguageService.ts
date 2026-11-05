@@ -52,6 +52,10 @@ export class CypherLanguageService {
     this.symbolsInfo = symbolsInfo;
   }
 
+  getSymbolsInfo() {
+    return this.symbolsInfo;
+  }
+
   lint(query: string, dbSchema: DbSchema) {
     const parsingResult = this.parse(query);
     return lintCypherQueryWithParsingResult(query, dbSchema, { parsingResult });
