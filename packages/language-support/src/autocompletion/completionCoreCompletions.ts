@@ -89,7 +89,7 @@ const showCommandRules: [number, YieldableShowCommand][] = [
   [CypherParser.RULE_showDatabase, 'databases'],
 ];
 
-const showCommandYieldCompletions = (
+const showCommandYieldItemCompletions = (
   candidateRule: ICandidateRule,
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
@@ -101,7 +101,6 @@ const showCommandYieldCompletions = (
     return [];
   }
 
-  // With nothing yielded yet there may be no yield clause in the parse tree
   const yieldClauseContext = findParent(
     parsingResult.stopNode.parent,
     (x) => x instanceof YieldClauseContext,
@@ -813,7 +812,7 @@ export function completionCoreCompletion(
       }
 
       if (ruleNumber === CypherParser.RULE_yieldItem) {
-        return showCommandYieldCompletions(
+        return showCommandYieldItemCompletions(
           candidateRule,
           parsingResult,
           dbSchema,
