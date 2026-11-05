@@ -1,7 +1,7 @@
 {
   "name": "neo4j-for-vscode",
   "displayName": "Neo4j for VS Code",
-  "version": "1.21.14",
+  "version": "1.21.19",
   "private": true,
   "description": "Highlighting, completions and more for Neo4j Cypher in VS Code",
   "categories": [
@@ -687,7 +687,7 @@
   "icon": "resources/images/logo.png",
   "preview": false,
   "engines": {
-    "node": ">=24.11.1",
+    "node": ">=24.22.2",
     "vscode": "^1.75.0"
   }
 }

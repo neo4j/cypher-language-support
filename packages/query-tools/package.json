@@ -43,6 +43,6 @@
     "@testcontainers/neo4j": "^11.5.1"
   },
   "engines": {
-    "node": ">=24.11.1"
+    "node": ">=24.22.2"
   }
 }

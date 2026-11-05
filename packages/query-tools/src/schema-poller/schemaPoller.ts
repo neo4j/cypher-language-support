@@ -252,6 +252,8 @@ export class Neo4jSchemaPoller {
       this.events,
       this.permissions,
     );
+
+    this.metadata = metadata;
     await this.pollYieldFields(metadata);
 
     this.metadata = metadata;
@@ -266,13 +268,19 @@ export class Neo4jSchemaPoller {
   private async pollYieldFields(metadata: ConnectedMetadataPoller) {
     const driver = this.driver;
     const currentDb = this.connection?.currentDb;
+    const currentDbType = this.connection?.databases.find(
+      (db) => db.name === currentDb,
+    )?.type;
+
     if (!driver || !currentDb) {
       return;
     }
 
     const showCommands: YieldableShowCommand[] = [
       'databases',
-      ...(this.permissions.constraints ? (['constraints'] as const) : []),
+      ...(this.permissions.constraints && currentDbType !== 'system'
+        ? (['constraints'] as const)
+        : []),
       ...(this.permissions.users ? (['users'] as const) : []),
       ...(this.permissions.roles ? (['roles'] as const) : []),
     ];

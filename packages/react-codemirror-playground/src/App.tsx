@@ -281,8 +281,8 @@ export function App() {
                 className="text-blue-500 cursor-pointer hover:text-blue-700"
                 title={
                   window.navigator.userAgent.includes('Mac')
-                    ? 'Shift-Option-F'
-                    : 'Ctrl-Shift-I'
+                    ? 'Alt-Shift-F'
+                    : 'Ctrl-Shift-F'
                 }
               >
                 Format Query
@@ -373,7 +373,6 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    // oxlint-disable-next-line typescript/no-base-to-string
                     setSchemaError(String(e));
                   }
                 }}

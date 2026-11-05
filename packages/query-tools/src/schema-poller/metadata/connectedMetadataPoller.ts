@@ -172,6 +172,24 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         },
       });
     });
+    const currentDbType = connection.databases.find(
+      (db) => db.name === connection.currentDb,
+    )?.type;
+    if (
+      connection.currentDb &&
+      permissions.constraints &&
+      currentDbType !== 'system'
+    ) {
+      this.constraints = new QueryPoller({
+        connection,
+        queryArgs: listConstraints(connection.currentDb),
+        onRefetchDone: (result) => {
+          if (result.success) {
+            this.dbSchema.constraints = result.data.constraints;
+          }
+        },
+      });
+    }
     if (connection.currentDb && permissions.constraints) {
       this.constraints = new QueryPoller({
         connection,

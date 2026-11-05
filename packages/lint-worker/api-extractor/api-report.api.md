@@ -18,7 +18,7 @@ import workerpool from 'workerpool';
 export function compareMajorMinorVersions(version1: string, version2: string): integer | undefined;
 
 // @public (undocumented)
-export function convertDbSchema(originalSchema: DbSchema, linterVersion: string): DbSchema | DbSchema_2;
+export function convertDbSchema(originalSchema: DbSchema, linterVersion: string | undefined): DbSchema | DbSchema_2;
 
 // @public (undocumented)
 export function getTaggedRegistryVersions(): Promise<NpmRelease[]>;
@@ -32,7 +32,7 @@ export function lintCypherQuery(query: string, dbSchema: DbSchema, featureFlags?
 };
 
 // @public (undocumented)
-export function linterFileToServerVersion(fileName: string): string;
+export function linterFileToServerVersion(fileName: string): string | undefined;
 
 // @public (undocumented)
 export type LinterTask = workerpool.Promise<ReturnType<typeof lintCypherQuery>>;
@@ -56,7 +56,7 @@ export type NpmRelease = {
 };
 
 // @public (undocumented)
-export const npmTagToLinterVersion: (tag: string) => string;
+export const npmTagToLinterVersion: (tag: string) => string | undefined;
 
 // @public (undocumented)
 export function serverVersionToLinter(serverVersion: string): {
