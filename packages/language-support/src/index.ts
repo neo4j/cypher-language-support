@@ -83,4 +83,5 @@ export type {
   CONDITIONS,
   ConditionNode,
   SymbolsInfo,
+  Constraint,
 } from './types.js';
