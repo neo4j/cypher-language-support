@@ -2364,15 +2364,15 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitExpression7 = (ctx: Expression7Context) => {
-    const comparison = ctx.comparisonExpression6();
-    if (!comparison) {
+    const comparisonExpression = ctx.comparisonExpression6();
+    if (!comparisonExpression) {
       this.visitChildren(ctx);
       return;
     }
     const comparisonExprGrp = this.startGroup();
     this._visit(ctx.expression6());
     this.avoidBreakBetween();
-    this.visit(comparison);
+    this.visit(comparisonExpression);
     this.endGroup(comparisonExprGrp);
   };
 
