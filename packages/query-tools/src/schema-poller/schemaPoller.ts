@@ -251,7 +251,8 @@ export class Neo4jSchemaPoller {
       this.events,
       this.permissions,
     );
-    if (this.permissions.constraints) {
+    const currentDbType = databases.find((db) => db.name === database)?.type;
+    if (this.permissions.constraints && currentDbType !== 'system') {
       await this.pollConstraintFields(metadata);
     }
 

@@ -172,7 +172,14 @@ export class ConnectedMetadataPoller extends MetadataPoller {
         },
       });
     });
-    if (connection.currentDb && permissions.constraints) {
+    const currentDbType = connection.databases.find(
+      (db) => db.name === connection.currentDb,
+    )?.type;
+    if (
+      connection.currentDb &&
+      permissions.constraints &&
+      currentDbType !== 'system'
+    ) {
       this.constraints = new QueryPoller({
         connection,
         queryArgs: listConstraints(connection.currentDb),
