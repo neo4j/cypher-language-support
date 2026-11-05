@@ -18,7 +18,7 @@ import {
   handleSettingConnectionsChange,
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
-import { getSchemaPoller, setContext } from './contextService';
+import { setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
 import type { SymbolTable } from '@neo4j-cypher/language-support';
@@ -146,11 +146,9 @@ export async function activate(context: ExtensionContext) {
     if (doc.languageId === 'cypher') {
       const query = doc.getText();
       const uri = doc.uri.fsPath;
-      const schema = getSchemaPoller().metadata?.dbSchema;
       void sendNotificationToLanguageClient('fetchSymbolTable', {
         query,
         uri,
-        schema,
       });
     }
   });

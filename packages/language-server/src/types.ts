@@ -1,5 +1,3 @@
-import type { DbSchema } from '@neo4j-cypher/language-support';
-
 // These settings are defined in the package.json
 export type Neo4jConnectionSettings = {
   connect?: boolean;
@@ -17,7 +15,6 @@ export type LintWorkerSettings = {
 export type SymbolFetchingParams = {
   query: string;
   uri: string;
-  schema: DbSchema;
 };
 
 export type Neo4jSettings = {
