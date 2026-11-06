@@ -1,5 +1,19 @@
 # @neo4j-cypher/react-codemirror
 
+## 2.0.0-next.43
+
+### Patch Changes
+
+- 7b40237: Add go-to-definition support to codemirror at ctrl+click and F12. Move "add additional cursor" to alt+click, and "box select" to alt+shift+drag in order to avoid collisions
+- Updated dependencies [613dfdc]
+- Updated dependencies [c63fdb7]
+- Updated dependencies [20d5c8c]
+- Updated dependencies [ea87989]
+- Updated dependencies [ea87989]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/language-support@2.0.0-next.40
+  - @neo4j-cypher/lint-worker@1.10.1-next.17
+
 ## 2.0.0-next.42
 
 ### Patch Changes
