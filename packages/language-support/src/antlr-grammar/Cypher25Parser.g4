@@ -180,11 +180,16 @@ whereClause
    ;
 
 searchClause
-   : SEARCH variable IN LPAREN (FULLTEXT | VECTOR) indexSpecificationClause forClause analyzerClause? whereClause? skip? limit RPAREN scoreClause?
+   : SEARCH variable IN LPAREN sourceSpecification RPAREN scoreClause?
+   ;
+
+sourceSpecification
+   : indexSpecificationClause
+   | combinedSpecificationClause
    ;
 
 indexSpecificationClause
-   : INDEX commandNameExpression
+   : (FULLTEXT | VECTOR) INDEX commandNameExpression forClause analyzerClause? whereClause? skip? limit
    ;
 
 forClause
@@ -195,9 +200,21 @@ analyzerClause
    : WITH ANALYZER expression
    ;
 
+combinedSpecificationClause
+   : COMBINE LPAREN combinedSpecificationBody RPAREN USING WRRF (WITH CONSTANT expression)? limit?
+   ;
+
+combinedSpecificationBody
+   : weightedSource (COMMA weightedSource)*
+   ;
+
+weightedSource
+   : sourceSpecification (WEIGHT expression)?
+   ;
+
 scoreClause
-  : SCORE AS variable
-  ;
+   : SCORE AS variable
+   ;
 
 withClause
    : WITH returnBody whereClause?
@@ -584,11 +601,18 @@ comparisonExpression6
       | ENDS WITH
       | CONTAINS
       | IN
-   ) expression6                                      # StringAndListComparison
-   | IS NOT? NULL                                     # NullComparison
-   | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type # TypeComparison
-   | IS NOT? normalForm? NORMALIZED                   # NormalFormComparison
-   | (IS NOT? LABELED? | COLON) labelExpression4      # LabelComparison
+   ) expression6                                                # StringAndListComparison
+   | IS NOT? chronologicalOperator expression6                  # ChronologicalComparison
+   | IS NOT? NULL                                               # NullComparison
+   | (IS NOT? (TYPED | COLONCOLON) | COLONCOLON) type           # TypeComparison
+   | IS NOT? normalForm? NORMALIZED                             # NormalFormComparison
+   | (IS NOT? LABELED? | COLON) labelExpression4                # LabelComparison
+   ;
+
+chronologicalOperator
+   : BEFORE
+   | AFTER
+   | SAME (INSTANT | REPRESENTATION)
    ;
 
 normalForm
@@ -994,10 +1018,12 @@ createCommand
       | createConstraint
       | createDatabase
       | createReplicaDatabase
+      | createVirtualGraphDatabase
       | createIndex
       | createRole
       | createUser
       | createAuthRule
+      | createSecret
    )
    ;
 
@@ -1024,6 +1050,7 @@ dropCommand
       | dropServer
       | dropUser
       | dropAuthRule
+      | dropSecret
    )
    ;
 
@@ -1755,7 +1782,7 @@ loadPrivilege
 showPrivilege
    : SHOW (
       (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
-      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER (CREDENTIALS | METADATA)? | SECRETS) ON DBMS
+      | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER (CREDENTIALS | METADATA)? | EXTERNAL SECRET | SECRET) ON DBMS
    )
    ;
 
@@ -1800,11 +1827,13 @@ dbmsPrivilege
    : (
       ALTER (ALIAS | AUTH RULE | COMPOSITE? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE | SECRETS) MANAGEMENT
+      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE | EXTERNAL SECRET | SECRET) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (AUTH RULE | ROLE | USER)
-      | WRITE SECRETS
-      | READ secretToken secretQualifier
+      | CREATE SECRET
+      | DROP SECRET
+      | ACCESS SECRET secretQualifier
+      | WRITE EXTERNAL SECRET
       | IMPERSONATE userQualifier?
    )
    ON DBMS
@@ -1845,15 +1874,10 @@ transactionToken
    | TRANSACTIONS
    ;
 
-secretToken
-  : SECRET
-  | SECRETS
-  ;
-
 secretQualifier
-  : TIMES
-  | stringOrParameterExpression
-  ;
+   : TIMES
+   | commandNameExpression
+   ;
 
 userQualifier
    : LPAREN (TIMES | userNames) RPAREN
@@ -1985,6 +2009,20 @@ showAuthRules
     : authRuleKeywords (AS commandToken)? showCommandYield?
     ;
 
+// Secret commands
+
+createSecret
+    : SECRET commandNameExpression (IF NOT EXISTS)? OF TYPE symbolicNameString secretSetClause+
+    ;
+
+dropSecret
+    : SECRET commandNameExpression (IF EXISTS)?
+    ;
+
+secretSetClause
+    : SET symbolicNameString (FROM EXTERNAL SECRET)? (stringLiteral | parameter["STRING"])
+    ;
+
 // Database commands
 
 createCompositeDatabase
@@ -1997,6 +2035,10 @@ createDatabase
 
 createReplicaDatabase
    : REPLICA DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? (SET? defaultLanguageSpecification)? topology? commandOptions? waitClause?
+   ;
+
+createVirtualGraphDatabase
+   : VIRTUAL GRAPH DATABASE symbolicAliasNameOrParameter (IF NOT EXISTS)? virtualGraphSpecification (SET? defaultLanguageSpecification)? commandOptions? waitClause?
    ;
 
 shards
@@ -2077,6 +2119,139 @@ alterPropertyShards
 
 alterReplicaTopology
    : TOPOLOGY uIntOrIntParameter replicaToken
+   ;
+
+// Virtual graph elements
+
+virtualGraphSpecification
+   : setVirtualGraphDatasource setVirtualGraphSecret setVirtualGraphMapping
+   ;
+
+setVirtualGraphDatasource
+   : SET? virtualGraphDatasource
+   ;
+
+setVirtualGraphSecret
+   : SET? virtualGraphSecret
+   ;
+
+setVirtualGraphMapping
+   : SET? virtualGraphMapping
+   ;
+
+alterVirtualGraph
+   : virtualGraphDatasource
+   | virtualGraphSecret
+   | virtualGraphMapping
+   ;
+
+virtualGraphDatasource
+   : DATASOURCE mapOrParameter
+   ;
+
+virtualGraphSecret
+   : SECRET commandNameExpression
+   ;
+
+virtualGraphMapping
+   : MAPPING (mapOrParameter | propertyTables)
+   ;
+
+propertyTables
+   : nodeTables edgeTables?
+   ;
+
+nodeTables
+   : nodeSynonym TABLES nodeTableList
+   ;
+
+nodeTableList
+   : LPAREN nodeTable (COMMA nodeTable)* RPAREN
+   ;
+
+nodeTable
+   : qualifiedTableName (AS symbolicNameString)? tableKey? (labelAndPropertiesList | tableProperties)?
+   ;
+
+qualifiedTableName
+   : (symbolicNameString DOT)* symbolicNameString
+   ;
+
+tableKey
+   : KEY columnNameList
+   ;
+
+columnNameList
+   : LPAREN columnName (COMMA columnName)* RPAREN
+   ;
+
+columnName
+   : symbolicNameString
+   ;
+
+labelAndPropertiesList
+   : labelAndProperties+
+   ;
+
+labelAndProperties
+   : tableLabel tableProperties?
+   ;
+
+tableLabel
+   : LABEL symbolicNameString
+   | DEFAULT LABEL
+   ;
+
+tableProperties
+   : NO PROPERTIES
+   | propertiesAre
+   | derivedPropertyList
+   ;
+
+propertiesAre
+   : PROPERTIES ARE? ALL COLUMNS (EXCEPT columnNameList)?
+   ;
+
+derivedPropertyList
+   : PROPERTIES LPAREN derivedProperty (COMMA derivedProperty)* RPAREN
+   ;
+
+derivedProperty
+   : columnName (AS symbolicNameString)?
+   ;
+
+edgeTables
+   : edgeSynonym TABLES edgeTableList
+   ;
+
+edgeTableList
+   : LPAREN edgeTable (COMMA edgeTable)* RPAREN
+   ;
+
+edgeTable
+   : qualifiedTableName (AS symbolicNameString)? tableKey? sourceKey destinationKey (labelAndPropertiesList | tableProperties)?
+   ;
+
+sourceKey
+   : SOURCE KEY columnNameList REFERENCES tableReference columnNameList?
+   ;
+
+destinationKey
+   : DESTINATION KEY columnNameList REFERENCES tableReference columnNameList?
+   ;
+
+tableReference
+   : qualifiedTableName
+   ;
+
+nodeSynonym
+   : NODE
+   | VERTEX
+   ;
+
+edgeSynonym
+   : EDGE
+   | RELATIONSHIP
    ;
 
 startDatabase
@@ -2282,6 +2457,7 @@ unescapedSymbolicNameString_
    | ADD
    | ADMIN
    | ADMINISTRATOR
+   | AFTER
    | ALIAS
    | ALIASES
    | ALL_SHORTEST_PATHS
@@ -2291,6 +2467,7 @@ unescapedSymbolicNameString_
    | ANALYZER
    | AND
    | ANY
+   | ARE
    | ARRAY
    | AS
    | ASC
@@ -2299,6 +2476,7 @@ unescapedSymbolicNameString_
    | AT
    | AUTH
    | AUTO
+   | BEFORE
    | BFLOAT16
    | BINDINGS
    | BOOL
@@ -2314,6 +2492,8 @@ unescapedSymbolicNameString_
    | CHANGE
    | CIDR
    | COLLECT
+   | COLUMNS
+   | COMBINE
    | COMMAND
    | COMMANDS
    | COMPOSITE
@@ -2324,6 +2504,7 @@ unescapedSymbolicNameString_
    | CONTINUE
    | COPY
    | CONDITION
+   | CONSTANT
    | COSINE
    | COUNT
    | CREATE
@@ -2335,6 +2516,7 @@ unescapedSymbolicNameString_
    | DATA
    | DATABASE
    | DATABASES
+   | DATASOURCE
    | DATE
    | DATETIME
    | DBMS
@@ -2346,6 +2528,7 @@ unescapedSymbolicNameString_
    | DENY
    | DESC
    | DESCENDING
+   | DESTINATION
    | DESTROY
    | DETACH
    | DIFFERENT
@@ -2370,12 +2553,14 @@ unescapedSymbolicNameString_
    | ERROR
    | EUCLIDEAN
    | EUCLIDEAN_SQUARED
+   | EXCEPT
    | EXECUTABLE
    | EXECUTE
    | EXIST
    | EXISTENCE
    | EXISTS
    | EXPAND
+   | EXTERNAL
    | FAIL
    | FALSE
    | FIELDTERMINATOR
@@ -2411,6 +2596,7 @@ unescapedSymbolicNameString_
    | INF
    | INFINITY
    | INSERT
+   | INSTANT
    | INT
    | INT64
    | INT32
@@ -2440,6 +2626,7 @@ unescapedSymbolicNameString_
    | MANAGEMENT
    | MANHATTAN
    | MAP
+   | MAPPING
    | MERGE
    | METADATA
    | NAME
@@ -2451,6 +2638,7 @@ unescapedSymbolicNameString_
    | NFD
    | NFKC
    | NFKD
+   | NO
    | NODE
    | NODETACH
    | NODES
@@ -2493,6 +2681,7 @@ unescapedSymbolicNameString_
    | READ
    | REALLOCATE
    | REDUCE
+   | REFERENCES
    | REL
    | RELATIONSHIP
    | RELATIONSHIPS
@@ -2503,6 +2692,7 @@ unescapedSymbolicNameString_
    | REPLICA
    | REPLICAS
    | REPORT
+   | REPRESENTATION
    | REQUIRE
    | REQUIRED
    | RESTRICT
@@ -2515,6 +2705,7 @@ unescapedSymbolicNameString_
    | ROWS
    | RULE
    | RULES
+   | SAME
    | SCAN
    | SCORE
    | SEARCH
@@ -2539,6 +2730,7 @@ unescapedSymbolicNameString_
    | SIGNED
    | SINGLE
    | SKIPROWS
+   | SOURCE
    | START
    | STARTS
    | STATUS
@@ -2547,6 +2739,7 @@ unescapedSymbolicNameString_
    | STRING
    | SUPPORTED
    | SUSPENDED
+   | TABLES
    | TAG
    | TAGS
    | TARGET
@@ -2584,13 +2777,16 @@ unescapedSymbolicNameString_
    | VECTOR_DISTANCE
    | VECTOR_NORM
    | VERTEX
+   | VIRTUAL
    | WAIT
    | WALK
+   | WEIGHT
    | WHEN
    | WHERE
    | WITH
    | WITHOUT
    | WRITE
+   | WRRF
    | XOR
    | YIELD
    | ZONE
