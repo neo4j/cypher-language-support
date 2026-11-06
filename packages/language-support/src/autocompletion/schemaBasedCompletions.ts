@@ -26,13 +26,21 @@ import {
   walkCNFTree,
 } from '../labelTreeWalking.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { getContextStartToken } from '../helpers/getContextToken.js';
+
+// Internal type of CompletionItem for path completions, provide more explicit types
+interface PathCompletionItem extends CompletionItem {
+  kind: typeof CompletionItemKind.Snippet;
+  insertTextFormat: typeof InsertTextFormat.Snippet;
+  insertText: string;
+}
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
-): CompletionItem[] {
-  const snippetCompletions: CompletionItem[] = [];
+): PathCompletionItem[] {
+  const snippetCompletions: PathCompletionItem[] = [];
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
   if (
     !lastVariable ||
@@ -93,10 +101,10 @@ export function getShortPathCompletions(
 
 export function getPathCompletions(
   lastNode: NodePatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
   dbSchema: DbSchema,
-): CompletionItem[] {
-  const snippetCompletions: CompletionItem[] = [];
+): PathCompletionItem[] {
+  const snippetCompletions: PathCompletionItem[] = [];
 
   const lastVariable = findLastVariable(lastNode, symbolsInfo);
   if (
@@ -204,7 +212,7 @@ export const allReltypeCompletions = (dbSchema: DbSchema) =>
 
 function findLastVariable(
   lastValidElement: NodePatternContext | RelationshipPatternContext,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ) {
   const variable = lastValidElement.variable();
   const isAnonVar = variable === null;
@@ -213,19 +221,22 @@ function findLastVariable(
         (entry) =>
           // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
           // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
-          entry.definitionPosition >= lastValidElement.start.start &&
+          entry.definitionPosition >=
+            getContextStartToken(lastValidElement).start &&
           entry.definitionPosition <= (lastValidElement.stop?.stop ?? -1),
       )
     : symbolsInfo?.symbolTables
         ?.flat()
-        .find((entry) => entry.references.includes(variable.start.start));
+        .find((entry) =>
+          entry.references.includes(getContextStartToken(variable).start),
+        );
   return foundVariable;
 }
 
 export function completeNodeLabel(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ): CompletionItem[] {
   if (dbSchema.graphSchema === undefined) {
     return allLabelCompletions(dbSchema);
@@ -300,7 +311,7 @@ export function completeNodeLabel(
 export function completeRelationshipType(
   dbSchema: DbSchema,
   parsingResult: ParsedStatement,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ): CompletionItem[] {
   if (dbSchema.graphSchema === undefined) {
     return allReltypeCompletions(dbSchema);

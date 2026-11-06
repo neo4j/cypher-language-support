@@ -82,12 +82,12 @@ function testPositionCoversDoc(
   );
   const cleanedResult = clampUnsafePositions([error], textDoc)[0];
 
-  expect(cleanedResult.range.start.line).toBe(0);
-  expect(cleanedResult.range.start.character).toBe(0);
-  expect(cleanedResult.range.end.line).toBe(endLine);
-  expect(cleanedResult.range.end.character).toBe(endChar);
-  expect(cleanedResult.offsets.start).toBe(0);
-  expect(cleanedResult.offsets.end).toBe(text.length);
+  expect(cleanedResult?.range.start.line).toBe(0);
+  expect(cleanedResult?.range.start.character).toBe(0);
+  expect(cleanedResult?.range.end.line).toBe(endLine);
+  expect(cleanedResult?.range.end.character).toBe(endChar);
+  expect(cleanedResult?.offsets.start).toBe(0);
+  expect(cleanedResult?.offsets.end).toBe(text.length);
 }
 
 const makeDiagnostic = (

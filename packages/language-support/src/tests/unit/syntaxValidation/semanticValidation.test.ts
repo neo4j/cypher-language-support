@@ -33,7 +33,7 @@ describe('Semantic validation spec', () => {
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+    expect(diagnostics1[0]?.message).not.toEqual(diagnostics2[0]?.message);
     expect(diagnostics1).toEqual([
       {
         message:
@@ -149,7 +149,7 @@ describe('Semantic validation spec', () => {
     const diagnostics1 = getDiagnosticsForQuery({ query: query1 });
     const query2 = 'MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1[0]?.message).toEqual(diagnostics2[0]?.message);
     expect(diagnostics1).toEqual([
       {
         message:
@@ -323,7 +323,7 @@ describe('Semantic validation spec', () => {
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).toEqual(diagnostics2[0].message);
+    expect(diagnostics1[0]?.message).toEqual(diagnostics2[0]?.message);
     expect(diagnostics1).toEqual([
       {
         message: 'Type mismatch: expected Map but was Node',
@@ -383,7 +383,7 @@ describe('Semantic validation spec', () => {
     const diagnostics = getDiagnosticsForQuery({ query });
 
     expect(diagnostics).toHaveLength(1);
-    expect(diagnostics[0].message).toContain("Invalid input 'GROUP'");
+    expect(diagnostics[0]?.message).toContain("Invalid input 'GROUP'");
   });
 
   test('In-query version takes priority for semantic analysis even if defaultLanguage is defined', () => {
@@ -394,7 +394,7 @@ describe('Semantic validation spec', () => {
     });
     const query2 = 'CYPHER 25 MATCH (n)-[r]->(m) SET r += m';
     const diagnostics2 = getDiagnosticsForQuery({ query: query2 });
-    expect(diagnostics1[0].message).not.toEqual(diagnostics2[0].message);
+    expect(diagnostics1[0]?.message).not.toEqual(diagnostics2[0]?.message);
     expect(diagnostics1).toEqual([
       {
         message:

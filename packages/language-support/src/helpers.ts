@@ -24,7 +24,7 @@ export function findStopNode(root: StatementsOrCommandsContext) {
 
   while (children && children.length > 0) {
     let index = children.length - 1;
-    let child = children[index];
+    let child = children[index]!;
 
     while (
       index > 0 &&
@@ -33,7 +33,7 @@ export function findStopNode(root: StatementsOrCommandsContext) {
         child.getText().startsWith('<missing'))
     ) {
       index--;
-      child = children[index];
+      child = children[index]!;
     }
     current = child as ParserRuleContext;
     children = current.children;
@@ -86,27 +86,18 @@ export function findCaret(
   parsingResult: ParsingResult,
   caretPosition: number,
 ): { statement: ParsedStatement; token: Token } | undefined {
-  const statements = parsingResult.statementsParsing;
-  let i = 0;
-  let result: { statement: ParsedStatement; token: Token } = undefined;
-  let keepLooking = true;
+  let result: { statement: ParsedStatement; token: Token } | undefined;
 
-  while (i < statements.length && keepLooking) {
-    let j = 0;
-    const statement = statements[i];
-    const tokens = statement.tokens;
-
-    while (j < tokens.length && keepLooking) {
-      const currentToken = tokens[j];
-      keepLooking = currentToken.start <= caretPosition;
-
-      if (currentToken.channel === 0 && keepLooking) {
-        result = { statement: statement, token: currentToken };
+  for (const statement of parsingResult.statementsParsing) {
+    for (const token of statement.tokens) {
+      if (token.start > caretPosition) {
+        return result;
       }
 
-      j++;
+      if (token.channel === 0) {
+        result = { statement, token };
+      }
     }
-    i++;
   }
 
   return result;
@@ -120,7 +111,7 @@ export function findPreviousNonSpace(
   while (i > 0) {
     const token = tokens[--i];
 
-    if (token.type !== CypherParser.SPACE) {
+    if (token && token.type !== CypherParser.SPACE) {
       return token;
     }
   }

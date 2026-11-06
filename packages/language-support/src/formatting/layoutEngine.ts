@@ -22,7 +22,11 @@ interface State {
   pendingComments: string[];
 }
 
-function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
+function shouldBreak(
+  state: State,
+  chunk: Chunk,
+  nextChunk: Chunk | undefined,
+): boolean {
   if (chunk.type === 'COMMENT') return true;
 
   if (chunk.type !== 'SYNTAX_ERROR' && chunk.noBreak) {
@@ -33,10 +37,10 @@ function shouldBreak(state: State, chunk: Chunk, nextChunk: Chunk): boolean {
     return false;
   }
 
-  return (
+  return Boolean(
     chunk.mustBreak ||
     chunk.doubleBreak ||
-    state.activeGroups.at(-1)?.shouldBreak
+    state.activeGroups.at(-1)?.shouldBreak,
   );
 }
 
@@ -63,9 +67,18 @@ function updateActiveGroups(
   }
 }
 
-function updateIndentationState(state: State, chunk: Chunk, nextChunk: Chunk) {
+function updateIndentationState(
+  state: State,
+  chunk: Chunk,
+  nextChunk: Chunk | undefined,
+) {
   for (const indent of chunk.indentation) {
     if (applySpecialBreak(state, chunk, nextChunk)) {
+      if (!indent.removeReference) {
+        throw new Error(
+          '[updateIndentationState] indent.removeReference not available',
+        );
+      }
       indent.removeReference.isApplied = false;
     } else if (indent.change === 1) {
       state.activeIndentations.push(indent);
@@ -174,7 +187,11 @@ function validateFinalState(state: State) {
   }
 }
 
-function applySpecialBreak(state: State, chunk: Chunk, nextChunk: Chunk) {
+function applySpecialBreak(
+  _state: State,
+  chunk: Chunk,
+  nextChunk: Chunk | undefined,
+) {
   // First, check if the next chunk is a special split
   // because that one includes the allowance of special split, opening bracket e.g.
   // Current chunk has oneItem set only if it has one child
@@ -189,9 +206,8 @@ export function chunksToFormattedString(
 ): FinalResultWithPos {
   const state = createInitialState();
 
-  for (let i = 0; i < chunkList.length; i++) {
-    const chunk = chunkList[i];
-    const nextChunk: Chunk = chunkList[i + 1];
+  for (const [i, chunk] of chunkList.entries()) {
+    const nextChunk = chunkList[i + 1];
 
     applyIndentationIfNeeded(state);
     checkAndSetCursorPosition(state, chunk);

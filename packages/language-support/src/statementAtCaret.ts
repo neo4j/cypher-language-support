@@ -1,3 +1,4 @@
+import type { ParsedStatement } from './cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
 
 /**
@@ -24,9 +25,18 @@ export function getStatementAtCaret(
     !currentStatement && statements.statementsParsing
       ? statements.statementsParsing.at(-1)
       : currentStatement;
-  const result = input.slice(
-    currentStatement.tokens.at(0).start,
-    currentStatement.tokens.at(-1).stop + 1,
-  );
-  return result;
+
+  return sliceInput(input, currentStatement);
+}
+
+function sliceInput(
+  input: string,
+  currentStatement: ParsedStatement | undefined,
+): string {
+  const tokens = currentStatement?.tokens ?? [];
+
+  const start = tokens.at(0)?.start ?? 0;
+  const stop = tokens.at(1)?.stop;
+
+  return input.slice(start, stop ? stop + 1 : undefined);
 }

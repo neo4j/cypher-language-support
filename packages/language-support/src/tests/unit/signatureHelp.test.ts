@@ -9,7 +9,7 @@ import { testData } from './testData.js';
 
 export function testSignatureHelp(
   fileText: string,
-  dbSchema: DbSchema,
+  dbSchema: DbSchema | undefined,
   expected: SignatureHelp,
   offset: number = fileText.length,
 ) {

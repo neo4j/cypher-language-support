@@ -150,7 +150,7 @@ export function getCypherTokenType(
   tokenType: CypherTokenType;
   finished: boolean;
 } {
-  const tokenText = token.text;
+  const tokenText = token.text ?? '';
 
   if (token.type === CypherLexer.ErrorChar) {
     if (tokenText === '"' || tokenText === "'") {

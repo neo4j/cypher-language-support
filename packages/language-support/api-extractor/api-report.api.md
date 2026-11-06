@@ -109,13 +109,13 @@ export class CypherLanguageService {
     goToDefinition(query: string, caretPosition: number): {
         startOffset: number;
         endOffset: number;
-    };
+    } | undefined;
     // (undocumented)
     highlightSyntax(query: string): ParsedCypherToken[];
     // (undocumented)
     hoverInfo(query: string, input: {
         caretPosition: number;
-        dbSchema: DbSchema;
+        dbSchema?: DbSchema;
     }): HoverInfo | undefined;
     // (undocumented)
     lint(query: string, dbSchema: DbSchema): {
@@ -410,7 +410,7 @@ export type ScopedRegistry<T> = Partial<Record<CypherVersion, Registry<T>>>;
 export function shouldAutoCompleteYield(query: string, offset: number): boolean;
 
 // @public (undocumented)
-export function signatureHelp(query: string, dbSchema: DbSchema, options?: SignatureInfoOptions): SignatureHelp;
+export function signatureHelp(query: string, dbSchema?: DbSchema, options?: SignatureInfoOptions): SignatureHelp;
 
 // @public (undocumented)
 export interface SignatureInfoOptions {
