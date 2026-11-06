@@ -65,6 +65,7 @@ import type {
   ImpliedLabelSetContext,
   ImpliesContext,
   IndexPostfixContext,
+  IndexSpecificationClauseContext,
   InsertClauseContext,
   KeywordLiteralContext,
   LabelComparisonContext,
@@ -793,10 +794,13 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.createCompositeDatabase());
     this._visit(ctx.createConstraint());
     this._visit(ctx.createDatabase());
+    this._visit(ctx.createReplicaDatabase());
+    this._visit(ctx.createVirtualGraphDatabase());
     this._visit(ctx.createIndex());
     this._visit(ctx.createRole());
     this._visit(ctx.createUser());
     this._visit(ctx.createAuthRule());
+    this._visit(ctx.createSecret());
   };
 
   visitCreateDatabase = (ctx: CreateDatabaseContext) => {
@@ -1332,9 +1336,21 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.LPAREN());
     const innerIndent = this.addIndentation();
     this.breakLine();
+    this._visit(ctx.sourceSpecification());
+    this.removeIndentation(innerIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visit(ctx.scoreClause());
+  };
+
+  visitIndexSpecificationClause = (ctx: IndexSpecificationClauseContext) => {
     this._visit(ctx.FULLTEXT());
     this._visit(ctx.VECTOR());
-    this._visit(ctx.indexSpecificationClause());
+    this._visit(ctx.INDEX());
+    this._visit(ctx.commandNameExpression());
     this.breakLine();
     this._visit(ctx.forClause());
     if (ctx.analyzerClause()) {
@@ -1351,13 +1367,6 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     }
     this.breakLine();
     this._visit(ctx.limit());
-    this.removeIndentation(innerIndent);
-    this.breakLine();
-    this._visitTerminalRaw(ctx.RPAREN(), {
-      dontConcatenate: true,
-      spacingChoice: 'SPACE_AFTER',
-    });
-    this._visit(ctx.scoreClause());
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
