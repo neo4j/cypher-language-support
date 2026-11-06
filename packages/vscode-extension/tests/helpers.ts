@@ -1,8 +1,9 @@
 import * as path from 'path';
 import * as vscode from 'vscode';
 import * as os from 'os';
-import { TextDocument, Uri, window, workspace } from 'vscode';
-import { Connection } from '../src/connectionService';
+import type { TextDocument } from 'vscode';
+import { Uri, window, workspace } from 'vscode';
+import type { Connection } from '../src/connectionService';
 import { getNonce } from '../src/getNonce';
 
 export async function openDocument(docUri: Uri) {
@@ -28,6 +29,7 @@ export async function newUntitledFileWithContent(
     return document;
   } catch (e) {
     console.error(e);
+    return undefined;
   }
 }
 
@@ -61,7 +63,6 @@ export async function eventually(
     } catch (e) {
       if (totalWait > timeoutMs) {
         throw new Error(
-          // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
           `Timeout of ${timeoutMs} exceeded for test with last error: ${e as Error}`,
         );
       }

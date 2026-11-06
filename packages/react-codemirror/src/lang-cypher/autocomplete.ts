@@ -1,14 +1,11 @@
-import {
-  Completion,
-  CompletionSource,
-  snippet,
-} from '@codemirror/autocomplete';
+import type { Completion, CompletionSource } from '@codemirror/autocomplete';
+import { snippet } from '@codemirror/autocomplete';
 import { shouldAutoCompleteYield } from '@neo4j-cypher/language-support';
 import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { CompletionItemIcons } from '../icons';
+import type { CompletionItemIcons } from '../icons';
 import type { CypherConfig } from './langCypher';
 import { getDocString } from './utils';
 

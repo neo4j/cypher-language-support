@@ -1,6 +1,8 @@
 import path from 'path';
-import { Event, EventEmitter, TreeDataProvider, TreeItem, Uri } from 'vscode';
-import { getParameters, Parameter } from '../parameterService';
+import type { Event, TreeDataProvider } from 'vscode';
+import { EventEmitter, TreeItem, Uri } from 'vscode';
+import type { Parameter } from '../parameterService';
+import { getParameters } from '../parameterService';
 
 export class ParameterItem extends TreeItem {
   constructor(parameter: Parameter) {

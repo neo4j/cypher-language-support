@@ -1,11 +1,9 @@
-import {
-  SignatureHelp,
-  SignatureInformation,
-} from 'vscode-languageserver-types';
+import type { SignatureHelp } from 'vscode-languageserver-types';
+import { SignatureInformation } from 'vscode-languageserver-types';
 
-import { ParserRuleContext, ParseTreeWalker, TerminalNode } from 'antlr4ng';
-import {
-  CypherCmdParser as CypherParser,
+import type { ParserRuleContext, TerminalNode } from 'antlr4ng';
+import { ParseTreeWalker } from 'antlr4ng';
+import type {
   AllReduceExpressionInvalidArgumentsContext,
   AllReduceExpressionValidArgumentsContext,
   CallClauseContext,
@@ -22,13 +20,15 @@ import {
   VectorFunctionContext,
   VectorNormFunctionContext,
 } from './generated-parser/CypherCmdParser.js';
+import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdParser.js';
 
-import { Token } from 'antlr4ng';
-import { DbSchema } from './dbSchema.js';
+import type { Token } from 'antlr4ng';
+import type { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
 import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
-import { createParsingResult, ParsingResult } from './cypherLanguageService.js';
-import { Neo4jFunction, Neo4jProcedure } from './types.js';
+import type { Neo4jFunction, Neo4jProcedure } from './types.js';
+import type { ParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
+import { createParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export const emptyResult: SignatureHelp = {
   signatures: [],
@@ -49,10 +49,39 @@ type MethodContext = ParserRuleContext & {
   LCURLY?: () => TerminalNode | null;
 };
 
+/* Absolute character offsets of the method name in the document, both inclusive */
+interface MethodNameRange {
+  start: number;
+  stop: number;
+}
+
 interface ParsedMethod {
   methodName: string;
   activeParameter: number;
   methodType: MethodType;
+  methodNameRange: MethodNameRange | undefined;
+}
+
+function terminalRange(node: TerminalNode): MethodNameRange {
+  return { start: node.symbol.start, stop: node.symbol.stop };
+}
+
+function contextRange(
+  ctx: ParserRuleContext | null,
+): MethodNameRange | undefined {
+  if (!ctx || !isDefined(ctx.start) || !isDefined(ctx.stop)) {
+    return undefined;
+  }
+
+  return { start: ctx.start.start, stop: ctx.stop.stop };
+}
+
+function tokenRange(token: Token | null): MethodNameRange | undefined {
+  if (!isDefined(token)) {
+    return undefined;
+  }
+
+  return { start: token.start, stop: token.stop };
 }
 
 export function toSignatureInformation(
@@ -142,21 +171,21 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName: methodName,
         activeParameter: previousArguments.length,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.ALLREDUCE()),
       };
     }
   };
 
   enterShortestPathPattern = (ctx: ShortestPathPatternContext) => {
     if (this.shouldGiveSignatureHelp(ctx)) {
-      const methodName = ctx.SHORTEST_PATH()
-        ? ctx.SHORTEST_PATH()?.getText()
-        : ctx.ALL_SHORTEST_PATHS()?.getText();
+      const nameNode = ctx.SHORTEST_PATH() ?? ctx.ALL_SHORTEST_PATHS();
       const activeParameter = 0;
-      if (!methodName) return;
+      if (!nameNode) return;
       this.result = {
-        methodName,
+        methodName: nameNode.getText(),
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(nameNode),
       };
     }
   };
@@ -170,6 +199,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.VECTOR_NORM()),
       };
     }
   };
@@ -184,6 +214,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter: previousArguments.length,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.VECTOR_DISTANCE()),
       };
     }
   };
@@ -198,6 +229,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter: previousArguments.length,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.VECTOR()),
       };
     }
   };
@@ -212,6 +244,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.NORMALIZE()),
       };
     }
   };
@@ -245,6 +278,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.TRIM()),
       };
     }
   };
@@ -258,6 +292,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.PROPERTY_EXISTS()),
       };
     }
   };
@@ -271,6 +306,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.EXISTS()),
       };
     }
   };
@@ -286,6 +322,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: terminalRange(ctx.REDUCE()),
       };
     }
   };
@@ -315,6 +352,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName,
         activeParameter,
         methodType: MethodType.function,
+        methodNameRange: tokenRange(ctx.start),
       };
     }
   };
@@ -352,6 +390,8 @@ class SignatureHelper extends CypherCmdParserListener {
           methodName: methodName,
           activeParameter: numMethodArgs,
           methodType: MethodType.function,
+          // There's no name token here, the whole expression is the method name
+          methodNameRange: contextRange(ctx),
         };
       }
     }
@@ -368,6 +408,7 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName: methodName,
         activeParameter: previousArguments.length,
         methodType: MethodType.function,
+        methodNameRange: contextRange(ctx.functionName()),
       };
     }
   };
@@ -383,36 +424,62 @@ class SignatureHelper extends CypherCmdParserListener {
         methodName: methodName,
         activeParameter: previousArguments.length,
         methodType: MethodType.procedure,
+        methodNameRange: contextRange(ctx.procedureName()),
       };
     }
   };
+}
+
+export interface SignatureInfoOptions {
+  caretPosition?: number;
+  consoleCommandsEnabled?: boolean;
+}
+
+function onMethodName(
+  parsedMethod: ParsedMethod,
+  caretPosition: number,
+): boolean {
+  const nameRange = parsedMethod.methodNameRange;
+
+  return (
+    isDefined(nameRange) &&
+    nameRange.start <= caretPosition &&
+    caretPosition <= nameRange.stop
+  );
 }
 
 export function getMethodSignature({
   parsingResult,
   dbSchema,
   caretPosition,
+  checkCaretOnMethodName = false,
 }: {
   parsingResult: ParsingResult;
   dbSchema: DbSchema;
   caretPosition: number;
+  checkCaretOnMethodName?: boolean;
 }):
   | {
       parsedMethod: ParsedMethod;
       schemaMethod: Neo4jFunction | Neo4jProcedure | undefined;
     }
   | undefined {
-  /* We need the token immediately before the caret
+  /* For in-typing signature help we need the token immediately before the caret
 
       CALL something(
                      ^
      because in this case what gives us information on where we are
      in the procedure is not the space at the caret, but the opening (
-  */
-  const prevCaretPosition = caretPosition - 1;
 
-  if (prevCaretPosition > 0) {
-    const caret = findCaret(parsingResult, prevCaretPosition);
+     When the caret has to be on the name (in hover) we look it up directly instead,
+     otherwise the lookup of the name resolves to the token before it
+  */
+  const lookupPosition = checkCaretOnMethodName
+    ? caretPosition
+    : caretPosition - 1;
+
+  if (checkCaretOnMethodName ? lookupPosition >= 0 : lookupPosition > 0) {
+    const caret = findCaret(parsingResult, lookupPosition);
 
     if (caret) {
       const statement = caret.statement;
@@ -425,6 +492,12 @@ export function getMethodSignature({
       ParseTreeWalker.DEFAULT.walk(signatureHelper, statement.ctx);
       const parsedMethod = signatureHelper.result;
       if (!parsedMethod) {
+        return undefined;
+      }
+      if (
+        checkCaretOnMethodName &&
+        !onMethodName(parsedMethod, caretPosition)
+      ) {
         return undefined;
       }
       const cypherVersion = resolveCypherVersion(
@@ -446,20 +519,30 @@ export function getMethodSignature({
       };
     }
   }
+  return undefined;
 }
 
 export function getSignatureInfo(
+  query: string,
+  dbSchema: DbSchema,
+  options: SignatureInfoOptions = {},
+): SignatureHelp {
+  return getSignatureInfoWithParsingResult(query, dbSchema, options);
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function getSignatureInfoWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     caretPosition = query.length,
     parsingResult,
     consoleCommandsEnabled = true,
-  }: {
-    caretPosition?: number;
-    parsingResult?: ParsingResult;
-    consoleCommandsEnabled?: boolean;
-  } = {},
+  }: SignatureInfoOptions & { parsingResult?: ParsingResult } = {},
 ): SignatureHelp {
   const resolvedParsingResult = parsingResult
     ? parsingResult

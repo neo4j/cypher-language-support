@@ -1,28 +1,27 @@
 import * as path from 'path';
+import type { ExtensionContext } from 'vscode';
 import {
   commands,
-  ExtensionContext,
   RelativePattern,
   StatusBarAlignment,
   Uri,
   window,
   workspace,
 } from 'vscode';
-import {
-  LanguageClient,
+import type {
   LanguageClientOptions,
   ServerOptions,
-  TransportKind,
 } from 'vscode-languageclient/node';
+import { LanguageClient, TransportKind } from 'vscode-languageclient/node';
 import {
   disconnectDatabaseConnectionOnExtensionDeactivation,
   handleSettingConnectionsChange,
   reconnectDatabaseConnectionOnExtensionActivation,
 } from './connectionService';
-import { getSchemaPoller, setContext } from './contextService';
+import { setContext } from './contextService';
 import { sendParametersToLanguageServer } from './parameterService';
 import { registerDisposables } from './registrationService';
-import { SymbolTable } from '@neo4j-cypher/language-support';
+import type { SymbolTable } from '@neo4j-cypher/language-support';
 import { sendNotificationToLanguageClient } from './languageClientService';
 import { CONSTANTS } from './constants';
 
@@ -147,11 +146,9 @@ export async function activate(context: ExtensionContext) {
     if (doc.languageId === 'cypher') {
       const query = doc.getText();
       const uri = doc.uri.fsPath;
-      const schema = getSchemaPoller().metadata?.dbSchema;
       void sendNotificationToLanguageClient('fetchSymbolTable', {
         query,
         uri,
-        schema,
       });
     }
   });

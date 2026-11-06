@@ -1,5 +1,39 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.42
+
+### Patch Changes
+
+- 8b991d6: Support function/procedure/variable hover in codemirror
+  In re-exported language support: Hover - Return structured `hoverInfo` instead of vscode-languageserver-types `Hover`. Breaking for dependants
+- Updated dependencies [8b991d6]
+- Updated dependencies [b510128]
+- Updated dependencies [a42578c]
+- Updated dependencies [8ed272e]
+- Updated dependencies [8b991d6]
+- Updated dependencies [b510128]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.42
+  - @neo4j-cypher/language-support@2.0.0-next.39
+
+## 2.0.0-next.41
+
+### Patch Changes
+
+- 5f11dd8: Fix vite bundling bug on prism after vite v8 update
+- f0f28db: Update vite to v8 and bump playwright
+- b38430c: Update grammar and semantic analysis to 2026.09
+- Updated dependencies [d3dbe10]
+- Updated dependencies [c2d5648]
+- Updated dependencies [1897def]
+- Updated dependencies [b2432d3]
+- Updated dependencies [5f11dd8]
+- Updated dependencies [321e370]
+- Updated dependencies [2844ec4]
+- Updated dependencies [f0f28db]
+- Updated dependencies [b38430c]
+  - @neo4j-cypher/language-support@2.0.0-next.38
+  - @neo4j-cypher/react-codemirror@2.0.0-next.41
+
 ## 2.0.0-next.40
 
 ### Patch Changes

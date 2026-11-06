@@ -36,7 +36,8 @@
       "runtimeExecutable": "${execPath}",
       "args": [
         "--extensionDevelopmentPath=${workspaceRoot}/packages/vscode-extension",
-        "--extensionTestsPath=${workspaceRoot}/packages/vscode-extension/dist/tests/testRunnerDebug"
+        "--extensionTestsPath=${workspaceRoot}/packages/vscode-extension/dist/tests/testRunnerDebug",
+        "--disableExtensions"
       ],
       "outFiles": [
         "${workspaceRoot}/packages/vscode-extension/**/*.js",

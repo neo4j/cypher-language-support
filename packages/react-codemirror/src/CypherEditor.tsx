@@ -1,18 +1,8 @@
 import { insertNewline } from '@codemirror/commands';
-import {
-  Annotation,
-  Compartment,
-  EditorState,
-  Extension,
-} from '@codemirror/state';
-import {
-  EditorView,
-  KeyBinding,
-  keymap,
-  lineNumbers,
-  placeholder,
-  ViewUpdate,
-} from '@codemirror/view';
+import type { Extension } from '@codemirror/state';
+import { Annotation, Compartment, EditorState } from '@codemirror/state';
+import type { KeyBinding, ViewUpdate } from '@codemirror/view';
+import { EditorView, keymap, lineNumbers, placeholder } from '@codemirror/view';
 import {
   createInlinePanelController,
   type InlinePanelCallbacks,
@@ -37,15 +27,18 @@ import {
   replaceHistory,
   replMode as historyNavigation,
 } from './historyNavigation';
-import { cypher, CypherConfig } from './lang-cypher/langCypher';
+import type { CypherConfig } from './lang-cypher/langCypher';
+import { cypher } from './lang-cypher/langCypher';
 import { cleanupWorkers } from './lang-cypher/syntaxValidation';
 import { basicNeo4jSetup } from './neo4jSetup';
 import { getThemeExtension } from './themes';
 import { richClipboardCopier } from './richClipboardCopier';
-import { LintWorker } from '@neo4j-cypher/lint-worker';
+import type { LintWorker } from '@neo4j-cypher/lint-worker';
 import workerpool from 'workerpool';
 
-type DomEventHandlers = Parameters<typeof EditorView.domEventHandlers>[0];
+export type DomEventHandlers = Parameters<
+  typeof EditorView.domEventHandlers
+>[0];
 
 /**
  * Normalize CRLF line endings to LF, which is what CodeMirror expects.
@@ -59,6 +52,7 @@ function normalizeLineEndings(value: string): string {
   return value.replace(/\r\n/g, '\n');
 }
 
+//TODO: Fix TSDoc issues and update readme to point to api-report
 export interface CypherEditorProps {
   /**
    * The prompt to show on single line editors
@@ -197,6 +191,12 @@ export interface CypherEditorProps {
   ariaLabel?: string;
 
   /**
+   * Extra attributes to set on the editable content element, e.g. `aria-invalid` and
+   * `aria-describedby` to associate the editor with an error message rendered outside of it.
+   */
+  contentAttributes?: Record<string, string>;
+
+  /**
    * Whether keybindings for inserting indents with the Tab key should be disabled.
    *
    * true will not create keybindings for inserting indents.
@@ -323,6 +323,7 @@ const readOnlyCompartment = new Compartment();
 const placeholderCompartment = new Compartment();
 const domEventHandlerCompartment = new Compartment();
 const diffCompartment = new Compartment();
+const contentAttributesCompartment = new Compartment();
 
 const formatLineNumber =
   (prompt?: string) => (a: number, state: EditorState) => {
@@ -333,7 +334,7 @@ const formatLineNumber =
     return a.toString();
   };
 
-type CypherEditorState = {
+export type CypherEditorState = {
   editorActionsContainer: HTMLElement | null;
 };
 
@@ -341,7 +342,7 @@ const ExternalEdit = Annotation.define<boolean>();
 const WorkerURL = new URL('./lang-cypher/lintWorker.mjs', import.meta.url)
   .pathname;
 
-class CodemirrorSymbolFetcher {
+export class CodemirrorSymbolFetcher {
   constructor(languageService: CypherLanguageService) {
     this.languageService = languageService;
   }
@@ -610,6 +611,9 @@ export class CypherEditor extends Component<
               'aria-label': this.props.ariaLabel,
             })
           : [],
+        contentAttributesCompartment.of(
+          EditorView.contentAttributes.of(this.props.contentAttributes ?? {}),
+        ),
         !this.props.moveFocusOnTab
           ? EditorView.contentAttributes.of({
               'aria-description':
@@ -752,6 +756,17 @@ export class CypherEditor extends Component<
           this.props.lineNumbers
             ? lineNumbers({ formatNumber: formatLineNumber(this.props.prompt) })
             : [],
+        ),
+      });
+    }
+
+    if (
+      JSON.stringify(prevProps.contentAttributes) !==
+      JSON.stringify(this.props.contentAttributes)
+    ) {
+      this.editorView.current.dispatch({
+        effects: contentAttributesCompartment.reconfigure(
+          EditorView.contentAttributes.of(this.props.contentAttributes ?? {}),
         ),
       });
     }

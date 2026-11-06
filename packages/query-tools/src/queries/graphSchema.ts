@@ -1,6 +1,7 @@
 import { resultTransformers } from 'neo4j-driver';
-import { ExecuteQueryArgs } from '../types/sdkTypes.js';
-import { Ajv, JSONSchemaType } from 'ajv';
+import type { ExecuteQueryArgs } from '../types/sdkTypes.js';
+import type { JSONSchemaType } from 'ajv';
+import { Ajv } from 'ajv';
 
 type NeoNode = {
   labels: string[];
@@ -94,16 +95,16 @@ export function extractRelationshipsWithNamedNodes(
   if (graphSchemas.length !== 1) {
     return items;
   }
-  const graphSchema = graphSchemas[0];
+  const graphSchema = graphSchemas[0]!;
   const nodes: Record<string, string> = {};
 
   for (const node of graphSchema.nodes) {
     //Query should only return 1 label
-    nodes[node.elementId] = node.labels[0];
+    nodes[node.elementId] = node.labels[0]!;
   }
   for (const rel of graphSchema.relationships) {
-    const from = nodes[rel.startNodeElementId];
-    const to = nodes[rel.endNodeElementId];
+    const from = nodes[rel.startNodeElementId]!;
+    const to = nodes[rel.endNodeElementId]!;
     const relType = rel.type;
     items.push({ from, to, relType });
   }

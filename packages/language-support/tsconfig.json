@@ -3,10 +3,12 @@
   "include": ["src"],
   "exclude": ["**/semanticAnalysis.js"],
   "compilerOptions": {
+    "strictNullChecks": false, // TODO: Remove this once the package is fixed (default is true)
     "outDir": "dist",
     "module": "nodenext",
     "moduleResolution": "nodenext",
     "declaration": true,
+    "declarationMap": true,
     "esModuleInterop": true,
     "types": ["vitest/globals", "node"]
   }

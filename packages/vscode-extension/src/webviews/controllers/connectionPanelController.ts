@@ -1,5 +1,5 @@
-import { Connection, Scheme } from '../../connectionService';
-import { ConnectionPanelMessage } from '../connectionPanel';
+import type { Connection, Scheme } from '../../connectionService';
+import type { ConnectionPanelMessage } from '../connectionPanel';
 
 interface vscode {
   postMessage(message: ConnectionPanelMessage): void;
@@ -121,6 +121,7 @@ export function onSubmit(event: Event): boolean {
       connection: connection,
       password: password,
     });
+    return false;
   }
 }
 

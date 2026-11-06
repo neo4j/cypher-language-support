@@ -9,6 +9,9 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -21,22 +24,25 @@ jobs:
     name: Setup and build project
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - name: Check the TextMate grammar is up to date
         run: |
           (git diff-index --name-status HEAD | grep "cypher.json" && (echo "Run pnpm build and commit an up to date cypher.json file please" && exit 1)) || echo "\n\nTextMate grammar is up to date"
 
-  lint-and-format:
-    name: Run oxlint and check formatting
+  lint-format-and-api:
+    name: Run oxlint, check formatting and api report
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Check there are no linting errors
         run: pnpm lint
+
+      - name: Check TypeScript types
+        run: pnpm typecheck
 
       - name: Check formatting
         run: pnpm format:check
@@ -44,27 +50,34 @@ jobs:
       - name: Detect unused exports and dependencies
         run: pnpm knip
 
+      # Fails if the public API changed without the committed report being regenerated
+      # in any of the tracked packages. Tracked API Extractor warnings are written into the
+      # report too, so a change in the set of warnings also fails here rather than scrolling
+      # past in a build log.
+      - name: Check the API reports are up to date
+        run: pnpm -r --no-bail run check-api-report --ci
+
   unit-test:
     name: Unit tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm test
+        run: pnpm test:unit
 
-  test-polling:
-    name: Polling integration tests
+  test-integration:
+    name: Integration tests
     needs: build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: pnpm --filter @neo4j-cypher/query-tools test:polling
+        run: pnpm --filter @neo4j-cypher/query-tools test --project integration
 
   firefox-react-codemirror-e2e-test:
     name: Firefox React Codemirror E2E tests
@@ -73,7 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
@@ -85,11 +98,21 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
       - uses: ./.github/actions/codemirror-e2e-tests
         with:
           browser: chromium
+
+  demo-smoke-test:
+    name: Demo smoke test
+    needs: build
+    timeout-minutes: 30
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: ./.github/actions/setup-and-build
+      - uses: ./.github/actions/demo-smoke-test
 
   vscode-webview-test:
     name: VSCode Webview tests
@@ -97,7 +120,7 @@ jobs:
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run e2e test
@@ -105,13 +128,13 @@ jobs:
         run: xvfb-run -a pnpm --filter neo4j-for-vscode test:webviews
 
   vscode-api-and-unit-tests:
-    name: VSCode API and Unit tests
+    name: VSCode API tests
     needs: build
     timeout-minutes: 30
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: ./.github/actions/setup-and-build
 
       - name: Run tests
-        run: xvfb-run -a pnpm --filter neo4j-for-vscode test:apiAndUnit
+        run: xvfb-run -a pnpm --filter neo4j-for-vscode test:api

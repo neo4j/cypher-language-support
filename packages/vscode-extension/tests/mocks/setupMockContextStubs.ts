@@ -1,4 +1,4 @@
-import * as sinon from 'sinon';
+import type * as sinon from 'sinon';
 import * as contextService from '../../src/contextService';
 import { MockExtensionContext } from './mockExtensionContext';
 import { MockLanguageClient } from './mockLanguageClient';

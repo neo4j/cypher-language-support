@@ -1,8 +1,9 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
+import type { UserConfig } from 'vite';
 import { configDefaults } from 'vitest/config';
 
-export default defineConfig({
+const config: UserConfig & { test: unknown } = {
   plugins: [react()],
   // todo investigate if common js is back on the menu
   build: { lib: { entry: 'src/index.ts', formats: ['es'] } },
@@ -16,4 +17,6 @@ export default defineConfig({
     // Fix for error in pipeline, see https://github.com/vitest-dev/vitest/discussions/6131
     maxWorkers: 1,
   },
-});
+};
+
+export default defineConfig(config);

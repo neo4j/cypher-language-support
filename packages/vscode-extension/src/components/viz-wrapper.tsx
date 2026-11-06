@@ -1,11 +1,7 @@
-import {
-  GraphVisualization,
-  NeoNode,
-  NeoRel,
-  SegmentedControl,
-} from '@neo4j-ndl/react';
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import { GraphVisualization, SegmentedControl } from '@neo4j-ndl/react';
 import React from 'react';
-import { ResultRows } from '../webviews/queryResults/queryResultsTypes';
+import type { ResultRows } from '../webviews/queryResults/queryResultsTypes';
 
 type VizWrapperProps = {
   rows: ResultRows;
@@ -13,18 +9,18 @@ type VizWrapperProps = {
   relationships: NeoRel[];
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-function renderRow(keys: any[], row: Record<string, unknown>, index: number) {
+function renderRow(
+  keys: string[],
+  row: Record<string, unknown>,
+  index: number,
+) {
   return (
     <tr>
       <td>{index}</td>
       {keys.map((key, i) => (
         <td key={i}>
           <div className="vizWrapper-table-cell n-code">
-            {
-              // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
-              JSON.stringify(row[key], null, 2)
-            }
+            {JSON.stringify(row[key], null, 2)}
           </div>
         </td>
       ))}

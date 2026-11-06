@@ -1,9 +1,5 @@
-import {
-  Condition,
-  ConditionNode,
-  isLabelLeaf,
-  LabelOrCondition,
-} from './types.js';
+import type { Condition, ConditionNode, LabelOrCondition } from './types.js';
+import { isLabelLeaf } from './types.js';
 
 function copyLabelTree(labelTree: LabelOrCondition): LabelOrCondition {
   if (isLabelLeaf(labelTree)) {

@@ -1,5 +1,5 @@
-import { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import type { Neo4jConnectionSettings } from '@neo4j-cypher/language-server/src/types';
+import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import * as assert from 'assert';
 import EventEmitter from 'events';
 import { afterEach, beforeEach } from 'mocha';
@@ -10,9 +10,9 @@ import { CONSTANTS } from '../../../src/constants';
 import * as contextService from '../../../src/contextService';
 import * as schemaPollerEventHandlers from '../../../src/schemaPollerEventHandlers';
 import { getMockConnection } from '../../helpers';
-import { MockExtensionContext } from '../../mocks/mockExtensionContext';
-import { MockLanguageClient } from '../../mocks/mockLanguageClient';
-import { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
+import type { MockExtensionContext } from '../../mocks/mockExtensionContext';
+import type { MockLanguageClient } from '../../mocks/mockLanguageClient';
+import type { MockSchemaPoller } from '../../mocks/mockSchemaPoller';
 import { setupMockContextStubs } from '../../mocks/setupMockContextStubs';
 
 suite('Connection service spec', () => {

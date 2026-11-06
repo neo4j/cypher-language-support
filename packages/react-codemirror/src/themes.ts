@@ -1,8 +1,8 @@
-import { Extension } from '@codemirror/state';
+import type { Extension } from '@codemirror/state';
+import type { ThemeOptions } from './lang-cypher/createCypherTheme';
 import {
   createCypherTheme,
   type DiffColors,
-  ThemeOptions,
 } from './lang-cypher/createCypherTheme';
 import { tokens } from './ndlTokensCopy';
 

@@ -1,9 +1,9 @@
 {
+  "$schema": "https://www.schemastore.org/tsconfig",
   "compilerOptions": {
     "composite": true,
     "allowJs": false,
     "declaration": true,
-    "esModuleInterop": true,
     "lib": ["dom", "ESNext"],
     "module": "nodenext",
     "moduleResolution": "nodenext",
@@ -13,7 +13,13 @@
     "outDir": "dist",
     "incremental": true,
     "strict": true,
-    "strictNullChecks": false
+    "exactOptionalPropertyTypes": false, // TODO: set to true once strictNullChecks are enabled
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": false, // TODO: set to true
+    "noImplicitReturns": true,
+
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true
   },
   "exclude": ["node_modules", ".vscode-test"]
 }

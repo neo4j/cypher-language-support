@@ -1,10 +1,10 @@
-import {
-  DefaultErrorStrategy,
+import type {
   Parser,
   ParserRuleContext,
   RecognitionException,
   Token,
 } from 'antlr4ng';
+import { DefaultErrorStrategy } from 'antlr4ng';
 
 /**
  * Error strategy that tracks which parser rule contexts caught a

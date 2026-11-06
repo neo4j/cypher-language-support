@@ -1,11 +1,11 @@
+import type { CompletionItem } from 'vscode-languageserver-types';
 import {
-  CompletionItem,
   CompletionItemKind,
   InsertTextFormat,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema.js';
-import { ParsedStatement } from '../cypherLanguageService.js';
-import { isLabelLeaf, LabelOrCondition, SymbolsInfo } from '../types.js';
+import type { DbSchema } from '../dbSchema.js';
+import type { LabelOrCondition, SymbolsInfo } from '../types.js';
+import { isLabelLeaf } from '../types.js';
 import { findParent, getDirection } from '../helpers.js';
 import {
   NodePatternContext,
@@ -25,6 +25,7 @@ import {
   getRelsFromNodesSets,
   walkCNFTree,
 } from '../labelTreeWalking.js';
+import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export function getShortPathCompletions(
   lastNode: RelationshipPatternContext,
@@ -242,6 +243,7 @@ export function completeNodeLabel(
           return true;
         }
       }
+      return false;
     });
 
     // limitation: bailing out on quantifiers
@@ -323,6 +325,7 @@ export function completeRelationshipType(
             return true;
           }
         }
+        return false;
       });
 
     const thisCtx = findParent(

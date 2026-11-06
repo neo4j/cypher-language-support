@@ -11,7 +11,12 @@ export function shouldAutoCompleteYield(query: string, offset: number) {
 
 export const uniq = <T>(arr: T[]) => Array.from(new Set(arr));
 
-type BacktickVariant = 'label' | 'propertyKey' | 'relType' | 'dbName' | 'param';
+export type BacktickVariant =
+  | 'label'
+  | 'propertyKey'
+  | 'relType'
+  | 'dbName'
+  | 'param';
 
 export function backtickIfNeeded(
   e: string,

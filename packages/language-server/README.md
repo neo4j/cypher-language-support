@@ -1,6 +1,6 @@
 # Language Server
 
-A language server wrapper for the `@neo4j-cypher/language-support` package.
+A [language server](https://microsoft.github.io/language-server-protocol/) for Neo4j's query language, Cypher.
 
 ## Installation
 

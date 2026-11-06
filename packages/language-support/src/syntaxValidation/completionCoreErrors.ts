@@ -1,4 +1,4 @@
-import { Token } from 'antlr4ng';
+import type { Token } from 'antlr4ng';
 import { distance } from 'fastest-levenshtein';
 import { CodeCompletionCore } from 'antlr4-c3';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';

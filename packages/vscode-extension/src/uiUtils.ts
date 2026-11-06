@@ -1,8 +1,8 @@
-import { ConnnectionResult } from '@neo4j-cypher/query-tools';
+import type { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import { window } from 'vscode';
-import { Connection } from './connectionService';
+import type { Connection } from './connectionService';
 import { CONSTANTS } from './constants';
-import { ConnectionItem } from './treeviews/connectionTreeDataProvider';
+import type { ConnectionItem } from './treeviews/connectionTreeDataProvider';
 
 /**
  * Utility function to manage what type of message type to display to the user based on the result of a connection attempt.

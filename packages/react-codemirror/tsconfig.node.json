@@ -7,5 +7,10 @@
     "allowSyntheticDefaultImports": true,
     "noEmit": true
   },
-  "include": ["*.config.ts", "*.config.js", "vite-env.d.ts"]
+  "include": [
+    "*.config.ts",
+    "*.config.js",
+    "vite-env.d.ts",
+    "vitest.config.mts"
+  ]
 }

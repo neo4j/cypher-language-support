@@ -1,35 +1,30 @@
-import {
-  cypherDataToString,
+import type {
   CypherDataType,
   CypherProperty,
   QueryResultWithLimit,
+} from '@neo4j-cypher/query-tools';
+import {
+  cypherDataToString,
   getPropertyTypeDisplayName,
 } from '@neo4j-cypher/query-tools';
-import { NeoNode, NeoRel } from '@neo4j-ndl/react';
-import {
-  isNode,
-  isPath,
-  isRelationship,
-  Neo4jError,
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import type {
   Node as Neo4jNode,
   Record as Neo4jRecord,
   Relationship as Neo4jRelationship,
   Path,
 } from 'neo4j-driver';
+import { isNode, isPath, isRelationship, Neo4jError } from 'neo4j-driver';
 import path from 'path';
-import {
-  ColorThemeKind,
-  Uri,
-  WebviewView,
-  WebviewViewProvider,
-  window,
-} from 'vscode';
+import type { WebviewView, WebviewViewProvider } from 'vscode';
+import { ColorThemeKind, Uri, window } from 'vscode';
 import { getExtensionContext, getSchemaPoller } from '../../contextService';
 import { getNonce } from '../../getNonce';
 import { getDeserializedParams } from '../../parameterService';
 import { toNativeTypes } from '../../typeUtils';
 import { querySummary } from './querySummary';
-import { QueryResultsMessage, views } from './queryResultsTypes';
+import type { QueryResultsMessage } from './queryResultsTypes';
+import { views } from './queryResultsTypes';
 
 export class Neo4jQueryDetailsProvider implements WebviewViewProvider {
   private view: WebviewView | undefined;

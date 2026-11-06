@@ -1,23 +1,23 @@
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import {
   NodePatternContext,
   RelationshipPatternContext,
 } from '../generated-parser/CypherCmdParser.js';
-import {
-  ParsedStatement,
-  translateTokensToRange,
-} from '../cypherLanguageService.js';
 import {
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
 } from '../labelTreeRewriting.js';
 import { getNodesFromRelsSet } from '../labelTreeWalking.js';
-import { isLabelLeaf, LabelOrCondition, SymbolTable } from '../types.js';
-import { SyntaxDiagnostic } from './syntaxValidation.js';
+import type { LabelOrCondition, SymbolTable } from '../types.js';
+import { isLabelLeaf } from '../types.js';
+import type { SyntaxDiagnostic } from './syntaxValidation.js';
 import { getDirection } from '../helpers.js';
+import { renderLabelTree } from '../labelTreeRender.js';
+import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
+import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a
@@ -378,27 +378,4 @@ function labelsIn(
     tree.children.forEach((c) => labelsIn(c, acc));
   }
   return acc;
-}
-
-/** Renders a label/type tree back to its written form (e.g. `(A | !B)`). */
-function renderLabelTree(tree: LabelOrCondition): string {
-  if (isLabelLeaf(tree)) {
-    return tree.value;
-  }
-  switch (tree.condition) {
-    case 'any':
-      return '%';
-    case 'not':
-      return '!' + renderLabelTree(tree.children[0]);
-    case 'and':
-    case 'or': {
-      if (tree.children.length <= 1) {
-        return tree.children.length === 1
-          ? renderLabelTree(tree.children[0])
-          : '';
-      }
-      const separator = tree.condition === 'and' ? ' & ' : ' | ';
-      return '(' + tree.children.map(renderLabelTree).join(separator) + ')';
-    }
-  }
 }

@@ -1,5 +1,12 @@
 # neo4j-for-vscode
 
+## 1.20.0
+
+- Add hover information for variables and functions/procedures
+- Fix: Introduce signature help for certain functions with a special definition in the Cypher grammar
+- Allow definition of connections via settings.json (see readme for instruction)
+- Warn on usage of properties not existing on any node/rel
+
 ## 1.18.0
 - Add schema based linting for path segments
 - Add a welcome page

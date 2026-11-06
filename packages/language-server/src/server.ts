@@ -1,22 +1,20 @@
-import {
-  createConnection,
+import type {
   Diagnostic,
-  DidChangeConfigurationNotification,
   Hover,
   HoverParams,
   InitializeResult,
-  MarkupKind,
+} from 'vscode-languageserver/node';
+import {
+  createConnection,
+  DidChangeConfigurationNotification,
   ProposedFeatures,
-  SemanticTokensRegistrationOptions,
-  SemanticTokensRegistrationType,
   TextDocuments,
   TextDocumentSyncKind,
 } from 'vscode-languageserver/node';
 
 import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { DbSchema, SymbolTable } from '@neo4j-cypher/language-support';
 import {
-  DbSchema,
-  SymbolTable,
   syntaxHighlightingLegend,
   CypherLanguageService,
 } from '@neo4j-cypher/language-support';
@@ -26,19 +24,19 @@ import { formatDocument } from './formatting';
 import { cleanupWorkers, lintDocument, setLintWorker } from './linting';
 import { doSignatureHelp } from './signatureHelp';
 import { highlightSyntaxForDocument } from './syntaxHighlighting';
-import {
+import type {
   LintWorkerSettings,
   Neo4jConnectionSettings,
   Neo4jParameters,
   Neo4jSettings,
+  SymbolFetchingParams,
 } from './types';
 import workerpool from 'workerpool';
-import { convertDbSchema, LintWorker } from '@neo4j-cypher/lint-worker';
+import type { LintWorker } from '@neo4j-cypher/lint-worker';
+import { convertDbSchema } from '@neo4j-cypher/lint-worker';
 import { join } from 'path';
-import {
-  createParametersHoverString,
-  createReturnHoverString,
-} from './hoverInfo';
+import { doHoverInfo } from './hoverInfo.js';
+import { goToDefinition } from './goToDefinition.js';
 
 const defaultWorkerPath: string = join(__dirname, 'lintWorker.cjs');
 let workerPath = defaultWorkerPath;
@@ -52,7 +50,7 @@ class SymbolFetcher {
     | {
         query: string;
         uri: string;
-        schema: DbSchema;
+        schema: DbSchema | undefined; //undefined when disconnected
       }
     | undefined;
   private symbolTablePool = workerpool.pool(defaultWorkerPath, {
@@ -66,13 +64,18 @@ class SymbolFetcher {
     linterVersion: string | undefined,
   ) {
     this.linterVersion = linterVersion;
+    this.symbolTablePool.terminate();
     this.symbolTablePool = workerpool.pool(lintWorkerPath, {
       maxWorkers: 1,
       workerTerminateTimeout: 0,
     });
   }
 
-  public queueSymbolJob(query: string, uri: string, schema: DbSchema) {
+  public queueSymbolJob(
+    query: string,
+    uri: string,
+    schema: DbSchema | undefined,
+  ) {
     this.nextJob = { query, uri, schema };
     if (!this.processing) {
       void this.processJobQueue();
@@ -84,7 +87,7 @@ class SymbolFetcher {
     while (this.nextJob) {
       try {
         const query = this.nextJob.query;
-        const dbSchema = this.nextJob.schema;
+        const dbSchema = this.nextJob.schema ?? {};
         const docUri = this.nextJob.uri;
         this.nextJob = undefined;
         const proxyWorker =
@@ -94,9 +97,9 @@ class SymbolFetcher {
         const result = await proxyWorker.lintCypherQuery(query, fixedDbSchema);
 
         if (
-          //if this.nextJob has new doc, our result is no longer valid
           result.symbolTables &&
-          !(this.nextJob && this.nextJob.uri != docUri)
+          //if this.nextJob has new doc, our result is no longer valid
+          this.isCurrentDocument(docUri)
         ) {
           languageService.setSymbolsInfo(
             {
@@ -109,12 +112,16 @@ class SymbolFetcher {
               }),
           );
         }
-      } catch {
+      } catch (e) {
         //eslint-disable-next-line
-        console.log('Symbol table calculation failed');
+        console.log('Symbol table calculation failed: ', e);
       }
     }
     this.processing = false;
+  }
+
+  private isCurrentDocument(uri: string) {
+    return !this.nextJob || this.nextJob.uri === uri;
   }
 }
 
@@ -127,13 +134,8 @@ const neo4jSchemaPoller = new Neo4jSchemaPoller();
 const symbolFetcher = new SymbolFetcher();
 
 async function lintSingleDocument(document: TextDocument): Promise<void> {
-  symbolFetcher.queueSymbolJob(
-    document.getText(),
-    document.uri,
-    neo4jSchemaPoller?.metadata?.dbSchema,
-  );
   if (settings?.features?.linting) {
-    return lintDocument(
+    await lintDocument(
       document,
       (diagnostics: Diagnostic[]) => {
         void connection.sendDiagnostics({
@@ -181,6 +183,7 @@ connection.onInitialize(() => {
       },
       hoverProvider: true,
       documentFormattingProvider: true,
+      definitionProvider: true,
     },
   };
 
@@ -191,28 +194,21 @@ connection.onInitialized(() => {
   void connection.client.register(DidChangeConfigurationNotification.type, {
     section: 'neo4j',
   });
-
-  const registrationOptions: SemanticTokensRegistrationOptions = {
-    documentSelector: [{ language: 'cypher' }],
-    legend: syntaxHighlightingLegend,
-    range: false,
-    full: {
-      delta: false,
-    },
-  };
-  void connection.client.register(
-    SemanticTokensRegistrationType.type,
-    registrationOptions,
-  );
 });
 
 connection.onDidChangeConfiguration((params) => {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
   settings = params.settings?.neo4j as Neo4jSettings;
   relintAllDocuments();
 });
 
-documents.onDidChangeContent((change) => lintSingleDocument(change.document));
+documents.onDidChangeContent((change) => {
+  symbolFetcher.queueSymbolJob(
+    change.document.getText(),
+    change.document.uri,
+    neo4jSchemaPoller.metadata?.dbSchema ?? {},
+  );
+  return lintSingleDocument(change.document);
+});
 
 // Trigger the syntax highlighting
 connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
@@ -221,6 +217,8 @@ connection.languages.semanticTokens.on(highlightSyntaxForDocument(documents));
 connection.onSignatureHelp(doSignatureHelp(documents, neo4jSchemaPoller));
 // Trigger the auto completion
 connection.onCompletion(doAutoCompletion(documents, neo4jSchemaPoller));
+// Trigger go to definition for variables
+connection.onDefinition(goToDefinition(documents));
 
 connection.onNotification(
   'updateLintWorker',
@@ -247,46 +245,16 @@ connection.onNotification(
 );
 
 connection.onHover((params: HoverParams): Hover | null => {
-  const textDocument = documents.get(params.textDocument.uri);
-  if (textDocument === undefined) return null;
-  const position = params.position;
-  const offset = textDocument.offsetAt(position);
-  const hoverInfo = languageService.hoverInfo(textDocument.getText(), {
-    caretPosition: offset,
-    dbSchema: neo4jSchemaPoller.metadata?.dbSchema ?? {},
-  });
-
-  if (!hoverInfo) {
-    return null;
-  }
-
-  return {
-    contents: {
-      kind: MarkupKind.Markdown,
-      value: [
-        '```cypher',
-        hoverInfo.signature,
-        '```',
-        `${hoverInfo.isDeprecated ? '(_deprecated_) ' : ''}${hoverInfo.description}`,
-        '',
-        ...createParametersHoverString(hoverInfo.params),
-        '',
-        ...createReturnHoverString(hoverInfo.returnDescription),
-      ].join('\n'),
-    },
-  };
+  return doHoverInfo(documents, neo4jSchemaPoller, params);
 });
 
 connection.onNotification(
   'fetchSymbolTable',
-  (params: {
-    query: string;
-    uri: string;
-    version: number;
-    schema: DbSchema;
-  }) => {
-    neo4jSchemaPoller.events.once('schemaFetched', () =>
-      symbolFetcher.queueSymbolJob(params.query, params.uri, params.schema),
+  (params: SymbolFetchingParams) => {
+    symbolFetcher.queueSymbolJob(
+      params.query,
+      params.uri,
+      neo4jSchemaPoller.metadata?.dbSchema,
     );
   },
 );

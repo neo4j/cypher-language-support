@@ -1,26 +1,15 @@
+import type { Diagnostic } from 'vscode-languageserver-types';
 import {
-  Diagnostic,
   DiagnosticSeverity,
   DiagnosticTag,
   Position,
 } from 'vscode-languageserver-types';
 
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import { resolveCypherVersion } from '../helpers.js';
-import {
-  LabelOrRelType,
-  LabelType,
-  ParsedFunction,
-  ParsedParameter,
-  ParsedProcedure,
-  ParsedStatement,
-  ParsingResult,
-  PropertyType,
-  createParsingResult,
-} from '../cypherLanguageService.js';
-import {
+import type {
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
@@ -29,6 +18,20 @@ import {
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
 import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
+
+import type {
+  LabelOrRelType,
+  ParsedProcedure,
+  ParsedParameter,
+  PropertyType,
+  ParsedFunction,
+} from '../cypherLanguageService/parsingTypes.js';
+import { LabelType } from '../cypherLanguageService/parsingTypes.js';
+import type {
+  ParsedStatement,
+  ParsingResult,
+} from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -66,7 +69,7 @@ function detectNonDeclaredLabel(
   return undefined;
 }
 
-type GenericDiagnostic = { message: string };
+export type GenericDiagnostic = { message: string };
 
 export function isNotParamError<T extends GenericDiagnostic>(
   diagnostic: T,
@@ -154,6 +157,8 @@ function detectNonDeclaredFunction(
     }
     return generateFunctionNotFoundError(parsedFunction);
   }
+
+  return undefined;
 }
 
 function functionExists(
@@ -371,6 +376,7 @@ type FixSymbolTablePositionArgs = {
   parseResult: ParsedStatement;
 };
 
+/** moves offsets/positions to fit the whole query after per-statement linting */
 function fixOffsets({
   semanticDiagnostics,
   parseResult,
@@ -402,6 +408,7 @@ function fixOffsets({
   });
 }
 
+/** moves offsets/positions to fit the whole query after per-statement symbol table retrieval */
 function fixSymbolTableOffsets({
   symbolTable,
   parseResult,
@@ -420,16 +427,22 @@ function fixSymbolTableOffsets({
   });
 }
 
-export function lintCypherQuery(
+export interface LintCypherQueryOptions {
+  consoleCommandsEnabled?: boolean;
+}
+
+/**
+ * Variant that accepts an already-computed parse, so CypherLanguageService can reuse
+ * its cache. Not re-exported from index.ts: ParsingResult exposes the generated ANTLR
+ * parser, which would drag the whole parser into the public API.
+ */
+export function lintCypherQueryWithParsingResult(
   query: string,
   dbSchema: DbSchema,
   {
     consoleCommandsEnabled = true,
     parsingResult,
-  }: {
-    consoleCommandsEnabled?: boolean;
-    parsingResult?: ParsingResult;
-  } = {},
+  }: LintCypherQueryOptions & { parsingResult?: ParsingResult } = {},
 ): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
   if (query.length > 0) {
     const resolvedParsingResult =
@@ -667,4 +680,12 @@ function errorOnUndeclaredProcedures(
   }
 
   return errors;
+}
+
+export function lintCypherQuery(
+  query: string,
+  dbSchema: DbSchema,
+  options: LintCypherQueryOptions = {},
+): { diagnostics: SyntaxDiagnostic[]; symbolTables: SymbolTable[] } {
+  return lintCypherQueryWithParsingResult(query, dbSchema, options);
 }

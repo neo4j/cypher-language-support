@@ -1,10 +1,6 @@
-import { DbSchema } from './dbSchema.js';
-import {
-  ConditionNode,
-  isLabelLeaf,
-  LabelLeaf,
-  LabelOrCondition,
-} from './types.js';
+import type { DbSchema } from './dbSchema.js';
+import type { ConditionNode, LabelLeaf, LabelOrCondition } from './types.js';
+import { isLabelLeaf } from './types.js';
 
 export function walkCNFTree(
   incomingLabels: Map<string, Set<string>>,

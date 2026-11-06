@@ -7,7 +7,7 @@ import type {
   Relationship,
 } from 'neo4j-driver';
 import { isNode, isPath, isRelationship } from 'neo4j-driver';
-import { CypherProperty } from '../types/cypher-data-types.js';
+import type { CypherProperty } from '../types/cypher-data-types.js';
 
 export type Properties = RecordShape<string, CypherProperty>;
 
@@ -32,9 +32,8 @@ export type DeduplicatedNodesAndRels = {
  * nested objects.
  *
  * @param records - Array of Neo4j records to process
- * @param options - Configuration options for extraction
- * @param options.nodeLimit - Maximum number of unique nodes to extract (optional)
- * @param options.keepDanglingRels - Whether to keep relationships whose start/end nodes are missing (default: false)
+ * @param nodeLimit - Configuration option: Maximum number of unique nodes to extract (optional)
+ * @param keepDanglingRels - Configuration option:  Whether to keep relationships whose start/end nodes are missing (default: false)
  *
  * @returns The {@link DeduplicatedNodesAndRels} containing unique nodes and relationships
  */

@@ -1,15 +1,8 @@
-import { ConnnectionResult } from '@neo4j-cypher/query-tools';
+import type { ConnnectionResult } from '@neo4j-cypher/query-tools';
 import path from 'path';
-import {
-  commands,
-  Disposable,
-  Uri,
-  ViewColumn,
-  Webview,
-  WebviewPanel,
-  window,
-} from 'vscode';
-import { Connection } from '../connectionService';
+import type { Disposable, Webview, WebviewPanel } from 'vscode';
+import { commands, Uri, ViewColumn, window } from 'vscode';
+import type { Connection } from '../connectionService';
 import { CONSTANTS } from '../constants';
 import { getNonce } from '../getNonce';
 

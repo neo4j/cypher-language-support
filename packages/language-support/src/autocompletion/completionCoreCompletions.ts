@@ -2,7 +2,7 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../dbSchema.js';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
@@ -11,10 +11,13 @@ import {
   NodePatternContext,
   PatternElementContext,
   RelationshipPatternContext,
+  ShowConstraintsEndContext,
+  YieldClauseContext,
 } from '../generated-parser/CypherCmdParser.js';
 import {
   findParent,
   findPreviousNonSpace,
+  getMethodName,
   resolveCypherVersion,
   rulesDefiningVariables,
 } from '../helpers.js';
@@ -25,20 +28,18 @@ import {
   tokenNames,
 } from '../lexerSymbols.js';
 
-import { getMethodName, ParsedStatement } from '../cypherLanguageService.js';
-
-import type { ICandidateRule } from 'antlr4-c3';
-import { CandidatesCollection, CodeCompletionCore } from 'antlr4-c3';
-import { Token } from 'antlr4ng';
-import {
+import type { ICandidateRule, CandidatesCollection } from 'antlr4-c3';
+import { CodeCompletionCore } from 'antlr4-c3';
+import type { Token } from 'antlr4ng';
+import type {
   CompletionItem,
   CypherVersion,
-  cypherVersionNumbers,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
   SymbolsInfo,
 } from '../types.js';
+import { cypherVersionNumbers } from '../types.js';
 import {
   completeRelationshipType,
   allLabelCompletions,
@@ -48,6 +49,7 @@ import {
   allReltypeCompletions,
 } from './schemaBasedCompletions.js';
 import { backtickIfNeeded, uniq } from './autocompletionHelpers.js';
+import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 const versionCompletions = () =>
   cypherVersionNumbers.map((v) => {
@@ -168,9 +170,7 @@ const namespacedCompletion = (
       .map((fnName) => fnName.split('.')[0]);
 
     return uniq(topLevelPrefixes)
-      .map(
-        (label) => ({ label, kind, detail: `(namespace)` }) as CompletionItem,
-      )
+      .map((label): CompletionItem => ({ label, kind, detail: `(namespace)` }))
       .concat(
         fullNames.map((label) => {
           const result = getMethodCompletionItem(
@@ -344,6 +344,7 @@ const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
 
   if (
     [
+      CypherParser.RULE_stringOrParameterExpression,
       CypherParser.RULE_stringOrParameter,
       CypherParser.RULE_commandNameExpression,
       CypherParser.RULE_symbolicNameOrStringParameterList,
@@ -507,6 +508,7 @@ export function completionCoreCompletion(
     CypherParser.RULE_cypher,
     CypherParser.RULE_labelType,
     CypherParser.RULE_relType,
+    CypherParser.RULE_yieldItem,
     // Either enable the helper rules for lexer clashes,
     // or collect all console commands like below with symbolicNameString
     ...(consoleCommandsEnabled
@@ -772,6 +774,30 @@ export function completionCoreCompletion(
 
       if (ruleNumber === CypherParser.RULE_autoCompletionRule) {
         return [{ label: 'auto', kind: CompletionItemKind.Event }];
+      }
+
+      if (ruleNumber === CypherParser.RULE_yieldItem) {
+        const showConstraintsEndContext = findParent(
+          parsingResult.stopNode.parent,
+          (x) => x instanceof ShowConstraintsEndContext,
+        );
+        const yieldClauseContext = findParent(
+          parsingResult.stopNode.parent,
+          (x) => x instanceof YieldClauseContext,
+        );
+        if (
+          showConstraintsEndContext instanceof ShowConstraintsEndContext &&
+          yieldClauseContext instanceof YieldClauseContext
+        ) {
+          const existingYieldItems = new Set(
+            yieldClauseContext.yieldItem().map((a) => a.getText()),
+          );
+          return dbSchema.constraintInfo.fieldNames
+            .map((fieldName) => {
+              return { label: fieldName, kind: CompletionItemKind.Variable };
+            })
+            .filter((a) => !existingYieldItems.has(a.label));
+        }
       }
 
       return [];

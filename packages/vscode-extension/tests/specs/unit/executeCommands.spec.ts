@@ -1,7 +1,8 @@
 import { FRIENDLY_ERROR_MESSAGES } from '@neo4j-cypher/query-tools';
 import { after, afterEach, beforeEach } from 'mocha';
 import * as sinon from 'sinon';
-import { commands, MessageOptions, window } from 'vscode';
+import type { MessageOptions } from 'vscode';
+import { commands, window } from 'vscode';
 import { CONSTANTS } from '../../../src/constants';
 import { getNeo4j2025Configuration } from '../../helpers';
 import {

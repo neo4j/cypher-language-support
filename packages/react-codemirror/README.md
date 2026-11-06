@@ -1,6 +1,6 @@
-# React Codemirror
+# Neo4j's Cypher React Codemirror
 
-This package can be built with `pnpm build` and then published to npm with `pnpm publish`.
+A React [codemirror](https://codemirror.net/) wrapper adding Cypher language support.
 
 ## Usage
 
@@ -20,11 +20,9 @@ export function CodeEditor() {
 }
 ```
 
+All properties exposed in CypherEditor can be found [here](./src/CypherEditor.tsx) under CypherEditorProps.
+
 For a full example, see the [react-codemirror-playground](https://github.com/neo4j/cypher-language-support/tree/main/packages/react-codemirror-playground).
-
-## Usage without react
-
-Currently we only support using the codemirror editor via the react wrapper, but we plan to release the codemirror extensions separately as well.
 
 ## Learning codemirror
 

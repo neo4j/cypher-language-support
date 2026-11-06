@@ -1,21 +1,16 @@
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-
 import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
-import { DbSchema, Registry } from '../dbSchema.js';
-import {
+import type { DbSchema, Registry } from '../dbSchema.js';
+import type {
   CypherVersion,
-  isCondition,
   LabelOrCondition,
   Neo4jFunction,
   Neo4jProcedure,
   SymbolTable,
 } from '../types.js';
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+import { isCondition } from '../types.js';
 // @ts-ignore
 import { analyzeQuery, updateSignatureResolver } from './semanticAnalysis.js';
-import { SyntaxDiagnostic } from './syntaxValidation.js';
+import type { SyntaxDiagnostic } from './syntaxValidation.js';
 
 export interface SemanticAnalysisResult {
   errors: SyntaxDiagnostic[];
@@ -29,10 +24,10 @@ interface ElementPosition {
   column: number;
 }
 
-interface SemanticAnalysisElement {
+export interface SemanticAnalysisElement {
   message: string;
-  startPosition: ElementPosition;
-  endPosition: ElementPosition;
+  startPosition: ElementPosition | null;
+  endPosition: ElementPosition | null;
 }
 
 const previousResolvers: {
@@ -42,25 +37,43 @@ const previousResolvers: {
   };
 } = {};
 
-function copySettingSeverity(
-  elements: SemanticAnalysisElement[],
-  severity: DiagnosticSeverity,
-): SyntaxDiagnostic[] {
-  return elements.map(({ message, startPosition, endPosition }) => ({
-    severity: severity,
-    message,
-    range: {
-      start: Position.create(startPosition.line, startPosition.column),
-      end: Position.create(endPosition.line, endPosition.column),
-    },
-    offsets: {
-      start: startPosition.offset,
-      end: endPosition.offset,
-    },
-  }));
+function statementEndPosition(statement: string): ElementPosition {
+  const lines = statement.split('\n');
+  return {
+    offset: statement.length,
+    line: lines.length - 1,
+    column: lines[lines.length - 1].length,
+  };
 }
 
-function copySymbolTable(symbolTable: SymbolTable): SymbolTable {
+export function convertTranspiledDiagnosticToSyntaxDiagnostic(
+  elements: SemanticAnalysisElement[],
+  severity: DiagnosticSeverity,
+  statement: string,
+): SyntaxDiagnostic[] {
+  return elements.map(({ message, startPosition, endPosition }) => {
+    // A single missing position collapses the span to the other one; only mark the whole statement if both are missing
+    const start = startPosition ??
+      endPosition ?? { offset: 0, line: 0, column: 0 };
+    const end = endPosition ?? startPosition ?? statementEndPosition(statement);
+    return {
+      severity: severity,
+      message,
+      range: {
+        start: Position.create(start.line, start.column),
+        end: Position.create(end.line, end.column),
+      },
+      offsets: {
+        start: start.offset,
+        end: end.offset,
+      },
+    };
+  });
+}
+
+function convertTranspiledSymbolTableToJSObject(
+  symbolTable: SymbolTable,
+): SymbolTable {
   return symbolTable.map(
     ({ variable, definitionPosition, types, references, labels }) => {
       return {
@@ -129,7 +142,7 @@ function updateResolverForVersion(
 }
 
 export function wrappedSemanticAnalysis(
-  query: string,
+  statement: string,
   dbSchema: DbSchema,
   parsedVersion?: CypherVersion,
 ): SemanticAnalysisResult {
@@ -137,19 +150,24 @@ export function wrappedSemanticAnalysis(
     const defaultVersion = dbSchema?.defaultLanguage;
     const cypherVersion = parsedVersion ?? defaultVersion ?? 'CYPHER 5';
     updateResolverForVersion(dbSchema, cypherVersion);
-    const semanticErrorsResult = analyzeQuery(query, cypherVersion);
+    const semanticErrorsResult = analyzeQuery(statement, cypherVersion);
     const errors: SemanticAnalysisElement[] = semanticErrorsResult.errors;
     const notifications: SemanticAnalysisElement[] =
       semanticErrorsResult.notifications;
     const symbolTable: SymbolTable = semanticErrorsResult.symbolTable;
 
     return {
-      errors: copySettingSeverity(errors, DiagnosticSeverity.Error),
-      notifications: copySettingSeverity(
+      errors: convertTranspiledDiagnosticToSyntaxDiagnostic(
+        errors,
+        DiagnosticSeverity.Error,
+        statement,
+      ),
+      notifications: convertTranspiledDiagnosticToSyntaxDiagnostic(
         notifications,
         DiagnosticSeverity.Warning,
+        statement,
       ),
-      symbolTable: copySymbolTable(symbolTable),
+      symbolTable: convertTranspiledSymbolTableToJSObject(symbolTable),
     };
   } catch {
     /* Ignores exceptions if they happen calling the semantic analysis. Should not happen but this is just defensive in case it did */

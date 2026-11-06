@@ -26,7 +26,7 @@ export interface ParsedCypherToken {
   bracketInfo?: BracketInfo;
 }
 
-interface BracketInfo {
+export interface BracketInfo {
   bracketType: BracketType;
   bracketLevel: number;
 }

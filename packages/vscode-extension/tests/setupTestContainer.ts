@@ -1,4 +1,5 @@
-import { Neo4jContainer, StartedNeo4jContainer } from '@testcontainers/neo4j';
+import type { StartedNeo4jContainer } from '@testcontainers/neo4j';
+import { Neo4jContainer } from '@testcontainers/neo4j';
 
 type ContainerOpts = {
   containerName?: string;
@@ -9,7 +10,7 @@ type ContainerOpts = {
 export async function createAndStartTestContainer(
   opts: ContainerOpts = {
     containerName: 'vscode-integration-tests',
-    neo4jVersion: 'neo4j:5-enterprise',
+    neo4jVersion: 'neo4j:enterprise',
   },
 ): Promise<StartedNeo4jContainer> {
   const password = 'password';

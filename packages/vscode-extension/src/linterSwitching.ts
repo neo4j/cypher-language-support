@@ -1,7 +1,7 @@
+import type { NpmRelease } from '@neo4j-cypher/lint-worker';
 import {
   getTaggedRegistryVersions,
   linterFileToServerVersion,
-  NpmRelease,
   serverVersionToLinter,
 } from '@neo4j-cypher/lint-worker';
 import { getSchemaPoller } from './contextService';

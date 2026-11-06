@@ -1,11 +1,11 @@
-import {
+import type {
   SignatureHelp,
   SignatureHelpParams,
   TextDocuments,
 } from 'vscode-languageserver/node';
 
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 import { languageService } from './server';
 
 const emptyResult: SignatureHelp = {

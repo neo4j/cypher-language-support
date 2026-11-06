@@ -22,7 +22,7 @@ import {
   isInt8Array,
 } from '../types/cypher-data-types.js';
 
-type CypherPropertyName =
+export type CypherPropertyName =
   | 'Float'
   | 'null'
   | 'String'

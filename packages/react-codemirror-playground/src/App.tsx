@@ -1,4 +1,5 @@
-import { DbSchema, testData } from '@neo4j-cypher/language-support';
+import type { DbSchema } from '@neo4j-cypher/language-support';
+import { testData } from '@neo4j-cypher/language-support';
 import {
   CypherEditor,
   type DiffProps,
@@ -7,8 +8,8 @@ import {
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { Tree } from 'react-d3-tree';
+import { getDebugTree } from '@neo4j-cypher/language-support';
 import { TokenTable } from './TokenTable';
-import { getDebugTree } from './treeUtil';
 
 function InlinePanelDemo({ onClose }: { onClose: () => void }) {
   const [text, setText] = useState('');
@@ -280,8 +281,8 @@ export function App() {
                 className="text-blue-500 cursor-pointer hover:text-blue-700"
                 title={
                   window.navigator.userAgent.includes('Mac')
-                    ? 'Shift-Option-F'
-                    : 'Ctrl-Shift-I'
+                    ? 'Alt-Shift-F'
+                    : 'Ctrl-Shift-F'
                 }
               >
                 Format Query
@@ -372,7 +373,7 @@ export function App() {
                     setSchema(schema);
                     setSchemaError(null);
                   } catch (e) {
-                    setSchemaError(String(e as Error));
+                    setSchemaError(String(e));
                   }
                 }}
               />

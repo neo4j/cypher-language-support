@@ -9,6 +9,7 @@
     "type": "git",
     "url": "git+https://github.com/neo4j/cypher-language-support.git"
   },
+  "type": "module",
   "scripts": {
     "prepare": "husky install",
     "build": "pnpm --recursive build",
@@ -19,18 +20,20 @@
     "snapshot-release": "pnpm changeset pre exit && pnpm changeset version --snapshot canary && pnpm install --frozen-lockfile=false && pnpm build && pnpm publish -r --tag canary --no-git-checks --access=public",
     "deep-clean": "rimraf -g **/{node_modules,dist,tsconfig*.tsbuildinfo} && pnpm clean",
     "clean": "pnpm --recursive --parallel clean",
-    "test": "pnpm --recursive --parallel test",
+    "test": "vitest run",
+    "test:unit": "vitest run --project '*(unit)'",
+    "test:integration": "vitest run --project '*(integration)'",
     "test:e2e": "pnpm --recursive test:e2e",
-    "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/formatting/verification/verificationCheck.ts",
+    "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/verification/formattingVerificationCheck.ts",
     "lint": "oxlint --max-warnings 0",
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",
     "format:check": "oxfmt --check",
-    "benchmark": "pnpm --recursive benchmark --concurrency=1",
     "typecheck": "tsc -b --noEmit --force"
   },
   "devDependencies": {
     "@changesets/cli": "^2.28.1",
+    "@microsoft/api-extractor": "7.59.0",
     "@types/node": "^24.10.1",
     "antlr-ng": "^1.0.10",
     "concurrently": "^8.2.1",
@@ -47,10 +50,10 @@
     "ts-node": "10.9.1",
     "tsx": "^4.19.4",
     "typescript": "5.8.3",
-    "vitest": "^4.1.11"
+    "vitest": "^5.0.1"
   },
   "engines": {
-    "node": ">=24.11.1",
+    "node": ">=24.22.2",
     "vscode": "^1.22.0"
   },
   "packageManager": "pnpm@10.21.0+sha512.da3337267e400fdd3d479a6c68079ac6db01d8ca4f67572083e722775a796788a7a9956613749e000fac20d424b594f7a791a5f4e2e13581c5ef947f26968a40"

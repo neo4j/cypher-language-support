@@ -1,11 +1,5 @@
-import {
-  Disposable,
-  Uri,
-  ViewColumn,
-  Webview,
-  WebviewPanel,
-  window,
-} from 'vscode';
+import type { Disposable, Webview, WebviewPanel } from 'vscode';
+import { Uri, ViewColumn, window } from 'vscode';
 import { CONSTANTS } from '../constants';
 import { getExtensionContext } from '../contextService';
 import { getNonce } from '../getNonce';

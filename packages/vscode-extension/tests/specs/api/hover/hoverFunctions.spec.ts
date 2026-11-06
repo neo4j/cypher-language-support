@@ -5,17 +5,15 @@ import { eventually, newUntitledFileWithContent } from '../../../helpers';
 
 suite('Hover spec functions', () => {
   const absFunction = testData.mockSchema.functions['CYPHER 5']['abs'];
-  const expectedHoverInfo = [
-    '```cypher',
-    absFunction.signature,
-    '```',
-    absFunction.description,
-    '',
-    '**Parameters**',
-    `- \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].name} :: ${absFunction.argumentDescription[0].type}`,
-    '',
-    `**Returns:** \`${absFunction.returnDescription}\``,
-  ].join('\n');
+  const expectedHoverInfo = `\`\`\`cypher
+${absFunction.signature}
+\`\`\`
+${absFunction.description}
+
+**Parameters**
+- \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].name} :: ${absFunction.argumentDescription[0].type}
+
+**Returns:** \`${absFunction.returnDescription}\``;
 
   test('Hover works for functions', async () => {
     const document = await newUntitledFileWithContent('RETURN abs(5)');

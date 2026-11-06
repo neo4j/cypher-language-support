@@ -1,20 +1,19 @@
-import {
-  clampUnsafePositions,
-  isNotParamError,
+import type {
   SymbolTable,
   SyntaxDiagnostic,
 } from '@neo4j-cypher/language-support';
-import { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
+import {
+  clampUnsafePositions,
+  isNotParamError,
+} from '@neo4j-cypher/language-support';
+import type { Neo4jSchemaPoller } from '@neo4j-cypher/query-tools';
 import debounce from 'lodash.debounce';
 import { join } from 'path';
-import { Diagnostic } from 'vscode-languageserver';
-import { TextDocument } from 'vscode-languageserver-textdocument';
+import type { Diagnostic } from 'vscode-languageserver';
+import type { TextDocument } from 'vscode-languageserver-textdocument';
 import workerpool from 'workerpool';
-import {
-  convertDbSchema,
-  LinterTask,
-  LintWorker,
-} from '@neo4j-cypher/lint-worker';
+import type { LinterTask, LintWorker } from '@neo4j-cypher/lint-worker';
+import { convertDbSchema } from '@neo4j-cypher/lint-worker';
 import { languageService } from './server';
 
 const defaultWorkerPath = join(__dirname, 'lintWorker.cjs');
@@ -44,7 +43,7 @@ async function rawLintDocument(
   sendDiagnostics: (diagnostics: Diagnostic[]) => void,
   notifySymbolTableDone: (symbolTable: SymbolTable[]) => Promise<void>,
   neo4j: Neo4jSchemaPoller,
-) {
+): Promise<void> {
   const query = document.getText();
   if (query.length === 0) {
     sendDiagnostics([]);
@@ -100,14 +99,12 @@ function filterLintResult(
     : clampUnsafePositions(diagnostics, document);
 }
 
-export const lintDocument: typeof rawLintDocument = debounce(
-  rawLintDocument,
-  600,
-  {
-    leading: false,
-    trailing: true,
-  },
-);
+export const lintDocument: (
+  ...args: Parameters<typeof rawLintDocument>
+) => Promise<void> | undefined = debounce(rawLintDocument, 600, {
+  leading: false,
+  trailing: true,
+});
 
 export const cleanupWorkers = async () => {
   await pool.terminate();

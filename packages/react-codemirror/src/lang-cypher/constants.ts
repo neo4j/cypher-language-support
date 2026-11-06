@@ -1,8 +1,9 @@
 import { languageDataProp } from '@codemirror/language';
 import type { Facet } from '@codemirror/state';
 import { NodeSet, NodeType } from '@lezer/common';
-import { styleTags, Tag, tags } from '@lezer/highlight';
-import { CypherTokenType } from '@neo4j-cypher/language-support';
+import type { Tag } from '@lezer/highlight';
+import { styleTags, tags } from '@lezer/highlight';
+import type { CypherTokenType } from '@neo4j-cypher/language-support';
 
 export const cypherTokenTypeToNode = (facet: Facet<unknown>) => ({
   topNode: NodeType.define({

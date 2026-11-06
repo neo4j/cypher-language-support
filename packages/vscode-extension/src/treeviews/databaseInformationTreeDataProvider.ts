@@ -1,10 +1,5 @@
-import {
-  Event,
-  EventEmitter,
-  TreeDataProvider,
-  TreeItem,
-  TreeItemCollapsibleState,
-} from 'vscode';
+import type { Event, TreeDataProvider } from 'vscode';
+import { EventEmitter, TreeItem, TreeItemCollapsibleState } from 'vscode';
 import {
   getActiveConnection,
   getDbSchemaInformation,
