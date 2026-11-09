@@ -983,6 +983,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.alterCurrentGraphType());
     this._visit(ctx.alterDatabase());
     this._visit(ctx.alterUser());
+    this._visit(ctx.alterUsers());
     this._visit(ctx.alterServer());
     this._visit(ctx.alterAuthRule());
   };
@@ -1038,6 +1039,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.variable());
     this.avoidSpaceBetween();
     this._visit(ctx.labelType());
+    this._visit(ctx.implies());
     this._visit(ctx.RPAREN());
   };
 
@@ -1449,21 +1451,6 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visitReturnBodyReturnItems(ctx.returnBody());
     this.endGroup(returnGrp);
     this._visitReturnBodyNotItems(ctx.returnBody());
-  };
-
-  visitReturnBody = (ctx: ReturnBodyContext) => {
-    if (ctx.DISTINCT()) {
-      this.avoidBreakBetween();
-      this._visit(ctx.DISTINCT());
-    }
-    this._visit(ctx.returnItems());
-    if (ctx.orderBy() || ctx.skip()) {
-      this.breakLine();
-      this._visit(ctx.orderBy());
-      this.breakLine();
-      this._visit(ctx.skip());
-    }
-    this._visit(ctx.limit());
   };
 
   visitFilterClause = (ctx: FilterClauseContext) => {

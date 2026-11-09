@@ -503,6 +503,21 @@ RETURN n, s`;
     verifyFormatting(query, expected);
   });
 
+  test('SEARCH clause with all index specification parts', () => {
+    const query = `MATCH (n) SEARCH n IN (FULLTEXT INDEX myIndex FOR "some text" WITH ANALYZER "english" WHERE n.active = true SKIP 5 LIMIT 10) SCORE AS s RETURN n, s`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    FULLTEXT INDEX myIndex
+    FOR "some text"
+    WITH ANALYZER "english"
+    WHERE n.active = true
+    SKIP 5
+    LIMIT 10
+  ) SCORE AS s
+RETURN n, s`;
+    verifyFormatting(query, expected);
+  });
+
   test('standard function invocation function formatting', () => {
     const query = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
     const expected = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
