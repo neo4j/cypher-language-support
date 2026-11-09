@@ -2,8 +2,8 @@ import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import type { ParsedStatement } from '../../cypherLanguageService/parserWrapper/parserWrapper.js';
 import type { DbSchema } from '../../dbSchema.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation.js';
-import { generateSyntaxDiagnostic } from './utils/generate-syntax-diagnostic.js';
-import { isNodeOrRelationshipProperty } from './utils/is-node-or-relationship-property.js';
+import { generateSyntaxDiagnostic } from './utils/generateSyntaxDiagnostic.js';
+import { isNodeOrRelationshipProperty } from './utils/isNodeOrRelationshipProperty.js';
 import type { SymbolTable } from '../../types.js';
 
 export function warnOnUndeclaredProperties(

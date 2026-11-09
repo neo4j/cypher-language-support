@@ -5,8 +5,8 @@ import type { DbSchema } from '../../dbSchema.js';
 import { resolveCypherVersion } from '../../helpers.js';
 import type { Neo4jFunction, Neo4jProcedure } from '../../types.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation.js';
-import { generateSyntaxDiagnostic } from './utils/generate-syntax-diagnostic.js';
-import { functionExists } from './utils/function-exists.js';
+import { generateSyntaxDiagnostic } from './utils/generateSyntaxDiagnostic.js';
+import { functionExists } from './utils/functionExists.js';
 
 export function errorOnUndeclaredFunctions(
   parsingResult: ParsedStatement,

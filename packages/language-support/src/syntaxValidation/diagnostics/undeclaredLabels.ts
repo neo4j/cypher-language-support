@@ -6,7 +6,7 @@ import {
 } from '../../cypherLanguageService/parsingTypes.js';
 import type { DbSchema } from '../../dbSchema.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation.js';
-import { generateSyntaxDiagnostic } from './utils/generate-syntax-diagnostic.js';
+import { generateSyntaxDiagnostic } from './utils/generateSyntaxDiagnostic.js';
 
 export function warnOnUndeclaredLabels(
   parsingResult: ParsedStatement,

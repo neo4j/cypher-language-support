@@ -16,14 +16,14 @@ import type {
   ParsingResult,
 } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
-import { errorOnUndeclaredParameters } from './diagnostics/undeclared-parameters.js';
-import { warnOnUndeclaredProperties } from './diagnostics/undeclared-properties.js';
-import { errorOnUndeclaredFunctions } from './diagnostics/undeclared-functions.js';
-import { functionExists } from './diagnostics/utils/function-exists.js';
-import { warningOnDeprecatedProcedure } from './diagnostics/deprecated-procedure.js';
-import { warningOnDeprecatedFunction } from './diagnostics/deprecated-function.js';
-import { warnOnUndeclaredLabels } from './diagnostics/undeclared-labels.js';
-import { generateSyntaxDiagnostic } from './diagnostics/utils/generate-syntax-diagnostic.js';
+import { errorOnUndeclaredParameters } from './diagnostics/undeclaredParameters.js';
+import { warnOnUndeclaredProperties } from './diagnostics/undeclaredProperties.js';
+import { errorOnUndeclaredFunctions } from './diagnostics/undeclaredFunctions.js';
+import { functionExists } from './diagnostics/utils/functionExists.js';
+import { warningOnDeprecatedProcedure } from './diagnostics/deprecatedProcedure.js';
+import { warningOnDeprecatedFunction } from './diagnostics/deprecatedFunction.js';
+import { warnOnUndeclaredLabels } from './diagnostics/undeclaredLabels.js';
+import { generateSyntaxDiagnostic } from './diagnostics/utils/generateSyntaxDiagnostic.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };

@@ -4,7 +4,7 @@ import type { ParsedProcedure } from '../../cypherLanguageService/parsingTypes.j
 import type { DbSchema } from '../../dbSchema.js';
 import { resolveCypherVersion } from '../../helpers.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation.js';
-import { generateSyntaxDiagnostic } from './utils/generate-syntax-diagnostic.js';
+import { generateSyntaxDiagnostic } from './utils/generateSyntaxDiagnostic.js';
 
 export function warningOnDeprecatedProcedure(
   parsingResult: ParsedStatement,
