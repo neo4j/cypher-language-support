@@ -1,73 +1,33 @@
 import type { Diagnostic } from 'vscode-languageserver-types';
-import {
-  DiagnosticSeverity,
-  DiagnosticTag,
-  Position,
-} from 'vscode-languageserver-types';
+import { DiagnosticSeverity, Position } from 'vscode-languageserver-types';
 
 import type { TextDocument } from 'vscode-languageserver-textdocument';
 
 import type { DbSchema } from '../dbSchema.js';
 import { resolveCypherVersion } from '../helpers.js';
-import type {
-  Neo4jFunction,
-  Neo4jProcedure,
-  SymbolTable,
-  Symbol,
-} from '../types.js';
+import type { SymbolTable } from '../types.js';
 import { wrappedSemanticAnalysis } from './semanticAnalysisWrapper.js';
-import { warnOnSchemaPathViolations } from './schemaBasedValidation.js';
+import { warnOnSchemaPathViolations } from './diagnostics/schemaBasedValidation.js';
 import { _internalFeatureFlags } from '../featureFlags.js';
 
-import type {
-  LabelOrRelType,
-  ParsedProcedure,
-  ParsedParameter,
-  PropertyType,
-  ParsedFunction,
-} from '../cypherLanguageService/parsingTypes.js';
-import { LabelType } from '../cypherLanguageService/parsingTypes.js';
+import type { ParsedProcedure } from '../cypherLanguageService/parsingTypes.js';
 import type {
   ParsedStatement,
   ParsingResult,
 } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { errorOnUndeclaredParameters } from './diagnostics/undeclaredParameters.js';
+import { warnOnUndeclaredProperties } from './diagnostics/undeclaredProperties.js';
+import { errorOnUndeclaredFunctions } from './diagnostics/undeclaredFunctions.js';
+import { functionExists } from './diagnostics/utils/functionExists.js';
+import { warningOnDeprecatedProcedure } from './diagnostics/deprecatedProcedure.js';
+import { warningOnDeprecatedFunction } from './diagnostics/deprecatedFunction.js';
+import { warnOnUndeclaredLabels } from './diagnostics/undeclaredLabels.js';
+import { generateSyntaxDiagnostic } from './diagnostics/utils/generateSyntaxDiagnostic.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
 };
-
-function detectNonDeclaredLabel(
-  labelOrRelType: LabelOrRelType,
-  dbLabels: Set<string>,
-  dbRelationshipTypes: Set<string>,
-): SyntaxDiagnostic | undefined {
-  const labelName = labelOrRelType.labelText;
-  const normalizedLabelName = labelName.replace(/^`|`$/g, '');
-  const notInDatabase =
-    (labelOrRelType.labelType === LabelType.nodeLabelType &&
-      !dbLabels.has(normalizedLabelName)) ||
-    (labelOrRelType.labelType === LabelType.relLabelType &&
-      !dbRelationshipTypes.has(normalizedLabelName)) ||
-    (!dbLabels.has(normalizedLabelName) &&
-      !dbRelationshipTypes.has(normalizedLabelName));
-
-  if (notInDatabase) {
-    const message =
-      labelOrRelType.labelType +
-      ' ' +
-      labelName +
-      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
-    return generateSyntaxDiagnostic(
-      labelName,
-      labelOrRelType,
-      DiagnosticSeverity.Warning,
-      message,
-    );
-  }
-
-  return undefined;
-}
 
 export type GenericDiagnostic = { message: string };
 
@@ -114,73 +74,6 @@ export function clampUnsafePositions(
   });
 }
 
-function generateSyntaxDiagnostic(
-  rawText: string,
-  parsedText: ParsedProcedure | LabelOrRelType | ParsedParameter | PropertyType,
-  severity: DiagnosticSeverity,
-  message: string,
-  deprecation: boolean = false,
-): SyntaxDiagnostic {
-  const nameChunks = rawText.split('\n');
-  const linesOffset = nameChunks.length - 1;
-  const lineIndex = parsedText.line - 1;
-  const startColumn = parsedText.column;
-  const endColumn =
-    linesOffset == 0
-      ? startColumn + rawText.length
-      : (nameChunks.at(-1)?.length ?? 0);
-
-  const error: SyntaxDiagnostic = {
-    severity,
-    range: {
-      start: Position.create(lineIndex, startColumn),
-      end: Position.create(lineIndex + linesOffset, endColumn),
-    },
-    offsets: parsedText.offsets,
-    message,
-    ...(deprecation ? { tags: [DiagnosticTag.Deprecated] } : {}),
-  };
-  return error;
-}
-
-function detectNonDeclaredFunction(
-  parsedFunction: ParsedFunction,
-  functionsSchema: Record<string, Neo4jFunction>,
-  procedureSchema: Record<string, Neo4jProcedure>,
-): SyntaxDiagnostic | undefined {
-  const exists = functionExists(parsedFunction, functionsSchema);
-  if (!exists) {
-    const existsAsProcedure =
-      procedureSchema && Boolean(procedureSchema[parsedFunction.name]);
-    if (existsAsProcedure) {
-      return generateProcedureUsedAsFunctionError(parsedFunction);
-    }
-    return generateFunctionNotFoundError(parsedFunction);
-  }
-
-  return undefined;
-}
-
-function functionExists(
-  functionCandidate: ParsedFunction,
-  functionsSchema: Record<string, Neo4jFunction>,
-): boolean {
-  if (!functionCandidate || !functionsSchema) {
-    return false;
-  }
-  const functionExistsWithExactName = Boolean(
-    functionsSchema[functionCandidate.name],
-  );
-  const lowerCaseFunctionName = functionCandidate.name.toLowerCase();
-  const caseInsensitiveBuiltInFunctionExists = Boolean(
-    Object.values(functionsSchema).find(
-      (fn) => fn.isBuiltIn && fn.name.toLowerCase() === lowerCaseFunctionName,
-    ),
-  );
-  // Built-in functions are case-insensitive in the database
-  return caseInsensitiveBuiltInFunctionExists || functionExistsWithExactName;
-}
-
 function generateFunctionUsedAsProcedureError(
   parsedProcedure: ParsedProcedure,
 ): SyntaxDiagnostic {
@@ -189,28 +82,6 @@ function generateFunctionUsedAsProcedureError(
     parsedProcedure,
     DiagnosticSeverity.Error,
     `${parsedProcedure.name} is a function, not a procedure. Did you mean to use the function ${parsedProcedure.name} with a RETURN instead of a CALL clause?`,
-  );
-}
-
-function generateFunctionNotFoundError(
-  parsedFunction: ParsedFunction,
-): SyntaxDiagnostic {
-  return generateSyntaxDiagnostic(
-    parsedFunction.rawText,
-    parsedFunction,
-    DiagnosticSeverity.Error,
-    `Function ${parsedFunction.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
-  );
-}
-
-function generateProcedureUsedAsFunctionError(
-  parsedFunction: ParsedFunction,
-): SyntaxDiagnostic {
-  return generateSyntaxDiagnostic(
-    parsedFunction.rawText,
-    parsedFunction,
-    DiagnosticSeverity.Error,
-    `${parsedFunction.name} is a procedure, not a function. Did you mean to call the procedure ${parsedFunction.name} inside a CALL clause?`,
   );
 }
 
@@ -223,137 +94,6 @@ function generateProcedureNotFoundError(
     DiagnosticSeverity.Error,
     `Procedure ${parsedProcedure.name} is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application`,
   );
-}
-
-function generateProcedureDeprecatedWarning(
-  parsedProcedure: ParsedProcedure,
-  deprecatedBy: string | undefined,
-): SyntaxDiagnostic {
-  const procDeprecatedWarning = `Procedure ${parsedProcedure.name} is deprecated.`;
-  return generateSyntaxDiagnostic(
-    parsedProcedure.rawText,
-    parsedProcedure,
-    DiagnosticSeverity.Warning,
-    deprecatedBy
-      ? procDeprecatedWarning + ` Alternative: ${deprecatedBy}`
-      : procDeprecatedWarning,
-    true,
-  );
-}
-
-function generateFunctionDeprecatedWarning(
-  parsedFunction: ParsedFunction,
-  deprecatedBy: string | undefined,
-): SyntaxDiagnostic {
-  const funcDeprecatedWarning = `Function ${parsedFunction.name} is deprecated.`;
-  return generateSyntaxDiagnostic(
-    parsedFunction.rawText,
-    parsedFunction,
-    DiagnosticSeverity.Warning,
-    deprecatedBy
-      ? funcDeprecatedWarning + ` Alternative: ${deprecatedBy}`
-      : funcDeprecatedWarning,
-    true,
-  );
-}
-
-function warnOnUndeclaredLabels(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
-
-  if (dbSchema.labels && dbSchema.relationshipTypes) {
-    const dbLabels = new Set(dbSchema.labels);
-    const dbRelationshipTypes = new Set(dbSchema.relationshipTypes);
-    const labelsAndRelTypes = parsingResult.collectedLabelOrRelTypes;
-
-    labelsAndRelTypes.forEach((labelOrRelType) => {
-      const warning = detectNonDeclaredLabel(
-        labelOrRelType,
-        dbLabels,
-        dbRelationshipTypes,
-      );
-
-      if (warning) warnings.push(warning);
-    });
-  }
-  return warnings;
-}
-
-function warnOnUndeclaredProperties(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-  symbolTable: SymbolTable,
-): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
-  const propertiesInSchema = dbSchema.propertyKeys;
-
-  if (!propertiesInSchema) {
-    return [];
-  }
-
-  const writeProperties = new Set(
-    parsingResult.collectedProperties
-      .filter((propInCypher) => propInCypher.type === 'write')
-      .map((p) => p.propertyName),
-  );
-
-  const missingProperties = parsingResult.collectedProperties.filter(
-    (propInCypher) => {
-      // Ignore properties that are not of Node or Relationship
-      if (!isNodeOrRelationshipProperty(propInCypher, symbolTable)) {
-        return false;
-      }
-
-      // Ignore all properties that are being modified in the query
-      if (writeProperties.has(propInCypher.propertyName)) {
-        return false;
-      }
-
-      return !propertiesInSchema.includes(propInCypher.propertyName);
-    },
-  );
-
-  for (const property of missingProperties) {
-    const message =
-      property.propertyName +
-      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
-    const warning = generateSyntaxDiagnostic(
-      property.propertyName,
-      property,
-      DiagnosticSeverity.Warning,
-      message,
-    );
-    warnings.push(warning);
-  }
-
-  return warnings;
-}
-
-function isNodeOrRelationshipProperty(
-  property: PropertyType,
-  symbolTable: SymbolTable,
-): boolean {
-  const variable = property.variable;
-  if (!variable) {
-    return false;
-  }
-  const symbol = symbolTable.find((symbol) => {
-    return symbol.variable === variable.name;
-  });
-  return Boolean(symbol && symbolIsNodeOrRel(symbol));
-}
-
-/** Checks all possible types of a symbol are Node or Relationship */
-function symbolIsNodeOrRel(symbol: Symbol): boolean {
-  if (symbol.types.length === 0) {
-    return false;
-  }
-
-  return symbol.types.every((type) => {
-    return type === 'Node' || type === 'Relationship';
-  });
 }
 
 function sortByPositionAndMessage(a: SyntaxDiagnostic, b: SyntaxDiagnostic) {
@@ -539,113 +279,6 @@ export function lintCypherQueryWithParsingResult(
   }
 
   return { diagnostics: [], symbolTables: [] };
-}
-
-function warningOnDeprecatedProcedure(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
-  if (dbSchema.procedures) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
-    const proceduresInQuery = parsingResult.collectedProcedures;
-
-    proceduresInQuery.forEach((parsedProcedure) => {
-      const proc = dbSchema.procedures?.[cypherVersion]?.[parsedProcedure.name];
-      const procedureDeprecated = proc?.option?.deprecated;
-      const deprecatedBy = proc?.deprecatedBy;
-      if (deprecatedBy)
-        if (procedureDeprecated) {
-          warnings.push(
-            generateProcedureDeprecatedWarning(parsedProcedure, deprecatedBy),
-          );
-        }
-    });
-  }
-  return warnings;
-}
-
-function warningOnDeprecatedFunction(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
-  if (dbSchema.functions) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
-    const functionsInQuery = parsingResult.collectedFunctions;
-    functionsInQuery.forEach((parsedFunction) => {
-      const fn = dbSchema.functions?.[cypherVersion]?.[parsedFunction.name];
-      const functionDeprecated = fn?.isDeprecated;
-      const deprecatedBy = fn?.deprecatedBy;
-      if (functionDeprecated) {
-        warnings.push(
-          generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy),
-        );
-      }
-    });
-  }
-  return warnings;
-}
-
-function errorOnUndeclaredParameters(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const errors: SyntaxDiagnostic[] = [];
-
-  if (parsingResult.collectedParameters) {
-    parsingResult.collectedParameters.forEach((parameter) => {
-      let parameterName = parameter.name;
-      if (parameterName.startsWith('`') && parameterName.endsWith('`')) {
-        parameterName = parameterName.substring(1, parameterName.length - 1);
-      }
-      if (dbSchema.parameters?.[parameterName] === undefined) {
-        errors.push(
-          generateSyntaxDiagnostic(
-            parameter.rawText,
-            parameter,
-            DiagnosticSeverity.Error,
-            `Parameter $${parameter.name} is not defined.`,
-          ),
-        );
-      }
-    });
-  }
-
-  return errors;
-}
-
-function errorOnUndeclaredFunctions(
-  parsingResult: ParsedStatement,
-  dbSchema: DbSchema,
-): SyntaxDiagnostic[] {
-  const warnings: SyntaxDiagnostic[] = [];
-
-  if (dbSchema.functions) {
-    const cypherVersion = resolveCypherVersion(
-      parsingResult.cypherVersion,
-      dbSchema,
-    );
-    const functionsInQuery = parsingResult.collectedFunctions;
-
-    functionsInQuery.forEach((parsedFunction) => {
-      const warning = detectNonDeclaredFunction(
-        parsedFunction,
-        dbSchema.functions?.[cypherVersion] ?? {},
-        dbSchema.procedures?.[cypherVersion] ?? {},
-      );
-
-      if (warning) warnings.push(warning);
-    });
-  }
-
-  return warnings;
 }
 
 function errorOnUndeclaredProcedures(

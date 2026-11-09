@@ -1,23 +1,23 @@
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 
-import type { DbSchema } from '../dbSchema.js';
+import type { DbSchema } from '../../dbSchema.js';
 import {
   NodePatternContext,
   RelationshipPatternContext,
-} from '../generated-parser/CypherCmdParser.js';
+} from '../../generated-parser/CypherCmdParser.js';
 import {
   isAnyNode,
   isNotAnyNode,
   removeInnerAnys,
-} from '../labelTreeRewriting.js';
-import { getNodesFromRelsSet } from '../labelTreeWalking.js';
-import type { LabelOrCondition, SymbolTable } from '../types.js';
-import { isLabelLeaf } from '../types.js';
-import type { SyntaxDiagnostic } from './syntaxValidation.js';
-import { getDirection } from '../helpers.js';
-import { renderLabelTree } from '../labelTreeRender.js';
-import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
-import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+} from '../../labelTreeRewriting.js';
+import { getNodesFromRelsSet } from '../../labelTreeWalking.js';
+import type { LabelOrCondition, SymbolTable } from '../../types.js';
+import { isLabelLeaf } from '../../types.js';
+import type { SyntaxDiagnostic } from '../syntaxValidation.js';
+import { getDirection } from '../../helpers.js';
+import { renderLabelTree } from '../../labelTreeRender.js';
+import { translateTokensToRange } from '../../cypherLanguageService/utils/translateTokenToRange.js';
+import type { ParsedStatement } from '../../cypherLanguageService/parserWrapper/parserWrapper.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a
