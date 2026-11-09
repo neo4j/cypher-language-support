@@ -5,8 +5,8 @@ import type {
   LabelOrRelType,
   ParsedParameter,
   PropertyType,
-} from '../../cypherLanguageService/parsingTypes.js';
-import type { SyntaxDiagnostic } from '../syntaxValidation.js';
+} from '../../../cypherLanguageService/parsingTypes.js';
+import type { SyntaxDiagnostic } from '../../syntaxValidation.js';
 
 export function generateSyntaxDiagnostic(
   rawText: string,

@@ -1,5 +1,5 @@
 import type { PropertyType } from '../../../cypherLanguageService/parsingTypes.js';
-import type { SymbolTable } from '../../../types.js';
+import type { SymbolTable, Symbol } from '../../../types.js';
 
 export function isNodeOrRelationshipProperty(
   property: PropertyType,
@@ -16,7 +16,7 @@ export function isNodeOrRelationshipProperty(
 }
 
 /** Checks all possible types of a symbol are Node or Relationship */
-function symbolIsNodeOrRel(symbol: symbol): boolean {
+function symbolIsNodeOrRel(symbol: Symbol): boolean {
   if (symbol.types.length === 0) {
     return false;
   }
