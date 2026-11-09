@@ -18,10 +18,6 @@ import { getDirection } from '../helpers.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import { translateTokensToRange } from '../cypherLanguageService/utils/translateTokenToRange.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
-import {
-  getContextStartToken,
-  getContextStopToken,
-} from '../helpers/getContextToken.js';
 
 // A relationship has exactly one type; this stand-in represents "some
 // relationship type that is not mentioned anywhere" when checking whether a
@@ -226,21 +222,21 @@ function checkAdjacency({
 
   const nodeStr = renderLabelTree(nodeTree);
   if (position === 'left') {
+    if (!node.start || !rel.stop) {
+      return undefined;
+    }
     return {
       message: `[:${relStr}] has no ${qualifier}(:${nodeStr})`,
-      ...translateTokensToRange(
-        getContextStartToken(node),
-        getContextStopToken(rel),
-      ),
+      ...translateTokensToRange(node.start, rel.stop),
       severity: DiagnosticSeverity.Warning,
     };
   }
+  if (!rel.start || !node.stop) {
+    return undefined;
+  }
   return {
     message: `(:${nodeStr}) has no ${qualifier}[:${relStr}]`,
-    ...translateTokensToRange(
-      getContextStartToken(rel),
-      getContextStopToken(node),
-    ),
+    ...translateTokensToRange(rel.start, node.stop),
     severity: DiagnosticSeverity.Warning,
   };
 }
@@ -277,15 +273,21 @@ function findEntry(
 ): SymbolTable[number] | undefined {
   const variable = element.variable();
   if (variable === null) {
+    const { start } = element;
+    if (!start) {
+      return undefined;
+    }
     return symbolTable.find(
       (entry) =>
-        entry.definitionPosition >= getContextStartToken(element).start &&
+        entry.definitionPosition >= start.start &&
         entry.definitionPosition <= (element.stop?.stop ?? -1),
     );
   }
-  return symbolTable.find((entry) =>
-    entry.references.includes(getContextStartToken(variable).start),
-  );
+  const { start } = variable;
+  if (!start) {
+    return undefined;
+  }
+  return symbolTable.find((entry) => entry.references.includes(start.start));
 }
 
 /**
