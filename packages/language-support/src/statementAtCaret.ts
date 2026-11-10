@@ -36,7 +36,7 @@ function sliceInput(
   const tokens = currentStatement?.tokens ?? [];
 
   const start = tokens.at(0)?.start ?? 0;
-  const stop = tokens.at(1)?.stop;
+  const stop = tokens.at(-1)?.stop;
 
   return input.slice(start, stop ? stop + 1 : undefined);
 }
