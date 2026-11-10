@@ -188,10 +188,7 @@ export interface DbSchema {
     // (undocumented)
     aliasNames?: string[];
     // (undocumented)
-    constraintInfo?: {
-        fieldNames: string[] | undefined;
-        constraints: Constraint[];
-    };
+    constraints?: Constraint[];
     // (undocumented)
     databaseNames?: string[];
     // (undocumented)
@@ -218,6 +215,8 @@ export interface DbSchema {
     roleNames?: string[];
     // (undocumented)
     userNames?: string[];
+    // (undocumented)
+    yieldFields?: Partial<Record<YieldableShowCommand, string[]>>;
 }
 
 // @public (undocumented)
@@ -578,6 +577,9 @@ export interface TokenPosition {
 
 // @public (undocumented)
 export function toSignatureInformation(curr: Neo4jFunction | Neo4jProcedure): SignatureInformation;
+
+// @public (undocumented)
+export type YieldableShowCommand = 'constraints' | 'users' | 'roles' | 'databases';
 
 // (No @packageDocumentation comment for this package)
 
