@@ -426,7 +426,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.pendingGroups.push(newGroup);
     this.groupStack.push(newGroup);
     this.groupID++;
-    return this.groupID - 1; //maybe clearer to say newGroup.id
+    return newGroup.id;
   };
 
   _addIndentationModifier = (modifier: IndentationModifier) => {
@@ -718,11 +718,6 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.chunkList.push(chunk);
     this.lastVisitedErrorNode = errorTokenIndex;
   };
-  //Does this make sense to have? Why not have a breakAndVisit and avoidBreakAndVisit too then? For clarity I would probably remove it and just write 2 lines
-  breakAndVisitChildren = (ctx: ParserRuleContext) => {
-    this.breakLine();
-    this.visitChildren(ctx);
-  };
 
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
     const n = ctx.statementOrCommand().length;
@@ -739,7 +734,8 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitCommand = (ctx: CommandContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
 
@@ -874,18 +870,22 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitConstraintTyped = (ctx: ConstraintTypedContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
   };
 
   visitConstraintIsUnique = (ctx: ConstraintIsUniqueContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
   };
 
   visitConstraintKey = (ctx: ConstraintKeyContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
   };
   visitConstraintIsNotNull = (ctx: ConstraintIsNotNullContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
   };
 
   visitCreateIndex_ = (ctx: CreateIndex_Context) => {
@@ -1236,7 +1236,8 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Handled separately because clauses should start on new lines, see
   // https://neo4j.com/docs/cypher-manual/current/styleguide/#cypher-styleguide-indentation-and-line-breaks
   visitClause = (ctx: ClauseContext) => {
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    this.visitChildren(ctx);
     this.preserveExplicitNewlineAfter(ctx);
   };
 
