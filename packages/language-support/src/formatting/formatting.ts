@@ -21,6 +21,7 @@ import type {
   CaseExpressionContext,
   ClauseContext,
   CollectExpressionContext,
+  CombinedSpecificationClauseContext,
   CommandContext,
   CommandNodePatternContext,
   CommandOptionsContext,
@@ -137,6 +138,7 @@ import type {
   VectorDistanceFunctionContext,
   VectorFunctionContext,
   VectorNormFunctionContext,
+  WeightedSourceContext,
   WhenBranchContext,
   WhenContext,
   WhereClauseContext,
@@ -424,7 +426,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.pendingGroups.push(newGroup);
     this.groupStack.push(newGroup);
     this.groupID++;
-    return this.groupID - 1;
+    return this.groupID - 1; //maybe clearer to say newGroup.id
   };
 
   _addIndentationModifier = (modifier: IndentationModifier) => {
@@ -716,7 +718,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.chunkList.push(chunk);
     this.lastVisitedErrorNode = errorTokenIndex;
   };
-
+  //Does this make sense to have? Why not have a breakAndVisit and avoidBreakAndVisit too then? For clarity I would probably remove it and just write 2 lines
   breakAndVisitChildren = (ctx: ParserRuleContext) => {
     this.breakLine();
     this.visitChildren(ctx);
@@ -1349,26 +1351,75 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitIndexSpecificationClause = (ctx: IndexSpecificationClauseContext) => {
+    const indexSpecificationGrp = this.startGroup();
+    const indexGrp = this.startGroup();
     this._visit(ctx.FULLTEXT());
     this._visit(ctx.VECTOR());
     this._visit(ctx.INDEX());
     this._visit(ctx.commandNameExpression());
-    this.breakLine();
+    this.endGroup(indexGrp);
+    const forGrp = this.startGroup();
     this._visit(ctx.forClause());
+    this.endGroup(forGrp);
+    this.breakLine();
     if (ctx.analyzerClause()) {
-      this.breakLine();
+      const analyzerGrp = this.startGroup();
       this._visit(ctx.analyzerClause());
+      this.endGroup(analyzerGrp);
+      this.breakLine();
     }
     if (ctx.whereClause()) {
-      this.breakLine();
+      const whereGrp = this.startGroup();
       this._visit(ctx.whereClause());
+      this.endGroup(whereGrp);
+      this.breakLine();
     }
     if (ctx.skip()) {
-      this.breakLine();
+      const skipGrp = this.startGroup();
       this._visit(ctx.skip());
+      this.endGroup(skipGrp);
+      this.breakLine();
     }
-    this.breakLine();
+    const limitGrp = this.startGroup();
     this._visit(ctx.limit());
+    this.endGroup(limitGrp);
+    this.endGroup(indexSpecificationGrp);
+  };
+
+  visitCombinedSpecificationClause = (
+    ctx: CombinedSpecificationClauseContext,
+  ) => {
+    this._visit(ctx.COMBINE());
+    this._visitTerminalRaw(ctx.LPAREN());
+    const combineIndent = this.addIndentation();
+    const combinedSpecificationBodyGrp = this.startGroup();
+    this.breakLine();
+    this._visit(ctx.combinedSpecificationBody());
+    this.endGroup(combinedSpecificationBodyGrp);
+    this.removeIndentation(combineIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this._visit(ctx.USING());
+    this._visit(ctx.WRRF());
+    this._visit(ctx.WITH());
+    this._visit(ctx.CONSTANT());
+    this._visit(ctx.expression());
+    this._visit(ctx.limit());
+  };
+
+  visitWeightedSource = (ctx: WeightedSourceContext) => {
+    const sourceSpecificationGrp = this.startGroup();
+    this._visit(ctx.sourceSpecification());
+    this.endGroup(sourceSpecificationGrp);
+    const weightGrp = this.startGroup();
+    this._visit(ctx.WEIGHT());
+    const exprIndent = this.addIndentation();
+    this._visit(ctx.expression());
+    this.removeIndentation(exprIndent);
+    this.endGroup(weightGrp);
   };
 
   visitCreateClause = (ctx: CreateClauseContext) => {
@@ -1511,7 +1562,11 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   visitLimit = (ctx: LimitContext) => {
     this.preserveExplicitNewlineBefore(ctx);
-    this.breakAndVisitChildren(ctx);
+    this.breakLine();
+    const limitGroup = this.startGroup();
+    this._visit(ctx.LIMITROWS());
+    this._visit(ctx.expression());
+    this.endGroup(limitGroup);
   };
 
   visitReturnItem = (ctx: ReturnItemContext) => {

@@ -503,6 +503,55 @@ RETURN n, s`;
     verifyFormatting(query, expected);
   });
 
+  test('SEARCH clause with combined specification clause', () => {
+    const query = `MATCH (n) SEARCH n IN ( COMBINE ( VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT 10 WEIGHT 5, VECTOR INDEX myOtherIndex FOR [3,6,9] WHERE n.active = true LIMIT 10 WEIGHT 3 ) USING WRRF WITH CONSTANT 2 )`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    COMBINE (
+      VECTOR INDEX myIndex
+      FOR [1, 2, 3]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 5,
+      VECTOR INDEX myOtherIndex
+      FOR [3, 6, 9]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 3
+    ) USING WRRF WITH CONSTANT 2
+  )`;
+    verifyFormatting(query, expected);
+  });
+
+  test('combined SEARCH clause with complex weight and limit expressions', () => {
+    const query = `MATCH (n) SEARCH n IN ( COMBINE ( VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT round(n.likelihoodToOwnAGoldenRetriever+n.likelihoodToOwnAChihuahua+n.likelihoodToOwnAPitbull) WEIGHT n.age + n.experience + n.daysUntilRetirement + n.numberOfFaceBookFriends + n.likelihoodOfHavingAGermanShepherd/1234, VECTOR INDEX myOtherIndex FOR [3,6,9] WHERE n.active = true LIMIT 10 WEIGHT 3) USING WRRF WITH CONSTANT 2 )`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    COMBINE (
+      VECTOR INDEX myIndex
+      FOR [1, 2, 3]
+      WHERE n.active = true
+      LIMIT
+      round(
+        n.likelihoodToOwnAGoldenRetriever +
+        n.likelihoodToOwnAChihuahua +
+        n.likelihoodToOwnAPitbull)
+      WEIGHT
+        n.age +
+        n.experience +
+        n.daysUntilRetirement +
+        n.numberOfFaceBookFriends +
+        n.likelihoodOfHavingAGermanShepherd / 1234,
+      VECTOR INDEX myOtherIndex
+      FOR [3, 6, 9]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 3
+    ) USING WRRF WITH CONSTANT 2
+  )`;
+    verifyFormatting(query, expected);
+  });
+
   test('SEARCH clause with all index specification parts', () => {
     const query = `MATCH (n) SEARCH n IN (FULLTEXT INDEX myIndex FOR "some text" WITH ANALYZER "english" WHERE n.active = true SKIP 5 LIMIT 10) SCORE AS s RETURN n, s`;
     const expected = `MATCH (n)
