@@ -39,9 +39,10 @@ export class VariableCollector implements ParseTreeListener {
         nextTokenIndex !== undefined &&
         this.tokenStream?.get(nextTokenIndex + 1)?.type === CypherParser.EOF;
 
-      const definesVariable = rulesDefiningOrUsingVariables.includes(
-        ctx.parent?.ruleIndex,
-      );
+      const parentRule = ctx.parent?.ruleIndex;
+      const definesVariable =
+        parentRule !== undefined &&
+        rulesDefiningOrUsingVariables.includes(parentRule);
 
       if (variable && !nextTokenIsEOF && definesVariable) {
         this.variables.push(variable);

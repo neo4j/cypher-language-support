@@ -12,6 +12,15 @@ export function getDefinitionPosition({
   symbolsInfo: SymbolsInfo;
 }): { startOffset: number; endOffset: number } | undefined {
   const caret = findCaret(parsingResult, caretPosition);
+  //Bail if cypher token caret is at does not cover the caret, for example when in a comment
+  //+1 at stop, so we cover when caret is after final letter of caret token
+  if (
+    !caret ||
+    caret.token.start > caretPosition ||
+    caret.token.stop + 1 < caretPosition
+  ) {
+    return undefined;
+  }
   const currentSymbolTable = caret
     ? parsingResult.statementsParsing.indexOf(caret.statement)
     : -1;
@@ -20,7 +29,7 @@ export function getDefinitionPosition({
     symbolsInfo.query === parsingResult.query &&
     currentSymbolTable >= 0
   ) {
-    const matchingVariable = symbolsInfo.symbolTables[currentSymbolTable].find(
+    const matchingVariable = symbolsInfo.symbolTables[currentSymbolTable]?.find(
       (x) =>
         x.references.some(
           (ref) =>

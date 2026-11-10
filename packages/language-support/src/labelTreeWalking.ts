@@ -26,6 +26,7 @@ export function walkCNFTree(
     } else if (
       c.condition === 'not' &&
       c.children.length === 1 &&
+      c.children[0] &&
       isLabelLeaf(c.children[0])
     ) {
       notLabels.push(c.children[0]);

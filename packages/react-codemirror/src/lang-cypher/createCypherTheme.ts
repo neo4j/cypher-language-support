@@ -192,6 +192,10 @@ export const createCypherTheme = ({
     '.cm-deprecated-element': {
       'text-decoration': 'line-through',
     },
+    '& .cm-clickableSymbol': {
+      'text-decoration': 'underline',
+      cursor: 'pointer',
+    },
     '.cm-tooltip-autocomplete': {
       maxWidth: '430px',
       '& > ul > li[aria-selected]': {
