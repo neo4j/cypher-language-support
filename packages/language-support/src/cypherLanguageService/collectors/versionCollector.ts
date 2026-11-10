@@ -5,10 +5,14 @@ import type { SyntaxDiagnostic } from '../../syntaxValidation/syntaxValidation.j
 import type { CypherVersion } from '../../types.js';
 import { allCypherVersions, cypherVersionNumbers } from '../../types.js';
 import { translateTokensToRange } from '../utils/translateTokenToRange.js';
+import {
+  getContextStartToken,
+  getContextStopToken,
+} from '../../helpers/getContextToken.js';
 
 export class CypherVersionCollector implements ParseTreeListener {
-  public cypherVersion: CypherVersion;
-  public invalidVersionError: SyntaxDiagnostic;
+  public cypherVersion: CypherVersion | undefined;
+  public invalidVersionError: SyntaxDiagnostic | undefined;
 
   enterEveryRule() {
     /* no-op */
@@ -35,7 +39,10 @@ export class CypherVersionCollector implements ParseTreeListener {
             ' is not a valid option for cypher version. Valid options are: ' +
             cypherVersionNumbers.join(', '),
           severity: DiagnosticSeverity.Error,
-          ...translateTokensToRange(ctx.start, ctx.stop),
+          ...translateTokensToRange(
+            getContextStartToken(ctx),
+            getContextStopToken(ctx),
+          ),
         };
       }
     }

@@ -110,6 +110,7 @@ const procedureNameCompletions = (
   );
 
 function isDeprecated(arg: Neo4jFunction | Neo4jProcedure | undefined) {
+  if (!arg) return false;
   if ('option' in arg) {
     return arg.option.deprecated;
   } else if ('isDeprecated' in arg) {
@@ -167,7 +168,7 @@ const namespacedCompletion = (
     // If we don't have any prefix show full functions and top level namespaces
     const topLevelPrefixes = fullNames
       .filter((fn) => fn.includes('.'))
-      .map((fnName) => fnName.split('.')[0]);
+      .map((fnName) => fnName.split('.')[0] ?? fnName);
 
     return uniq(topLevelPrefixes)
       .map((label): CompletionItem => ({ label, kind, detail: `(namespace)` }))
@@ -195,7 +196,7 @@ const namespacedCompletion = (
       if (name.startsWith(namespacePrefix)) {
         // given prefix `apoc.` turn `apoc.util.sleep` => `util`
         const splitByDot = name.slice(namespacePrefix.length).split('.');
-        const option = splitByDot[0];
+        const option = splitByDot[0] ?? '';
         const isFunctionName = splitByDot.length === 1;
 
         // handle prefix `time.truncate.` turning `time.truncate` => ``
@@ -246,7 +247,7 @@ function getTokenCompletions(
         : CompletionItemKind.Keyword;
 
       const firstToken = isConsoleCommand
-        ? tokenNames[tokenNumber].toLowerCase()
+        ? tokenNames[tokenNumber]?.toLowerCase()
         : tokenNames[tokenNumber];
 
       const firstIgnoredToken = followUpIndexes.findIndex((t) =>
@@ -343,6 +344,7 @@ const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
   const parentRule = context.ruleList.at(-1);
 
   if (
+    parentRule !== undefined &&
     [
       CypherParser.RULE_stringOrParameterExpression,
       CypherParser.RULE_stringOrParameter,
@@ -363,6 +365,7 @@ const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
   ) {
     return ExpectedParameterType.String;
   } else if (
+    parentRule !== undefined &&
     [CypherParser.RULE_properties, CypherParser.RULE_mapOrParameter].includes(
       parentRule,
     )
@@ -468,7 +471,7 @@ export function completionCoreCompletion(
   // Move the caret index to the end of the query
   const eofIndex = tokens.length > 0 ? tokens.length - 1 : 0;
 
-  const eof = tokens[eofIndex];
+  const eof = tokens[eofIndex]!;
 
   // When we have EOF with a different text in the token, it means the parser has failed to parse it.
   // We give empty completions in that case because the query is severely broken at the
@@ -487,7 +490,7 @@ export function completionCoreCompletion(
   const previousToken = tokens[caretIndex - 1];
   if (
     previousToken?.type === CypherLexer.IDENTIFIER ||
-    lexerKeywords.includes(previousToken?.type)
+    (previousToken !== undefined && lexerKeywords.includes(previousToken.type))
   ) {
     caretIndex--;
   }
@@ -792,8 +795,8 @@ export function completionCoreCompletion(
           const existingYieldItems = new Set(
             yieldClauseContext.yieldItem().map((a) => a.getText()),
           );
-          return dbSchema.constraintInfo.fieldNames
-            .map((fieldName) => {
+          return (dbSchema.constraintInfo?.fieldNames ?? [])
+            .map((fieldName: string): CompletionItem => {
               return { label: fieldName, kind: CompletionItemKind.Variable };
             })
             .filter((a) => !existingYieldItems.has(a.label));
@@ -820,7 +823,11 @@ export function completionCoreCompletion(
 
   // if the completion was automatically triggered by a snippet trigger character
   // we should only return snippet completions
-  if (snippetTriggers.includes(previousToken?.type) && !manualTrigger) {
+  if (
+    previousToken !== undefined &&
+    snippetTriggers.includes(previousToken.type) &&
+    !manualTrigger
+  ) {
     return snippetCompletions;
   }
 
@@ -836,7 +843,7 @@ function getSnippetCompletions(
   dbSchema: DbSchema,
   tokens: Token[],
   candidates: CandidatesCollection,
-  symbolsInfo: SymbolsInfo,
+  symbolsInfo: SymbolsInfo | undefined,
 ) {
   let snippetCompletions: CompletionItem[] = [];
   if (
@@ -867,7 +874,7 @@ function getSnippetCompletions(
               !parsingResult.errorTracker.hasError(x),
           )
         : undefined;
-    const finalNonEofToken = tokens.at(-2);
+    const finalNonEofToken = tokens.at(-2)!;
 
     if (
       lastNode &&
@@ -878,13 +885,13 @@ function getSnippetCompletions(
         CypherParser.MINUS,
       ].includes(finalNonEofToken.type)
     ) {
-      const secondLastToken = tokens.at(-3);
+      const secondLastToken = tokens.at(-3)!;
       // case: ]-
       if (
         secondLastToken.type === CypherParser.RBRACKET &&
         lastNode instanceof RelationshipPatternContext
       ) {
-        const shortPathCompletions: CompletionItem[] = getShortPathCompletions(
+        const shortPathCompletions = getShortPathCompletions(
           lastNode,
           symbolsInfo,
           dbSchema,
@@ -894,7 +901,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x?.insertText.slice(1, x.insertText.length),
+              insertText: x.insertText.slice(1),
               label: x.label.slice(1, x.label.length),
             };
           });
@@ -906,7 +913,7 @@ function getSnippetCompletions(
         secondLastToken.type === CypherParser.RPAREN &&
         lastNode instanceof NodePatternContext
       ) {
-        const pathCompletions: CompletionItem[] = getPathCompletions(
+        const pathCompletions = getPathCompletions(
           lastNode,
           symbolsInfo,
           dbSchema,
@@ -916,7 +923,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x?.insertText.slice(1, x.insertText.length),
+              insertText: x.insertText.slice(1),
               label: x.label.slice(1, x.label.length),
             };
           });
@@ -924,7 +931,7 @@ function getSnippetCompletions(
         // case: )<-
         // Needed because the "-" will re-trigger completions
       } else if (
-        tokens.at(-4).type === CypherParser.RPAREN &&
+        tokens.at(-4)!.type === CypherParser.RPAREN &&
         [CypherParser.ARROW_LEFT_HEAD, CypherParser.LT].includes(
           secondLastToken.type,
         ) &&
@@ -933,7 +940,7 @@ function getSnippetCompletions(
         ) &&
         lastNode instanceof NodePatternContext
       ) {
-        const pathCompletions: CompletionItem[] = getPathCompletions(
+        const pathCompletions = getPathCompletions(
           lastNode,
           symbolsInfo,
           dbSchema,
@@ -943,7 +950,7 @@ function getSnippetCompletions(
           .map((x) => {
             return {
               ...x,
-              insertText: x?.insertText.slice(2, x.insertText.length),
+              insertText: x.insertText.slice(2),
               label: x.label.slice(2, x.label.length),
             };
           });
@@ -1081,7 +1088,7 @@ function completeSymbolicName({
     parsingResult.tokens,
     candidateRule.startTokenIndex,
   );
-  const afterToToken = previousNonSpace.type === CypherParser.TO;
+  const afterToToken = previousNonSpace?.type === CypherParser.TO;
   const ruleList = candidateRule.ruleList;
 
   // avoid suggesting existing user names or role names when creating a new one
