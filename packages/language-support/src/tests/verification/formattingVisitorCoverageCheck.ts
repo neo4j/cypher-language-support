@@ -8,6 +8,11 @@
  * formatted output.
  *
  * Usage: pnpm test:formattingVisitorCoverage [path/to/formatting.ts]
+ *
+ * Note: Generated script.
+ * Since it's a helper only used for verification, I was a little less thorough in examining it,
+ * but glancing through it seems to make sense, and handles some special cases in reasonable ways
+ * (ex helper functions, aliased variables)
  */
 import fs from 'fs';
 import path from 'path';
@@ -71,6 +76,18 @@ interface ContextInfo {
   labels: Map<string, string>;
 }
 
+// Goes through "class <Rule>Context" definitions and
+// determines what child-rules (defined in "<rule>(): <Rule>Context" accessor methods) exist
+// as well as figuring out what labels exist (ex. defined like "WHERE whereExp = expression" in the grammar - where whereExp is the label)
+//In the end we get:
+//{
+//   LocalProcedureDefinitionContext: {
+//   accessors: [procedureName, localInputFieldsSignature, ...]
+//   accessorTypes: {procedureName: ProcedureNameContext, localInputFieldsSignature: LocalInputFieldsSignatureContext, ...}
+//   labels: {_outputType: localOutputFieldsSignature}
+// },
+// ...
+//} //Does it really make sense then to keep both accesor and accessorTypes? accessors = accessorTypes.keys()
 function collectContexts(): Map<string, ContextInfo> {
   const result = new Map<string, ContextInfo>();
   for (const stmt of parseFile(parserPath).statements) {
@@ -184,7 +201,12 @@ class CoverageAnalyzer {
     private dispatching: Set<string>,
   ) {}
 
-  /** What the function visits of its parameter at `paramIndex`. */
+  //I assume the reason we allow paramIndex > 0 is in case helpers take more parameters?
+  /** What the function visits of its parameter at `paramIndex`.
+   * Called on a visitor function this goes through the fields of the
+   * only param (corresponding to the visited rule), and checks that all child-rules are used
+   * inside a visit-call
+   */
   analyze(fnName: string, paramIndex: number): Coverage {
     const key = `${fnName}#${paramIndex}`;
     const cached = this.cache.get(key);
@@ -295,8 +317,11 @@ class CoverageAnalyzer {
 }
 
 function main() {
+  //generatedContexts
   const contexts = collectContexts();
+  // formatterFile
   const source = parseFile(formatterPath);
+  // treePrintVisitor
   const cls = source.statements.find(
     (s): s is ts.ClassDeclaration =>
       ts.isClassDeclaration(s) && s.name?.text === VISITOR_CLASS,
@@ -304,10 +329,14 @@ function main() {
   if (!cls) throw new Error(`Class ${VISITOR_CLASS} not found`);
 
   const fns = collectClassFunctions(cls);
+  //see if formattting.ts method is visitor of Context class in generated parser
   const contextOfVisitor = (name: string) => {
     const match = /^visit([A-Z]\w*)$/.exec(name);
     return match ? contexts.get(`${match[1]}Context`) : undefined;
   };
+  //Gets filled with visitor method names like visitFilterClause etc
+  //I assume this is so that a calling another visit method directly counts as a visit too,
+  //Not sure we ever do that, but if we did I suppose it should count
   const dispatching = new Set(DISPATCHING_VISITS);
   for (const name of fns.keys()) {
     if (contextOfVisitor(name)) dispatching.add(name);
