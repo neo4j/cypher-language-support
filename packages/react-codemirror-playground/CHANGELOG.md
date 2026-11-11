@@ -1,5 +1,20 @@
 # @neo4j-cypher/react-codemirror-playground
 
+## 2.0.0-next.43
+
+### Patch Changes
+
+- ee9e00f: Upgrade to react 19
+- Updated dependencies [ee9e00f]
+- Updated dependencies [613dfdc]
+- Updated dependencies [7b40237]
+- Updated dependencies [20d5c8c]
+- Updated dependencies [ea87989]
+- Updated dependencies [ea87989]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/react-codemirror@2.0.0-next.43
+  - @neo4j-cypher/language-support@2.0.0-next.40
+
 ## 2.0.0-next.42
 
 ### Patch Changes
