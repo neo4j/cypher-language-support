@@ -8,10 +8,6 @@ import { couldCreateNewLabel } from '../utils/couldCreateNewLabel.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
 import type { LabelOrRelType } from '../parsingTypes.js';
 import { LabelType } from '../parsingTypes.js';
-import {
-  getContextStartToken,
-  getContextStopToken,
-} from '../../helpers/getContextToken.js';
 
 /** This listener collects all labels and relationship types in read operations */
 export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
@@ -38,16 +34,18 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         !hasErrorNodesUnder(ctx.parent) &&
         !couldCreateNewLabel(ctx)
       ) {
-        this.labelOrRelTypes.push({
-          labelType: getLabelType(ctx),
-          labelText: ctx.getText(),
-          line: getContextStartToken(ctx).line,
-          column: getContextStartToken(ctx).column,
-          offsets: {
-            start: getContextStartToken(ctx).start,
-            end: getContextStopToken(ctx).stop + 1,
-          },
-        });
+        if (ctx.start && ctx.stop) {
+          this.labelOrRelTypes.push({
+            labelType: getLabelType(ctx),
+            labelText: ctx.getText(),
+            line: ctx.start.line,
+            column: ctx.start.column,
+            offsets: {
+              start: ctx.start.start,
+              end: ctx.stop.stop + 1,
+            },
+          });
+        }
       }
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
@@ -56,16 +54,18 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         isDefined(symbolicName) &&
         ctx.parent &&
         !hasErrorNodesUnder(ctx.parent) &&
-        !couldCreateNewLabel(ctx)
+        !couldCreateNewLabel(ctx) &&
+        symbolicName.start &&
+        symbolicName.stop
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
-          labelText: getContextStartToken(symbolicName).text ?? '',
-          line: getContextStartToken(symbolicName).line,
-          column: getContextStartToken(symbolicName).column,
+          labelText: symbolicName.start.text ?? '',
+          line: symbolicName.start.line,
+          column: symbolicName.start.column,
           offsets: {
-            start: getContextStartToken(symbolicName).start,
-            end: getContextStopToken(symbolicName).stop + 1,
+            start: symbolicName.start.start,
+            end: symbolicName.stop.stop + 1,
           },
         });
       }

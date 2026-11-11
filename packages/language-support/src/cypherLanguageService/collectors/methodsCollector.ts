@@ -5,10 +5,6 @@ import {
 } from '../../generated-parser/CypherCmdParser.js';
 import type { ParsedFunction, ParsedProcedure } from '../parsingTypes.js';
 import { getMethodName } from '../../helpers.js';
-import {
-  getContextStartToken,
-  getContextStopToken,
-} from '../../helpers/getContextToken.js';
 
 // This listener collects all functions and procedures
 export class MethodsCollector implements ParseTreeListener {
@@ -32,13 +28,15 @@ export class MethodsCollector implements ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (
-      ctx instanceof FunctionNameContext ||
-      ctx instanceof ProcedureNameContext
+      (ctx instanceof FunctionNameContext ||
+        ctx instanceof ProcedureNameContext) &&
+      ctx.start &&
+      ctx.stop
     ) {
       const methodName = getMethodName(ctx);
 
-      const startTokenIndex = getContextStartToken(ctx).tokenIndex;
-      const stopTokenIndex = getContextStopToken(ctx).tokenIndex;
+      const startTokenIndex = ctx.start.tokenIndex;
+      const stopTokenIndex = ctx.stop.tokenIndex;
 
       const rawText = this.tokens
         .slice(startTokenIndex, stopTokenIndex + 1)
@@ -50,11 +48,11 @@ export class MethodsCollector implements ParseTreeListener {
       const result = {
         name: methodName,
         rawText: rawText,
-        line: getContextStartToken(ctx).line,
-        column: getContextStartToken(ctx).column,
+        line: ctx.start.line,
+        column: ctx.start.column,
         offsets: {
-          start: getContextStartToken(ctx).start,
-          end: getContextStopToken(ctx).stop + 1,
+          start: ctx.start.start,
+          end: ctx.stop.stop + 1,
         },
       };
 
