@@ -25,6 +25,10 @@ export type PropertyType = HasPosition & {
     start: number;
   };
   type: 'read' | 'write';
+  /** The inferred type of the right hand side of an expression with the property.
+   * @example WHERE m.title = "The Matrix" // STRING
+   */
+  rightHandType?: string;
 };
 
 export type ParsedParameter = HasPosition & {

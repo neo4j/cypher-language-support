@@ -24,6 +24,7 @@ import { warningOnDeprecatedProcedure } from './diagnostics/deprecatedProcedure.
 import { warningOnDeprecatedFunction } from './diagnostics/deprecatedFunction.js';
 import { warnOnUndeclaredLabels } from './diagnostics/undeclaredLabels.js';
 import { generateSyntaxDiagnostic } from './diagnostics/utils/generateSyntaxDiagnostic.js';
+import { warnOnPropertyNotInConstraint } from './diagnostics/propertyConstraints.js';
 
 export type SyntaxDiagnostic = Diagnostic & {
   offsets: { start: number; end: number };
@@ -248,6 +249,12 @@ export function lintCypherQueryWithParsingResult(
           symbolTable,
         );
 
+        const propertyConstraintsWarnings = warnOnPropertyNotInConstraint(
+          current,
+          dbSchema,
+          symbolTable,
+        );
+
         const schemaPathWarnings = warnOnSchemaPathViolations(
           current,
           dbSchema,
@@ -264,6 +271,7 @@ export function lintCypherQueryWithParsingResult(
             procedureErrors,
             functionWarnings,
             procedureWarnings,
+            propertyConstraintsWarnings,
             current.syntaxErrors,
           )
           .sort(sortByPositionAndMessage);
