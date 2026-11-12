@@ -7,7 +7,7 @@ import {
   cypherDataToString,
   getPropertyTypeDisplayName,
 } from '@neo4j-cypher/query-tools';
-import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react-graph';
 import type {
   Node as Neo4jNode,
   Record as Neo4jRecord,

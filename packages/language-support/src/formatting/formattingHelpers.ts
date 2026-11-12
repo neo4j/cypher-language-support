@@ -99,15 +99,18 @@ function isKeywordTerminal(node: TerminalNode): boolean {
   return lexerKeywords.includes(node.symbol.type) && !isSymbolicName(node);
 }
 
-export function isComment(token: Token) {
+export function isComment(token: Token): boolean {
   return (
     token.type === CypherCmdLexer.MULTI_LINE_COMMENT ||
     token.type === CypherCmdLexer.SINGLE_LINE_COMMENT
   );
 }
 
-export const isInlineComment = (chunk: Chunk) =>
-  chunk.comment && chunk.comment.startsWith('/*');
+export function isInlineComment(
+  chunk: Chunk,
+): chunk is Chunk & { comment: string } {
+  return Boolean(chunk.comment?.startsWith('/*'));
+}
 
 // Variables, functions/procedures namespaces or property names that have the same name as a keyword should not be
 // treated as keywords
@@ -157,8 +160,8 @@ export function getParseTreeAndTokens(query: string) {
 export function findTargetToken(
   tokens: Token[],
   cursorPosition: number,
-): Token | false {
-  let targetToken: Token;
+): Token | undefined {
+  let targetToken: Token | undefined;
   for (const token of tokens) {
     if (token.channel === 0) {
       targetToken = token;
@@ -167,7 +170,7 @@ export function findTargetToken(
       return targetToken;
     }
   }
-  return false;
+  return undefined;
 }
 
 // These three are helpers for the fillInGroupSizes method to make it more manageable
@@ -220,7 +223,10 @@ export function verifyGroupSizes(chunkList: Chunk[]) {
 
 const openingCharacters = [CypherCmdLexer.LPAREN, CypherCmdLexer.LBRACKET];
 
-export function shouldAddSpace(chunk: Chunk, nextChunk: Chunk): boolean {
+export function shouldAddSpace(
+  chunk: Chunk,
+  nextChunk: Chunk | undefined,
+): boolean {
   if (chunk.type === 'SYNTAX_ERROR' || nextChunk?.type === 'SYNTAX_ERROR') {
     return false;
   }

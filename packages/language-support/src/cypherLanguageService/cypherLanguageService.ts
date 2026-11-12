@@ -68,7 +68,7 @@ export class CypherLanguageService {
 
   hoverInfo(
     query: string,
-    { caretPosition, dbSchema }: { caretPosition: number; dbSchema: DbSchema },
+    { caretPosition, dbSchema }: { caretPosition: number; dbSchema?: DbSchema },
   ): HoverInfo | undefined {
     const parsingResult = this.parse(query);
     return getHoverInfo({
@@ -112,6 +112,9 @@ export class CypherLanguageService {
   }
 
   goToDefinition(query: string, caretPosition: number) {
+    if (!this.symbolsInfo) {
+      return undefined;
+    }
     const parsingResult = this.parse(query);
     return getDefinitionPosition({
       caretPosition,

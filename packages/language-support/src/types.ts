@@ -72,11 +72,11 @@ export const isCondition = (condition: string): condition is Condition => {
 export type LabelLeaf = {
   value: string;
 };
-export const isLabelLeaf = (
-  labelOrCondition: LabelOrCondition,
-): labelOrCondition is LabelLeaf => {
-  return 'value' in labelOrCondition;
-};
+export function isLabelLeaf(
+  labelOrCondition: LabelOrCondition | undefined,
+): labelOrCondition is LabelLeaf {
+  return Boolean(labelOrCondition && 'value' in labelOrCondition);
+}
 
 export const CONDITIONS = ['and', 'or', 'not', 'any'] as const;
 export type Condition = (typeof CONDITIONS)[number];

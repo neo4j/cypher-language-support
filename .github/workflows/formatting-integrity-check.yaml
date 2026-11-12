@@ -11,6 +11,9 @@ on:
     paths:
       - 'packages/language-support/src/formatting/**'
 
+permissions:
+  contents: read
+
 jobs:
   formatting-integrity-check:
     name: Formatter integrity check
