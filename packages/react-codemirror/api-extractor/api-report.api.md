@@ -62,7 +62,7 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     setValueAndFocus(value?: string): void;
     // (undocumented)
     state: CypherEditorState;
-    symbolFetcher: CodemirrorSymbolFetcher;
+    symbolFetcher?: CodemirrorSymbolFetcher;
     updateCursorPosition(position: number): void;
 }
 
@@ -133,7 +133,7 @@ export type CypherEditorState = {
 };
 
 // @public (undocumented)
-export const darkThemeConstants: ThemeOptions;
+export const darkTheme: ThemeOptions;
 
 // @public (undocumented)
 export interface DiffColors {

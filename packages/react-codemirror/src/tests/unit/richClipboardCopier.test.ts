@@ -3,11 +3,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { EditorView } from '@codemirror/view';
 import { getHTML, getCSSStyleForClass } from '../../richClipboardCopier';
 
-function createStyleSheet(rules: string): CSSStyleSheet {
+function createStyleSheet(rules: string): void {
   const styleEl = document.createElement('style');
   styleEl.textContent = rules;
   document.head.appendChild(styleEl);
-  return styleEl.sheet;
 }
 
 describe('getCSSStyleForClass', () => {
