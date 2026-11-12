@@ -276,6 +276,18 @@ class CoverageAnalyzer {
         const acc = accessorsIn(n.initializer);
         if (acc.size > 0) aliases.set(n.name.text, acc);
       }
+      // `for (const x of ctx.foo())` makes `this.visit(x)` count for foo too.
+      if (
+        ts.isForOfStatement(n) &&
+        ts.isVariableDeclarationList(n.initializer)
+      ) {
+        const acc = accessorsIn(n.expression);
+        for (const decl of n.initializer.declarations) {
+          if (acc.size > 0 && ts.isIdentifier(decl.name)) {
+            aliases.set(decl.name.text, acc);
+          }
+        }
+      }
     });
 
     walk(fn.body, (n) => {
