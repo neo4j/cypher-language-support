@@ -393,9 +393,7 @@ EDGE TABLES (
 DATASOURCE {type: 'jdbc'}
 SECRET mySecret
 MAPPING
-VERTEX TABLES (
-  db.schema.persons DEFAULT LABEL PROPERTIES ALL COLUMNS
-)
+VERTEX TABLES (db.schema.persons DEFAULT LABEL PROPERTIES ALL COLUMNS)
 RELATIONSHIP TABLES (
   knows
     KEY (a, b)
@@ -485,9 +483,7 @@ NODE TABLES (
 DATASOURCE $d
 SECRET s
 MAPPING
-NODE TABLES (
-  p
-)
+NODE TABLES (p)
 EDGE TABLES (
   knows
     SOURCE KEY (personIdentifierA, personIdentifierB)

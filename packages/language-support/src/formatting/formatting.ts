@@ -936,9 +936,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.commandNameExpression());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
-    this.visit(ctx.OF());
-    this.avoidBreakBetween();
-    this._visit(ctx.TYPE());
+    this._visitWithoutBreaks(ctx.OF(), ctx.TYPE());
     this._visit(ctx.symbolicNameString());
     for (let i = 0; i < ctx.secretSetClause().length; i++) {
       this.breakLine();
@@ -950,11 +948,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitCreateVirtualGraphDatabase = (
     ctx: CreateVirtualGraphDatabaseContext,
   ) => {
-    this.visit(ctx.VIRTUAL());
-    this.avoidBreakBetween();
-    this._visit(ctx.GRAPH());
-    this.avoidBreakBetween();
-    this._visit(ctx.DATABASE());
+    this._visitWithoutBreaks(ctx.VIRTUAL(), ctx.GRAPH(), ctx.DATABASE());
     this._visit(ctx.symbolicAliasNameOrParameter());
     this._visitCommandIfNotExists(ctx);
     this.breakLine();
@@ -993,45 +987,21 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitNodeTableList = (ctx: NodeTableListContext) => {
-    this._visit(ctx.LPAREN());
-    const nodeTableListIndent = this.addIndentation();
-    this.breakLine();
-    let tableGrp = this.startGroup();
-    this._visit(ctx.nodeTable(0));
-    this.endGroup(tableGrp);
-    for (let i = 1; i < ctx.nodeTable().length; i++) {
-      this._visit(ctx.COMMA(i - 1));
-      this.breakLine();
-      tableGrp = this.startGroup();
-      this._visit(ctx.nodeTable(i));
-      this.endGroup(tableGrp);
-    }
-    this.removeIndentation(nodeTableListIndent);
-    this.breakLine();
-    this._visitTerminalRaw(ctx.RPAREN(), {
-      dontConcatenate: true,
-    });
+    this._visitParenthesizedList(
+      ctx.LPAREN(),
+      ctx.nodeTable(),
+      ctx.COMMA(),
+      ctx.RPAREN(),
+    );
   };
 
   visitEdgeTableList = (ctx: EdgeTableListContext) => {
-    this._visit(ctx.LPAREN());
-    const edgeTableListIndent = this.addIndentation();
-    this.breakLine();
-    let tableGrp = this.startGroup();
-    this._visit(ctx.edgeTable(0));
-    this.endGroup(tableGrp);
-    for (let i = 1; i < ctx.edgeTable().length; i++) {
-      this._visit(ctx.COMMA(i - 1));
-      this.breakLine();
-      tableGrp = this.startGroup();
-      this._visit(ctx.edgeTable(i));
-      this.endGroup(tableGrp);
-    }
-    this.removeIndentation(edgeTableListIndent);
-    this.breakLine();
-    this._visitTerminalRaw(ctx.RPAREN(), {
-      dontConcatenate: true,
-    });
+    this._visitParenthesizedList(
+      ctx.LPAREN(),
+      ctx.edgeTable(),
+      ctx.COMMA(),
+      ctx.RPAREN(),
+    );
   };
 
   visitQualifiedTableName = (ctx: QualifiedTableNameContext) => {
