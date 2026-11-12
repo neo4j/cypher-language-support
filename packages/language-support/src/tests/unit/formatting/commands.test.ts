@@ -306,3 +306,103 @@ OPTIONS {
     verifyFormatting(query, expected);
   });
 });
+
+describe('tests for secret commands', () => {
+  test('drop secret', () => {
+    const query = `drop secret mySecret if exists`;
+    const expected = `DROP SECRET mySecret IF EXISTS`;
+    verifyFormatting(query, expected);
+  });
+
+  test('secret privileges', () => {
+    const query = `grant access secret * on dbms to myRole;
+grant access secret mySecret on dbms to myRole;
+grant create secret on dbms to myRole;
+deny drop secret on dbms to myRole;
+grant write external secret on dbms to myRole;
+revoke external secret management on dbms from myRole;
+grant secret management on dbms to myRole;
+grant show secret on dbms to myRole;
+grant show external secret on dbms to myRole;`;
+    const expected = `GRANT ACCESS SECRET * ON DBMS TO myRole;
+GRANT ACCESS SECRET mySecret ON DBMS TO myRole;
+GRANT CREATE SECRET ON DBMS TO myRole;
+DENY DROP SECRET ON DBMS TO myRole;
+GRANT WRITE EXTERNAL SECRET ON DBMS TO myRole;
+REVOKE EXTERNAL SECRET MANAGEMENT ON DBMS FROM myRole;
+GRANT SECRET MANAGEMENT ON DBMS TO myRole;
+GRANT SHOW SECRET ON DBMS TO myRole;
+GRANT SHOW EXTERNAL SECRET ON DBMS TO myRole;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create secret with multiple set clauses', () => {
+    const query = `create secret myVeryLongSecretName if not exists of type amazonWebServicesSecretsManager set accessKeyIdentifier $accessKeyParameter set secretAccessKey from external secret "arn:aws:secretsmanager:eu-west-1:123456789:secret:mySecret"`;
+    const expected = `CREATE SECRET myVeryLongSecretName IF NOT EXISTS
+OF TYPE amazonWebServicesSecretsManager
+SET accessKeyIdentifier $accessKeyParameter
+SET secretAccessKey FROM EXTERNAL SECRET "arn:aws:secretsmanager:eu-west-1:123456789:secret:mySecret"`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for virtual graph database commands', () => {
+  test('create virtual graph database with map mapping', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping {nodes: []}`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING {nodes: []}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with set prefixes, options and wait', () => {
+    const query = `create virtual graph database myGraph if not exists set datasource $ds set secret mySecret set mapping $mapping set default language cypher 25 options {foo: 1} wait`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph IF NOT EXISTS
+SET DATASOURCE $ds
+SET SECRET mySecret
+SET MAPPING $mapping
+SET DEFAULT LANGUAGE CYPHER 25
+OPTIONS {foo: 1}
+WAIT`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with property tables', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping node tables (persons key (id) label Person properties are all columns except (password), movies as m label Movie no properties) edge tables (acted_in source key (person_id) references persons destination key (movie_id) references movies (id) label ACTED_IN properties (role as character, year))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING
+NODE TABLES (
+  persons KEY (id) LABEL Person PROPERTIES ARE ALL COLUMNS EXCEPT (password),
+  movies AS m LABEL Movie NO PROPERTIES
+)
+EDGE TABLES (
+  acted_in
+    SOURCE KEY (person_id) REFERENCES persons
+    DESTINATION KEY (movie_id) REFERENCES movies (id)
+    LABEL ACTED_IN PROPERTIES (role AS character, year)
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with qualified table names and synonyms', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping vertex tables (db.schema.persons default label properties all columns) relationship tables (knows key (a, b) source key (a) references db.schema.persons destination key (b) references db.schema.persons label KNOWS label FRIEND no properties)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING
+VERTEX TABLES (
+  db.schema.persons DEFAULT LABEL PROPERTIES ALL COLUMNS
+)
+RELATIONSHIP TABLES (
+  knows
+    KEY (a, b)
+    SOURCE KEY (a) REFERENCES db.schema.persons
+    DESTINATION KEY (b) REFERENCES db.schema.persons
+    LABEL KNOWS LABEL FRIEND NO PROPERTIES
+)`;
+    verifyFormatting(query, expected);
+  });
+});

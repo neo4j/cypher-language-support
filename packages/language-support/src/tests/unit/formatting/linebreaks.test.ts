@@ -1639,6 +1639,39 @@ RETURN
   50`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('long STARTS WITH comparison', () => {
+    const query = `match (n) where n.aVeryLongPropertyNameForStartTime starts with n.anotherVeryLongPropertyNameForEndTimeXXXXXXX and n.x is before datetime() return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryLongPropertyNameForStartTime STARTS
+  WITH
+  n.anotherVeryLongPropertyNameForEndTimeXXXXXXX AND
+  n.x IS BEFORE datetime()
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long chronological comparison', () => {
+    const query = `match (n) where n.aVeryLongPropertyNameForStartTime is not same representation n.anotherVeryLongPropertyNameForEndTime and n.x is before datetime() return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryLongPropertyNameForStartTime IS NOT SAME REPRESENTATION
+  n.anotherVeryLongPropertyNameForEndTime AND
+  n.x IS BEFORE datetime()
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  //Should probably split before "IS NOT TYPED STRING"
+  test('long type comparison', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeType is not typed string return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeType IS NOT TYPED STRING
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
 });
 
 describe('tests for line breaks with non-default max column width', () => {

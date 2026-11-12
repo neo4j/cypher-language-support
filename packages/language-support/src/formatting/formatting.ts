@@ -19,6 +19,7 @@ import type {
   CallClauseContext,
   CaseAlternativeContext,
   CaseExpressionContext,
+  ChronologicalComparisonContext,
   ClauseContext,
   CollectExpressionContext,
   CombinedSpecificationClauseContext,
@@ -40,10 +41,15 @@ import type {
   CreateDatabaseContext,
   CreateFulltextIndexContext,
   CreateIndex_Context,
+  CreateSecretContext,
   CreateVectorIndexContext,
+  CreateVirtualGraphDatabaseContext,
   DeleteClauseContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
+  EdgeTableContext,
+  EdgeTableListContext,
+  EdgeTablesContext,
   EdgeTypeSpecificationContext,
   ElseBranchContext,
   ExistsExpressionContext,
@@ -94,9 +100,14 @@ import type {
   MultiLabelNodePatternContext,
   NamespaceContext,
   NextStatementContext,
+  NodeTableContext,
+  NodeTableListContext,
+  NodeTablesContext,
   NodeTypeInSituReferenceContext,
   NodeTypeSpecificationContext,
+  NormalFormComparisonContext,
   NormalizeFunctionContext,
+  NullComparisonContext,
   NumberLiteralContext,
   ParameterContext,
   ParenthesizedExpressionContext,
@@ -109,6 +120,7 @@ import type {
   ProcedureNameContext,
   PropertyContext,
   PropertyTypeListContext,
+  QualifiedTableNameContext,
   QueryBodyContext,
   QueryWithLocalDefinitionsContext,
   RangePostfixContext,
@@ -132,12 +144,14 @@ import type {
   SubqueryClauseContext,
   SubqueryScopeContext,
   TrimFunctionContext,
+  TypeComparisonContext,
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
   VectorDistanceFunctionContext,
   VectorFunctionContext,
   VectorNormFunctionContext,
+  VirtualGraphSpecificationContext,
   WeightedSourceContext,
   WhenBranchContext,
   WhenContext,
@@ -745,7 +759,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       | CreateIndex_Context
       | CreateFulltextIndexContext
       | CreateVectorIndexContext
-      | CreateAuthRuleContext,
+      | CreateAuthRuleContext
+      | CreateSecretContext
+      | CreateVirtualGraphDatabaseContext,
   ) => {
     if (ctx.IF()) {
       this.avoidBreakBetween();
@@ -867,6 +883,187 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.commandRelPattern());
     this.visit(ctx.constraintType());
     this._visit(ctx.commandOptions());
+  };
+
+  visitCreateSecret = (ctx: CreateSecretContext) => {
+    this._visit(ctx.SECRET());
+    this._visit(ctx.commandNameExpression());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    this.visit(ctx.OF());
+    this.avoidBreakBetween();
+    this._visit(ctx.TYPE());
+    this._visit(ctx.symbolicNameString());
+    for (let i = 0; i < ctx.secretSetClause().length; i++) {
+      this.breakLine();
+      this._visit(ctx.secretSetClause(i));
+    }
+    this.breakLine();
+  };
+
+  visitCreateVirtualGraphDatabase = (
+    ctx: CreateVirtualGraphDatabaseContext,
+  ) => {
+    this.visit(ctx.VIRTUAL());
+    this.avoidBreakBetween();
+    this._visit(ctx.GRAPH());
+    this.avoidBreakBetween();
+    this._visit(ctx.DATABASE());
+    this._visit(ctx.symbolicAliasNameOrParameter());
+    this._visitCommandIfNotExists(ctx);
+    this.breakLine();
+    const specificationGrp = this.startGroup();
+    this._visit(ctx.virtualGraphSpecification());
+    this.endGroup(specificationGrp);
+    this.breakLine();
+    if (ctx.defaultLanguageSpecification()) {
+      this._visit(ctx.SET());
+      this._visit(ctx.defaultLanguageSpecification());
+      this.breakLine();
+    }
+    if (ctx.commandOptions()) {
+      this._visit(ctx.commandOptions());
+      this.breakLine();
+    }
+    if (ctx.waitClause()) {
+      this._visit(ctx.waitClause());
+      this.breakLine();
+    }
+  };
+
+  visitVirtualGraphSpecification = (ctx: VirtualGraphSpecificationContext) => {
+    const dataSourceGrp = this.startGroup();
+    this._visit(ctx.setVirtualGraphDatasource());
+    this.endGroup(dataSourceGrp);
+    this.breakLine();
+    const secretGrp = this.startGroup();
+    this._visit(ctx.setVirtualGraphSecret());
+    this.endGroup(secretGrp);
+    this.breakLine();
+    const mappingGrp = this.startGroup();
+    this._visit(ctx.setVirtualGraphMapping());
+    this.endGroup(mappingGrp);
+    this.breakLine();
+  };
+
+  visitNodeTableList = (ctx: NodeTableListContext) => {
+    this._visit(ctx.LPAREN());
+    const nodeTableListIndent = this.addIndentation();
+    this.breakLine();
+    let tableGrp = this.startGroup();
+    this._visit(ctx.nodeTable(0));
+    this.endGroup(tableGrp);
+    for (let i = 1; i < ctx.nodeTable().length; i++) {
+      this._visit(ctx.COMMA(i - 1));
+      this.breakLine();
+      tableGrp = this.startGroup();
+      this._visit(ctx.nodeTable(i));
+      this.endGroup(tableGrp);
+    }
+    this.removeIndentation(nodeTableListIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+    });
+  };
+
+  visitEdgeTableList = (ctx: EdgeTableListContext) => {
+    this._visit(ctx.LPAREN());
+    const edgeTableListIndent = this.addIndentation();
+    this.breakLine();
+    let tableGrp = this.startGroup();
+    this._visit(ctx.edgeTable(0));
+    this.endGroup(tableGrp);
+    for (let i = 1; i < ctx.edgeTable().length; i++) {
+      this._visit(ctx.COMMA(i - 1));
+      this.breakLine();
+      tableGrp = this.startGroup();
+      this._visit(ctx.edgeTable(i));
+      this.endGroup(tableGrp);
+    }
+    this.removeIndentation(edgeTableListIndent);
+    this.breakLine();
+    this._visitTerminalRaw(ctx.RPAREN(), {
+      dontConcatenate: true,
+    });
+  };
+
+  visitQualifiedTableName = (ctx: QualifiedTableNameContext) => {
+    let i = 0;
+    while (i < ctx.symbolicNameString().length - 1) {
+      this._visit(ctx.symbolicNameString(i));
+      this.avoidSpaceBetween();
+      this.avoidBreakBetween();
+      this._visit(ctx.DOT(i));
+      this.avoidSpaceBetween();
+      this.avoidBreakBetween();
+      i++;
+    }
+    this._visit(ctx.symbolicNameString(i));
+  };
+
+  visitNodeTable = (ctx: NodeTableContext) => {
+    const nameGrp = this.startGroup();
+    this._visit(ctx.qualifiedTableName());
+    this._visit(ctx.AS());
+    this._visit(ctx.symbolicNameString());
+    this.endGroup(nameGrp);
+    const tableIndent = this.addIndentation();
+    if (ctx.tableKey()) {
+      const tableGrp = this.startGroup();
+      this._visit(ctx.tableKey());
+      this.endGroup(tableGrp);
+    }
+    if (ctx.labelAndPropertiesList() || ctx.tableProperties()) {
+      const propGrp = this.startGroup();
+      this._visit(ctx.labelAndPropertiesList());
+      this._visit(ctx.tableProperties());
+      this.endGroup(propGrp);
+    }
+    this.removeIndentation(tableIndent);
+  };
+
+  visitEdgeTable = (ctx: EdgeTableContext) => {
+    const nameGrp = this.startGroup();
+    this._visit(ctx.qualifiedTableName());
+    this._visit(ctx.AS());
+    this._visit(ctx.symbolicNameString());
+    this.endGroup(nameGrp);
+    const tableIndent = this.addIndentation();
+    if (ctx.tableKey()) {
+      const tableGrp = this.startGroup();
+      this._visit(ctx.tableKey());
+      this.endGroup(tableGrp);
+    }
+    const sourceGrp = this.startGroup();
+    this._visit(ctx.sourceKey());
+    this.endGroup(sourceGrp);
+    const destinationGrp = this.startGroup();
+    this._visit(ctx.destinationKey());
+    this.endGroup(destinationGrp);
+    if (ctx.labelAndPropertiesList() || ctx.tableProperties()) {
+      const propGrp = this.startGroup();
+      this._visit(ctx.labelAndPropertiesList());
+      this._visit(ctx.tableProperties());
+      this.endGroup(propGrp);
+    }
+    this.removeIndentation(tableIndent);
+  };
+
+  visitEdgeTables = (ctx: EdgeTablesContext) => {
+    this._visit(ctx.edgeSynonym());
+    this.avoidBreakBetween();
+    this._visit(ctx.TABLES());
+    this.avoidBreakBetween();
+    this._visit(ctx.edgeTableList());
+  };
+
+  visitNodeTables = (ctx: NodeTablesContext) => {
+    this._visit(ctx.nodeSynonym());
+    this.avoidBreakBetween();
+    this._visit(ctx.TABLES());
+    this.avoidBreakBetween();
+    this._visit(ctx.nodeTableList());
   };
 
   visitConstraintTyped = (ctx: ConstraintTypedContext) => {
@@ -2408,6 +2605,45 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.avoidBreakBetween();
     this.visit(ctx.comparisonExpression6());
     this.endGroup(comparisonExprGrp);
+  };
+
+  visitChronologicalComparison = (ctx: ChronologicalComparisonContext) => {
+    const comparisonGrp = this.startGroup();
+    this._visit(ctx.IS());
+    this._visit(ctx.NOT());
+    this._visit(ctx.chronologicalOperator());
+    this.endGroup(comparisonGrp);
+    this._visit(ctx.expression6());
+  };
+
+  visitNullComparison = (ctx: NullComparisonContext) => {
+    const comparisonGrp = this.startGroup();
+    this._visit(ctx.IS());
+    this._visit(ctx.NOT());
+    this._visit(ctx.NULL());
+    this.endGroup(comparisonGrp);
+  };
+
+  visitTypeComparison = (ctx: TypeComparisonContext) => {
+    const comparisonGrp = this.startGroup();
+    this._visit(ctx.IS());
+    this.avoidBreakBetween();
+    this._visit(ctx.NOT());
+    this.avoidBreakBetween();
+    this._visit(ctx.TYPED());
+    this.avoidBreakBetween();
+    this._visit(ctx.COLONCOLON());
+    this.endGroup(comparisonGrp);
+    this._visit(ctx.type());
+  };
+
+  visitNormalFormComparison = (ctx: NormalFormComparisonContext) => {
+    const comparisonGrp = this.startGroup();
+    this._visit(ctx.IS());
+    this._visit(ctx.NOT());
+    this._visit(ctx.normalForm());
+    this._visit(ctx.NORMALIZED());
+    this.endGroup(comparisonGrp);
   };
 
   visitExpression6 = (ctx: Expression6Context) => {

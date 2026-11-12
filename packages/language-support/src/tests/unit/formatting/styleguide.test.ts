@@ -567,6 +567,22 @@ RETURN n, s`;
     verifyFormatting(query, expected);
   });
 
+  test('chronological comparisons BEFORE and AFTER', () => {
+    const query = `match (n) where n.start is before n.end and n.a is not after date() return n`;
+    const expected = `MATCH (n)
+WHERE n.start IS BEFORE n.end AND n.a IS NOT AFTER date()
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('chronological comparisons SAME INSTANT and SAME REPRESENTATION', () => {
+    const query = `match (a), (b) where a.t is same instant b.t or a.t is not same representation b.t return a, b`;
+    const expected = `MATCH (a), (b)
+WHERE a.t IS SAME INSTANT b.t OR a.t IS NOT SAME REPRESENTATION b.t
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
   test('standard function invocation function formatting', () => {
     const query = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
     const expected = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
