@@ -193,6 +193,14 @@ function isIdent(node: ts.Node, name: string) {
   return ts.isIdentifier(node) && node.text === name;
 }
 
+// For array params, `param[i]` and `...param` count as the param itself.
+function isParamOrElement(node: ts.Node, name: string) {
+  if (ts.isElementAccessExpression(node) || ts.isSpreadElement(node)) {
+    return isIdent(node.expression, name);
+  }
+  return isIdent(node, name);
+}
+
 class CoverageAnalyzer {
   private cache = new Map<string, Coverage>();
   private inProgress = new Set<string>();
@@ -213,7 +221,12 @@ class CoverageAnalyzer {
     const cached = this.cache.get(key);
     if (cached) return cached;
     const fn = this.fns.get(fnName);
-    const param = fn?.parameters[paramIndex];
+    // Arguments past a rest parameter all land in it
+    const lastParam = fn?.parameters.at(-1);
+    const param =
+      lastParam?.dotDotDotToken && paramIndex >= fn.parameters.length - 1
+        ? lastParam
+        : fn?.parameters[paramIndex];
     if (!fn?.body || !param || !ts.isIdentifier(param.name)) {
       return emptyCoverage();
     }
@@ -278,7 +291,7 @@ class CoverageAnalyzer {
       if (!isVisit && !isHelper) return;
 
       n.arguments.forEach((arg, i) => {
-        if (isIdent(arg, ctx)) {
+        if (isParamOrElement(arg, ctx)) {
           if (GENERIC_VISITS.has(name)) {
             coverage.generic = true;
           } else if (isVisit) {

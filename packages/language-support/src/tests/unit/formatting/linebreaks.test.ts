@@ -1644,8 +1644,7 @@ RETURN
     const query = `match (n) where n.aVeryLongPropertyNameForStartTime starts with n.anotherVeryLongPropertyNameForEndTimeXXXXXXX and n.x is before datetime() return n`;
     const expected = `MATCH (n)
 WHERE
-  n.aVeryLongPropertyNameForStartTime STARTS
-  WITH
+  n.aVeryLongPropertyNameForStartTime STARTS WITH
   n.anotherVeryLongPropertyNameForEndTimeXXXXXXX AND
   n.x IS BEFORE datetime()
 RETURN n`;
@@ -1663,12 +1662,59 @@ RETURN n`;
     verifyFormatting(query, expected);
   });
 
-  //Should probably split before "IS NOT TYPED STRING"
   test('long type comparison', () => {
     const query = `match (n) where n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeType is not typed string return n`;
     const expected = `MATCH (n)
 WHERE
   n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeType IS NOT TYPED STRING
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long chronological comparison starting late on the line', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXX is not same representation n.b return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXX IS NOT SAME REPRESENTATION
+  n.b
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long null comparison starting late on the line', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXXXXXXXXXXXXXXXXX is not null and n.b return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXXXXXXXXXXXXXXXXX IS NOT NULL AND
+  n.b
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long normal form comparison starting late on the line', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXXXXXXXXXXXX is not nfkc normalized and n.b return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongPropertyNameXXXXXXXXXXXXXXXXXXXX IS NOT NFKC NORMALIZED AND
+  n.b
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long type comparison with NOT NULL type', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyName is not typed string not null return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyName IS NOT TYPED STRING NOT NULL
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long type comparison with ::', () => {
+    const query = `match (n) where n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeTypeXX :: string return n`;
+    const expected = `MATCH (n)
+WHERE
+  n.aVeryVeryReallyExtremelyLongOneCouldEvenSayPropertyNameWithSomeTypeXX :: STRING
 RETURN n`;
     verifyFormatting(query, expected);
   });

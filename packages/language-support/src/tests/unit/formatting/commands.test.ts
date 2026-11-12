@@ -405,4 +405,135 @@ RELATIONSHIP TABLES (
 )`;
     verifyFormatting(query, expected);
   });
+
+  test('create virtual graph database with long label list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons key (id) label Person label Actor label Director label Producer label Writer label Human properties are all columns)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    KEY (id)
+    LABEL Person
+    LABEL Actor
+    LABEL Director
+    LABEL Producer
+    LABEL Writer
+    LABEL Human PROPERTIES ARE ALL COLUMNS
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long derived property list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons properties (firstName as first, lastName as last, dateOfBirth as born, placeOfBirth as birthplace))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    PROPERTIES (
+      firstName AS first,
+      lastName AS last,
+      dateOfBirth AS born,
+      placeOfBirth AS birthplace
+    )
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long key column list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons key (aVeryLongColumnName, anotherVeryLongColumnName, yetAnotherVeryLongColumnName) no properties)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    KEY (
+      aVeryLongColumnName,
+      anotherVeryLongColumnName,
+      yetAnotherVeryLongColumnName
+    )
+    NO PROPERTIES
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long label properties and except list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons label Person properties are all columns except (passwordHash, socialSecurityNumber, creditCardNumber))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    LABEL Person
+      PROPERTIES ARE ALL COLUMNS EXCEPT (
+        passwordHash,
+        socialSecurityNumber,
+        creditCardNumber
+      )
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long source key', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (p) edge tables (knows source key (personIdentifierA, personIdentifierB) references persons_with_long_name (identifierA, identifierB) destination key (b) references p)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  p
+)
+EDGE TABLES (
+  knows
+    SOURCE KEY (personIdentifierA, personIdentifierB)
+      REFERENCES persons_with_long_name (identifierA, identifierB)
+    DESTINATION KEY (b) REFERENCES p
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long datasource map', () => {
+    const query = `create virtual graph database a datasource {type: 'jdbc', url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db', user: 'me'} secret s mapping $m`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE {
+  type: 'jdbc',
+  url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db',
+  user: 'me'
+}
+SECRET s
+MAPPING $m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long SET datasource map', () => {
+    const query = `create virtual graph database a set datasource {type: 'jdbc', url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db'} set secret s set mapping $m`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+SET DATASOURCE {
+  type: 'jdbc',
+  url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db'
+}
+SET SECRET s
+SET MAPPING $m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long mapping map', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping {nodes: [{table: 'persons', label: 'Person'}, {table: 'movies', label: 'Movie'}], edges: []}`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING {
+  nodes: [
+    {table: 'persons', label: 'Person'},
+    {table: 'movies', label: 'Movie'}
+  ],
+  edges: []
+}`;
+    verifyFormatting(query, expected);
+  });
 });

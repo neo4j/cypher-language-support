@@ -22,6 +22,7 @@ import type {
   ChronologicalComparisonContext,
   ClauseContext,
   CollectExpressionContext,
+  ColumnNameListContext,
   CombinedSpecificationClauseContext,
   CommandContext,
   CommandNodePatternContext,
@@ -45,6 +46,9 @@ import type {
   CreateVectorIndexContext,
   CreateVirtualGraphDatabaseContext,
   DeleteClauseContext,
+  DerivedPropertyContext,
+  DerivedPropertyListContext,
+  DestinationKeyContext,
   DynamicAnyAllExpressionContext,
   DynamicPropertyContext,
   EdgeTableContext,
@@ -75,6 +79,8 @@ import type {
   IndexSpecificationClauseContext,
   InsertClauseContext,
   KeywordLiteralContext,
+  LabelAndPropertiesContext,
+  LabelAndPropertiesListContext,
   LabelComparisonContext,
   LabelExpression4Context,
   LabelExpressionContext,
@@ -93,6 +99,7 @@ import type {
   MapComprehensionForListContext,
   MapComprehensionForMapContext,
   MapContext,
+  MapOrParameterContext,
   MapProjectionContext,
   MatchClauseContext,
   MergeActionContext,
@@ -118,6 +125,7 @@ import type {
   PatternElementContext,
   PatternListContext,
   ProcedureNameContext,
+  PropertiesAreContext,
   PropertyContext,
   PropertyTypeListContext,
   QualifiedTableNameContext,
@@ -135,14 +143,22 @@ import type {
   SetClauseContext,
   SetPropContext,
   SetPropsContext,
+  SetVirtualGraphDatasourceContext,
+  SetVirtualGraphMappingContext,
+  SetVirtualGraphSecretContext,
   ShortestGroupContext,
   ShowCommandYieldContext,
   ShowCommandYieldWhereContext,
   SkipContext,
+  SourceKeyContext,
   StatementsOrCommandsContext,
   StringAndListComparisonContext,
   SubqueryClauseContext,
   SubqueryScopeContext,
+  TableKeyContext,
+  TableLabelContext,
+  TablePropertiesContext,
+  TableReferenceContext,
   TrimFunctionContext,
   TypeComparisonContext,
   UnionContext,
@@ -151,6 +167,8 @@ import type {
   VectorDistanceFunctionContext,
   VectorFunctionContext,
   VectorNormFunctionContext,
+  VirtualGraphDatasourceContext,
+  VirtualGraphMappingContext,
   VirtualGraphSpecificationContext,
   WeightedSourceContext,
   WhenBranchContext,
@@ -378,6 +396,23 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     chunk[propertyName] = true;
   };
 
+  /**
+   * Like setChunkProperty, but for every chunk from startIdx up to (not including)
+   * the last one, i.e. it affects the gaps between those chunks. Needed when the
+   * chunks come from nested rules that the caller doesn't visit directly.
+   */
+  setChunkPropertyFrom = (
+    startIdx: number,
+    propertyName: 'noSpace' | 'noBreak',
+  ): void => {
+    for (let i = startIdx; i < this.chunkList.length - 1; i++) {
+      const chunk = this.chunkList[i];
+      if (chunk.type !== 'COMMENT') {
+        chunk[propertyName] = true;
+      }
+    }
+  };
+
   avoidSpaceBetween = (): void => {
     this.setChunkProperty('noSpace');
   };
@@ -392,6 +427,17 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   avoidBreakBetween = (): void => {
     this.setChunkProperty('noBreak');
+  };
+
+  // Keeps the given nodes on one line, including inside nested rules (e.g. a
+  // type like STRING NOT NULL). Whether to break after the last node is still
+  // decided by the surrounding groups.
+  _visitWithoutBreaks = (...nodes: (ParserRuleContext | TerminalNode)[]) => {
+    const startIdx = this.chunkList.length;
+    for (let i = 0; i < nodes.length; i++) {
+      this._visit(nodes[i]);
+    }
+    this.setChunkPropertyFrom(startIdx, 'noBreak');
   };
 
   mustBreakBetween = () => {
@@ -1064,6 +1110,199 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this._visit(ctx.TABLES());
     this.avoidBreakBetween();
     this._visit(ctx.nodeTableList());
+  };
+
+  // Keeps the { on the same line as the keyword when the map is split, like OPTIONS
+  _visitKeywordAndMap = (
+    keyword: TerminalNode,
+    mapOrParameter: MapOrParameterContext,
+  ) => {
+    this._visit(keyword);
+    this.setOneItemProperty();
+    const mapIndent = this.addIndentation();
+    this._visit(mapOrParameter);
+    this.removeIndentation(mapIndent);
+  };
+
+  _visitSetPrefixed = (set: TerminalNode, rest: ParserRuleContext) => {
+    if (set) {
+      this._visit(set);
+      this.avoidBreakBetween();
+    }
+    this._visit(rest);
+  };
+
+  visitSetVirtualGraphDatasource = (ctx: SetVirtualGraphDatasourceContext) => {
+    this._visitSetPrefixed(ctx.SET(), ctx.virtualGraphDatasource());
+  };
+
+  visitSetVirtualGraphSecret = (ctx: SetVirtualGraphSecretContext) => {
+    this._visitSetPrefixed(ctx.SET(), ctx.virtualGraphSecret());
+  };
+
+  visitSetVirtualGraphMapping = (ctx: SetVirtualGraphMappingContext) => {
+    this._visitSetPrefixed(ctx.SET(), ctx.virtualGraphMapping());
+  };
+
+  visitVirtualGraphDatasource = (ctx: VirtualGraphDatasourceContext) => {
+    this._visitKeywordAndMap(ctx.DATASOURCE(), ctx.mapOrParameter());
+  };
+
+  visitVirtualGraphMapping = (ctx: VirtualGraphMappingContext) => {
+    if (ctx.mapOrParameter()) {
+      this._visitKeywordAndMap(ctx.MAPPING(), ctx.mapOrParameter());
+    } else {
+      this._visit(ctx.MAPPING());
+      this._visit(ctx.propertyTables());
+    }
+  };
+
+  // Formats (a, b, c) like a list literal: one item per line if it doesn't fit
+  _visitParenthesizedList = (
+    lparen: TerminalNode,
+    items: ParserRuleContext[],
+    commas: TerminalNode[],
+    rparen: TerminalNode,
+  ) => {
+    const listGrp = this.startGroup();
+    this._visit(lparen);
+    const listIndent = this.addIndentation();
+    for (let i = 0; i < items.length; i++) {
+      const itemGrp = this.startGroup();
+      this._visit(items[i]);
+      if (i < items.length - 1) {
+        this._visit(commas[i]);
+      }
+      this.endGroup(itemGrp);
+    }
+    this.avoidSpaceBetween();
+    this.removeIndentation(listIndent);
+    this._visitTerminalRaw(rparen, {
+      dontConcatenate: true,
+      spacingChoice: 'SPACE_AFTER',
+    });
+    this.endGroup(listGrp);
+  };
+
+  visitColumnNameList = (ctx: ColumnNameListContext) => {
+    this._visitParenthesizedList(
+      ctx.LPAREN(),
+      ctx.columnName(),
+      ctx.COMMA(),
+      ctx.RPAREN(),
+    );
+  };
+
+  // SOURCE KEY (a) REFERENCES table (b), breaking before REFERENCES if needed
+  _visitForeignKey = (
+    keywords: TerminalNode[],
+    keyColumns: ColumnNameListContext,
+    references: TerminalNode,
+    table: TableReferenceContext,
+    referencedColumns: ColumnNameListContext,
+  ) => {
+    this._visitWithoutBreaks(...keywords);
+    this.avoidBreakBetween();
+    this._visit(keyColumns);
+    const referencesIndent = this.addIndentation();
+    const referencesGrp = this.startGroup();
+    this._visitWithoutBreaks(references, table);
+    if (referencedColumns) {
+      this.avoidBreakBetween();
+      this._visit(referencedColumns);
+    }
+    this.endGroup(referencesGrp);
+    this.removeIndentation(referencesIndent);
+  };
+
+  visitSourceKey = (ctx: SourceKeyContext) => {
+    this._visitForeignKey(
+      [ctx.SOURCE(), ctx.KEY()],
+      ctx.columnNameList(0),
+      ctx.REFERENCES(),
+      ctx.tableReference(),
+      ctx.columnNameList(1),
+    );
+  };
+
+  visitDestinationKey = (ctx: DestinationKeyContext) => {
+    this._visitForeignKey(
+      [ctx.DESTINATION(), ctx.KEY()],
+      ctx.columnNameList(0),
+      ctx.REFERENCES(),
+      ctx.tableReference(),
+      ctx.columnNameList(1),
+    );
+  };
+
+  visitTableKey = (ctx: TableKeyContext) => {
+    this._visit(ctx.KEY());
+    this.avoidBreakBetween();
+    this._visit(ctx.columnNameList());
+  };
+
+  visitLabelAndPropertiesList = (ctx: LabelAndPropertiesListContext) => {
+    for (let i = 0; i < ctx.labelAndProperties().length; i++) {
+      const labelGrp = this.startGroup();
+      this._visit(ctx.labelAndProperties(i));
+      this.endGroup(labelGrp);
+    }
+  };
+
+  visitLabelAndProperties = (ctx: LabelAndPropertiesContext) => {
+    this._visit(ctx.tableLabel());
+    const propertiesIndent = this.addIndentation();
+    this._visit(ctx.tableProperties());
+    this.removeIndentation(propertiesIndent);
+  };
+
+  visitTableLabel = (ctx: TableLabelContext) => {
+    this._visitWithoutBreaks(
+      ctx.DEFAULT(),
+      ctx.LABEL(),
+      ctx.symbolicNameString(),
+    );
+  };
+
+  visitTableProperties = (ctx: TablePropertiesContext) => {
+    if (ctx.NO()) {
+      this._visitWithoutBreaks(ctx.NO(), ctx.PROPERTIES());
+    } else {
+      this.visitChildren(ctx);
+    }
+  };
+
+  visitPropertiesAre = (ctx: PropertiesAreContext) => {
+    this._visitWithoutBreaks(
+      ctx.PROPERTIES(),
+      ctx.ARE(),
+      ctx.ALL(),
+      ctx.COLUMNS(),
+      ctx.EXCEPT(),
+    );
+    if (ctx.columnNameList()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.columnNameList());
+    }
+  };
+
+  visitDerivedPropertyList = (ctx: DerivedPropertyListContext) => {
+    this._visit(ctx.PROPERTIES());
+    this.avoidBreakBetween();
+    this._visitParenthesizedList(
+      ctx.LPAREN(),
+      ctx.derivedProperty(),
+      ctx.COMMA(),
+      ctx.RPAREN(),
+    );
+  };
+
+  visitDerivedProperty = (ctx: DerivedPropertyContext) => {
+    this._visitWithoutBreaks(
+      ctx.columnName(),
+      ctx.AS(),
+      ctx.symbolicNameString(),
+    );
   };
 
   visitConstraintTyped = (ctx: ConstraintTypedContext) => {
@@ -2608,42 +2847,31 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitChronologicalComparison = (ctx: ChronologicalComparisonContext) => {
-    const comparisonGrp = this.startGroup();
-    this._visit(ctx.IS());
-    this._visit(ctx.NOT());
-    this._visit(ctx.chronologicalOperator());
-    this.endGroup(comparisonGrp);
+    this._visitWithoutBreaks(ctx.IS(), ctx.NOT(), ctx.chronologicalOperator());
     this._visit(ctx.expression6());
   };
 
   visitNullComparison = (ctx: NullComparisonContext) => {
-    const comparisonGrp = this.startGroup();
-    this._visit(ctx.IS());
-    this._visit(ctx.NOT());
-    this._visit(ctx.NULL());
-    this.endGroup(comparisonGrp);
+    this._visitWithoutBreaks(ctx.IS(), ctx.NOT(), ctx.NULL());
   };
 
   visitTypeComparison = (ctx: TypeComparisonContext) => {
-    const comparisonGrp = this.startGroup();
-    this._visit(ctx.IS());
-    this.avoidBreakBetween();
-    this._visit(ctx.NOT());
-    this.avoidBreakBetween();
-    this._visit(ctx.TYPED());
-    this.avoidBreakBetween();
-    this._visit(ctx.COLONCOLON());
-    this.endGroup(comparisonGrp);
-    this._visit(ctx.type());
+    this._visitWithoutBreaks(
+      ctx.IS(),
+      ctx.NOT(),
+      ctx.TYPED(),
+      ctx.COLONCOLON(),
+      ctx.type(),
+    );
   };
 
   visitNormalFormComparison = (ctx: NormalFormComparisonContext) => {
-    const comparisonGrp = this.startGroup();
-    this._visit(ctx.IS());
-    this._visit(ctx.NOT());
-    this._visit(ctx.normalForm());
-    this._visit(ctx.NORMALIZED());
-    this.endGroup(comparisonGrp);
+    this._visitWithoutBreaks(
+      ctx.IS(),
+      ctx.NOT(),
+      ctx.normalForm(),
+      ctx.NORMALIZED(),
+    );
   };
 
   visitExpression6 = (ctx: Expression6Context) => {
@@ -3599,12 +3827,14 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitStringAndListComparison = (ctx: StringAndListComparisonContext) => {
-    this._visit(ctx.REGEQ());
-    this._visit(ctx.STARTS());
-    this._visit(ctx.ENDS());
-    this._visit(ctx.WITH());
-    this._visit(ctx.CONTAINS());
-    this._visit(ctx.IN());
+    this._visitWithoutBreaks(
+      ctx.REGEQ(),
+      ctx.STARTS(),
+      ctx.ENDS(),
+      ctx.WITH(),
+      ctx.CONTAINS(),
+      ctx.IN(),
+    );
     this.setOneItemProperty();
     this._visit(ctx.expression6());
   };
