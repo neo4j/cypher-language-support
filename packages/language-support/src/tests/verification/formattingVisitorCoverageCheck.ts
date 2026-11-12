@@ -105,8 +105,11 @@ function collectContexts(): Map<string, ContextInfo> {
         member.name.text.startsWith('_') &&
         /^(\w+)Context\b/.exec(member.type?.getText() ?? '');
       if (ruleLabel) {
-        const rule = ruleLabel[1];
-        labels.set(member.name.text, rule[0].toLowerCase() + rule.slice(1));
+        const rule = ruleLabel[1]!;
+        labels.set(
+          member.name.text,
+          rule.charAt(0).toLowerCase() + rule.slice(1),
+        );
       } else if (
         ts.isMethodDeclaration(member) &&
         ts.isIdentifier(member.name) &&
@@ -116,7 +119,7 @@ function collectContexts(): Map<string, ContextInfo> {
       ) {
         accessors.add(member.name.text);
         const ruleType = /(\w+Context)\b/.exec(member.type.getText());
-        if (ruleType) accessorTypes.set(member.name.text, ruleType[1]);
+        if (ruleType) accessorTypes.set(member.name.text, ruleType[1]!);
       }
     }
     result.set(stmt.name.text, { accessors, accessorTypes, labels });
@@ -221,13 +224,14 @@ class CoverageAnalyzer {
     const cached = this.cache.get(key);
     if (cached) return cached;
     const fn = this.fns.get(fnName);
+    if (!fn?.body) return emptyCoverage();
     // Arguments past a rest parameter all land in it
-    const lastParam = fn?.parameters.at(-1);
+    const lastParam = fn.parameters.at(-1);
     const param =
       lastParam?.dotDotDotToken && paramIndex >= fn.parameters.length - 1
         ? lastParam
-        : fn?.parameters[paramIndex];
-    if (!fn?.body || !param || !ts.isIdentifier(param.name)) {
+        : fn.parameters[paramIndex];
+    if (!param || !ts.isIdentifier(param.name)) {
       return emptyCoverage();
     }
     // Recursive helpers: assume nothing extra on the cyclic edge.

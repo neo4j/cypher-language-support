@@ -407,7 +407,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ): void => {
     for (let i = startIdx; i < this.chunkList.length - 1; i++) {
       const chunk = this.chunkList[i];
-      if (chunk.type !== 'COMMENT') {
+      if (chunk && chunk.type !== 'COMMENT') {
         chunk[propertyName] = true;
       }
     }
@@ -432,7 +432,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // Keeps the given nodes on one line, including inside nested rules (e.g. a
   // type like STRING NOT NULL). Whether to break after the last node is still
   // decided by the surrounding groups.
-  _visitWithoutBreaks = (...nodes: (ParserRuleContext | TerminalNode)[]) => {
+  _visitWithoutBreaks = (
+    ...nodes: (ParserRuleContext | TerminalNode | null | undefined)[]
+  ) => {
     const startIdx = this.chunkList.length;
     for (let i = 0; i < nodes.length; i++) {
       this._visit(nodes[i]);
@@ -1106,7 +1108,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.removeIndentation(mapIndent);
   };
 
-  _visitSetPrefixed = (set: TerminalNode, rest: ParserRuleContext) => {
+  _visitSetPrefixed = (set: TerminalNode | null, rest: ParserRuleContext) => {
     if (set) {
       this._visit(set);
       this.avoidBreakBetween();
@@ -1131,8 +1133,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitVirtualGraphMapping = (ctx: VirtualGraphMappingContext) => {
-    if (ctx.mapOrParameter()) {
-      this._visitKeywordAndMap(ctx.MAPPING(), ctx.mapOrParameter());
+    const mapOrParam = ctx.mapOrParameter();
+    if (mapOrParam) {
+      this._visitKeywordAndMap(ctx.MAPPING(), mapOrParam);
     } else {
       this._visit(ctx.MAPPING());
       this._visit(ctx.propertyTables());
@@ -1178,10 +1181,10 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   // SOURCE KEY (a) REFERENCES table (b), breaking before REFERENCES if needed
   _visitForeignKey = (
     keywords: TerminalNode[],
-    keyColumns: ColumnNameListContext,
+    keyColumns: ColumnNameListContext | null,
     references: TerminalNode,
-    table: TableReferenceContext,
-    referencedColumns: ColumnNameListContext,
+    table: TableReferenceContext | null,
+    referencedColumns: ColumnNameListContext | null,
   ) => {
     this._visitWithoutBreaks(...keywords);
     this.avoidBreakBetween();
