@@ -120,6 +120,10 @@ ADMINISTRATOR
    : A D M I N I S T R A T O R
    ;
 
+AFTER
+   : A F T E R
+   ;
+
 ALIAS
    : A L I A S
    ;
@@ -156,6 +160,10 @@ ANY
    : A N Y
    ;
 
+ARE
+   : A R E
+   ;
+
 ARRAY
    : A R R A Y
    ;
@@ -190,6 +198,10 @@ AUTO
 
 BAR
    : '|'
+   ;
+
+BEFORE
+   : B E F O R E
    ;
 
 BINDINGS
@@ -248,6 +260,14 @@ COLLECT
    : C O L L E C T
    ;
 
+COLUMNS
+   : C O L U M N S
+   ;
+
+COMBINE
+   : C O M B I N E
+   ;
+
 COLON
    : ':'
    ;
@@ -293,8 +313,12 @@ COPY
    ;
 
 CONDITION
-    : C O N D I T I O N
-    ;
+   : C O N D I T I O N
+   ;
+
+CONSTANT
+   : C O N S T A N T
+   ;
 
 CONTINUE
    : C O N T I N U E
@@ -344,6 +368,10 @@ DATABASES
    : D A T A B A S E S
    ;
 
+DATASOURCE
+   : D A T A S O U R C E
+   ;
+
 DATE
    : D A T E
    ;
@@ -386,6 +414,10 @@ DESC
 
 DESCENDING
    : D E S C E N D I N G
+   ;
+
+DESTINATION
+   : D E S T I N A T I O N
    ;
 
 DESTROY
@@ -504,6 +536,10 @@ EQ
    : '='
    ;
 
+EXCEPT
+   : E X C E P T
+   ;
+
 EXECUTABLE
    : E X E C U T A B L E
    ;
@@ -526,6 +562,10 @@ EXISTS
 
 EXPAND
    : E X P A N D
+   ;
+
+EXTERNAL
+   : E X T E R N A L
    ;
 
 ERROR
@@ -680,6 +720,10 @@ INSERT
    : I N S E R T
    ;
 
+INSTANT
+   : I N S T A N T
+   ;
+
 INTO
    : I N T O
    ;
@@ -814,6 +858,10 @@ MAP
    : M A P
    ;
 
+MAPPING
+   : M A P P I N G
+   ;
+
 MATCH
    : M A T C H
    ;
@@ -882,6 +930,10 @@ NEXT
    : N E X T
    ;
 
+NO
+   : N O
+   ;
+
 NODE
    : N O D E
    ;
@@ -944,6 +996,14 @@ ON
 
 ONLY
    : O N L Y
+   ;
+
+ONTOLOGY
+   : O N T O L O G Y
+   ;
+
+ONTOLOGIES
+   : O N T O L O G I E S
    ;
 
 OPTIONAL
@@ -1078,6 +1138,10 @@ REDUCE
    : R E D U C E
    ;
 
+REFERENCES
+   : R E F E R E N C E S
+   ;
+
 RENAME
    : R E N A M E
    ;
@@ -1120,6 +1184,10 @@ REPLICAS
 
 REPORT
    : R E P O R T
+   ;
+
+REPRESENTATION
+   : R E P R E S E N T A T I O N
    ;
 
 REQUIRE
@@ -1172,6 +1240,10 @@ RULES
 
 RPAREN
    : ')'
+   ;
+
+SAME
+   : S A M E
    ;
 
 SCAN
@@ -1274,6 +1346,10 @@ SKIPROWS
    : S K I P
    ;
 
+SOURCE
+   : S O U R C E
+   ;
+
 START
    : S T A R T
    ;
@@ -1300,6 +1376,10 @@ SUPPORTED
 
 SUSPENDED
    : S U S P E N D E D
+   ;
+
+TABLES
+   : T A B L E S
    ;
 
 TAG
@@ -1458,13 +1538,21 @@ VERTEX
    : V E R T E X
    ;
 
+VIRTUAL
+   : V I R T U A L
+   ;
+
 WAIT
    : W A I T
    ;
 
 WALK
-    : W A L K
-    ;
+   : W A L K
+   ;
+
+WEIGHT
+   : W E I G H T
+   ;
 
 WHEN
    : W H E N
@@ -1484,6 +1572,10 @@ WITHOUT
 
 WRITE
    : W R I T E
+   ;
+
+WRRF
+   : W R R F
    ;
 
 XOR

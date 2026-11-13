@@ -503,6 +503,86 @@ RETURN n, s`;
     verifyFormatting(query, expected);
   });
 
+  test('SEARCH clause with combined specification clause', () => {
+    const query = `MATCH (n) SEARCH n IN ( COMBINE ( VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT 10 WEIGHT 5, VECTOR INDEX myOtherIndex FOR [3,6,9] WHERE n.active = true LIMIT 10 WEIGHT 3 ) USING WRRF WITH CONSTANT 2 )`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    COMBINE (
+      VECTOR INDEX myIndex
+      FOR [1, 2, 3]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 5,
+      VECTOR INDEX myOtherIndex
+      FOR [3, 6, 9]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 3
+    ) USING WRRF WITH CONSTANT 2
+  )`;
+    verifyFormatting(query, expected);
+  });
+
+  test('combined SEARCH clause with complex weight and limit expressions', () => {
+    const query = `MATCH (n) SEARCH n IN ( COMBINE ( VECTOR INDEX myIndex FOR [1,2,3] WHERE n.active = true LIMIT round(n.likelihoodToOwnAGoldenRetriever+n.likelihoodToOwnAChihuahua+n.likelihoodToOwnAPitbull) WEIGHT n.age + n.experience + n.daysUntilRetirement + n.numberOfFaceBookFriends + n.likelihoodOfHavingAGermanShepherd/1234, VECTOR INDEX myOtherIndex FOR [3,6,9] WHERE n.active = true LIMIT 10 WEIGHT 3) USING WRRF WITH CONSTANT 2 )`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    COMBINE (
+      VECTOR INDEX myIndex
+      FOR [1, 2, 3]
+      WHERE n.active = true
+      LIMIT
+      round(
+        n.likelihoodToOwnAGoldenRetriever +
+        n.likelihoodToOwnAChihuahua +
+        n.likelihoodToOwnAPitbull)
+      WEIGHT
+        n.age +
+        n.experience +
+        n.daysUntilRetirement +
+        n.numberOfFaceBookFriends +
+        n.likelihoodOfHavingAGermanShepherd / 1234,
+      VECTOR INDEX myOtherIndex
+      FOR [3, 6, 9]
+      WHERE n.active = true
+      LIMIT 10
+      WEIGHT 3
+    ) USING WRRF WITH CONSTANT 2
+  )`;
+    verifyFormatting(query, expected);
+  });
+
+  test('SEARCH clause with all index specification parts', () => {
+    const query = `MATCH (n) SEARCH n IN (FULLTEXT INDEX myIndex FOR "some text" WITH ANALYZER "english" WHERE n.active = true SKIP 5 LIMIT 10) SCORE AS s RETURN n, s`;
+    const expected = `MATCH (n)
+  SEARCH n IN (
+    FULLTEXT INDEX myIndex
+    FOR "some text"
+    WITH ANALYZER "english"
+    WHERE n.active = true
+    SKIP 5
+    LIMIT 10
+  ) SCORE AS s
+RETURN n, s`;
+    verifyFormatting(query, expected);
+  });
+
+  test('chronological comparisons BEFORE and AFTER', () => {
+    const query = `match (n) where n.start is before n.end and n.a is not after date() return n`;
+    const expected = `MATCH (n)
+WHERE n.start IS BEFORE n.end AND n.a IS NOT AFTER date()
+RETURN n`;
+    verifyFormatting(query, expected);
+  });
+
+  test('chronological comparisons SAME INSTANT and SAME REPRESENTATION', () => {
+    const query = `match (a), (b) where a.t is same instant b.t or a.t is not same representation b.t return a, b`;
+    const expected = `MATCH (a), (b)
+WHERE a.t IS SAME INSTANT b.t OR a.t IS NOT SAME REPRESENTATION b.t
+RETURN a, b`;
+    verifyFormatting(query, expected);
+  });
+
   test('standard function invocation function formatting', () => {
     const query = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;
     const expected = `RETURN valueType(VECTOR($integerList, 4096, INTEGER64))`;

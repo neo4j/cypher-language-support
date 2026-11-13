@@ -25,6 +25,7 @@
     "test:integration": "vitest run --project '*(integration)'",
     "test:e2e": "pnpm --recursive test:e2e",
     "test:formattingIntegrity": "tsx ./packages/language-support/src/tests/verification/formattingVerificationCheck.ts",
+    "test:formattingVisitorCoverage": "tsx ./packages/language-support/src/tests/verification/formattingVisitorCoverageCheck.ts",
     "lint": "oxlint --max-warnings 0",
     "lint-fix": "pnpm lint --fix",
     "format": "oxfmt",

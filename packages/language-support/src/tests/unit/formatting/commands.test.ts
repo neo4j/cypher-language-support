@@ -306,3 +306,230 @@ OPTIONS {
     verifyFormatting(query, expected);
   });
 });
+
+describe('tests for secret commands', () => {
+  test('drop secret', () => {
+    const query = `drop secret mySecret if exists`;
+    const expected = `DROP SECRET mySecret IF EXISTS`;
+    verifyFormatting(query, expected);
+  });
+
+  test('secret privileges', () => {
+    const query = `grant access secret * on dbms to myRole;
+grant access secret mySecret on dbms to myRole;
+grant create secret on dbms to myRole;
+deny drop secret on dbms to myRole;
+grant write external secret on dbms to myRole;
+revoke external secret management on dbms from myRole;
+grant secret management on dbms to myRole;
+grant show secret on dbms to myRole;
+grant show external secret on dbms to myRole;`;
+    const expected = `GRANT ACCESS SECRET * ON DBMS TO myRole;
+GRANT ACCESS SECRET mySecret ON DBMS TO myRole;
+GRANT CREATE SECRET ON DBMS TO myRole;
+DENY DROP SECRET ON DBMS TO myRole;
+GRANT WRITE EXTERNAL SECRET ON DBMS TO myRole;
+REVOKE EXTERNAL SECRET MANAGEMENT ON DBMS FROM myRole;
+GRANT SECRET MANAGEMENT ON DBMS TO myRole;
+GRANT SHOW SECRET ON DBMS TO myRole;
+GRANT SHOW EXTERNAL SECRET ON DBMS TO myRole;`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create secret with multiple set clauses', () => {
+    const query = `create secret myVeryLongSecretName if not exists of type amazonWebServicesSecretsManager set accessKeyIdentifier $accessKeyParameter set secretAccessKey from external secret "arn:aws:secretsmanager:eu-west-1:123456789:secret:mySecret"`;
+    const expected = `CREATE SECRET myVeryLongSecretName IF NOT EXISTS
+OF TYPE amazonWebServicesSecretsManager
+SET accessKeyIdentifier $accessKeyParameter
+SET secretAccessKey FROM EXTERNAL SECRET "arn:aws:secretsmanager:eu-west-1:123456789:secret:mySecret"`;
+    verifyFormatting(query, expected);
+  });
+});
+
+describe('tests for virtual graph database commands', () => {
+  test('create virtual graph database with map mapping', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping {nodes: []}`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING {nodes: []}`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with set prefixes, options and wait', () => {
+    const query = `create virtual graph database myGraph if not exists set datasource $ds set secret mySecret set mapping $mapping set default language cypher 25 options {foo: 1} wait`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph IF NOT EXISTS
+SET DATASOURCE $ds
+SET SECRET mySecret
+SET MAPPING $mapping
+SET DEFAULT LANGUAGE CYPHER 25
+OPTIONS {foo: 1}
+WAIT`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with property tables', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping node tables (persons key (id) label Person properties are all columns except (password), movies as m label Movie no properties) edge tables (acted_in source key (person_id) references persons destination key (movie_id) references movies (id) label ACTED_IN properties (role as character, year))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING
+NODE TABLES (
+  persons KEY (id) LABEL Person PROPERTIES ARE ALL COLUMNS EXCEPT (password),
+  movies AS m LABEL Movie NO PROPERTIES
+)
+EDGE TABLES (
+  acted_in
+    SOURCE KEY (person_id) REFERENCES persons
+    DESTINATION KEY (movie_id) REFERENCES movies (id)
+    LABEL ACTED_IN PROPERTIES (role AS character, year)
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with qualified table names and synonyms', () => {
+    const query = `create virtual graph database myGraph datasource {type: 'jdbc'} secret mySecret mapping vertex tables (db.schema.persons default label properties all columns) relationship tables (knows key (a, b) source key (a) references db.schema.persons destination key (b) references db.schema.persons label KNOWS label FRIEND no properties)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE myGraph
+DATASOURCE {type: 'jdbc'}
+SECRET mySecret
+MAPPING
+VERTEX TABLES (db.schema.persons DEFAULT LABEL PROPERTIES ALL COLUMNS)
+RELATIONSHIP TABLES (
+  knows
+    KEY (a, b)
+    SOURCE KEY (a) REFERENCES db.schema.persons
+    DESTINATION KEY (b) REFERENCES db.schema.persons
+    LABEL KNOWS LABEL FRIEND NO PROPERTIES
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long label list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons key (id) label Person label Actor label Director label Producer label Writer label Human properties are all columns)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    KEY (id)
+    LABEL Person
+    LABEL Actor
+    LABEL Director
+    LABEL Producer
+    LABEL Writer
+    LABEL Human PROPERTIES ARE ALL COLUMNS
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long derived property list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons properties (firstName as first, lastName as last, dateOfBirth as born, placeOfBirth as birthplace))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    PROPERTIES (
+      firstName AS first,
+      lastName AS last,
+      dateOfBirth AS born,
+      placeOfBirth AS birthplace
+    )
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long key column list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons key (aVeryLongColumnName, anotherVeryLongColumnName, yetAnotherVeryLongColumnName) no properties)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    KEY (
+      aVeryLongColumnName,
+      anotherVeryLongColumnName,
+      yetAnotherVeryLongColumnName
+    )
+    NO PROPERTIES
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long label properties and except list', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (persons label Person properties are all columns except (passwordHash, socialSecurityNumber, creditCardNumber))`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (
+  persons
+    LABEL Person
+      PROPERTIES ARE ALL COLUMNS EXCEPT (
+        passwordHash,
+        socialSecurityNumber,
+        creditCardNumber
+      )
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long source key', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping node tables (p) edge tables (knows source key (personIdentifierA, personIdentifierB) references persons_with_long_name (identifierA, identifierB) destination key (b) references p)`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING
+NODE TABLES (p)
+EDGE TABLES (
+  knows
+    SOURCE KEY (personIdentifierA, personIdentifierB)
+      REFERENCES persons_with_long_name (identifierA, identifierB)
+    DESTINATION KEY (b) REFERENCES p
+)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long datasource map', () => {
+    const query = `create virtual graph database a datasource {type: 'jdbc', url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db', user: 'me'} secret s mapping $m`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE {
+  type: 'jdbc',
+  url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db',
+  user: 'me'
+}
+SECRET s
+MAPPING $m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long SET datasource map', () => {
+    const query = `create virtual graph database a set datasource {type: 'jdbc', url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db'} set secret s set mapping $m`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+SET DATASOURCE {
+  type: 'jdbc',
+  url: 'jdbc:postgresql://some.very.long.host.example.com:5432/db'
+}
+SET SECRET s
+SET MAPPING $m`;
+    verifyFormatting(query, expected);
+  });
+
+  test('create virtual graph database with long mapping map', () => {
+    const query = `create virtual graph database a datasource $d secret s mapping {nodes: [{table: 'persons', label: 'Person'}, {table: 'movies', label: 'Movie'}], edges: []}`;
+    const expected = `CREATE VIRTUAL GRAPH DATABASE a
+DATASOURCE $d
+SECRET s
+MAPPING {
+  nodes: [
+    {table: 'persons', label: 'Person'},
+    {table: 'movies', label: 'Movie'}
+  ],
+  edges: []
+}`;
+    verifyFormatting(query, expected);
+  });
+});
