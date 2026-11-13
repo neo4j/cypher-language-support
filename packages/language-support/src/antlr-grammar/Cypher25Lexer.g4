@@ -998,6 +998,14 @@ ONLY
    : O N L Y
    ;
 
+ONTOLOGY
+   : O N T O L O G Y
+   ;
+
+ONTOLOGIES
+   : O N T O L O G I E S
+   ;
+
 OPTIONAL
    : O P T I O N A L
    ;

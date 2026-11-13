@@ -320,6 +320,8 @@ export const lexerKeywords = [
   CypherLexer.OIDC,
   CypherLexer.ON,
   CypherLexer.ONLY,
+  CypherLexer.ONTOLOGY,
+  CypherLexer.ONTOLOGIES,
   CypherLexer.OPTION,
   CypherLexer.OPTIONAL,
   CypherLexer.OPTIONS,

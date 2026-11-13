@@ -1760,7 +1760,7 @@ createPropertyPrivilegeToken
 actionForDBMS
    : ALIAS
    | AUTH RULE
-   | COMPOSITE? DATABASE
+   | (COMPOSITE | VIRTUAL GRAPH)? DATABASE
    | ROLE
    | USER
    ;
@@ -1781,7 +1781,7 @@ loadPrivilege
 
 showPrivilege
    : SHOW (
-      (indexToken | constraintToken | transactionToken userQualifier?) ON databaseScope
+      (indexToken | constraintToken | ontologyToken | transactionToken userQualifier?) ON databaseScope
       | (ALIAS | AUTH RULE | PRIVILEGE | ROLE | SERVER | SERVERS | settingToken settingQualifier | USER (CREDENTIALS | METADATA)? | EXTERNAL SECRET | SECRET) ON DBMS
    )
    ;
@@ -1790,6 +1790,7 @@ setPrivilege
    : SET (
       (passwordToken | USER (STATUS | HOME DATABASE | METADATA) | DATABASE (ACCESS | DEFAULT LANGUAGE) | AUTH) ON DBMS
       | DATABASE (ACCESS | DEFAULT LANGUAGE) ON databaseScope
+      | ontologyToken ON databaseScope
       | LABEL labelsResource ON graphScope
       | PROPERTY propertiesResource ON graphScope graphQualifier
    )
@@ -1817,7 +1818,7 @@ databasePrivilege
       | ALTER COMPOSITE? DATABASE
       | START
       | STOP
-      | (indexToken | constraintToken | NAME) MANAGEMENT?
+      | (indexToken | constraintToken | ontologyToken | NAME) MANAGEMENT?
       | (TRANSACTION MANAGEMENT? | TERMINATE transactionToken) userQualifier?
    )
    ON databaseScope
@@ -1825,9 +1826,9 @@ databasePrivilege
 
 dbmsPrivilege
    : (
-      ALTER (ALIAS | AUTH RULE | COMPOSITE? DATABASE | USER)
+      ALTER (ALIAS | AUTH RULE | (COMPOSITE | VIRTUAL GRAPH)? DATABASE | USER)
       | ASSIGN (PRIVILEGE | ROLE)
-      | (ALIAS | COMPOSITE? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE | EXTERNAL SECRET | SECRET) MANAGEMENT
+      | (ALIAS | (COMPOSITE | VIRTUAL GRAPH)? DATABASE | PRIVILEGE | ROLE | SERVER | USER METADATA? | AUTH RULE | EXTERNAL SECRET | SECRET) MANAGEMENT
       | dbmsPrivilegeExecute
       | RENAME (AUTH RULE | ROLE | USER)
       | CREATE SECRET
@@ -1867,6 +1868,11 @@ indexToken
 constraintToken
    : CONSTRAINT
    | CONSTRAINTS
+   ;
+
+ontologyToken
+   : ONTOLOGY
+   | ONTOLOGIES
    ;
 
 transactionToken
@@ -2654,6 +2660,8 @@ unescapedSymbolicNameString_
    | OIDC
    | ON
    | ONLY
+   | ONTOLOGY
+   | ONTOLOGIES
    | OPTIONAL
    | OPTIONS
    | OPTION
