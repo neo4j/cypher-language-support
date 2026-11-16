@@ -1,11 +1,12 @@
-import { testData } from '@neo4j-cypher/language-support';
 import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { eventually, newUntitledFileWithContent } from '../../../helpers';
+import { testData } from '@neo4j-cypher/language-support';
 
 suite('Hover spec functions', () => {
-  const absFunction = testData.mockSchema.functions['CYPHER 5']['abs'];
-  const expectedHoverInfo = `\`\`\`cypher
+  function checkHover(hovers: vscode.Hover[]) {
+    const absFunction = testData.mockSchema.functions['CYPHER 5']['abs'];
+    const expectedHoverInfo = `\`\`\`cypher
 ${absFunction.signature}
 \`\`\`
 ${absFunction.description}
@@ -14,6 +15,12 @@ ${absFunction.description}
 - \`${absFunction.argumentDescription[0].name}\` - ${absFunction.argumentDescription[0].name} :: ${absFunction.argumentDescription[0].type}
 
 **Returns:** \`${absFunction.returnDescription}\``;
+
+    assert.equal(hovers.length, 1);
+    const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
+
+    assert.equal(markdown, expectedHoverInfo);
+  }
 
   test('Hover works for functions', async () => {
     const document = await newUntitledFileWithContent('RETURN abs(5)');
@@ -25,12 +32,7 @@ ${absFunction.description}
         document.uri,
         position,
       );
-      assert.equal(hovers.length, 1);
-
-      assert.equal(
-        (hovers[0].contents[0] as vscode.MarkdownString).value,
-        expectedHoverInfo,
-      );
+      checkHover(hovers);
     });
   });
 
@@ -45,12 +47,7 @@ ${absFunction.description}
         position,
       );
 
-      assert.equal(hovers.length, 1);
-
-      assert.equal(
-        (hovers[0].contents[0] as vscode.MarkdownString).value,
-        expectedHoverInfo,
-      );
+      checkHover(hovers);
     });
   });
 
@@ -65,12 +62,7 @@ ${absFunction.description}
         position,
       );
 
-      assert.equal(hovers.length, 1);
-
-      assert.equal(
-        (hovers[0].contents[0] as vscode.MarkdownString).value,
-        expectedHoverInfo,
-      );
+      checkHover(hovers);
     });
   });
 });

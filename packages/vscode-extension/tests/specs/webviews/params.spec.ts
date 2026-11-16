@@ -55,8 +55,10 @@ suite('Params panel testing', () => {
 
   before(async () => {
     workbench = await browser.getWorkbench();
-    await workbench.executeCommand('neo4jQueryDetails.focus');
-    await workbench.executeCommand('neo4jQueryVisualization.focus');
+    await browser.executeWorkbench(async (vscode) => {
+      await vscode.commands.executeCommand('neo4jQueryDetails.focus');
+      await vscode.commands.executeCommand('neo4jQueryVisualization.focus');
+    });
   });
 
   async function escapeModal(count: number) {
