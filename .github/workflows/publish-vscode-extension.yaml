@@ -6,6 +6,9 @@ on:
     tags:
       - 'neo4j-for-vscode@*.*.*'
 
+permissions:
+  contents: read
+
 env:
   NODE_OPTIONS: '--max_old_space_size=4096'
 
