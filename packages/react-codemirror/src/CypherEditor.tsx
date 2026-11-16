@@ -414,7 +414,7 @@ export class CypherEditor extends Component<
   /**
    * The codemirror editor container.
    */
-  editorContainer: React.RefObject<HTMLDivElement> = createRef();
+  editorContainer: React.RefObject<HTMLDivElement | null> = createRef();
   /**
    * The codemirror editor state.
    */
