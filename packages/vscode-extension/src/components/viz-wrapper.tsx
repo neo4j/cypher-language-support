@@ -1,5 +1,6 @@
-import type { NeoNode, NeoRel } from '@neo4j-ndl/react';
-import { GraphVisualization, SegmentedControl } from '@neo4j-ndl/react';
+import type { NeoNode, NeoRel } from '@neo4j-ndl/react-graph';
+import { SegmentedControl } from '@neo4j-ndl/react';
+import { GraphVisualization } from '@neo4j-ndl/react-graph';
 import React from 'react';
 import type { ResultRows } from '../webviews/queryResults/queryResultsTypes';
 

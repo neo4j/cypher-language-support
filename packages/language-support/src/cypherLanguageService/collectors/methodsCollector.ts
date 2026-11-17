@@ -28,8 +28,10 @@ export class MethodsCollector implements ParseTreeListener {
 
   exitEveryRule(ctx: unknown) {
     if (
-      ctx instanceof FunctionNameContext ||
-      ctx instanceof ProcedureNameContext
+      (ctx instanceof FunctionNameContext ||
+        ctx instanceof ProcedureNameContext) &&
+      ctx.start &&
+      ctx.stop
     ) {
       const methodName = getMethodName(ctx);
 

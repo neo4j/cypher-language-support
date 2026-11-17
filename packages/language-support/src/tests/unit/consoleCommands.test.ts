@@ -20,7 +20,10 @@ function expectParsedCommands(
     result.statementsParsing
       .flatMap((statement) => [statement.command])
       .map((cmd) => {
-        const copy = { ...cmd };
+        const copy: Record<string, unknown> = {
+          ...cmd,
+        };
+
         // These data structures are recursive, so .toEqual doesn't work.
         // We test the positions work properly in with the error position tests
         delete copy.start;

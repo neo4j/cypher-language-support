@@ -62,7 +62,7 @@ export function completionCoreErrormessage(
     Object.keys(rulesOfInterest).map((n) => parseInt(n, 10)),
   );
 
-  const errorText = currentToken.text;
+  const errorText = currentToken.text ?? '';
 
   const candidates = codeCompletion.collectCandidates(caretIndex);
 
@@ -93,7 +93,7 @@ export function completionCoreErrormessage(
       lexerSymbols[tokenNumber] === CypherTokenType.consoleCommand;
 
     const tokenName = isConsoleCommand
-      ? tokenNames[tokenNumber].toLowerCase()
+      ? tokenNames[tokenNumber]!.toLowerCase()
       : tokenNames[tokenNumber];
 
     // We don't want to suggest the ":" of console commands as it's not helpful even
@@ -151,10 +151,13 @@ export function completionCoreErrormessage(
     errorType = 'Unexpected token';
   }
 
-  const bestSuggestion = tokenCandidates.reduce<{
-    similarity: number;
-    currentBest: string;
-  }>((best, suggestion) => {
+  const bestSuggestion = tokenCandidates.reduce<
+    | {
+        similarity: number;
+        currentBest: string;
+      }
+    | undefined
+  >((best, suggestion) => {
     const similarity = normalizedLevenshteinDistance(suggestion, errorText);
     if (
       similarity > similarityForSuggestions &&

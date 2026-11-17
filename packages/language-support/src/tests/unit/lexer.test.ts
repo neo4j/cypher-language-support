@@ -21,7 +21,7 @@ describe('Lexer tokens', () => {
       if (symbolNumber === CypherParser.EOF) {
         return 'EOF';
       }
-      return symbolicNames[symbolNumber];
+      return symbolicNames[symbolNumber]!;
     });
 
     // Check for keywords that exist in the parser but not the lexer
@@ -44,7 +44,7 @@ describe('Lexer tokens', () => {
       .map(([k]) => parseInt(k, 10));
 
     keywordTokens.forEach((token) => {
-      const tokenName = tokenNames[token];
+      const tokenName = tokenNames[token]!;
       const inputStream = CharStream.fromString(tokenName);
       const lexer = new CypherLexer(inputStream);
 
@@ -55,7 +55,7 @@ describe('Lexer tokens', () => {
 
       expect(tokens.length).toBe(2);
       // If the test fails, it is useful to see the token that was parsed
-      if (tokens[0].type !== token) {
+      if (tokens[0]?.type !== token) {
         console.error(
           'unexpected token',
           tokenName,
@@ -65,14 +65,14 @@ describe('Lexer tokens', () => {
         );
         console.error(
           'expected token',
-          tokenNames[tokens[0].type],
-          tokens[0].type,
+          tokenNames[tokens[0]!.type],
+          tokens[0]!.type,
           'symbolic name',
-          CypherLexer.symbolicNames[tokens[0].type],
+          CypherLexer.symbolicNames[tokens[0]!.type],
         );
       }
-      expect(tokens[0].type).toBe(token);
-      expect(tokens[1].type).toBe(CypherLexer.EOF);
+      expect(tokens[0]!.type).toBe(token);
+      expect(tokens[1]!.type).toBe(CypherLexer.EOF);
     });
   });
 });

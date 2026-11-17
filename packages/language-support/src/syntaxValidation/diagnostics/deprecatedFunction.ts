@@ -20,7 +20,7 @@ export function warningOnDeprecatedFunction(
     functionsInQuery.forEach((parsedFunction) => {
       const fn = dbSchema.functions?.[cypherVersion]?.[parsedFunction.name];
       const functionDeprecated = fn?.isDeprecated;
-      const deprecatedBy = fn?.deprecatedBy;
+      const deprecatedBy = fn?.deprecatedBy ?? undefined;
       if (functionDeprecated) {
         warnings.push(
           generateFunctionDeprecatedWarning(parsedFunction, deprecatedBy),

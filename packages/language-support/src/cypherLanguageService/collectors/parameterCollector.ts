@@ -17,7 +17,7 @@ export class ParameterCollector implements ParseTreeListener {
   exitEveryRule(ctx: unknown) {
     if (ctx instanceof ParameterContext) {
       const parameterName = ctx.parameterName().getText();
-      if (parameterName) {
+      if (parameterName && ctx.start && ctx.stop) {
         this.parameters.push({
           name: parameterName,
           rawText: ctx.getText(),

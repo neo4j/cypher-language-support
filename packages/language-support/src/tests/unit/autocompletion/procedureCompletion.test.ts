@@ -7,27 +7,25 @@ import { testData } from '../testData.js';
 import { testCompletions } from './completionAssertionHelpers.js';
 
 describe('Procedures auto-completion', () => {
-  const procedures = testData.mockSchema.procedures;
+  const procedures = testData.mockSchema.procedures['CYPHER 5'];
 
   const dbSchema: DbSchema = {
     procedures: {
       'CYPHER 5': {
-        'tx.getMetaData': procedures['CYPHER 5']['tx.getMetaData'],
+        'tx.getMetaData': procedures['tx.getMetaData'],
         'db.index.fulltext.awaitEventuallyConsistentIndexRefresh':
-          procedures['CYPHER 5'][
-            'db.index.fulltext.awaitEventuallyConsistentIndexRefresh'
-          ],
-        'db.ping': procedures['CYPHER 5']['db.ping'],
-        'db.stats.retrieve': procedures['CYPHER 5']['db.stats.retrieve'],
-        'db.stats.collect': procedures['CYPHER 5']['db.stats.collect'],
-        'db.stats.clear': procedures['CYPHER 5']['db.stats.clear'],
-        'dbms.components': procedures['CYPHER 5']['dbms.components'],
-        'cdc.current': procedures['CYPHER 5']['cdc.current'],
+          procedures['db.index.fulltext.awaitEventuallyConsistentIndexRefresh'],
+        'db.ping': procedures['db.ping'],
+        'db.stats.retrieve': procedures['db.stats.retrieve'],
+        'db.stats.collect': procedures['db.stats.collect'],
+        'db.stats.clear': procedures['db.stats.clear'],
+        'dbms.components': procedures['dbms.components'],
+        'cdc.current': procedures['cdc.current'],
         'jwt.security.requestAccess': {
           ...testData.emptyProcedure,
           name: 'jwt.security.requestAccess',
         },
-        'apoc.create.uuids': procedures['CYPHER 5']['apoc.create.uuids'],
+        'apoc.create.uuids': procedures['apoc.create.uuids'],
       },
     },
   };
@@ -70,15 +68,15 @@ describe('Procedures auto-completion', () => {
           label: 'tx.getMetaData',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['tx.getMetaData'].signature,
-          documentation: procedures['CYPHER 5']['tx.getMetaData'].description,
+          signature: procedures['tx.getMetaData'].signature,
+          documentation: procedures['tx.getMetaData'].description,
         },
         {
           label: 'cdc.current',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['cdc.current'].signature,
-          documentation: procedures['CYPHER 5']['cdc.current'].description,
+          signature: procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
           tags: [CompletionItemTag.Deprecated],
         },
         {
@@ -107,8 +105,8 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.ping'].signature,
-          documentation: procedures['CYPHER 5']['db.ping'].description,
+          signature: procedures['db.ping'].signature,
+          documentation: procedures['db.ping'].description,
         },
       ],
       excluded: [
@@ -129,23 +127,22 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.retrieve'].signature,
-          documentation:
-            procedures['CYPHER 5']['db.stats.retrieve'].description,
+          signature: procedures['db.stats.retrieve'].signature,
+          documentation: procedures['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.collect'].signature,
-          documentation: procedures['CYPHER 5']['db.stats.collect'].description,
+          signature: procedures['db.stats.collect'].signature,
+          documentation: procedures['db.stats.collect'].description,
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.clear'].signature,
-          documentation: procedures['CYPHER 5']['db.stats.clear'].description,
+          signature: procedures['db.stats.clear'].signature,
+          documentation: procedures['db.stats.clear'].description,
         },
       ],
       excluded: [
@@ -178,23 +175,22 @@ describe('Procedures auto-completion', () => {
           label: 'retrieve',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.retrieve'].signature,
-          documentation:
-            procedures['CYPHER 5']['db.stats.retrieve'].description,
+          signature: procedures['db.stats.retrieve'].signature,
+          documentation: procedures['db.stats.retrieve'].description,
         },
         {
           label: 'collect',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.collect'].signature,
-          documentation: procedures['CYPHER 5']['db.stats.collect'].description,
+          signature: procedures['db.stats.collect'].signature,
+          documentation: procedures['db.stats.collect'].description,
         },
         {
           label: 'clear',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.stats.clear'].signature,
-          documentation: procedures['CYPHER 5']['db.stats.clear'].description,
+          signature: procedures['db.stats.clear'].signature,
+          documentation: procedures['db.stats.clear'].description,
         },
       ],
       excluded: [
@@ -266,8 +262,8 @@ describe('Procedures auto-completion', () => {
           label: 'ping',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['db.ping'].signature,
-          documentation: procedures['CYPHER 5']['db.ping'].description,
+          signature: procedures['db.ping'].signature,
+          documentation: procedures['db.ping'].description,
         },
         {
           label: 'stats',
@@ -289,8 +285,8 @@ describe('Procedures auto-completion', () => {
           label: 'current',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['cdc.current'].signature,
-          documentation: procedures['CYPHER 5']['cdc.current'].description,
+          signature: procedures['cdc.current'].signature,
+          documentation: procedures['cdc.current'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],
@@ -442,9 +438,8 @@ describe('Procedures auto-completion', () => {
           label: 'uuids',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['apoc.create.uuids'].signature,
-          documentation:
-            procedures['CYPHER 5']['apoc.create.uuids'].description,
+          signature: procedures['apoc.create.uuids'].signature,
+          documentation: procedures['apoc.create.uuids'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],
@@ -458,9 +453,8 @@ describe('Procedures auto-completion', () => {
           label: 'uuids',
           kind: CompletionItemKind.Method,
           detail: '(procedure)',
-          signature: procedures['CYPHER 5']['apoc.create.uuids'].signature,
-          documentation:
-            procedures['CYPHER 5']['apoc.create.uuids'].description,
+          signature: procedures['apoc.create.uuids'].signature,
+          documentation: procedures['apoc.create.uuids'].description,
           tags: [CompletionItemTag.Deprecated],
         },
       ],

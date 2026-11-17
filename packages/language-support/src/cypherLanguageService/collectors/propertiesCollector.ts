@@ -36,7 +36,7 @@ export class PropertiesCollector implements ParseTreeListener {
           const isRead = this.isReadClause(parentClause);
           const isWrite = this.isWriteClause(parentClause);
 
-          if (isRead || isWrite) {
+          if ((isRead || isWrite) && ctx.start && ctx.stop) {
             const variable = this.getPropertyVariable(ctx);
 
             const propertyName = ctx.getText().replace(/^`|`$/g, '');
@@ -65,7 +65,7 @@ export class PropertiesCollector implements ParseTreeListener {
       this.getVariableFromPatternProperty(ctx) ??
       this.getVariableFromPropertyAccess(ctx);
 
-    if (varCtx) {
+    if (varCtx && varCtx.start) {
       return {
         name: varCtx.getText(),
         start: varCtx.start.start,
@@ -88,7 +88,7 @@ export class PropertiesCollector implements ParseTreeListener {
       patternElement instanceof NodePatternContext ||
       patternElement instanceof RelationshipPatternContext
     ) {
-      return patternElement.variable();
+      return patternElement.variable() ?? undefined;
     }
     return undefined;
   }
@@ -101,7 +101,7 @@ export class PropertiesCollector implements ParseTreeListener {
       (ctx) => ctx instanceof Expression2Context,
     );
     if (propertyAccessExpr instanceof Expression2Context) {
-      return propertyAccessExpr.expression1().variable();
+      return propertyAccessExpr.expression1().variable() ?? undefined;
     }
 
     return undefined;

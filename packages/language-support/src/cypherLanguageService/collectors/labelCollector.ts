@@ -34,16 +34,18 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         !hasErrorNodesUnder(ctx.parent) &&
         !couldCreateNewLabel(ctx)
       ) {
-        this.labelOrRelTypes.push({
-          labelType: getLabelType(ctx),
-          labelText: ctx.getText(),
-          line: ctx.start.line,
-          column: ctx.start.column,
-          offsets: {
-            start: ctx.start.start,
-            end: ctx.stop.stop + 1,
-          },
-        });
+        if (ctx.start && ctx.stop) {
+          this.labelOrRelTypes.push({
+            labelType: getLabelType(ctx),
+            labelText: ctx.getText(),
+            line: ctx.start.line,
+            column: ctx.start.column,
+            offsets: {
+              start: ctx.start.start,
+              end: ctx.stop.stop + 1,
+            },
+          });
+        }
       }
     } else if (ctx instanceof LabelOrRelTypeContext) {
       const symbolicName = ctx.symbolicNameString();
@@ -52,11 +54,13 @@ export class ReadLabelAndRelTypesCollector implements ParseTreeListener {
         isDefined(symbolicName) &&
         ctx.parent &&
         !hasErrorNodesUnder(ctx.parent) &&
-        !couldCreateNewLabel(ctx)
+        !couldCreateNewLabel(ctx) &&
+        symbolicName.start &&
+        symbolicName.stop
       ) {
         this.labelOrRelTypes.push({
           labelType: getLabelType(ctx),
-          labelText: symbolicName.start.text,
+          labelText: symbolicName.start.text ?? '',
           line: symbolicName.start.line,
           column: symbolicName.start.column,
           offsets: {

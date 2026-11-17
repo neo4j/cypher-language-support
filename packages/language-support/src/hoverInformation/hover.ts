@@ -40,9 +40,9 @@ export function getHoverInfo({
   symbolsInfo,
 }: {
   caretPosition: number;
-  dbSchema: DbSchema;
+  dbSchema?: DbSchema;
   parsingResult: ParsingResult;
-  symbolsInfo: SymbolsInfo;
+  symbolsInfo?: SymbolsInfo;
 }): HoverInfo | undefined {
   const methodSignatureInfo = getMethodSignature({
     parsingResult,
