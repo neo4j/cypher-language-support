@@ -127,7 +127,9 @@ export const cypherAutocomplete: (config: CypherConfig) => CompletionSource =
         return {
           label: o.insertText ? o.insertText : o.label,
           displayLabel: o.label,
-          type: completionKindToCodemirrorIcon(o.kind!),
+          type: completionKindToCodemirrorIcon(
+            o.kind ?? CompletionItemKind.Text,
+          ),
           apply:
             o.kind === CompletionItemKind.Snippet
               ? // codemirror requires an empty snippet space to be able to tab out of the completion

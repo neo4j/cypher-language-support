@@ -133,7 +133,7 @@ export type CypherEditorState = {
 };
 
 // @public (undocumented)
-export const darkTheme: ThemeOptions;
+export const darkThemeConstants: ThemeOptions;
 
 // @public (undocumented)
 export interface DiffColors {

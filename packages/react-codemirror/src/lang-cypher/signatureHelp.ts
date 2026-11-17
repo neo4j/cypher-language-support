@@ -87,9 +87,9 @@ function getSignatureHelpTooltip(
   let result: Tooltip[] = [];
   const schema = config.schema;
   const ranges = state.selection.ranges;
-  const range = ranges.at(0)!;
+  const range = ranges.at(0);
 
-  if (schema && ranges.length === 1 && range.from === range.to) {
+  if (range && schema && ranges.length === 1 && range.from === range.to) {
     const caretPosition = range.from;
     const query = state.doc.toString();
 
@@ -103,17 +103,21 @@ function getSignatureHelpTooltip(
       );
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
-      const activeParameter = signatureHelpInfo.activeParameter!;
 
       if (
         activeSignature !== undefined &&
-        activeSignature >= 0 &&
-        activeSignature < signatures.length &&
-        signatures[activeSignature]!.documentation !== undefined
+        signatures[activeSignature] &&
+        signatures[activeSignature].documentation !== undefined
       ) {
-        const signature = signatures[activeSignature]!;
+        const signature = signatures[activeSignature];
         const showSignatureTooltipBelow =
           config.showSignatureTooltipBelow ?? true;
+
+        let activeParameter = signatureHelpInfo.activeParameter ?? 0;
+        const numParameters = signature.parameters?.length ?? 0;
+        if (numParameters < activeParameter) {
+          activeParameter = 0;
+        }
 
         const highlighter = tooltipCypherHighlighter(state, config);
         result = [

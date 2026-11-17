@@ -5,7 +5,7 @@ import {
 } from './themes';
 import type { ThemeOptions } from './lang-cypher/createCypherTheme';
 
-export const darkTheme: ThemeOptions = internalDarkThemeConstants;
+export const darkThemeConstants: ThemeOptions = internalDarkThemeConstants;
 export const lightThemeConstants: ThemeOptions = internalLightThemeConstants;
 
 export { LanguageSupport };

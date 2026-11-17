@@ -20,7 +20,6 @@ import {
   type DbSchema,
 } from '@neo4j-cypher/language-support';
 import debounce from 'lodash.debounce';
-import type { MutableRefObject } from 'react';
 import { Component, createRef, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { DEBOUNCE_TIME } from './constants';
@@ -419,14 +418,14 @@ export class CypherEditor extends Component<
    * The codemirror editor state.
    */
   editorState: React.MutableRefObject<EditorState> =
-    createRef() as MutableRefObject<EditorState>;
+    createRef() as React.MutableRefObject<EditorState>;
   /**
    * The codemirror editor view.
    */
   editorView: React.MutableRefObject<EditorView> =
-    createRef() as MutableRefObject<EditorView>;
+    createRef() as React.MutableRefObject<EditorView>;
   private schemaRef: React.MutableRefObject<CypherConfig> =
-    createRef() as MutableRefObject<CypherConfig>;
+    createRef() as React.MutableRefObject<CypherConfig>;
   private inlinePanelController: InlinePanelController | null = null;
   private editorActionsController: EditorActionsController | null = null;
 
