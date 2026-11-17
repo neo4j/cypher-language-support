@@ -26,7 +26,6 @@ import {
   walkCNFTree,
 } from '../labelTreeWalking.js';
 import type { ParsedStatement } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
-import { getContextStartToken } from '../helpers/getContextToken.js';
 
 // Internal type of CompletionItem for path completions, provide more explicit types
 interface PathCompletionItem extends CompletionItem {
@@ -215,22 +214,26 @@ function findLastVariable(
   symbolsInfo: SymbolsInfo | undefined,
 ) {
   const variable = lastValidElement.variable();
-  const isAnonVar = variable === null;
-  const foundVariable = isAnonVar
-    ? symbolsInfo?.symbolTables?.flat().find(
-        (entry) =>
-          // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
-          // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
-          entry.definitionPosition >=
-            getContextStartToken(lastValidElement).start &&
-          entry.definitionPosition <= (lastValidElement.stop?.stop ?? -1),
-      )
-    : symbolsInfo?.symbolTables
-        ?.flat()
-        .find((entry) =>
-          entry.references.includes(getContextStartToken(variable).start),
-        );
-  return foundVariable;
+  if (variable === null) {
+    const { start, stop } = lastValidElement;
+    if (!start || !stop) {
+      return undefined;
+    }
+    return symbolsInfo?.symbolTables?.flat().find(
+      (entry) =>
+        // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
+        // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
+        entry.definitionPosition >= start.start &&
+        entry.definitionPosition <= stop.stop,
+    );
+  }
+  const { start } = variable;
+  if (!start) {
+    return undefined;
+  }
+  return symbolsInfo?.symbolTables
+    ?.flat()
+    .find((entry) => entry.references.includes(start.start));
 }
 
 export function completeNodeLabel(
