@@ -10,10 +10,6 @@ import {
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
 import type { PropertyType } from '../parsingTypes.js';
-import {
-  getContextStartToken,
-  getContextStopToken,
-} from '../../helpers/getContextToken.js';
 
 // This listener collects all properties in read operations
 export class PropertiesCollector implements ParseTreeListener {
@@ -40,7 +36,7 @@ export class PropertiesCollector implements ParseTreeListener {
           const isRead = this.isReadClause(parentClause);
           const isWrite = this.isWriteClause(parentClause);
 
-          if (isRead || isWrite) {
+          if ((isRead || isWrite) && ctx.start && ctx.stop) {
             const variable = this.getPropertyVariable(ctx);
 
             const propertyName = ctx.getText().replace(/^`|`$/g, '');
@@ -48,11 +44,11 @@ export class PropertiesCollector implements ParseTreeListener {
             this.properties.push({
               propertyName,
               variable,
-              line: getContextStartToken(ctx).line,
-              column: getContextStartToken(ctx).column,
+              line: ctx.start.line,
+              column: ctx.start.column,
               offsets: {
-                start: getContextStartToken(ctx).start,
-                end: getContextStopToken(ctx).stop + 1,
+                start: ctx.start.start,
+                end: ctx.stop.stop + 1,
               },
               type: isWrite ? 'write' : 'read',
             });
@@ -69,10 +65,10 @@ export class PropertiesCollector implements ParseTreeListener {
       this.getVariableFromPatternProperty(ctx) ??
       this.getVariableFromPropertyAccess(ctx);
 
-    if (varCtx) {
+    if (varCtx && varCtx.start) {
       return {
         name: varCtx.getText(),
-        start: getContextStartToken(varCtx).start,
+        start: varCtx.start.start,
       };
     }
 

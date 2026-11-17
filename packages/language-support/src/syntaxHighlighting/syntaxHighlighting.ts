@@ -63,7 +63,6 @@ import {
 } from './syntaxHighlightingHelper.js';
 import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
-import { getContextStartToken } from '../helpers/getContextToken.js';
 
 export const syntaxHighlightingLegend: SemanticTokensLegend = {
   tokenModifiers: [],
@@ -145,11 +144,9 @@ class SyntaxHighlighter extends CypherParserListener {
         rCurly.getText(),
       );
     } else {
-      this.addToken(
-        getContextStartToken(ctx),
-        CypherTokenType.stringLiteral,
-        ctx.getText(),
-      );
+      if (ctx.start) {
+        this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+      }
     }
   };
 
@@ -168,36 +165,28 @@ class SyntaxHighlighter extends CypherParserListener {
         rCurly.getText(),
       );
     } else {
-      this.addToken(
-        getContextStartToken(ctx),
-        CypherTokenType.stringLiteral,
-        ctx.getText(),
-      );
+      if (ctx.start) {
+        this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+      }
     }
   };
 
   exitCypherOptionValue = (ctx: CypherOptionValueContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.settingValue,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.settingValue, ctx.getText());
+    }
   };
 
   exitCypherOptionName = (ctx: CypherOptionNameContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.setting,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.setting, ctx.getText());
+    }
   };
 
   exitLabelName = (ctx: LabelNameContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.label,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.label, ctx.getText());
+    }
   };
 
   exitLabelType = (ctx: LabelTypeContext) => {
@@ -217,27 +206,21 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitLeftArrow = (ctx: LeftArrowContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.separator,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
+    }
   };
 
   exitArrowLine = (ctx: ArrowLineContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.separator,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
+    }
   };
 
   exitRightArrow = (ctx: RightArrowContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.separator,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.separator, ctx.getText());
+    }
   };
 
   exitShortestPathPattern = (ctx: ShortestPathPatternContext) => {
@@ -304,19 +287,15 @@ class SyntaxHighlighter extends CypherParserListener {
     const namespace = ctx.namespace();
 
     namespace.symbolicNameString().forEach((namespaceName) => {
-      this.addToken(
-        getContextStartToken(namespaceName),
-        tokenType,
-        namespaceName.getText(),
-      );
+      if (namespaceName.start) {
+        this.addToken(namespaceName.start, tokenType, namespaceName.getText());
+      }
     });
 
     const nameOfMethod = ctx.symbolicNameString();
-    this.addToken(
-      getContextStartToken(nameOfMethod),
-      tokenType,
-      nameOfMethod.getText(),
-    );
+    if (nameOfMethod.start) {
+      this.addToken(nameOfMethod.start, tokenType, nameOfMethod.getText());
+    }
   }
 
   private colourPredicateFunction = (ctx: TerminalNode) => {
@@ -328,89 +307,73 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitVariable = (ctx: VariableContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.variable,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+    }
   };
 
   exitParameterName = (ctx: ParameterNameContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.variable,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+    }
   };
 
   exitProcedureResultItem = (ctx: ProcedureResultItemContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.variable,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.variable, ctx.getText());
+    }
   };
 
   exitPropertyKeyName = (ctx: PropertyKeyNameContext) => {
     // FIXME Is this correct in this case for all cases, not just simple properties?
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.property,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.property, ctx.getText());
+    }
   };
 
   // TODO Do we need this one and the one below?
   exitStringLiteral = (ctx: StringLiteralContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.stringLiteral,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
   };
 
   exitStringsLiteral = (ctx: StringsLiteralContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.stringLiteral,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.stringLiteral, ctx.getText());
+    }
   };
 
   exitBooleanLiteral = (ctx: BooleanLiteralContext) => {
     // Normally booleans are coloured as numbers in other languages
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.booleanLiteral,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.booleanLiteral, ctx.getText());
+    }
   };
 
   exitNumberLiteral = (ctx: NumberLiteralContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.numberLiteral,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.numberLiteral, ctx.getText());
+    }
   };
 
   exitKeywordLiteral = (ctx: KeywordLiteralContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.keywordLiteral,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.keywordLiteral, ctx.getText());
+    }
   };
 
   exitParameter = (ctx: ParameterContext) => {
     const dollar = ctx.DOLLAR();
     const parameterName = ctx.parameterName();
     this.addToken(dollar.symbol, CypherTokenType.paramDollar, dollar.getText());
-    this.addToken(
-      getContextStartToken(parameterName),
-      CypherTokenType.paramValue,
-      parameterName.getText(),
-    );
+    if (parameterName.start) {
+      this.addToken(
+        parameterName.start,
+        CypherTokenType.paramValue,
+        parameterName.getText(),
+      );
+    }
   };
 
   exitListItemsPredicate = (ctx: ListItemsPredicateContext) => {
@@ -430,11 +393,9 @@ class SyntaxHighlighter extends CypherParserListener {
   };
 
   exitSymbolicNameString = (ctx: SymbolicNameStringContext) => {
-    this.addToken(
-      getContextStartToken(ctx),
-      CypherTokenType.symbolicName,
-      ctx.getText(),
-    );
+    if (ctx.start) {
+      this.addToken(ctx.start, CypherTokenType.symbolicName, ctx.getText());
+    }
   };
 
   // Fix coloring of colon in console commands (operator -> consoleCommand)
