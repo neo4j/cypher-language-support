@@ -12,6 +12,10 @@ function cypherCodeBlock(fragment: string): string[] {
 }
 
 export function hoverInfoToMarkdown(info: HoverInfo): string {
+  if (info.kind === 'parameter') {
+    return info.name + ': \n' + cypherCodeBlock(info.value).join('\n');
+  }
+
   if (info.kind === 'variable') {
     const typeLine = ['`', `${info.variable}: ${info.types.join(', ')}`, '`'];
     return (

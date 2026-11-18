@@ -119383,11 +119383,17 @@ const mockSchema = {
   ],
   parameters: {
     param1: {
-      property: 'value',
-      speed: 123.4,
+      key: 'param1',
+      stringValue: '123.4',
     },
-    favColor: 'green',
-    myParam: 1337,
+    favColor: {
+      key: 'favColor',
+      stringValue: '"green"',
+    },
+    myParam: {
+      key: 'myParam',
+      stringValue: '1337',
+    },
   },
   databaseNames: [
     'neo4j',

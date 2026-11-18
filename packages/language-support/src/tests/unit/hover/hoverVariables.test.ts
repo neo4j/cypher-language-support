@@ -270,19 +270,18 @@ describe('Variable hover', () => {
     expect(hoverInfo).toEqual(undefined);
   });
 
-  test('Does not provide hover info for parameters', () => {
-    const query = 'RETURN $param';
+  test('Provides hover info for parameters', () => {
+    const query = 'RETURN $param1';
     const { symbolTables } = languageService.lint(query, dbSchema);
     languageService.setSymbolsInfo({
       query,
       symbolTables: symbolTables,
     });
-    const positions = ['RETURN '.length, 'RETURN $'.length];
-
-    positions.forEach((caretPosition) => {
-      expect(
-        languageService.hoverInfo(query, { caretPosition, dbSchema }),
-      ).toEqual(undefined);
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $par'.length,
+      dbSchema,
     });
+
+    expect(hoverInfo).toEqual('');
   });
 });
