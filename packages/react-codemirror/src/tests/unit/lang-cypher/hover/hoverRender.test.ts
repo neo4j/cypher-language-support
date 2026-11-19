@@ -68,6 +68,19 @@ describe('hover info html rendering', () => {
     ).toBe('<p><code>x: Integer</code></p>');
   });
 
+  test('renders a parameter hover', () => {
+    const query = 'RETURN $favColor';
+    const info = new CypherLanguageService().hoverInfo(query, {
+      caretPosition: 'RETURN $fav'.length,
+      dbSchema: testData.mockSchema,
+    });
+
+    expect(renderHoverInfo(info).innerHTML).toBe(
+      '<p><code>favColor:</code></p><pre><code>"green"</code></pre>',
+    );
+    expect(highlightedFragments(info)).toEqual([['"green"', 'parameter']]);
+  });
+
   test('renders a function hover', () => {
     expect(renderMethodHover('RETURN toFloat(1)').innerHTML).toBe(
       [

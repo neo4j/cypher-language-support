@@ -282,6 +282,10 @@ describe('Variable hover', () => {
       dbSchema,
     });
 
-    expect(hoverInfo).toEqual('');
+    expect(hoverInfo).toEqual({
+      kind: 'parameter',
+      name: 'param1',
+      value: '123.4',
+    });
   });
 });

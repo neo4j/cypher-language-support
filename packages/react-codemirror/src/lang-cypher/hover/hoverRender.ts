@@ -28,7 +28,7 @@ export function renderHoverInfo(
     typeLine.appendChild(element('code', `${info.name}:`));
     dom.appendChild(typeLine);
 
-    dom.appendChild(codeBlock(info.value, 'function', highlightHoverCode));
+    dom.appendChild(codeBlock(info.value, 'parameter', highlightHoverCode));
 
     return dom;
   }
