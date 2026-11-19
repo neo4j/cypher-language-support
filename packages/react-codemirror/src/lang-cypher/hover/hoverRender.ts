@@ -145,12 +145,12 @@ function renderDescription(
 
   let i = 0;
   while (i < lines.length) {
-    if (lines[i].startsWith(bullet)) {
+    if (lines[i]!.startsWith(bullet)) {
       flushParagraph();
       const list = document.createElement('ul');
-      while (i < lines.length && lines[i].startsWith(bullet)) {
+      while (i < lines.length && lines[i]!.startsWith(bullet)) {
         const item = document.createElement('li');
-        renderInline(item, lines[i].slice(bullet.length));
+        renderInline(item, lines[i]!.slice(bullet.length));
         list.appendChild(item);
         i++;
       }
@@ -158,10 +158,10 @@ function renderDescription(
       continue;
     }
 
-    if (lines[i].trim() === '') {
+    if (lines[i]!.trim() === '') {
       if (paragraph.length > 0) flushParagraph();
     } else {
-      paragraph.push(lines[i]);
+      paragraph.push(lines[i]!);
     }
     i++;
   }
@@ -186,7 +186,9 @@ function renderInline(target: HTMLElement, text: string) {
     }
 
     target.appendChild(
-      code !== undefined ? element('code', code.trim()) : element('em', italic),
+      code !== undefined
+        ? element('code', code.trim())
+        : element('em', italic ?? ''),
     );
 
     lastEnd = match.index + matched.length;

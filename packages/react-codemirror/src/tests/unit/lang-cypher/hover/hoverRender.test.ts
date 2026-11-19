@@ -14,7 +14,7 @@ function methodHover(query: string): HoverInfo {
   return languageService.hoverInfo(query, {
     caretPosition: query.indexOf('(') - 1,
     dbSchema: testData.mockSchema,
-  });
+  })!;
 }
 
 function renderMethodHover(query: string): HTMLElement {
@@ -154,7 +154,7 @@ describe('hover info html rendering', () => {
     });
 
     expect(dom.querySelector('em')).toBeNull();
-    expect(dom.querySelector('li').textContent).toBe(
+    expect(dom.querySelector('li')?.textContent).toBe(
       `pathOptions - ${description}`,
     );
   });
