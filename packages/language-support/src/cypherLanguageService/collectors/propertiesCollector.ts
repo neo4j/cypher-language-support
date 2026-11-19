@@ -6,6 +6,7 @@ import {
   NodePatternContext,
   RelationshipPatternContext,
   Expression2Context,
+  SetItemContext,
 } from '../../generated-parser/CypherCmdParser.js';
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
@@ -34,7 +35,7 @@ export class PropertiesCollector implements ParseTreeListener {
         );
         if (parentClause instanceof ClauseContext) {
           const isRead = this.isReadClause(parentClause);
-          const isWrite = this.isWriteClause(parentClause);
+          const isWrite = this.isWriteClause(parentClause); // Should we check RHS or LHS in assigments?
 
           if ((isRead || isWrite) && ctx.start && ctx.stop) {
             const variable = this.getPropertyVariable(ctx);
@@ -56,6 +57,16 @@ export class PropertiesCollector implements ParseTreeListener {
         }
       }
     }
+  }
+
+  private getRightHandType(ctx: PropertyKeyNameContext) {
+    const setItem = findParent(ctx, (ctx) => ctx instanceof SetItemContext);
+
+    if (setItem instanceof SetItemContext) {
+      return undefined;
+    }
+
+    // setItem
   }
 
   private getPropertyVariable(

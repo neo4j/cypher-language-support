@@ -55,7 +55,6 @@ export function findParent(
 
   return current;
 }
-
 export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
