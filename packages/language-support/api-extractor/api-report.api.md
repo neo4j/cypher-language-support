@@ -287,7 +287,11 @@ export type HoverInfo = {
 } & MethodHoverInfo) | ({
     kind: 'procedure';
     returnValues: HoverDescription[];
-} & MethodHoverInfo);
+} & MethodHoverInfo) | {
+    kind: 'parameter';
+    name: string;
+    value: string;
+};
 
 // @public (undocumented)
 export const _internalFeatureFlags: FeatureFlags;
