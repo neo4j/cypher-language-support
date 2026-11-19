@@ -117,6 +117,9 @@ export async function charCoords(page: Page, line: number, column: number) {
   return page.evaluate(
     ([line, column]) => {
       const lineElement = document.querySelectorAll('.cm-line')[line];
+      if (!lineElement) {
+        throw new Error(`No line at ${line}`);
+      }
       const walker = document.createTreeWalker(
         lineElement,
         NodeFilter.SHOW_TEXT,
@@ -140,7 +143,7 @@ export async function charCoords(page: Page, line: number, column: number) {
       }
       throw new Error(`No character at ${line}:${column}`);
     },
-    [line, column],
+    [line, column] as const,
   );
 }
 

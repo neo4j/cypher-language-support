@@ -16,7 +16,7 @@ function getTriggerCharacter(query: string, caretPosition: number) {
   let triggerCharacter = query.at(i);
 
   // Discard all space characters. Note that a space can be more than just a ' '
-  while (/\s/.test(triggerCharacter) && i > 0) {
+  while (triggerCharacter && /\s/.test(triggerCharacter) && i > 0) {
     i -= 1;
     triggerCharacter = query.at(i);
   }
@@ -35,8 +35,8 @@ const createSignatureHelpElement =
     highlighter: TooltipCypherHighlighter;
   }) =>
   () => {
-    const parameters = signature.parameters;
-    const doc = getDocString(signature.documentation);
+    const parameters = signature.parameters!;
+    const doc = getDocString(signature.documentation!);
     const dom = document.createElement('div');
     dom.className = 'cm-signature-help-panel';
 
@@ -89,7 +89,7 @@ function getSignatureHelpTooltip(
   const ranges = state.selection.ranges;
   const range = ranges.at(0);
 
-  if (schema && ranges.length === 1 && range.from === range.to) {
+  if (range && schema && ranges.length === 1 && range.from === range.to) {
     const caretPosition = range.from;
     const query = state.doc.toString();
 
@@ -103,17 +103,21 @@ function getSignatureHelpTooltip(
       );
       const activeSignature = signatureHelpInfo.activeSignature;
       const signatures = signatureHelpInfo.signatures;
-      const activeParameter = signatureHelpInfo.activeParameter;
 
       if (
         activeSignature !== undefined &&
-        activeSignature >= 0 &&
-        activeSignature < signatures.length &&
+        signatures[activeSignature] &&
         signatures[activeSignature].documentation !== undefined
       ) {
         const signature = signatures[activeSignature];
         const showSignatureTooltipBelow =
           config.showSignatureTooltipBelow ?? true;
+
+        let activeParameter = signatureHelpInfo.activeParameter ?? 0;
+        const numParameters = signature.parameters?.length ?? 0;
+        if (numParameters < activeParameter) {
+          activeParameter = 0;
+        }
 
         const highlighter = tooltipCypherHighlighter(state, config);
         result = [

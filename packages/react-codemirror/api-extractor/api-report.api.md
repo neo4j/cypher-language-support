@@ -52,7 +52,7 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     componentWillUnmount(): void;
     // (undocumented)
     static defaultProps: CypherEditorProps;
-    editorContainer: React.RefObject<HTMLDivElement>;
+    editorContainer: React.RefObject<HTMLDivElement | null>;
     editorState: React.MutableRefObject<EditorState>;
     editorView: React.MutableRefObject<EditorView>;
     focus(): void;
@@ -62,7 +62,7 @@ export class CypherEditor extends Component<CypherEditorProps, CypherEditorState
     setValueAndFocus(value?: string): void;
     // (undocumented)
     state: CypherEditorState;
-    symbolFetcher: CodemirrorSymbolFetcher;
+    symbolFetcher?: CodemirrorSymbolFetcher;
     updateCursorPosition(position: number): void;
 }
 
