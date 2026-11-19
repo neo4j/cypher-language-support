@@ -76,10 +76,10 @@ describe('hover info html rendering', () => {
     });
     expect(info).toBeDefined();
 
-    expect(renderHoverInfo(info).innerHTML).toBe(
+    expect(renderHoverInfo(info!).innerHTML).toBe(
       '<p><code>favColor:</code></p><pre><code>"green"</code></pre>',
     );
-    expect(highlightedFragments(info)).toEqual([['"green"', 'parameter']]);
+    expect(highlightedFragments(info!)).toEqual([['"green"', 'parameter']]);
   });
 
   test('renders a function hover', () => {
