@@ -74,6 +74,7 @@ describe('hover info html rendering', () => {
       caretPosition: 'RETURN $fav'.length,
       dbSchema: testData.mockSchema,
     });
+    expect(info).toBeDefined();
 
     expect(renderHoverInfo(info).innerHTML).toBe(
       '<p><code>favColor:</code></p><pre><code>"green"</code></pre>',
