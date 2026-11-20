@@ -4,6 +4,14 @@ import { CONSTANTS } from '../../../../src/constants';
 import { eventually, newUntitledFileWithContent } from '../../../helpers';
 
 suite('Hover spec parameters', () => {
+  before(async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'pokemon',
+      '"charmander"',
+    );
+  });
+
   async function getHovers(
     document: vscode.TextDocument,
     position: vscode.Position,
@@ -16,11 +24,6 @@ suite('Hover spec parameters', () => {
   }
 
   test('Hover shows the value of a parameter', async () => {
-    await vscode.commands.executeCommand(
-      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
-      'pokemon',
-      '"charmander"',
-    );
     const document = await newUntitledFileWithContent('RETURN $pokemon');
 
     // Both on the $ and inside the parameter name
