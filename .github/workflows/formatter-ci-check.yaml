@@ -1,0 +1,29 @@
+name: Formatter visitor coverage check
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'packages/language-support/src/formatting/**'
+      - 'packages/language-support/src/antlr-grammar/**'
+      - 'packages/language-support/src/tests/verification/formattingVisitorCoverageCheck.ts'
+
+permissions:
+  contents: read
+
+jobs:
+  formatting-visitor-coverage:
+    name: Formatter visitor coverage check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - name: Setup and build project
+        uses: ./.github/actions/setup-and-build
+
+      # Heuristic check: statically analyses formatting.ts against the generated
+      # parser, so it can give false positives (silence intended omissions via
+      # ALLOWED_MISSING in the script) and false negatives (a pass doesn't prove
+      # every child is printed correctly).
+      - name: Check formatter visitors visit all rule children
+        run: pnpm test:formattingVisitorCoverage
