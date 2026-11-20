@@ -1,5 +1,23 @@
 # @neo4j-cypher/language-server
 
+## 2.0.0-next.41
+
+### Patch Changes
+
+- 613dfdc: Remove duplicate registration to syntax highlighting
+- ea87989: Fix: Use internal dbschema for symbol fetch requests, rather than one sent in message
+- 0b97f5f: Adds support for go-to-definition
+- Updated dependencies [613dfdc]
+- Updated dependencies [c63fdb7]
+- Updated dependencies [20d5c8c]
+- Updated dependencies [ea87989]
+- Updated dependencies [ea87989]
+- Updated dependencies [71e158d]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/language-support@2.0.0-next.40
+  - @neo4j-cypher/lint-worker@1.10.1-next.17
+  - @neo4j-cypher/query-tools@2.0.0-next.40
+
 ## 2.0.0-next.40
 
 ### Patch Changes
