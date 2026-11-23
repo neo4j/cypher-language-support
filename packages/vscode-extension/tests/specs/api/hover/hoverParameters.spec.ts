@@ -2,6 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { CONSTANTS } from '../../../../src/constants';
 import { eventually, newUntitledFileWithContent } from '../../../helpers';
+import { before } from 'mocha';
 
 suite('Hover spec parameters', () => {
   before(async () => {
