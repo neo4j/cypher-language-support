@@ -24,4 +24,4 @@ jobs:
         uses: ./.github/actions/setup-and-build
 
       - name: Run formatting check
-        run: pnpm test:formattingIntegrity
+        run: pnpm --filter @neo4j-cypher/language-support test:formattingIntegrity

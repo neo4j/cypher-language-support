@@ -26,4 +26,4 @@ jobs:
       # ALLOWED_MISSING in the script) and false negatives (a pass doesn't prove
       # every child is printed correctly).
       - name: Check formatter visitors visit all rule children
-        run: pnpm test:formattingVisitorCoverage
+        run: pnpm --filter @neo4j-cypher/language-support test:formattingVisitorCoverage
