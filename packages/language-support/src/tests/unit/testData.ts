@@ -119383,15 +119383,12 @@ const mockSchema = {
   ],
   parameters: {
     param1: {
-      key: 'param1',
       stringValue: '123.4',
     },
     favColor: {
-      key: 'favColor',
       stringValue: '"green"',
     },
     myParam: {
-      key: 'myParam',
       stringValue: '1337',
     },
   },
