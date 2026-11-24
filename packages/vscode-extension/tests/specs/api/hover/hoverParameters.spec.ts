@@ -24,22 +24,36 @@ suite('Hover spec parameters', () => {
     );
   }
 
-  test('Hover shows the value of a parameter', async () => {
+  test('Hover shows the value of a parameter on $-sign', async () => {
     const document = await newUntitledFileWithContent('RETURN $pokemon');
 
-    // Both on the $ and inside the parameter name
-    for (const character of [7, 10]) {
-      await eventually(async () => {
-        const hovers = await getHovers(
-          document,
-          new vscode.Position(0, character),
-        );
+    const character = 7;
+    await eventually(async () => {
+      const hovers = await getHovers(
+        document,
+        new vscode.Position(0, character),
+      );
 
-        assert.equal(hovers.length, 1);
-        const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
-        assert.equal(markdown, 'pokemon: \n```cypher\n"charmander"\n```');
-      });
-    }
+      assert.equal(hovers.length, 1);
+      const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
+      assert.equal(markdown, 'pokemon: \n```cypher\n"charmander"\n```');
+    });
+  });
+
+  test('Hover shows the value of a parameter on param name', async () => {
+    const document = await newUntitledFileWithContent('RETURN $pokemon');
+
+    const character = 10;
+    await eventually(async () => {
+      const hovers = await getHovers(
+        document,
+        new vscode.Position(0, character),
+      );
+
+      assert.equal(hovers.length, 1);
+      const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
+      assert.equal(markdown, 'pokemon: \n```cypher\n"charmander"\n```');
+    });
   });
 
   test('Hover shows nothing for an undefined parameter', async () => {
