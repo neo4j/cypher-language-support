@@ -6,7 +6,9 @@ import { getParameters } from '../parameterService';
 
 export class ParameterItem extends TreeItem {
   constructor(parameter: Parameter) {
-    const label = `${parameter.key}: ${parameter.stringValue} (${parameter.type})`;
+    // Tree item labels are single-line, so flatten the multi-line stringValue
+    const oneLineValue = parameter.stringValue.replaceAll('\n', '');
+    const label = `${parameter.key}: ${oneLineValue} (${parameter.type})`;
     super(label);
     this.id = parameter.key;
     this.contextValue = 'parameter';

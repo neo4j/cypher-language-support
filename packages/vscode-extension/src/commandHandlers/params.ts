@@ -172,10 +172,7 @@ export async function evaluateParam(
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
     const paramAsCypherType = resultEntries[0] as CypherDataType;
     const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
-    const stringValue = cypherDataToString(paramAsCypherType).replaceAll(
-      '\n',
-      '',
-    );
+    const stringValue = cypherDataToString(paramAsCypherType);
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
     await setParameter({
