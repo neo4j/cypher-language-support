@@ -2360,4 +2360,24 @@ MATCH (n)
 RETURN m;`.trimStart();
     verifyFormatting(query, expected);
   });
+
+  test('long type unions can break before |, but not within a type part', () => {
+    const query = `RETURN someVeryLongVariableName IS NOT TYPED INTEGER NOT NULL | FLOAT NOT NULL | LOCAL DATETIME NOT NULL | ZONED DATETIME NOT NULL`;
+    const expected = `RETURN
+  someVeryLongVariableName IS NOT TYPED INTEGER NOT NULL
+  | FLOAT NOT NULL
+  | LOCAL DATETIME NOT NULL
+  | ZONED DATETIME NOT NULL`;
+    verifyFormatting(query, expected);
+  });
+
+  test('long type unions nested in LIST<...> can break before |', () => {
+    const query = `RETURN someVeryLongVariableName IS :: LIST<INTEGER NOT NULL | FLOAT NOT NULL | LOCAL DATETIME NOT NULL | ZONED DATETIME NOT NULL>`;
+    const expected = `RETURN
+  someVeryLongVariableName IS :: LIST < INTEGER NOT NULL
+  | FLOAT NOT NULL
+  | LOCAL DATETIME NOT NULL
+  | ZONED DATETIME NOT NULL >`;
+    verifyFormatting(query, expected);
+  });
 });

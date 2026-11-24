@@ -161,6 +161,11 @@ import type {
   TableReferenceContext,
   TrimFunctionContext,
   TypeComparisonContext,
+  TypeContext,
+  TypeListSuffixContext,
+  TypeNameContext,
+  TypeNullabilityContext,
+  TypePartContext,
   UnionContext,
   UnwindClauseContext,
   UseClauseContext,
@@ -398,7 +403,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
   /**
    * Like setChunkProperty, but for every chunk from startIdx up to (not including)
-   * the last one, i.e. it affects the gaps between those chunks. Needed when the
+   * the current last one, i.e. it affects the gaps between those chunks. Needed when the
    * chunks come from nested rules that the caller doesn't visit directly.
    */
   setChunkPropertyFrom = (
@@ -429,9 +434,11 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
     this.setChunkProperty('noBreak');
   };
 
-  // Keeps the given nodes on one line, including inside nested rules (e.g. a
-  // type like STRING NOT NULL). Whether to break after the last node is still
-  // decided by the surrounding groups.
+  // Keeps the given nodes on one line, including inside nested rules. Whether
+  // to break after the last node is still decided by the surrounding groups.
+  // Only use on terminals and short rules not likely to grow (e.g. normalForm).
+  // If a nested rule needs its own formatting, give it a visitor instead:
+  // noBreak set here overrides any breaks set inside it.
   _visitWithoutBreaks = (
     ...nodes: (ParserRuleContext | TerminalNode | null | undefined)[]
   ) => {
@@ -2852,8 +2859,52 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       ctx.NOT(),
       ctx.TYPED(),
       ctx.COLONCOLON(),
-      ctx.type(),
     );
+    this.avoidBreakBetween();
+    this._visit(ctx.type());
+  };
+
+  visitType = (ctx: TypeContext) => {
+    const n = ctx.typePart().length;
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.typePart(i));
+      if (i < n - 1) {
+        this._visit(ctx.BAR(i));
+        this.avoidBreakBetween();
+      }
+    }
+  };
+
+  visitTypePart = (ctx: TypePartContext) => {
+    this._visit(ctx.typeName());
+    if (ctx.typeNullability()) {
+      this.avoidBreakBetween();
+      this._visit(ctx.typeNullability());
+    }
+    for (const suffix of ctx.typeListSuffix()) {
+      this.avoidBreakBetween();
+      this._visit(suffix);
+    }
+  };
+
+  // Not _visitWithoutBreaks: LIST<...> and ANY<...> contain a nested type
+  // whose own break points should be kept
+  visitTypeName = (ctx: TypeNameContext) => {
+    const n = ctx.getChildCount();
+    for (let i = 0; i < n; i++) {
+      this._visit(ctx.getChild(i) as ParserRuleContext | TerminalNode);
+      if (i < n - 1) {
+        this.avoidBreakBetween();
+      }
+    }
+  };
+
+  visitTypeNullability = (ctx: TypeNullabilityContext) => {
+    this._visitWithoutBreaks(ctx.NOT(), ctx.NULL(), ctx.EXCLAMATION_MARK());
+  };
+
+  visitTypeListSuffix = (ctx: TypeListSuffixContext) => {
+    this._visitWithoutBreaks(ctx.LIST(), ctx.ARRAY(), ctx.typeNullability());
   };
 
   visitNormalFormComparison = (ctx: NormalFormComparisonContext) => {
