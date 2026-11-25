@@ -22,8 +22,8 @@ jobs:
         uses: ./.github/actions/setup-and-build
 
       # Heuristic check: statically analyses formatting.ts against the generated
-      # parser, so it can give false positives (silence intended omissions via
-      # ALLOWED_MISSING in the script) and false negatives (a pass doesn't prove
-      # every child is printed correctly).
+      # parser, but can give false positives and false negatives (a pass doesn't prove
+      # every child is printed correctly, and a fail could be missing a convoluted visit).
+      # Visitors to be ignored by the check can be silenced via ALLOWED_MISSING in the script
       - name: Check formatter visitors visit all rule children
         run: pnpm --filter @neo4j-cypher/language-support test:formattingVisitorCoverage
