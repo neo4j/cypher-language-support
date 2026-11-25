@@ -395,15 +395,12 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     const chunk = this.lastInChunkList();
-    if (chunk.type === 'COMMENT') {
-      return;
-    }
-    chunk[propertyName] = true;
+    this.setPropertyIfNonComment(chunk, propertyName);
   };
 
   /**
    * Like setChunkProperty, but for every chunk from startIdx up to (not including)
-   * the current last one, i.e. it affects the gaps between those chunks. Needed when the
+   * the current last one. Needed when the
    * chunks come from nested rules that the caller doesn't visit directly.
    */
   setChunkPropertyFrom = (
@@ -412,11 +409,23 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   ): void => {
     for (let i = startIdx; i < this.chunkList.length - 1; i++) {
       const chunk = this.chunkList[i];
-      if (chunk && chunk.type !== 'COMMENT') {
-        chunk[propertyName] = true;
-      }
+      this.setPropertyIfNonComment(chunk, propertyName);
     }
   };
+
+  private setPropertyIfNonComment(
+    chunk: Chunk | undefined,
+    propertyName:
+      | 'noSpace'
+      | 'noBreak'
+      | 'mustBreak'
+      | 'specialSplit'
+      | 'oneItem',
+  ) {
+    if (chunk && chunk.type !== 'COMMENT') {
+      chunk[propertyName] = true;
+    }
+  }
 
   avoidSpaceBetween = (): void => {
     this.setChunkProperty('noSpace');
