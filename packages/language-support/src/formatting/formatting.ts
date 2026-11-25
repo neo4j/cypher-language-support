@@ -2892,7 +2892,22 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   visitTypeName = (ctx: TypeNameContext) => {
     const n = ctx.getChildCount();
     for (let i = 0; i < n; i++) {
-      this._visit(ctx.getChild(i) as ParserRuleContext | TerminalNode);
+      const child = ctx.getChild(i);
+      if (child instanceof ParserRuleContext || child instanceof TerminalNode) {
+        const tokenType =
+          child instanceof TerminalNode ? child.symbol.type : undefined;
+        if (
+          tokenType === CypherCmdLexer.LT ||
+          tokenType === CypherCmdLexer.GT ||
+          tokenType === CypherCmdLexer.LPAREN
+        ) {
+          this.avoidSpaceBetween();
+        }
+        this._visit(child);
+        if (tokenType === CypherCmdLexer.LT) {
+          this.avoidSpaceBetween();
+        }
+      }
       if (i < n - 1) {
         this.avoidBreakBetween();
       }
@@ -2900,6 +2915,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   visitTypeNullability = (ctx: TypeNullabilityContext) => {
+    if (ctx.EXCLAMATION_MARK()) {
+      this.avoidSpaceBetween();
+    }
     this._visitWithoutBreaks(ctx.NOT(), ctx.NULL(), ctx.EXCLAMATION_MARK());
   };
 

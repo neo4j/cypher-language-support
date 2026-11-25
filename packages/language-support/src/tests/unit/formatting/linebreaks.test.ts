@@ -2374,10 +2374,10 @@ RETURN m;`.trimStart();
   test('long type unions nested in LIST<...> can break before |', () => {
     const query = `RETURN someVeryLongVariableName IS :: LIST<INTEGER NOT NULL | FLOAT NOT NULL | LOCAL DATETIME NOT NULL | ZONED DATETIME NOT NULL>`;
     const expected = `RETURN
-  someVeryLongVariableName IS :: LIST < INTEGER NOT NULL
+  someVeryLongVariableName IS :: LIST<INTEGER NOT NULL
   | FLOAT NOT NULL
   | LOCAL DATETIME NOT NULL
-  | ZONED DATETIME NOT NULL >`;
+  | ZONED DATETIME NOT NULL>`;
     verifyFormatting(query, expected);
   });
 });
