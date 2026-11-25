@@ -420,7 +420,8 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       | 'noBreak'
       | 'mustBreak'
       | 'specialSplit'
-      | 'oneItem',
+      | 'oneItem'
+      | 'doubleBreak',
   ) {
     if (chunk && chunk.type !== 'COMMENT') {
       chunk[propertyName] = true;
@@ -469,12 +470,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
   };
 
   doubleBreakBetweenNonComment = (): void => {
-    if (
-      this.chunkList.length > 0 &&
-      this.lastInChunkList().type !== 'COMMENT'
-    ) {
-      this.lastInChunkList().doubleBreak = true;
-    }
+    this.setPropertyIfNonComment(this.lastInChunkList(), 'doubleBreak');
   };
 
   getFirstNonCommentIdx = (): number => {
