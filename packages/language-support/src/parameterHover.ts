@@ -28,10 +28,15 @@ export function getParameterHover({
       const currentParam = paramCollector.caretParameter;
       if (currentParam) {
         const param = dbSchema.parameters[currentParam.name];
-        if (param && param instanceof Object && 'stringValue' in param) {
+        if (
+          param &&
+          param instanceof Object &&
+          'stringValue' in param &&
+          typeof param.stringValue === 'string'
+        ) {
           return {
             name: currentParam.name,
-            value: param.stringValue as string,
+            value: param.stringValue,
           };
         }
       }
