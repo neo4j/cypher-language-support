@@ -19,7 +19,7 @@ import {
 import { CypherCmdLexer as CypherLexer } from '../../generated-parser/CypherCmdLexer.js';
 import type { CypherCmdParser as CypherParser } from '../../generated-parser/CypherCmdParser.js';
 import type { CommonTokenStream, ParserRuleContext } from 'antlr4ng';
-import { Token } from 'antlr4ng';
+import { ParseTreeWalker, Token } from 'antlr4ng';
 import { DiagnosticSeverity } from 'vscode-languageserver-types';
 import type { SyntaxDiagnostic } from '../../syntaxValidation/syntaxValidation.js';
 import { translateTokensToRange } from '../utils/translateTokenToRange.js';
@@ -105,10 +105,10 @@ export function createParsingResult(
       parser.addParseListener(variableFinder);
       parser.addParseListener(methodsFinder);
       parser.addParseListener(cypherVersionCollector);
-      parser.addParseListener(propertiesFinder);
       parser.addParseListener(readPatternElementsCollector);
       parser.addErrorListener(errorListener);
       const ctx = parser.statementsOrCommands();
+      ParseTreeWalker.DEFAULT.walk(propertiesFinder, ctx);
 
       // The statement is empty if we cannot find anything that is not EOF or a space
       const isEmptyStatement =

@@ -42,6 +42,9 @@ export class ConstraintsHandler {
     const symbol = this.symbolTable.find((symbol) => {
       return symbol.variable === variable.name;
     });
+    if (!symbol) {
+      return undefined;
+    }
 
     const nodeLabels = this.getLabels(symbol.labels);
 

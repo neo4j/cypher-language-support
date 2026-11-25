@@ -1,3 +1,5 @@
+import type { ExpressionContext } from '../generated-parser/CypherCmdParser.js';
+
 type HasPosition = {
   line: number;
   column: number;
@@ -25,10 +27,8 @@ export type PropertyType = HasPosition & {
     start: number;
   };
   type: 'read' | 'write';
-  /** The inferred type of the right hand side of an expression with the property.
-   * @example WHERE m.title = "The Matrix" // STRING
-   */
-  rightHandType?: string;
+  /** The expression assigned to the property in the query */
+  assignedExpression?: ExpressionContext;
 };
 
 export type ParsedParameter = HasPosition & {

@@ -6,7 +6,9 @@ import { generateSyntaxDiagnostic } from './utils/generateSyntaxDiagnostic.js';
 import { isNodeOrRelationshipProperty } from './utils/isNodeOrRelationshipProperty.js';
 import type { SymbolTable } from '../../types.js';
 import { ConstraintsHandler } from './utils/contraintsHandler.js';
+import { inferExpressionTypes } from './utils/inferExpressionType.js';
 
+/** Sends a warning if a property is assigned to a type not matching the constraint */
 export function warnOnPropertyNotInConstraint(
   parsingResult: ParsedStatement,
   dbSchema: DbSchema,
@@ -20,28 +22,40 @@ export function warnOnPropertyNotInConstraint(
   }
 
   const constraintsHandler = new ConstraintsHandler(
-    dbSchema.constraintInfo.constraints,
+    constraintInfo.constraints,
     symbolTable,
   );
 
-  const propertiesWithIncorrectType = parsingResult.collectedProperties.filter(
-    (propInCypher) => {
-      // Ignore properties that are not of Node or Relationship
-      if (!isNodeOrRelationshipProperty(propInCypher, symbolTable)) {
-        return false;
-      }
+  for (const property of parsingResult.collectedProperties) {
+    if (
+      property.type === 'read' ||
+      !property.assignedExpression ||
+      !isNodeOrRelationshipProperty(property, symbolTable)
+    ) {
+      continue;
+    }
 
-      const _propConstraintType =
-        constraintsHandler.getPropertyType(propInCypher);
+    const expectedType = constraintsHandler.getPropertyType(property);
+    const actualTypes = inferExpressionTypes(
+      property.assignedExpression,
+      symbolTable,
+    );
+    // Keep comparisons to known scalar types until richer constraints are supported.
+    const scalarTypes = new Set(['STRING', 'INTEGER', 'FLOAT', 'BOOLEAN']);
+    const expected = expectedType?.toUpperCase();
 
-      return true;
-    },
-  );
+    // TODO: improve this
+    if (
+      !expected ||
+      !scalarTypes.has(expected) ||
+      !actualTypes?.length ||
+      !actualTypes.every((type) => scalarTypes.has(type.toUpperCase())) ||
+      actualTypes.some((type) => type.toUpperCase() === expected)
+    ) {
+      continue;
+    }
 
-  for (const property of propertiesWithIncorrectType) {
-    const message =
-      property.propertyName +
-      " is not present in the database. Make sure you didn't misspell it or that it is available when you run this statement in your application";
+    const message = `Type mismatch for property ${property.propertyName}: expected ${expectedType} but was ${actualTypes.join(' or ')}`;
     const warning = generateSyntaxDiagnostic(
       property.propertyName,
       property,
