@@ -34,7 +34,8 @@ Package-specific and non-Vitest suites:
 - `pnpm --filter @neo4j-cypher/react-codemirror test:e2e` — Playwright component tests; use `test:e2e-ui` for UI mode.
 - `pnpm --filter neo4j-for-vscode test:api` — VS Code API/unit tests; requires a container manager for Neo4j and launches VS Code.
 - `pnpm --filter neo4j-for-vscode test:webviews` — VS Code webview tests via WebdriverIO.
-- `pnpm test:formattingIntegrity` — formatter verification over a large query corpus.
+- `pnpm --filter @neo4j-cypher/language-support test:formattingIntegrity` — formatter verification over a large query corpus.
+- `pnpm --filter @neo4j-cypher/language-support test:formattingVisitorCoverage` — static check that formatter visitors visit every child of their rule.
 
 Before the first Playwright run, install browsers with `pnpm exec playwright install`. The full E2E suite includes VS Code tests, which may require a container manager and a graphical environment; run those suites explicitly when that environment is available.
 

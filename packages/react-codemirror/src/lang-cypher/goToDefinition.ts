@@ -115,9 +115,9 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
         const modKey = isMac ? e.metaKey : e.ctrlKey;
         this.coords = { x: e.clientX, y: e.clientY };
 
-        const pos = modKey ? this.view.posAtCoords(this.coords) : undefined;
+        const pos = modKey ? this.view.posAtCoords(this.coords) : null;
         const range =
-          pos === undefined
+          pos === null
             ? undefined
             : symbolWithDefinitionRange(this.view, pos, this.cfg);
         //Only need changes when hovering on the position of a new reference
@@ -133,7 +133,10 @@ const clickableSymbolPlugin = ViewPlugin.fromClass(
         const modKey = isMac ? 'Meta' : 'Control';
         if (e.key === modKey) {
           const pos = this.view.posAtCoords(this.coords);
-          const range = symbolWithDefinitionRange(this.view, pos, this.cfg);
+          const range =
+            pos === null
+              ? undefined
+              : symbolWithDefinitionRange(this.view, pos, this.cfg);
           //Only need changes when hovering on the position of a new reference
           if (
             range?.from !== this.range?.from ||

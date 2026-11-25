@@ -11,7 +11,7 @@ type TooltipExpectations = {
 };
 
 const importCsvProc =
-  testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'];
+  testData.mockSchema.procedures!['CYPHER 5']!['apoc.import.csv']!;
 
 function testTooltip(tooltip: Locator, expectations: TooltipExpectations) {
   const includes = expectations.includes ?? [];
@@ -86,9 +86,10 @@ test('Signature help shows the description for the first argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv']
-        .argumentDescription[0].description,
-      testData.mockSchema.procedures['CYPHER 5']['apoc.import.csv'].description,
+      testData.mockSchema.procedures!['CYPHER 5']!['apoc.import.csv']!
+        .argumentDescription[0]!.description,
+      testData.mockSchema.procedures!['CYPHER 5']!['apoc.import.csv']!
+        .description,
     ],
   });
 });
@@ -107,7 +108,7 @@ test('Signature help shows the description for the first argument when the curso
 
   await testTooltip(tooltip, {
     includes: [
-      importCsvProc.argumentDescription[0].description,
+      importCsvProc.argumentDescription[0]!.description,
       importCsvProc.description,
     ],
   });
@@ -131,7 +132,7 @@ test('Signature help shows the description for the second argument', async ({
 
   await testTooltip(tooltip, {
     includes: [
-      importCsvProc.argumentDescription[1].description,
+      importCsvProc.argumentDescription[1]!.description,
       importCsvProc.description,
     ],
   });
@@ -151,7 +152,7 @@ test('Signature help shows the description for the second argument when the curs
 
   await testTooltip(tooltip, {
     includes: [
-      importCsvProc.argumentDescription[1].description,
+      importCsvProc.argumentDescription[1]!.description,
       importCsvProc.description,
     ],
   });

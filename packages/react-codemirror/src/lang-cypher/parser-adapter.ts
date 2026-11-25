@@ -85,7 +85,7 @@ export class ParserAdapter extends Parser {
     if (document.length === 0) {
       this.config.setUseLightVersion?.(false);
     }
-    const tokens = Prism.tokenize(document, Prism.languages.cypher);
+    const tokens = Prism.tokenize(document, Prism.languages.cypher!);
     return {
       type: 'prism' as const,
       tokens,

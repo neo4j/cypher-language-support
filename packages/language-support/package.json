@@ -57,7 +57,9 @@
     "gen-api-report": "pnpm build-esm-and-types && pnpm check-api-report",
     "dev": "pnpm build && concurrently 'tsc --outDir dist/esm/project/language-support --watch' 'npm:build-commonjs -- --watch'",
     "clean": "rm -rf dist src/generated-parser tsconfig*.tsbuildinfo",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:formattingIntegrity": "tsx src/tests/verification/formattingVerificationCheck.ts",
+    "test:formattingVisitorCoverage": "tsx src/tests/verification/formattingVisitorCoverageCheck.ts"
   },
   "dependencies": {
     "antlr4-c3": "3.4.4",

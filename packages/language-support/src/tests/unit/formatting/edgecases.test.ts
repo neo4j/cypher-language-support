@@ -1191,4 +1191,30 @@ RETURN p.name`;
     const expected = `RETURN ALL 501010 qqq`;
     verifyFormatting(query, expected);
   });
+
+  test('no spaces around < > in parameterized types', () => {
+    const query = `RETURN x IS :: list < string not null > not null | any value < integer | float >`;
+    const expected = `RETURN x IS :: LIST<STRING NOT NULL> NOT NULL | ANY VALUE<INTEGER | FLOAT>`;
+    verifyFormatting(query, expected);
+  });
+
+  test('no space before ( in vector types', () => {
+    const query = `RETURN x IS :: vector < int32 > (3) | vector (3, float32)`;
+    const expected = `RETURN x IS :: VECTOR<INT32>(3) | VECTOR(3, FLOAT32)`;
+    verifyFormatting(query, expected);
+  });
+
+  test('no space before ! in non-null types', () => {
+    const query = `RETURN x IS :: integer ! | string list ! | list<integer !> !`;
+    const expected = `RETURN x IS :: INTEGER! | STRING LIST! | LIST<INTEGER!>!`;
+    verifyFormatting(query, expected);
+  });
+
+  test('type spacing also applies in constraints', () => {
+    const query = `create constraint for (a:A) require a.p is :: list < integer ! > | vector < int8 > (3)`;
+    const expected = `CREATE CONSTRAINT
+FOR (a:A)
+REQUIRE a.p IS :: LIST<INTEGER!> | VECTOR<INT8>(3)`;
+    verifyFormatting(query, expected);
+  });
 });
