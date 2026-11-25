@@ -288,10 +288,7 @@ const parameterCompletions = (
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, paramType]) =>
-      isExpectedParameterType(expectedType, paramType),
-    )
+    .filter(([, paramType]) => isExpectedParameterType(expectedType, paramType))
     .map(([paramName]) => {
       const backtickedName = backtickIfNeeded(paramName, 'param');
       let maybeInsertText = backtickedName
