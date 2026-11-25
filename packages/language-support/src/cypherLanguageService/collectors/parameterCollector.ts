@@ -1,5 +1,6 @@
 import type { ParseTreeListener, Token } from 'antlr4ng';
 import { ParameterContext } from '../../generated-parser/CypherCmdParser.js';
+import { contextContainsToken } from '../../helpers.js';
 import type { ParsedParameter } from '../parsingTypes.js';
 
 export class ParameterCollector implements ParseTreeListener {
@@ -33,17 +34,8 @@ export class ParameterCollector implements ParseTreeListener {
           },
         };
         this.parameters.push(parsedParameter);
-        if (this.caretToken) {
-          const caretStart = this.caretToken.start;
-          const caretStop = this.caretToken.stop;
-          if (
-            caretStart &&
-            caretStop &&
-            ctx.start.start <= caretStart &&
-            ctx.stop.stop >= caretStop
-          ) {
-            this.caretParameter = parsedParameter;
-          }
+        if (this.caretToken && contextContainsToken(ctx, this.caretToken)) {
+          this.caretParameter = parsedParameter;
         }
       }
     }

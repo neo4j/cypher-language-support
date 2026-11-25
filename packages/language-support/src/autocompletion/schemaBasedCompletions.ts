@@ -6,7 +6,7 @@ import {
 import type { DbSchema } from '../dbSchema.js';
 import type { LabelOrCondition, SymbolsInfo } from '../types.js';
 import { isLabelLeaf } from '../types.js';
-import { findParent, getDirection } from '../helpers.js';
+import { contextContainsRange, findParent, getDirection } from '../helpers.js';
 import {
   NodePatternContext,
   PatternElementContext,
@@ -215,16 +215,10 @@ function findLastVariable(
 ) {
   const variable = lastValidElement.variable();
   if (variable === null) {
-    const { start, stop } = lastValidElement;
-    if (!start || !stop) {
-      return undefined;
-    }
-    return symbolsInfo?.symbolTables?.flat().find(
-      (entry) =>
-        // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
-        // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
-        entry.definitionPosition >= start.start &&
-        entry.definitionPosition <= stop.stop,
+    return symbolsInfo?.symbolTables?.flat().find((entry) =>
+      // Because the anonymous variable created in the AST is "made up", it doesnt have a position of its own in the query.
+      // It therefor inherits the parent-nodes (The NodePattern/RelationshipPattern = lastValidElement) position
+      contextContainsRange(lastValidElement, entry.definitionPosition),
     );
   }
   const { start } = variable;
