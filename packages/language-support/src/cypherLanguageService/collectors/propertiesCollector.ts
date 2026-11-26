@@ -1,17 +1,21 @@
 import type { ParseTreeListener } from 'antlr4ng';
-import type { VariableContext } from '../../generated-parser/CypherCmdParser.js';
+import type {
+  ExpressionContext,
+  VariableContext,
+} from '../../generated-parser/CypherCmdParser.js';
 import {
   PropertyKeyNameContext,
   ClauseContext,
   NodePatternContext,
   RelationshipPatternContext,
   Expression2Context,
+  SetItemContext,
+  SetPropContext,
 } from '../../generated-parser/CypherCmdParser.js';
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
 import type { PropertyType } from '../parsingTypes.js';
 
-// This listener collects all properties in read operations
 export class PropertiesCollector implements ParseTreeListener {
   properties: PropertyType[] = [];
 
@@ -33,12 +37,13 @@ export class PropertiesCollector implements ParseTreeListener {
           (ctx) => ctx instanceof ClauseContext,
         );
         if (parentClause instanceof ClauseContext) {
+          const assignment = this.getAssignment(ctx);
+
           const isRead = this.isReadClause(parentClause);
           const isWrite = this.isWriteClause(parentClause);
 
           if ((isRead || isWrite) && ctx.start && ctx.stop) {
             const variable = this.getPropertyVariable(ctx);
-
             const propertyName = ctx.getText().replace(/^`|`$/g, '');
 
             this.properties.push({
@@ -51,6 +56,8 @@ export class PropertiesCollector implements ParseTreeListener {
                 end: ctx.stop.stop + 1,
               },
               type: isWrite ? 'write' : 'read',
+              assignedExpression:
+                assignment?.side === 'lhs' ? assignment.rhs : undefined,
             });
           }
         }
@@ -123,5 +130,37 @@ export class PropertiesCollector implements ParseTreeListener {
     return Boolean(
       clause.matchClause() || clause.withClause() || clause.returnClause(),
     );
+  }
+
+  /** Returns the side of an assigment and the expression of the assignment */
+  private getAssignment(
+    ctx: PropertyKeyNameContext,
+  ): { side: 'lhs' | 'rhs'; rhs: ExpressionContext } | undefined {
+    const assignment = findParent(
+      ctx,
+      (node) => node instanceof SetItemContext,
+    );
+    // Skip unsupported assigments, such as label assignments.
+    if (!(assignment instanceof SetPropContext)) {
+      return undefined;
+    }
+
+    if (hasErrorNodesUnder(assignment)) return undefined;
+
+    const rhs = assignment.expression();
+    if (findParent(ctx, (node) => node === rhs)) {
+      return { side: 'rhs', rhs };
+    }
+
+    if (assignment instanceof SetPropContext) {
+      const postfixes = assignment.expression2().postFix();
+      const target = postfixes[postfixes.length - 1];
+      // Only the final property lookup is written; dynamic keys are reads.
+      if (ctx.parent?.parent === target) {
+        return { side: 'lhs', rhs };
+      }
+    }
+
+    return undefined;
   }
 }
