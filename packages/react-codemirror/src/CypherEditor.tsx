@@ -242,7 +242,7 @@ const format = (view: EditorView): void => {
     const { formattedQuery, newCursorPos } = formatQuery(doc, {
       cursorPosition: view.state.selection.main.anchor,
     });
-    if (!newCursorPos) {
+    if (newCursorPos === undefined) {
       return;
     }
     view.dispatch({
@@ -647,7 +647,7 @@ export class CypherEditor extends Component<
       if (this.props.value) {
         this.updateCursorPosition(this.props.value.length);
       }
-    } else if (this.props.offset) {
+    } else if (this.props.offset !== undefined) {
       this.updateCursorPosition(this.props.offset);
     }
 
