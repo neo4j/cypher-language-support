@@ -7,6 +7,7 @@ import { isNodeOrRelationshipProperty } from './utils/isNodeOrRelationshipProper
 import type { SymbolTable } from '../../types.js';
 import { ConstraintsHandler } from './utils/contraintsHandler.js';
 import { inferExpressionTypes } from './utils/inferExpressionType.js';
+import type { PropertyType } from '../../cypherLanguageService/parsingTypes.js';
 
 /** Sends a warning if a property is assigned to a type not matching the constraint */
 export function warnOnPropertyNotInConstraint(
@@ -27,43 +28,72 @@ export function warnOnPropertyNotInConstraint(
   );
 
   for (const property of parsingResult.collectedProperties) {
-    if (
-      property.type === 'read' ||
-      !property.assignedExpression ||
-      !isNodeOrRelationshipProperty(property, symbolTable)
-    ) {
-      continue;
-    }
-
-    const expectedType = constraintsHandler.getPropertyType(property);
-    const actualTypes = inferExpressionTypes(
-      property.assignedExpression,
-      symbolTable,
-    );
-    // Keep comparisons to known scalar types until richer constraints are supported.
-    const scalarTypes = new Set(['STRING', 'INTEGER', 'FLOAT', 'BOOLEAN']);
-    const expected = expectedType?.toUpperCase();
-
-    // TODO: improve this
-    if (
-      !expected ||
-      !scalarTypes.has(expected) ||
-      !actualTypes?.length ||
-      !actualTypes.every((type) => scalarTypes.has(type.toUpperCase())) ||
-      actualTypes.some((type) => type.toUpperCase() === expected)
-    ) {
-      continue;
-    }
-
-    const message = `Type mismatch for property ${property.propertyName}: expected ${expectedType} but was ${actualTypes.join(' or ')}`;
-    const warning = generateSyntaxDiagnostic(
-      property.propertyName,
+    const warning = diagnosticForProperty(
       property,
-      DiagnosticSeverity.Warning,
-      message,
+      symbolTable,
+      constraintsHandler,
     );
-    warnings.push(warning);
+    if (warning) {
+      warnings.push(warning);
+    }
   }
 
   return warnings;
+}
+
+function diagnosticForProperty(
+  property: PropertyType,
+  symbolTable: SymbolTable,
+  constraintsHandler: ConstraintsHandler,
+): SyntaxDiagnostic | undefined {
+  if (
+    property.type === 'read' ||
+    !property.assignedExpression ||
+    !isNodeOrRelationshipProperty(property, symbolTable)
+  ) {
+    return undefined;
+  }
+
+  const expectedType = constraintsHandler.getPropertyType(property);
+  const actualTypes = inferExpressionTypes(
+    property.assignedExpression,
+    symbolTable,
+  );
+
+  const expected = expectedType?.toUpperCase();
+
+  if (matchTypesOrUnknown(actualTypes, expected)) {
+    return undefined;
+  }
+
+  const message = `Type mismatch for property ${property.propertyName}: expected ${expectedType} but was ${actualTypes.join(' or ')}`;
+  const warning = generateSyntaxDiagnostic(
+    property.propertyName,
+    property,
+    DiagnosticSeverity.Warning,
+    message,
+  );
+  return warning;
+}
+
+/** @returns true if the actualTypes match the expected type. Will return true if unknown */
+function matchTypesOrUnknown(
+  actualTypes: string[],
+  expected: string | undefined,
+): boolean {
+  const scalarTypes = new Set(['STRING', 'INTEGER', 'FLOAT', 'BOOLEAN']);
+
+  if (!expected || !scalarTypes.has(expected)) {
+    return true;
+  }
+
+  const expectedTypesKnown =
+    actualTypes.length > 0 &&
+    actualTypes.every((type) => scalarTypes.has(type.toUpperCase()));
+
+  if (!expectedTypesKnown) {
+    return true;
+  }
+
+  return actualTypes.some((type) => type.toUpperCase() === expected);
 }

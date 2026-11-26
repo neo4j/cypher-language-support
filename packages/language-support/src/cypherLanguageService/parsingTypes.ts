@@ -27,7 +27,8 @@ export type PropertyType = HasPosition & {
     start: number;
   };
   type: 'read' | 'write';
-  /** The expression assigned to the property in the query */
+  /** The expression assigned to the property in the query.
+   * This is only available in properties for the LHS of an assigment expression */
   assignedExpression?: ExpressionContext;
 };
 

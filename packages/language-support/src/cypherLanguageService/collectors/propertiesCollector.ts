@@ -11,8 +11,6 @@ import {
   Expression2Context,
   SetItemContext,
   SetPropContext,
-  SetPropsContext,
-  AddPropContext,
 } from '../../generated-parser/CypherCmdParser.js';
 import { findParent } from '../../helpers.js';
 import { hasErrorNodesUnder } from '../utils/hasErrorNodesUnder.js';
@@ -134,7 +132,7 @@ export class PropertiesCollector implements ParseTreeListener {
     );
   }
 
-  /** Given a property, is it in the left or right side? */
+  /** Returns the side of an assigment and the expression of the assignment */
   private getAssignment(
     ctx: PropertyKeyNameContext,
   ): { side: 'lhs' | 'rhs'; rhs: ExpressionContext } | undefined {
@@ -142,13 +140,8 @@ export class PropertiesCollector implements ParseTreeListener {
       ctx,
       (node) => node instanceof SetItemContext,
     );
-    // Only value assignments expose expression(); label assignments do not.
-    // SetProp: SET n.name = value; SetProps: SET n = map; AddProp: SET n += map.
-    if (
-      !(assignment instanceof SetPropContext) &&
-      !(assignment instanceof SetPropsContext) &&
-      !(assignment instanceof AddPropContext)
-    ) {
+    // Skip unsupported assigments, such as label assignments.
+    if (!(assignment instanceof SetPropContext)) {
       return undefined;
     }
 

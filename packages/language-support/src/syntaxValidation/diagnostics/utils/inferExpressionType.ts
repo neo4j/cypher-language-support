@@ -26,9 +26,11 @@ function inferRuleTypes(
   if (node instanceof StringsLiteralContext) return ['STRING'];
   if (node instanceof BooleanLiteralContext) return ['BOOLEAN'];
   if (node instanceof NumericLiteralContext) {
-    return [node.numberLiteral().DECIMAL_DOUBLE() ? 'FLOAT' : 'INTEGER'];
+    const isFloat = node.numberLiteral().DECIMAL_DOUBLE();
+    return [isFloat ? 'FLOAT' : 'INTEGER'];
   }
 
+  // Simple expressions with a single children
   if (
     node.children.length === 1 &&
     node.children[0] instanceof ParserRuleContext
