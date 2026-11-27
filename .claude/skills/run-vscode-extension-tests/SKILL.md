@@ -12,11 +12,11 @@ Both suites pop real VS Code windows, download a VS Code build on first run, and
 ## The suites
 
 ```sh
-pnpm --filter neo4j-for-vscode test:apiAndUnit   # API + unit tests
+pnpm --filter neo4j-for-vscode test:api          # API + unit tests
 pnpm --filter neo4j-for-vscode test:webviews     # webview tests (wdio)
 ```
 
-- **`test:apiAndUnit`** runs `build:dev`, wipes `.vscode-test/user-data`, then `dist/tests/runApiAndUnitTests.js`: it starts **two Neo4j testcontainers itself** (a Neo4j 5 and a 2025.x, via `tests/setupTestContainer.ts` — no pre-running Neo4j needed; host ports are random-mapped and passed as `NEO4J_5_PORT`/`NEO4J_2025_PORT`) and runs mocha (tdd UI, 30 s per-test timeout, globs `**/{api,unit}/**/*.spec.js` under `dist/tests`). A separate small `test:mocha` (param unit test) runs after. Connection defaults/overrides live in `tests/helpers.ts`.
+- **`test:api`** runs `build:dev`, wipes `.vscode-test/user-data`, then `dist/tests/runApiAndUnitTests.js`: it starts **two Neo4j testcontainers itself** (a Neo4j 5 and a 2025.x, via `tests/setupTestContainer.ts` — no pre-running Neo4j needed; host ports are random-mapped and passed as `NEO4J_5_PORT`/`NEO4J_2025_PORT`) and runs mocha (tdd UI, 30 s per-test timeout, globs `**/{api,unit}/**/*.spec.js` under `dist/tests`). Connection defaults/overrides live in `tests/helpers.ts`.
 - **`test:webviews`** runs wdio via `wdio-vscode-service` against `dist/tests/runWebviewTests.js`.
 - CI (`ci.yaml`) runs both under `xvfb-run -a` on Linux; locally the windows are visible.
 

@@ -514,47 +514,156 @@ describe('Filters parameter completions on the expected type', () => {
     ]);
   });
 
-  test.each([
-    'ENABLE SERVER $',
-    'DROP USER $',
-    'CREATE ROLE $',
-    'ALTER USER foo SET PASSWORD $',
-  ])('Suggests only string parameters in %s', (query) => {
-    expect(parameterLabels(query)).toEqual(['$stringParam', '$untypedParam']);
+  test('Suggests only string parameters for ENABLE SERVER', () => {
+    expect(parameterLabels('ENABLE SERVER $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
   });
 
-  test.each([
-    'CREATE (n $',
-    'CREATE INDEX abc FOR (n:Person) ON (n.name) OPTIONS $',
-  ])('Suggests only map parameters in %s', (query) => {
-    expect(parameterLabels(query)).toEqual(['$mapParam', '$untypedParam']);
+  test('Suggests only string parameters for DROP USER', () => {
+    expect(parameterLabels('DROP USER $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
   });
 
-  test.each(['MATCH SHORTEST $', 'MATCH ANY $'])(
-    'Suggests only integer parameters in %s',
-    (query) => {
-      expect(parameterLabels(query)).toEqual(['$intParam', '$untypedParam']);
-    },
-  );
-
-  test.each([
-    'RETURN vector_distance($',
-    'RETURN vector_distance($vectorParam, $',
-    'RETURN vector_norm($',
-  ])('Suggests only vector parameters in %s', (query) => {
-    expect(parameterLabels(query)).toEqual(['$untypedParam', '$vectorParam']);
+  test('Suggests only string parameters for CREATE ROLE', () => {
+    expect(parameterLabels('CREATE ROLE $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
   });
 
-  test.each([
-    'RETURN vector_distance(coalesce($',
-    'RETURN vector_distance(coalesce($a, $',
-    'RETURN vector_distance([1, $',
-    'RETURN vector_distance({a: 1, b: $',
-    'RETURN vector_norm($vectorParam, $',
-    'RETURN vector_distance($a, $b, $',
-    'RETURN vector($',
-  ])('Suggests all parameters in non-vector arguments: %s', (query) => {
-    expect(parameterLabels(query)).toEqual([
+  test('Suggests only string parameters for passwords', () => {
+    expect(parameterLabels('ALTER USER foo SET PASSWORD $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only map parameters for node properties', () => {
+    expect(parameterLabels('CREATE (n $')).toEqual([
+      '$mapParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only map parameters for index options', () => {
+    expect(
+      parameterLabels('CREATE INDEX abc FOR (n:Person) ON (n.name) OPTIONS $'),
+    ).toEqual(['$mapParam', '$untypedParam']);
+  });
+
+  test('Suggests only integer parameters for SHORTEST', () => {
+    expect(parameterLabels('MATCH SHORTEST $')).toEqual([
+      '$intParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only integer parameters for ANY', () => {
+    expect(parameterLabels('MATCH ANY $')).toEqual([
+      '$intParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the first argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the second argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($vectorParam, $')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the first argument of vector_norm', () => {
+    expect(parameterLabels('RETURN vector_norm($')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a function call in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance(coalesce($')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for later arguments of a function call in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance(coalesce($a, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a list in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance([1, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a map in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance({a: 1, b: $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the second argument of vector_norm', () => {
+    expect(parameterLabels('RETURN vector_norm($vectorParam, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the third argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($a, $b, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the value of vector()', () => {
+    expect(parameterLabels('RETURN vector($')).toEqual([
       '$dateParam',
       '$floatParam',
       '$intParam',
