@@ -18,7 +18,7 @@ export function getStatementAtCaret(
   // Since the find goes through the statements in order this will work out.
   let currentStatement = statements.statementsParsing.find((statement) => {
     const stopOffset = statement?.ctx?.stop?.stop;
-    return stopOffset ? stopOffset >= caretOffset : false;
+    return stopOffset !== undefined ? stopOffset >= caretOffset : false;
   });
   // Special case for when the caret is after the final token
   currentStatement =
@@ -38,5 +38,5 @@ function sliceInput(
   const start = tokens.at(0)?.start ?? 0;
   const stop = tokens.at(-1)?.stop;
 
-  return input.slice(start, stop ? stop + 1 : undefined);
+  return input.slice(start, stop !== undefined ? stop + 1 : undefined);
 }

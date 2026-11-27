@@ -761,7 +761,7 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     if (
-      this.unParseableStart &&
+      this.unParseableStart !== undefined &&
       node.symbol.tokenIndex >= this.unParseableStart
     ) {
       return;

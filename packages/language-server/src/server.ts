@@ -287,7 +287,6 @@ const changeConnection = (connectionSettings: Neo4jConnectionSettings) => {
   if (
     neo4jSchemaPoller.connection === undefined &&
     connectionSettings.connect &&
-    connectionSettings.password &&
     connectionSettings.connectURL &&
     connectionSettings.user
   ) {
@@ -295,7 +294,8 @@ const changeConnection = (connectionSettings: Neo4jConnectionSettings) => {
       connectionSettings.connectURL,
       {
         username: connectionSettings.user,
-        password: connectionSettings.password,
+        // Connections without a stored password send null/undefined
+        password: connectionSettings.password ?? '',
       },
       { appName: 'cypher-language-server' },
       connectionSettings.database,

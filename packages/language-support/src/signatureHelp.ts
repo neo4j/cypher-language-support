@@ -238,7 +238,7 @@ class SignatureHelper extends CypherCmdParserListener {
     if (this.shouldGiveSignatureHelp(ctx)) {
       const methodName = ctx.NORMALIZE().getText();
       const commaStop = ctx.COMMA()?.symbol.stop;
-      if (!commaStop) return;
+      if (commaStop === undefined) return;
       const activeParameter = commaStop < this.caretToken.stop ? 1 : 0;
       this.result = {
         methodName,
@@ -258,14 +258,14 @@ class SignatureHelper extends CypherCmdParserListener {
         const trimCharacterString = ctx.expression(0);
         if (
           trimSource &&
-          trimSource.start?.start &&
-          trimSource.start?.start <= this.caretToken.stop
+          trimSource.start?.start !== undefined &&
+          trimSource.start.start <= this.caretToken.stop
         ) {
           activeParameter = 2;
         } else if (
           trimCharacterString &&
-          trimCharacterString.start?.stop &&
-          trimCharacterString.start?.start <= this.caretToken.stop
+          trimCharacterString.start?.start !== undefined &&
+          trimCharacterString.start.start <= this.caretToken.stop
         ) {
           activeParameter = 1;
         } else {
@@ -368,7 +368,7 @@ class SignatureHelper extends CypherCmdParserListener {
         collection of spaces between apoc.do.when and the left parenthesis
       */
       const stopTokenIdx = ctx?.stop?.tokenIndex;
-      if (!stopTokenIdx) return;
+      if (stopTokenIdx === undefined) return;
       let index = stopTokenIdx + 1;
       let nextToken = this.tokens[index];
 

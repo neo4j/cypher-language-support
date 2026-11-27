@@ -58,7 +58,7 @@ export function clampUnsafePositions(
         diagnostic.range.start.line,
         diagnostic.offsets.start,
         diagnostic.offsets.end,
-      ].find((pos) => pos < 0)
+      ].some((pos) => pos < 0)
     ) {
       return {
         ...diagnostic,

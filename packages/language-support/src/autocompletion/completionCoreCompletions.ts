@@ -641,7 +641,7 @@ export function completionCoreCompletion(
             const variableName = variable?.getText();
             if (
               !variableName ||
-              !variablePosition ||
+              variablePosition === undefined ||
               !couldBeNodeOrRel(
                 variablePosition,
                 variableName,
