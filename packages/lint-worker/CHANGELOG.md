@@ -1,5 +1,21 @@
 # @neo4j-cypher/lint-worker
 
+## 1.10.1-next.17
+
+### Patch Changes
+
+- c63fdb7: Fix Regex susceptible of ReDoS attacks
+- 20d5c8c: Fix linter crashing on firefox with "Worker is terminated"
+- ecc4d57: Update grammar and semantic analysis to 2026.11
+- Updated dependencies [613dfdc]
+- Updated dependencies [9cba15a]
+- Updated dependencies [20d5c8c]
+- Updated dependencies [ea87989]
+- Updated dependencies [ecc4d57]
+- Updated dependencies [ea87989]
+- Updated dependencies [0b97f5f]
+  - @neo4j-cypher/language-support@2.0.0-next.40
+
 ## 1.10.1-next.16
 
 ### Patch Changes
