@@ -1,5 +1,17 @@
 # @neo4j-cypher/language-support
 
+## 2.0.0-next.40
+
+### Patch Changes
+
+- 613dfdc: Enable caching for parsing results
+- 9cba15a: Fix formatting of Query console commands
+- 20d5c8c: Fix linter crashing on firefox with "Worker is terminated"
+- ea87989: Add SHOW CONSTRAINTS YIELD completions
+- ecc4d57: Update grammar and semantic analysis to 2026.11
+- ea87989: Add constraint polling
+- 0b97f5f: Adds support for go-to-definition
+
 ## 2.0.0-next.39
 
 ### Minor Changes
