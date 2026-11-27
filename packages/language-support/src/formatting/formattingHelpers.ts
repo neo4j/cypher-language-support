@@ -1,5 +1,5 @@
 import type { TerminalNode, Token } from 'antlr4ng';
-import { CharStream, CommonTokenStream } from 'antlr4ng';
+import { CharStream, CommonTokenStream, ParserRuleContext } from 'antlr4ng';
 import { CypherCmdLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser,
@@ -86,6 +86,39 @@ const traillingCharacters = [
   CypherCmdLexer.RPAREN,
   CypherCmdLexer.RBRACKET,
 ];
+
+// Rules whose direct terminal children are console command keywords. Arguments
+// such as expressions, maps or statements are sub-rules, so they are unaffected.
+const consoleCommandKeywordRules = new Set([
+  CypherCmdParser.RULE_paramsCmd,
+  CypherCmdParser.RULE_paramsArgs,
+  CypherCmdParser.RULE_clearCmd,
+  CypherCmdParser.RULE_historyCmd,
+  CypherCmdParser.RULE_serverArgs,
+  CypherCmdParser.RULE_connectCmd,
+  CypherCmdParser.RULE_disconnectCmd,
+  CypherCmdParser.RULE_sysInfoCmd,
+  CypherCmdParser.RULE_styleCmd,
+  CypherCmdParser.RULE_welcomeCmd,
+  CypherCmdParser.RULE_playCmd,
+  CypherCmdParser.RULE_accessModeCmd,
+  CypherCmdParser.RULE_helpCmd,
+  CypherCmdParser.RULE_listCompletionRule,
+  CypherCmdParser.RULE_useCompletionRule,
+  CypherCmdParser.RULE_serverCompletionRule,
+  CypherCmdParser.RULE_readCompletionRule,
+  CypherCmdParser.RULE_writeCompletionRule,
+  CypherCmdParser.RULE_autoCompletionRule,
+]);
+
+// Console commands are lowercase in Query, so we follow that
+export function wantsToBeLowerCase(node: TerminalNode): boolean {
+  const parent = node.parent;
+  return (
+    parent instanceof ParserRuleContext &&
+    consoleCommandKeywordRules.has(parent.ruleIndex)
+  );
+}
 
 export function wantsToBeUpperCase(node: TerminalNode): boolean {
   return isKeywordTerminal(node);

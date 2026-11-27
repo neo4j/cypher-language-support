@@ -28,6 +28,8 @@ import type {
   CommandNodePatternContext,
   CommandOptionsContext,
   CommandRelPatternContext,
+  ConsoleCommandContext,
+  LambdaContext,
   ConstraintIsNotNullContext,
   ConstraintIsUniqueContext,
   ConstraintKeyContext,
@@ -212,6 +214,7 @@ import {
   isComment,
   verifyGroupSizes,
   wantsToBeConcatenated,
+  wantsToBeLowerCase,
   wantsToBeUpperCase,
 } from './formattingHelpers.js';
 import { chunksToFormattedString } from './layoutEngine.js';
@@ -795,6 +798,36 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
 
     this.chunkList.push(chunk);
     this.lastVisitedErrorNode = errorTokenIndex;
+  };
+
+  visitConsoleCommand = (ctx: ConsoleCommandContext) => {
+    this.breakLine();
+    this._visitTerminalRaw(ctx.COLON(), { dontConcatenate: true });
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.clearCmd());
+    this._visit(ctx.historyCmd());
+    this._visit(ctx.useCmd());
+    this._visit(ctx.paramsCmd());
+    this._visit(ctx.serverCmd());
+    this._visit(ctx.connectCmd());
+    this._visit(ctx.disconnectCmd());
+    this._visit(ctx.welcomeCmd());
+    this._visit(ctx.sysInfoCmd());
+    this._visit(ctx.styleCmd());
+    this._visit(ctx.playCmd());
+    this._visit(ctx.accessModeCmd());
+    this._visit(ctx.helpCmd());
+    this._visit(ctx.autoCmd());
+  };
+
+  visitLambda = (ctx: LambdaContext) => {
+    this._visit(ctx.parameterName());
+    this._visit(ctx.EQ());
+    this.avoidSpaceBetween();
+    this.avoidBreakBetween();
+    this._visit(ctx.GT());
+    this._visit(ctx.expression());
   };
 
   visitStatementsOrCommands = (ctx: StatementsOrCommandsContext) => {
@@ -2276,7 +2309,9 @@ class TreePrintVisitor extends CypherCmdParserVisitor<void> {
       return;
     }
     let text = node.getText();
-    if (wantsToBeUpperCase(node)) {
+    if (wantsToBeLowerCase(node)) {
+      text = text.toLowerCase();
+    } else if (wantsToBeUpperCase(node)) {
       text = text.toUpperCase();
     }
     const chunk: RegularChunk = {
