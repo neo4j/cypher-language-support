@@ -270,19 +270,47 @@ describe('Variable hover', () => {
     expect(hoverInfo).toEqual(undefined);
   });
 
-  test('Does not provide hover info for parameters', () => {
-    const query = 'RETURN $param';
+  test('Provides hover info for parameters', () => {
+    const query = 'RETURN $param1';
     const { symbolTables } = languageService.lint(query, dbSchema);
     languageService.setSymbolsInfo({
       query,
       symbolTables: symbolTables,
     });
-    const positions = ['RETURN '.length, 'RETURN $'.length];
-
-    positions.forEach((caretPosition) => {
-      expect(
-        languageService.hoverInfo(query, { caretPosition, dbSchema }),
-      ).toEqual(undefined);
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $par'.length,
+      dbSchema,
     });
+
+    expect(hoverInfo).toEqual({
+      kind: 'parameter',
+      name: 'param1',
+      type: 'Float',
+      value: '123.4',
+    });
+  });
+
+  test('Provides hover info for parameters with only a type', () => {
+    const query = 'RETURN $typed';
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $ty'.length,
+      dbSchema: { ...dbSchema, parameters: { typed: { type: 'Date' } } },
+    });
+
+    expect(hoverInfo).toEqual({
+      kind: 'parameter',
+      name: 'typed',
+      type: 'Date',
+    });
+  });
+
+  test('Provides no parameter hover info for undeclared parameters', () => {
+    const query = 'RETURN $undeclared';
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $und'.length,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toEqual(undefined);
   });
 });

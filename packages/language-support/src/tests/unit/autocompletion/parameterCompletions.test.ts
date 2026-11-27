@@ -6,15 +6,13 @@ import { autocomplete } from '../../../autocompletion/autocompletion.js';
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
     parameters: {
-      stringParam: 'something',
-      '@param': 'wow',
-      'param.1': 5000,
-      '100param': 'great',
-      intParam: 1337,
-      mapParam: {
-        property: 'value',
-      },
-      'some param': 'something',
+      stringParam: { type: 'String' },
+      '@param': { type: 'String' },
+      'param.1': { type: 'Integer' },
+      '100param': { type: 'String' },
+      intParam: { type: 'Integer' },
+      mapParam: { type: 'Map' },
+      'some param': { type: 'String' },
     },
   };
 
@@ -482,5 +480,197 @@ describe('Completes parameters outside of databases, roles, user names', () => {
       ],
       excluded: [],
     });
+  });
+});
+
+describe('Filters parameter completions on the expected type', () => {
+  const dbSchema: DbSchema = {
+    parameters: {
+      stringParam: { type: 'String', stringValue: '"something"' },
+      intParam: { type: 'Integer', stringValue: '1337' },
+      floatParam: { type: 'Float', stringValue: '13.37' },
+      mapParam: { type: 'Map', stringValue: '{a: 1}' },
+      vectorParam: { type: 'Vector', stringValue: 'vector([1, 2], 2, INT32)' },
+      dateParam: { type: 'Date', stringValue: '2026-11-27' },
+      untypedParam: {},
+    },
+  };
+
+  const parameterLabels = (query: string) =>
+    autocomplete(query, dbSchema)
+      .map(({ label }) => label)
+      .filter((label) => label.startsWith('$'))
+      .sort();
+
+  test('Suggests all parameters when any type is expected', () => {
+    expect(parameterLabels('RETURN $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests only string parameters for ENABLE SERVER', () => {
+    expect(parameterLabels('ENABLE SERVER $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only string parameters for DROP USER', () => {
+    expect(parameterLabels('DROP USER $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only string parameters for CREATE ROLE', () => {
+    expect(parameterLabels('CREATE ROLE $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only string parameters for passwords', () => {
+    expect(parameterLabels('ALTER USER foo SET PASSWORD $')).toEqual([
+      '$stringParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only map parameters for node properties', () => {
+    expect(parameterLabels('CREATE (n $')).toEqual([
+      '$mapParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only map parameters for index options', () => {
+    expect(
+      parameterLabels('CREATE INDEX abc FOR (n:Person) ON (n.name) OPTIONS $'),
+    ).toEqual(['$mapParam', '$untypedParam']);
+  });
+
+  test('Suggests only integer parameters for SHORTEST', () => {
+    expect(parameterLabels('MATCH SHORTEST $')).toEqual([
+      '$intParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only integer parameters for ANY', () => {
+    expect(parameterLabels('MATCH ANY $')).toEqual([
+      '$intParam',
+      '$untypedParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the first argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the second argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($vectorParam, $')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests only vector parameters for the first argument of vector_norm', () => {
+    expect(parameterLabels('RETURN vector_norm($')).toEqual([
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a function call in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance(coalesce($')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for later arguments of a function call in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance(coalesce($a, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a list in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance([1, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters inside a map in a vector argument', () => {
+    expect(parameterLabels('RETURN vector_distance({a: 1, b: $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the second argument of vector_norm', () => {
+    expect(parameterLabels('RETURN vector_norm($vectorParam, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the third argument of vector_distance', () => {
+    expect(parameterLabels('RETURN vector_distance($a, $b, $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test('Suggests all parameters for the value of vector()', () => {
+    expect(parameterLabels('RETURN vector($')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
   });
 });

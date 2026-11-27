@@ -2,7 +2,7 @@ import {
   CompletionItemKind,
   CompletionItemTag,
 } from 'vscode-languageserver-types';
-import type { DbSchema } from '../dbSchema.js';
+import type { CypherParameter, DbSchema } from '../dbSchema.js';
 import { CypherCmdLexer as CypherLexer } from '../generated-parser/CypherCmdLexer.js';
 import {
   CypherCmdParser as CypherParser,
@@ -288,10 +288,7 @@ const parameterCompletions = (
   expectedType: ExpectedParameterType,
 ): CompletionItem[] =>
   Object.entries(dbInfo.parameters ?? {})
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    .filter(([_, paramType]) =>
-      isExpectedParameterType(expectedType, paramType),
-    )
+    .filter(([, param]) => isExpectedParameterType(expectedType, param))
     .map(([paramName]) => {
       const backtickedName = backtickIfNeeded(paramName, 'param');
       let maybeInsertText = backtickedName
@@ -337,10 +334,71 @@ const propertyKeyCompletions = (dbInfo: DbSchema): CompletionItem[] =>
 enum ExpectedParameterType {
   String = 'STRING',
   Map = 'MAP',
+  Integer = 'INTEGER',
+  Vector = 'VECTOR',
   Any = 'ANY',
 }
 
-const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
+/**
+ * Whether the parameter starting at the given token is one of the vectors
+ * compared in vector_distance(v1, v2, metric) or normed in vector_norm(v, metric).
+ * Done on tokens because the completion core may reach the parameter through
+ * functionInvocation instead, since vector_distance is also a valid function name.
+ */
+function isVectorFunctionArgument(tokens: Token[], startTokenIndex: number) {
+  const previous = findPreviousNonSpace(tokens, startTokenIndex);
+  if (previous?.type === CypherLexer.LPAREN) {
+    const functionName = findPreviousNonSpace(tokens, previous.tokenIndex);
+    return (
+      functionName?.type === CypherLexer.VECTOR_DISTANCE ||
+      functionName?.type === CypherLexer.VECTOR_NORM
+    );
+  }
+
+  if (previous?.type !== CypherLexer.COMMA) {
+    return false;
+  }
+
+  // Find the opening bracket enclosing the comma, to check that it's
+  // the argument list of vector_distance and this is its second argument
+  const closing = [
+    CypherLexer.RPAREN,
+    CypherLexer.RBRACKET,
+    CypherLexer.RCURLY,
+  ];
+  const opening = [
+    CypherLexer.LPAREN,
+    CypherLexer.LBRACKET,
+    CypherLexer.LCURLY,
+  ];
+  let depth = 0;
+  let commas = 0;
+  for (let i = previous.tokenIndex - 1; i >= 0; i--) {
+    const type = tokens[i]?.type ?? CypherLexer.EOF;
+    if (closing.includes(type)) {
+      depth++;
+    } else if (opening.includes(type)) {
+      if (depth === 0) {
+        const functionName = findPreviousNonSpace(tokens, i);
+        return (
+          type === CypherLexer.LPAREN &&
+          commas === 0 &&
+          functionName?.type === CypherLexer.VECTOR_DISTANCE
+        );
+      }
+      depth--;
+    } else if (type === CypherLexer.COMMA && depth === 0) {
+      commas++;
+    }
+  }
+
+  return false;
+}
+
+const inferExpectedParameterTypeFromContext = (
+  context: ICandidateRule,
+  tokens: Token[],
+) => {
   const parentRule = context.ruleList.at(-1);
 
   if (
@@ -371,25 +429,41 @@ const inferExpectedParameterTypeFromContext = (context: ICandidateRule) => {
     )
   ) {
     return ExpectedParameterType.Map;
-  } else {
-    return ExpectedParameterType.Any;
+  } else if (
+    parentRule !== undefined &&
+    [
+      CypherParser.RULE_uIntOrIntParameter,
+      CypherParser.RULE_nonNegativeIntegerSpecification,
+    ].includes(parentRule)
+  ) {
+    return ExpectedParameterType.Integer;
   }
+
+  if (isVectorFunctionArgument(tokens, context.startTokenIndex)) {
+    return ExpectedParameterType.Vector;
+  }
+
+  return ExpectedParameterType.Any;
 };
 
+const expectedTypeNames: Record<
+  Exclude<ExpectedParameterType, ExpectedParameterType.Any>,
+  string
+> = {
+  [ExpectedParameterType.String]: 'String',
+  [ExpectedParameterType.Map]: 'Map',
+  [ExpectedParameterType.Integer]: 'Integer',
+  [ExpectedParameterType.Vector]: 'Vector',
+};
+
+// Parameters without a type could be of the expected type, so they're kept
 const isExpectedParameterType = (
   expectedType: ExpectedParameterType,
-  value: unknown,
-) => {
-  const typeName = typeof value;
-  switch (expectedType) {
-    case ExpectedParameterType.String:
-      return typeName === 'string';
-    case ExpectedParameterType.Map:
-      return typeName === 'object';
-    case ExpectedParameterType.Any:
-      return true;
-  }
-};
+  { type }: CypherParameter,
+) =>
+  expectedType === ExpectedParameterType.Any ||
+  type === undefined ||
+  type === expectedTypeNames[expectedType];
 
 function couldBeNodeOrRel(
   variablePosition: number,
@@ -605,7 +679,7 @@ export function completionCoreCompletion(
           dbSchema,
           previousToken,
           tokens,
-          inferExpectedParameterTypeFromContext(candidateRule),
+          inferExpectedParameterTypeFromContext(candidateRule, tokens),
         );
       }
 

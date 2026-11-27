@@ -60,7 +60,7 @@ test('Can filter out missing parameter warnings when disconnected using isNotPar
       dbSchema: {
         ...testData.mockSchema,
         parameters: {
-          'some param': 21,
+          'some param': { type: 'Integer' },
         },
         databaseNames: [],
       },

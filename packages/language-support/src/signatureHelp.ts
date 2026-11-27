@@ -25,7 +25,12 @@ import { CypherCmdParser as CypherParser } from './generated-parser/CypherCmdPar
 import type { Token } from 'antlr4ng';
 import type { DbSchema } from './dbSchema.js';
 import { CypherCmdParserListener } from './generated-parser/CypherCmdParserListener.js';
-import { findCaret, isDefined, resolveCypherVersion } from './helpers.js';
+import {
+  contextContainsToken,
+  findCaret,
+  isDefined,
+  resolveCypherVersion,
+} from './helpers.js';
 import type { Neo4jFunction, Neo4jProcedure } from './types.js';
 import type { ParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
 import { createParsingResult } from './cypherLanguageService/parserWrapper/parserWrapper.js';
@@ -148,11 +153,7 @@ class SignatureHelper extends CypherCmdParserListener {
     const openingToken = ctx.LPAREN?.() ?? ctx.LCURLY?.();
 
     return (
-      isDefined(ctx.start) &&
-      isDefined(ctx.stop) &&
-      ctx.start.start <= this.caretToken.start &&
-      this.caretToken.stop <= ctx.stop.stop &&
-      isDefined(openingToken)
+      contextContainsToken(ctx, this.caretToken) && isDefined(openingToken)
     );
   }
 

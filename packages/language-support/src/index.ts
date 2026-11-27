@@ -9,7 +9,14 @@ export {
   BacktickVariant,
 } from './autocompletion/autocompletionHelpers.js';
 export { backtickIfNeeded } from './autocompletion/autocompletionHelpers.js';
-export type { DbSchema, ScopedRegistry, Registry } from './dbSchema.js';
+export type {
+  CypherDataTypeName,
+  CypherParameter,
+  CypherPropertyName,
+  DbSchema,
+  ScopedRegistry,
+  Registry,
+} from './dbSchema.js';
 export type {
   HoverDescription,
   HoverInfo,

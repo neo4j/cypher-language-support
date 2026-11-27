@@ -5,6 +5,9 @@
 ```ts
 
 import type { Config } from 'neo4j-driver';
+import type { CypherDataTypeName } from '@neo4j-cypher/language-support';
+import type { CypherParameter } from '@neo4j-cypher/language-support';
+import type { CypherPropertyName } from '@neo4j-cypher/language-support';
 import type { CypherVersion } from '@neo4j-cypher/language-support';
 import type { Date as Date_2 } from 'neo4j-driver';
 import type { DateTime } from 'neo4j-driver';
@@ -60,8 +63,7 @@ export const cypherDataToString: (map: CypherDataType | undefined, stringStyle?:
 // @public (undocumented)
 export type CypherDataType = CypherBasicPropertyType | CypherStructuralType | CypherMap | CypherList;
 
-// @public (undocumented)
-export type CypherDataTypeName = CypherPropertyName | 'Node' | 'Relationship' | 'Path' | 'Map' | 'Vector';
+export { CypherDataTypeName }
 
 // @public (undocumented)
 export type CypherList = (CypherBasicPropertyType | CypherStructuralType | CypherMap | CypherList)[];
@@ -75,8 +77,7 @@ export interface CypherMap {
 // @public (undocumented)
 export type CypherProperty = CypherBasicPropertyType | CypherBasicPropertyType[];
 
-// @public (undocumented)
-export type CypherPropertyName = 'Float' | 'null' | 'String' | 'Bigint' | 'Boolean' | `List${string}` | 'LocalTime' | 'Time' | 'Date' | 'LocalDateTime' | 'DateTime' | 'Integer' | 'Duration' | 'Point' | 'ByteArray' | 'Vector' | 'Unknown';
+export { CypherPropertyName }
 
 // @public (undocumented)
 export type CypherStringStyle = 'cypher' | 'cypher-with-ids';
@@ -251,7 +252,7 @@ export class Neo4jSchemaPoller {
         appName: string;
     }, database?: string): Promise<ConnnectionResult>;
     // (undocumented)
-    setParameters(parameters: Record<string, unknown>): void;
+    setParameters(parameters: Record<string, CypherParameter>): void;
 }
 
 // @public (undocumented)
@@ -308,6 +309,9 @@ export const spacialFormat: (p: Point) => string;
 
 // @public (undocumented)
 export type StringStyle = 'json' | CypherStringStyle;
+
+// @public
+export function toCypherParameter(value: CypherDataType): CypherParameter;
 
 // (No @packageDocumentation comment for this package)
 

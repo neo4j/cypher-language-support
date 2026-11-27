@@ -87,6 +87,9 @@ export type Constraint = {
     propertyType: string;
 };
 
+// @public
+export type CypherDataTypeName = CypherPropertyName | 'Node' | 'Relationship' | 'Path' | 'Map';
+
 // @public (undocumented)
 export class CypherLanguageService {
     constructor(input?: {
@@ -125,6 +128,15 @@ export class CypherLanguageService {
     // (undocumented)
     setSymbolsInfo(symbolsInfo: SymbolsInfo, sendMessage?: (symbolTables: SymbolTable[]) => Promise<void>): void;
 }
+
+// @public
+export interface CypherParameter {
+    stringValue?: string;
+    type?: CypherDataTypeName;
+}
+
+// @public
+export type CypherPropertyName = 'Float' | 'null' | 'String' | 'Bigint' | 'Boolean' | `List${string}` | 'LocalTime' | 'Time' | 'Date' | 'LocalDateTime' | 'DateTime' | 'Integer' | 'Duration' | 'Point' | 'ByteArray' | 'Vector' | 'Unknown';
 
 // @public (undocumented)
 export enum CypherTokenType {
@@ -207,7 +219,7 @@ export interface DbSchema {
     // (undocumented)
     labels?: string[];
     // (undocumented)
-    parameters?: Record<string, unknown>;
+    parameters?: Record<string, CypherParameter>;
     // (undocumented)
     procedures?: ScopedRegistry<Neo4jProcedure>;
     // (undocumented)
@@ -287,7 +299,12 @@ export type HoverInfo = {
 } & MethodHoverInfo) | ({
     kind: 'procedure';
     returnValues: HoverDescription[];
-} & MethodHoverInfo);
+} & MethodHoverInfo) | {
+    kind: 'parameter';
+    name: string;
+    type?: string;
+    value?: string;
+};
 
 // @public (undocumented)
 export const _internalFeatureFlags: FeatureFlags;

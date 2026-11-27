@@ -379,6 +379,54 @@ suite('Auto completion spec', () => {
     });
   });
 
+  test('Parameters are filtered on the type expected by the query', async () => {
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'stringParam',
+      '"pikachu"',
+    );
+    await vscode.commands.executeCommand(
+      CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,
+      'mapParam',
+      '{name: "pikachu"}',
+    );
+
+    const stringParam = {
+      label: '$stringParam',
+      kind: vscode.CompletionItemKind.Variable,
+    };
+    const mapParam = {
+      label: '$mapParam',
+      kind: vscode.CompletionItemKind.Variable,
+    };
+
+    const stringDoc = await newUntitledFileWithContent('ENABLE SERVER $');
+    const stringPosition = new vscode.Position(0, 15);
+    await testCompletionContains({
+      textFile: stringDoc.uri,
+      position: stringPosition,
+      expected: [stringParam],
+    });
+    await testCompletionNotContains({
+      textFile: stringDoc.uri,
+      position: stringPosition,
+      excluded: [mapParam],
+    });
+
+    const mapDoc = await newUntitledFileWithContent('CREATE (n $');
+    const mapPosition = new vscode.Position(0, 11);
+    await testCompletionContains({
+      textFile: mapDoc.uri,
+      position: mapPosition,
+      expected: [mapParam],
+    });
+    await testCompletionNotContains({
+      textFile: mapDoc.uri,
+      position: mapPosition,
+      excluded: [stringParam],
+    });
+  });
+
   test('Parameters are available in completions even when disconnected from neo4j', async () => {
     await vscode.commands.executeCommand(
       CONSTANTS.COMMANDS.INTERNAL.EVAL_PARAMETER,

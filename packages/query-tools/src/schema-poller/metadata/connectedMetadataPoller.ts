@@ -1,5 +1,6 @@
 import type {
   Constraint,
+  CypherParameter,
   CypherVersion,
   DbSchema,
   Neo4jFunction,
@@ -45,7 +46,7 @@ export class ConnectedMetadataPoller extends MetadataPoller {
 
   constructor(
     databases: Database[],
-    parameters: Record<string, unknown>,
+    parameters: Record<string, CypherParameter>,
     serverCypherVersions: string[] | undefined,
     private readonly connection: Neo4jConnection,
     private readonly events: EventEmitter,

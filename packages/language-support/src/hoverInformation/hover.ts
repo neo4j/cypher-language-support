@@ -5,6 +5,7 @@ import { isLabelLeaf } from '../types.js';
 import { findVariableOnCaret } from './variableHover.js';
 import { renderLabelTree } from '../labelTreeRender.js';
 import type { ParsingResult } from '../cypherLanguageService/parserWrapper/parserWrapper.js';
+import { getParameterHover } from '../parameterHover.js';
 
 export interface HoverDescription {
   name: string;
@@ -31,7 +32,8 @@ export type HoverInfo =
       labelExpression?: string;
     }
   | ({ kind: 'function'; returnType: string } & MethodHoverInfo)
-  | ({ kind: 'procedure'; returnValues: HoverDescription[] } & MethodHoverInfo);
+  | ({ kind: 'procedure'; returnValues: HoverDescription[] } & MethodHoverInfo)
+  | { kind: 'parameter'; name: string; type?: string; value?: string };
 
 export function getHoverInfo({
   caretPosition,
@@ -44,6 +46,15 @@ export function getHoverInfo({
   parsingResult: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 }): HoverInfo | undefined {
+  const parameterHoverInfo = getParameterHover({
+    parsingResult,
+    caretPosition,
+    dbSchema,
+  });
+  if (parameterHoverInfo) {
+    return { kind: 'parameter', ...parameterHoverInfo };
+  }
+
   const methodSignatureInfo = getMethodSignature({
     parsingResult,
     caretPosition,

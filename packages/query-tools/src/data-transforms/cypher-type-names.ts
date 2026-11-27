@@ -14,6 +14,11 @@ import {
 } from 'neo4j-driver';
 
 import type {
+  CypherDataTypeName,
+  CypherParameter,
+  CypherPropertyName,
+} from '@neo4j-cypher/language-support';
+import type {
   CypherDataType,
   CypherProperty,
 } from '../types/cypher-data-types.js';
@@ -21,25 +26,9 @@ import {
   isCypherBasicPropertyType,
   isInt8Array,
 } from '../types/cypher-data-types.js';
+import { cypherDataToString } from './record-to-string.js';
 
-export type CypherPropertyName =
-  | 'Float'
-  | 'null'
-  | 'String'
-  | 'Bigint'
-  | 'Boolean'
-  | `List${string}`
-  | 'LocalTime'
-  | 'Time'
-  | 'Date'
-  | 'LocalDateTime'
-  | 'DateTime'
-  | 'Integer'
-  | 'Duration'
-  | 'Point'
-  | 'ByteArray'
-  | 'Vector'
-  | 'Unknown';
+export type { CypherDataTypeName, CypherPropertyName };
 
 const capitalize = (s: string) => s.charAt(0).toUpperCase() + s.slice(1);
 
@@ -122,13 +111,6 @@ export const getPropertyTypeDisplayName = (
   return 'Unknown';
 };
 
-export type CypherDataTypeName =
-  | CypherPropertyName
-  | 'Node'
-  | 'Relationship'
-  | 'Path'
-  | 'Map'
-  | 'Vector';
 export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
   if (Array.isArray(val)) {
     return 'List';
@@ -154,4 +136,15 @@ export function getCypherTypeName(val?: CypherDataType): CypherDataTypeName {
   }
 
   return 'Map';
+}
+
+/**
+ * Creates a parameter for `DbSchema.parameters` from a value returned by the
+ * neo4j driver, e.g. from evaluating `RETURN <expression>`
+ */
+export function toCypherParameter(value: CypherDataType): CypherParameter {
+  return {
+    type: getCypherTypeName(value),
+    stringValue: cypherDataToString(value),
+  };
 }

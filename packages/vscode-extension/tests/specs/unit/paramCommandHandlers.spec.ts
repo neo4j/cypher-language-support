@@ -207,11 +207,8 @@ suite('Parameters command handlers spec', () => {
       'updateParameters',
       {
         a: {
-          key: 'a',
-          serializedValue: 'charmander',
           stringValue: '"charmander"',
           type: 'String',
-          evaluatedStatement: '"charmander"',
         },
       },
     );
@@ -309,18 +306,12 @@ suite('Parameters command handlers spec', () => {
       'updateParameters',
       {
         a: {
-          key: 'a',
-          serializedValue: { low: 1234, high: 0, 'transport-class': 'Integer' },
           stringValue: '1234',
           type: 'Integer',
-          evaluatedStatement: '1234',
         },
         b: {
-          key: 'b',
-          serializedValue: 'pikachu',
           stringValue: '"pikachu"',
           type: 'String',
-          evaluatedStatement: '"pikachu"',
         },
       },
     );
@@ -335,11 +326,8 @@ suite('Parameters command handlers spec', () => {
       'updateParameters',
       {
         b: {
-          key: 'b',
-          serializedValue: 'pikachu',
           stringValue: '"pikachu"',
           type: 'String',
-          evaluatedStatement: '"pikachu"',
         },
       },
     );

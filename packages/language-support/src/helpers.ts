@@ -60,6 +60,26 @@ export function isDefined(x: unknown) {
   return x !== null && x !== undefined;
 }
 
+export function contextContainsRange(
+  ctx: ParserRuleContext,
+  start: number,
+  stop: number = start,
+): boolean {
+  return (
+    isDefined(ctx.start) &&
+    isDefined(ctx.stop) &&
+    ctx.start.start <= start &&
+    stop <= ctx.stop.stop
+  );
+}
+
+export function contextContainsToken(
+  ctx: ParserRuleContext,
+  token: Token,
+): boolean {
+  return contextContainsRange(ctx, token.start, token.stop);
+}
+
 export function inNodeLabel(stopNode: ParserRuleContext) {
   const nodePattern = findParent(
     stopNode,

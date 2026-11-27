@@ -1,13 +1,11 @@
 import type {
   CypherDataType,
-  CypherDataTypeName,
   Database,
   Neo4jType,
 } from '@neo4j-cypher/query-tools';
 import {
-  cypherDataToString,
-  getCypherTypeName,
   serializeTypeAnnotations,
+  toCypherParameter,
 } from '@neo4j-cypher/query-tools';
 import { Neo4jError } from 'neo4j-driver';
 import { window } from 'vscode';
@@ -171,11 +169,7 @@ export async function evaluateParam(
     const resultEntries = Object.values(record.toObject());
     const paramAsNeo4jType = resultEntries[0] as Neo4jType;
     const paramAsCypherType = resultEntries[0] as CypherDataType;
-    const type: CypherDataTypeName = getCypherTypeName(paramAsCypherType);
-    const stringValue = cypherDataToString(paramAsCypherType).replaceAll(
-      '\n',
-      '',
-    );
+    const { type, stringValue } = toCypherParameter(paramAsCypherType);
 
     const serializedValue = serializeTypeAnnotations(paramAsNeo4jType);
     await setParameter({

@@ -16,11 +16,16 @@ export type TooltipCypherHighlighter = (
 ) => void;
 
 /** The Cypher fragments a hover or signature help shows, each needing its own context to be highlighted */
-export type CypherFragmentKind = 'labelExpression' | 'function' | 'procedure';
+export type CypherFragmentKind =
+  | 'labelExpression'
+  | 'parameter'
+  | 'function'
+  | 'procedure';
 
 //Need some prefixing for the cypher fragment to parse correctly (and get the same highlighting as in a valid query)
 const fragmentPrefixes: Record<CypherFragmentKind, string> = {
   labelExpression: 'MATCH (x:',
+  parameter: 'RETURN ',
   function: 'RETURN ',
   procedure: 'CALL ',
 };

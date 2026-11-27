@@ -234,3 +234,28 @@ n: Node
     );
   });
 });
+
+describe('Parameter hover markdown', () => {
+  test('writes the type and value of a parameter', () => {
+    expect(
+      hoverInfoToMarkdown({
+        kind: 'parameter',
+        name: 'p',
+        type: 'String',
+        value: '"green"',
+      }),
+    ).toBe('`\n$p: String\n`\n\n```cypher\n"green"\n```');
+  });
+
+  test('writes only the type of a parameter without a value', () => {
+    expect(
+      hoverInfoToMarkdown({ kind: 'parameter', name: 'p', type: 'Date' }),
+    ).toBe('`\n$p: Date\n`');
+  });
+
+  test('writes Any as the type of an untyped parameter', () => {
+    expect(hoverInfoToMarkdown({ kind: 'parameter', name: 'p' })).toBe(
+      '`\n$p: Any\n`',
+    );
+  });
+});

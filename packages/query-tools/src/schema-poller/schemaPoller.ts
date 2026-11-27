@@ -14,7 +14,10 @@ import { getVersion } from '../queries/version.js';
 import { DisconnectedMetadataPoller } from './metadata/disconnectedMetadataPoller.js';
 import { ConnectedMetadataPoller } from './metadata/connectedMetadataPoller.js';
 import { listConstraintFields } from '../queries/constraints.js';
-import type { Constraint } from '@neo4j-cypher/language-support';
+import type {
+  Constraint,
+  CypherParameter,
+} from '@neo4j-cypher/language-support';
 import { getPermissions } from '../queries/permissions.js';
 
 export type ConnnectionResult = {
@@ -38,10 +41,10 @@ export class Neo4jSchemaPoller {
   private reconnectionTimeout?: ReturnType<typeof setTimeout>;
   private retries = MAX_RETRY_ATTEMPTS;
   private lastError?: ConnectionError;
-  private parameters: Record<string, unknown> = {};
+  private parameters: Record<string, CypherParameter> = {};
   private permissions: PollingPermissions = { constraints: false };
 
-  public setParameters(parameters: Record<string, unknown>): void {
+  public setParameters(parameters: Record<string, CypherParameter>): void {
     this.parameters = parameters;
 
     if (this.metadata) {

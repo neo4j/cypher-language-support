@@ -23,6 +23,19 @@ export function renderHoverInfo(
 ): HTMLElement {
   const dom = document.createElement('div');
   dom.className = 'cm-hover-info';
+  if (info.kind === 'parameter') {
+    const typeLine = document.createElement('p');
+    typeLine.appendChild(
+      element('code', `$${info.name}: ${info.type ?? 'Any'}`),
+    );
+    dom.appendChild(typeLine);
+
+    if (info.value !== undefined) {
+      dom.appendChild(codeBlock(info.value, 'parameter', highlightHoverCode));
+    }
+
+    return dom;
+  }
 
   if (info.kind === 'variable') {
     const typeLine = document.createElement('p');

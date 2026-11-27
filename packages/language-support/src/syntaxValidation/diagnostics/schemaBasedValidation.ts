@@ -14,7 +14,7 @@ import { getNodesFromRelsSet } from '../../labelTreeWalking.js';
 import type { LabelOrCondition, SymbolTable } from '../../types.js';
 import { isLabelLeaf } from '../../types.js';
 import type { SyntaxDiagnostic } from '../syntaxValidation.js';
-import { getDirection } from '../../helpers.js';
+import { contextContainsRange, getDirection } from '../../helpers.js';
 import { renderLabelTree } from '../../labelTreeRender.js';
 import { translateTokensToRange } from '../../cypherLanguageService/utils/translateTokenToRange.js';
 import type { ParsedStatement } from '../../cypherLanguageService/parserWrapper/parserWrapper.js';
@@ -273,14 +273,8 @@ function findEntry(
 ): SymbolTable[number] | undefined {
   const variable = element.variable();
   if (variable === null) {
-    const { start } = element;
-    if (!start) {
-      return undefined;
-    }
-    return symbolTable.find(
-      (entry) =>
-        entry.definitionPosition >= start.start &&
-        entry.definitionPosition <= (element.stop?.stop ?? -1),
+    return symbolTable.find((entry) =>
+      contextContainsRange(element, entry.definitionPosition),
     );
   }
   const { start } = variable;
