@@ -77,9 +77,15 @@ describe('hover info html rendering', () => {
     expect(info).toBeDefined();
 
     expect(renderHoverInfo(info!).innerHTML).toBe(
-      '<p><code>favColor:</code></p><pre><code>"green"</code></pre>',
+      '<p><code>$favColor: String</code></p><pre><code>"green"</code></pre>',
     );
     expect(highlightedFragments(info!)).toEqual([['"green"', 'parameter']]);
+  });
+
+  test('renders a parameter hover without type or value', () => {
+    expect(renderHoverInfo({ kind: 'parameter', name: 'p' }).innerHTML).toBe(
+      '<p><code>$p: Any</code></p>',
+    );
   });
 
   test('renders a function hover', () => {

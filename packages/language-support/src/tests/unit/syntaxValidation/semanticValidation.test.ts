@@ -2524,7 +2524,7 @@ In this case, \`p\` is defined in the same \`MATCH\` clause as ((a)-[e]->(b {h: 
         dbSchema: {
           ...testData.mockSchema,
           parameters: {
-            'some param': 21,
+            'some param': { type: 'Integer' },
           },
         },
       }),

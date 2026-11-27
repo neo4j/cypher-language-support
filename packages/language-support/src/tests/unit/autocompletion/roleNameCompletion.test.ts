@@ -6,11 +6,9 @@ describe('Can complete role names', () => {
   const dbSchema: DbSchema = {
     roleNames: ['foo', 'bar'],
     parameters: {
-      stringParam: 'something',
-      intParam: 1337,
-      mapParam: {
-        property: 'value',
-      },
+      stringParam: { type: 'String' },
+      intParam: { type: 'Integer' },
+      mapParam: { type: 'Map' },
     },
   };
 

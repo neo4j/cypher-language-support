@@ -25,12 +25,10 @@ describe('Can complete database names', () => {
       '1db',
     ],
     parameters: {
-      param1: 'something',
-      param2: 1337,
-      param3: {
-        property: 'value',
-      },
-      'param 4': 'something else',
+      param1: { type: 'String' },
+      param2: { type: 'Integer' },
+      param3: { type: 'Map' },
+      'param 4': { type: 'String' },
     },
   };
 

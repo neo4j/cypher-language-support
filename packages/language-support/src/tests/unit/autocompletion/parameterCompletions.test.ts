@@ -6,15 +6,13 @@ import { autocomplete } from '../../../autocompletion/autocompletion.js';
 describe('Completes parameters outside of databases, roles, user names', () => {
   const dbSchema: DbSchema = {
     parameters: {
-      stringParam: 'something',
-      '@param': 'wow',
-      'param.1': 5000,
-      '100param': 'great',
-      intParam: 1337,
-      mapParam: {
-        property: 'value',
-      },
-      'some param': 'something',
+      stringParam: { type: 'String' },
+      '@param': { type: 'String' },
+      'param.1': { type: 'Integer' },
+      '100param': { type: 'String' },
+      intParam: { type: 'Integer' },
+      mapParam: { type: 'Map' },
+      'some param': { type: 'String' },
     },
   };
 
@@ -482,5 +480,88 @@ describe('Completes parameters outside of databases, roles, user names', () => {
       ],
       excluded: [],
     });
+  });
+});
+
+describe('Filters parameter completions on the expected type', () => {
+  const dbSchema: DbSchema = {
+    parameters: {
+      stringParam: { type: 'String', stringValue: '"something"' },
+      intParam: { type: 'Integer', stringValue: '1337' },
+      floatParam: { type: 'Float', stringValue: '13.37' },
+      mapParam: { type: 'Map', stringValue: '{a: 1}' },
+      vectorParam: { type: 'Vector', stringValue: 'vector([1, 2], 2, INT32)' },
+      dateParam: { type: 'Date', stringValue: '2026-11-27' },
+      untypedParam: {},
+    },
+  };
+
+  const parameterLabels = (query: string) =>
+    autocomplete(query, dbSchema)
+      .map(({ label }) => label)
+      .filter((label) => label.startsWith('$'))
+      .sort();
+
+  test('Suggests all parameters when any type is expected', () => {
+    expect(parameterLabels('RETURN $')).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
+  });
+
+  test.each([
+    'ENABLE SERVER $',
+    'DROP USER $',
+    'CREATE ROLE $',
+    'ALTER USER foo SET PASSWORD $',
+  ])('Suggests only string parameters in %s', (query) => {
+    expect(parameterLabels(query)).toEqual(['$stringParam', '$untypedParam']);
+  });
+
+  test.each([
+    'CREATE (n $',
+    'CREATE INDEX abc FOR (n:Person) ON (n.name) OPTIONS $',
+  ])('Suggests only map parameters in %s', (query) => {
+    expect(parameterLabels(query)).toEqual(['$mapParam', '$untypedParam']);
+  });
+
+  test.each(['MATCH SHORTEST $', 'MATCH ANY $'])(
+    'Suggests only integer parameters in %s',
+    (query) => {
+      expect(parameterLabels(query)).toEqual(['$intParam', '$untypedParam']);
+    },
+  );
+
+  test.each([
+    'RETURN vector_distance($',
+    'RETURN vector_distance($vectorParam, $',
+    'RETURN vector_norm($',
+  ])('Suggests only vector parameters in %s', (query) => {
+    expect(parameterLabels(query)).toEqual(['$untypedParam', '$vectorParam']);
+  });
+
+  test.each([
+    'RETURN vector_distance(coalesce($',
+    'RETURN vector_distance(coalesce($a, $',
+    'RETURN vector_distance([1, $',
+    'RETURN vector_distance({a: 1, b: $',
+    'RETURN vector_norm($vectorParam, $',
+    'RETURN vector_distance($a, $b, $',
+    'RETURN vector($',
+  ])('Suggests all parameters in non-vector arguments: %s', (query) => {
+    expect(parameterLabels(query)).toEqual([
+      '$dateParam',
+      '$floatParam',
+      '$intParam',
+      '$mapParam',
+      '$stringParam',
+      '$untypedParam',
+      '$vectorParam',
+    ]);
   });
 });

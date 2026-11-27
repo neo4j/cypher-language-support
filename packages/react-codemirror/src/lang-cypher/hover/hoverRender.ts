@@ -25,10 +25,14 @@ export function renderHoverInfo(
   dom.className = 'cm-hover-info';
   if (info.kind === 'parameter') {
     const typeLine = document.createElement('p');
-    typeLine.appendChild(element('code', `${info.name}:`));
+    typeLine.appendChild(
+      element('code', `$${info.name}: ${info.type ?? 'Any'}`),
+    );
     dom.appendChild(typeLine);
 
-    dom.appendChild(codeBlock(info.value, 'parameter', highlightHoverCode));
+    if (info.value !== undefined) {
+      dom.appendChild(codeBlock(info.value, 'parameter', highlightHoverCode));
+    }
 
     return dom;
   }

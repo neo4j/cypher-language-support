@@ -1,3 +1,5 @@
+import type { CypherParameter } from '@neo4j-cypher/language-support';
+
 // These settings are defined in the package.json
 export type Neo4jConnectionSettings = {
   connect?: boolean;
@@ -24,4 +26,4 @@ export type Neo4jSettings = {
   features: { linting: boolean };
 };
 
-export type Neo4jParameters = Record<string, unknown>;
+export type Neo4jParameters = Record<string, CypherParameter>;

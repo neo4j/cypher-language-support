@@ -285,7 +285,32 @@ describe('Variable hover', () => {
     expect(hoverInfo).toEqual({
       kind: 'parameter',
       name: 'param1',
+      type: 'Float',
       value: '123.4',
     });
+  });
+
+  test('Provides hover info for parameters with only a type', () => {
+    const query = 'RETURN $typed';
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $ty'.length,
+      dbSchema: { ...dbSchema, parameters: { typed: { type: 'Date' } } },
+    });
+
+    expect(hoverInfo).toEqual({
+      kind: 'parameter',
+      name: 'typed',
+      type: 'Date',
+    });
+  });
+
+  test('Provides no parameter hover info for undeclared parameters', () => {
+    const query = 'RETURN $undeclared';
+    const hoverInfo = languageService.hoverInfo(query, {
+      caretPosition: 'RETURN $und'.length,
+      dbSchema,
+    });
+
+    expect(hoverInfo).toEqual(undefined);
   });
 });

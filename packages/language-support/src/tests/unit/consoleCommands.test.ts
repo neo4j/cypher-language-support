@@ -1,3 +1,4 @@
+import type { DbSchema } from '../../dbSchema.js';
 import { testData } from './testData.js';
 import { highlightSyntax } from '../../syntaxHighlighting/syntaxHighlighting.js';
 import { autocomplete } from '../../autocompletion/autocompletion.js';
@@ -368,14 +369,14 @@ describe(':use', () => {
 });
 
 describe(':play', () => {
-  const dbSchema = {
+  const dbSchema: DbSchema = {
     databaseNames: ['foo'],
     aliasNames: ['bar'],
     labels: ['fan'],
     relationshipTypes: ['follows'],
     userNames: ['fred'],
     roleNames: ['fixer'],
-    parameters: { fixing: 'foobar' },
+    parameters: { fixing: { type: 'String' } },
     propertyKeys: ['firstName'],
   };
 

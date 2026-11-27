@@ -33,7 +33,7 @@ export type HoverInfo =
     }
   | ({ kind: 'function'; returnType: string } & MethodHoverInfo)
   | ({ kind: 'procedure'; returnValues: HoverDescription[] } & MethodHoverInfo)
-  | { kind: 'parameter'; name: string; value: string };
+  | { kind: 'parameter'; name: string; type?: string; value?: string };
 
 export function getHoverInfo({
   caretPosition,
@@ -46,17 +46,13 @@ export function getHoverInfo({
   parsingResult: ParsingResult;
   symbolsInfo?: SymbolsInfo;
 }): HoverInfo | undefined {
-  const paramaterSignatureInfo = getParameterHover({
+  const parameterHoverInfo = getParameterHover({
     parsingResult,
     caretPosition,
     dbSchema,
   });
-  if (paramaterSignatureInfo) {
-    return {
-      kind: 'parameter',
-      name: paramaterSignatureInfo.name,
-      value: paramaterSignatureInfo.value,
-    };
+  if (parameterHoverInfo) {
+    return { kind: 'parameter', ...parameterHoverInfo };
   }
 
   const methodSignatureInfo = getMethodSignature({

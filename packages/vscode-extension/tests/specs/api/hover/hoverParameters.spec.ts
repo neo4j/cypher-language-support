@@ -36,7 +36,10 @@ suite('Hover spec parameters', () => {
 
       assert.equal(hovers.length, 1);
       const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
-      assert.equal(markdown, 'pokemon: \n```cypher\n"charmander"\n```');
+      assert.equal(
+        markdown,
+        '`\n$pokemon: String\n`\n\n```cypher\n"charmander"\n```',
+      );
     });
   });
 
@@ -52,7 +55,10 @@ suite('Hover spec parameters', () => {
 
       assert.equal(hovers.length, 1);
       const markdown = (hovers[0].contents[0] as vscode.MarkdownString).value;
-      assert.equal(markdown, 'pokemon: \n```cypher\n"charmander"\n```');
+      assert.equal(
+        markdown,
+        '`\n$pokemon: String\n`\n\n```cypher\n"charmander"\n```',
+      );
     });
   });
 

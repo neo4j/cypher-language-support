@@ -1,3 +1,4 @@
+import type { CypherParameter } from '@neo4j-cypher/language-support';
 import type { CypherDataTypeName } from '@neo4j-cypher/query-tools';
 import { deserializeTypeAnnotations } from '@neo4j-cypher/query-tools';
 import * as vscode from 'vscode';
@@ -108,6 +109,11 @@ async function updateParameters(parameters: Parameters): Promise<void> {
  *          Parameters object has been sent the language server.
  */
 export async function sendParametersToLanguageServer() {
-  const params = getParameters();
+  const params: Record<string, CypherParameter> = Object.fromEntries(
+    Object.values(getParameters()).map(({ key, type, stringValue }) => [
+      key,
+      { type, stringValue },
+    ]),
+  );
   await sendNotificationToLanguageClient('updateParameters', params);
 }

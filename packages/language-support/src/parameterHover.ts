@@ -12,7 +12,7 @@ export function getParameterHover({
   parsingResult: ParsingResult;
   dbSchema?: DbSchema;
   caretPosition: number;
-}): { name: string; value: string } | undefined {
+}): { name: string; type?: string; value?: string } | undefined {
   if (!dbSchema) {
     return undefined;
   }
@@ -28,15 +28,13 @@ export function getParameterHover({
       const currentParam = paramCollector.caretParameter;
       if (currentParam) {
         const param = dbSchema.parameters[currentParam.name];
-        if (
-          param &&
-          param instanceof Object &&
-          'stringValue' in param &&
-          typeof param.stringValue === 'string'
-        ) {
+        if (param) {
           return {
             name: currentParam.name,
-            value: param.stringValue,
+            ...(param.type !== undefined && { type: param.type }),
+            ...(param.stringValue !== undefined && {
+              value: param.stringValue,
+            }),
           };
         }
       }

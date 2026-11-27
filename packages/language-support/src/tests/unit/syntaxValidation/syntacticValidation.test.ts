@@ -707,7 +707,7 @@ describe('Syntactic validation spec', () => {
         dbSchema: {
           labels: ['Dog', 'Cat'],
           relationshipTypes: ['Person'],
-          parameters: { value: 'mockedName' },
+          parameters: { value: { type: 'String' } },
         },
       }),
     ).toEqual([]);

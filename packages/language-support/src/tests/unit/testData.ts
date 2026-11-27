@@ -119383,12 +119383,15 @@ const mockSchema = {
   ],
   parameters: {
     param1: {
+      type: 'Float',
       stringValue: '123.4',
     },
     favColor: {
+      type: 'String',
       stringValue: '"green"',
     },
     myParam: {
+      type: 'Integer',
       stringValue: '1337',
     },
   },

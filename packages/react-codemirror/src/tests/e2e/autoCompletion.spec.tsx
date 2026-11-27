@@ -297,7 +297,7 @@ test('can complete parameters', async ({ page, mount }) => {
   const component = await mount(
     <CypherEditor
       schema={{
-        parameters: { parameter: { type: 'string' } },
+        parameters: { parameter: { type: 'String' } },
       }}
     />,
   );
@@ -316,7 +316,7 @@ test('completes allShortestPaths correctly', async ({ page, mount }) => {
   await mount(
     <CypherEditor
       schema={{
-        parameters: { parameter: { type: 'string' } },
+        parameters: { parameter: { type: 'String' } },
       }}
     />,
   );

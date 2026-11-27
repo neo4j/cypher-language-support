@@ -6,6 +6,7 @@ export type { Neo4jType } from './cypher-execution/query-result.js';
 export {
   getCypherTypeName,
   getPropertyTypeDisplayName,
+  toCypherParameter,
 } from './data-transforms/cypher-type-names.js';
 export type {
   CypherDataTypeName,
